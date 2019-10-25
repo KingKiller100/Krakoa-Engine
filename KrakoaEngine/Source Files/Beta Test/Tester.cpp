@@ -1,6 +1,5 @@
 #include "Tester.h"
 
-
 #include <iostream>
 
 namespace krakoa::test

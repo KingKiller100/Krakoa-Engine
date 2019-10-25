@@ -3,7 +3,7 @@
 
 namespace krakoa
 {
-	namespace test
+	namespace kTest
 	{
 		KRAKOA_API void PrintTest();
 	}

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace krakoa::test
+namespace krakoa::kTest
 {
 	void PrintTest()
 	{

@@ -1,10 +1,12 @@
 #include "Application.h"
+#include "../Utility/Date And Time/kTime.h"
 
 namespace krakoa
 {
 	Application::Application()
 	: running(false)
 	{
+		kTime::Clock<>::Start();
 	}
 
 	Application::~Application()
@@ -17,6 +19,8 @@ namespace krakoa
 
 	void Application::Run()
 	{
+		const auto deltaTime = kTime::Clock<>::GetDeltaTime();
+		const auto time = kTime::Clock<>::GetCurrentTime();
 	}
 
 	constexpr bool Application::IsRunning() const

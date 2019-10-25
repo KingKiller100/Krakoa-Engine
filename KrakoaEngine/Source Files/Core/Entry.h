@@ -2,12 +2,18 @@
 #include <memory>
 
 #ifdef KRAKOA_OS_WINDOWS
+#include "Utility/Format To String/kFormatToString.h"
+#include "Utility/Date And Time/kTime.h"
 
 extern krakoa::Application* krakoa::CreateApplication();
 
 int main(int argv, char** argc)
 {
-	krakoa::test::PrintTest();
+	std::string str = "purple";
+	
+	krakoa::kFormatToString::FormatToString("%s rain %s", str.c_str(), krakoa::kTime::Clock<>::GetCurrentTime().c_str());
+	
+	krakoa::kTest::PrintTest();
 	
 	const auto deletor = [](krakoa::Application* game) -> void
 	{

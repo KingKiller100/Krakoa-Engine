@@ -136,17 +136,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="kDebugger.cpp" />
     <ClCompile Include="Source Files\Beta Test\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
-    <ClCompile Include="Source Files\Utility\Logging.cpp" />
+    <ClCompile Include="Source Files\Utility\File System\kFileSystem.cpp" />
+    <ClCompile Include="Source Files\Utility\Logging\Logging.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="kDebugger.h" />
     <ClInclude Include="Source Files\Beta Test\Tester.h" />
     <ClInclude Include="Source Files\Core\Application.h" />
     <ClInclude Include="Source Files\Core\EngineCore.h" />
     <ClInclude Include="Source Files\Core\Entry.h" />
     <ClInclude Include="Source Files\Krakoa.h" />
-    <ClInclude Include="Source Files\Utility\Logging.h" />
+    <ClInclude Include="Source Files\Utility\Date And Time\kDate.h" />
+    <ClInclude Include="Source Files\Utility\Date And Time\kTime.h" />
+    <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
+    <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h" />
+    <ClInclude Include="Source Files\Utility\Logging\Logging.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,8 +6,7 @@ namespace krakoa
 	{
 		void CheckRemoteDebuggerAttached(const char* filename);
 
-		void BreakPointHere();
-		
+		void BreakPointHere();		
 	}
 }
 

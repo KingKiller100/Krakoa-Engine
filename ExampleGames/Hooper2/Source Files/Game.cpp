@@ -6,8 +6,7 @@ public:
 	Hooper2Game()
 		: Application()
 	{}
-
-	
+		
 	~Hooper2Game()
 	= default;
 	

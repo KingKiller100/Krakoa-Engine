@@ -27,7 +27,10 @@
     <ClCompile Include="Source Files\Utility\File System\kFileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kDebugger.cpp">
+    <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Utility\Calendar\kCalendar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,17 +56,20 @@
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Utility\Date And Time\kDate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Utility\Date And Time\kTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kDebugger.h">
+    <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source Files\Utility\Calendar\kCalendar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Clock\kClock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

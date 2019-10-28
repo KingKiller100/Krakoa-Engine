@@ -1,19 +1,20 @@
 #pragma once
+#include "Beta Test/Tester.h"
 #include <memory>
 
-#ifdef KRAKOA_OS_WINDOWS
-#include "Utility/Format To String/kFormatToString.h"
-#include "Utility/Date And Time/kTime.h"
 
+using namespace krakoa;
+#ifdef KRAKOA_OS_WINDOWS
 extern krakoa::Application* krakoa::CreateApplication();
 
 int main(int argv, char** argc)
 {
-	std::string str = "purple";
-	
-	krakoa::kFormatToString::FormatToString("%s rain %s", str.c_str(), krakoa::kTime::Clock<>::GetCurrentTime().c_str());
-	
-	krakoa::kTest::PrintTest();
+	kTest::Print_Test();
+	kTest::Timer_Test();
+	kTest::FileSystem_Test();
+	kTest::Debugger_Test();
+	kTest::Calendar_Test();
+
 	
 	const auto deletor = [](krakoa::Application* game) -> void
 	{

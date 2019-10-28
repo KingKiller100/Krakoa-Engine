@@ -2,19 +2,17 @@
 #include "Beta Test/Tester.h"
 #include <memory>
 
-
 using namespace krakoa;
+
+void Tests();
+
 #ifdef KRAKOA_OS_WINDOWS
+
 extern krakoa::Application* krakoa::CreateApplication();
 
 int main(int argv, char** argc)
 {
-	kTest::Print_Test();
-	kTest::Timer_Test();
-	kTest::FileSystem_Test();
-	kTest::Debugger_Test();
-	kTest::Calendar_Test();
-
+	Tests();
 	
 	const auto deletor = [](krakoa::Application* game) -> void
 	{
@@ -36,3 +34,12 @@ int main(int argv, char** argc)
 }
 
 #endif
+
+inline void Tests()
+{
+	kTest::Print_Test();
+	kTest::Timer_Test();
+	kTest::FileSystem_Test();
+	kTest::Debugger_Test();
+	kTest::Calendar_Test();
+}

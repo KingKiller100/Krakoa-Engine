@@ -13,7 +13,7 @@ namespace krakoa::kCalendar
 		return kCalendarDateTime;
 	}
 
-	std::string GetTimeStr()
+	std::string GetTimeText()
 	{
 		const auto dateTime = GetSystemDateAndTime();
 		return FormatToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);

@@ -16,7 +16,7 @@ namespace krakoa
 			millisec
 		};
 
-		std::string GetTimeStr();
+		std::string GetTimeText();
 		std::string GetDateInTextFormat();
 		const SYSTEMTIME GetSystemDateAndTime();		
 		const char* GetMonth(const unsigned short month);

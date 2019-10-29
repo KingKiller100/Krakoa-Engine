@@ -7,7 +7,7 @@ namespace krakoa
 	Application::Application()
 	: running(false)
 	{
-		kTime::Clock<>::Start();
+		kTime::Clock<double>::Start();
 	}
 
 	Application::~Application()
@@ -20,7 +20,7 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		const auto deltaTime = kTime::Clock<>::GetDeltaTime();
+		const auto deltaTime = kTime::Clock<double>::GetDeltaTime();
 	}
 
 	constexpr bool Application::IsRunning() const

@@ -38,8 +38,9 @@ int main(int argv, char** argc)
 inline void Tests()
 {
 	kTest::Print_Test();
-	kTest::Timer_Test();
+	kTest::Clock_Test();
 	kTest::FileSystem_Test();
 	kTest::Debugger_Test();
 	kTest::Calendar_Test();
+	kTest::Logger_Test();	
 }

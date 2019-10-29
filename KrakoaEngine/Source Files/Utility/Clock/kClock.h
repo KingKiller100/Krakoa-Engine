@@ -5,21 +5,21 @@
 namespace krakoa
 {
 	namespace kTime
-	{		
+	{
 		using HighResolutionClock = std::chrono::high_resolution_clock;
-		
+
 		template<typename Precision = double>
 		class Clock
 		{
-		using Duration = std::chrono::duration<Precision>;
-		using SystemTime = std::chrono::system_clock;
-			
+			using Duration = std::chrono::duration<Precision>;
+			using SystemClock = std::chrono::system_clock;
+
 		public:
 			explicit Clock()
-			= default;
+				= default;
 
 			~Clock()
-			= default;
+				= default;
 
 			static void Start()
 			{
@@ -29,22 +29,22 @@ namespace krakoa
 					kClock_Initialized = true;
 				}
 			}
-			
+
 			static Precision GetSystemLifeTime()
 			{
-				const auto systemTime = std::chrono::duration_cast<Duration>(HighResolutionClock::now() - startTimePoint).count();
+				const Precision systemTime = std::chrono::duration_cast<Duration>(HighResolutionClock::now() - startTimePoint).count();
 				return systemTime;
 			}
-			
+
 			static Precision GetDeltaTime()
 			{
 				lastTimePoint = currentTimePoint;
 				currentTimePoint = HighResolutionClock::now();
 
-				const auto deltaTime = std::chrono::duration_cast<Duration>(currentTimePoint - lastTimePoint).count();
+				const Precision deltaTime = std::chrono::duration_cast<Duration>(currentTimePoint - lastTimePoint).count();
 				return deltaTime;
 			}
-						
+
 		private:
 			static HighResolutionClock::time_point lastTimePoint;
 			static HighResolutionClock::time_point startTimePoint;
@@ -52,11 +52,17 @@ namespace krakoa
 
 			static bool kClock_Initialized;
 		};
-		
-		HighResolutionClock::time_point Clock<>::lastTimePoint = HighResolutionClock::now();
-		HighResolutionClock::time_point Clock<>::startTimePoint = HighResolutionClock::now();
-		HighResolutionClock::time_point Clock<>::currentTimePoint = HighResolutionClock::now();
 
-		bool Clock<>::kClock_Initialized = false;
+		template<typename T>
+		HighResolutionClock::time_point Clock<T>::lastTimePoint = HighResolutionClock::now();
+
+		template<typename T>
+		HighResolutionClock::time_point Clock<T>::startTimePoint = HighResolutionClock::now();
+
+		template<typename T>
+		HighResolutionClock::time_point Clock<T>::currentTimePoint = HighResolutionClock::now();
+
+		template<typename T>
+		bool Clock<T>::kClock_Initialized = false;
 	}
 }

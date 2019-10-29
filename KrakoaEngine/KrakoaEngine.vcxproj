@@ -173,7 +173,7 @@
     <ClCompile Include="Source Files\Beta Test\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
     <ClCompile Include="Source Files\Utility\File System\kFileSystem.cpp" />
-    <ClCompile Include="Source Files\Utility\Logging\Logging.cpp" />
+    <ClCompile Include="Source Files\Utility\Logging\kLogging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.h" />
@@ -186,7 +186,7 @@
     <ClInclude Include="Source Files\Utility\Clock\kClock.h" />
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
     <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h" />
-    <ClInclude Include="Source Files\Utility\Logging\Logging.h" />
+    <ClInclude Include="Source Files\Utility\Logging\kLogging.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

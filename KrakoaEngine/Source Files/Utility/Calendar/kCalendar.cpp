@@ -2,7 +2,7 @@
 
 #include "../Format To String/kFormatToString.h"
 
-namespace krakoa::kCalendar
+namespace util::kCalendar
 {
 	using namespace kFormatToString;
 

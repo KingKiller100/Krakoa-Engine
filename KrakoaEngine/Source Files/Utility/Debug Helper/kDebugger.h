@@ -1,6 +1,6 @@
 #pragma once
 
-namespace krakoa
+namespace util
 {
 	namespace kDebugger
 	{

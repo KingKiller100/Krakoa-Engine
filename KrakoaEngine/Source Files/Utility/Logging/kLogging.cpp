@@ -5,16 +5,16 @@
 #include "../Format To String/kFormatToString.h"
 
 #include <cstdio>
+#include <string_view>
 
-namespace krakoa::kLogs
+namespace util::kLogs
 {
 	using namespace kCalendar;
 	using namespace kFileSystem;
 	using namespace kFormatToString;
 		
 	
-	const LogQueue::value_type logBegin = "Logging Initialized";
-	LogQueue::value_type startOfkLogFile = "***********************************************************************\n" + logBegin + "\t" + GetDateInTextFormat() + "\t\t" + GetTimeText() + "\n***********************************************************************\n\n";
+	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
 	LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n\n***********************************************************************\n";
 	LogQueue::value_type endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n";
 
@@ -23,17 +23,13 @@ namespace krakoa::kLogs
 		: directory(GetCurrentWorkingDirectory() + "Logs\\"),
 		filename(FormatToString("Krakoa Engine Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
 		initialized_kLogging(false)
-	{
-		ResolveLogLevel();
-	}
+	{	}
 
-	Logging::Logging(const std::string& filename, const std::string& directory)
-		: directory(directory),
-		filename(filename),
+	Logging::Logging(std::string& filename, std::string& directory)
+		: directory(std::move(directory)),
+		filename(std::move(filename)),
 		initialized_kLogging(false)
-	{
-		ResolveLogLevel();
-	}
+	{	}
 
 	Logging::~Logging()
 	= default;
@@ -43,8 +39,24 @@ namespace krakoa::kLogs
 		if (initialized_kLogging) { return; }
 
 		initialized_kLogging = true;
-		auto startLog = startOfkLogFile;
+
+		ResolveLogLevel();
+		ResolveOutputColour();
+		
+		std::string_view startLog = startOfkLogFile;
 		AddToLogBuffer(startLog, LogLevel::NORM);
+	}
+	
+	void Logging::AddToLogBuffer(std::string_view & logLine, const LogLevel lvl)
+	{
+		OutputToConsole(logLine, lvl);
+		logBufferQueue_.emplace_back(logLine.data());
+	}
+
+	void Logging::AddToLogBuffer(std::string& logLine, const LogLevel lvl)
+	{
+		OutputToConsole(logLine, lvl);
+		logBufferQueue_.emplace_back(std::move(logLine));
 	}
 
 	void Logging::ChangeOutputDirectory(const std::string& dir)
@@ -60,27 +72,6 @@ namespace krakoa::kLogs
 			filename += ".log";
 	}
 
-	void Logging::AppendLogFile()
-	{
-		auto conclusionCurrentLog = endOfkCurrentLog;
-		AddToLogBuffer(conclusionCurrentLog,LogLevel::INFO);
-		OutputLogToFile("Master Logs");
-	}
-
-	void Logging::Output()
-	{
-		AddToLogBuffer(endOfkLogFileLine, LogLevel::INFO);
-		OutputLogToFile("Master Logs");
-	}
-
-	void Logging::OutputToFatalFile(const std::string& msg)
-	{
-		AddEntry(msg, LogLevel::FATL);
-		auto fatalEOF = endOfkLogFileLine;
-		AddToLogBuffer(fatalEOF, LogLevel::FATL);
-		OutputLogToFile("Fatal Logs");
-	}
-
 	void Logging::AddEntry(const std::string& msg, const LogLevel lvl /* = NORM */)
 	{
 		if (!(initialized_kLogging)) return;
@@ -94,10 +85,42 @@ namespace krakoa::kLogs
 		if (!(initialized_kLogging)) return;
 
 		auto logBanner = FormatToString("[%s]\t[%s]:\t[%s]\n", GetTimeText().c_str(), ResolveTypeClassification(type).c_str(), msg.c_str());
-		AddToLogBuffer(logBanner, LogLevel::INFO);
+		AddToLogBuffer(logBanner, LogLevel::BANR);
 	}
 
-	void Logging::ResolveLogLevel() noexcept
+	void Logging::AppendLogFile()
+	{
+		std::string_view conclusionCurrentLog = endOfkCurrentLog;
+		AddToLogBuffer(conclusionCurrentLog,LogLevel::NORM);
+		OutputLogToFile("Master Logs");
+	}
+
+	void Logging::Output()
+	{
+		std::string_view endLogLine = endOfkLogFileLine;
+		AddToLogBuffer(endLogLine, LogLevel::NORM);
+		OutputLogToFile("Master Logs");
+	}
+
+	void Logging::OutputToFatalFile(const std::string& msg)
+	{
+		AddEntry(msg, LogLevel::FATL);
+		std::string_view fatalEOF = endOfkLogFileLine;		
+		AddToLogBuffer(fatalEOF, LogLevel::FATL);
+		OutputLogToFile("Fatal Logs");
+	}
+
+	void Logging::OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept
+	{
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, consoleColourMap.at(lvl));
+		
+		printf_s("%s", logLine.data());
+
+		//SetConsoleTextAttribute(hConsole, consoleColourMap.at(LogLevel::NORM));
+	}
+
+	void Logging::ResolveLogLevel()
 	{
 		logLevelMap.insert(std::make_pair(LogLevel::NORM, "NORM"));
 		logLevelMap.insert(std::make_pair(LogLevel::INFO, "INFO"));
@@ -106,48 +129,29 @@ namespace krakoa::kLogs
 		logLevelMap.insert(std::make_pair(LogLevel::FATL, "FATL"));			
 	}
 
-	void Logging::OutputToSystem(const LogQueue::value_type& logline, const LogLevel lvl)
+	void Logging::ResolveOutputColour()
 	{
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, ResolveOutputColour(lvl));
-		
-		printf_s("%s", logline.c_str());
-
-		SetConsoleTextAttribute(hConsole, 15);
-	}
-
-	LoggingConsoleColour Logging::ResolveOutputColour(const LogLevel lvl)
-	{
-		switch (lvl)
-		{
-		case LogLevel::NORM:
-			return LoggingConsoleColour::WHITE;
-		case LogLevel::INFO:
-			return LoggingConsoleColour::LIGHT_GREEN;
-		case LogLevel::FATL:
-			return LoggingConsoleColour::SCARLET_RED;
-		case LogLevel::ERRR:
-			return LoggingConsoleColour::MAROON_RED;
-		case LogLevel::WARN:
-			return LoggingConsoleColour::YELLOW;
-		}
+		consoleColourMap.insert(std::make_pair(LogLevel::NORM, LoggingConsoleColour::WHITE));
+		consoleColourMap.insert(std::make_pair(LogLevel::WARN, LoggingConsoleColour::YELLOW));
+		consoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
+		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::MAROON_RED));
+		consoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
+		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::SCARLET_RED));
 	}
 
 	std::string Logging::GetFullLogText()
 	{
-		LogQueue::value_type fullLog;
-
 		if (!(initialized_kLogging))
 		{
-			return "\t\tLOGGING UNINITIALIZED!\n\tTO USE CALL THE 'INITIALIZE_LOGGING' MACRO BEFORE USES";
+			return "\t\tLOGGING NOT INITIALIZED!\n\tTO USE CALL THE 'INITIALIZE' METHOD BEFORE USES";
 		}
-
+		
+		LogQueue::value_type fullLog;
 		while (!(logBufferQueue_.empty()))
 		{
 			fullLog += logBufferQueue_.front();
 			logBufferQueue_.pop_front();
 		}
-
 		return fullLog;
 	}
 
@@ -156,6 +160,8 @@ namespace krakoa::kLogs
 		if (!(logBufferQueue_.empty()))
 			return logBufferQueue_.back();
 
+		OutputToConsole("NO ENTRIES! LOGS ARE EMPTY", LogLevel::ERRR);
+		
 		return "EMPTY";
 	}
 
@@ -176,7 +182,7 @@ namespace krakoa::kLogs
 	std::string Logging::ResolveTypeClassification(const std::string& type)
 	{
 		const WORD wantedTypeLength = 4;
-		auto temp = std::string();
+		std::string temp;
 
 		for (auto iterator = type.cbegin(); iterator != (type.cbegin() + wantedTypeLength); ++iterator)
 		{
@@ -191,11 +197,5 @@ namespace krakoa::kLogs
 		const auto fullPath = directory + filename;		
 		CreateNewDirectories(directory);
 		OutputToFile(fullPath.c_str(), GetFullLogText().c_str());
-	}
-	
-	void Logging::AddToLogBuffer(std::string& logLine, const LogLevel lvl)
-	{
-		OutputToSystem(logLine, lvl);
-		logBufferQueue_.emplace_back(std::move(logLine));
 	}
 }

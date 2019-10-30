@@ -3,7 +3,7 @@
 #include <string>
 #include <Windows.h>
 
-namespace krakoa
+namespace util
 {
 	namespace kCalendar
 	

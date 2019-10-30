@@ -4,7 +4,7 @@
 #include <deque>
 #include <unordered_map>
 
-namespace krakoa
+namespace util
 {
 	namespace kLogs
 	{
@@ -30,6 +30,7 @@ namespace krakoa
 		enum class LogLevel : unsigned short
 		{
 			NORM, // Normal
+			BANR, // Log Banner
 			INFO, // Informative
 			WARN, // Warning
 			ERRR, // Error
@@ -42,7 +43,7 @@ namespace krakoa
 		{
 		public:
 			explicit Logging();
-			explicit Logging(const std::string& filename, const std::string& directory);
+			explicit Logging(std::string& filename, std::string& directory);
 
 			~Logging();
 			
@@ -144,6 +145,8 @@ namespace krakoa
 			 * \param logLine
 			 *		Full log message
 			 */
+			void AddToLogBuffer(std::string_view& logLine, const LogLevel lvl);
+
 			void AddToLogBuffer(std::string& logLine, const LogLevel lvl);
 
 			/**
@@ -159,11 +162,11 @@ namespace krakoa
 			 * \brief
 			 *		Stores all log levels into a map with the string equivalent
 			 */
-			void ResolveLogLevel() noexcept;
+			void ResolveLogLevel();
 
-			void OutputToSystem(const LogQueue::value_type& logline, const LogLevel lvl);
+			void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
 
-			LoggingConsoleColour ResolveOutputColour(const LogLevel lvl);
+			void ResolveOutputColour();
 			
 		protected:
 			LogQueue logBufferQueue_; // Queue buffer to cache the logged messages
@@ -172,6 +175,7 @@ namespace krakoa
 			std::string filename;
 
 			std::unordered_map<LogLevel, const char*> logLevelMap;
+			std::unordered_map<LogLevel, LoggingConsoleColour> consoleColourMap;
 
 			bool initialized_kLogging;
 		};

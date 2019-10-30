@@ -2,6 +2,7 @@
 #include "Beta Test/Tester.h"
 #include <memory>
 
+
 using namespace krakoa;
 
 void Tests();
@@ -29,7 +30,7 @@ int main(int argv, char** argc)
 		app->Run();
 		app->Shutdown(); // placed for now so that the application doesn't run endlessly
 	}
-
+	 
 	return 0;
 }
 
@@ -37,10 +38,12 @@ int main(int argv, char** argc)
 
 inline void Tests()
 {
-	kTest::Print_Test();
-	kTest::Clock_Test();
-	kTest::FileSystem_Test();
-	kTest::Debugger_Test();
-	kTest::Calendar_Test();
-	kTest::Logger_Test();	
+	using namespace kTest;
+	Print_Test();
+	Clock_Test();
+	FileSystem_Test();
+	Debugger_Test();
+	Calendar_Test();
+	Logger_Test();
+	Math_Vector_Test();
 }

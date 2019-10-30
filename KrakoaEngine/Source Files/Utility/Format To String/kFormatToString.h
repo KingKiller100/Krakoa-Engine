@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <string>
 
-namespace krakoa
+namespace util
 {
 	namespace kFormatToString
 	{		

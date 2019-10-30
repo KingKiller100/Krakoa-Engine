@@ -4,7 +4,7 @@
 
 #include <Windows.h>
 
-namespace krakoa::kDebugger
+namespace util::kDebugger
 {
 	using namespace kFileSystem;
 	

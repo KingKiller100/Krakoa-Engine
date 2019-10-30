@@ -11,5 +11,6 @@ namespace krakoa
 		KRAKOA_API void FileSystem_Test();
 		KRAKOA_API void Calendar_Test();
 		KRAKOA_API void Logger_Test();
+		KRAKOA_API void Math_Vector_Test();
 	}
 }

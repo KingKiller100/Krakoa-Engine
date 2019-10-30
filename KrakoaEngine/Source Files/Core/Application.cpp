@@ -4,6 +4,7 @@
 
 namespace krakoa
 {
+	using namespace util;
 	Application::Application()
 	: running(false)
 	{

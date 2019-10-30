@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace krakoa
+namespace util
 {
 	namespace kTime
 	{

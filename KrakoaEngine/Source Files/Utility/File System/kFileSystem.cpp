@@ -5,7 +5,7 @@
 #include <fstream>
 #include <Windows.h>
 
-namespace krakoa::kFileSystem
+namespace util::kFileSystem
 {
 	void OutputToFile(const char* fullDirectory, const char* content)
 	{

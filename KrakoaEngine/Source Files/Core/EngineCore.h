@@ -10,4 +10,4 @@
 	#error SOORY BLOKE, KRAKOA ONLY SUPPORTS WINDOWS!
 #endif
 
-
+#define USE_RESULTS [[nodiscard]]

@@ -191,7 +191,10 @@
     <ClInclude Include="Source Files\Utility\Maths\Constants.h" />
     <ClInclude Include="Source Files\Utility\Maths\kMaths.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector2.h" />
+    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector3.h" />
+    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\VectorBase.h" />
+    <ClInclude Include="Source Files\Utility\String View\string_view.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

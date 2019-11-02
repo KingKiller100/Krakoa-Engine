@@ -45,5 +45,5 @@ inline void Tests()
 	Debugger_Test();
 	Calendar_Test();
 	Logger_Test();
-	Math_Vector_Test();
+	Math_Vector2_Test();
 }

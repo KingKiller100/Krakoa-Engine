@@ -8,55 +8,44 @@ namespace util
 		template<typename T>
 		struct VectorBase;
 
-		// Pure length of the vector
-		template<typename T>
-		T VectorMagnitudeSQ(const VectorBase<T>& v);
-
-		// Square rooted length of the vector
-		template<typename T>
-		T VectorMagnitude(const VectorBase<T>& v);
-
 		// Normalizes a vector
 		template<typename T>
-		VectorBase<T> VectorNormalize(const VectorBase<T>& v);
+		static VectorBase<T> VectorNormalize(const VectorBase<T>& v);
 
 		// Produces the dot product
 		template<typename T>
-		T VectorDotProduct(const VectorBase<T>& v, const VectorBase<T>& u);
+		static T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v);
 
 
 		template <typename T>
 		struct VectorBase
-		{
-			VectorBase() : x(0), y(0), z(0), w(0)
-			{
-				Magnitude();
-			}
+		{			
+			VectorBase()
+			: x(0), y(0), z(0), w(0)
+			{		}
 
-			explicit VectorBase(const T _v, const T _w = 0) : x(_v), y(_v), z(_v), w(_w)
-			{
-				Magnitude();
-			}
+			explicit VectorBase(const T _v, const T _w = 0)
+			: x(_v), y(_v), z(_v), w(_w)
+			{		}
 
-			explicit VectorBase(const T _x, const T _y, const T _z, const T _w = 0) : x(_x), y(_y), z(_z), w(_w)
-			{
-				Magnitude();
-			}
+			explicit VectorBase(const T _x, const T _y, const T _z, const T _w = 0)
+			: x(_x), y(_y), z(_z), w(_w)
+			{		}
 
 			virtual ~VectorBase()
 				= default;
 
-			constexpr T Magnitude() const
+			[[nodiscard]] virtual double Magnitude() const
 			{
-				return VectorMagnitude(*this);
+				return std::sqrt((x * x) + (y * y) + (z * z));
 			}
 
-			// Restricts vector value to max value
-			void Truncate(const T max)
+			// Restricts vector magnitude to max value
+			constexpr void Truncate(const T max)
 			{
 				if (VectorBase::Magnitude() > max)
 				{
-					*this = VectorNormalize(*this) * max;
+					*this = kMaths::VectorNormalize(*this) * max;
 				}
 			}
 
@@ -70,9 +59,10 @@ namespace util
 
 
 			// Calculates distance between two 3D objects
-			T Distance(const VectorBase& v)
+			constexpr T Distance(const VectorBase& v)
 			{
-				return VectorMagnitude(v - *this);
+				auto distanceVec = v - *this;				
+				return distanceVec.Magnitude();
 			}
 
 
@@ -89,7 +79,9 @@ namespace util
 			// Sets all values of the vector to zero
 			void Zero()
 			{
-				*this = VectorBase();
+				this->x = 0;
+				this->y = 0;
+				this->z = 0;
 			}
 
 			T& operator[](size_t index)
@@ -202,29 +194,23 @@ namespace util
 			{
 				return x != 0 || y != 0 || z != 0;
 			}
+
+			VectorBase operator-()
+			{
+				return VectorBase(-this->x, -this->y, -this->z, this->w);
+			}
+
+			friend T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&);
+			friend VectorBase<T> VectorNormalize(const VectorBase<T>&);
+
 			
-		public:
+		protected:
 			T x, y, z, w;
 		};
 
-
-		// Pure length of the vector
-		template<typename T>
-		T VectorMagnitudeSQ(const VectorBase<T>& v)
-		{
-			return (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
-		}
-
-		// Square rooted length of the vector
-		template<typename T>
-		T VectorMagnitude(const VectorBase<T>& v)
-		{
-			return std::sqrt(VectorMagnitudeSQ(v));
-		}
-
 		// Normalizes a vector
 		template<typename T>
-		VectorBase<T> VectorNormalize(const VectorBase<T>& v)
+		VectorBase<T> VectorNormalize(const VectorBase<T>& v) 
 		{
 			const T mag = v.Magnitude();
 			return mag != 0 ? v / mag : v;
@@ -232,10 +218,9 @@ namespace util
 
 		// Produces the dot product
 		template<typename T>
-		T VectorDotProduct(const VectorBase<T>& v, const VectorBase<T>& u)
+		T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v)
 		{
 			return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
 		}
-
 	}
 }

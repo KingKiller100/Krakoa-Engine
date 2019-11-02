@@ -13,7 +13,7 @@ namespace util
 			NAVY_BLUE = 1,
 			DARK_GREEN,
 			AQUA_BLUE,
-			MAROON_RED,
+			DARK_RED,
 			PURPLE,
 			MUSTARD_YELLOW,
 			LIGHT_GREY,
@@ -24,7 +24,8 @@ namespace util
 			SCARLET_RED,
 			VIOLET_PURPLE,
 			YELLOW,
-			WHITE,			
+			WHITE,
+			FATAL_RED_BG_WHITE_TEXT = 79
 		};
 		
 		enum class LogLevel : unsigned short
@@ -57,7 +58,7 @@ namespace util
 
 			void ChangeOutputDirectory(const std::string& dir);
 
-			void ChangeFileName(const std::string& file);
+			void ChangeFilename(const char* fname);
 
 			/**
 			 * \brief

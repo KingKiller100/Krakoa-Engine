@@ -2,17 +2,17 @@
 
 #include "VectorBase.h"
 
-#include <limits>
-
 namespace util::kMaths
 {
 	template <typename T>
 	struct Vector2 : VectorBase<T>
-	{
-		using TypeLimits = std::numeric_limits<T>;
-	public:
+	{	
 		Vector2()
 		: VectorBase<T>()
+		{}
+		
+		explicit Vector2(const T v)
+		: VectorBase<T>(v, v, 0)
 		{}
 
 		explicit Vector2(const T x, const T y)
@@ -22,28 +22,35 @@ namespace util::kMaths
 		~Vector2()
 		= default;
 
-		T X(const T _x = (TypeLimits::max)())
+		T& X()
 		{
-			this->x = _x == (TypeLimits::max)() ? this->x : _x;
 			return this->x;
 		}
 
-		T Y(const T _y = (TypeLimits::max)())
+		[[nodiscard]] T X() const
 		{
-			this->y = _y == (TypeLimits::max)() ? this->y: _y;
+			return this->x;
+		}
+
+		T& Y()
+		{  
 			return this->y;
 		}
 
-		template<typename T2>
-		Vector2 operator()(const Vector2<T>& a, const Vector2<T2>& b)
-		{			
-			return Vector2<T>(static_cast<T>(b.X()), static_cast<T>(b.Y()));
+		[[nodiscard]] T Y() const
+		{
+			return this->y;
+		}
+
+		[[nodiscard]] Vector2 Perpendicular() const
+		{
+			return Vector2(-this->y, this->x);
 		}
 	};
 
-	using Vector2i = Vector2 < int	>;
-	using Vector2f = Vector2 < float >;
-	using Vector2d = Vector2 < double >;
-	using Vector2u = Vector2 < unsigned >;
+	using Vector2s = Vector2 < int		>; // signed integer
+	using Vector2f = Vector2 < float	>; // floating point
+	using Vector2d = Vector2 < double	>; // double floating point
+	using Vector2u = Vector2 < unsigned >; // unsigned integer
 }
 

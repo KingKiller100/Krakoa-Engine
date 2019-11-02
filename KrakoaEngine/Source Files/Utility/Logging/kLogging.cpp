@@ -62,16 +62,40 @@ namespace util::kLogs
 	void Logging::ChangeOutputDirectory(const std::string& dir)
 	{
 		directory = dir;
+
+		const auto newDirText = "New directory " + directory;
+		OutputToConsole(newDirText, LogLevel::INFO);
 	}
 
-	void Logging::ChangeFileName(const std::string& file)
+	void Logging::ChangeFilename(const char* fname)
 	{
-		filename = file;
-
-		if (file.find('.') == std::string::npos)
+		const std::string_view newFilename = fname;
+		const auto pos = newFilename.find('.');
+		
+		if (pos != std::string_view::npos)
+		{
+			if (pos != newFilename.size() - 1)
+			{
+				filename = newFilename;
+			}
+			else
+			{
+				filename = newFilename;
+				filename += "log";
+			}
+		}
+		else
+		{
+			filename = newFilename;
 			filename += ".log";
+		}
+		
+		const std::string newFname = "new filename is " + filename;
+		
+		OutputToConsole(newFname, LogLevel::INFO);
 	}
 
+	
 	void Logging::AddEntry(const std::string& msg, const LogLevel lvl /* = NORM */)
 	{
 		if (!(initialized_kLogging)) return;
@@ -134,9 +158,9 @@ namespace util::kLogs
 		consoleColourMap.insert(std::make_pair(LogLevel::NORM, LoggingConsoleColour::WHITE));
 		consoleColourMap.insert(std::make_pair(LogLevel::WARN, LoggingConsoleColour::YELLOW));
 		consoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
-		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::MAROON_RED));
+		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::SCARLET_RED));
 		consoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
-		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::SCARLET_RED));
+		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::FATAL_RED_BG_WHITE_TEXT));
 	}
 
 	std::string Logging::GetFullLogText()

@@ -28,7 +28,7 @@ namespace util
 		template<typename T>
 		T DegreesToRadians(const T degrees)
 		{
-			return degrees * (TAU / 360.f);
+			return degrees * (TAU / 360.0);
 		}
 
 		template<typename T>
@@ -46,11 +46,11 @@ namespace util
 		template<typename T>
 		T AngleBetweenVectors(const VectorBase<T>& v, const VectorBase<T>& u, const bool inDegrees)
 		{
+			static const T convertToDegrees = 180.f / PI;
+			
 			const T angle = VectorDotProduct<T>(v, u) / (v.Magnitude() * u.Magnitude());
-
-			const T toDegrees = 180.f / PI;
-
-			return inDegrees ? acos(angle) * toDegrees : acos(angle);
+			
+			return inDegrees ? acos(angle) * convertToDegrees : acos(angle);
 		}
 	}
 }

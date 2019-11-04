@@ -18,8 +18,11 @@ namespace util::kFileSystem
 		}
 	}
 
-	bool CreateNewDirectories(const std::string& directory)
-	{
+	bool CreateNewDirectories(const std::string_view& directory)
+	{		
+		if (directory.back() != '\\')
+			return false; // Final segment of directory must end with '\\'
+		
 		bool isDirCreated = false;
 		auto pos = directory.find_first_of('\\') + 1;
 
@@ -34,7 +37,7 @@ namespace util::kFileSystem
 				return isDirCreated;
 			}
 
-			isDirCreated = CreateNewDirectory(nextDirectory.c_str());
+			isDirCreated = CreateNewDirectory(nextDirectory.data());
 		}
 	}
 

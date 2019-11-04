@@ -1,5 +1,7 @@
 #pragma once
 
+#include "LogEntry.h"
+
 #include <string>
 #include <deque>
 #include <unordered_map>
@@ -130,7 +132,7 @@ namespace util
 			 * \param logFileName
 			 *		Name of the log file
 			 */
-			void OutputLogToFile(const std::string& logFileName);
+			void OutputLogToFile();
 
 			/**
 			 * \brief
@@ -146,9 +148,9 @@ namespace util
 			 * \param logLine
 			 *		Full log message
 			 */
-			void AddToLogBuffer(std::string_view& logLine, const LogLevel lvl);
+			void AddToLogBuffer(const std::string_view& logLine, const LogLevel lvl);
 
-			void AddToLogBuffer(std::string& logLine, const LogLevel lvl);
+			//void AddToLogBuffer(std::string& logLine, const LogLevel lvl);
 
 			/**
 			 * \brief
@@ -157,20 +159,20 @@ namespace util
 			 *		The subject type of the log banner
 			 * \return
 			 */
-			std::string ResolveTypeClassification(const std::string& type);
+			static std::string ResolveTypeClassification(const std::string& type);
 
 			/**
 			 * \brief
 			 *		Stores all log levels into a map with the string equivalent
 			 */
-			void ResolveLogLevel();
+			void InitializeLogLevelMap();
 
 			void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
 
-			void ResolveOutputColour();
+			void InitializeOutputToConsoleColourMap();
 			
 		protected:
-			LogQueue logBufferQueue_; // Queue buffer to cache the logged messages
+			LogQueue logCacheQueue; // Queue buffer to cache the logged messages
 
 			std::string directory;
 			std::string filename;
@@ -182,5 +184,8 @@ namespace util
 		};
 
 	}
+
+#define LOG_ENTRY(msg, time, date) kLogs::TemplateLogEntry(msg, time, date, __FILE__, __LINE__);
+
 }
 

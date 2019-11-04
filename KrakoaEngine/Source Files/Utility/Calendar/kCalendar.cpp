@@ -2,6 +2,8 @@
 
 #include "../Format To String/kFormatToString.h"
 
+#include <array>
+
 namespace util::kCalendar
 {
 	using namespace kFormatToString;
@@ -27,37 +29,27 @@ namespace util::kCalendar
 
 	const char* GetMonth(const unsigned short month)
 	{
-		switch (month)
-		{
-		case 1: return "January";
-		case 2: return "February";
-		case 3: return "March";
-		case 4: return "April";
-		case 5: return "May";
-		case 6: return "June";
-		case 7: return "July";
-		case 8: return "August";
-		case 9: return "September";
-		case 10: return "October";
-		case 11: return "November";
-		case 12: return "December";
-		default: return "Not a month";
-		}
+		static std::array<const char*, 12> kCalendar_MonthsArray = 
+		{"January", "February", "March", "April", "May",
+		"June", "July", "August", "September", "October",
+			"November", "December"};
+
+		if(month < kCalendar_MonthsArray.size())
+			return kCalendar_MonthsArray[month - 1];
+
+		return "Value entered does not index to a month of the year";
 	}
 
 	const char* GetDayOfTheWeek(const unsigned short day)
 	{
-		switch (day)
-		{
-		case 1: return "Monday";
-		case 2: return "Tuesday";
-		case 3: return "Wednesday";
-		case 4: return "Thursday";
-		case 5: return "Friday";
-		case 6: return "Saturday";
-		case 7: return "Sunday";
-		default: return "Not a day";
-		}
+		static std::array<const char*, 7> kCalendar_DaysOfTheWeek =
+		{ "Sunday", "Monday", "Tuesday", "Wednesday",
+		"Thursday", "Friday", "Saturday" };
+
+		if (day < kCalendar_DaysOfTheWeek.size())
+			return kCalendar_DaysOfTheWeek[day];
+
+		return "Value entered does not index to a day of the week";
 	}
 
 	std::string GetDateInNumericalFormat(const bool slash)

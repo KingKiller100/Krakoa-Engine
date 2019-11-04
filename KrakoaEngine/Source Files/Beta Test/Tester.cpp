@@ -10,6 +10,8 @@
 #include "../Utility/Maths/Vectors/Vector3.h"
 #include "../Utility/Maths/Vectors/Vector4.h"
 
+#include "../Utility/String View/string_view.h"
+
 #include <iostream>
 
 namespace krakoa::kTest
@@ -57,17 +59,7 @@ namespace krakoa::kTest
 	}
 
 	void Logger_Test()
-	{
-
-		/*HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-		for (auto i = char(0); i < (std::numeric_limits<decltype(i)>::max)(); ++i)
-		{
-			SetConsoleTextAttribute(hConsole, i);
-
-			printf_s("%d %s", i, " Logging to system console\n");
-		}*/
-		
+	{		
 		kLogs::Logging logger = kLogs::Logging();
 		logger.InitializeLogging();
 		logger.ChangeOutputDirectory(kFileSystem::GetCurrentWorkingDirectory() + "Change Dir\\");
@@ -79,9 +71,9 @@ namespace krakoa::kTest
 		logger.AddEntry("FATAL!", kLogs::LogLevel::FATL);
 		logger.GetLastLoggedEntry();
 		logger.ErasePreviousEntries(2);
-		logger.Output();
-		logger.AddEntry("Done", kLogs::LogLevel::WARN);	
 		logger.AppendLogFile();
+		logger.AddEntry("Done", kLogs::LogLevel::WARN);	
+		logger.Output();
 	}
 
 	void Math_Vector2_Test()
@@ -92,13 +84,14 @@ namespace krakoa::kTest
 		v2.ReverseVector();
 		v2.X();
 		v2.Y();
+		v2 *= 8;
 		v2.Truncate(30);
 		const auto temp = v2.Magnitude();
 		const auto temp1 = v2.Perpendicular();
 		v2.Distance(temp1);
 		const auto temp2 = -v2;
 		const auto temp3 = v2.Magnitude();
-		
+		auto res = v2 != temp2;
 		v2.Zero();
 	}
 
@@ -118,5 +111,30 @@ namespace krakoa::kTest
 		const auto v4 = Vector4s(5,7, 3, 1);
 		
 		auto p = v4.W();
+	}
+
+	void String_View_Test()
+	{
+		using namespace kString_View;
+		auto t = "hooper2";
+		StringView s = t;
+		wStringView s2(L"string literal");
+		u32StringView s3 = U"std string";
+		s.RemovePrefix(3);
+		s.RemoveSuffix(1);
+		auto pos = s.FirstInstanceOf('e');
+		auto pos1 = s.FirstInstanceOf('g', 1, 2);
+		auto pos2 = s.FirstInstanceOf("er");
+		auto k = s2.Back();
+		k = s2.Front();
+		wStringView s4(L"Empty");
+		s2.Swap(s4);
+		auto ptr = s2.Data();
+		s2.Clear();
+		auto b = s2.Empty();
+		auto l = s3.Length();
+		auto v = s3.Substr(5);
+		auto temp = s.Substr(s.Length());
+		auto h = s.IsEqual(temp);
 	}
 }

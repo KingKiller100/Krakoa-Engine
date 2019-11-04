@@ -40,31 +40,49 @@ namespace util::kLogs
 
 		initialized_kLogging = true;
 
-		ResolveLogLevel();
-		ResolveOutputColour();
+		InitializeLogLevelMap();
+		InitializeOutputToConsoleColourMap();
 		
 		std::string_view startLog = startOfkLogFile;
 		AddToLogBuffer(startLog, LogLevel::NORM);
 	}
-	
-	void Logging::AddToLogBuffer(std::string_view & logLine, const LogLevel lvl)
+
+	void Logging::InitializeLogLevelMap()
 	{
-		OutputToConsole(logLine, lvl);
-		logBufferQueue_.emplace_back(logLine.data());
+		logLevelMap.insert(std::make_pair(LogLevel::NORM, "NORM"));
+		logLevelMap.insert(std::make_pair(LogLevel::INFO, "INFO"));
+		logLevelMap.insert(std::make_pair(LogLevel::WARN, "WARN"));
+		logLevelMap.insert(std::make_pair(LogLevel::ERRR, "ERRR"));
+		logLevelMap.insert(std::make_pair(LogLevel::FATL, "FATL"));
 	}
 
-	void Logging::AddToLogBuffer(std::string& logLine, const LogLevel lvl)
+	void Logging::InitializeOutputToConsoleColourMap()
+	{
+		consoleColourMap.insert(std::make_pair(LogLevel::NORM, LoggingConsoleColour::WHITE));
+		consoleColourMap.insert(std::make_pair(LogLevel::WARN, LoggingConsoleColour::YELLOW));
+		consoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
+		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::SCARLET_RED));
+		consoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
+		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::FATAL_RED_BG_WHITE_TEXT));
+	}
+	
+	void Logging::AddToLogBuffer(const std::string_view & logLine, const LogLevel lvl)
 	{
 		OutputToConsole(logLine, lvl);
-		logBufferQueue_.emplace_back(std::move(logLine));
+		logCacheQueue.emplace_back(logLine.data());
 	}
+
+	/*void Logging::AddToLogBuffer(std::string& logLine, const LogLevel lvl)
+	{
+		OutputToConsole(logLine, lvl);
+		logCacheQueue.emplace_back(std::move(logLine));
+	}*/
 
 	void Logging::ChangeOutputDirectory(const std::string& dir)
 	{
 		directory = dir;
 
-		const auto newDirText = "New directory " + directory;
-		OutputToConsole(newDirText, LogLevel::INFO);
+		OutputToConsole("New directory:\t " + directory + "\n", LogLevel::INFO);
 	}
 
 	void Logging::ChangeFilename(const char* fname)
@@ -89,10 +107,8 @@ namespace util::kLogs
 			filename = newFilename;
 			filename += ".log";
 		}
-		
-		const std::string newFname = "new filename is " + filename;
-		
-		OutputToConsole(newFname, LogLevel::INFO);
+
+		OutputToConsole("new filename:\t " + filename + "\n", LogLevel::INFO);
 	}
 
 	
@@ -100,30 +116,33 @@ namespace util::kLogs
 	{
 		if (!(initialized_kLogging)) return;
 
-		auto logLine = FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(), logLevelMap.at(lvl), msg.c_str());
-		AddToLogBuffer(logLine, lvl);
+		
+		AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(), 
+			logLevelMap.at(lvl), msg.c_str()),
+			lvl);
 	}
 
 	void Logging::AddEntryBanner(const std::string& msg, const std::string& type)
 	{
 		if (!(initialized_kLogging)) return;
 
-		auto logBanner = FormatToString("[%s]\t[%s]:\t[%s]\n", GetTimeText().c_str(), ResolveTypeClassification(type).c_str(), msg.c_str());
-		AddToLogBuffer(logBanner, LogLevel::BANR);
+		AddToLogBuffer(FormatToString("[%s]\t[%s]:\t[%s]\n", GetTimeText().c_str(),
+			ResolveTypeClassification(type).c_str(), msg.c_str()), 
+			LogLevel::BANR);
 	}
 
 	void Logging::AppendLogFile()
 	{
 		std::string_view conclusionCurrentLog = endOfkCurrentLog;
 		AddToLogBuffer(conclusionCurrentLog,LogLevel::NORM);
-		OutputLogToFile("Master Logs");
+		OutputLogToFile();
 	}
 
 	void Logging::Output()
 	{
 		std::string_view endLogLine = endOfkLogFileLine;
 		AddToLogBuffer(endLogLine, LogLevel::NORM);
-		OutputLogToFile("Master Logs");
+		OutputLogToFile();
 	}
 
 	void Logging::OutputToFatalFile(const std::string& msg)
@@ -131,7 +150,7 @@ namespace util::kLogs
 		AddEntry(msg, LogLevel::FATL);
 		std::string_view fatalEOF = endOfkLogFileLine;		
 		AddToLogBuffer(fatalEOF, LogLevel::FATL);
-		OutputLogToFile("Fatal Logs");
+		OutputLogToFile();
 	}
 
 	void Logging::OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept
@@ -140,27 +159,6 @@ namespace util::kLogs
 		SetConsoleTextAttribute(hConsole, consoleColourMap.at(lvl));
 		
 		printf_s("%s", logLine.data());
-
-		//SetConsoleTextAttribute(hConsole, consoleColourMap.at(LogLevel::NORM));
-	}
-
-	void Logging::ResolveLogLevel()
-	{
-		logLevelMap.insert(std::make_pair(LogLevel::NORM, "NORM"));
-		logLevelMap.insert(std::make_pair(LogLevel::INFO, "INFO"));
-		logLevelMap.insert(std::make_pair(LogLevel::WARN, "WARN"));
-		logLevelMap.insert(std::make_pair(LogLevel::ERRR, "ERRR"));
-		logLevelMap.insert(std::make_pair(LogLevel::FATL, "FATL"));			
-	}
-
-	void Logging::ResolveOutputColour()
-	{
-		consoleColourMap.insert(std::make_pair(LogLevel::NORM, LoggingConsoleColour::WHITE));
-		consoleColourMap.insert(std::make_pair(LogLevel::WARN, LoggingConsoleColour::YELLOW));
-		consoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
-		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::SCARLET_RED));
-		consoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
-		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::FATAL_RED_BG_WHITE_TEXT));
 	}
 
 	std::string Logging::GetFullLogText()
@@ -171,18 +169,18 @@ namespace util::kLogs
 		}
 		
 		LogQueue::value_type fullLog;
-		while (!(logBufferQueue_.empty()))
+		while (!(logCacheQueue.empty()))
 		{
-			fullLog += logBufferQueue_.front();
-			logBufferQueue_.pop_front();
+			fullLog += logCacheQueue.front();
+			logCacheQueue.pop_front();
 		}
 		return fullLog;
 	}
 
 	LogQueue::value_type Logging::GetLastLoggedEntry()
 	{
-		if (!(logBufferQueue_.empty()))
-			return logBufferQueue_.back();
+		if (!(logCacheQueue.empty()))
+			return logCacheQueue.back();
 
 		OutputToConsole("NO ENTRIES! LOGS ARE EMPTY", LogLevel::ERRR);
 		
@@ -191,16 +189,16 @@ namespace util::kLogs
 
 	void Logging::ErasePreviousEntries(const size_t numOfEntries)
 	{
-		const auto lastLoggedItem = logBufferQueue_.cend();
+		const auto lastLoggedItem = logCacheQueue.cend();
 		const auto startPosition = lastLoggedItem - (numOfEntries - 1);
 
-		logBufferQueue_.erase(startPosition, lastLoggedItem);
+		logCacheQueue.erase(startPosition, lastLoggedItem);
 	}
 
 	void Logging::Clear()
 	{
-		if (!(logBufferQueue_.empty()))
-			logBufferQueue_.clear();
+		if (!(logCacheQueue.empty()))
+			logCacheQueue.clear();
 	}
 
 	std::string Logging::ResolveTypeClassification(const std::string& type)
@@ -216,10 +214,9 @@ namespace util::kLogs
 		return temp;
 	}
 
-	void Logging::OutputLogToFile(const std::string& logFileName)
-	{
-		const auto fullPath = directory + filename;		
+	void Logging::OutputLogToFile()
+	{				
 		CreateNewDirectories(directory);
-		OutputToFile(fullPath.c_str(), GetFullLogText().c_str());
+		OutputToFile((directory + filename).c_str(), GetFullLogText().c_str());
 	}
 }

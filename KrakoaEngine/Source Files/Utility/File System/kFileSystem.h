@@ -29,7 +29,7 @@ namespace util
 		 *		The path must be completely unique otherwise the path will not be created. If parts of the
 		 *		path already exist, only
 		 */
-		bool CreateNewDirectories(const std::string& directory);
+		bool CreateNewDirectories(const std::string_view& directory);
 
 		/**
 		 * \brief

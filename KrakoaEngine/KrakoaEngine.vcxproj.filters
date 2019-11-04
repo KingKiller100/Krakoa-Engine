@@ -92,6 +92,15 @@
     <ClInclude Include="Source Files\Utility\String View\string_view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Logging\LogEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

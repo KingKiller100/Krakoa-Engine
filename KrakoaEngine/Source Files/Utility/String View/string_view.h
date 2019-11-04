@@ -1,29 +1,296 @@
 #pragma once
 
+#include "../Debug Helper/kAssert.h"
+
+#include <cassert>
+#include <limits>
+#include <string>
+#include <type_traits>
+#include <xutility>
+
 namespace util
 {
-	namespace string_view
+	namespace kString_View
 	{
-		template<class CharT, class Trait>
-		class StringView
+		template<class CharT, class Traits>
+		class Template_String_View
 		{
-			StringView()
-			: string(nullptr),
-			size(0)
+		public:
+			using Type			= CharT;
+			using Ptr			= CharT*;
+			using Ref			= CharT&;
+			using Const_Ptr		= const CharT*;
+			using Const_Ref		= const CharT&;
+			using Size			= size_t;
+			
+			static constexpr auto npos{ static_cast<Size>(-1) };
+
+			static_assert(std::is_same_v<CharT, typename Traits::char_type>,
+				"Type entered into string_view class does not match a char type object (char, wchar_t, char32_t, etc)!");
+			
+			constexpr Template_String_View() noexcept
+				: string(nullptr),
+				length(0)
+			{}
+
+			constexpr Template_String_View( const Template_String_View& ) noexcept = default;
+			
+			constexpr explicit Template_String_View(const Const_Ptr stringLiteral, const Size size, const Size offset = 0) noexcept
+				: string(stringLiteral),
+				length(size)
 			{
-				
+				CheckOffsetWithinLength(offset, "Offset greater than length");
+				string = string + offset;
+				length -= offset;
 			}
 
-			StringView(const CharT* stringLiteral, const size_t size)
-			: string(stringLiteral),
-			size(size)
+			constexpr Template_String_View(const Const_Ptr stringLiteral) noexcept
+				: string(stringLiteral)
 			{
-				
+				length = GetStrLength(string);
 			}
 
+			constexpr Template_String_View(const std::basic_string<CharT>& str) noexcept
+				: string(str.c_str()),
+				length(str.size())
+			{			}
+			
+			constexpr Template_String_View& operator=( const Template_String_View& other) noexcept
+			{
+				this->string = other.string;
+				this->length = other.length;
+				return *this;
+			}
+
+			USE_RESULT constexpr Const_Ref operator[](const Size index) const noexcept
+			{
+				return at(index);
+			}
+
+			USE_RESULT constexpr Const_Ref at(const Size index) const
+			{
+				CheckOffsetWithinLength(index,
+					"Index must be within 0 and length of string (... -1)");
+				return string[index];				
+			}
+
+			USE_RESULT constexpr Const_Ptr Data() const
+			{
+				return string;
+			}
+			
+			USE_RESULT constexpr Size Length() const
+			{
+				return length;
+			}
+
+			USE_RESULT constexpr bool Empty() const
+			{
+				return length == 0;
+			}
+
+			void Clear()
+			{
+				string = nullptr;
+				length = 0;
+			}
+
+			constexpr void Swap(Template_String_View& other) noexcept
+			{
+				const auto temp = other;
+				other = *this;
+				*this = temp;
+			}
+
+			USE_RESULT constexpr Const_Ptr SubData(const Size amount, const Size offset = 0) const
+			{
+				CheckOffsetWithinLength(amount + offset,
+					"Amount and offset provided give an index greater than the length of the string");
+
+				return Template_String_View( string + offset, amount ).Data();
+			}
+
+			USE_RESULT constexpr Template_String_View Substr(const Size amount, const Size offset = 0) const
+			{
+				CheckOffsetWithinLength(amount + offset, 
+					"Amount and offset provided give an index greater than the length of the string");
+				return Template_String_View(string + offset, amount);
+			}
+
+			constexpr Size FirstInstanceOf(const CharT item, const Size offset = 0, Size amountToCheck = (std::numeric_limits<Size>::max)())
+			{
+				CheckOffsetWithinLength(offset, 
+					"Offset is greater than the length of string");
+				
+				auto currentChar = string + offset;
+				Size count(0);
+				while (*currentChar != CharT('\0') 
+					&& amountToCheck > 0)
+				{
+					if (*currentChar == item)
+						return count;
+					
+					++count;
+					--amountToCheck;
+					currentChar += ReturnSizeOfCharT();
+				}
+				
+				return npos;
+			}
+
+			Size FirstInstanceOf(Const_Ptr str, const Size offset = 0)
+			{
+				CheckOffsetWithinLength(offset, 
+					"Offset is greater than the length of string");
+				auto pos = FirstInstanceOf(str[0], offset);
+
+				auto strLength = GetStrLength(str);
+				
+				if (pos == npos)
+					return npos;
+				
+				auto viewStr = string + pos;
+				Size idx(0);
+				
+				while (*viewStr != CharT('\0'))
+				{
+					if (*viewStr == str[idx])
+					{
+						++viewStr;
+						++pos;
+						++idx;
+						continue;
+					}
+
+					if (str[idx] == '\0')
+						return (pos - strLength);
+
+					idx = 0;
+					pos = FirstInstanceOf(str[0], pos);
+					viewStr = string + pos;
+				}
+				
+				return npos;
+			}
+
+			void RemovePrefix(const Size offset)
+			{
+				CheckOffsetWithinLength(offset, 
+					"Offset provided is outside the range of the string");
+				
+				string += offset;
+				length -= offset;
+			}
+
+			Const_Ptr RemoveSuffix(const Size offset)
+			{
+				CheckOffsetWithinLength(offset, 
+					"Offset provided is outside the range of the string");
+				
+				length -= offset;
+				return string + offset;
+			}
+			
+			USE_RESULT constexpr Const_Ref Front() const noexcept
+			{
+				assert(string != nullptr);
+				return string[0];
+			}
+			
+			USE_RESULT constexpr Const_Ref Back() const noexcept
+			{
+				assert(string != nullptr);
+				return string[length - 1];
+			}
+
+			USE_RESULT constexpr bool IsEqual(const Template_String_View& other) const
+			{
+				if (length != other.length)
+					return false;
+				
+				auto thisCurrentChar = string;
+				auto otherCurrentChar = other.string;
+								
+				while (*thisCurrentChar == *otherCurrentChar )
+				{
+					++thisCurrentChar;
+					++otherCurrentChar;
+					if (*thisCurrentChar == CharT('\0')
+						&& *otherCurrentChar == CharT('\0'))
+						return true;
+				}
+				
+				return false;
+			}
+			
 		private:
-			CharT* string;
-			size_t size;
+			constexpr void CheckOffsetWithinLength(const Size offset, const char* msg) const
+			{
+				if (offset > length)
+					std::_Xout_of_range(msg);
+			}
+
+			USE_RESULT constexpr Size ReturnSizeOfCharT() const
+			{
+				return sizeof(char);
+			}
+
+			Size GetStrLength(Const_Ptr str)
+			{
+				Size size = 0;
+				auto currentChar = str;
+				
+				while (*currentChar != CharT('\0'))
+				{
+					++size;
+					currentChar += ReturnSizeOfCharT();
+				}
+
+				return size;
+			}
+			
+		private:
+			Const_Ptr string;
+			size_t length;
 		};
+
+		// Type aliasing for standard forms of Template_String_View
+		
+#ifdef __cpp_lib_char8_t
+		using u8StringView = Template_String_View<char8_t, std::char_traits<char8_t>>;
+		
+		USE_RESULT inline u8StringView operator"" _sv(u8StringView::Const_Ptr str, size_t length) noexcept
+		{
+			return u8StringView(str, length);
+		}
+#endif // __cpp_lib_char8_t
+		
+		using StringView = Template_String_View<char, std::char_traits<char>>;
+		using u16StringView = Template_String_View<char16_t, std::char_traits<char16_t>>;
+		using u32StringView = Template_String_View<char32_t, std::char_traits<char32_t>>;
+		using wStringView = Template_String_View<wchar_t, std::char_traits<wchar_t>>;
+
+
+		USE_RESULT constexpr StringView operator"" _sv(StringView::Const_Ptr str, size_t length) noexcept
+		{
+			return StringView(str, length);
+		}
+		
+		USE_RESULT constexpr u16StringView operator"" _sv(u16StringView::Const_Ptr str, size_t length) noexcept
+		{
+			return u16StringView(str, length);
+		}
+		
+		USE_RESULT constexpr u32StringView operator"" _sv(u32StringView::Const_Ptr str, size_t length) noexcept
+		{
+			return u32StringView(str, length);
+		}
+		
+		USE_RESULT constexpr wStringView operator"" _sv(wStringView::Const_Ptr str, size_t length) noexcept
+		{
+			return wStringView(str, length);
+		}
+		
+		
 	}
 }

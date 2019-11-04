@@ -14,5 +14,6 @@ namespace krakoa
 		KRAKOA_API void Math_Vector2_Test();
 		KRAKOA_API void Math_Vector3_Test();
 		KRAKOA_API void Math_Vector4_Test();
+		KRAKOA_API void String_View_Test();
 	}
 }

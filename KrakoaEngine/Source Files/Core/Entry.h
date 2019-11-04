@@ -46,4 +46,7 @@ inline void Tests()
 	Calendar_Test();
 	Logger_Test();
 	Math_Vector2_Test();
+	Math_Vector3_Test();
+	Math_Vector4_Test();
+	String_View_Test();
 }

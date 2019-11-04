@@ -176,6 +176,7 @@
     <ClCompile Include="Source Files\Utility\Logging\kLogging.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.h" />
     <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.h" />
     <ClInclude Include="Source Files\Beta Test\Tester.h" />
     <ClInclude Include="Source Files\Core\Application.h" />
@@ -187,9 +188,11 @@
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
     <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging.h" />
+    <ClInclude Include="Source Files\Utility\Logging\LogEntry.h" />
     <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.h" />
     <ClInclude Include="Source Files\Utility\Maths\Constants.h" />
     <ClInclude Include="Source Files\Utility\Maths\kMaths.h" />
+    <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector2.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector3.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.h" />

@@ -33,6 +33,9 @@
     <ClCompile Include="Source Files\Utility\Logging\kLogging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source Files\Utility\Debug Helper\kAssert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Krakoa.h">
@@ -98,7 +101,10 @@
     <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Utility\Logging\LogEntry.h">
+    <ClInclude Include="Source Files\Utility\Logging\kLogEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Logging\kLog_Class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

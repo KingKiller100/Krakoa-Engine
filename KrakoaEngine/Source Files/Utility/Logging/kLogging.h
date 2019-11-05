@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LogEntry.h"
+#include "kLogEntry.h"
 
 #include <string>
 #include <deque>
@@ -40,13 +40,14 @@ namespace util
 			FATL  // Fatal
 		};
 
+		//template<typename T>
 		using LogQueue = std::deque<std::string>;
 
 		class Logging
 		{
 		public:
-			explicit Logging();
-			explicit Logging(std::string& filename, std::string& directory);
+			Logging();
+			Logging(std::string& filename, std::string& directory);
 
 			~Logging();
 			
@@ -128,9 +129,7 @@ namespace util
 		private:
 			/**
 			 * \brief
-			 *		Creates the log file with the cached kLogs
-			 * \param logFileName
-			 *		Name of the log file
+			 *		Creates the log file with the cached log entries 
 			 */
 			void OutputLogToFile();
 
@@ -184,8 +183,5 @@ namespace util
 		};
 
 	}
-
-#define LOG_ENTRY(msg, time, date) kLogs::TemplateLogEntry(msg, time, date, __FILE__, __LINE__);
-
 }
 

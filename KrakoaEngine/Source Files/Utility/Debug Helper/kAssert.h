@@ -1,31 +1,41 @@
 #pragma once
 
-#include "kDebugger.h"
+#include <exception>
+#include <string>
 
 namespace util
 {
-	
+	namespace debug
+	{
 #if _DEBUG
 
-	
-	inline void __cdecl Assert(wchar_t const* txt, wchar_t const* file, wchar_t const* line)
-	{
+		class AssertOnFailedExpression final : public std::exception
+		{
+		public:
+			AssertOnFailedExpression(const wchar_t* exp, const wchar_t* msg, const wchar_t* f, const unsigned l);
+			~AssertOnFailedExpression() throw();
 
-		kDebugger::BreakPointHere();
-	}
-	
-#define kAssert(condition)\
-	(void)\
-	(\
-		(condition == true) ||\
-		Assert(_CRT_WIDE(#condition), _CRT_WIDE(__FILE__), _CRT_WIDE(__LINE__)\
-	)\
+			char const* what() const override;
+
+		private:
+			const wchar_t* expression;
+			const wchar_t* message;
+			const wchar_t* file;
+			const unsigned line;
+			std::wstring report;
+		};
+
+
+#define kAssert(condition, msg)\
+	{\
+		if(condition == false)\
+			throw ::util::debug::AssertOnFailedExpression(_CRT_WIDE(#condition), _CRT_WIDE(#msg), _CRT_WIDE(__FILE__), (unsigned)(__LINE__));\
+	}\
 
 #else
-#define kAssert ((void)0)
+#define kAssert(condition, msg) ((void)0);
 
 #endif
 
-
-
+	}
 }

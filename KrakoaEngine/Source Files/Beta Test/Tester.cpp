@@ -12,6 +12,8 @@
 
 #include "../Utility/String View/string_view.h"
 
+#include "../Utility/Debug Helper/kAssert.h"
+
 #include <iostream>
 
 namespace krakoa::kTest
@@ -93,6 +95,8 @@ namespace krakoa::kTest
 		const auto temp3 = v2.Magnitude();
 		auto res = v2 != temp2;
 		v2.Zero();
+
+		kAssert(v2.Magnitude() != 0, "Vector is NULL");
 	}
 
 	void Math_Vector3_Test()

@@ -85,6 +85,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +108,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +132,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +158,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,8 +181,18 @@
     <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp" />
     <ClCompile Include="Source Files\Beta Test\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
-    <ClCompile Include="Source Files\Utility\File System\kFileSystem.cpp" />
+    <ClCompile Include="Source Files\Utility\Format To String\kUTFStringConverter.cpp" />
     <ClCompile Include="Source Files\Utility\Logging\kLogging.cpp" />
+    <ClCompile Include="Source Files\Precompile.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Precompile.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Precompile.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Precompile.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Precompile.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.h" />
@@ -188,6 +206,7 @@
     <ClInclude Include="Source Files\Utility\Clock\kClock.h" />
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
     <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h" />
+    <ClInclude Include="Source Files\Utility\Format To String\kUTFStringConverter.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogEntry.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLog_Class.h" />
@@ -199,6 +218,7 @@
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector3.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\VectorBase.h" />
+    <ClInclude Include="Source Files\Precompile.h" />
     <ClInclude Include="Source Files\Utility\String View\string_view.h" />
   </ItemGroup>
   <ItemGroup>

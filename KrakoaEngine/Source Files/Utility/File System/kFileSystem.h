@@ -7,6 +7,21 @@ namespace util
 {
 	namespace kFileSystem
 	{
+		//Type aliases for STL container --------------------------------------------------------
+		template<class Char>
+		using StringType = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
+
+		template<class Char>
+		using StringReader = std::basic_string_view<Char>;
+
+		template<class Char>
+		using FileReader = std::basic_ifstream<Char, std::char_traits<Char>>;
+
+		template<class Char>
+		using FileWriter = std::basic_ofstream<Char, std::char_traits<Char>>;
+		// --------------------------------------------------------------------------------------
+
+		
 		/**
 		 * \brief
 		 *		Outputs a file to the specified directory and fills it with the given data
@@ -15,7 +30,17 @@ namespace util
 		 * \param content
 		 *		The data to fill the file with.
 		 */
-		void OutputToFile(const char* fullDirectory, const char* content);
+		template<class CharT>
+		void OutputToFile(const CharT* fullDirectory, const CharT* content)
+		{
+			FileWriter<CharT> outFile(fullDirectory, std::ios::out | std::ios::app);
+
+			if (outFile.is_open())
+			{
+				outFile << content;
+				outFile.close();
+			}
+		}
 
 		/**
 		 * \brief
@@ -29,7 +54,29 @@ namespace util
 		 *		The path must be completely unique otherwise the path will not be created. If parts of the
 		 *		path already exist, only
 		 */
-		bool CreateNewDirectories(const std::string_view& directory);
+		template<class CharT>
+		bool CreateNewDirectories(const StringReader<CharT>& directory)
+		{
+			if (directory.back() != '\\')
+				return false; // Final segment of directory must end with '\\'
+
+			bool isDirCreated = false;
+			auto pos = directory.find_first_of('\\') + 1;
+
+			while (true)
+			{
+				const auto nextForwardSlash = directory.find_first_of('\\', pos) + 1;
+				const auto nextDirectory = directory.substr(0, nextForwardSlash);
+				pos = nextForwardSlash;
+
+				if (pos == 0)
+				{
+					return isDirCreated;
+				}
+
+				isDirCreated = CreateNewDirectory<CharT>(nextDirectory.data());
+			}
+		}
 
 		/**
 		 * \brief
@@ -39,7 +86,20 @@ namespace util
 		 * \return
 		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 		 */
-		bool CreateNewDirectory(const char* directory);
+		template<class CharT>
+		bool CreateNewDirectory(const CharT* directory)
+		{
+			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			{
+				return _mkdir(directory) == 0;
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			{
+				return _wmkdir(directory) == 0;
+			}
+
+			return false;
+		}
 
 		/**
 		 * \brief
@@ -53,7 +113,20 @@ namespace util
 		 *		- The folder is completely empty (including empty of system and hidden folder files)
 		 *		- This directory is not the current directory of this application.
 		 */
-		bool DeleteDirectory(const char* directory);
+		template<class CharT>
+		bool DeleteDirectory(const CharT* directory)
+		{
+			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			{
+				return _rmdir(directory) == 0;
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			{
+				return _wrmkdir(directory) == 0;
+			}
+
+			return false;
+		}
 
 		/**
 		 * \brief
@@ -63,7 +136,31 @@ namespace util
 		 * \return
 		 *		TRUE if file exist or FALSE if file does not exist
 		 */
-		bool CheckFileExists(const char* fileName);
+
+		template<class CharT>
+		bool CheckFileExists(const CharT* fileName)
+		{
+			FILE* file;
+			auto result = -1;
+
+			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			{
+				result = fopen_s(&file, fileName, "r");
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			{
+				result = _wfopen_s(&file, fileName, L"r");
+			}
+
+			if (file)
+			{
+				fclose(file);
+				delete file;
+				file = nullptr;
+			}
+
+			return result == 0;
+		}
 
 		/**
 		 * \brief
@@ -73,7 +170,29 @@ namespace util
 		 * \return
 		 *		A vector of every line of data in the file, as a string
 		 */
-		std::vector<std::string> ParseFileData(const char* fullFilePath);
+		template<class CharT>
+		std::vector<StringType<CharT>> ParseFileData(const CharT* fullFilePath)
+		{
+			std::vector<StringType<CharT>> fileData;
+
+			if (CheckFileExists<CharT>(fullFilePath))
+			{
+				std::basic_ifstream<CharT, std::char_traits<CharT>> inFile(fullFilePath);
+
+				if (inFile.is_open())
+				{
+					StringType<CharT> data;
+					while (!(inFile.eof()))
+					{
+						std::getline(inFile, data);
+						fileData.push_back(data);
+					}
+					inFile.close();
+				}
+			}
+
+			return fileData;
+		}
 
 		/**
 		 * \brief
@@ -81,7 +200,29 @@ namespace util
 		 * \return
 		 *		Current working directory as a string
 		 */
-		std::string GetCurrentWorkingDirectory();
+		template<class Char>
+		StringType<Char> GetCurrentWorkingDirectory()
+		{
+			StringType<Char> fullFolderPathOfCurrentWorkingDirectory;
+
+			if (fullFolderPathOfCurrentWorkingDirectory.empty())
+			{
+				Char cwdBuffer[1024];
+
+				if _CONSTEXPR_IF(std::is_same_v<Char, char>)
+					GetModuleFileNameA(nullptr, cwdBuffer, sizeof(cwdBuffer));
+				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
+					GetModuleFileNameW(nullptr, cwdBuffer, sizeof(cwdBuffer));
+
+				fullFolderPathOfCurrentWorkingDirectory = cwdBuffer;
+
+				// Remove the filename, but keep the end slash
+				fullFolderPathOfCurrentWorkingDirectory.erase(fullFolderPathOfCurrentWorkingDirectory.find_last_of('\\') + 1, fullFolderPathOfCurrentWorkingDirectory.back());
+			}
+
+			return fullFolderPathOfCurrentWorkingDirectory;
+		}
+
 
 	}
 }

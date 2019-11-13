@@ -1,3 +1,4 @@
+#include "Precompile.h"
 #include "kCalendar.h"
 
 #include "../Format To String/kFormatToString.h"
@@ -56,6 +57,50 @@ namespace util::kCalendar
 	{
 		const auto dateTime = GetSystemDateAndTime();
 		const auto dateFormat = slash ? "%02d/%02d/%02d" : "%02d-%02d-%04d";
+		return FormatToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
+	}
+
+	std::wstring wGetTimeText()
+	{
+		const auto dateTime = GetSystemDateAndTime();
+		return FormatToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
+	}
+
+	std::wstring wGetDateInTextFormat()
+	{
+		const auto dateTime = GetSystemDateAndTime();
+		return FormatToString(L"%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
+	}
+
+	const wchar_t* wGetMonth(const unsigned short month)
+	{
+		static std::array<const wchar_t*, 12> kCalendar_MonthsArray =
+		{ L"January", L"February", L"March", L"April", L"May",
+		L"June", L"July", L"August", L"September", L"October",
+			L"November", L"December" };
+
+		if (month < kCalendar_MonthsArray.size())
+			return kCalendar_MonthsArray[month - 1];
+
+		return L"Value entered does not index to a month of the year";
+	}
+
+	const wchar_t* wGetDayOfTheWeek(const unsigned short day)
+	{
+		static std::array<const wchar_t*, 7> kCalendar_DaysOfTheWeek =
+		{ L"Sunday", L"Monday", L"Tuesday", L"Wednesday",
+		L"Thursday", L"Friday", L"Saturday" };
+
+		if (day < kCalendar_DaysOfTheWeek.size())
+			return kCalendar_DaysOfTheWeek[day];
+
+		return L"Value entered does not index to a day of the week";
+	}
+
+	std::wstring wGetDateInNumericalFormat(const bool slash)
+	{
+		const auto dateTime = GetSystemDateAndTime();
+		const auto dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
 		return FormatToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 

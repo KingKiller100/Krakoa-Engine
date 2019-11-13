@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kLogEntry.h"
+#include "../../Precompile.h"
 
 #include <string>
 #include <deque>
@@ -40,9 +40,8 @@ namespace util
 			FATL  // Fatal
 		};
 
-		//template<typename T>
 		using LogQueue = std::deque<std::string>;
-
+		
 		class Logging
 		{
 		public:
@@ -59,7 +58,7 @@ namespace util
 			 */
 			void InitializeLogging();
 
-			void ChangeOutputDirectory(const std::string& dir);
+			void ChangeOutputDirectory(const std::string_view dir);
 
 			void ChangeFilename(const char* fname);
 
@@ -81,7 +80,7 @@ namespace util
 			 * \param msg
 			 *		Error message
 			 */
-			void OutputToFatalFile(const LogQueue::value_type& msg);
+			void OutputToFatalFile(const typename LogQueue::value_type& msg);
 
 			/**
 			 * \brief
@@ -91,7 +90,7 @@ namespace util
 			 * \param lvl
 			 *		Log level type
 			 */
-			void AddEntry(const LogQueue::value_type& msg, const LogLevel lvl = LogLevel::NORM);
+			void AddEntry(const std::string_view msg, const LogLevel lvl = LogLevel::NORM);
 
 			/**
 			 * \brief
@@ -99,9 +98,9 @@ namespace util
 			 * \param[in] msg
 			 *		Log banner title
 			 * \param type
-			 *		The category/subject of the log banner, in only 4 letters
+			 *		The category/subject of the log banner
 			 */
-			void AddEntryBanner(const LogQueue::value_type& msg, const std::string& type);
+			void AddEntryBanner(const std::string_view msg, const std::string_view type);
 
 			/**
 			 * \brief
@@ -149,17 +148,6 @@ namespace util
 			 */
 			void AddToLogBuffer(const std::string_view& logLine, const LogLevel lvl);
 
-			//void AddToLogBuffer(std::string& logLine, const LogLevel lvl);
-
-			/**
-			 * \brief
-			 *		Resolves the log subject/category to the correct format
-			 * \param type
-			 *		The subject type of the log banner
-			 * \return
-			 */
-			static std::string ResolveTypeClassification(const std::string& type);
-
 			/**
 			 * \brief
 			 *		Stores all log levels into a map with the string equivalent
@@ -171,7 +159,7 @@ namespace util
 			void InitializeOutputToConsoleColourMap();
 			
 		protected:
-			LogQueue logCacheQueue; // Queue buffer to cache the logged messages
+			LogQueue logEntryQueue; // Queue buffer to cache the logged messages
 
 			std::string directory;
 			std::string filename;

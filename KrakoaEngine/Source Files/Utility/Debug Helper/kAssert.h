@@ -9,27 +9,26 @@ namespace util
 	{
 #if _DEBUG
 
-		class AssertOnFailedExpression final : public std::exception
+		class AssertOnFailedExpressionException final : public std::exception
 		{
 		public:
-			AssertOnFailedExpression(const wchar_t* exp, const wchar_t* msg, const wchar_t* f, const unsigned l);
-			~AssertOnFailedExpression() throw();
+			AssertOnFailedExpressionException(const wchar_t* exp, const wchar_t* msg, const wchar_t* f, const unsigned l);
+			~AssertOnFailedExpressionException() throw();
 
 			char const* what() const override;
-
+			virtual void wReportToCharReport();
+			
+			
 		private:
-			const wchar_t* expression;
-			const wchar_t* message;
-			const wchar_t* file;
-			const unsigned line;
 			std::wstring report;
+			std::string reportChar;
 		};
 
 
 #define kAssert(condition, msg)\
 	{\
 		if(condition == false)\
-			throw ::util::debug::AssertOnFailedExpression(_CRT_WIDE(#condition), _CRT_WIDE(#msg), _CRT_WIDE(__FILE__), (unsigned)(__LINE__));\
+			throw ::util::debug::AssertOnFailedExpressionException(_CRT_WIDE(#condition), _CRT_WIDE(##msg), _CRT_WIDE(__FILE__), (unsigned)(__LINE__));\
 	}\
 
 #else

@@ -1,29 +1,30 @@
 #pragma once
 #include "../../Core/EngineCore.h"
+#include "../Calendar/kCalendar.h"
 
-#include <type_traits>
 #include <string>
-
+// ***********************************************	UNUSED	**************************************************
 namespace util::kLogs
 {
+	using namespace kCalendar;
 	template<class CharT>
 	class TemplateLogEntry
 	{
-		using Message = std::basic_string_view<CharT>;
+		using Message = std::basic_string<CharT>;
 		using DateTimeStrType = const char*;
 		using FileStrType = const wchar_t*;
 		using LineStrType = const unsigned;
 
 	public:
-		TemplateLogEntry(Message msg, DateTimeStrType time, DateTimeStrType date, FileStrType file = nullptr, LineStrType line = 0)
-		: msg(msg), timeStr(time), dateStr(date),
+		TemplateLogEntry(Message msg, FileStrType file = L"", LineStrType line = 0)
+		: msg(msg), timeStr(GetTimeText().c_str()), dateStr(GetDateInNumericalFormat().c_str()),
 		file(file), line(line)
 		{}
 		
 		~TemplateLogEntry()
 			= default;
 
-		USE_RESULT constexpr Message GetMessage() const
+		USE_RESULT constexpr Message GetLogMessage() const
 		{
 			return msg;
 		}
@@ -47,7 +48,7 @@ namespace util::kLogs
 		{
 			return line;
 		}
-		
+
 	private:
 		Message msg;
 		DateTimeStrType timeStr;

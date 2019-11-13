@@ -1,3 +1,4 @@
+#include "Precompile.h"
 #include "kLogging.h"
 
 #include "../Calendar/kCalendar.h"
@@ -20,7 +21,7 @@ namespace util::kLogs
 
 	
 	Logging::Logging()
-		: directory(GetCurrentWorkingDirectory() + "Logs\\"),
+		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
 		filename(FormatToString("Krakoa Engine Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
 		initialized_kLogging(false)
 	{	}
@@ -69,19 +70,12 @@ namespace util::kLogs
 	void Logging::AddToLogBuffer(const std::string_view & logLine, const LogLevel lvl)
 	{
 		OutputToConsole(logLine, lvl);
-		logCacheQueue.emplace_back(logLine.data());
+		logEntryQueue.emplace_back(logLine.data());
 	}
 
-	/*void Logging::AddToLogBuffer(std::string& logLine, const LogLevel lvl)
-	{
-		OutputToConsole(logLine, lvl);
-		logCacheQueue.emplace_back(std::move(logLine));
-	}*/
-
-	void Logging::ChangeOutputDirectory(const std::string& dir)
+	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
 		directory = dir;
-
 		OutputToConsole("New directory:\t " + directory + "\n", LogLevel::INFO);
 	}
 
@@ -112,22 +106,21 @@ namespace util::kLogs
 	}
 
 	
-	void Logging::AddEntry(const std::string& msg, const LogLevel lvl /* = NORM */)
+	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */)
 	{
 		if (!(initialized_kLogging)) return;
-
-		
+				
 		AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(), 
-			logLevelMap.at(lvl), msg.c_str()),
+			logLevelMap.at(lvl), msg.data()),
 			lvl);
 	}
 
-	void Logging::AddEntryBanner(const std::string& msg, const std::string& type)
+	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type)
 	{
 		if (!(initialized_kLogging)) return;
 
 		AddToLogBuffer(FormatToString("[%s]\t[%s]:\t[%s]\n", GetTimeText().c_str(),
-			ResolveTypeClassification(type).c_str(), msg.c_str()), 
+			type.data(), msg.data()), 
 			LogLevel::BANR);
 	}
 
@@ -155,6 +148,10 @@ namespace util::kLogs
 
 	void Logging::OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept
 	{
+#ifdef _DEBUG
+		OutputDebugStringA(logLine.data());
+#endif
+		
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, consoleColourMap.at(lvl));
 		
@@ -169,18 +166,18 @@ namespace util::kLogs
 		}
 		
 		LogQueue::value_type fullLog;
-		while (!(logCacheQueue.empty()))
+		while (!(logEntryQueue.empty()))
 		{
-			fullLog += logCacheQueue.front();
-			logCacheQueue.pop_front();
+			fullLog += logEntryQueue.front();
+			logEntryQueue.pop_front();
 		}
 		return fullLog;
 	}
 
 	LogQueue::value_type Logging::GetLastLoggedEntry()
 	{
-		if (!(logCacheQueue.empty()))
-			return logCacheQueue.back();
+		if (!(logEntryQueue.empty()))
+			return logEntryQueue.back();
 
 		OutputToConsole("NO ENTRIES! LOGS ARE EMPTY", LogLevel::ERRR);
 		
@@ -189,34 +186,21 @@ namespace util::kLogs
 
 	void Logging::ErasePreviousEntries(const size_t numOfEntries)
 	{
-		const auto lastLoggedItem = logCacheQueue.cend();
-		const auto startPosition = lastLoggedItem - (numOfEntries - 1);
+		const auto lastLoggedEntry = logEntryQueue.cend();
+		const auto startPosition = lastLoggedEntry - (numOfEntries - 1);
 
-		logCacheQueue.erase(startPosition, lastLoggedItem);
+		logEntryQueue.erase(startPosition, lastLoggedEntry);
 	}
 
 	void Logging::Clear()
 	{
-		if (!(logCacheQueue.empty()))
-			logCacheQueue.clear();
+		if (!(logEntryQueue.empty()))
+			logEntryQueue.clear();
 	}
-
-	std::string Logging::ResolveTypeClassification(const std::string& type)
-	{
-		const WORD wantedTypeLength = 4;
-		std::string temp;
-
-		for (auto iterator = type.cbegin(); iterator != (type.cbegin() + wantedTypeLength); ++iterator)
-		{
-			temp += toupper(*iterator);
-		}
-
-		return temp;
-	}
-
+	
 	void Logging::OutputLogToFile()
 	{				
-		CreateNewDirectories(directory);
+		CreateNewDirectories<char>(directory);
 		OutputToFile((directory + filename).c_str(), GetFullLogText().c_str());
 	}
 }

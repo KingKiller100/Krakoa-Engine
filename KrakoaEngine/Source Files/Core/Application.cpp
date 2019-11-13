@@ -1,3 +1,5 @@
+
+#include "Precompile.h"
 #include "Application.h"
 
 #include "../Utility/Clock/kClock.h"

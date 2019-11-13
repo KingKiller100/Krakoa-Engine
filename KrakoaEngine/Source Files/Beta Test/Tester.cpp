@@ -1,3 +1,4 @@
+#include "Precompile.h"
 #include "Tester.h"
 
 #include "../Utility/Calendar/kCalendar.h"
@@ -41,8 +42,8 @@ namespace krakoa::kTest
 	void FileSystem_Test()
 	{
 		kFileSystem::CheckFileExists("C:\\Users\\kweku\\Documents\\Krakoa Engine\\bin\\x64\\Debug\\Hooper2\\waitforremotedebugger");
-		const auto cwd = kFileSystem::GetCurrentWorkingDirectory();
-		kFileSystem::CreateNewDirectories(cwd + "Create Directories Test\\Success1\\Success2\\");
+		const auto cwd = kFileSystem::GetCurrentWorkingDirectory<char>();
+		kFileSystem::CreateNewDirectories<char>(cwd + "Create Directories Test\\Success1\\Success2\\");
 		kFileSystem::CreateNewDirectory((cwd + "Create Directory Test\\").c_str());
 		kFileSystem::DeleteDirectory((cwd + "Create Directories Test\\Success1\\Success2").c_str());
 		kFileSystem::OutputToFile((cwd + "Create Directory Test\\Test.txt").c_str(), "Success\n");
@@ -64,7 +65,7 @@ namespace krakoa::kTest
 	{		
 		kLogs::Logging logger = kLogs::Logging();
 		logger.InitializeLogging();
-		logger.ChangeOutputDirectory(kFileSystem::GetCurrentWorkingDirectory() + "Change Dir\\");
+		logger.ChangeOutputDirectory(kFileSystem::GetCurrentWorkingDirectory<char>() + "Change Dir\\");
 		logger.ChangeFilename("DiffFileName");
 		logger.AddEntry("NORMAL!", kLogs::LogLevel::NORM);
 		logger.AddEntryBanner("BANNER!", "TEST");
@@ -96,13 +97,13 @@ namespace krakoa::kTest
 		auto res = v2 != temp2;
 		v2.Zero();
 
-		kAssert(v2.Magnitude() != 0, "Vector is NULL");
+		{ if( v2.Magnitude() != 0 == false) throw ::util::debug::AssertOnFailedExpressionException(_CRT_WIDE("v2.Magnitude() != 0"), _CRT_WIDE("Vector is NULL"), _CRT_WIDE(__FILE__), static_cast<unsigned>(__LINE__)); };
 	}
 
 	void Math_Vector3_Test()
 	{
 		using namespace kMaths;
-		 auto v3 = Vector3f();
+		auto v3 = Vector3f();
 		const Vector3f tempV3 = Vector3f(v3.Z());
 
 		CrossProduct(v3, tempV3);

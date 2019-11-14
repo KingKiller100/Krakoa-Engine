@@ -101,39 +101,34 @@ namespace util
 				return length == 0;
 			}
 
-			void Clear()
+			constexpr void Clear()
 			{
 				string = nullptr;
 				length = 0;
 			}
 					   
-			USE_RESULT constexpr Const_Ref Front() const noexcept
+			USE_RESULT constexpr Const_Ref Front() const
 			{
 				kAssert(string != nullptr, "string is null");
-				return string[0];
+				return Empty() ? CharT("") : string[0];
 			}
 
-			USE_RESULT constexpr Const_Ref Back() const noexcept
+			USE_RESULT constexpr Const_Ref Back() const
 			{
 				kAssert(string != nullptr, "string is null");
-				return string[length - 1];
+				return Empty() ? CharT("") : string[length - 1];
 			}
 
-			constexpr bool StartsWith(const CharT item)
+			constexpr bool StartsWith(const CharT item) noexcept
 			{
-				return *string == item;
-			}
-
-			constexpr bool EndsWith(const CharT item)
-			{
-				return string[(length - 1)] == item;
+				return !Empty() && Front() == item;
 			}
 
 			constexpr bool StartsWith(const Template_String_View& other)
 			{
-				if (other.length > length)
+				if (other.length > length  || Empty())
 					return false;
-				
+
 				auto currentChar = string;
 				auto otherChar = other.string;
 
@@ -147,6 +142,16 @@ namespace util
 				}
 
 				return true;
+			}
+
+			constexpr bool StartsWith(Const_Ptr const literal) 
+			{
+				return StartsWith(Template_String_View(literal));
+			}
+			
+			constexpr bool EndsWith(const CharT item) noexcept
+			{
+				return !Empty() && Back() == item;
 			}
 
 			constexpr bool EndsWith(const Template_String_View& other)
@@ -170,6 +175,12 @@ namespace util
 
 				return true;
 			}
+
+			constexpr bool EndsWith(Const_Ptr const literal)
+			{
+				return EndsWith(Template_String_View(literal));
+			}
+
 			
 			constexpr void Swap(Template_String_View& other) noexcept
 			{
@@ -218,8 +229,8 @@ namespace util
 			{
 				CheckOffsetWithinLength(offset, 
 					"Offset is greater than the length of string");
-				auto pos = FirstInstanceOf(str[0], offset);
 
+				auto pos = FirstInstanceOf(str[0], offset);
 				auto strLength = GetStrLength(str);
 				
 				if (pos == npos)
@@ -238,7 +249,7 @@ namespace util
 						continue;
 					}
 
-					if (str[idx] == '\0')
+					if (str[idx] == CharT('\0'))
 						return (pos - strLength);
 
 					idx = 0;
@@ -268,9 +279,12 @@ namespace util
 				return npos;
 			}
 
-			constexpr Size LastInstanceOf(const CharT item) noexcept
+			constexpr Size LastInstanceOf(const CharT item, const Size offset = 0) 
 			{
-				auto currentChar = string + length;
+				CheckOffsetWithinLength(offset, 
+					"Offset greater than length of this string");
+
+				auto currentChar = string + length - offset;
 				Size pos(length - 1);
 
 				while (currentChar != string)
@@ -284,9 +298,9 @@ namespace util
 				return npos;
 			}
 
-			constexpr Size LastInstanceOfNot(const CharT item) noexcept
+			constexpr Size LastInstanceOfNot(const CharT item, const Size offset = 0) noexcept
 			{
-				auto currentChar = string + length;
+				auto currentChar = string + length - offset;
 				Size pos(length - 1);
 
 				while (currentChar != string)
@@ -297,6 +311,40 @@ namespace util
 					--pos;
 					currentChar -= ReturnSizeOfCharT();
 				}
+				return npos;
+			}
+
+			constexpr Size LastInstanceOf(Const_Ptr str, const Size offset = 0) noexcept
+			{
+				CheckOffsetWithinLength(offset, "Offset greater than length of this string");
+
+				auto pos = LastInstanceOf(str[0], offset);
+				auto strLength = GetStrLength(str);
+
+				if (pos == npos)
+					return npos;
+
+				auto viewStr = string + length - pos;
+				Size strIdx(0);
+
+				while (viewStr != string)
+				{
+					if (*viewStr == str[strIdx])
+					{
+						++viewStr;
+						++pos;
+						++strIdx;
+						continue;
+					}
+
+					if (str[strIdx] == CharT('\0'))
+						return (pos - strLength);
+
+					strIdx = 0;
+					pos = LastInstanceOf(str[0], pos);
+					viewStr = string + length - pos;
+				}
+
 				return npos;
 			}
 
@@ -337,6 +385,28 @@ namespace util
 				
 				return false;
 			}
+
+			constexpr Size Find(const CharT item, Size offset) const
+			{
+				return FirstInstanceOf(item, offset);
+			}
+
+			constexpr Size Find(Const_Ptr item, Size offset) const
+			{
+				return FirstInstanceOf(item, offset);
+			}
+
+			constexpr Size rFind(const CharT item, Size offset) const
+			{
+				return LastInstanceOf(item, offset);
+			}
+
+			constexpr Size rFind(Const_Ptr item, Size offset) const
+			{
+				return LastInstanceOf(item, offset);
+			}
+
+
 			
 		private:
 			constexpr void CheckOffsetWithinLength(const Size offset, const char* msg) const

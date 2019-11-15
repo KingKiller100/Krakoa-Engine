@@ -43,11 +43,11 @@ namespace krakoa::kTest
 	{
 		kFileSystem::CheckFileExists("C:\\Users\\kweku\\Documents\\Krakoa Engine\\bin\\x64\\Debug\\Hooper2\\waitforremotedebugger");
 		const auto cwd = kFileSystem::GetCurrentWorkingDirectory<char>();
-		kFileSystem::CreateNewDirectories<char>(cwd + "Create Directories Test\\Success1\\Success2\\");
+		kFileSystem::CreateNewDirectories<char>((cwd + "Create Directories Test\\Success1\\Success2\\"));
 		kFileSystem::CreateNewDirectory((cwd + "Create Directory Test\\").c_str());
 		kFileSystem::DeleteDirectory((cwd + "Create Directories Test\\Success1\\Success2").c_str());
 		kFileSystem::OutputToFile((cwd + "Create Directory Test\\Test.txt").c_str(), "Success\n");
-		kFileSystem::ParseFileData((cwd + "Create Directory Test\\Test.txt").c_str());
+		const auto fileInfo = kFileSystem::ParseFileData((cwd + "Create Directory Test\\Test.txt").c_str());
 	}
 
 	void Calendar_Test()
@@ -63,20 +63,21 @@ namespace krakoa::kTest
 
 	void Logger_Test()
 	{		
-		kLogs::Logging logger = kLogs::Logging();
-		logger.InitializeLogging();
-		logger.ChangeOutputDirectory(kFileSystem::GetCurrentWorkingDirectory<char>() + "Change Dir\\");
-		logger.ChangeFilename("DiffFileName");
-		logger.AddEntry("NORMAL!", kLogs::LogLevel::NORM);
-		logger.AddEntryBanner("BANNER!", "TEST");
-		logger.AddEntry("INFORMATIVE!", kLogs::LogLevel::INFO);
-		logger.AddEntry("ERROR!", kLogs::LogLevel::ERRR);
-		logger.AddEntry("FATAL!", kLogs::LogLevel::FATL);
-		logger.GetLastLoggedEntry();
-		logger.ErasePreviousEntries(2);
-		logger.AppendLogFile();
-		logger.AddEntry("Done", kLogs::LogLevel::WARN);	
-		logger.Output();
+		INIT_LOGS;
+		CHANGE_LOGS_DESTINATION(kFileSystem::GetCurrentWorkingDirectory<char>() + "Change Dir\\");
+		CHANGE_LOGS_FILENAME("DiffFileName");
+		LOG_BANNER("BANNER!", "TEST");
+		LOG_ENTRY("NORMAL!", kLogs::LogLevel::NORM);
+		LOG_ENTRY("INFORMATIVE!", kLogs::LogLevel::INFO);
+		LOG_ENTRY("Done", kLogs::LogLevel::WARN);
+		LOG_ENTRY("ERROR!", kLogs::LogLevel::ERRR);
+		auto last = GET_LAST_LOG_ENTRY;
+		ERASE_LOG_ENTRIES(1);
+		LOG_ENTRY("ERROR AGAIN!", kLogs::LogLevel::ERRR);
+		FATAL("FATAL!");
+		FLUSH_LOGS;
+		END_LOGGING;
+		LOG_ENTRY("end", kLogs::LogLevel::NORM);
 	}
 
 	void Math_Vector2_Test()
@@ -97,7 +98,7 @@ namespace krakoa::kTest
 		auto res = v2 != temp2;
 		v2.Zero();
 
-		{ if( v2.Magnitude() != 0 == false) throw ::util::debug::AssertOnFailedExpressionException(_CRT_WIDE("v2.Magnitude() != 0"), _CRT_WIDE("Vector is NULL"), _CRT_WIDE(__FILE__), static_cast<unsigned>(__LINE__)); };
+		kAssert(v2.Magnitude() != 0, "Vector is null");
 	}
 
 	void Math_Vector3_Test()

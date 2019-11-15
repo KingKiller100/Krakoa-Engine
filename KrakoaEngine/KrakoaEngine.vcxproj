@@ -182,7 +182,7 @@
     <ClCompile Include="Source Files\Beta Test\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
     <ClCompile Include="Source Files\Utility\Format To String\kUTFStringConverter.cpp" />
-    <ClCompile Include="Source Files\Utility\Logging\kLogging.cpp" />
+    <ClCompile Include="Source Files\Utility\Logging\kLogging_Class.cpp" />
     <ClCompile Include="Source Files\Precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -207,9 +207,8 @@
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
     <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h" />
     <ClInclude Include="Source Files\Utility\Format To String\kUTFStringConverter.h" />
+    <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging.h" />
-    <ClInclude Include="Source Files\Utility\Logging\kLogEntry.h" />
-    <ClInclude Include="Source Files\Utility\Logging\kLog_Class.h" />
     <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.h" />
     <ClInclude Include="Source Files\Utility\Maths\Constants.h" />
     <ClInclude Include="Source Files\Utility\Maths\kMaths.h" />

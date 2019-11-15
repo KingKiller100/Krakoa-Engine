@@ -1,5 +1,5 @@
 #include "Precompile.h"
-#include "kLogging.h"
+#include "kLogging_Class.h"
 
 #include "../Calendar/kCalendar.h"
 #include "../File System/kFileSystem.h"
@@ -22,7 +22,7 @@ namespace util::kLogs
 	
 	Logging::Logging()
 		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
-		filename(FormatToString("Krakoa Engine Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
+		filename(FormatToString("Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
 		initialized_kLogging(false)
 	{	}
 
@@ -44,7 +44,7 @@ namespace util::kLogs
 		InitializeLogLevelMap();
 		InitializeOutputToConsoleColourMap();
 		
-		std::string_view startLog = startOfkLogFile;
+		const std::string_view startLog = startOfkLogFile;
 		AddToLogBuffer(startLog, LogLevel::NORM);
 	}
 
@@ -106,13 +106,23 @@ namespace util::kLogs
 	}
 
 	
-	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */)
+	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
 	{
 		if (!(initialized_kLogging)) return;
-				
-		AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(), 
-			logLevelMap.at(lvl), msg.data()),
-			lvl);
+
+		if (lvl < LogLevel::ERRR)
+		{
+			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(),
+				logLevelMap.at(lvl), msg.data()),
+				lvl);
+		}
+		else
+		{
+			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n\t\t[File]:\t%s\n\t\t[Line]:\t%d\n",
+				GetTimeText().c_str(), logLevelMap.at(lvl), 
+				msg.data(), file, line),
+				lvl);
+		}
 	}
 
 	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type)
@@ -126,22 +136,23 @@ namespace util::kLogs
 
 	void Logging::AppendLogFile()
 	{
-		std::string_view conclusionCurrentLog = endOfkCurrentLog;
+		const std::string_view conclusionCurrentLog = endOfkCurrentLog;
 		AddToLogBuffer(conclusionCurrentLog,LogLevel::NORM);
 		OutputLogToFile();
 	}
 
-	void Logging::Output()
+	void Logging::FinalOutput()
 	{
-		std::string_view endLogLine = endOfkLogFileLine;
+		const std::string_view endLogLine = endOfkLogFileLine;
 		AddToLogBuffer(endLogLine, LogLevel::NORM);
 		OutputLogToFile();
+		initialized_kLogging = false;
 	}
 
-	void Logging::OutputToFatalFile(const std::string& msg)
+	void Logging::OutputToFatalFile(const std::string& msg, const char* file, const unsigned line)
 	{
-		AddEntry(msg, LogLevel::FATL);
-		std::string_view fatalEOF = endOfkLogFileLine;		
+		AddEntry(msg, LogLevel::FATL, file, line);
+		const std::string_view fatalEOF = endOfkLogFileLine;		
 		AddToLogBuffer(fatalEOF, LogLevel::FATL);
 		OutputLogToFile();
 	}
@@ -186,10 +197,10 @@ namespace util::kLogs
 
 	void Logging::ErasePreviousEntries(const size_t numOfEntries)
 	{
-		const auto lastLoggedEntry = logEntryQueue.cend();
-		const auto startPosition = lastLoggedEntry - (numOfEntries - 1);
+		const auto AfterLastEntryIter = logEntryQueue.cend();
+		const auto startPosition = AfterLastEntryIter - numOfEntries;
 
-		logEntryQueue.erase(startPosition, lastLoggedEntry);
+		logEntryQueue.erase(startPosition, AfterLastEntryIter);
 	}
 
 	void Logging::Clear()

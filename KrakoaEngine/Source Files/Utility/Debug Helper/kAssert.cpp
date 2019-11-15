@@ -2,7 +2,7 @@
 #include "kAssert.h"
 
 #include "../Format To String/kFormatToString.h"
-#include "../Logging/kLog_Class.h"
+#include "../Logging/kLogging.h"
 
 namespace util::debug
 {
@@ -11,8 +11,14 @@ namespace util::debug
 		report(kFormatToString::FormatToString(L"Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, f, l))
 	{
 		wReportToCharReport();
+
+		char fileBuffer[512];
+		const auto fileStr = std::wstring_view(f);
+		auto fileLength = fileStr.size();
+		wcstombs_s(&fileLength, fileBuffer, fileStr.data(), sizeof (fileBuffer));
+		
 		kLogs::GetLogger()->InitializeLogging();
-		kLogs::GetLogger()->OutputToFatalFile( reportChar );
+		kLogs::GetLogger()->OutputToFatalFile( reportChar, fileBuffer, l);
 	}
 
 	AssertOnFailedExpressionException::~AssertOnFailedExpressionException() throw()
@@ -28,14 +34,8 @@ namespace util::debug
 	void AssertOnFailedExpressionException::wReportToCharReport()
 	{
 		char tempChar[1024];
-		auto count = size_t(0);
-		auto currentChar = report.c_str();
-
-		while (*currentChar != (L'\0'))
-		{
-			++currentChar;
-			++count;
-		}
+		auto count = report.size();
+		
 		wcstombs_s(&count, tempChar, report.c_str(), sizeof(tempChar));
 
 		reportChar = tempChar;

@@ -98,7 +98,7 @@ namespace krakoa::kTest
 		auto res = v2 != temp2;
 		v2.Zero();
 
-		kAssert(v2.Magnitude() != 0, "Vector is null");
+		//kAssert(v2.Magnitude() != 0, "Vector is null");
 	}
 
 	void Math_Vector3_Test()

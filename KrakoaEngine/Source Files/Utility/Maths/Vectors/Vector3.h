@@ -71,5 +71,11 @@ namespace util::kMaths
 	using Vector3f = Vector3 < float	>; // floating point
 	using Vector3d = Vector3 < double	>; // double floating point
 	using Vector3u = Vector3 < unsigned >; // unsigned integer
+
+	template<typename T>
+	inline Vector3d operator+(const Vector3d& left, const Vector3<T>& right)
+	{
+		return Vector3d(left.X() + right.X(), left.Y() + right.Y(), left.Z() + right.Z());
+	}
 }
 

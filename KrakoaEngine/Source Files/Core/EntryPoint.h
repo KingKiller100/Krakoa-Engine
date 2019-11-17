@@ -1,19 +1,16 @@
 #pragma once
 #include "Application.h"
+
 #include "../Beta Test/TesterManager.h"
 
-#include <vector>
 #include <memory>
 
 extern krakoa::Application* krakoa::CreateApplication();
 
-void SetUpTests();
-void Tests();
+void RunTests();
 
 int main(int argv, char** argc)
-{
-	Tests();
-	
+{	
 	const auto deletor = [](krakoa::Application* game) -> void
 	{
 		game->Shutdown();
@@ -26,6 +23,7 @@ int main(int argv, char** argc)
 
 	while (app->IsRunning())
 	{
+		RunTests();
 		app->Run();
 		app->Shutdown(); // placed for now so that the application doesn't run endlessly
 	}
@@ -34,9 +32,10 @@ int main(int argv, char** argc)
 }
 
 
-inline void Tests()
+inline void RunTests()
 {
 	auto& testManager = kTest::TesterManager::Reference();
-	testManager.Initialize();
+	testManager.InitializeMathsTests();
+	testManager.InitializeUtilityTests();
 	testManager.RunAll();
 }

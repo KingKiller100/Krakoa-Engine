@@ -43,13 +43,19 @@ namespace kTest::Maths
 
 	void VectorsTester::Math_Vector3_Test()
 	{
-		auto v3 = Vector3f();
-		const Vector3f tempV3 = Vector3f(v3.Z());
+		auto v3 = Vector3f(12, 3, 10);
+		const auto tempV3 = Vector3s(v3.Z());
 
 		CrossProduct(v3, tempV3);
 
+		// operator tests
 		auto result =  tempV3 + v3;
-		
+		result =  tempV3 - v3;
+		result =  tempV3 * v3;
+		result =  tempV3 / v3;
+		v3 -= tempV3;
+		v3 *= tempV3;
+		v3 /= tempV3;
 	}
 
 	void VectorsTester::Math_Vector4_Test()

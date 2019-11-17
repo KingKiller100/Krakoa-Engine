@@ -4,14 +4,9 @@
 
 #include "../Patterns/SimpleSingleton.h"
 
-#include <memory>
-#include <unordered_map>
-
 namespace kTest
 {
-	class Tester;
-	
-	using TestMap = std::unordered_map<const char*, std::unique_ptr<Tester>>;
+	class Tester;	
 	
 	class KRAKOA_API TesterManager : public Pattern::SimpleSingleton<TesterManager>
 	{
@@ -19,13 +14,10 @@ namespace kTest
 		TesterManager(Token);
 		~TesterManager();
 		
-		void Initialize();
-		void RunAll();
-
-	protected:
+		void InitializeMathsTests();
+		void InitializeUtilityTests();
 		void Add(Tester* test);
-		
-	private:
-		TestMap tests;
+		void RunAll();
+		void ClearAllTests();
 	};
 }

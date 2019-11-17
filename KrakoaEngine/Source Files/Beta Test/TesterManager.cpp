@@ -3,7 +3,10 @@
 
 #include "Tester.h"
 
+// Maths Tests
 #include "Maths Tests/Vectors_Test.h"
+
+// Utility Tests
 #include "Utility Tests/Calendar_Test.h"
 #include "Utility Tests/Clock_Test.h"
 #include "Utility Tests/DebugHelp_Test.h"
@@ -12,9 +15,12 @@
 #include "Utility Tests/StringView_Test.h"
 
 #include <iostream>
+#include <unordered_map>
 
 namespace kTest
-{	
+{
+	std::unordered_map<const char*, std::unique_ptr<Tester>> kTests_Tests;
+	
 	TesterManager::TesterManager(Token)
 	{
 	}
@@ -22,30 +28,37 @@ namespace kTest
 	TesterManager::~TesterManager()
 		= default;
 
-	void TesterManager::Initialize()
+	void TesterManager::InitializeMathsTests()
+	{
+		Add(new Maths::VectorsTester());
+	}
+
+	void TesterManager::InitializeUtilityTests()
 	{		
 		Add(new utility::CalendarTester());
 		Add(new utility::ClockTester());
 		Add(new utility::DebugHelpTester());
 		Add(new utility::FileSystemTester());
-		Add(new Maths::VectorsTester());
 		Add(new utility::StringViewTester());
 		Add(new utility::LoggingTester());
 	}
 
 	void TesterManager::Add(Tester* test)
 	{
-		tests.insert(
-			std::make_pair(test->GetName(), 
-				std::unique_ptr<Tester>(std::move(test))));
+		kTests_Tests.insert(std::make_pair(test->GetName(), test));
 	}
 
 	void TesterManager::RunAll()
 	{
-		for (auto& test : tests)
+		for (auto& test : kTests_Tests)
 		{
 			const auto result = test.second->Run() ? "Success: " : "Failed: ";
 			std::cout << result << test.first << "\n";
 		}
+	}
+
+	void TesterManager::ClearAllTests()
+	{
+		kTests_Tests.clear();
 	}
 }

@@ -10,6 +10,7 @@ namespace util
 {
 	namespace kLogs
 	{
+		
 		enum LoggingConsoleColour : unsigned short
 		{
 			NAVY_BLUE = 1,
@@ -39,6 +40,17 @@ namespace util
 			ERRR, // Error
 			FATL  // Fatal
 		};
+		
+#if defined (_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4251)
+		EXPIMP_TEMPLATE template class KRAKOA_API std::deque<std::string>;
+		EXPIMP_TEMPLATE template class KRAKOA_API std::basic_string<char>;
+		EXPIMP_TEMPLATE template class KRAKOA_API std::basic_string_view<char>;
+		EXPIMP_TEMPLATE template class KRAKOA_API std::unordered_map<LogLevel, const char*>;
+		EXPIMP_TEMPLATE template class KRAKOA_API std::unordered_map<LogLevel, LoggingConsoleColour>;
+#pragma warning(pop)
+#endif
 
 		using LogQueue = std::deque<std::string>;
 		

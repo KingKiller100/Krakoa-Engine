@@ -256,50 +256,43 @@ namespace util
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator+=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator+=(r);
+			return left.operator+=(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1> operator-(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator-(r);
+			return left.operator-(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator-=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator-=(r);
+			return left.operator-=(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1> operator*(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator*(r);
+			return left.operator*(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator*=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator*=(r);
+			return left.operator*=(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1> operator/(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator/(r);
+			return left.operator/(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator/=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
-			return left.operator/=(r);
+			return left.operator/=(VectorBase<T1>(right.x, right.y, right.z, right.w));
 		}
 	}
 }

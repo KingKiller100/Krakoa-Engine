@@ -20,6 +20,36 @@ namespace util::kMaths
 		: VectorBase<T>(x, y, z, 0)
 		{}
 
+		template<typename T2>
+		explicit  Vector3(const Vector3& other)
+			: VectorBase<T>(other.X(), other.Y(), other.Z(), 0)
+		{}
+		
+		template<typename T2>
+		explicit  Vector3(const Vector3<T2>& other)
+			: VectorBase<T>(other.X(), other.Y(), other.Z(), 0)
+		{}
+
+
+		Vector3& operator=(const Vector3& other)
+		{
+			this->x = other.x;
+			this->y = other.y;
+			this->z = other.z;
+
+			return *this;
+		}
+
+		template<typename  T2>
+		Vector3& operator=(const Vector3<T2>& other)
+		{
+			this->x = other.X();
+			this->y = other.Y();
+			this->z = other.Z();
+
+			return *this;
+		}
+
 		~Vector3()
 		= default;
 
@@ -61,10 +91,10 @@ namespace util::kMaths
 		}
 	};
 
-	template<typename T>
-	static Vector3<T> CrossProduct(const Vector3<T>& u, const Vector3<T>& v)
+	template<typename T1, typename T2>
+	static Vector3<T1> CrossProduct(const Vector3<T1>& u, const Vector3<T2>& v)
 	{
-		return Vector3<T>(u.CrossProduct(v));
+		return Vector3<T1>(u.CrossProduct( Vector3<T1>(v.X(), v.Y(), v.Z()) ));
 	}
 
 	using Vector3s = Vector3 < int		>; // signed integer

@@ -3,7 +3,6 @@
 // STL libraries
 #include <array>
 #include <chrono>
-#include <cstdio>
 #include <deque>
 #include <fstream>
 #include <future>
@@ -27,8 +26,9 @@
 
 // Windows Libraries
 #include <corecrt.h>
-#include <corecrt_wdirect.h>
-#include <corecrt_wstdio.h>
 #include <direct.h>
+#include <corecrt_wdirect.h>
+#include <cstdio>
+#include <corecrt_wstdio.h>
 #include <Windows.h>
 

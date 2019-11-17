@@ -203,6 +203,30 @@ namespace util
 			friend T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&);
 			friend VectorBase<T> VectorNormalize(const VectorBase<T>&);
 
+			// friend operators for different type vector operations
+			template<typename T2>
+			friend VectorBase<T> operator+(const VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T>& operator+=(VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T> operator-(const VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T>& operator-=(VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T> operator*(const VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T>& operator*=( VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T> operator/(const VectorBase<T>&, const VectorBase<T2>&);
+			
+			template<typename T2>
+			friend VectorBase<T>& operator/=(VectorBase<T>&, const VectorBase<T2>&);
 			
 		protected:
 			T x, y, z, w;
@@ -221,6 +245,61 @@ namespace util
 		T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v)
 		{
 			return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1> operator+(const VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			return left.operator+(VectorBase<T1>(right.x, right.y, right.z, right.w));
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1>& operator+=(VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator+=(r);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1> operator-(const VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator-(r);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1>& operator-=(VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator-=(r);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1> operator*(const VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator*(r);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1>& operator*=(VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator*=(r);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1> operator/(const VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator/(r);
+		}
+
+		template<typename T1, typename T2>
+		VectorBase<T1>& operator/=(VectorBase<T1>& left, const VectorBase<T2>& right)
+		{
+			VectorBase<T1> r = VectorBase<T1>(right.x, right.y, right.z, right.w);
+			return left.operator/=(r);
 		}
 	}
 }

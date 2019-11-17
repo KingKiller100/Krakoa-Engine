@@ -1,15 +1,14 @@
 #pragma once
-#include "Beta Test/Tester.h"
+#include "Application.h"
+#include "../Beta Test/TesterManager.h"
+
+#include <vector>
 #include <memory>
 
-
-using namespace krakoa;
-
-void Tests();
-
-#ifdef KRAKOA_OS_WINDOWS
-
 extern krakoa::Application* krakoa::CreateApplication();
+
+void SetUpTests();
+void Tests();
 
 int main(int argv, char** argc)
 {
@@ -34,19 +33,10 @@ int main(int argv, char** argc)
 	return 0;
 }
 
-#endif
 
 inline void Tests()
 {
-	using namespace kTest;
-	Print_Test();
-	Clock_Test();
-	FileSystem_Test();
-	Debugger_Test();
-	Calendar_Test();
-	Logger_Test();
-	Math_Vector2_Test();
-	Math_Vector3_Test();
-	Math_Vector4_Test();
-	String_View_Test();
+	auto& testManager = kTest::TesterManager::Reference();
+	testManager.Initialize();
+	testManager.RunAll();
 }

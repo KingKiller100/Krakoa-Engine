@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Precompile.h"
+#include "../../Core/EngineCore.h"
 
 #include <string>
 #include <deque>
@@ -42,7 +42,7 @@ namespace util
 
 		using LogQueue = std::deque<std::string>;
 		
-		class Logging
+		class KRAKOA_API Logging
 		{
 		public:
 			Logging();

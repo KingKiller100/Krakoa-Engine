@@ -15,7 +15,7 @@ namespace util::kMaths
 		~Matrix4x4()
 			= default;
 
-		constexpr void Identity()
+		void Identity()
 		{
 			for (auto& mat : matrix)
 				mat.Zero();

@@ -1,20 +1,36 @@
 #pragma once
+
 #include "../Core/EngineCore.h"
 
-namespace krakoa
+namespace kTest
 {
-	namespace kTest
+	class KRAKOA_API Tester
 	{
-		KRAKOA_API void Print_Test();
-		KRAKOA_API void Debugger_Test();		
-		KRAKOA_API void Clock_Test();
-		KRAKOA_API void FileSystem_Test();
-		KRAKOA_API void Calendar_Test();
-		KRAKOA_API void Logger_Test();
-		KRAKOA_API void Math_Vector2_Test();
-		KRAKOA_API void Math_Vector3_Test();
-		KRAKOA_API void Math_Vector4_Test();
-		KRAKOA_API void String_View_Test();
-		KRAKOA_API void UTF_Converters_Test();
+	public:
+		Tester(const char* name) noexcept;
+		Tester(Tester&& other) noexcept;
+		Tester& operator=(Tester&& other) noexcept;
+
+		virtual ~Tester();
+
+		constexpr const char* GetName() const;
+		
+		bool Run();
+
+
+		// Deleted Funcs
+		Tester(const Tester& other) = delete;
+		Tester& operator=(const Tester& other) = delete;
+		
+	private:
+		virtual void Test() = 0;
+		
+	protected:
+		const char* name;
+	};
+
+	constexpr const char* Tester::GetName() const
+	{
+		return name;
 	}
 }

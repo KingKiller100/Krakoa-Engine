@@ -176,6 +176,14 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source Files\Beta Test\TesterManager.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\Clock_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\DebugHelp_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\FileSystem_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\Calendar_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\Logging_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\StringView_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Maths Tests\Vectors_Test.cpp" />
     <ClCompile Include="Source Files\Utility\Calendar\kCalendar.cpp" />
     <ClCompile Include="Source Files\Utility\Debug Helper\kAssert.cpp" />
     <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp" />
@@ -195,12 +203,21 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source Files\Beta Test\TesterManager.h" />
+    <ClInclude Include="Source Files\Patterns\SimpleSingleton.h" />
+    <ClInclude Include="Source Files\Beta Test\Utility Tests\Clock_Test.h" />
+    <ClInclude Include="Source Files\Beta Test\Utility Tests\DebugHelp_Test.h" />
+    <ClInclude Include="Source Files\Beta Test\Utility Tests\FileSystem_Test.h" />
+    <ClInclude Include="Source Files\Beta Test\Utility Tests\Calendar_Test.h" />
+    <ClInclude Include="Source Files\Beta Test\Utility Tests\Logging_Test.h" />
+    <ClInclude Include="Source Files\Beta Test\Utility Tests\StringView_Test.h" />
+    <ClInclude Include="Source Files\Beta Test\Maths Tests\Vectors_Test.h" />
     <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.h" />
     <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.h" />
     <ClInclude Include="Source Files\Beta Test\Tester.h" />
     <ClInclude Include="Source Files\Core\Application.h" />
     <ClInclude Include="Source Files\Core\EngineCore.h" />
-    <ClInclude Include="Source Files\Core\Entry.h" />
+    <ClInclude Include="Source Files\Core\EntryPoint.h" />
     <ClInclude Include="Source Files\Krakoa.h" />
     <ClInclude Include="Source Files\Utility\Calendar\kCalendar.h" />
     <ClInclude Include="Source Files\Utility\Clock\kClock.h" />
@@ -218,7 +235,7 @@
     <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.h" />
     <ClInclude Include="Source Files\Utility\Maths\Vectors\VectorBase.h" />
     <ClInclude Include="Source Files\Precompile.h" />
-    <ClInclude Include="Source Files\Utility\String View\string_view.h" />
+    <ClInclude Include="Source Files\Utility\String View\StringView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../Core/EngineCore.h"
 #include "../Debug Helper/kAssert.h"
 
 #include <limits>
@@ -110,13 +111,13 @@ namespace util
 			USE_RESULT constexpr Const_Ref Front() const
 			{
 				kAssert(string != nullptr, "string is null");
-				return Empty() ? CharT("") : string[0];
+				return string[0];
 			}
 
 			USE_RESULT constexpr Const_Ref Back() const
 			{
 				kAssert(string != nullptr, "string is null");
-				return Empty() ? CharT("") : string[length - 1];
+				return length < 1 ? string[0] : string[length - 1];
 			}
 
 			constexpr bool StartsWith(const CharT item) noexcept

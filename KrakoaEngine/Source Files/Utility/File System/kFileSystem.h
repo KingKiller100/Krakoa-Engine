@@ -34,7 +34,6 @@ namespace util
 		void OutputToFile(const CharT* fullDirectory, const CharT* content)
 		{
 			FileWriter<CharT> outFile(fullDirectory, std::ios::out | std::ios::app);
-			//std::ofstream outFile(fullDirectory, std::ios::out | std::ios::app);
 
 			if (outFile.is_open())
 			{

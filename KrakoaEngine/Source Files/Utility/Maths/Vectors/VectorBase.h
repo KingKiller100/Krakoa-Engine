@@ -4,7 +4,6 @@ namespace util
 {
 	namespace kMaths
 	{
-
 		template<typename T>
 		struct VectorBase;
 
@@ -177,7 +176,7 @@ namespace util
 
 				return *this;
 			}
-
+			
 			// bool operator == returns true if both VectorBaseD values are equal				
 			bool operator==(const VectorBase& v) const
 			{
@@ -250,49 +249,82 @@ namespace util
 		template<typename T1, typename T2>
 		VectorBase<T1> operator+(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator+(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator+(VectorBase<T1>(
+				static_cast<T1>(right.x), 
+				static_cast<T1>(right.y), 
+				static_cast<T1>(right.z), 
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator+=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator+=(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator+=(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1> operator-(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator-(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator-(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator-=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator-=(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator-=(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1> operator*(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator*(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator*(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator*=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator*=(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator*=(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1> operator/(const VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator/(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator/(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
 
 		template<typename T1, typename T2>
 		VectorBase<T1>& operator/=(VectorBase<T1>& left, const VectorBase<T2>& right)
 		{
-			return left.operator/=(VectorBase<T1>(right.x, right.y, right.z, right.w));
+			return left.operator/=(VectorBase<T1>(
+				static_cast<T1>(right.x),
+				static_cast<T1>(right.y),
+				static_cast<T1>(right.z),
+				static_cast<T1>(right.w)));
 		}
+
 	}
 }

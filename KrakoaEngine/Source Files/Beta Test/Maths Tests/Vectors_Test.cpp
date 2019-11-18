@@ -25,7 +25,7 @@ namespace kTest::Maths
 
 	void VectorsTester::Math_Vector2_Test()
 	{
-		auto v2 = ::util::kMaths::Vector2<double>(5, -10);
+		auto v2 = Vector2d(5.999, -10.675);
 		v2.ToPositives();
 		v2.ReverseVector();
 		v2.X();
@@ -43,19 +43,19 @@ namespace kTest::Maths
 
 	void VectorsTester::Math_Vector3_Test()
 	{
-		auto v3 = Vector3f(12, 3, 10);
-		const auto tempV3 = Vector3s(v3.Z());
+		auto v3 = Vector3f(12.6f, 3.4f, 10.345f);
+		const auto tempV3 = Vector3s(static_cast<int>(v3.Z()));
 
 		CrossProduct(v3, tempV3);
 
+		auto ans = v3 + tempV3;
 		// operator tests
-		auto result =  tempV3 + v3;
-		result =  tempV3 - v3;
-		result =  tempV3 * v3;
+		//auto result = tempV3 + v3;
+		//auto result = tempV3 * v3;
+		/*result =  tempV3 - v3;
 		result =  tempV3 / v3;
-		v3 -= tempV3;
 		v3 *= tempV3;
-		v3 /= tempV3;
+		v3 /= tempV3;*/
 	}
 
 	void VectorsTester::Math_Vector4_Test()

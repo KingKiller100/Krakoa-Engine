@@ -13,11 +13,13 @@ namespace kTest
 	public:
 		TesterManager(Token);
 		~TesterManager();
+
+		static void Shutdown();
 		
-		void InitializeMathsTests();
-		void InitializeUtilityTests();
-		void Add(Tester* test);
-		void RunAll();
-		void ClearAllTests();
+		static void InitializeMathsTests();
+		static void InitializeUtilityTests();
+		static void Add(Tester* test);
+		static void RunAll();
+		static void ClearAllTests();
 	};
 }

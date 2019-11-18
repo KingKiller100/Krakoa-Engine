@@ -11,6 +11,8 @@ void RunTests();
 
 int main(int argv, char** argc)
 {	
+	RunTests();
+		
 	const auto deletor = [](krakoa::Application* game) -> void
 	{
 		game->Shutdown();
@@ -23,7 +25,6 @@ int main(int argv, char** argc)
 
 	while (app->IsRunning())
 	{
-		RunTests();
 		app->Run();
 		app->Shutdown(); // placed for now so that the application doesn't run endlessly
 	}

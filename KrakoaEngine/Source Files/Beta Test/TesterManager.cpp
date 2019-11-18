@@ -28,6 +28,10 @@ namespace kTest
 	TesterManager::~TesterManager()
 		= default;
 
+	void TesterManager::Shutdown()
+	{
+	}
+
 	void TesterManager::InitializeMathsTests()
 	{
 		Add(new Maths::VectorsTester());

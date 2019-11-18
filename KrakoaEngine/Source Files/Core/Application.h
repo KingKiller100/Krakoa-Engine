@@ -11,7 +11,7 @@ namespace krakoa
 		virtual ~Application();
 
 		void Initialize();
-		void Run();
+		static void Run();
 		constexpr  bool IsRunning() const;
 		virtual void Shutdown() = 0;
 

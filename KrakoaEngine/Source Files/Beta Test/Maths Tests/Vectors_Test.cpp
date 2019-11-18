@@ -46,9 +46,11 @@ namespace kTest::Maths
 		auto v3 = Vector3f(12.6f, 3.4f, 10.345f);
 		const auto tempV3 = Vector3s(static_cast<int>(v3.Z()));
 
-		CrossProduct(v3, tempV3);
+		auto v = CrossProduct(v3, tempV3);
 
-		auto ans = v3 + tempV3;
+		auto lol = v3 + v3;
+		auto ans = tempV3 + (v3);
+		auto ref = v3[1];
 		// operator tests
 		//auto result = tempV3 + v3;
 		//auto result = tempV3 * v3;

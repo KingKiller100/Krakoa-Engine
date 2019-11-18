@@ -16,9 +16,9 @@ namespace kTest::utility
 
 	void FileSystemTester::Test()
 	{
-		kFileSystem::CheckFileExists("C:\\Users\\kweku\\Documents\\Krakoa Engine\\bin\\x64\\Debug\\Hooper2\\waitforremotedebugger");
 		const auto cwd = kFileSystem::GetCurrentWorkingDirectory<char>();
-		kFileSystem::CreateNewDirectories<char>((cwd + "Create Directories Test\\Success1\\Success2\\"));
+		kFileSystem::CheckFileExists( (cwd + "Krakoa Engine\\bin\\x64\\Debug\\Hooper2\\waitforremotedebugger").c_str() );
+		kFileSystem::CreateNewDirectories<char>( (cwd + "Create Directories Test\\Success1\\Success2\\").c_str() );
 		kFileSystem::CreateNewDirectory((cwd + "Create Directory Test\\").c_str());
 		kFileSystem::DeleteDirectory((cwd + "Create Directories Test\\Success1\\Success2").c_str());
 		kFileSystem::OutputToFile((cwd + "Create Directory Test\\Test.txt").c_str(), "Success\n");

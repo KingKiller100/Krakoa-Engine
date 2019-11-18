@@ -7,16 +7,21 @@ namespace util
 {
 	namespace kFileSystem
 	{
-		//Type aliases for STL container --------------------------------------------------------
+		//Type aliases for STL containers --------------------------------------------------------
+		
+		// STL string
 		template<class Char>
 		using StringType = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
 
+		// STL string_view
 		template<class Char>
 		using StringReader = std::basic_string_view<Char>;
 
+		// STL ifstream
 		template<class Char>
 		using FileReader = std::basic_ifstream<Char, std::char_traits<Char>>;
 
+		// STL ofstream
 		template<class Char>
 		using FileWriter = std::basic_ofstream<Char, std::char_traits<Char>>;
 		// --------------------------------------------------------------------------------------
@@ -40,6 +45,29 @@ namespace util
 				outFile << content;
 				outFile.close();
 			}
+		}
+
+		/**
+		 * \brief
+		 *		Creates a new folder to the directory, if it does not exist already
+		 * \param directory
+		 *		Full folder path of the new folder to be created
+		 * \return
+		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
+		 */
+		template<class CharT>
+		bool CreateNewDirectory(const CharT* directory)
+		{
+			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			{
+				return _mkdir(directory) == 0;
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			{
+				return _wmkdir(directory) == 0;
+			}
+
+			return false;
 		}
 
 		/**
@@ -76,29 +104,6 @@ namespace util
 
 				isDirCreated = CreateNewDirectory<CharT>(nextDirectory.data());
 			}
-		}
-
-		/**
-		 * \brief
-		 *		Creates a new folder to the directory, if it does not exist already
-		 * \param directory
-		 *		Full folder path of the new folder to be created
-		 * \return
-		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
-		 */
-		template<class CharT>
-		bool CreateNewDirectory(const CharT* directory)
-		{
-			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
-			{
-				return _mkdir(directory) == 0;
-			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
-			{
-				return _wmkdir(directory) == 0;
-			}
-
-			return false;
 		}
 
 		/**

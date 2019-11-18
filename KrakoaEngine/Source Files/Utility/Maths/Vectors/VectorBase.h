@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../Debug Helper/kAssert.h"
+
 namespace util
 {
 	namespace kMaths
@@ -85,7 +87,8 @@ namespace util
 
 			T& operator[](size_t index)
 			{
-				return *(reinterpret_cast<T*>(this) + index);
+				kAssert(index < 4, "Invalid index - Index to unreachable dimension!");
+				return *(reinterpret_cast<T*>(this) + index * sizeof(T*));
 			}
 
 			// Overloads + operator to add two vectors objects

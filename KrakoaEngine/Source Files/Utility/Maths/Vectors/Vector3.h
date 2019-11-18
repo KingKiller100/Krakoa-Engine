@@ -59,6 +59,11 @@ namespace util::kMaths
 				this->z * v.x - this->x * v.z,
 				this->x * v.y - this->y * v.x);
 		}
+		
+		Vector3 operator+(const Vector3& right) const
+		{
+			return Vector3(this->x + right.X(), this->y + right.Y(), this->z + right.Z());
+		}
 	};
 
 	template<typename T1, typename T2>
@@ -69,7 +74,7 @@ namespace util::kMaths
 			static_cast<T1>(v.Y()),
 			static_cast<T1>(v.Z()))));
 	}
-
+	   
 	template<typename T1, typename T2>
 	Vector3<T1> operator+(const Vector3<T1>& left, const Vector3<T2>& right)
 	{

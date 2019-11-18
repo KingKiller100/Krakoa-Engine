@@ -28,7 +28,7 @@ namespace util
 			VIOLET_PURPLE,
 			YELLOW,
 			WHITE,
-			FATAL_RED_BG_WHITE_TEXT = 79
+			RED_BG_WHITE_TEXT = 79
 		};
 		
 		enum class LogLevel : unsigned short
@@ -94,7 +94,7 @@ namespace util
 			 * \param file
 			 * \param line
 			 */
-			void OutputToFatalFile(const typename LogQueue::value_type& msg, const char* file, const unsigned line);
+			void OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line);
 
 			/**
 			 * \brief

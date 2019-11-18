@@ -30,7 +30,8 @@ namespace kTest::Maths
 		v2.ReverseVector();
 		v2.X();
 		v2.Y();
-		v2 *= 8;
+		auto g = v2 *= 8;
+		g = v2 /= 8;
 		v2.Truncate(30);
 		const auto temp = v2.Magnitude();
 		const auto temp1 = v2.Perpendicular();
@@ -48,16 +49,17 @@ namespace kTest::Maths
 
 		auto v = CrossProduct(v3, tempV3);
 
-		auto lol = v3 + v3;
-		auto ans = tempV3 + (v3);
 		auto ref = v3[1];
-		// operator tests
-		//auto result = tempV3 + v3;
-		//auto result = tempV3 * v3;
-		/*result =  tempV3 - v3;
+
+		// operator tests		
+		auto result = tempV3 + v3;
+		result = tempV3 * v3;
+		result =  tempV3 - v3;
 		result =  tempV3 / v3;
 		v3 *= tempV3;
-		v3 /= tempV3;*/
+		v3 /= tempV3;
+		v3 *= 2;
+		v3 = tempV3;
 	}
 
 	void VectorsTester::Math_Vector4_Test()

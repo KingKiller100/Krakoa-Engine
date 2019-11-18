@@ -1,26 +1,38 @@
 #pragma once
 
 // STL libraries
+
+// Containers
 #include <array>
-#include <chrono>
 #include <deque>
-#include <fstream>
-#include <future>
-#include <iostream>
 #include <map>
 #include <unordered_map>
-#include <memory>
 #include <set>
 #include <unordered_set>
-#include <sstream>
 #include <stack>
 #include <string>
 #include <string_view>
-#include <thread>
 #include <vector>
+
+// Threading
+#include <future>
+#include <thread>
+
+// Input/Output Handlers
+#include <fstream>
+#include <istream>
+#include <ostream>
+#include <iostream>
+
+// Misc.
+#include <chrono>
+#include <memory>
+#include <sstream>
 #include <utility>
 
-// Primitive types
+// End STL Libraries
+
+// Primitive types handling
 #include <cwchar>
 #include <type_traits>
 

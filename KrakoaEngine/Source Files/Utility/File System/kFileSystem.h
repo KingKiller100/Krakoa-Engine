@@ -1,5 +1,9 @@
 #pragma once
 
+#include <direct.h>
+#include <corecrt_wdirect.h>
+#include <cstdio>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -24,6 +28,10 @@ namespace util
 		// STL ofstream
 		template<class Char>
 		using FileWriter = std::basic_ofstream<Char, std::char_traits<Char>>;
+
+		// STL vector of StringTypes
+		template<typename Char>
+		using FileDataLines = std::vector<StringReader<Char>>;
 		// --------------------------------------------------------------------------------------
 
 		
@@ -35,10 +43,10 @@ namespace util
 		 * \param content
 		 *		The data to fill the file with.
 		 */
-		template<class CharT>
-		void OutputToFile(const CharT* fullDirectory, const CharT* content)
+		template<class CharType>
+		void OutputToFile(const CharType* fullDirectory, const CharType* content)
 		{
-			FileWriter<CharT> outFile(fullDirectory, std::ios::out | std::ios::app);
+			FileWriter<CharType> outFile(fullDirectory, std::ios::out | std::ios::app);
 
 			if (outFile.is_open())
 			{
@@ -55,14 +63,14 @@ namespace util
 		 * \return
 		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 		 */
-		template<class CharT>
-		bool CreateNewDirectory(const CharT* directory)
+		template<class CharType>
+		bool CreateNewDirectory(const CharType* directory)
 		{
-			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
 				return _mkdir(directory) == 0;
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
 				return _wmkdir(directory) == 0;
 			}
@@ -82,19 +90,21 @@ namespace util
 		 *		The path must be completely unique otherwise the path will not be created. If parts of the
 		 *		path already exist, only
 		 */
-		template<class CharT>
-		bool CreateNewDirectories(const StringReader<CharT>& directory)
+		template<class CharType>
+		bool CreateNewDirectories(const CharType* directory)
 		{
-			if (directory.back() != '\\')
-				return false; // Final segment of directory must end with '\\'
+			StringReader<CharType> dir(directory);
+			
+			if (dir.back() != '\\')
+				return false; // Final suffix of directory char type must end with '\\'
 
 			bool isDirCreated = false;
-			auto pos = directory.find_first_of('\\') + 1;
+			auto pos = dir.find_first_of('\\') + 1;
 
 			while (true)
 			{
-				const auto nextForwardSlash = directory.find_first_of('\\', pos) + 1;
-				const auto nextDirectory = directory.substr(0, nextForwardSlash);
+				const auto nextForwardSlash = dir.find_first_of('\\', pos) + 1;
+				const auto nextDirectory = dir.substr(0, nextForwardSlash);
 				pos = nextForwardSlash;
 
 				if (pos == 0)
@@ -102,7 +112,7 @@ namespace util
 					return isDirCreated;
 				}
 
-				isDirCreated = CreateNewDirectory<CharT>(nextDirectory.data());
+				isDirCreated = CreateNewDirectory<CharType>(nextDirectory.data());
 			}
 		}
 
@@ -118,14 +128,14 @@ namespace util
 		 *		- The folder is completely empty (including empty of system and hidden folder files)
 		 *		- This directory is not the current directory of this application.
 		 */
-		template<class CharT>
-		bool DeleteDirectory(const CharT* directory)
+		template<class CharType>
+		bool DeleteDirectory(const CharType* directory)
 		{
-			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
 				return _rmdir(directory) == 0;
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
 				return _wrmkdir(directory) == 0;
 			}
@@ -142,17 +152,17 @@ namespace util
 		 *		TRUE if file exist or FALSE if file does not exist
 		 */
 
-		template<class CharT>
-		bool CheckFileExists(const CharT* fileName)
+		template<class CharType>
+		bool CheckFileExists(const CharType* fileName)
 		{
 			FILE* file;
 			auto result = -1;
 
-			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
 				result = fopen_s(&file, fileName, "r");
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
 				result = _wfopen_s(&file, fileName, L"r");
 			}
@@ -175,18 +185,42 @@ namespace util
 		 * \return
 		 *		A vector of every line of data in the file, as a string
 		 */
-		template<class CharT>
-		std::vector<StringType<CharT>> ParseFileData(const CharT* fullFilePath)
+	/*	template<class CharType>
+		std::vector<StringType<CharType>> ParseFileData(const CharType* fullFilePath)
 		{
-			std::vector<StringType<CharT>> fileData;
+			std::vector<StringType<CharType>> fileData;
 
-			if (CheckFileExists<CharT>(fullFilePath))
+			if (CheckFileExists<CharType>(fullFilePath))
 			{
-				std::basic_ifstream<CharT, std::char_traits<CharT>> inFile(fullFilePath);
+				FileReader<CharType> inFile(fullFilePath);
 
 				if (inFile.is_open())
 				{
-					StringType<CharT> data;
+					StringType<CharType> data;
+					while (!(inFile.eof()))
+					{
+						std::getline(inFile, data);
+						fileData.push_back(data);
+					}
+					inFile.close();
+				}
+			}
+
+			return fileData;
+		}*/
+
+		template<class CharType>
+		inline std::vector<std::string> ParseFileData(const char* fullFilePath)
+		{
+			std::vector<std::string> fileData;
+
+			if (CheckFileExists(fullFilePath))
+			{
+				std::ifstream inFile(fullFilePath);
+
+				if (inFile.is_open())
+				{
+					std::string data;
 					while (!(inFile.eof()))
 					{
 						std::getline(inFile, data);
@@ -198,7 +232,7 @@ namespace util
 
 			return fileData;
 		}
-
+		
 		/**
 		 * \brief
 		 *		Returns the current directory
@@ -218,7 +252,7 @@ namespace util
 					GetModuleFileNameA(nullptr, cwdBuffer, sizeof(cwdBuffer));
 				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
 					GetModuleFileNameW(nullptr, cwdBuffer, sizeof(cwdBuffer));
-
+				 
 				fullFolderPathOfCurrentWorkingDirectory = cwdBuffer;
 
 				// Remove the filename, but keep the end slash

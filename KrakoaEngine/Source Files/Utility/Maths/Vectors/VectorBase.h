@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../Debug Helper/kAssert.h"
-
 namespace util
 {
 	namespace kMaths
@@ -62,12 +60,12 @@ namespace util
 			// Calculates distance between two 3D objects
 			constexpr T Distance(const VectorBase& v)
 			{
-				auto distanceVec = v - *this;				
+				const auto distanceVec = v - *this;				
 				return distanceVec.Magnitude();
 			}
 
 
-			// Returns vector times by -1 - does not reassign values
+			// Returns vector times by -1 - does not reassign values (except w element)
 			VectorBase ReverseVector()
 			{
 				this->x *= -1;
@@ -77,7 +75,7 @@ namespace util
 				return *this;
 			}
 
-			// Sets all values of the vector to zero
+			// Sets all values of the vector to zero (except w element)
 			void Zero()
 			{
 				this->x = 0;
@@ -87,8 +85,10 @@ namespace util
 
 			T& operator[](size_t index)
 			{
-				kAssert(index < 4, "Invalid index - Index to unreachable dimension!");
-				return *(reinterpret_cast<T*>(this) + index * sizeof(T*));
+				if (index > 3)
+					std::out_of_range("Index is out of range");
+
+				return *(reinterpret_cast<T*>(this) + index);
 			}
 
 			// Overloads + operator to add two vectors objects
@@ -128,11 +128,11 @@ namespace util
 			}
 
 			// adds to current vector3 value
-			VectorBase& operator+=(const VectorBase& v)
+			/*VectorBase& operator+=(const VectorBase& v)
 			{
 				*this = *this + v;
 				return *this;
-			}
+			}*/
 
 			// divides current vector3 value
 			VectorBase& operator-=(const VectorBase& v)
@@ -142,32 +142,32 @@ namespace util
 			}
 
 			// divides current vector3 value and sets variable to it
-			VectorBase& operator/=(const VectorBase& v)
+			virtual VectorBase& operator/=(const VectorBase& v)
 			{
 				*this = *this / v;
 				return *this;
 			}
 
 			// divides current vector3 value by a float and sets variable to it
-			VectorBase& operator/=(const T f)
+		/*	VectorBase& operator/=(const T f)
 			{
 				*this = *this / f;
 				return *this;
-			}
+			}*/
 
 			// multiplies current vector3 value and sets variable to it
-			VectorBase& operator*=(const VectorBase& v)
+			virtual VectorBase& operator*=(const VectorBase& v)
 			{
 				*this = *this * v;
 				return *this;
 			}
 
 			// multiply current vector3 value by a float and sets variable to it
-			VectorBase& operator*=(const T f)
+		/*	virtual VectorBase& operator*=(const T f)
 			{
 				*this = *this * f;
 				return *this;
-			}
+			}*/
 			
 			// Overloads = operator to make one vector axis values equal to another
 			VectorBase& operator=(const VectorBase& v)
@@ -186,7 +186,7 @@ namespace util
 				return (this->x == v.x && this->y == v.y && this->z == v.z);
 			}
 
-			// bool operator != returns true if both VectorBaseD values are NOT equal			
+			// bool operator != returns true if both VectorBase values are NOT equal			
 			bool operator!=(const VectorBase& v) const
 			{
 				return !(*this == v);
@@ -205,30 +205,6 @@ namespace util
 			friend T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&);
 			friend VectorBase<T> VectorNormalize(const VectorBase<T>&);
 
-			// friend operators for different type vector operations
-			template<typename T2>
-			friend VectorBase<T> operator+(const VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T>& operator+=(VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T> operator-(const VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T>& operator-=(VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T> operator*(const VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T>& operator*=( VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T> operator/(const VectorBase<T>&, const VectorBase<T2>&);
-			
-			template<typename T2>
-			friend VectorBase<T>& operator/=(VectorBase<T>&, const VectorBase<T2>&);
 			
 		protected:
 			T x, y, z, w;
@@ -247,86 +223,6 @@ namespace util
 		T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v)
 		{
 			return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1> operator+(const VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator+(VectorBase<T1>(
-				static_cast<T1>(right.x), 
-				static_cast<T1>(right.y), 
-				static_cast<T1>(right.z), 
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1>& operator+=(VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator+=(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1> operator-(const VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator-(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1>& operator-=(VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator-=(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1> operator*(const VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator*(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1>& operator*=(VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator*=(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1> operator/(const VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator/(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
-		}
-
-		template<typename T1, typename T2>
-		VectorBase<T1>& operator/=(VectorBase<T1>& left, const VectorBase<T2>& right)
-		{
-			return left.operator/=(VectorBase<T1>(
-				static_cast<T1>(right.x),
-				static_cast<T1>(right.y),
-				static_cast<T1>(right.z),
-				static_cast<T1>(right.w)));
 		}
 
 	}

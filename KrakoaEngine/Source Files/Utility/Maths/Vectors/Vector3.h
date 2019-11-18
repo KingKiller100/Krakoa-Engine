@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VectorBase.h"
+#include "Vector3.h"
 
 namespace util::kMaths
 {
@@ -59,10 +59,117 @@ namespace util::kMaths
 				this->z * v.x - this->x * v.z,
 				this->x * v.y - this->y * v.x);
 		}
-		
-		Vector3 operator+(const Vector3& right) const
+
+		// Operators
+
+		Vector3 operator- () const
 		{
-			return Vector3(this->x + right.X(), this->y + right.Y(), this->z + right.Z());
+			return Vector3(-this->X(), -this->Y(), -this->Z());
+		}
+
+		// Overloads + operator to add two vectors objects
+		template<typename T2>
+		Vector3 operator+(const Vector3<T2>& v) const
+		{
+			return Vector3(
+				this->x + static_cast<T>(v.X()),
+				this->y + static_cast<T>(v.Y()),
+				this->z + static_cast<T>(v.Z()));
+		}
+
+		// Overloads - operator to subtract two vectors objects
+		template<typename T2>
+		Vector3 operator-(const Vector3<T2>& v) const
+		{
+			return Vector3(
+				this->x - static_cast<T>(v.X()),
+				this->y - static_cast<T>(v.Y()),
+				this->z - static_cast<T>(v.Z()));
+		}
+
+		// Overloads * operator to multiply two vector objects
+		template<typename T2>
+		Vector3 operator*(const Vector3<T2>& v) const
+		{
+			return Vector3(
+				this->x * static_cast<T>(v.X()),
+				this->y* static_cast<T>(v.Y()),
+				this->z* static_cast<T>(v.Z()));
+		}
+
+		// Overloads / operator to divide two vectors objects
+		template<typename T2>
+		Vector3 operator/(const Vector3<T2>& v) const
+		{
+			return Vector3(
+				this->x / static_cast<T>(v.X()),
+				this->y / static_cast<T>(v.Y()),
+				this->z / static_cast<T>(v.Z()));
+		}
+
+		// adds to current vector3 value
+		template<typename T2>
+		Vector3& operator+=(const Vector3<T2>& v)
+		{
+			*this = *this + v;
+			return *this;
+		}
+
+		// divides current vector3 value
+		template<typename T2>
+		Vector3& operator-=(const Vector3<T2>& v)
+		{
+			*this = *this - v;
+			return *this;
+		}
+
+		// divides current vector3 value and sets variable to it
+		template<typename T2>
+		Vector3& operator/=(const Vector3<T2>& v)
+		{
+			*this = *this / v;
+			return *this;
+		}
+
+		// multiplies current vector3 value and sets variable to it
+		template<typename T2>
+		Vector3& operator*=(const Vector3<T2>& v)
+		{
+			*this = *this * v;
+			return *this;
+		}
+
+		Vector3 operator*(const T f)
+		{
+			return Vector3(this->X() * f, this->Y() * f, this->Z() * f);
+		}
+
+		Vector3 operator/(const T f)
+		{
+			return Vector3(this->X() / f, this->Y() / f, this->Z() * f);
+		}
+
+		Vector3& operator*=(const T f) 
+		{
+			*this = *this * f;
+			return *this;
+		}
+
+		Vector3& operator/=(const T f) 
+		{
+			*this = *this / f;
+			return *this;
+		}
+		
+		// Overloads = operator to make one vector values equivalent to another
+		template<typename T2>
+		Vector3& operator=(const Vector3<T2>& v)
+		{
+			this->x = static_cast<T>(v.X());
+			this->y = static_cast<T>(v.Y());
+			this->z = static_cast<T>(v.Z());
+
+			return *this;
 		}
 	};
 
@@ -74,85 +181,6 @@ namespace util::kMaths
 			static_cast<T1>(v.Y()),
 			static_cast<T1>(v.Z()))));
 	}
-	   
-	template<typename T1, typename T2>
-	Vector3<T1> operator+(const Vector3<T1>& left, const Vector3<T2>& right)
-	{
-		return left.operator+(Vector3<T1>(
-			static_cast<T1>(right.X()),
-			static_cast<T1>(right.Y()),
-			static_cast<T1>(right.Z())));
-	}
-
-	/*template<typename T1, typename T2>
-	VectorBase<T1>& operator+=(VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator+=(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}
-
-	template<typename T1, typename T2>
-	VectorBase<T1> operator-(const VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator-(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}
-
-	template<typename T1, typename T2>
-	VectorBase<T1>& operator-=(VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator-=(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}
-
-	template<typename T1, typename T2>
-	VectorBase<T1> operator*(const VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator*(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}
-
-	template<typename T1, typename T2>
-	VectorBase<T1>& operator*=(VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator*=(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}
-
-	template<typename T1, typename T2>
-	VectorBase<T1> operator/(const VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator/(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}
-
-	template<typename T1, typename T2>
-	VectorBase<T1>& operator/=(VectorBase<T1>& left, const VectorBase<T2>& right)
-	{
-		return left.operator/=(VectorBase<T1>(
-			static_cast<T1>(right.x),
-			static_cast<T1>(right.y),
-			static_cast<T1>(right.z),
-			static_cast<T1>(right.w)));
-	}*/
 
 	using Vector3s = Vector3 < int		>; // signed integer
 	using Vector3f = Vector3 < float	>; // floating point

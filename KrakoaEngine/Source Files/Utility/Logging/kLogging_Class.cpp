@@ -64,7 +64,7 @@ namespace util::kLogs
 		consoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
 		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::SCARLET_RED));
 		consoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
-		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::FATAL_RED_BG_WHITE_TEXT));
+		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::RED_BG_WHITE_TEXT));
 	}
 	
 	void Logging::AddToLogBuffer(const std::string_view & logLine, const LogLevel lvl)
@@ -149,7 +149,7 @@ namespace util::kLogs
 		initialized_kLogging = false;
 	}
 
-	void Logging::OutputToFatalFile(const std::string& msg, const char* file, const unsigned line)
+	void Logging::OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line)
 	{
 		AddEntry(msg, LogLevel::FATL, file, line);
 		const std::string_view fatalEOF = endOfkLogFileLine;		
@@ -167,6 +167,8 @@ namespace util::kLogs
 		SetConsoleTextAttribute(hConsole, consoleColourMap.at(lvl));
 		
 		printf_s("%s", logLine.data());
+
+		SetConsoleTextAttribute(hConsole, consoleColourMap.at(LogLevel::NORM));
 	}
 
 	std::string Logging::GetFullLogText()
@@ -211,7 +213,7 @@ namespace util::kLogs
 	
 	void Logging::OutputLogToFile()
 	{				
-		CreateNewDirectories<char>(directory);
+		CreateNewDirectories(directory.c_str());
 		OutputToFile((directory + filename).c_str(), GetFullLogText().c_str());
 	}
 }

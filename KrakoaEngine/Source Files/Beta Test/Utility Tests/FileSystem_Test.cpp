@@ -14,7 +14,7 @@ namespace kTest::utility
 	FileSystemTester::~FileSystemTester()
 		= default;
 
-	void FileSystemTester::Test()
+	bool FileSystemTester::Test()
 	{
 		const auto cwd = kFileSystem::GetCurrentWorkingDirectory<char>();
 		auto good = kFileSystem::CheckFileExists( (cwd + "waitforremotedebugger").c_str() );
@@ -24,5 +24,7 @@ namespace kTest::utility
 		auto isDeleted = kFileSystem::DeleteDirectory((cwd + "Create Directories Test\\Success1\\Success2").c_str());
 		kFileSystem::OutputToFile((cwd + "Create Directory Test\\Test.txt").c_str(), "Success\n");
 		const auto fileInfo = util::kFileSystem::ParseFileData((cwd + "Create Directory Test\\Test.txt").c_str());
+
+		return true;
 	}
 }

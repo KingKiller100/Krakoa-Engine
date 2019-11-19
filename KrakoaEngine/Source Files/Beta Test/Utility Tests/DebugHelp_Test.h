@@ -10,7 +10,7 @@ namespace kTest::utility
 		~DebugHelpTester() override;
 		
 	private:
-		void Test() override;
+		bool Test() override;
 	};
 }
 

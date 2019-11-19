@@ -11,10 +11,10 @@ namespace kTest::Maths
 		~VectorsTester() override;
 
 	private:
-		void Test() override;
+		bool Test() override;
 		
-		static void Math_Vector2_Test();
-		static void Math_Vector3_Test();
-		static void Math_Vector4_Test();
+		bool Math_Vector2_Test();
+		bool Math_Vector3_Test();
+		bool Math_Vector4_Test();
 	};
 }

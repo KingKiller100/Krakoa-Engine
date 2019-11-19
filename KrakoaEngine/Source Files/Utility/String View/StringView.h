@@ -12,20 +12,20 @@ namespace util
 {
 	namespace kString_View
 	{
-		template<class CharT, class Traits>
+		template<class CharType, class Traits>
 		class Template_String_View
 		{
 		public:
-			using Type			= CharT;
-			using Ptr			= CharT*;
-			using Ref			= CharT&;
-			using Const_Ptr		= const CharT*;
-			using Const_Ref		= const CharT&;
+			using Type			= CharType;
+			using Ptr			= CharType*;
+			using Ref			= CharType&;
+			using Const_Ptr		= const CharType*;
+			using Const_Ref		= const CharType&;
 			using Size			= size_t;
 			
 			static constexpr auto npos{ static_cast<Size>(-1) };
 
-			static_assert(std::is_same_v<CharT, typename Traits::char_type>,
+			static_assert(std::is_same_v<CharType, typename Traits::char_type>,
 				"Type entered into string_view class does not match a char type object (char, wchar_t, char32_t, etc)!");
 			
 			constexpr Template_String_View() noexcept
@@ -50,7 +50,7 @@ namespace util
 				length = GetStrLength(string);
 			}
 
-			constexpr Template_String_View(const std::basic_string<CharT>& str) noexcept
+			constexpr Template_String_View(const std::basic_string<CharType>& str) noexcept
 				: string(str.c_str()),
 				length(str.size())
 			{			}
@@ -62,13 +62,30 @@ namespace util
 				return *this;
 			}
 
-			constexpr Template_String_View& operator=(const std::basic_string<CharT>& other) noexcept
+			constexpr Template_String_View& operator=(const std::basic_string<CharType>& other) noexcept
 			{
 				this->string = other.c_str();
 				this->length = other.size();
 				return *this;
 			}
+
+			// Operators
+			constexpr bool operator==(const CharType item) const
+			{
+				return Length() == 1 && *Data() == item;
+			}
 			
+			constexpr bool operator==(const Template_String_View& other) const
+			{
+				return Length() == other.length && other.Data() == string;
+			}
+
+			constexpr bool operator==(Const_Ptr str) const
+			{
+				const Template_String_View temp(str);
+				return Length() == temp.Length() && temp.Data() == string;
+			}
+
 			constexpr operator Const_Ptr() const
 			{
 				return string;
@@ -120,7 +137,7 @@ namespace util
 				return length < 1 ? string[0] : string[length - 1];
 			}
 
-			constexpr bool StartsWith(const CharT item) noexcept
+			constexpr bool StartsWith(const CharType item) noexcept
 			{
 				return !Empty() && Front() == item;
 			}
@@ -133,7 +150,7 @@ namespace util
 				auto currentChar = string;
 				auto otherChar = other.string;
 
-				while (*otherChar != CharT('\0'))
+				while (*otherChar != CharType('\0'))
 				{
 					if (*currentChar != *otherChar)
 						return false;
@@ -150,7 +167,7 @@ namespace util
 				return StartsWith(Template_String_View(literal));
 			}
 			
-			constexpr bool EndsWith(const CharT item) noexcept
+			constexpr bool EndsWith(const Type item) noexcept
 			{
 				return !Empty() && Back() == item;
 			}
@@ -165,7 +182,7 @@ namespace util
 				auto currentChar = string + lengthDiff;
 				auto otherChar = other.string;
 
-				while (*otherChar != CharT('\0'))
+				while (*otherChar != CharType('\0'))
 				{
 					if (*currentChar != *otherChar)
 						return false;
@@ -202,17 +219,18 @@ namespace util
 			{
 				CheckOffsetWithinLength(amount + offset, 
 					"Amount and offset provided give an index greater than the length of the string");
+
 				return Template_String_View(string + offset, amount);
 			}
 
-			constexpr Size FirstInstanceOf(const CharT item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
+			constexpr Size FirstInstanceOf(const Type item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
 			{
 				CheckOffsetWithinLength(offset, 
 					"Offset is greater than the length of string");
 				
 				auto currentChar = string + offset;
 				Size count(0);
-				while (*currentChar != CharT('\0') 
+				while (*currentChar != CharType('\0') 
 					&& searchLimit > 0)
 				{
 					if (*currentChar == item)
@@ -226,7 +244,7 @@ namespace util
 				return npos;
 			}
 
-			Size FirstInstanceOf(Const_Ptr str, const Size offset = 0)
+			constexpr Size FirstInstanceOf(Const_Ptr str, const Size offset = 0)
 			{
 				CheckOffsetWithinLength(offset, 
 					"Offset is greater than the length of string");
@@ -240,7 +258,7 @@ namespace util
 				auto viewStr = string + pos;
 				Size idx(0);
 				
-				while (*viewStr != CharT('\0'))
+				while (*viewStr != CharType('\0'))
 				{
 					if (*viewStr == str[idx])
 					{
@@ -250,7 +268,7 @@ namespace util
 						continue;
 					}
 
-					if (str[idx] == CharT('\0'))
+					if (str[idx] == CharType('\0'))
 						return (pos - strLength);
 
 					idx = 0;
@@ -261,14 +279,19 @@ namespace util
 				return npos;
 			}
 			
-			constexpr Size FirstInstanceOfNot(const CharT item, const Size offset = 0)
+			constexpr Size FirstInstanceOf(const Template_String_View& other, const Size offset = 0)
+			{
+				return FirstInstanceOf(other.string, offset);
+			}
+
+			constexpr Size FirstInstanceOfNot(const Type item, const Size offset = 0)
 			{
 				CheckOffsetWithinLength(offset,
 					"Offset is greater than the length of string");
 
 				auto currentChar = string + offset;
 				Size count(0);
-				while (*currentChar != CharT('\0'))
+				while (*currentChar != CharType('\0'))
 				{
 					if (*currentChar != item)
 						return count;
@@ -280,7 +303,7 @@ namespace util
 				return npos;
 			}
 
-			constexpr Size LastInstanceOf(const CharT item, const Size offset = 0) 
+			constexpr Size LastInstanceOf(const CharType item, const Size offset = 0)
 			{
 				CheckOffsetWithinLength(offset, 
 					"Offset greater than length of this string");
@@ -299,7 +322,7 @@ namespace util
 				return npos;
 			}
 
-			constexpr Size LastInstanceOfNot(const CharT item, const Size offset = 0) noexcept
+			constexpr Size LastInstanceOfNot(const CharType item, const Size offset = 0) noexcept
 			{
 				auto currentChar = string + length - offset;
 				Size pos(length - 1);
@@ -338,7 +361,7 @@ namespace util
 						continue;
 					}
 
-					if (str[strIdx] == CharT('\0'))
+					if (str[strIdx] == CharType('\0'))
 						return (pos - strLength);
 
 					strIdx = 0;
@@ -379,15 +402,15 @@ namespace util
 				{
 					++thisCurrentChar;
 					++otherCurrentChar;
-					if (*thisCurrentChar == CharT('\0')
-						&& *otherCurrentChar == CharT('\0'))
+					if (*thisCurrentChar == CharType('\0')
+						&& *otherCurrentChar == CharType('\0'))
 						return true;
 				}
 				
 				return false;
 			}
 
-			constexpr Size Find(const CharT item, Size offset) const
+			constexpr Size Find(const CharType item, Size offset) const
 			{
 				return FirstInstanceOf(item, offset);
 			}
@@ -397,7 +420,7 @@ namespace util
 				return FirstInstanceOf(item, offset);
 			}
 
-			constexpr Size rFind(const CharT item, Size offset) const
+			constexpr Size rFind(const CharType item, Size offset) const
 			{
 				return LastInstanceOf(item, offset);
 			}
@@ -426,7 +449,7 @@ namespace util
 				Size size = 0;
 				auto currentChar = str;
 				
-				while (*currentChar != CharT('\0'))
+				while (*currentChar != CharType('\0'))
 				{
 					++size;
 					currentChar += ReturnSizeOfCharT();

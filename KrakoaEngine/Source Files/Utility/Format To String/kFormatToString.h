@@ -6,26 +6,26 @@ namespace util
 {
 	namespace kFormatToString
 	{
-		template<class CharT, typename T>
-		constexpr std::basic_string<CharT> SingleObjectToString( T object )
+		template<class CharType, typename T>
+		constexpr std::basic_string<CharType> SingleObjectToString( T object )
 		{
-			std::basic_stringstream<CharT> ss;
+			std::basic_stringstream<CharType> ss;
 			ss << object;
 			return ss.str();
 		}
 
 		// Only designed for ANSI or wide char string
-		template<class CharT, typename T, typename ...Ts>
-		constexpr std::basic_string<CharT> FormatToString( const CharT* format, T&& arg, Ts&& ...argPack )
+		template<class CharType, typename T, typename ...Ts>
+		constexpr std::basic_string<CharType> FormatToString( const CharType* format, T&& arg, Ts&& ...argPack )
 		{
-			CharT buffer[1024];
+			CharType buffer[1024];
 			
-			if _CONSTEXPR_IF(std::is_same_v<CharT, char>)
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 				_sprintf_p(buffer, sizeof buffer, format, arg, argPack...);
-			else if _CONSTEXPR_IF(std::is_same_v<CharT, wchar_t>)						
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)						
 				_swprintf_p(buffer, sizeof buffer, format, arg, argPack...);
 			else
-				return CharT('\0');
+				return CharType('\0');
 
 			return buffer;
 		}

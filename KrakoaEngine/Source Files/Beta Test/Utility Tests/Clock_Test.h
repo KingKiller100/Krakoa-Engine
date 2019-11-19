@@ -11,6 +11,6 @@ namespace kTest::utility
 		~ClockTester() override;
 		
 	private:
-		void Test() override;
+		bool Test() override;
 	};
 }

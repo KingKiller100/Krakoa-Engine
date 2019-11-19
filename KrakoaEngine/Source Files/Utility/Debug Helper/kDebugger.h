@@ -6,8 +6,8 @@ namespace util
 	namespace kDebugger
 	{
 
-		template<class CharT>
-		inline void CheckRemoteDebuggerAttached(const CharT* filename)
+		template<class CharType>
+		inline void CheckRemoteDebuggerAttached(const CharType* filename)
 		{
 #ifdef  _DEBUG
 			if (::IsDebuggerPresent() == TRUE)

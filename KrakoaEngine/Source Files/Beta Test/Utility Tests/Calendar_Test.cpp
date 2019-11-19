@@ -15,7 +15,7 @@ namespace kTest::utility
 	CalendarTester::~CalendarTester()
 		= default;
 
-	void CalendarTester::Test()
+	bool CalendarTester::Test()
 	{
 		const auto dateTimeTest = kCalendar::GetSystemDateAndTime();
 		const auto time = kCalendar::GetComponentOfTime(kCalendar::TimeComponent::millisec);
@@ -23,7 +23,9 @@ namespace kTest::utility
 		calendarTest = kCalendar::GetDateInTextFormat();
 		calendarTest = kCalendar::GetTimeText();
 		calendarTest = kCalendar::GetDayOfTheWeek(3);
-		calendarTest = kCalendar::GetMonth(3);		
+		calendarTest = kCalendar::GetMonth(3);	
+
+		return true;
 	}
 }
 

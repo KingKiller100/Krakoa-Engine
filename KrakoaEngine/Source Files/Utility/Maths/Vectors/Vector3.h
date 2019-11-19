@@ -160,7 +160,7 @@ namespace util::kMaths
 			*this = *this / f;
 			return *this;
 		}
-		
+
 		// Overloads = operator to make one vector values equivalent to another
 		template<typename T2>
 		Vector3& operator=(const Vector3<T2>& v)

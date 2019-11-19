@@ -15,10 +15,12 @@ namespace kTest::utility
 	ClockTester::~ClockTester()
 		= default;
 
-	void ClockTester::Test()
+	bool ClockTester::Test()
 	{
 		kTime::Clock<float>::Start();
 		kTime::Clock<double>::GetDeltaTime();
-		util::kTime::Clock<long double>::GetSystemLifeTime();		
+		util::kTime::Clock<long double>::GetSystemLifeTime();
+
+		return true;
 	}
 }

@@ -15,7 +15,7 @@ namespace kTest::utility
 	LoggingTester::~LoggingTester()
 		= default;
 
-	void LoggingTester::Test()
+	bool LoggingTester::Test()
 	{
 		INIT_LOGS;
 		CHANGE_LOGS_DESTINATION(kFileSystem::GetCurrentWorkingDirectory<char>() + "Change Dir\\");
@@ -33,5 +33,7 @@ namespace kTest::utility
 		FLUSH_LOGS;
 		END_LOGGING;
 		LOG_ENTRY("end", kLogs::LogLevel::NORM);		
+
+		return true;
 	}
 }

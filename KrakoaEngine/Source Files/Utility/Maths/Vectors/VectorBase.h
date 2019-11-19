@@ -83,12 +83,19 @@ namespace util
 				this->z = 0;
 			}
 
-			T& operator[](size_t index)
+			virtual T& operator[](const size_t index)
 			{
 				if (index > 3)
 					std::out_of_range("Index is out of range");
 
-				return *(reinterpret_cast<T*>(this) + index);
+				switch (index)
+				{
+				case 0: return this->x;
+				case 1: return this->y;
+				case 2: return this->z;
+				case 3: return this->w;
+				default: return x;
+				}
 			}
 
 			// Overloads + operator to add two vectors objects
@@ -205,6 +212,8 @@ namespace util
 			friend T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&);
 			friend VectorBase<T> VectorNormalize(const VectorBase<T>&);
 
+			private:
+				
 			
 		protected:
 			T x, y, z, w;

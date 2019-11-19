@@ -11,7 +11,7 @@ namespace kTest::utility
 		~LoggingTester() override;
 		
 	private:
-		void Test() override;
+		bool Test() override;
 	};
 }
 

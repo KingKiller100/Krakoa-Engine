@@ -27,13 +27,17 @@ namespace kTest
 
 	Tester::~Tester()
 		= default;
-	
+	   
+	constexpr const char* Tester::GetName() const
+	{
+		return name;
+	}
+
 	bool Tester::Run()
 	{
 		try
-		{
-			Test();
-			return true;
+		{			
+			return Test();
 		}
 		catch (const std::exception&)
 		{

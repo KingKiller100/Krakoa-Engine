@@ -16,11 +16,12 @@ namespace kTest::utility
 	DebugHelpTester::~DebugHelpTester()
 		= default;
 
-	void DebugHelpTester::Test()
+	bool DebugHelpTester::Test()
 	{
 		kDebugger::CheckRemoteDebuggerAttached("waitforremotedebugger");
 		//kDebugger::BreakPointHere(); // Works Great!
 		//kAssert(false, "Working Great!"); 
+		return true;
 	}
 
 

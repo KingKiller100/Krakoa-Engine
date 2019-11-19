@@ -101,19 +101,16 @@ namespace util
 			bool isDirCreated = false;
 			auto pos = dir.find_first_of('\\') + 1;
 
-			while (true)
+			while (pos != 0)
 			{
 				const auto nextForwardSlash = dir.find_first_of('\\', pos) + 1;
 				const auto nextDirectory = dir.substr(0, nextForwardSlash);
 				pos = nextForwardSlash;
 
-				if (pos == 0)
-				{
-					return isDirCreated;
-				}
-
 				isDirCreated = CreateNewDirectory<CharType>(nextDirectory.data());
 			}
+
+			return isDirCreated;
 		}
 
 		/**
@@ -155,7 +152,8 @@ namespace util
 		template<class CharType>
 		bool CheckFileExists(const CharType* fileName)
 		{
-			FILE* file;
+			const std::unique_ptr<FILE> f;
+			auto file = f.get();
 			auto result = -1;
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
@@ -167,13 +165,9 @@ namespace util
 				result = _wfopen_s(&file, fileName, L"r");
 			}
 
-			if (file)
-			{
+			if (file)			
 				fclose(file);
-				delete file;
-				file = nullptr;
-			}
-
+			
 			return result == 0;
 		}
 
@@ -185,45 +179,22 @@ namespace util
 		 * \return
 		 *		A vector of every line of data in the file, as a string
 		 */
-	/*	template<class CharType>
-		std::vector<StringType<CharType>> ParseFileData(const CharType* fullFilePath)
+		template<class CharType>
+		inline auto ParseFileData(const CharType* fullFilePath)
 		{
-			std::vector<StringType<CharType>> fileData;
+			FileDataLines<CharType> fileData;
 
-			if (CheckFileExists<CharType>(fullFilePath))
+			if (CheckFileExists(fullFilePath))
 			{
-				FileReader<CharType> inFile(fullFilePath);
+				FileReader<CharType> inFile;
+				
+				inFile.open(fullFilePath);
 
 				if (inFile.is_open())
 				{
 					StringType<CharType> data;
-					while (!(inFile.eof()))
+					while (std::getline(inFile, data))
 					{
-						std::getline(inFile, data);
-						fileData.push_back(data);
-					}
-					inFile.close();
-				}
-			}
-
-			return fileData;
-		}*/
-
-		template<class CharType>
-		inline std::vector<std::string> ParseFileData(const char* fullFilePath)
-		{
-			std::vector<std::string> fileData;
-
-			if (CheckFileExists(fullFilePath))
-			{
-				std::ifstream inFile(fullFilePath);
-
-				if (inFile.is_open())
-				{
-					std::string data;
-					while (!(inFile.eof()))
-					{
-						std::getline(inFile, data);
 						fileData.push_back(data);
 					}
 					inFile.close();

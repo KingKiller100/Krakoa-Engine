@@ -36,7 +36,8 @@ namespace kTest
 #define VerifyResults(test)\
 	if ((test) == false)\
 	{\
-		this->name = util::kFormatToString::FormatToString("%s Test:  Line %d     Function: %s", this->name, __LINE__, __FUNCSIG__).c_str();\
+		auto result = util::kFormatToString::FormatToString("%s Test:  Line %d     Function: %s", this->name, __LINE__, __FUNCSIG__);\
+		this->name = result.c_str();\
 		return false; \
 	}\
 

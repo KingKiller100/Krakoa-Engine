@@ -14,6 +14,9 @@
 #include "Utility Tests/Logging_Test.h"
 #include "Utility Tests/StringView_Test.h"
 
+// File System for release test results
+#include "../Utility/File System/kFileSystem.h"
+
 #include <iostream>
 #include <unordered_map>
 
@@ -54,10 +57,20 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
+		const auto directory = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "TestResults.txt";
+
 		for (auto& test : kTests_Tests)
 		{
 			const auto result = test.second->Run() ? "Success: " : "Failed: ";
 			std::cout << result << test.first << "\n";
+
+			if (result == "Failed: ")
+			{
+				int a = 0;
+				a++;
+			}
+
+			util::kFileSystem::OutputToFile(directory.c_str(), (std::string(result) + test.second->GetName() + "\n").c_str());
 		}
 	}
 

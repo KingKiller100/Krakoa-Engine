@@ -21,5 +21,6 @@ namespace kTest
 		static void Add(Tester* test);
 		static void RunAll();
 		static void ClearAllTests();
+		
 	};
 }

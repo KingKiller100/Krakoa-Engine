@@ -21,6 +21,7 @@ namespace kTest::Maths
 		VerifyResults(Math_Vector2_Test() == true);
 		VerifyResults(Math_Vector3_Test() == true);
 		VerifyResults(Math_Vector4_Test() == true);
+		return true;
 	}
 
 	bool VectorsTester::Math_Vector2_Test()
@@ -29,7 +30,7 @@ namespace kTest::Maths
 		
 		v2.ToPositives();
 		
-		if ((v2.X() > 0 || v2.Y() > 0) == false) { this->name = util::kFormatToString::FormatToString("%s Test:  Line %d     Function: %s", this->name, __LINE__, __FUNCSIG__).c_str(); return false; }			
+		VerifyResults(v2.X() > 0 || v2.Y() > 0);
 
 		v2.ReverseVector();
 		v2.X();

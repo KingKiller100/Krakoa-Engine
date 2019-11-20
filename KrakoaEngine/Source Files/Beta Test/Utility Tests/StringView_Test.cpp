@@ -17,49 +17,57 @@ namespace kTest::utility
 
 	bool StringViewTester::Test()
 	{
-		auto hooper2Text = "hooper2";
-		StringView s = hooper2Text;
-		wStringView s2(L"string literal");
-		u32StringView s3 = U"String Tester";
+		const auto txt = "Char String";
+		StringView s = txt;
+		VERIFY(s.Data() == "Char String")
+		
+		wStringView s2(L"Wide Char String");
+		VERIFY(s2.Data() == L"Wide Char String");
+				
+		u32StringView s3 = U"Unsigned 32-Bit String";
+		VERIFY(s3.Data() == U"Unsigned 32-Bit String")
+
+		u16StringView s4 = u"Unsigned 16-Bit String";
+		VERIFY(s4.Data() == u"Unsigned 16-Bit String")
 		
 		s.RemovePrefix(3);
-		VerifyResults(s.Data() == "per2");
+		VERIFY(s.Data() == "r String");
 
 		s.RemoveSuffix(1);
-		VerifyResults(s.Length() == 3);
+		VERIFY(s.Length() == 7);
 
-		auto ePos = s.FirstInstanceOf('e');
-		VerifyResults(ePos != StringView::npos);
+		const auto rPos = s.FirstInstanceOf('r');
+		VERIFY(rPos != StringView::npos && rPos == 0);
 
-		auto gPos = s.FirstInstanceOf('g', 1, 2);
-		VerifyResults(gPos == StringView::npos);
+		const auto ngPos = s.FirstInstanceOf("ng", 2);
+		VERIFY(ngPos != StringView::npos && ngPos == 6);
 		
-		auto erPos = s.FirstInstanceOf("er");
-		VerifyResults(erPos != StringView::npos);
+		const auto badGPos = s.FirstInstanceOf('g', 2, 3);
+		VERIFY(badGPos == StringView::npos);
 
 		auto k = s2.Back();
-		VerifyResults(k == L'l');
+		VERIFY(k == L'l');
 
 		k = s2.Front();
-		VerifyResults(k == L's');
+		VERIFY(k == L's');
 
-		wStringView s4(L"Empty");
-		s2.Swap(s4);
-		VerifyResults(s2 == L"Empty");
-		VerifyResults(s4 == L"string literal");
+		wStringView s5(L"Empty");
+		s2.Swap(s5);
+		VERIFY(s2 == L"Empty");
+		VERIFY(s5 == L"Wide Char String");
 
-		auto ptr = s2.Data();
-		VerifyResults(ptr == L"string literal")
+		const auto ptr = s2.Data();
+		VERIFY(ptr == L"string literal")
 
 		s2.Clear();
-		VerifyResults(s2.Length() == 0 && s2.Data() == nullptr);
-		VerifyResults(s2.Empty() == true);
+		VERIFY(s2.Length() == 0 && s2.Data() == nullptr);
+		VERIFY(s2.Empty() == true);
 		
 		auto v = s3.Substr(5);
-		VerifyResults(v == U"g Tester" && v);
+		VERIFY(v == U"g Tester" && v);
 
 		auto temp = s.Substr(s.Length());
-		auto h = s.IsEqual(temp);
+		VERIFY(s.IsEqual(temp));
 
 		return true;
 	}

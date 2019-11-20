@@ -1,12 +1,12 @@
 #pragma once
 
 #include <string>
-#include <Windows.h>
+
+struct _SYSTEMTIME;
 
 namespace util
 {
-	namespace kCalendar
-	
+	namespace kCalendar	
 	{
 		enum class TimeComponent
 		{
@@ -16,7 +16,8 @@ namespace util
 			millisec
 		};
 
-		const SYSTEMTIME GetSystemDateAndTime();		
+		const _SYSTEMTIME& GetLocalDateAndTime();
+		const _SYSTEMTIME& GetSystemDateAndTime();		
 		unsigned short GetComponentOfTime(const TimeComponent timeComponent);
 
 		// ASCII
@@ -26,7 +27,7 @@ namespace util
 		const char* GetDayOfTheWeek(const unsigned short day);
 		std::string GetDateInNumericalFormat(const bool slash = true);
 
-		//UNICODE
+		// Wide Multi-Byte Chars
 		std::wstring wGetTimeText();
 		std::wstring wGetDateInTextFormat();
 		const wchar_t* wGetMonth(const unsigned short month);

@@ -402,6 +402,7 @@ namespace util
 				{
 					++thisCurrentChar;
 					++otherCurrentChar;
+
 					if (*thisCurrentChar == CharType('\0')
 						&& *otherCurrentChar == CharType('\0'))
 						return true;

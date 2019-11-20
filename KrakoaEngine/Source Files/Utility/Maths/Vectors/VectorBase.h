@@ -36,7 +36,19 @@ namespace util
 
 			[[nodiscard]] virtual double Magnitude() const
 			{
-				return std::sqrt((x * x) + (y * y) + (z * z));
+				if (x || y || z)
+					return std::sqrt( static_cast<double>(MagnitudeSQ()) );
+
+				return 0.000;
+			}
+
+
+			[[nodiscard]] T MagnitudeSQ() const
+			{
+				if (x || y || z)
+					return (x * x) + (y * y) + (z * z);
+
+				return T(0);
 			}
 
 			// Restricts vector magnitude to max value

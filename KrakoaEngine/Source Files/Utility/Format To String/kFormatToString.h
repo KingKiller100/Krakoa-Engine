@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Precompile.h"
+#include <string>
 
 namespace util
 {

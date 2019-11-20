@@ -4,27 +4,51 @@
 #include "../Format To String/kFormatToString.h"
 
 #include <array>
+#include <Windows.h>
 
 namespace util::kCalendar
 {
 	using namespace kFormatToString;
 
-	const SYSTEMTIME GetSystemDateAndTime()
+	const _SYSTEMTIME& GetLocalDateAndTime()
 	{
-		static SYSTEMTIME kCalendarDateTime;
-		GetLocalTime(&kCalendarDateTime);
-		return kCalendarDateTime;
+		static _SYSTEMTIME kCalendar_Local_DateTime;
+		GetLocalTime(&kCalendar_Local_DateTime);
+		return kCalendar_Local_DateTime;
 	}
 
+	const _SYSTEMTIME& GetSystemDateAndTime()
+	{
+		static _SYSTEMTIME kCalendar_System_DateTime;
+		GetSystemTime(&kCalendar_System_DateTime);
+		return kCalendar_System_DateTime;
+	}
+
+	unsigned short GetComponentOfTime(const TimeComponent timeComponent)
+	{
+		const auto now = GetLocalDateAndTime();
+
+		switch (timeComponent)
+		{
+		case TimeComponent::hour:		return now.wHour;
+		case TimeComponent::min:		return now.wMinute;
+		case TimeComponent::sec:		return now.wSecond;
+		case TimeComponent::millisec:	return now.wMilliseconds;
+		default: return MAXWORD;
+		}
+	}
+
+	// ASCII
+	
 	std::string GetTimeText()
 	{
-		const auto dateTime = GetSystemDateAndTime();
+		const auto dateTime = GetLocalDateAndTime();
 		return FormatToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
 	std::string GetDateInTextFormat()
 	{
-		const auto dateTime = GetSystemDateAndTime();				
+		const auto dateTime = GetLocalDateAndTime();				
 		return FormatToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
 	}
 
@@ -55,20 +79,22 @@ namespace util::kCalendar
 
 	std::string GetDateInNumericalFormat(const bool slash)
 	{
-		const auto dateTime = GetSystemDateAndTime();
+		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? "%02d/%02d/%02d" : "%02d-%02d-%04d";
 		return FormatToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
+	// WIDE MULTI-BYTE CHAR
+	
 	std::wstring wGetTimeText()
 	{
-		const auto dateTime = GetSystemDateAndTime();
+		const auto dateTime = GetLocalDateAndTime();
 		return FormatToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
 	std::wstring wGetDateInTextFormat()
 	{
-		const auto dateTime = GetSystemDateAndTime();
+		const auto dateTime = GetLocalDateAndTime();
 		return FormatToString(L"%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
 	}
 
@@ -99,22 +125,8 @@ namespace util::kCalendar
 
 	std::wstring wGetDateInNumericalFormat(const bool slash)
 	{
-		const auto dateTime = GetSystemDateAndTime();
+		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
 		return FormatToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
-	}
-
-	unsigned short GetComponentOfTime(const TimeComponent timeComponent)
-	{
-		const auto now = GetSystemDateAndTime();
-
-		switch (timeComponent)
-		{
-		case TimeComponent::hour: return now.wHour;
-		case TimeComponent::min: return now.wMinute;
-		case TimeComponent::sec: return now.wSecond;
-		case TimeComponent::millisec: return now.wMilliseconds;
-		default: return MAXWORD;
-		}
 	}
 }

@@ -63,13 +63,6 @@ namespace kTest
 		{
 			const auto result = test.second->Run() ? "Success: " : "Failed: ";
 			std::cout << result << test.first << "\n";
-
-			if (result == "Failed: ")
-			{
-				int a = 0;
-				a++;
-			}
-
 			util::kFileSystem::OutputToFile(directory.c_str(), (std::string(result) + test.second->GetName() + "\n").c_str());
 		}
 	}

@@ -28,9 +28,9 @@ namespace kTest
 	Tester::~Tester()
 		= default;
 	   
-	constexpr const char* Tester::GetName() const
+	const char* Tester::GetName() const
 	{
-		return name;
+		return name.c_str();
 	}
 
 	bool Tester::Run()
@@ -39,7 +39,7 @@ namespace kTest
 		{			
 			return Test();
 		}
-		catch (const std::exception&)
+		catch (std::exception&)
 		{
 			return false;
 		}

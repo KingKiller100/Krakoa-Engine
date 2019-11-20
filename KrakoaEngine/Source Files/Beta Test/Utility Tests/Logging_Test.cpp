@@ -27,6 +27,7 @@ namespace kTest::utility
 		LOG_ENTRY("Done", kLogs::LogLevel::WARN);
 		LOG_ENTRY("ERROR!", kLogs::LogLevel::ERRR);
 		auto last = GET_LAST_LOG_ENTRY;
+		VERIFY(last.find("ERROR!") != std::string::npos);
 		ERASE_LOG_ENTRIES(1);
 		LOG_ENTRY("ERROR AGAIN!", kLogs::LogLevel::ERRR);
 		FATAL("FATAL!");

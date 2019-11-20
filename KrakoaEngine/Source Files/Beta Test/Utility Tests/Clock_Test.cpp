@@ -19,7 +19,7 @@ namespace kTest::utility
 	{
 		kTime::Clock<float>::Start();
 		kTime::Clock<double>::GetDeltaTime();
-		util::kTime::Clock<long double>::GetSystemLifeTime();
+		kTime::Clock<long double>::GetSystemLifeTime();
 
 		return true;
 	}

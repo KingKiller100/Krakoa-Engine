@@ -122,25 +122,25 @@ namespace util::kMaths
 			return *this;
 		}
 
-		Vector2 operator*(const T f)
+		Vector2 operator*(const T scalar)
 		{
-			return Vector2(this->X() * f, this->Y() * f);
+			return Vector2(this->X() * scalar, this->Y() * scalar);
 		}
 
-		Vector2 operator/(const T f)
+		Vector2 operator/(const T scalar)
 		{
-			return Vector2(this->X() / f, this->Y() / f);
+			return Vector2(this->X() / scalar, this->Y() / scalar);
 		}
 		
-		Vector2& operator*=(const T f) 
+		Vector2& operator*=(const T scalar) 
 		{
-			*this = *this * f;
+			*this = *this * scalar;
 			return *this;
 		}
 
-		Vector2& operator/=(const T f) 
+		Vector2& operator/=(const T scalar) 
 		{
-			*this = *this / f;
+			*this = *this / scalar;
 			return *this;
 		}
 		
@@ -150,7 +150,6 @@ namespace util::kMaths
 		{
 			this->x = v.X();
 			this->y = v.Y();
-			this->z = v.Z();
 
 			return *this;
 		}

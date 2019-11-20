@@ -15,13 +15,19 @@ namespace util
 		template<class CharType, class Traits>
 		class Template_String_View
 		{
+			template<typename T>
+			class Iterator;
+
 		public:
+			using Size			= size_t;
 			using Type			= CharType;
 			using Ptr			= CharType*;
 			using Ref			= CharType&;
+			using Iter			= Iterator<Template_String_View>;
+			
 			using Const_Ptr		= const CharType*;
 			using Const_Ref		= const CharType&;
-			using Size			= size_t;
+			using Const_Iter	= const Iter;
 			
 			static constexpr auto npos{ static_cast<Size>(-1) };
 
@@ -499,8 +505,18 @@ namespace util
 		USE_RESULT constexpr wStringView operator"" _sv(wStringView::Const_Ptr str, size_t length) noexcept
 		{
 			return wStringView(str, length);
-		}
-		
-		
+		}		
 	}
+
+	template<typename T>
+	class Iterator
+	{
+	public:
+		Iterator();
+		~Iterator();
+
+	private:
+		std::shared_ptr<T> object;
+	};
+
 }

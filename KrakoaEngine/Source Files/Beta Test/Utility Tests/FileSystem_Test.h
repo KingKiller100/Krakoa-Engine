@@ -11,6 +11,6 @@ namespace kTest::utility
 		~FileSystemTester() override;
 		
 	private:
-		bool Test() override;
+		void Test() override;
 	};
 }

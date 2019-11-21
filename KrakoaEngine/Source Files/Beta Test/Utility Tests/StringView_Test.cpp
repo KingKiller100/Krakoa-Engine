@@ -15,8 +15,8 @@ namespace kTest::utility
 	StringViewTester::~StringViewTester()
 		= default;
 
-	bool StringViewTester::Test()
-	{
+	void StringViewTester::Test()
+{
 		const auto txt = "Char String";
 		StringView s = txt;
 		VERIFY(s.Data() == "Char String")
@@ -68,8 +68,6 @@ namespace kTest::utility
 
 		auto temp = s.Substr(s.Length());
 		VERIFY(s.IsEqual(temp));
-
-		return true;
 	}
 }
 

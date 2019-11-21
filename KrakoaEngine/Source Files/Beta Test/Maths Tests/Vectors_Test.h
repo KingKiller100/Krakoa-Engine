@@ -11,7 +11,7 @@ namespace kTest::Maths
 		~VectorsTester() override;
 
 	private:
-		bool Test() override;
+		void Test() override;
 		
 		bool Math_Vector2_Test();
 		bool Math_Vector3_Test();

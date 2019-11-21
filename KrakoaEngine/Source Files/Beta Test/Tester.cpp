@@ -9,7 +9,7 @@ namespace kTest
 	static std::vector<std::unique_ptr<Tester>> kTest_Tests;
 	
 	Tester::Tester(const char* name) noexcept
-		: name(name)
+		: name(name), success(true)
 	{	
 	}
 
@@ -33,11 +33,17 @@ namespace kTest
 		return name.c_str();
 	}
 
+	std::string Tester::GetResult() const
+	{
+		return result.str();
+	}
+
 	bool Tester::Run()
 	{
 		try
 		{			
-			return Test();
+			Test();
+			return success;
 		}
 		catch (std::exception&)
 		{

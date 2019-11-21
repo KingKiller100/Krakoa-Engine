@@ -23,6 +23,7 @@
 namespace kTest
 {
 	std::unordered_map<const char*, std::unique_ptr<Tester>> kTests_Tests;
+	std::string kTest_TestResultDir;
 	
 	TesterManager::TesterManager(Token)
 	{
@@ -33,6 +34,12 @@ namespace kTest
 
 	void TesterManager::Shutdown()
 	{
+	}
+
+	void TesterManager::Initialize()
+	{
+		kTest_TestResultDir = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "TestResults\\";
+		util::kFileSystem::CreateNewDirectory(kTest_TestResultDir.c_str());
 	}
 
 	void TesterManager::InitializeMathsTests()
@@ -57,13 +64,22 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		const auto directory = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "TestResults.txt";
+		if (kTest_TestResultDir.find("Results.txt") == std::string::npos)
+			kTest_TestResultDir += "Results.txt";
 
 		for (auto& test : kTests_Tests)
-		{
-			const auto result = test.second->Run() ? "Success: " : "Failed: ";
-			std::cout << result << test.first << "\n";
-			util::kFileSystem::OutputToFile(directory.c_str(), (std::string(result) + test.second->GetName() + "\n").c_str());
+		{			
+			std::string resultTest;
+			if (test.second->Run())
+			{
+				resultTest = util::kFormatToString::FormatToString("Success: Test Name: %s\n", test.first);
+			}
+			else
+			{
+				resultTest = test.second->GetResult();
+			}
+
+			util::kFileSystem::OutputToFile(kTest_TestResultDir.c_str(), resultTest.c_str());
 		}
 	}
 

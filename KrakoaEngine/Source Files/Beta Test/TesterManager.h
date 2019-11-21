@@ -15,6 +15,8 @@ namespace kTest
 		~TesterManager();
 
 		static void Shutdown();
+
+		static void Initialize();
 		
 		static void InitializeMathsTests();
 		static void InitializeUtilityTests();

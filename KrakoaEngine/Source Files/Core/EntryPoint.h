@@ -36,6 +36,7 @@ int main(int argv, char** argc)
 inline void RunTests()
 {
 	auto& testManager = kTest::TesterManager::Reference();
+	testManager.Initialize();
 	testManager.InitializeMathsTests();
 	testManager.InitializeUtilityTests();
 	testManager.RunAll();

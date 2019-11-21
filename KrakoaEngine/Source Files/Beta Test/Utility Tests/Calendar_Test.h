@@ -11,7 +11,7 @@ namespace kTest::utility
 		~CalendarTester() override;
 		
 	private:
-		bool Test() override;
+		void Test() override;
 	};
 }
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vcruntime.h>
-
 #ifdef KRAKOA_OS_WINDOWS
 	#ifdef KRAKOA_BUILD_DLL
 		#define KRAKOA_API __declspec(dllexport)

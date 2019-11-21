@@ -6,17 +6,17 @@
 #include "../Utility/File System/kFileSystem.h"
 
 #include <string>
+#include <sstream>
 
 namespace kTest
 {
 
-#if defined (_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable:4251)
 	EXPIMP_TEMPLATE template class KRAKOA_API std::basic_string<char>;
 	EXPIMP_TEMPLATE template class KRAKOA_API std::basic_string_view<char>;
+	EXPIMP_TEMPLATE template class KRAKOA_API std::basic_stringstream<char>;
 #pragma warning(pop)
-#endif
 	
 	class KRAKOA_API Tester
 	{
@@ -28,6 +28,7 @@ namespace kTest
 		virtual ~Tester();
 
 		const char* GetName() const;
+		std::string GetResult() const;
 		
 		bool Run();
 
@@ -36,18 +37,20 @@ namespace kTest
 		Tester& operator=(const Tester& other) = delete;
 		
 	private:
-		virtual bool Test() = 0;
+		virtual void Test() = 0;
 		
 	protected:
 		std::string name;
+		std::stringstream result;
+		bool success;
 	};
 	
 	 // If results are wrong, change name to failed test function signature and line, else continues to next line
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->name = util::kFormatToString::FormatToString("Test Name: %s\n\t\t\tLine: %d\n\t\t\tFunction: %s\n\t\t\tCondition: %s", this->name.c_str(), __LINE__, FUNC_SIG, #test);\
-		return false; \
+		this->result << util::kFormatToString::FormatToString("Failed: Test Name: %s\n\tCondition: %s\n\tFunction: %s\n\tLine: %d\n", this->name.c_str(), #test, FUNC_SIG, __LINE__);\
+		this->success = false; \
 	}\
 
 }

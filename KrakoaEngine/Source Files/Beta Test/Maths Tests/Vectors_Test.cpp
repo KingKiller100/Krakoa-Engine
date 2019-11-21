@@ -16,12 +16,11 @@ namespace kTest::Maths
 	VectorsTester::~VectorsTester()
 		= default;
 
-	bool VectorsTester::Test()
+	void VectorsTester::Test()
 	{
 		VERIFY(Math_Vector2_Test() == true);
 		VERIFY(Math_Vector3_Test() == true);
 		VERIFY(Math_Vector4_Test() == true);
-		return true;
 	}
 
 	bool VectorsTester::Math_Vector2_Test()
@@ -102,7 +101,7 @@ namespace kTest::Maths
 
 		const auto p = v4.W();
 		VERIFY(p == 1);
-		
+
 		return true;
 	}
 }

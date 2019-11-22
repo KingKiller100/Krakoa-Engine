@@ -16,7 +16,7 @@ namespace util::kLogs
 		
 	
 	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
-	LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n\n***********************************************************************\n";
+	LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n";
 	LogQueue::value_type endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n";
 
 	
@@ -79,26 +79,25 @@ namespace util::kLogs
 		OutputToConsole("New directory:\t " + directory + "\n", LogLevel::INFO);
 	}
 
-	void Logging::ChangeFilename(const char* fname)
+	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
-		const std::string_view newFilename = fname;
-		const auto pos = newFilename.find('.');
+		const auto pos = newFileName.find('.');
 		
 		if (pos != std::string_view::npos)
 		{
-			if (pos != newFilename.size() - 1)
+			if (pos != newFileName.size() - 1)
 			{
-				filename = newFilename;
+				filename = newFileName;
 			}
 			else
 			{
-				filename = newFilename;
+				filename = newFileName;
 				filename += "log";
 			}
 		}
 		else
 		{
-			filename = newFilename;
+			filename = newFileName;
 			filename += ".log";
 		}
 

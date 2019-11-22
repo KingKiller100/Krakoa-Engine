@@ -296,7 +296,7 @@ namespace util
 					"Offset is greater than the length of string");
 
 				auto currentChar = string + offset;
-				Size count(0);
+				auto count = offset;
 				while (*currentChar != CharType('\0'))
 				{
 					if (*currentChar != item)
@@ -315,7 +315,7 @@ namespace util
 					"Offset greater than length of this string");
 
 				auto currentChar = string + length - offset;
-				Size pos(length - 1);
+				Size pos(length - offset);
 
 				while (currentChar != string)
 				{
@@ -331,7 +331,7 @@ namespace util
 			constexpr Size LastInstanceOfNot(const CharType item, const Size offset = 0) noexcept
 			{
 				auto currentChar = string + length - offset;
-				Size pos(length - 1);
+				Size pos(length - offset);
 
 				while (currentChar != string)
 				{

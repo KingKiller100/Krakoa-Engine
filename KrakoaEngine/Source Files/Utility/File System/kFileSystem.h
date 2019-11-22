@@ -38,15 +38,15 @@ namespace util
 		/**
 		 * \brief
 		 *		Outputs a file to the specified directory and fills it with the given data
-		 * \param fullDirectory
+		 * \param fullFilePath
 		 *		The full file directory with the final filename and file extension
 		 * \param content
 		 *		The data to fill the file with.
 		 */
 		template<class CharType>
-		void OutputToFile(const CharType* fullDirectory, const CharType* content)
+		void OutputToFile(const CharType* fullFilePath, const CharType* content)
 		{
-			FileWriter<CharType> outFile(fullDirectory, std::ios::out | std::ios::app);
+			FileWriter<CharType> outFile(fullFilePath, std::ios::out | std::ios::app);
 
 			if (outFile.is_open())
 			{
@@ -115,6 +115,31 @@ namespace util
 
 		/**
 		 * \brief
+		 *		Deletes file from system
+		 * \tparam CharType
+		 *		Char type i.e. must be char/wchar_t/u32char_t/etc...
+		 * \param[in] fullFilePath
+		 *		Full file path of the file to delete
+		 * \return
+		 *		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
+		 */
+		template<typename CharType>
+		bool RemoveFile(const CharType* fullFilePath)
+		{
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			{
+				return DeleteFileA(fullFilePath) == TRUE;
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+			{
+				return DeleteFileW(fullFilePath) == TRUE;
+			}
+
+			return false;
+		}
+		
+		/**
+		 * \brief
 		 *		Deletes a directory
 		 * \param directory
 		 *		The full folder directory
@@ -143,14 +168,14 @@ namespace util
 		/**
 		 * \brief
 		 *		Checks (from folder holding the executable file in current directory) if a file exists
-		 * \param fileName
+		 * \param fullFilePath
 		 *		filename (or full directory to the file)
 		 * \return
 		 *		TRUE if file exist or FALSE if file does not exist
 		 */
 
 		template<class CharType>
-		bool CheckFileExists(const CharType* fileName)
+		bool CheckFileExists(const CharType* fullFilePath)
 		{
 			const std::unique_ptr<FILE> f;
 			auto file = f.get();
@@ -158,11 +183,11 @@ namespace util
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				result = fopen_s(&file, fileName, "r");
+				result = fopen_s(&file, fullFilePath, "r");
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				result = _wfopen_s(&file, fileName, L"r");
+				result = _wfopen_s(&file, fullFilePath, L"r");
 			}
 
 			if (file)			

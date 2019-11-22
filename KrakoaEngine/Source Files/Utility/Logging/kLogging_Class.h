@@ -70,9 +70,21 @@ namespace util
 			 */
 			void InitializeLogging();
 
+			/**
+			 * \brief
+			 *		Change the directory the log file outputs to
+			 * \param dir
+			 *		STL string view representing the new directory
+			 */
 			void ChangeOutputDirectory(const std::string_view dir);
 
-			void ChangeFilename(const char* fname);
+			/**
+			 * \brief
+			 *		Change name of log filename 
+			 * \param newFileName
+			 *		STL string view representing filename
+			 */
+			void ChangeFilename(const std::string_view newFileName);
 
 			/**
 			 * \brief

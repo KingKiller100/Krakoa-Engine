@@ -7,19 +7,19 @@
 
 extern krakoa::Application* krakoa::CreateApplication();
 
-void RunTests();
+void RunTestsOnkLibrary();
 
 int main(int argv, char** argc)
-{	
-	RunTests();
+{
+	RunTestsOnkLibrary();
 		
-	const auto deletor = [](krakoa::Application* game) -> void
+	const auto deleter = [](krakoa::Application* game) -> void
 	{
 		game->Shutdown();
 		delete game;
 	};
 
-	auto app = std::unique_ptr<krakoa::Application, decltype(deletor)>(krakoa::CreateApplication(), deletor);
+	auto app = std::unique_ptr<krakoa::Application, decltype(deleter)>(krakoa::CreateApplication(), deleter);
 
 	app->Initialize();
 
@@ -33,7 +33,7 @@ int main(int argv, char** argc)
 }
 
 
-inline void RunTests()
+inline void RunTestsOnkLibrary()
 {
 	auto& testManager = kTest::TesterManager::Reference();
 	testManager.Initialize();

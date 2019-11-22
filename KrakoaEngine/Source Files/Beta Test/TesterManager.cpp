@@ -14,16 +14,15 @@
 #include "Utility Tests/Logging_Test.h"
 #include "Utility Tests/StringView_Test.h"
 
-// File System for release test results
+// File System to output test results
 #include "../Utility/File System/kFileSystem.h"
 
-#include <iostream>
 #include <unordered_map>
 
 namespace kTest
 {
 	std::unordered_map<const char*, std::unique_ptr<Tester>> kTests_Tests;
-	std::string kTest_TestResultDir;
+	std::string kTest_TestResultFilePath;
 	
 	TesterManager::TesterManager(Token)
 	{
@@ -38,8 +37,11 @@ namespace kTest
 
 	void TesterManager::Initialize()
 	{
-		kTest_TestResultDir = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "TestResults\\";
-		util::kFileSystem::CreateNewDirectory(kTest_TestResultDir.c_str());
+		kTest_TestResultFilePath = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "TestResults\\";
+		util::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
+		
+		kTest_TestResultFilePath += "Results.txt";
+		util::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
 	}
 
 	void TesterManager::InitializeMathsTests()
@@ -51,10 +53,10 @@ namespace kTest
 	{		
 		Add(new utility::CalendarTester());
 		Add(new utility::ClockTester());
-		Add(new utility::DebugHelpTester());
 		Add(new utility::FileSystemTester());
-		Add(new utility::StringViewTester());
+		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
+		Add(new utility::StringViewTester());
 	}
 
 	void TesterManager::Add(Tester* test)
@@ -64,12 +66,10 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		if (kTest_TestResultDir.find("Results.txt") == std::string::npos)
-			kTest_TestResultDir += "Results.txt";
-
 		for (auto& test : kTests_Tests)
 		{			
 			std::string resultTest;
+			
 			if (test.second->Run())
 			{
 				resultTest = util::kFormatToString::FormatToString("Success: Test Name: %s\n", test.first);
@@ -79,7 +79,7 @@ namespace kTest
 				resultTest = test.second->GetResult();
 			}
 
-			util::kFileSystem::OutputToFile(kTest_TestResultDir.c_str(), resultTest.c_str());
+			util::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
 	}
 

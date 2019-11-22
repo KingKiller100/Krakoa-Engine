@@ -13,8 +13,8 @@ namespace kTest::Maths
 	private:
 		void Test() override;
 		
-		bool Math_Vector2_Test();
-		bool Math_Vector3_Test();
-		bool Math_Vector4_Test();
+		bool Vector2Test();
+		bool Vector3Test();
+		bool Vector4Test();
 	};
 }

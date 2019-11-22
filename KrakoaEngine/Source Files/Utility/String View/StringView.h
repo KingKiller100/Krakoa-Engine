@@ -29,6 +29,8 @@ namespace util
 			using Const_Ref		= const CharType&;
 			using Const_Iter	= const Iter;
 			
+			using CharTraits	= Traits;
+
 			static constexpr auto npos{ static_cast<Size>(-1) };
 
 			static_assert(std::is_same_v<CharType, typename Traits::char_type>,
@@ -45,7 +47,7 @@ namespace util
 				: string(stringLiteral),
 				length(size)
 			{
-				CheckOffsetWithinLength(offset, "Offset greater than length");
+				CheckWithinLength(offset, "Offset greater than length");
 				string = string + offset;
 				length -= offset;
 			}
@@ -104,7 +106,7 @@ namespace util
 
 			USE_RESULT constexpr Const_Ref at(const Size index) const
 			{
-				CheckOffsetWithinLength(index,
+				CheckWithinLength(index,
 					"Index must be within 0 and length of string");
 
 				return string[index];				
@@ -213,9 +215,16 @@ namespace util
 				*this = temp;
 			}
 
+			constexpr Size Compare(const Template_String_View& other)
+			{
+				// Write it yourself, can't rely on this to be in older versions of the STL
+				return std::_Traits_compare<CharTraits>(string, length, other.Data(), other.Length());
+			}
+
+
 			USE_RESULT constexpr Const_Ptr SubData(const Size amount, const Size offset = 0) const
 			{
-				CheckOffsetWithinLength(amount + offset,
+				CheckWithinLength(amount + offset,
 					"Amount and offset provided give an index greater than the length of the string");
 
 				return Template_String_View( string + offset, amount ).Data();
@@ -223,7 +232,7 @@ namespace util
 
 			USE_RESULT constexpr Template_String_View Substr(const Size amount, const Size offset = 0) const
 			{
-				CheckOffsetWithinLength(amount + offset, 
+				CheckWithinLength(amount + offset, 
 					"Amount and offset provided give an index greater than the length of the string");
 
 				return Template_String_View(string + offset, amount);
@@ -231,11 +240,12 @@ namespace util
 
 			constexpr Size FirstInstanceOf(const Type item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
 			{
-				CheckOffsetWithinLength(offset, 
+				CheckWithinLength(offset, 
 					"Offset is greater than the length of string");
 				
 				auto currentChar = string + offset;
-				Size count(0);
+				Size count(offset);
+
 				while (*currentChar != CharType('\0') 
 					&& searchLimit > 0)
 				{
@@ -252,12 +262,12 @@ namespace util
 
 			constexpr Size FirstInstanceOf(Const_Ptr str, const Size offset = 0)
 			{
-				CheckOffsetWithinLength(offset, 
+				CheckWithinLength(offset, 
 					"Offset is greater than the length of string");
 
 				auto pos = FirstInstanceOf(str[0], offset);
 				auto strLength = GetStrLength(str);
-				
+								
 				if (pos == npos)
 					return npos;
 				
@@ -271,11 +281,13 @@ namespace util
 						++viewStr;
 						++pos;
 						++idx;
-						continue;
 					}
 
 					if (str[idx] == CharType('\0'))
 						return (pos - strLength);
+					else
+						continue;
+
 
 					idx = 0;
 					pos = FirstInstanceOf(str[0], pos);
@@ -292,7 +304,7 @@ namespace util
 
 			constexpr Size FirstInstanceOfNot(const Type item, const Size offset = 0)
 			{
-				CheckOffsetWithinLength(offset,
+				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
 
 				auto currentChar = string + offset;
@@ -311,7 +323,7 @@ namespace util
 
 			constexpr Size LastInstanceOf(const CharType item, const Size offset = 0)
 			{
-				CheckOffsetWithinLength(offset, 
+				CheckWithinLength(offset, 
 					"Offset greater than length of this string");
 
 				auto currentChar = string + length - offset;
@@ -346,7 +358,7 @@ namespace util
 
 			constexpr Size LastInstanceOf(Const_Ptr str, const Size offset = 0) noexcept
 			{
-				CheckOffsetWithinLength(offset, "Offset greater than length of this string");
+				CheckWithinLength(offset, "Offset greater than length of this string");
 
 				auto pos = LastInstanceOf(str[0], offset);
 				auto strLength = GetStrLength(str);
@@ -380,7 +392,7 @@ namespace util
 
 			void RemovePrefix(const Size offset)
 			{
-				CheckOffsetWithinLength(offset, 
+				CheckWithinLength(offset, 
 					"Offset provided is outside the range of the string");
 				
 				string += offset;
@@ -389,7 +401,7 @@ namespace util
 
 			Const_Ptr RemoveSuffix(const Size offset)
 			{
-				CheckOffsetWithinLength(offset, 
+				CheckWithinLength(offset, 
 					"Offset provided is outside the range of the string");
 				
 				length -= offset;
@@ -440,9 +452,9 @@ namespace util
 
 			
 		private:
-			constexpr void CheckOffsetWithinLength(const Size offset, const char* msg) const
+			constexpr void CheckWithinLength(const Size size, const char* msg) const
 			{
-				if (offset > length)
+				if (size > length)
 					std::_Xout_of_range(msg);
 			}
 

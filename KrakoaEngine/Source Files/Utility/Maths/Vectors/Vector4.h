@@ -4,7 +4,7 @@
 
 #include <limits>
 
-namespace util::kMaths
+namespace kMaths
 {
 	
 	template <typename T>

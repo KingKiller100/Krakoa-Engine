@@ -1,7 +1,7 @@
 #include "Precompile.h"
 #include "kAssert.h"
 
-#include "../Format To String/kFormatToString.h"
+#include "../Format/kFormatToString.h"
 #include "../Logging/kLogging.h"
 
 namespace util::debug

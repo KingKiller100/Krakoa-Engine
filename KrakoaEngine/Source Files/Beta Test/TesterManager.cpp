@@ -11,6 +11,7 @@
 #include "Utility Tests/Clock_Test.h"
 #include "Utility Tests/DebugHelp_Test.h"
 #include "Utility Tests/FileSystem_Test.h"
+#include "Utility Tests/FormatToString_Test.h"
 #include "Utility Tests/Logging_Test.h"
 #include "Utility Tests/StringView_Test.h"
 
@@ -54,6 +55,7 @@ namespace kTest
 		Add(new utility::CalendarTester());
 		Add(new utility::ClockTester());
 		Add(new utility::FileSystemTester());
+		Add(new utility::FormatToStringTester());
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
 		Add(new utility::StringViewTester());

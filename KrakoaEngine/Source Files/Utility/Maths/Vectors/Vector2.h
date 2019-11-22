@@ -2,7 +2,7 @@
 
 #include "VectorBase.h"
 
-namespace util::kMaths
+namespace kMaths
 {
 	template <typename T>
 	struct Vector2 : VectorBase<T>

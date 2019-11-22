@@ -7,7 +7,7 @@
 
 namespace kTest::Maths
 {
-	using namespace ::util::kMaths;
+	using namespace kMaths;
 	
 	VectorsTester::VectorsTester()
 		: Tester("Vectors 2/3/4 Test")
@@ -18,12 +18,12 @@ namespace kTest::Maths
 
 	void VectorsTester::Test()
 	{
-		VERIFY(Math_Vector2_Test() == true);
-		VERIFY(Math_Vector3_Test() == true);
-		VERIFY(Math_Vector4_Test() == true);
+		VERIFY(Vector2Test() == true);
+		VERIFY(Vector3Test() == true);
+		VERIFY(Vector4Test() == true);
 	}
 
-	bool VectorsTester::Math_Vector2_Test()
+	bool VectorsTester::Vector2Test()
 	{
 		auto v2 = Vector2d(2.5, -11.0);
 		VERIFY(v2.X() == 2.5 && v2.Y() == -11.0);
@@ -61,7 +61,7 @@ namespace kTest::Maths
 		return true;
 	}
 
-	bool VectorsTester::Math_Vector3_Test()
+	bool VectorsTester::Vector3Test()
 	{
 		auto v3 = Vector3f(12.6f, 3.4f, 10.345f);
 		VERIFY(v3.X() == 12.6f && v3.Y() == 3.4f && v3.Z() == 10.345f);
@@ -95,7 +95,7 @@ namespace kTest::Maths
 		return true;
 	}
 
-	bool VectorsTester::Math_Vector4_Test()
+	bool VectorsTester::Vector4Test()
 	{
 		const auto v4 = Vector4s(5, 7, 3, 1);
 

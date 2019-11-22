@@ -5,7 +5,7 @@
 
 #include <array>
 
-namespace util::kMaths
+namespace kMaths
 {
 	class Matrix4x4
 	{

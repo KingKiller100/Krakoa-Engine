@@ -30,9 +30,6 @@
     <ClCompile Include="Source Files\Precompile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source Files\Utility\Format To String\kUTFStringConverter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source Files\Utility\Logging\kLogging_Class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,6 +60,12 @@
     <ClCompile Include="Source Files\Beta Test\TesterManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\FormatToString_Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Utility\Format\kUTFStringConverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Krakoa.h">
@@ -72,9 +75,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.h">
@@ -114,9 +114,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Precompile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Utility\Format To String\kUTFStringConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.h">
@@ -165,6 +162,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Beta Test\Utility Tests\FormatToString_Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Format\kFormatToString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

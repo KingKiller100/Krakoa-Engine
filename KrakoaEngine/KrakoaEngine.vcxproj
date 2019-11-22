@@ -182,6 +182,7 @@
     <ClCompile Include="Source Files\Beta Test\Utility Tests\DebugHelp_Test.cpp" />
     <ClCompile Include="Source Files\Beta Test\Utility Tests\FileSystem_Test.cpp" />
     <ClCompile Include="Source Files\Beta Test\Utility Tests\Calendar_Test.cpp" />
+    <ClCompile Include="Source Files\Beta Test\Utility Tests\FormatToString_Test.cpp" />
     <ClCompile Include="Source Files\Beta Test\Utility Tests\Logging_Test.cpp" />
     <ClCompile Include="Source Files\Beta Test\Utility Tests\StringView_Test.cpp" />
     <ClCompile Include="Source Files\Beta Test\Maths Tests\Vectors_Test.cpp" />
@@ -190,7 +191,7 @@
     <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp" />
     <ClCompile Include="Source Files\Beta Test\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
-    <ClCompile Include="Source Files\Utility\Format To String\kUTFStringConverter.cpp" />
+    <ClCompile Include="Source Files\Utility\Format\kUTFStringConverter.cpp" />
     <ClCompile Include="Source Files\Utility\Logging\kLogging_Class.cpp" />
     <ClCompile Include="Source Files\Precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -224,8 +225,8 @@
     <ClInclude Include="Source Files\Utility\Calendar\kCalendar.h" />
     <ClInclude Include="Source Files\Utility\Clock\kClock.h" />
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
-    <ClInclude Include="Source Files\Utility\Format To String\kFormatToString.h" />
-    <ClInclude Include="Source Files\Utility\Format To String\kUTFStringConverter.h" />
+    <ClInclude Include="Source Files\Utility\Format\kFormatToString.h" />
+    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging.h" />
     <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.h" />

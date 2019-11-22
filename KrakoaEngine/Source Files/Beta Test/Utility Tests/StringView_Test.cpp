@@ -18,20 +18,26 @@ namespace kTest::utility
 	void StringViewTester::Test()
 {
 		const auto txt = "Char String";
+
+		std::string_view test = txt; // When I need to test speed
+		/*test.substr();*/
 		StringView s = txt;
-		VERIFY(s.Data() == "Char String")
+		VERIFY(s.Data() == "Char String" && s.Length() == 11)
 		
 		wStringView s2(L"Wide Char String");
-		VERIFY(s2.Data() == L"Wide Char String");
+		VERIFY(s2.Data() == L"Wide Char String" && s2.Length() == 16);
 				
 		u32StringView s3 = U"Unsigned 32-Bit String";
-		VERIFY(s3.Data() == U"Unsigned 32-Bit String")
+		VERIFY(s3.Data() == U"Unsigned 32-Bit String" && s3.Length() == 22)
 
 		u16StringView s4 = u"Unsigned 16-Bit String";
-		VERIFY(s4.Data() == u"Unsigned 16-Bit String")
+		VERIFY(s4.Data() == u"Unsigned 16-Bit String" && s3.Length() == 22)
+		
+		//test.remove_prefix(3);
+		//VERIFY(test.compare("r String") == 0);
 		
 		s.RemovePrefix(3);
-		VERIFY(s.Data() == "r String");
+		VERIFY(s.Compare("r String") == 0);
 
 		s.RemoveSuffix(1);
 		VERIFY(s.Length() == 7);
@@ -46,10 +52,10 @@ namespace kTest::utility
 		VERIFY(badGPos == StringView::npos);
 
 		auto k = s2.Back();
-		VERIFY(k == L'l');
+		VERIFY(k == L'g');
 
 		k = s2.Front();
-		VERIFY(k == L's');
+		VERIFY(k == L'W');
 
 		wStringView s5(L"Empty");
 		s2.Swap(s5);
@@ -57,7 +63,7 @@ namespace kTest::utility
 		VERIFY(s5 == L"Wide Char String");
 
 		const auto ptr = s2.Data();
-		VERIFY(ptr == L"string literal")
+		VERIFY(ptr == L"Empty")
 
 		s2.Clear();
 		VERIFY(s2.Length() == 0 && s2.Data() == nullptr);

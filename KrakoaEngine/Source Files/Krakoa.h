@@ -9,9 +9,10 @@
 #include "Utility/Debug Helper/kAssert.h"
 #include "Utility/Debug Helper/kDebugger.h"
 #include "Utility/File System/kFileSystem.h"
-#include "Utility/String View/StringView.h"
-#include "Utility/Format To String/kUTFStringConverter.h"
+#include "Utility/Format/kUTFStringConverter.h"
+#include "Utility/Format/kFormatToString.h"
 #include "Utility/Logging/kLogging_Class.h"
+#include "Utility/String View/StringView.h"
 
 // For client game applications
 #include "Core/Application.h"

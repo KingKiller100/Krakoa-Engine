@@ -29,17 +29,15 @@ namespace kTest::utility
 		const auto testStr2 = kFormatToString::FormatToString("will all %s printf function format specifiers like with string literals ", "work");
 		const auto testStr3 = kFormatToString::FormatToString("and with different numerical types such as float %02.03f, ", float(kMaths::TAU));
 		const auto testStr4 = kFormatToString::FormatToString("doubles %02.07f, ", double(kMaths::E));
-		const auto testStr5 = kFormatToString::FormatToString("signed or unsigned integers %d/%u, ", -50, 200U);
-		const auto testStr6 = kFormatToString::FormatToString("pointer addresses %p ", tempIntPtr);
-		const auto testStr7 = "etc..";
+		const auto testStr5 = kFormatToString::FormatToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
+		const auto testStr6 = kFormatToString::FormatToString("pointer addresses i.e. %p (random int ptr address)", tempIntPtr);
 
 		VERIFY(testStr == "This test 1 ");
-		VERIFY(testStr2 == "will work with string literals ");
-		VERIFY(testStr3 == "with different types such as float 06.282, ");
+		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
+		VERIFY(testStr3 == "and with different numerical types such as float 6.283, ");
 		VERIFY(testStr4 == "doubles 2.7182818, ");
-		VERIFY(testStr5 == "signed or unsigned ints 50, ");
+		VERIFY(testStr5 == "signed (-50) or unsigned integers (200), ");
 		VERIFY(testStr6.find("pointer addresses ") != std::string::npos);
-		VERIFY(testStr7 == "etc...")
 	}
 
 	void FormatToStringTester::SingleObjectToStringTest()

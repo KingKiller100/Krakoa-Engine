@@ -19,7 +19,10 @@ namespace kTest::utility
 		
 		const auto cwd = GetCurrentWorkingDirectory<char>();
 
-		const auto good = CheckFileExists((cwd + "waitforremotedebugger").c_str());
+		auto content = std::string();
+		OutputToFile((cwd + "FS_File_Test").c_str(), content.c_str());
+
+		const auto good = CheckFileExists((cwd + "FS_Find_Test").c_str());
 		VERIFY(good == true);
 
 		const auto bad = CheckFileExists((cwd + "NULL").c_str());

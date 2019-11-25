@@ -74,7 +74,7 @@ namespace kTest
 			
 			if (test.second->Run())
 			{
-				resultTest = util::kFormatToString::FormatToString("Success: Test Name: %s\n", test.first);
+				resultTest = util::kFormatToString::FormatToString("Success: Test Name: %s\n\n", test.first);
 			}
 			else
 			{

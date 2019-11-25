@@ -30,8 +30,16 @@ namespace util
 			using Const_Iter	= const Iter;
 			
 			using CharTraits	= Traits;
+					   
+			enum {
+				EQUAL,
+				MINE_SHORT,
+				OTHER_SHORT,
+				DIFFERENT
+			} compareResult;
 
 			static constexpr auto npos{ static_cast<Size>(-1) };
+			static constexpr auto null_terminater = static_cast<CharType>('\0');
 
 			static_assert(std::is_same_v<CharType, typename Traits::char_type>,
 				"Type entered into string_view class does not match a char type object (char, wchar_t, char32_t, etc)!");
@@ -158,7 +166,7 @@ namespace util
 				auto currentChar = string;
 				auto otherChar = other.string;
 
-				while (*otherChar != CharType('\0'))
+				while (*otherChar != null_terminater)
 				{
 					if (*currentChar != *otherChar)
 						return false;
@@ -190,7 +198,7 @@ namespace util
 				auto currentChar = string + lengthDiff;
 				auto otherChar = other.string;
 
-				while (*otherChar != CharType('\0'))
+				while (*otherChar != null_terminater)
 				{
 					if (*currentChar != *otherChar)
 						return false;
@@ -215,10 +223,31 @@ namespace util
 				*this = temp;
 			}
 
-			constexpr Size Compare(const Template_String_View& other)
+			constexpr int Compare(const Template_String_View& other)
 			{
 				// Write it yourself, can't rely on this to be in older versions of the STL
-				return std::_Traits_compare<CharTraits>(string, length, other.Data(), other.Length());
+				auto myString = string;
+				auto otherString = other.string;
+
+				while (*myString != null_terminater && *otherString != null_terminater)
+				{
+					if (*myString == *otherString)
+					{
+						myString++;
+						otherString++;
+					}
+					else
+					{
+						return DIFFERENT;
+					}
+				}
+
+				if (*myString == null_terminater && *otherString == null_terminater)
+					return EQUAL;
+				else if (*myString == null_terminater)
+					return MINE_SHORT;
+				else
+					return OTHER_SHORT;
 			}
 
 
@@ -246,7 +275,7 @@ namespace util
 				auto currentChar = string + offset;
 				Size count(offset);
 
-				while (*currentChar != CharType('\0') 
+				while (*currentChar != null_terminater
 					&& searchLimit > 0)
 				{
 					if (*currentChar == item)
@@ -274,7 +303,7 @@ namespace util
 				auto viewStr = string + pos;
 				Size idx(0);
 				
-				while (*viewStr != CharType('\0'))
+				while (*viewStr != null_terminater)
 				{
 					if (*viewStr == str[idx])
 					{
@@ -283,7 +312,7 @@ namespace util
 						++idx;
 					}
 
-					if (str[idx] == CharType('\0'))
+					if (str[idx] == null_terminater)
 						return (pos - strLength);
 					else
 						continue;
@@ -309,7 +338,7 @@ namespace util
 
 				auto currentChar = string + offset;
 				auto count = offset;
-				while (*currentChar != CharType('\0'))
+				while (*currentChar != null_terminater)
 				{
 					if (*currentChar != item)
 						return count;
@@ -379,7 +408,7 @@ namespace util
 						continue;
 					}
 
-					if (str[strIdx] == CharType('\0'))
+					if (str[strIdx] == null_terminater)
 						return (pos - strLength);
 
 					strIdx = 0;
@@ -421,8 +450,8 @@ namespace util
 					++thisCurrentChar;
 					++otherCurrentChar;
 
-					if (*thisCurrentChar == CharType('\0')
-						&& *otherCurrentChar == CharType('\0'))
+					if (*thisCurrentChar == null_terminater
+						&& *otherCurrentChar == null_terminater)
 						return true;
 				}
 				
@@ -468,7 +497,7 @@ namespace util
 				Size size = 0;
 				auto currentChar = str;
 				
-				while (*currentChar != CharType('\0'))
+				while (*currentChar != null_terminater)
 				{
 					++size;
 					currentChar += ReturnSizeOfCharT();
@@ -476,7 +505,7 @@ namespace util
 
 				return size;
 			}
-			
+
 		private:
 			Const_Ptr string;
 			size_t length;

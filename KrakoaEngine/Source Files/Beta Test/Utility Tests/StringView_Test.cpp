@@ -70,7 +70,7 @@ namespace kTest::utility
 		VERIFY(s2.Empty() == true);
 		
 		auto v = s3.Substr(5);
-		VERIFY(v == U"g Tester" && v);
+		VERIFY(v.Compare(U"g Tester") && v);
 
 		auto temp = s.Substr(s.Length());
 		VERIFY(s.IsEqual(temp));

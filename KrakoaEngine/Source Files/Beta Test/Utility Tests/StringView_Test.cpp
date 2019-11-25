@@ -51,6 +51,9 @@ namespace kTest::utility
 		const auto badGPos = s.FirstInstanceOf('g', 2, 3);
 		VERIFY(badGPos == StringView::npos);
 
+		const auto Pos3 = s4.LastInstanceOf(L'6');
+		VERIFY(Pos3 == 11);
+
 		auto k = s2.Back();
 		VERIFY(k == L'g');
 

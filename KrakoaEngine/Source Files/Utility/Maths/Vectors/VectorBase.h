@@ -48,7 +48,7 @@ namespace kMaths
 			if (x || y || z)
 				return (x * x) + (y * y) + (z * z);
 
-			return T(0);
+			return static_cast<T>(0);
 		}
 
 		// Restricts vector magnitude to max value
@@ -78,7 +78,7 @@ namespace kMaths
 
 
 		// Returns vector times by -1 - does not reassign values (except w element)
-		VectorBase ReverseVector()
+		constexpr VectorBase ReverseVector()
 		{
 			this->x *= -1;
 			this->y *= -1;

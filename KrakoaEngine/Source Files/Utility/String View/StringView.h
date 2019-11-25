@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Core/EngineCore.h"
-#include "../Debug Helper/kAssert.h"
+#include <Core/EngineCore.h>
+#include <Utility/Debug Helper/kAssert.h>
 
 #include <limits>
 #include <string>
@@ -33,7 +33,7 @@ namespace util
 					   
 			enum {
 				EQUAL,
-				MINE_SHORT,
+				MYSTR_SHORT,
 				OTHER_SHORT,
 				DIFFERENT
 			} compareResult;
@@ -102,6 +102,12 @@ namespace util
 				return Length() == temp.Length() && temp.Data() == string;
 			}
 
+			constexpr bool operator==(const std::string& stdString)
+			{
+				return (Compare(stdString.c_str()) == EQUAL);
+			}
+			//*****************
+
 			constexpr operator Const_Ptr() const
 			{
 				return string;
@@ -147,7 +153,7 @@ namespace util
 				return string[0];
 			}
 
-			USE_RESULT constexpr Const_Ref Back() const
+			USE_RESULT constexpr Const_Ref Back() const 
 			{
 				kAssert(string != nullptr, "string is null");
 				return length < 1 ? string[0] : string[length - 1];
@@ -158,7 +164,7 @@ namespace util
 				return !Empty() && Front() == item;
 			}
 
-			constexpr bool StartsWith(const Template_String_View& other)
+			constexpr bool StartsWith(const Template_String_View& other) noexcept
 			{
 				if (other.length > length  || Empty())
 					return false;
@@ -178,7 +184,7 @@ namespace util
 				return true;
 			}
 
-			constexpr bool StartsWith(Const_Ptr const literal) 
+			constexpr bool StartsWith(Const_Ptr const literal) noexcept
 			{
 				return StartsWith(Template_String_View(literal));
 			}
@@ -188,7 +194,7 @@ namespace util
 				return !Empty() && Back() == item;
 			}
 
-			constexpr bool EndsWith(const Template_String_View& other)
+			constexpr bool EndsWith(const Template_String_View& other) noexcept
 			{
 				if (other.length > length)
 					return false;
@@ -210,7 +216,7 @@ namespace util
 				return true;
 			}
 
-			constexpr bool EndsWith(Const_Ptr const literal)
+			constexpr bool EndsWith(Const_Ptr const literal) noexcept
 			{
 				return EndsWith(Template_String_View(literal));
 			}
@@ -223,7 +229,7 @@ namespace util
 				*this = temp;
 			}
 
-			constexpr int Compare(const Template_String_View& other)
+			USE_RESULT constexpr int Compare(const Template_String_View& other) noexcept
 			{
 				// Write it yourself, can't rely on this to be in older versions of the STL
 				auto myString = string;
@@ -245,7 +251,7 @@ namespace util
 				if (*myString == null_terminater && *otherString == null_terminater)
 					return EQUAL;
 				else if (*myString == null_terminater)
-					return MINE_SHORT;
+					return MYSTR_SHORT;
 				else
 					return OTHER_SHORT;
 			}
@@ -283,7 +289,7 @@ namespace util
 					
 					++count;
 					--searchLimit;
-					currentChar += ReturnSizeOfCharT();
+					currentChar++;
 				}
 				
 				return npos;
@@ -344,7 +350,7 @@ namespace util
 						return count;
 
 					++count;
-					currentChar += ReturnSizeOfCharT();
+					currentChar++;
 				}
 
 				return npos;
@@ -355,7 +361,7 @@ namespace util
 				CheckWithinLength(offset, 
 					"Offset greater than length of this string");
 
-				auto currentChar = string + length - offset;
+				auto currentChar = string + length - offset - 1;
 				Size pos(length - offset);
 
 				while (currentChar != string)
@@ -364,14 +370,14 @@ namespace util
 						return pos;
 
 					--pos;
-					currentChar -= ReturnSizeOfCharT();
+					currentChar--;
 				}
 				return npos;
 			}
 
 			constexpr Size LastInstanceOfNot(const CharType item, const Size offset = 0) noexcept
 			{
-				auto currentChar = string + length - offset;
+				auto currentChar = string + length - offset - 1;
 				Size pos(length - offset);
 
 				while (currentChar != string)
@@ -380,7 +386,7 @@ namespace util
 						return pos;
 
 					--pos;
-					currentChar -= ReturnSizeOfCharT();
+					currentChar--;
 				}
 				return npos;
 			}
@@ -487,11 +493,6 @@ namespace util
 					std::_Xout_of_range(msg);
 			}
 
-			USE_RESULT constexpr Size ReturnSizeOfCharT() const
-			{
-				return sizeof(char);
-			}
-
 			Size GetStrLength(Const_Ptr str)
 			{
 				Size size = 0;
@@ -500,7 +501,7 @@ namespace util
 				while (*currentChar != null_terminater)
 				{
 					++size;
-					currentChar += ReturnSizeOfCharT();
+					currentChar++;
 				}
 
 				return size;
@@ -555,6 +556,11 @@ namespace util
 	public:
 		Iterator();
 		~Iterator();
+
+		Iterator operator++(int)
+		{
+
+		}
 
 	private:
 		std::shared_ptr<T> object;

@@ -1,9 +1,9 @@
 #include "Precompile.h"
 #include "Vectors_Test.h"
 
-#include "../../Utility/Maths/Vectors/Vector2.h"
-#include "../../Utility/Maths/Vectors/Vector3.h"
-#include "../../Utility/Maths/Vectors/Vector4.h"
+#include <Utility/Maths/Vectors/Vector2.h>
+#include <Utility/Maths/Vectors/Vector3.h>
+#include <Utility/Maths/Vectors/Vector4.h>
 
 namespace kTest::Maths
 {

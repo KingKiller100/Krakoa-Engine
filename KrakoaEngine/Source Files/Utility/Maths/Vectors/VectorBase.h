@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Core/EngineCore.h>
+
 namespace kMaths
 {
 	template<typename T>
@@ -17,22 +19,22 @@ namespace kMaths
 	template <typename T>
 	struct VectorBase
 	{
-		VectorBase()
+		constexpr VectorBase()
 			: x(0), y(0), z(0), w(0)
 		{		}
 
-		explicit VectorBase(const T _v, const T _w = 0)
+		constexpr explicit VectorBase(const T _v, const T _w = 0)
 			: x(_v), y(_v), z(_v), w(_w)
 		{		}
 
-		explicit VectorBase(const T _x, const T _y, const T _z, const T _w = 0)
+		constexpr explicit VectorBase(const T _x, const T _y, const T _z, const T _w = 0)
 			: x(_x), y(_y), z(_z), w(_w)
 		{		}
 
 		virtual ~VectorBase()
 			= default;
 
-		[[nodiscard]] virtual double Magnitude() const
+		USE_RESULT double Magnitude() const noexcept
 		{
 			if (x || y || z)
 				return std::sqrt(static_cast<double>(MagnitudeSQ()));
@@ -41,7 +43,7 @@ namespace kMaths
 		}
 
 
-		[[nodiscard]] T MagnitudeSQ() const
+		USE_RESULT constexpr T MagnitudeSQ() const noexcept
 		{
 			if (x || y || z)
 				return (x * x) + (y * y) + (z * z);
@@ -50,7 +52,7 @@ namespace kMaths
 		}
 
 		// Restricts vector magnitude to max value
-		constexpr void Truncate(const T max)
+		constexpr void Truncate(const T max) 
 		{
 			if (VectorBase::Magnitude() > max)
 			{
@@ -59,7 +61,7 @@ namespace kMaths
 		}
 
 		// Reassigns values to be positives
-		void ToPositives()
+		constexpr void ToPositives() noexcept
 		{
 			x = x < 0 ? -x : x;
 			y = y < 0 ? -y : y;

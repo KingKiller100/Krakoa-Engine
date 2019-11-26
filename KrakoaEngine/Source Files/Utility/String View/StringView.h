@@ -31,12 +31,12 @@ namespace util
 			
 			using CharTraits	= Traits;
 					   
-			enum {
+			enum : unsigned short {
 				EQUAL,
 				MYSTR_SHORT,
-				OTHER_SHORT,
+				OTHER_STR_SHORT,
 				DIFFERENT
-			} compareResult;
+			} ;
 
 			static constexpr auto npos{ static_cast<Size>(-1) };
 			static constexpr auto null_terminater = static_cast<CharType>('\0');
@@ -189,7 +189,7 @@ namespace util
 				return StartsWith(Template_String_View(literal));
 			}
 			
-			constexpr bool EndsWith(const Type item) noexcept
+			constexpr bool EndsWith(const CharType item) noexcept
 			{
 				return !Empty() && Back() == item;
 			}
@@ -253,7 +253,7 @@ namespace util
 				else if (*myString == null_terminater)
 					return MYSTR_SHORT;
 				else
-					return OTHER_SHORT;
+					return OTHER_STR_SHORT;
 			}
 
 
@@ -273,7 +273,7 @@ namespace util
 				return Template_String_View(string + offset, amount);
 			}
 
-			constexpr Size FirstInstanceOf(const Type item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
+			constexpr Size FirstInstanceOf(const CharType item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
 			{
 				CheckWithinLength(offset, 
 					"Offset is greater than the length of string");
@@ -337,7 +337,7 @@ namespace util
 				return FirstInstanceOf(other.string, offset);
 			}
 
-			constexpr Size FirstInstanceOfNot(const Type item, const Size offset = 0)
+			constexpr Size FirstInstanceOfNot(const CharType item, const Size offset = 0)
 			{
 				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
@@ -351,6 +351,29 @@ namespace util
 
 					++count;
 					currentChar++;
+				}
+
+				return npos;
+			}
+
+			constexpr Size FirstInstanceOfNot(Const_Ptr str, const Size offset = 0)
+			{
+				CheckWithinLength(offset,
+					"Offset is greater than the length of string");
+
+				auto currentChar = string + offset;
+				auto compareStr = str;
+				auto count = offset;
+				Size idx = 0U;
+
+				while (*currentChar != null_terminater)
+				{
+					if (*currentChar != compareStr[idx])
+						return count;
+
+					++count;
+					currentChar++;
+					idx++;
 				}
 
 				return npos;
@@ -464,24 +487,24 @@ namespace util
 				return false;
 			}
 
-			constexpr Size Find(const CharType item, Size offset) const
+			USE_RESULT constexpr Size Find(const CharType item, Size offset) const
 			{
 				return FirstInstanceOf(item, offset);
 			}
 
-			constexpr Size Find(Const_Ptr item, Size offset) const
+			USE_RESULT constexpr Size Find(Const_Ptr str, Size offset) const
 			{
-				return FirstInstanceOf(item, offset);
+				return FirstInstanceOf(str, offset);
 			}
 
-			constexpr Size rFind(const CharType item, Size offset) const
+			USE_RESULT constexpr Size rFind(const CharType item, Size offset) const
 			{
 				return LastInstanceOf(item, offset);
 			}
 
-			constexpr Size rFind(Const_Ptr item, Size offset) const
+			USE_RESULT constexpr Size rFind(Const_Ptr str, Size offset) const
 			{
-				return LastInstanceOf(item, offset);
+				return LastInstanceOf(str, offset);
 			}
 
 

@@ -22,7 +22,7 @@ namespace kTest::utility
 		auto content = std::string();
 		OutputToFile((cwd + "FS_File_Test").c_str(), content.c_str());
 
-		const auto good = CheckFileExists((cwd + "FS_Find_Test").c_str());
+		const auto good = CheckFileExists((cwd + "FS_File_Test").c_str());
 		VERIFY(good == true);
 
 		const auto bad = CheckFileExists((cwd + "NULL").c_str());
@@ -46,6 +46,8 @@ namespace kTest::utility
 		const auto isFileDeleted = RemoveFile((cwd + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(isFileDeleted == true);
 
+		VERIFY(RemoveFile((cwd + "FS_File_Test").c_str()) == true);
+		VERIFY(DeleteDirectory((cwd + "Change Dir\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directory Test\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\Success1\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\").c_str()) == true);

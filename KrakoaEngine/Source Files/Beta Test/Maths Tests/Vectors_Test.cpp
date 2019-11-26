@@ -37,7 +37,7 @@ namespace kTest::Maths
 		VERIFY(xVal != v2.X() && yVal != v2.Y());
 
 		auto g = v2 *= 8;
-		VERIFY(g.X() == 20.0 && g.Y() == -88.0);
+		VERIFY(g.X() == -20.0 && g.Y() == -88.0);
 		
 		g = v2 /= 8;
 		VERIFY(g.X() == -2.5 && g.Y() == -11.0);
@@ -67,7 +67,7 @@ namespace kTest::Maths
 		VERIFY(v3.X() == 12.6f && v3.Y() == 3.4f && v3.Z() == 10.345f);
 
 		const auto tempV3 = Vector3s(static_cast<int>(v3.Z()));
-		VERIFY(tempV3.X() == v3.Z() && tempV3.Y() == v3.Z() && tempV3.Z() == v3.Z());
+		VERIFY(tempV3.X() == static_cast<int>(v3.Z()) && tempV3.Y() == static_cast<int>(v3.Z()) && tempV3.Z() == static_cast<int>(v3.Z()));
 
 		auto v = CrossProduct(v3, tempV3);
 
@@ -79,13 +79,15 @@ namespace kTest::Maths
 		VERIFY(result.X() == 22 && result.Y() == 13 && result.Z() == 20);
 		
 		result = tempV3 * v3;
-		VERIFY(result.X() == 126 && result.Y() == 34 && result.Z() == 103.45);
+		VERIFY(result.X() == 120 && result.Y() == 30 && result.Z() == 100);
 		
 		result =  tempV3 - v3;
-		VERIFY(result.X() == -2.6 && result.Y() == 6 && result.Z() == 0);
+		VERIFY(result.X() == -2 && result.Y() == 7 && result.Z() == 0);
 		
-		result =  tempV3 / v3;
-		VERIFY(result.X() == tempV3.X() / v3.X() && result.Y() == tempV3.Y() / v3.Y() && result.Z() == tempV3.Z() / v3.Z());
+		result = tempV3 / v3;
+		VERIFY(result.X() == tempV3.X() / static_cast<decltype(tempV3.X())>(v3.X()));
+		VERIFY(result.Y() == tempV3.Y() / static_cast<decltype(tempV3.Y())>(v3.Y()));
+		VERIFY(result.Z() == tempV3.Z() / static_cast<decltype(tempV3.Z())>(v3.Z()));
 		
 		v3 *= tempV3;
 		v3 /= tempV3;

@@ -1,7 +1,8 @@
-#include "Precompile.h"
+#include <Precompile.h>
+
 #include "StringView_Test.h"
 
-#include "../../Utility/String View/StringView.h"
+#include <Utility/String View/StringView.h>
 
 
 namespace kTest::utility
@@ -32,12 +33,12 @@ namespace kTest::utility
 
 		u16StringView s4 = u"Unsigned 16-Bit String";
 		VERIFY(s4.Data() == u"Unsigned 16-Bit String" && s3.Length() == 22)
-		
-		//test.remove_prefix(3);
-		//VERIFY(test.compare("r String") == 0);
-		
+				
 		s.RemovePrefix(3);
-		VERIFY(s.Compare("r String") == 0);
+		VERIFY(s.Compare("r String") == StringView::EQUAL);
+		VERIFY(s.Compare("nothing") == StringView::DIFFERENT);
+		VERIFY(s.Compare("r Str") == StringView::OTHER_STR_SHORT);
+		VERIFY(s.Compare("r String Fail") == StringView::MYSTR_SHORT);
 
 		s.RemoveSuffix(1);
 		VERIFY(s.Length() == 7);
@@ -50,9 +51,18 @@ namespace kTest::utility
 		
 		const auto badGPos = s.FirstInstanceOf('g', 2, 3);
 		VERIFY(badGPos == StringView::npos);
+		
+		const auto iPos = s.FirstInstanceOfNot('i', 2);
+		VERIFY(iPos == 2);
+		
+		const auto rBlankSPos = s.FirstInstanceOfNot("r S");
+		VERIFY(rBlankSPos == 3);
 
 		const auto Pos3 = s4.LastInstanceOf(L'6');
 		VERIFY(Pos3 == 11);
+
+		const auto BadrPos = s4.LastInstanceOfNot(L'r', 2);
+		VERIFY(BadrPos == 20);
 
 		auto k = s2.Back();
 		VERIFY(k == L'g');

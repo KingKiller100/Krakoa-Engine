@@ -117,7 +117,7 @@ namespace util::kLogs
 		}
 		else
 		{
-			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n\t\t[File]:\t%s\n\t\t[Line]:\t%d\n",
+			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d\n",
 				GetTimeText().c_str(), logLevelMap.at(lvl), 
 				msg.data(), file, line),
 				lvl);

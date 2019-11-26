@@ -78,7 +78,7 @@ namespace kTest
 			}
 			else
 			{
-				resultTest = test.second->GetResult();
+				resultTest = util::kFormatToString::FormatToString("Failure: Test Name: %s\n%s", test.first, test.second->GetResult().c_str());
 			}
 
 			util::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());

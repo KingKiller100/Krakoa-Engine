@@ -41,13 +41,17 @@ namespace kMaths
 		return value >= 0 ? Clamp(value, min, max) : -Clamp(value, min, max);
 	}
 
+	template<typename T1, typename T2>
+	T1 PowerOfX(T1&& base, T2&& power)
+	{
+		return pow(base, power);
+	}
+
 	template<typename T>
 	T AngleBetweenVectors(const VectorBase<T>& v, const VectorBase<T>& u, const bool inDegrees)
 	{
-		static const T convertToDegrees = 180.f / PI;
-
 		const T angle = VectorDotProduct<T>(v, u) / (v.Magnitude() * u.Magnitude());
 
-		return inDegrees ? acos(angle) * convertToDegrees : acos(angle);
+		return inDegrees ? RadiansToDegrees(acos(angle)) : acos(angle);
 	}
 }

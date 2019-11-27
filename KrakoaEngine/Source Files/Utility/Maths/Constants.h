@@ -13,10 +13,4 @@ namespace kMaths
 	constexpr AccuracyType ROOT_2 = 1.414213562373095048801688;
 	constexpr AccuracyType GOLDEN_RATIO = 1.618033988749894848204586;
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO = 1 / GOLDEN_RATIO;
-
-	template<typename T1, typename T2>
-	T1 PowerOfX(T1&& base, T2&& power)
-	{
-		return pow(base, power);
-	}
 }

@@ -1,6 +1,5 @@
 #pragma once
-#include "../Tester.h"
-
+#include <Beta Test/Tester.h>
 
 namespace kTest::utility
 {
@@ -11,7 +10,7 @@ namespace kTest::utility
 		~StringViewTester() override;
 
 	private:
-		void Test() override;				
+		void Test() override;
 	};
 
 }

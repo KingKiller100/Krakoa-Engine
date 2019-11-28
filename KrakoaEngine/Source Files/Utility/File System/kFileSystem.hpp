@@ -15,25 +15,21 @@ namespace util
 	{
 		//Type aliases for STL containers --------------------------------------------------------
 		
-		// STL string
+		// STL basic_string
 		template<class Char>
-		using StringType = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
+		using StringWriter = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
 
-		// STL string_view
-		template<class Char>
-		using StringReader = std::basic_string_view<Char>;
-
-		// STL ifstream
+		// STL basic_ifstream
 		template<class Char>
 		using FileReader = std::basic_ifstream<Char, std::char_traits<Char>>;
 
-		// STL ofstream
+		// STL basic_ofstream
 		template<class Char>
 		using FileWriter = std::basic_ofstream<Char, std::char_traits<Char>>;
 
 		// STL vector of StringTypes
 		template<typename Char>
-		using FileDataLines = std::vector<StringReader<Char>>;
+		using FileLinesData = std::vector<StringWriter<Char>>;
 		// --------------------------------------------------------------------------------------
 
 		
@@ -95,7 +91,7 @@ namespace util
 		template<class CharType>
 		bool CreateNewDirectories(const CharType* directory)
 		{
-			StringReader<CharType> dir(directory);
+			StringWriter<CharType> dir(directory);
 			
 			if (dir.back() != '\\')
 				return false; // Final suffix of directory char type must end with '\\'
@@ -103,13 +99,15 @@ namespace util
 			bool isDirCreated = false;
 			auto pos = dir.find_first_of('\\') + 1;
 
+			StringWriter<CharType> nextDirectory;
+
 			while (pos != 0)
 			{
-				const auto nextForwardSlash = dir.find_first_of('\\', pos) + 1;
-				const auto nextDirectory = dir.substr(0, nextForwardSlash);
-				pos = nextForwardSlash;
+				isDirCreated = CreateNewDirectory<CharType>(nextDirectory.c_str());
 
-				isDirCreated = CreateNewDirectory<CharType>(nextDirectory.data());
+				const auto nextForwardSlash = dir.find_first_of('\\', pos) + 1;
+				nextDirectory = dir.substr(0, nextForwardSlash);
+				pos = nextForwardSlash;
 			}
 
 			return isDirCreated;
@@ -118,7 +116,7 @@ namespace util
 		/**
 		 * \brief
 		 *		Deletes file from system
-		 * \tparam CharType
+		 * \param CharType
 		 *		Char type i.e. must be char/wchar_t/u32char_t/etc...
 		 * \param[in] fullFilePath
 		 *		Full file path of the file to delete
@@ -209,7 +207,7 @@ namespace util
 		template<class CharType>
 		inline auto ParseFileData(const CharType* fullFilePath)
 		{
-			FileDataLines<CharType> fileData;
+			FileLinesData<CharType> fileData;
 
 			if (CheckFileExists(fullFilePath))
 			{
@@ -219,7 +217,7 @@ namespace util
 
 				if (inFile.is_open())
 				{
-					StringType<CharType> data;
+					StringWriter<CharType> data;
 					while (std::getline(inFile, data))
 					{
 						fileData.push_back(data);
@@ -238,9 +236,9 @@ namespace util
 		 *		Current working directory as a string
 		 */
 		template<class Char>
-		StringType<Char> GetCurrentWorkingDirectory()
+		StringWriter<Char> GetCurrentWorkingDirectory()
 		{
-			StringType<Char> fullFolderPathOfCurrentWorkingDirectory;
+			StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
 
 			if (fullFolderPathOfCurrentWorkingDirectory.empty())
 			{

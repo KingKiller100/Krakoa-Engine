@@ -41,13 +41,12 @@ namespace kTest::utility
 		VERIFY(CheckFileExists((cwd + "Create Directory Test\\Test.txt").c_str()) == true);
 
 		const auto fileInfo = util::kFileSystem::ParseFileData((cwd + "Create Directory Test\\Test.txt").c_str());
-		VERIFY(fileInfo.front() == "Success\n");
+		VERIFY(fileInfo.front().compare("Success") == 0);
 
 		const auto isFileDeleted = RemoveFile((cwd + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(isFileDeleted == true);
 
 		VERIFY(RemoveFile((cwd + "FS_File_Test").c_str()) == true);
-		VERIFY(DeleteDirectory((cwd + "Change Dir\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directory Test\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\Success1\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\").c_str()) == true);

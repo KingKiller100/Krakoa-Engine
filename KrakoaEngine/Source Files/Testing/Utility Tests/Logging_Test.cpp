@@ -19,7 +19,7 @@ namespace kTest::utility
 
 		INIT_LOGS();
 
-		const auto dir = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "Change Dir\\";		
+		const auto dir = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\Log Test Dir\\";		
 		CHANGE_LOGS_DESTINATION(dir);
 
 		const auto filename = "DiffFileName";
@@ -55,12 +55,12 @@ namespace kTest::utility
 				
 		LOG_ENTRY("ERROR AGAIN!", kLogs::LogLevel::ERRR);
 		last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("ERROR AGAIN!") == std::string::npos);
-
-		
+		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
+				
 		FATAL("FATAL!");
+
 		last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("EMPTY") == std::string::npos);
+		VERIFY(last.find("EMPTY") != std::string::npos);
 		
 		FLUSH_LOGS();
 		END_LOGGING();
@@ -71,5 +71,8 @@ namespace kTest::utility
 		LOG_ENTRY("end", kLogs::LogLevel::NORM);	
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("end") == std::string::npos);
+
+		kFileSystem::RemoveFile((dir + filename + ".log").data());
+		kFileSystem::DeleteDirectory(dir.data());
 	}
 }

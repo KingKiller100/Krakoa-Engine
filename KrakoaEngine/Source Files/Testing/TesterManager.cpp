@@ -38,7 +38,7 @@ namespace kTest
 
 	void TesterManager::Initialize()
 	{
-		kTest_TestResultFilePath = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "TestResults\\";
+		kTest_TestResultFilePath = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\";
 		util::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
 		
 		kTest_TestResultFilePath += "Results.txt";

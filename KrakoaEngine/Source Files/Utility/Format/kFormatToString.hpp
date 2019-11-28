@@ -16,7 +16,7 @@ namespace util
 
 		// Only designed for ANSI or wide char string
 		template<class CharType, typename T, typename ...Ts>
-		constexpr std::basic_string<CharType> FormatToString( const CharType* format, T&& arg, Ts&& ...argPack )
+		constexpr std::basic_string<CharType> FormatToString( const CharType* format, T&& arg, Ts&& ...argPack)
 		{
 			CharType buffer[1024];
 			

@@ -19,6 +19,9 @@ namespace util
 		template<class Char>
 		using StringWriter = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
 
+		template<class Char>
+		using StringReader = std::basic_string_view<Char>;
+
 		// STL basic_ifstream
 		template<class Char>
 		using FileReader = std::basic_ifstream<Char, std::char_traits<Char>>;
@@ -51,6 +54,13 @@ namespace util
 				outFile << content;
 				outFile.close();
 			}
+#ifdef _DEBUG
+			else
+			{
+				auto dirStr = StringReader<CharType>(fullFilePath);
+				OutputDebugStringA((StringWriter<CharType>("Cannot open file ") + dirStr.substr(dirStr.find_last_of('\\')).data()).c_str());
+			}
+#endif // DEBUG
 		}
 
 		/**

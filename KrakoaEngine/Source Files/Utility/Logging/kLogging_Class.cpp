@@ -1,9 +1,9 @@
-#include "Precompile.h"
-#include "kLogging_Class.h"
+#include <Precompile.h>
+#include <Utility/Logging/kLogging_Class.hpp>
 
-#include "../Calendar/kCalendar.h"
-#include "../File System/kFileSystem.h"
-#include "../Format/kFormatToString.h"
+#include <Utility/Calendar/kCalendar.hpp>
+#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/File System/kFileSystem.hpp>
 
 #include <cstdio>
 #include <string_view>
@@ -12,7 +12,7 @@ namespace util::kLogs
 {
 	using namespace kCalendar;
 	using namespace kFileSystem;
-	using namespace kFormatToString;
+	using namespace kFormat;
 		
 	
 	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";

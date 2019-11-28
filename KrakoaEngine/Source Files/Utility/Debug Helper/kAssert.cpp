@@ -1,24 +1,24 @@
-#include "Precompile.h"
-#include "kAssert.h"
+#include <Precompile.h>
+#include <Utility/Debug Helper/kAssert.hpp>
 
-#include "../Format/kFormatToString.h"
-#include "../Logging/kLogging.h"
+#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/Logging/kLogging.hpp>
 
 namespace util::debug
 {
-	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const wchar_t* exp, const wchar_t* msg, const wchar_t* f, const unsigned l)
+	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const wchar_t* exp, const wchar_t* msg, const wchar_t* file, const unsigned line)
 		: std::exception(),
-		report(kFormatToString::FormatToString(L"Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, f, l))
+		report(kFormat::FormatToString(L"Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
 	{
 		wReportToCharReport();
 
 		char fileBuffer[512];
-		const auto fileStr = std::wstring_view(f);
+		const auto fileStr = std::wstring_view(file);
 		auto fileLength = fileStr.size();
 		wcstombs_s(&fileLength, fileBuffer, fileStr.data(), sizeof (fileBuffer));
 		
-		kLogs::GetLogger()->InitializeLogging();
-		kLogs::GetLogger()->OutputToFatalFile( reportChar, fileBuffer, l);
+		INIT_LOGS();
+		kLogs::GetLogger()->OutputToFatalFile( reportChar, fileBuffer, line);
 	}
 
 	AssertOnFailedExpressionException::~AssertOnFailedExpressionException() throw()

@@ -1,14 +1,9 @@
-#include "Precompile.h"
-#include "kDebugger.h"
-
-#include "../File System/kFileSystem.h"
-
+#include <Precompile.h>
+#include <Utility/Debug Helper/kDebugger.hpp>
 
 namespace util::kDebugger
 {
-	using namespace kFileSystem;
-
-	void BreakPointHere()
+	void BreakPointHere() noexcept
 	{
 		__debugbreak();
 	}

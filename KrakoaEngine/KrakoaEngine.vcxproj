@@ -73,7 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Kweku\Krakoa-Engine\KrakoaEngine\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)</OutDir>
@@ -178,19 +178,19 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source Files\Beta Test\TesterManager.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\Clock_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\DebugHelp_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\FileSystem_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\Calendar_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\FormatToString_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\Logging_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Utility Tests\StringView_Test.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Maths Tests\Vectors_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\TesterManager.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\Clock_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\DebugHelp_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\FileSystem_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\Calendar_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\FormatToString_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\Logging_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Utility Tests\StringView_Test.cpp" />
+    <ClCompile Include="Source Files\Testing\Maths Tests\Vectors_Test.cpp" />
     <ClCompile Include="Source Files\Utility\Calendar\kCalendar.cpp" />
     <ClCompile Include="Source Files\Utility\Debug Helper\kAssert.cpp" />
     <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp" />
-    <ClCompile Include="Source Files\Beta Test\Tester.cpp" />
+    <ClCompile Include="Source Files\Testing\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
     <ClCompile Include="Source Files\Utility\Format\kUTFStringConverter.cpp" />
     <ClCompile Include="Source Files\Utility\Logging\kLogging_Class.cpp" />
@@ -206,40 +206,40 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source Files\Beta Test\TesterManager.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\FormatToString_Test.h" />
-    <ClInclude Include="Source Files\Patterns\SimpleSingleton.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\Clock_Test.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\DebugHelp_Test.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\FileSystem_Test.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\Calendar_Test.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\Logging_Test.h" />
-    <ClInclude Include="Source Files\Beta Test\Utility Tests\StringView_Test.h" />
-    <ClInclude Include="Source Files\Beta Test\Maths Tests\Vectors_Test.h" />
-    <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.h" />
-    <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.h" />
-    <ClInclude Include="Source Files\Beta Test\Tester.h" />
-    <ClInclude Include="Source Files\Core\Application.h" />
-    <ClInclude Include="Source Files\Core\EngineCore.h" />
-    <ClInclude Include="Source Files\Core\EntryPoint.h" />
-    <ClInclude Include="Source Files\Krakoa.h" />
-    <ClInclude Include="Source Files\Utility\Calendar\kCalendar.h" />
-    <ClInclude Include="Source Files\Utility\Clock\kClock.h" />
-    <ClInclude Include="Source Files\Utility\File System\kFileSystem.h" />
-    <ClInclude Include="Source Files\Utility\Format\kFormatToString.h" />
-    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.h" />
-    <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.h" />
-    <ClInclude Include="Source Files\Utility\Logging\kLogging.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Constants.h" />
-    <ClInclude Include="Source Files\Utility\Maths\kMaths.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector2.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector3.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.h" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\VectorBase.h" />
+    <ClInclude Include="Source Files\Testing\TesterManager.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\FormatToString_Test.hpp" />
+    <ClInclude Include="Source Files\Patterns\SimpleSingleton.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\Clock_Test.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\DebugHelp_Test.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\FileSystem_Test.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\Calendar_Test.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\Logging_Test.hpp" />
+    <ClInclude Include="Source Files\Testing\Utility Tests\StringView_Test.hpp" />
+    <ClInclude Include="Source Files\Testing\Maths Tests\Vectors_Test.hpp" />
+    <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.hpp" />
+    <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.hpp" />
+    <ClInclude Include="Source Files\Testing\Tester.hpp" />
+    <ClInclude Include="Source Files\Core\Application.hpp" />
+    <ClInclude Include="Source Files\Core\EngineCore.hpp" />
+    <ClInclude Include="Source Files\Core\EntryPoint.hpp" />
+    <ClInclude Include="Source Files\Krakoa.hpp" />
+    <ClInclude Include="Source Files\Utility\Calendar\kCalendar.hpp" />
+    <ClInclude Include="Source Files\Utility\Clock\kClock.hpp" />
+    <ClInclude Include="Source Files\Utility\File System\kFileSystem.hpp" />
+    <ClInclude Include="Source Files\Utility\Format\kFormatToString.hpp" />
+    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.hpp" />
+    <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.hpp" />
+    <ClInclude Include="Source Files\Utility\Logging\kLogging.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Constants.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\kMaths.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector2.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector3.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\Vectors\VectorBase.hpp" />
     <ClInclude Include="Source Files\Precompile.h" />
-    <ClInclude Include="Source Files\Utility\String View\StringView.h" />
+    <ClInclude Include="Source Files\Utility\String View\StringView.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

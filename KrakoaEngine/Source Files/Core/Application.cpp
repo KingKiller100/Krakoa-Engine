@@ -1,12 +1,12 @@
+#include <Precompile.h>
+#include <Core/Application.hpp>
 
-#include "Precompile.h"
-#include "Application.h"
-
-#include "../Utility/Clock/kClock.h"
+#include <Utility/Clock/kClock.hpp>
 
 namespace krakoa
 {
 	using namespace util;
+
 	Application::Application()
 	: running(false)
 	{

@@ -20,13 +20,13 @@ namespace kMaths
 	template<typename  T>
 	T RadiansToDegrees(const T radians)
 	{
-		return radians * (360.0 / TAU);
+		return radians * (360.0 / consts::TAU);
 	}
 
 	template<typename T>
 	T DegreesToRadians(const T degrees)
 	{
-		return degrees * (TAU / 360.0);
+		return degrees * (consts::TAU / 360.0);
 	}
 
 	template<typename T>

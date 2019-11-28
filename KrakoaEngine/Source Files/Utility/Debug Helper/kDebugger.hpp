@@ -1,4 +1,7 @@
 #pragma once
+
+#include <Core/EngineCore.hpp>
+
 #include <Utility/File System/kFileSystem.hpp>
 
 namespace util
@@ -9,12 +12,12 @@ namespace util
 		inline constexpr void CheckRemoteDebuggerAttached(const CharType* filename) noexcept
 		{
 #ifdef  _DEBUG
-			if (::IsDebuggerPresent() == TRUE)
+			if (::IsDebuggerPresent() == IS_TRUE) // 
 				return;
 
 			while (kFileSystem::CheckFileExists(filename))
 			{
-				if (::IsDebuggerPresent() == TRUE)
+				if (::IsDebuggerPresent() == IS_TRUE)
 				{
 					break;
 				}

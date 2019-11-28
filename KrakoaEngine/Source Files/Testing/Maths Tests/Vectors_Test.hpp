@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Beta Test/Tester.hpp>
+#include <Testing/Tester.hpp>
 
 namespace kTest::Maths
 {

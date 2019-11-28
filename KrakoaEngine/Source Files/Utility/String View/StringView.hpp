@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Core/EngineCore.h>
-#include <Utility/Debug Helper/kAssert.h>
+#include <Core/EngineCore.hpp>
+#include <Utility/Debug Helper/kAssert.hpp>
 
 #include <limits>
 #include <string>
@@ -32,10 +32,10 @@ namespace util
 			using CharTraits	= Traits;
 					   
 			enum : unsigned short {
-				EQUAL,
+				EQUAL = 0,
 				MYSTR_SHORT,
 				OTHER_STR_SHORT,
-				DIFFERENT
+				DIFFERENT = 65535
 			} ;
 
 			static constexpr auto npos{ static_cast<Size>(-1) };

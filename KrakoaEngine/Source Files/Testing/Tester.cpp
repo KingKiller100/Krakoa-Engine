@@ -1,5 +1,5 @@
 #include <Precompile.h>
-#include <Beta Test/Tester.hpp>
+#include <Testing/Tester.hpp>
 
 #include <vector>
 #include <memory>
@@ -30,7 +30,7 @@ namespace kTest
 		return name.c_str();
 	}
 
-	std::string_view Tester::GetResult() const noexcept
+	std::string Tester::GetResult() const noexcept
 	{
 		return result.str();
 	}

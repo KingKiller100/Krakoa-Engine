@@ -1,7 +1,6 @@
 #pragma once 
 
-#include "../../../Precompile.h"
-#include "../Vectors/Vector4.h"
+#include <Utility/Maths/Vectors/Vector4.hpp>
 
 #include <array>
 

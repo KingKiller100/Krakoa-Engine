@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Core/EngineCore.hpp>
+
 #include <direct.h>
-#include <corecrt_wdirect.h>
 #include <cstdio>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <corecrt_wdirect.h>
 
 namespace util
 {
@@ -128,11 +130,11 @@ namespace util
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				return DeleteFileA(fullFilePath) == TRUE;
+				return DeleteFileA(fullFilePath) == IS_TRUE; // 1 == TRUE
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				return DeleteFileW(fullFilePath) == TRUE;
+				return DeleteFileW(fullFilePath) == IS_TRUE; // 1 == TRUE
 			}
 
 			return false;

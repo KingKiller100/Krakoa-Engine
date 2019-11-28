@@ -19,3 +19,6 @@
 #else
 	#define USE_RESULT 
 #endif
+
+#define IS_TRUE 1
+#define IS_FALSE 0

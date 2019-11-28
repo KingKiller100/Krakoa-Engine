@@ -22,7 +22,7 @@
 
 namespace kTest
 {
-	std::unordered_map<const char*, std::unique_ptr<Tester>> kTests_Tests;
+	std::unordered_map<const char*, std::unique_ptr<Tester>> kTests_TestsUMap;
 	std::string kTest_TestResultFilePath;
 	
 	TesterManager::TesterManager(Token)
@@ -63,12 +63,12 @@ namespace kTest
 
 	void TesterManager::Add(Tester* test)
 	{
-		kTests_Tests.insert(std::make_pair(test->GetName(), test));
+		kTests_TestsUMap.insert(std::make_pair(test->GetName(), test));
 	}
 
 	void TesterManager::RunAll()
 	{
-		for (auto& test : kTests_Tests)
+		for (auto& test : kTests_TestsUMap)
 		{			
 			std::string resultTest;
 			
@@ -78,7 +78,7 @@ namespace kTest
 			}
 			else
 			{
-				resultTest = util::kFormat::FormatToString("Failure: Test Name: %s\n%s", test.first, test.second->GetResult().c_str());
+				resultTest = util::kFormat::FormatToString("Failure: Test Name: %s\n%s", test.first, test.second->GetResult().data());
 			}
 
 			util::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
@@ -87,6 +87,6 @@ namespace kTest
 
 	void TesterManager::ClearAllTests()
 	{
-		kTests_Tests.clear();
+		kTests_TestsUMap.clear();
 	}
 }

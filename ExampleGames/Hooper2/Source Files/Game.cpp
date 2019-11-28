@@ -1,4 +1,4 @@
-#include <Krakoa.h>
+#include <Krakoa.hpp>
 
 class Hooper2Game : public krakoa::Application
 {

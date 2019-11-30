@@ -11,6 +11,7 @@ namespace util
 		template<typename Precision = double>
 		class Clock
 		{
+			using Units = std::chrono::milliseconds;
 			using Duration = std::chrono::duration<Precision>;
 			using SystemClock = std::chrono::system_clock;
 
@@ -32,7 +33,7 @@ namespace util
 
 			static Precision GetSystemLifeTime()
 			{
-				const Precision systemTime = std::chrono::duration_cast<Duration>(HighResolutionClock::now() - startTimePoint).count();
+				const Precision systemTime = std::chrono::duration_cast<Units>(HighResolutionClock::now() - startTimePoint).count();
 				return systemTime;
 			}
 
@@ -41,7 +42,7 @@ namespace util
 				lastTimePoint = currentTimePoint;
 				currentTimePoint = HighResolutionClock::now();
 
-				const Precision deltaTime = std::chrono::duration_cast<Duration>(currentTimePoint - lastTimePoint).count();
+				const Precision deltaTime = std::chrono::duration_cast<Units>(currentTimePoint - lastTimePoint).count();
 				return deltaTime;
 			}
 

@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{208B7BED-8C5D-4B42-A8CB-57FB5DC73F9E}</ProjectGuid>
     <RootNamespace>KrakoaEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>KrakoaEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -230,7 +230,7 @@
     <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.hpp" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.hpp" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.hpp" />
+    <ClInclude Include="Source Files\Utility\Maths\kAlgorithms.hpp" />
     <ClInclude Include="Source Files\Utility\Maths\Constants.hpp" />
     <ClInclude Include="Source Files\Utility\Maths\kMaths.hpp" />
     <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.hpp" />

@@ -2,7 +2,7 @@
 
 #include <Utility/Maths/Constants.hpp>
 
-#include <Utility/Maths/Algorithms/kAlgorithms.hpp>
+#include <Utility/Maths/kAlgorithms.hpp>
 
 #include <Utility/Maths/Vectors/VectorBase.hpp>
 #include <Utility/Maths/Vectors/Vector2.hpp>

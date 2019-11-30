@@ -9,11 +9,11 @@ namespace kMaths
 
 	// Normalizes a vector
 	template<typename T>
-	static VectorBase<T> VectorNormalize(const VectorBase<T>& v);
+	static constexpr VectorBase<T> VectorNormalize(const VectorBase<T>& v) noexcept;
 
 	// Produces the dot product
 	template<typename T>
-	static T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v);
+	static constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept;
 
 
 	template <typename T>
@@ -34,7 +34,7 @@ namespace kMaths
 		virtual ~VectorBase()
 			= default;
 
-		USE_RESULT double Magnitude() const noexcept
+		USE_RESULT constexpr double Magnitude() const noexcept
 		{
 			if (x || y || z)
 				return std::sqrt(static_cast<double>(MagnitudeSQ()));
@@ -52,7 +52,7 @@ namespace kMaths
 		}
 
 		// Restricts vector magnitude to max value
-		constexpr void Truncate(const T max) 
+		constexpr void Truncate(const T max) noexcept
 		{
 			if (VectorBase::Magnitude() > max)
 			{
@@ -221,8 +221,8 @@ namespace kMaths
 			return VectorBase(-this->x, -this->y, -this->z, this->w);
 		}
 
-		friend T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&);
-		friend VectorBase<T> VectorNormalize(const VectorBase<T>&);
+		friend constexpr VectorBase<T> VectorNormalize(const VectorBase<T>&) noexcept;
+		friend constexpr T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&) noexcept;
 
 	private:
 
@@ -233,7 +233,7 @@ namespace kMaths
 
 	// Normalizes a vector
 	template<typename T>
-	VectorBase<T> VectorNormalize(const VectorBase<T>& v)
+	constexpr VectorBase<T> VectorNormalize(const VectorBase<T>& v) noexcept
 	{
 		const T mag = v.Magnitude();
 		return mag != 0 ? v / mag : v;
@@ -241,7 +241,7 @@ namespace kMaths
 
 	// Produces the dot product
 	template<typename T>
-	T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v)
+	constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
 	{
 		return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
 	}

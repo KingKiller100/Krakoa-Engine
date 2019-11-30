@@ -89,9 +89,6 @@
     <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Utility\Maths\Algorithms\kAlgorithms.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source Files\Utility\Maths\kMaths.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -168,6 +165,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Testing\TesterManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Maths\kAlgorithms.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

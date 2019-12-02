@@ -7,7 +7,7 @@
 #include <Testing/Maths Tests/Vectors_Test.hpp>
 
 // Utility Tests
-#include <Testing/Utility Tests/Clock_Test.hpp>
+#include <Testing/Utility Tests/Timer_Test.hpp>
 #include <Testing/Utility Tests/Logging_Test.hpp>
 #include <Testing/Utility Tests/Calendar_Test.hpp>
 #include <Testing/Utility Tests/DebugHelp_Test.hpp>
@@ -53,7 +53,7 @@ namespace kTest
 	void TesterManager::InitializeUtilityTests()
 	{		
 		Add(new utility::CalendarTester());
-		Add(new utility::ClockTester());
+		Add(new utility::TimerTester());
 		Add(new utility::FileSystemTester());
 		Add(new utility::FormatToStringTester());
 		Add(new utility::DebugHelpTester());

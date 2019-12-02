@@ -1,7 +1,7 @@
 #include <Precompile.h>
 #include <Core/Application.hpp>
 
-#include <Utility/Clock/kClock.hpp>
+#include <Utility/Clock/kTimer.hpp>
 
 namespace krakoa
 {
@@ -10,7 +10,6 @@ namespace krakoa
 	Application::Application()
 	: running(false)
 	{
-		kTime::Clock<double>::Start();
 	}
 
 	Application::~Application()
@@ -23,7 +22,7 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		const auto deltaTime = kTime::Clock<double>::GetDeltaTime();
+		//const auto deltaTime = kTime::Clock<double>::GetDeltaTime();
 	}
 
 	constexpr bool Application::IsRunning() const

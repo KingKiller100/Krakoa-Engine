@@ -4,11 +4,11 @@
 
 namespace kTest::utility
 {
-	class ClockTester : public Tester
+	class TimerTester : public Tester
 	{
 	public:
-		ClockTester();
-		~ClockTester() override;
+		TimerTester();
+		~TimerTester() override;
 		
 	private:
 		void Test() override;

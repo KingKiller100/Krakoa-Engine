@@ -42,9 +42,6 @@
     <ClCompile Include="Source Files\Testing\Utility Tests\Calendar_Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Clock_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source Files\Testing\Utility Tests\DebugHelp_Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,6 +61,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Testing\TesterManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\Timer_Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,9 +119,6 @@
     <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Utility\Clock\kClock.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source Files\Utility\Calendar\kCalendar.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -141,9 +138,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Testing\Utility Tests\Calendar_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Clock_Test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Testing\Utility Tests\DebugHelp_Test.hpp">
@@ -168,6 +162,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Maths\kAlgorithms.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\Timer_Test.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Clock\kTimer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

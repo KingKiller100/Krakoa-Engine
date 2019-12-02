@@ -5,7 +5,7 @@
 
 // Util Includes
 #include <Utility/Calendar/kCalendar.hpp>
-#include <Utility/Clock/kClock.hpp>
+#include <Utility/Clock/kTimer.hpp>
 #include <Utility/Debug Helper/kAssert.hpp>
 #include <Utility/Debug Helper/kDebugger.hpp>
 #include <Utility/File System/kFileSystem.hpp>

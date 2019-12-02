@@ -46,7 +46,7 @@ namespace kTest::utility
 		const auto isFileDeleted = RemoveFile((cwd + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(isFileDeleted == true);
 
-		VERIFY(RemoveFile((cwd + "FS_File_Test").c_str()) == true);
+		VERIFY(RemoveFile((cwd + "FS_File_Test").c_str()) == false);
 		VERIFY(DeleteDirectory((cwd + "Create Directory Test\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\Success1\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\").c_str()) == true);

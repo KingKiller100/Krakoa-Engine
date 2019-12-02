@@ -167,7 +167,7 @@
     <ClInclude Include="Source Files\Testing\Utility Tests\Timer_Test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Utility\Clock\kTimer.hpp">
+    <ClInclude Include="Source Files\Utility\Timer\kTimer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -49,7 +49,7 @@ namespace kTest
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->result << util::kFormat::FormatToString("\tCondition: %s\n\tFunction: %s\n\tCode Line: %d\n\n", #test, FUNC_SIG, __LINE__);\
+		this->result << util::kFormat::FormatToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__);\
 		this->success = false; \
 	}\
 

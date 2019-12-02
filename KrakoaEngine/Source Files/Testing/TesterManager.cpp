@@ -38,11 +38,13 @@ namespace kTest
 
 	void TesterManager::Initialize()
 	{
+#ifdef TESTING_ENABLED
 		kTest_TestResultFilePath = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\";
-		util::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
+		const auto isMade = util::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
 		
 		kTest_TestResultFilePath += "Results.txt";
 		util::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
+#endif // TESTING_ENABLED
 	}
 
 	void TesterManager::InitializeMathsTests()
@@ -68,6 +70,7 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
+#ifdef TESTING_ENABLED
 		for (auto& test : kTests_TestsUMap)
 		{			
 			std::string resultTest;
@@ -83,6 +86,7 @@ namespace kTest
 
 			util::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
+#endif // TESTING_ENABLED
 	}
 
 	void TesterManager::ClearAllTests()

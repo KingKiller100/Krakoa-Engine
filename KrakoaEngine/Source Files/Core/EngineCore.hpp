@@ -8,8 +8,6 @@
 		#define KRAKOA_API __declspec(dllimport)
 		#define EXPIMP_TEMPLATE extern
 	#endif
-
-#define FUNC_SIG __FUNCSIG__
 #else
 	#error SORRY BLOKE, KRAKOA ONLY SUPPORTS WINDOWS!
 #endif
@@ -22,3 +20,7 @@
 
 #define IS_TRUE 1
 #define IS_FALSE 0
+
+#if defined(TEST_ALLOWED)
+	#define TESTING_ENABLED 1
+#endif // 

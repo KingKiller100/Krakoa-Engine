@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/EngineCore.hpp>
+#include <Utility/Timer/kTimer.hpp>
 
 namespace krakoa
 {
@@ -10,13 +11,14 @@ namespace krakoa
 		Application();
 		virtual ~Application();
 
-		void Initialize();
-		static void Run();
+		constexpr void Initialize();
+		void Run();
 		constexpr  bool IsRunning() const;
 		virtual void Shutdown() = 0;
 
 	protected:
 		bool running;
+		util::kTime::SystemTimer systemTimer;
 	};
 
 	Application* CreateApplication();

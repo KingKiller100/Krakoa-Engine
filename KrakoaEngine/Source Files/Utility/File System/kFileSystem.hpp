@@ -44,7 +44,7 @@ namespace util
 		 * \param content
 		 *		The data to fill the file with.
 		 */
-		template<class CharType>
+		template<class CharType = char>
 		void OutputToFile(const CharType* fullFilePath, const CharType* content)
 		{
 			FileWriter<CharType> outFile(fullFilePath, std::ios::out | std::ios::app);
@@ -71,7 +71,7 @@ namespace util
 		 * \return
 		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 		 */
-		template<class CharType>
+		template<class CharType = char>
 		bool CreateNewDirectory(const CharType* directory)
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
@@ -98,7 +98,7 @@ namespace util
 		 *		The path must be completely unique otherwise the path will not be created. If parts of the
 		 *		path already exist, only
 		 */
-		template<class CharType>
+		template<class CharType = char>
 		bool CreateNewDirectories(const CharType* directory)
 		{
 			StringWriter<CharType> dir(directory);
@@ -133,9 +133,11 @@ namespace util
 		 * \return
 		 *		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
 		 */
-		template<typename CharType>
+		template<typename CharType = char>
 		bool RemoveFile(const CharType* fullFilePath)
 		{
+
+			if constexpr (std::is_same_v<CharType, char>)
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
 				return DeleteFileA(fullFilePath) == IS_TRUE; // 1 == TRUE
@@ -160,7 +162,7 @@ namespace util
 		 *		- The folder is completely empty (including empty of system and hidden folder files)
 		 *		- This directory is not the current directory of this application.
 		 */
-		template<class CharType>
+		template<class CharType = char>
 		bool DeleteDirectory(const CharType* directory)
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)

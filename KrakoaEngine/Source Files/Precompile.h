@@ -11,13 +11,15 @@
 #include <unordered_set>
 #include <stack>
 #include <string>
-#include <string_view>
 #include <vector>
 
-// Threading
-#include <future>
-#include <thread>
+#if _HAS_CXX17
+	#include <string_view>
 
+// Threading
+	#include <future>
+	#include <thread>
+#endif 
 // Input/Output Handlers
 #include <fstream>
 #include <istream>
@@ -25,7 +27,9 @@
 #include <iostream>
 
 // Misc.
-#include <chrono>
+#if _HAS_CXX17
+	#include <chrono>
+#endif
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -37,10 +41,13 @@
 #include <type_traits>
 
 // Windows Libraries
-#include <corecrt.h>
+#ifdef _HAS_CXX17
+	#include <corecrt.h>
+	#include <corecrt_wdirect.h>
+	#include <corecrt_wstdio.h>
+#endif 
+
 #include <direct.h>
-#include <corecrt_wdirect.h>
 #include <cstdio>
-#include <corecrt_wstdio.h>
 #include <Windows.h>
 

@@ -9,7 +9,6 @@ namespace util
 {
 	namespace kTime
 	{
-
 #if defined (_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable:4251)

@@ -12,9 +12,11 @@
 	#error SORRY BLOKE, KRAKOA ONLY SUPPORTS WINDOWS!
 #endif
 
+
 #if _HAS_CXX17
 	#define USE_RESULT [[nodiscard]]
 #else
+	#define constexpr 	
 	#define USE_RESULT 
 #endif
 

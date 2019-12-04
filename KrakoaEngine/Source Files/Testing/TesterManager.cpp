@@ -16,7 +16,7 @@
 #include <Testing/Utility Tests/FormatToString_Test.hpp>
 
 // File System to output test results
-#include <Utility/File System/kFileSystem.hpp>
+#include <File System/kFileSystem.hpp>
 
 #include <unordered_map>
 

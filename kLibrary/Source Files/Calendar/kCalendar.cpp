@@ -1,4 +1,3 @@
-#include <Precompile.h>
 #include <Calendar/kCalendar.hpp>
 
 #include <Format/kFormatToString.hpp>

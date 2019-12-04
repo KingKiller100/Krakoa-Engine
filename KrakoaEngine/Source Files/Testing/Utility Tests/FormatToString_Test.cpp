@@ -1,8 +1,8 @@
 #include <Precompile.h>
 #include <Testing/Utility Tests/FormatToString_Test.hpp>
 
-#include <Utility/Maths/Constants.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include <Maths/kAlgorithms.hpp>
+#include <Format/kFormatToString.hpp>
 
 namespace kTest::utility
 {

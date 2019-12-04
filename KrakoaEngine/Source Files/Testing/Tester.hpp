@@ -2,8 +2,8 @@
 
 #include <Core/EngineCore.hpp>
 
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/File System/kFileSystem.hpp>
+#include <Format/kFormatToString.hpp>
+#include <File System/kFileSystem.hpp>
 
 #include <string>
 #include <sstream>

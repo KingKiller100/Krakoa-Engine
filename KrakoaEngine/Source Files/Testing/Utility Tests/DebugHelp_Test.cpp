@@ -1,8 +1,8 @@
 #include <Precompile.h>
 #include <Testing/Utility Tests/DebugHelp_Test.hpp>
 
-#include <Utility/Debug Helper/kDebugger.hpp>
-#include <Utility/Debug Helper/kAssert.hpp>
+#include <Debug Helper/kDebugger.hpp>
+#include <Debug Helper/kAssert.hpp>
 
 namespace kTest::utility
 {	

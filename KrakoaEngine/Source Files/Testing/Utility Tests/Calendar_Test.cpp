@@ -1,7 +1,7 @@
 #include <Precompile.h>
 #include <Testing/Utility Tests/Calendar_Test.hpp>
 
-#include <Utility/Calendar/kCalendar.hpp>
+#include <Calendar/kCalendar.hpp>
 
 namespace kTest::utility
 {

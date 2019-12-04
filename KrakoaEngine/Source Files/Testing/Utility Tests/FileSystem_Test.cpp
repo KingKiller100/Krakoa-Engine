@@ -1,7 +1,7 @@
 #include <Precompile.h>
 #include <Testing/Utility Tests/FileSystem_Test.hpp>
 
-#include <Utility/File System/kFileSystem.hpp>
+#include <File System/kFileSystem.hpp>
 
 namespace kTest::utility
 {

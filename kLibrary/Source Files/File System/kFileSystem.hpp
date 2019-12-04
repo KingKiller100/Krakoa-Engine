@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/EngineCore.hpp>
+#include <HelperMacros.hpp>
 
 #include <direct.h>
 #include <cstdio>
@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <corecrt_wdirect.h>
+#include <Windows.h>
 
 namespace util
 {
@@ -217,7 +218,7 @@ namespace util
 		 *		A vector of every line of data in the file, as a string
 		 */
 		template<class CharType>
-		inline auto ParseFileData(const CharType* fullFilePath)
+		USE_RESULT inline auto ParseFileData(const CharType* fullFilePath)
 		{
 			FileLinesData<CharType> fileData;
 
@@ -248,7 +249,7 @@ namespace util
 		 *		Current working directory as a string
 		 */
 		template<class Char>
-		StringWriter<Char> GetCurrentWorkingDirectory()
+		USE_RESULT StringWriter<Char> GetCurrentWorkingDirectory()
 		{
 			StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
 

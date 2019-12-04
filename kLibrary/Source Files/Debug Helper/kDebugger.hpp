@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Core/EngineCore.hpp>
+#include <HelperMacros.hpp>
 
-#include <Utility/File System/kFileSystem.hpp>
+#include <File System/kFileSystem.hpp>
 
 namespace util
 {

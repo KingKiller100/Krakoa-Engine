@@ -2,8 +2,8 @@
 
 #include <Testing/Utility Tests/StringView_Test.hpp>
 
-#include <Utility/String View/StringView.hpp>
-#include <Utility/Timer/kTimer.hpp>
+#include <String View/StringView.hpp>
+#include <Timer/kTimer.hpp>
 
 namespace kTest::utility
 {

@@ -1,8 +1,8 @@
 #include <Precompile.h>
 #include <Testing/Utility Tests/Logging_Test.hpp>
 
-#include <Utility/Logging/kLogging.hpp>
-#include <Utility/File System/kFileSystem.hpp>
+#include <Logging/kLogging.hpp>
+#include <File System/kFileSystem.hpp>
 
 namespace kTest::utility
 {		

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/EngineCore.hpp>
+#include <HelperMacros.hpp>
 
 #include <chrono>
 #include <atomic>
@@ -12,8 +12,8 @@ namespace util
 #if defined (_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable:4251)
-		EXPIMP_TEMPLATE template class KRAKOA_API std::chrono::time_point< std::chrono::high_resolution_clock, typename std::chrono::high_resolution_clock::duration>;
-		EXPIMP_TEMPLATE template class KRAKOA_API std::chrono::time_point< std::chrono::system_clock, typename std::chrono::system_clock::duration>;
+		PORT_STL template class KLIB_API std::chrono::time_point< std::chrono::high_resolution_clock, typename std::chrono::high_resolution_clock::duration>;
+		PORT_STL template class KLIB_API std::chrono::time_point< std::chrono::system_clock, typename std::chrono::system_clock::duration>;
 #pragma warning(pop)
 #endif
 
@@ -25,6 +25,7 @@ namespace util
 		using Hours = std::chrono::hours;
 
 		template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
+		//class Timer
 		class KRAKOA_API Timer
 		{			
 			using Rep = RepresentationType;

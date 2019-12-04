@@ -5,10 +5,10 @@
 	#define EXPORT_STL
 #else
 	#define KLIB_API __declspec(dllimport)
-	#define EXPORT_STL extern
+	#define PORT_STL extern
 #endif
 
-#if _HAS_CXX17
+#if _MSVC_LANG > 201402L
 	#define USE_RESULT [[nodiscard]]
 #else
 	#define noexcept throw ()

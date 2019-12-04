@@ -1,10 +1,12 @@
 #pragma once
 
-#include <Utility/Maths/Constants.hpp>
-#include <Utility/Maths/Vectors/VectorBase.hpp>
-#include <Utility/Maths/Vectors/Vector2.hpp>
-#include <Utility/Maths/Vectors/Vector3.hpp>
-#include <Utility/Maths/Vectors/Vector4.hpp>
+#include <HelperMacros.hpp>
+
+#include <Maths/Constants.hpp>
+#include <Maths/Vectors/VectorBase.hpp>
+#include <Maths/Vectors/Vector2.hpp>
+#include <Maths/Vectors/Vector3.hpp>
+#include <Maths/Vectors/Vector4.hpp>
 
 #include <cmath>
 

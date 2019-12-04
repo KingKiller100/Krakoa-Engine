@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Utility/Maths/Constants.hpp>
+#include <Maths/Constants.hpp>
 
-#include <Utility/Maths/kAlgorithms.hpp>
+#include <Maths/kAlgorithms.hpp>
 
-#include <Utility/Maths/Vectors/VectorBase.hpp>
-#include <Utility/Maths/Vectors/Vector2.hpp>
-#include <Utility/Maths/Vectors/Vector3.hpp>
-#include <Utility/Maths/Vectors/Vector4.hpp>
+#include <Maths/Vectors/VectorBase.hpp>
+#include <Maths/Vectors/Vector2.hpp>
+#include <Maths/Vectors/Vector3.hpp>
+#include <Maths/Vectors/Vector4.hpp>
 
-#include <Utility/Maths/Matrix/Matrix4x4.hpp>
+#include <Maths/Matrix/Matrix4x4.hpp>

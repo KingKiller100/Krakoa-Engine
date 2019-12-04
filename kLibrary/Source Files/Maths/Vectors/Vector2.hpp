@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Utility/Maths/Vectors/VectorBase.hpp>
+#include <Maths/Vectors/VectorBase.hpp>
 
 namespace kMaths
 {

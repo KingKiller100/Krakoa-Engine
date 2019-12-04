@@ -1,6 +1,6 @@
 #pragma once
 
-#include <HelperMacros.h>
+#include <HelperMacros.hpp>
 
 #include <string>
 #include <deque>
@@ -41,20 +41,21 @@ namespace util
 			FATL  // Fatal
 		};
 		
-#if defined (_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable:4251)
-		EXPORT_STL template class KLIB_API std::deque<std::string>;
-		EXPORT_STL template class KLIB_API std::basic_string<char>;
-		EXPORT_STL template class KLIB_API std::basic_string_view<char>;
-		EXPORT_STL template class KLIB_API std::unordered_map<LogLevel, const char*>;
-		EXPORT_STL template class KLIB_API std::unordered_map<LogLevel, LoggingConsoleColour>;
-#pragma warning(pop)
-#endif
+//#if defined (_MSC_VER)
+//#pragma warning(push)
+//#pragma warning(disable:4251)
+//		EXPORT_STL template class KLIB_API std::deque<std::string>;
+//		EXPORT_STL template class KLIB_API std::basic_string<char>;
+//		EXPORT_STL template class KLIB_API std::basic_string_view<char>;
+//		EXPORT_STL template class KLIB_API std::unordered_map<LogLevel, const char*>;
+//		EXPORT_STL template class KLIB_API std::unordered_map<LogLevel, LoggingConsoleColour>;
+//#pragma warning(pop)
+//#endif
 
 		using LogQueue = std::deque<std::string>;
 		
-		class KLIB_API Logging
+		//class KLIB_API Logging
+		class Logging
 		{
 		public:
 			Logging();

@@ -6,6 +6,7 @@
 
 #include <cstdio>
 #include <string_view>
+#include <Windows.h>
 
 namespace util::kLogs
 {

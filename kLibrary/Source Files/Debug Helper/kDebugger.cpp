@@ -1,5 +1,4 @@
-#include <Precompile.h>
-#include <Utility/Debug Helper/kDebugger.hpp>
+#include <Debug Helper/kDebugger.hpp>
 
 namespace util::kDebugger
 {

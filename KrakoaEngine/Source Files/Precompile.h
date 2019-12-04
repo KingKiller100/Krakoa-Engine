@@ -13,13 +13,17 @@
 #include <string>
 #include <vector>
 
-#if _HAS_CXX17
-	#include <string_view>
 
+#if _MSVC_LANG >= 201702L
+	#include <string_view>
+#endif //_MSVC_LANG >= 201702L
+
+#if _MSVC_LANG >= 201400L
 // Threading
 	#include <future>
 	#include <thread>
-#endif 
+#endif //_MSVC_LANG >= 201400L
+
 // Input/Output Handlers
 #include <fstream>
 #include <istream>
@@ -27,9 +31,10 @@
 #include <iostream>
 
 // Misc.
-#if _HAS_CXX17
+#if _MSVC_LANG >= 201400L
 	#include <chrono>
-#endif
+#endif //_MSVC_LANG >= 201400L
+
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -42,11 +47,11 @@
 
 // Windows Libraries
 #if KRAKOA_OS_WINDOWS
-	#ifdef _HAS_CXX17
+	#if _MSVC_LANG >= 201702L
 		#include <corecrt.h>
 		#include <corecrt_wdirect.h>
 		#include <corecrt_wstdio.h>
-	#endif 
+	#endif //_MSVC_LANG >= 201702L
 	
 	#include <direct.h>
 	#include <cstdio>

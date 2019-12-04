@@ -86,8 +86,14 @@
     <ClInclude Include="Source Files\String View\StringView.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\HelperMacros.h">
+    <ClInclude Include="Source Files\HelperMacros.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kLib.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

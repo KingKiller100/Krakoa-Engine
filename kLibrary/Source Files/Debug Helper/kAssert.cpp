@@ -1,11 +1,11 @@
-#include <Precompile.h>
-#include <Utility/Debug Helper/kAssert.hpp>
+#include <Debug Helper/kAssert.hpp>
 
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/Logging/kLogging.hpp>
+#include <Format/kFormatToString.hpp>
+#include <Logging/kLogging.hpp>
 
 namespace util::debug
 {
+#if _DEBUG
 	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const char* exp, const char* msg, const char* file, const unsigned line)
 		: std::exception(),
 		report(kFormat::FormatToString("Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
@@ -23,4 +23,5 @@ namespace util::debug
 	{
 		return report.c_str();
 	}
+#endif
 }

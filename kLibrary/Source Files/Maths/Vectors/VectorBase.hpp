@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/EngineCore.hpp>
+#include <HelperMacros.hpp>
 
 namespace kMaths
 {

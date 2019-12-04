@@ -1,7 +1,7 @@
 #include <Precompile.h>
 #include <Testing/Utility Tests/Timer_Test.hpp>
 
-#include <Utility/Timer/kTimer.hpp>
+#include <Timer/kTimer.hpp>
 
 #include <vector>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Core/EngineCore.hpp>
-#include <Utility/Debug Helper/kAssert.hpp>
+#include <HelperMacros.hpp>
+#include <Debug Helper/kAssert.hpp>
 
 #include <limits>
 #include <string>

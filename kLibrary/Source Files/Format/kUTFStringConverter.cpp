@@ -1,5 +1,4 @@
-#include <Precompile.h>
-#include <Utility/Format/kUTFStringConverter.hpp>
+#include <Format/kUTFStringConverter.hpp>
 
 // TO BE IMPLEMENTED - NEED TO LEARN MORE ABOUT UTF/UNICODE AND CHARACTER ENCODING
 

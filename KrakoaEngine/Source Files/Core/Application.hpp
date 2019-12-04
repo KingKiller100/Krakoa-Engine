@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core/EngineCore.hpp>
-#include <Utility/Timer/kTimer.hpp>
+#include <Timer/kTimer.hpp>
 
 namespace krakoa
 {

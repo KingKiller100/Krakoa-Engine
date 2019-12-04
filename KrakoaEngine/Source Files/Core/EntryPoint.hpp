@@ -3,16 +3,27 @@
 #include <Core/Application.hpp>
 
 #include <Testing/TesterManager.hpp>
+#include <Utility/Logging/kLogging.hpp>
 
 #include <memory>
 
 extern krakoa::Application* krakoa::CreateApplication();
 
-void RunTestsOnkLibrary();
+inline void RunTestsOnkLibrary()
+{
+	auto& testManager = kTest::TesterManager::Reference();
+	testManager.Initialize();
+	testManager.InitializeMathsTests();
+	testManager.InitializeUtilityTests();
+	testManager.RunAll();
+};
 
 int main(int argv, char** argc)
 {
 	RunTestsOnkLibrary();
+
+	INIT_LOGS();
+	LOG_BANNER("WELCOME TO KRAKOA", "ENTRY");
 		
 	const auto deleter = [](krakoa::Application* game) -> void
 	{
@@ -31,14 +42,4 @@ int main(int argv, char** argc)
 	}
 	 
 	return 0;
-}
-
-
-inline void RunTestsOnkLibrary()
-{
-	auto& testManager = kTest::TesterManager::Reference();
-	testManager.Initialize();
-	testManager.InitializeMathsTests();
-	testManager.InitializeUtilityTests();
-	testManager.RunAll();
 }

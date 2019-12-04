@@ -139,7 +139,7 @@ namespace kMaths
 		}
 		
 		T const rem = num % base;
-		if (-1 % 2 == 1)
+		if _CONSTEXPR_IF(-1 % 2 == 1)
 		{
 			return rem;
 		}
@@ -151,15 +151,15 @@ namespace kMaths
 
 	//////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT inline constexpr Vector2<T> Rotate(Vector2<T>& position, const T angle) noexcept
+	USE_RESULT inline constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{
 		if (angle == 0)
 			return 0;
 
-		const float rotation = atan2f(static_cast<float>(position.X()), static_cast<float>(position.X())) + static_cast<float>(angle);
-		const float mag = position.Magnitude();
-		const T lXPos = static_cast<T>(cosf(static_cast<float>(rotation)) * mag);
-		const T lYPos = static_cast<T>(sinf(static_cast<float>(rotation)) * mag);
+		const T rotation = atan2(position.Y(), position.X()) + angle;
+		const T mag = position.Magnitude();
+		const T lXPos = static_cast<T>(cos(rotation) * mag);
+		const T lYPos = static_cast<T>(sin(rotation) * mag);
 		return Vector2<T>(lXPos, lYPos);
 	}
 

@@ -33,19 +33,19 @@ namespace kTest::utility
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("BANNER!") != std::string::npos)
 
-		LOG_ENTRY("NORMAL!", kLogs::LogLevel::NORM);
+		LOG_NORM("NORMAL!");
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("NORMAL!") != std::string::npos)
 
-		LOG_ENTRY("INFORMATIVE!", kLogs::LogLevel::INFO);
+		LOG_INFO("INFORMATIVE!");
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("INFORMATIVE!") != std::string::npos)
 
-		LOG_ENTRY("Done", kLogs::LogLevel::WARN);
+		LOG_NORM("Done");
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("Done") != std::string::npos)
 
-		LOG_ENTRY("ERROR!", kLogs::LogLevel::ERRR);
+		LOG_ERRR("ERROR!");
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("ERROR!") != std::string::npos);
 
@@ -53,7 +53,7 @@ namespace kTest::utility
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("ERROR!") == std::string::npos);
 				
-		LOG_ENTRY("ERROR AGAIN!", kLogs::LogLevel::ERRR);
+		LOG_ERRR("ERROR AGAIN!");
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
 				
@@ -68,7 +68,7 @@ namespace kTest::utility
 		const auto fullFilePathToDelete = dir + filename + ".log";
 		VERIFY(util::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
 		
-		LOG_ENTRY("end", kLogs::LogLevel::NORM);	
+		LOG_NORM("end");	
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("end") == std::string::npos);
 

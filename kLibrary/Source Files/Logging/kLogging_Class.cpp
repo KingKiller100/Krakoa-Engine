@@ -1,9 +1,8 @@
-#include <Precompile.h>
-#include <Utility/Logging/kLogging_Class.hpp>
+#include <Logging/kLogging_Class.hpp>
 
-#include <Utility/Calendar/kCalendar.hpp>
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/File System/kFileSystem.hpp>
+#include <Calendar/kCalendar.hpp>
+#include <Format/kFormatToString.hpp>
+#include <File System/kFileSystem.hpp>
 
 #include <cstdio>
 #include <string_view>
@@ -13,13 +12,16 @@ namespace util::kLogs
 	using namespace kCalendar;
 	using namespace kFileSystem;
 	using namespace kFormat;
-		
 	
 	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
 	LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n";
 	LogQueue::value_type endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n";
 
-	
+	const char* Logging::kLogs_Empty = "Empty";
+
+	std::unordered_map<LogLevel, const char*> Logging::kLogs_LogLevelMap;
+	std::unordered_map<LogLevel, LoggingConsoleColour> Logging::kLogs_ConsoleColourMap;
+
 	Logging::Logging()
 		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
 		filename(FormatToString("Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
@@ -33,7 +35,10 @@ namespace util::kLogs
 	{	}
 
 	Logging::~Logging()
-	= default;
+	{
+		if (GetLastLoggedEntry() != Logging::kLogs_Empty)
+			FinalOutput();
+	}
 
 	void Logging::InitializeLogging()
 	{
@@ -50,21 +55,21 @@ namespace util::kLogs
 
 	void Logging::InitializeLogLevelMap()
 	{
-		logLevelMap.insert(std::make_pair(LogLevel::NORM, "NORM"));
-		logLevelMap.insert(std::make_pair(LogLevel::INFO, "INFO"));
-		logLevelMap.insert(std::make_pair(LogLevel::WARN, "WARN"));
-		logLevelMap.insert(std::make_pair(LogLevel::ERRR, "ERRR"));
-		logLevelMap.insert(std::make_pair(LogLevel::FATL, "FATL"));
+		kLogs_LogLevelMap.insert(std::make_pair(LogLevel::NORM, "NORM"));
+		kLogs_LogLevelMap.insert(std::make_pair(LogLevel::INFO, "INFO"));
+		kLogs_LogLevelMap.insert(std::make_pair(LogLevel::WARN, "WARN"));
+		kLogs_LogLevelMap.insert(std::make_pair(LogLevel::ERRR, "ERRR"));
+		kLogs_LogLevelMap.insert(std::make_pair(LogLevel::FATL, "FATL"));
 	}
 
 	void Logging::InitializeOutputToConsoleColourMap()
 	{
-		consoleColourMap.insert(std::make_pair(LogLevel::NORM, LoggingConsoleColour::WHITE));
-		consoleColourMap.insert(std::make_pair(LogLevel::WARN, LoggingConsoleColour::YELLOW));
-		consoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
-		consoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::SCARLET_RED));
-		consoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
-		consoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::RED_BG_WHITE_TEXT));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::NORM, LoggingConsoleColour::WHITE));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::WARN, LoggingConsoleColour::YELLOW));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::BANR, LoggingConsoleColour::LIGHT_GREY));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::ERRR, LoggingConsoleColour::SCARLET_RED));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::INFO, LoggingConsoleColour::LIGHT_GREEN));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::RED_BG_WHITE_TEXT));
 	}
 	
 	void Logging::AddToLogBuffer(const std::string_view & logLine, const LogLevel lvl)
@@ -112,14 +117,18 @@ namespace util::kLogs
 		if (lvl < LogLevel::ERRR)
 		{
 			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(),
-				logLevelMap.at(lvl), msg.data()),
+				kLogs_LogLevelMap.at(lvl), 
+				msg.data()),
 				lvl);
 		}
 		else
 		{
 			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d\n",
-				GetTimeText().c_str(), logLevelMap.at(lvl), 
-				msg.data(), file, line),
+				GetTimeText().c_str(),
+				kLogs_LogLevelMap.at(lvl), 
+				msg.data(), 
+				file, 
+				line),
 				lvl);
 		}
 	}
@@ -163,11 +172,11 @@ namespace util::kLogs
 #endif
 		
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, consoleColourMap.at(lvl));
+		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
 		
 		printf_s("%s", logLine.data());
 
-		SetConsoleTextAttribute(hConsole, consoleColourMap.at(LogLevel::NORM));
+		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LogLevel::NORM));
 	}
 
 	std::string Logging::GetFullLogText()

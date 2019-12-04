@@ -1,7 +1,7 @@
 #include <Precompile.h>
-#include <Utility/Calendar/kCalendar.hpp>
+#include <Calendar/kCalendar.hpp>
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Format/kFormatToString.hpp>
 
 #include <array>
 #include <Windows.h>

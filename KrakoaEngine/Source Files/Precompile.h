@@ -41,13 +41,14 @@
 #include <type_traits>
 
 // Windows Libraries
-#ifdef _HAS_CXX17
-	#include <corecrt.h>
-	#include <corecrt_wdirect.h>
-	#include <corecrt_wstdio.h>
-#endif 
-
-#include <direct.h>
-#include <cstdio>
-#include <Windows.h>
-
+#if KRAKOA_OS_WINDOWS
+	#ifdef _HAS_CXX17
+		#include <corecrt.h>
+		#include <corecrt_wdirect.h>
+		#include <corecrt_wstdio.h>
+	#endif 
+	
+	#include <direct.h>
+	#include <cstdio>
+	#include <Windows.h>
+#endif

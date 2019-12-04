@@ -1,6 +1,8 @@
 #include <Precompile.h>
 #include <Utility/Format/kUTFStringConverter.hpp>
 
+// TO BE IMPLEMENTED - NEED TO LEARN MORE ABOUT UTF/UNICODE AND CHARACTER ENCODING
+
 namespace util::kUTF
 {
 	std::u16string UTF8ConvertToUTF16(const std::string_view utf8Str)

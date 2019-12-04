@@ -99,16 +99,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -263,13 +264,8 @@
     <ClCompile Include="Source Files\Testing\Utility Tests\Logging_Test.cpp" />
     <ClCompile Include="Source Files\Testing\Utility Tests\StringView_Test.cpp" />
     <ClCompile Include="Source Files\Testing\Maths Tests\Vectors_Test.cpp" />
-    <ClCompile Include="Source Files\Utility\Calendar\kCalendar.cpp" />
-    <ClCompile Include="Source Files\Utility\Debug Helper\kAssert.cpp" />
-    <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp" />
     <ClCompile Include="Source Files\Testing\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
-    <ClCompile Include="Source Files\Utility\Format\kUTFStringConverter.cpp" />
-    <ClCompile Include="Source Files\Utility\Logging\kLogging_Class.cpp" />
     <ClCompile Include="Source Files\Precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">Create</PrecompiledHeader>
@@ -296,33 +292,20 @@
     <ClInclude Include="Source Files\Testing\Utility Tests\Logging_Test.hpp" />
     <ClInclude Include="Source Files\Testing\Utility Tests\StringView_Test.hpp" />
     <ClInclude Include="Source Files\Testing\Maths Tests\Vectors_Test.hpp" />
-    <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.hpp" />
-    <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.hpp" />
     <ClInclude Include="Source Files\Testing\Tester.hpp" />
     <ClInclude Include="Source Files\Core\Application.hpp" />
     <ClInclude Include="Source Files\Core\EngineCore.hpp" />
     <ClInclude Include="Source Files\Core\EntryPoint.hpp" />
     <ClInclude Include="Source Files\Krakoa.hpp" />
-    <ClInclude Include="Source Files\Utility\Calendar\kCalendar.hpp" />
-    <ClInclude Include="Source Files\Utility\Timer\kTimer.hpp" />
-    <ClInclude Include="Source Files\Utility\File System\kFileSystem.hpp" />
-    <ClInclude Include="Source Files\Utility\Format\kFormatToString.hpp" />
-    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.hpp" />
-    <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.hpp" />
-    <ClInclude Include="Source Files\Utility\Logging\kLogging.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\kAlgorithms.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Constants.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\kMaths.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Matrix\Matrix4x4.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector2.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector3.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\Vector4.hpp" />
-    <ClInclude Include="Source Files\Utility\Maths\Vectors\VectorBase.hpp" />
     <ClInclude Include="Source Files\Precompile.h" />
-    <ClInclude Include="Source Files\Utility\String View\StringView.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\kLibrary\kLibrary.vcxproj">
+      <Project>{2322a691-8c3a-4724-9e2b-861e6f0e1bd1}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

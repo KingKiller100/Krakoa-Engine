@@ -11,7 +11,7 @@ namespace util::debug
 		report(kFormat::FormatToString("Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
 	{
 		INIT_LOGS();
-		kLogs::GetLogger()->OutputToFatalFile( report, file, line);
+		kLogs::GetMainLogger()->OutputToFatalFile( report, file, line);
 	}
 
 	AssertOnFailedExpressionException::~AssertOnFailedExpressionException() throw()

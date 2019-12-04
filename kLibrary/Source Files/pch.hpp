@@ -15,13 +15,13 @@
 
 
 #if _MSVC_LANG >= 201702L
-	#include <string_view>
+#include <string_view>
 #endif //_MSVC_LANG >= 201702L
 
 #if _MSVC_LANG >= 201400L
 // Threading
-	#include <future>
-	#include <thread>
+#include <future>
+#include <thread>
 #endif //_MSVC_LANG >= 201400L
 
 // Input/Output Handlers
@@ -32,7 +32,7 @@
 
 // Misc.
 #if _MSVC_LANG >= 201400L
-	#include <chrono>
+#include <chrono>
 #endif //_MSVC_LANG >= 201400L
 
 #include <memory>
@@ -47,13 +47,14 @@
 
 // Windows Libraries
 #if KRAKOA_OS_WINDOWS
-	#if _MSVC_LANG >= 201702L
-		#include <corecrt.h>
-		#include <corecrt_wdirect.h>
-		#include <corecrt_wstdio.h>
-	#endif //_MSVC_LANG >= 201702L
-	
-	#include <direct.h>
-	#include <cstdio>
-	#include <Windows.h>
+#if _MSVC_LANG >= 201702L
+#include <corecrt.h>
+#include <corecrt_wdirect.h>
+#include <corecrt_wstdio.h>
+#endif //_MSVC_LANG >= 201702L
+
+#include <direct.h>
+#include <cstdio>
+#include <Windows.h>
 #endif
+

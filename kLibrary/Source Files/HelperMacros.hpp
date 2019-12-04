@@ -2,7 +2,7 @@
 
 #if KLIB_LIB
 	#define KLIB_API __declspec(dllexport)
-	#define EXPORT_STL
+	#define PORT_STL
 #else
 	#define KLIB_API __declspec(dllimport)
 	#define PORT_STL extern
@@ -18,3 +18,7 @@
 
 #define IS_TRUE 1
 #define IS_FALSE 0
+
+#if defined(TEST_ALLOWED)
+	#define TESTING_ENABLED 1
+#endif // 

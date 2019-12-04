@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29418.71
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hooper2", "ExampleGames\Hooper2\Hooper2.vcxproj", "{060C9415-6B51-4874-8CAB-81BEC777A6BC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KrakoaEngine", "KrakoaEngine\KrakoaEngine.vcxproj", "{208B7BED-8C5D-4B42-A8CB-57FB5DC73F9E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kLibrary", "kLibrary\kLibrary.vcxproj", "{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kLib", "kLibrary\kLibrary.vcxproj", "{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,8 +51,8 @@ Global
 		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Release|x64.Build.0 = Release|x64
 		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Release|x86.ActiveCfg = Release|Win32
 		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Release|x86.Build.0 = Release|Win32
-		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Test|x64.ActiveCfg = Release|x64
-		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Test|x64.Build.0 = Release|x64
+		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Test|x64.ActiveCfg = Test|x64
+		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Test|x64.Build.0 = Test|x64
 		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Test|x86.ActiveCfg = Release|Win32
 		{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}.Test|x86.Build.0 = Release|Win32
 	EndGlobalSection

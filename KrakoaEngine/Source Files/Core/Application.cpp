@@ -1,14 +1,15 @@
 #include <Precompile.h>
 #include <Core/Application.hpp>
 
+#include <Utility/Timer/kTimer.hpp>
 
 namespace krakoa
 {
 	using namespace util;
+	kTime::SystemTimer systemTimer = kTime::SystemTimer("System Timer");
 
 	Application::Application()
-	: running(false),
-	  systemTimer(kTime::SystemTimer("System Time"))
+	: running(false)
 	{	}
 
 	Application::~Application()

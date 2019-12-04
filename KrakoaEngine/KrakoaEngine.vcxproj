@@ -195,7 +195,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;TEST_ALLOWED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -265,16 +265,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source Files\Testing\TesterManager.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\Timer_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\DebugHelp_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\FileSystem_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\Calendar_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\FormatToString_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\Logging_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Utility Tests\StringView_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Maths Tests\Vectors_Test.cpp" />
-    <ClCompile Include="Source Files\Testing\Tester.cpp" />
     <ClCompile Include="Source Files\Core\Application.cpp" />
     <ClCompile Include="Source Files\Precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -292,17 +282,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source Files\Testing\TesterManager.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\FormatToString_Test.hpp" />
-    <ClInclude Include="Source Files\Patterns\SimpleSingleton.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\Timer_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\DebugHelp_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\FileSystem_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\Calendar_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\Logging_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Utility Tests\StringView_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Maths Tests\Vectors_Test.hpp" />
-    <ClInclude Include="Source Files\Testing\Tester.hpp" />
     <ClInclude Include="Source Files\Core\Application.hpp" />
     <ClInclude Include="Source Files\Core\EngineCore.hpp" />
     <ClInclude Include="Source Files\Core\EntryPoint.hpp" />

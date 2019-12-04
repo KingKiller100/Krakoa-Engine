@@ -2,21 +2,13 @@
 
 #include <Core/Application.hpp>
 
-#include <Testing/TesterManager.hpp>
 #include <Utility/Logging/kLogging.hpp>
 
 #include <memory>
 
 extern krakoa::Application* krakoa::CreateApplication();
 
-inline void RunTestsOnkLibrary()
-{
-	auto& testManager = kTest::TesterManager::Reference();
-	testManager.Initialize();
-	testManager.InitializeMathsTests();
-	testManager.InitializeUtilityTests();
-	testManager.RunAll();
-};
+void RunTestsOnkLibrary();
 
 int main(int argv, char** argc)
 {
@@ -43,3 +35,13 @@ int main(int argv, char** argc)
 	 
 	return 0;
 }
+
+#include <Testing/TesterManager.hpp>
+inline void RunTestsOnkLibrary()
+{
+	auto& testManager = kTest::TesterManager::Reference();
+	testManager.Initialize();
+	testManager.InitializeMathsTests();
+	testManager.InitializeUtilityTests();
+	testManager.RunAll();
+};

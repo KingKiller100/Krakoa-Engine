@@ -78,13 +78,11 @@ namespace kMaths
 
 
 		// Returns vector times by -1 - does not reassign values (except w element)
-		constexpr VectorBase ReverseVector()
+		constexpr void ReverseVector()
 		{
 			this->x *= -1;
 			this->y *= -1;
 			this->z *= -1;
-
-			return *this;
 		}
 
 		// Sets all values of the vector to zero (except w element)

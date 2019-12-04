@@ -26,7 +26,7 @@ namespace util
 
 		template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
 		//class Timer
-		class KRAKOA_API Timer
+		class KLIB_API Timer
 		{			
 			using Rep = RepresentationType;
 			using Clock = ClockType;
@@ -75,9 +75,11 @@ namespace util
 		// Very precise results
 		using HighAccuracyTimer = Timer<>;
 		using SystemTimer = Timer<double, std::chrono::system_clock>;
+		using MonotonicTimer = Timer<double, std::chrono::steady_clock>;
 
 		// Less precise results
 		using HighAccuracyTimerf = Timer<float>;
 		using SystemTimerf = Timer<float, std::chrono::system_clock>;
+		using MonotonicTimerf = Timer<float, std::chrono::steady_clock>;
 	}
 }

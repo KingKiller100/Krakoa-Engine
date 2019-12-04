@@ -15,6 +15,3 @@
 #if defined(TEST_ALLOWED)
 	#define TESTING_ENABLED 1
 #endif // 
-
-
-#include <HelperMacros.hpp>

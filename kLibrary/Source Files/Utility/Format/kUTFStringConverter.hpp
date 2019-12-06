@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace util::kUTF
+namespace klib::kUTF
 {
 	const char16_t* UTF8ConvertToUTF16(const char* utf8);
 	std::u16string UTF8ConvertToUTF16(const std::string_view utf8Str);

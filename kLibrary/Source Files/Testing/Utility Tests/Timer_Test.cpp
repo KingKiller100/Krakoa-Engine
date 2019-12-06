@@ -14,7 +14,7 @@ namespace kTest::utility
 
 	void TimerTester::Test()
 	{
-		using namespace util::kTime;
+		using namespace klib::kTime;
 
 		HighAccuracyTimer testTime("Clock Test Timer");
 

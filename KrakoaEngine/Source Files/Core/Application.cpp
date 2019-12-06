@@ -5,7 +5,7 @@
 
 namespace krakoa
 {
-	using namespace util;
+	using namespace klib;
 	kTime::SystemTimer systemTimer = kTime::SystemTimer("System Timer");
 
 	Application::Application()
@@ -13,7 +13,9 @@ namespace krakoa
 	{	}
 
 	Application::~Application()
-	= default;
+	{
+		Shutdown();
+	}
 
 	constexpr void Application::Initialize()
 	{

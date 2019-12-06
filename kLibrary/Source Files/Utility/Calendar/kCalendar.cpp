@@ -4,9 +4,11 @@
 #include <Utility/Format/kFormatToString.hpp>
 
 #include <array>
+
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #include <Windows.h>
 
-namespace util::kCalendar
+namespace klib::kCalendar
 {
 	using namespace kFormat;
 
@@ -49,7 +51,8 @@ namespace util::kCalendar
 	std::string GetDateInTextFormat()
 	{
 		const auto dateTime = GetLocalDateAndTime();				
-		return FormatToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
+		const auto dateStr = FormatToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek).data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
+		return dateStr;
 	}
 
 	std::string_view GetMonth(const unsigned short month)
@@ -59,7 +62,7 @@ namespace util::kCalendar
 		"June", "July", "August", "September", "October",
 			"November", "December"};
 
-		if(month < kCalendar_MonthsArray.size())
+		if(month <= kCalendar_MonthsArray.size() || month > 0)
 			return kCalendar_MonthsArray[month - 1];
 
 		return "Value entered does not index to a month of the year";

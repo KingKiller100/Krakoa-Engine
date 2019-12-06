@@ -6,7 +6,7 @@
 #include <deque>
 #include <unordered_map>
 
-namespace util
+namespace klib
 {
 	namespace kLogs
 	{

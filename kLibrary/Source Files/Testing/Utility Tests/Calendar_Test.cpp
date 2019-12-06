@@ -16,7 +16,7 @@ namespace kTest::utility
 
 	void CalendarTester::Test()
 	{
-		using namespace util;
+		using namespace klib;
 		
 		const auto& localDateTimeTest = kCalendar::GetLocalDateAndTime();
 		const auto& systemDateTimeTest = kCalendar::GetSystemDateAndTime();

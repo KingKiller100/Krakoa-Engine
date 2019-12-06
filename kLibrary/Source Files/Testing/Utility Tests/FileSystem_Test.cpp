@@ -15,7 +15,7 @@ namespace kTest::utility
 
 	void FileSystemTester::Test()
 	{
-		using namespace util::kFileSystem;
+		using namespace klib::kFileSystem;
 		
 		const auto cwd = GetCurrentWorkingDirectory<char>();
 
@@ -40,15 +40,16 @@ namespace kTest::utility
 		OutputToFile((cwd + "Create Directory Test\\Test.txt").c_str(), "Success\n");
 		VERIFY(CheckFileExists((cwd + "Create Directory Test\\Test.txt").c_str()) == true);
 
-		const auto fileInfo = util::kFileSystem::ParseFileData((cwd + "Create Directory Test\\Test.txt").c_str());
+		const auto fileInfo = klib::kFileSystem::ParseFileData((cwd + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(fileInfo.front().compare("Success") == 0);
 
 		const auto isFileDeleted = RemoveFile((cwd + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(isFileDeleted == true);
 
-		VERIFY(RemoveFile((cwd + "FS_File_Test").c_str()) == false);
+		VERIFY(RemoveFile((cwd + "FS_File_Test").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directory Test\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\Success1\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\").c_str()) == true);
+
 	}
 }

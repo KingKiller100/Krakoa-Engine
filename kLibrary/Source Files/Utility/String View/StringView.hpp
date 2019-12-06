@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <xutility>
 
-namespace util
+namespace klib
 {
 	namespace kString_View
 	{

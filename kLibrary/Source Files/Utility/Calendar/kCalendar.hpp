@@ -4,7 +4,7 @@
 
 struct _SYSTEMTIME;
 
-namespace util
+namespace klib
 {
 	namespace kCalendar	
 	{

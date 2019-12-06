@@ -5,7 +5,7 @@
 #include <chrono>
 #include <atomic>
 
-namespace util
+namespace klib
 {
 	namespace kTime
 	{

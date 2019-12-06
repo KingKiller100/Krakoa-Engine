@@ -21,7 +21,7 @@ namespace kTest
 	class Tester
 	{
 	public:
-		constexpr Tester(const char* name) noexcept;
+		Tester(const char* name) noexcept;
 		Tester(Tester&& other) noexcept;
 		Tester& operator=(Tester&& other) noexcept;
 
@@ -49,7 +49,7 @@ namespace kTest
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->result << util::kFormat::FormatToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__);\
+		this->result << klib::kFormat::FormatToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__);\
 		this->success = false; \
 	}\
 

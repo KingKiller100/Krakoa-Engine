@@ -10,20 +10,14 @@ extern krakoa::Application* krakoa::CreateApplication();
 
 void RunTestsOnkLibrary();
 
-int main(int argv, char** argc)
+int main(int argc, char** argv)
 {
 	RunTestsOnkLibrary();
 
 	INIT_LOGS();
-	LOG_BANNER("WELCOME TO KRAKOA", "ENTRY");
-		
-	const auto deleter = [](krakoa::Application* game) -> void
-	{
-		game->Shutdown();
-		delete game;
-	};
+	LOG_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
-	auto app = std::unique_ptr<krakoa::Application, decltype(deleter)>(krakoa::CreateApplication(), deleter);
+	auto app = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
 
 	app->Initialize();
 

@@ -46,15 +46,17 @@
 #include <type_traits>
 
 // Windows Libraries
-#if KRAKOA_OS_WINDOWS
-#if _MSVC_LANG >= 201702L
-#include <corecrt.h>
-#include <corecrt_wdirect.h>
-#include <corecrt_wstdio.h>
-#endif //_MSVC_LANG >= 201702L
+#if KLIB_WINDOWS_OS
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#include <direct.h>
-#include <cstdio>
-#include <Windows.h>
+#if _MSVC_LANG >= 201702L
+	#include <corecrt.h>
+	#include <corecrt_wdirect.h>
+	#include <corecrt_wstdio.h>
+	#endif //_MSVC_LANG >= 201702L
+	
+	#include <direct.h>
+	#include <cstdio>
+	#include <Windows.h>
 #endif
 

@@ -21,45 +21,12 @@
     <ClCompile Include="Source Files\Core\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source Files\Testing\Maths Tests\Vectors_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Calendar_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\DebugHelp_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\FileSystem_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\FormatToString_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Logging_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\StringView_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Tester.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\TesterManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Timer_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Precompile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Krakoa.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Patterns\SimpleSingleton.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Core\EntryPoint.hpp">
@@ -69,36 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Core\Application.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Maths Tests\Vectors_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Calendar_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\DebugHelp_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\FileSystem_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\FormatToString_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Logging_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\StringView_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Tester.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\TesterManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Timer_Test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

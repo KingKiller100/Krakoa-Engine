@@ -6,7 +6,7 @@
 
 namespace kTest
 {
-	constexpr Tester::Tester(const char* name) noexcept
+	Tester::Tester(const char* name) noexcept
 		: name(name), success(true)
 	{	}
 

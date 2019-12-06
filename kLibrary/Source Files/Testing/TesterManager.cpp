@@ -39,11 +39,11 @@ namespace kTest
 	void TesterManager::Initialize()
 	{
 #ifdef TESTING_ENABLED
-		kTest_TestResultFilePath = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\";
-		const auto isMade = util::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
+		kTest_TestResultFilePath = klib::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\";
+		const auto isMade = klib::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
 		
 		kTest_TestResultFilePath += "Results.txt";
-		util::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
+		klib::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
 #endif // TESTING_ENABLED
 	}
 
@@ -74,10 +74,10 @@ namespace kTest
 		for (auto& test : kTests_TestsUSet)
 		{			
 			const auto resultTest = test->Run() 
-				? util::kFormat::FormatToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
-				: util::kFormat::FormatToString("Failure: Test Name: %s\n%s", test->GetName(), test->GetResult().data()); // Fail Case
+				? klib::kFormat::FormatToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
+				: klib::kFormat::FormatToString("Failure: Test Name: %s\n%s", test->GetName(), test->GetResult().data()); // Fail Case
 			
-			util::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
+			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
 #endif // TESTING_ENABLED
 	}

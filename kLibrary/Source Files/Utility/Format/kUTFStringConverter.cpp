@@ -3,7 +3,7 @@
 
 // TO BE IMPLEMENTED - NEED TO LEARN MORE ABOUT UTF/UNICODE AND CHARACTER ENCODING
 
-namespace util::kUTF
+namespace klib::kUTF
 {
 	std::u16string UTF8ConvertToUTF16(const std::string_view utf8Str)
 	{

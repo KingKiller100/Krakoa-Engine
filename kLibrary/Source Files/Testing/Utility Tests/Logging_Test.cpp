@@ -15,11 +15,11 @@ namespace kTest::utility
 
 	void LoggingTester::Test()
 	{
-		using namespace util;
+		using namespace klib;
 
 		INIT_LOGS();
 
-		const auto dir = util::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\Log Test Dir\\";		
+		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\Log Test Dir\\";		
 		CHANGE_LOGS_DESTINATION(dir);
 
 		const auto filename = "DiffFileName";
@@ -66,7 +66,7 @@ namespace kTest::utility
 		END_LOGGING();
 
 		const auto fullFilePathToDelete = dir + filename + ".log";
-		VERIFY(util::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
+		VERIFY(klib::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
 		
 		LOG_NORM("end");	
 		last = GET_LAST_LOG_ENTRY();

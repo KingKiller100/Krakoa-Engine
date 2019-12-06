@@ -7,17 +7,16 @@
 
 #include <cstdio>
 #include <string_view>
-#include <Windows.h>
 
-namespace util::kLogs
+namespace klib::kLogs
 {
 	using namespace kCalendar;
 	using namespace kFileSystem;
 	using namespace kFormat;
 	
-	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
+	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized:\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
 	LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n";
-	LogQueue::value_type endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n";
+	LogQueue::value_type endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 
 	const char* Logging::kLogs_Empty = "Empty";
 
@@ -118,7 +117,7 @@ namespace util::kLogs
 
 		if (lvl < LogLevel::ERRR)
 		{
-			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n", GetTimeText().c_str(),
+			AddToLogBuffer(FormatToString("[%s]\t[%s]: %s\n", GetTimeText().c_str(),
 				kLogs_LogLevelMap.at(lvl), 
 				msg.data()),
 				lvl);
@@ -139,7 +138,7 @@ namespace util::kLogs
 	{
 		if (!(initialized_kLogging)) return;
 
-		AddToLogBuffer(FormatToString("[%s]\t[%s]:\t[%s]\n", GetTimeText().c_str(),
+		AddToLogBuffer(FormatToString("[%s]\t[%s]: [%s]\n", GetTimeText().c_str(),
 			type.data(), msg.data()), 
 			LogLevel::BANR);
 	}

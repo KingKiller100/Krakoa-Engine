@@ -3,7 +3,7 @@
 #include <exception>
 #include <string>
 
-namespace util
+namespace klib
 {
 	namespace debug
 	{
@@ -25,7 +25,7 @@ namespace util
 #define kAssert(condition, msg)\
 	{\
 		if((condition) == false)\
-			throw ::util::debug::AssertOnFailedExpressionException(#condition, ##msg, __FILE__, (unsigned)(__LINE__));\
+			throw ::klib::debug::AssertOnFailedExpressionException(#condition, ##msg, __FILE__, (unsigned)(__LINE__));\
 	}\
 
 #else

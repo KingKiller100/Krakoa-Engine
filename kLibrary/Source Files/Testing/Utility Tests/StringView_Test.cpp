@@ -17,7 +17,7 @@ namespace kTest::utility
 
 	void StringViewTester::Test()
 	{
-		using namespace util::kString_View;
+		using namespace klib::kString_View;
 		
 		const auto txt = "Char String";
 

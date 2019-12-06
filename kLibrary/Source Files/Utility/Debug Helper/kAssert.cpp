@@ -4,7 +4,7 @@
 #include <Utility/Format/kFormatToString.hpp>
 #include <Utility/Logging/kLogging.hpp>
 
-namespace util::debug
+namespace klib::debug
 {
 #if _DEBUG
 	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const char* exp, const char* msg, const char* file, const unsigned line)

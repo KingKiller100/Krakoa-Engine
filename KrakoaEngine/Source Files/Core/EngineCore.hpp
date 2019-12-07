@@ -12,3 +12,5 @@
 	#error SORRY BLOKE, KRAKOA ONLY SUPPORTS WINDOWS!
 #endif
 
+#define BIT_SHIFT(n) (1 << n)
+

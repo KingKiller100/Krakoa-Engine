@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Core/Application.hpp>
-
 #include <Utility/Logging/kLogging.hpp>
+
+#include <Core/Application.hpp>
 
 #include <memory>
 

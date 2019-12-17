@@ -11,12 +11,11 @@ public:
 	~Hooper2Game()
 	= default;
 	
-	 void Shutdown() override
+	void Shutdown() override
 	{
 		 running = false;
 	}
 };
-
 
 krakoa::Application* krakoa::CreateApplication()
 {

@@ -14,7 +14,7 @@ namespace krakoa
 
 	Application::~Application()
 	{
-		Shutdown();
+		//Shutdown();
 	}
 
 	constexpr void Application::Initialize()

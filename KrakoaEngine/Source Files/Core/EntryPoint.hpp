@@ -30,6 +30,10 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+
+
+
+#ifdef TEST_ALLOWED
 #include <Testing/TesterManager.hpp>
 inline void RunTestsOnkLibrary()
 {
@@ -39,3 +43,7 @@ inline void RunTestsOnkLibrary()
 	testManager.InitializeUtilityTests();
 	testManager.RunAll();
 };
+#else
+inline void RunTestsOnkLibrary()
+{	}
+#endif // TEST_ALLOWEDG

@@ -13,12 +13,11 @@ public:
 		Shutdown();
 	}
 	
-	 void Shutdown() override
+	void Shutdown() override
 	{
 		 running = false;
 	}
 };
-
 
 krakoa::Application* krakoa::CreateApplication()
 {

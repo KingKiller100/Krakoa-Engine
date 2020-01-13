@@ -9,7 +9,9 @@ public:
 	{}
 		
 	~Hooper2Game()
-	= default;
+	{
+		Shutdown();
+	}
 	
 	 void Shutdown() override
 	{

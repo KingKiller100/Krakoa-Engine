@@ -13,9 +13,7 @@ namespace krakoa
 	{	}
 
 	Application::~Application()
-	{
-		Shutdown();
-	}
+		= default;
 
 	constexpr void Application::Initialize()
 	{

@@ -45,13 +45,13 @@ namespace klib::kCalendar
 	std::string GetTimeText()
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		return FormatToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
+		return ToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
 	std::string GetDateInTextFormat()
 	{
 		const auto dateTime = GetLocalDateAndTime();				
-		const auto dateStr = FormatToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek).data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
+		const auto dateStr = ToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek).data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
 		return dateStr;
 	}
 
@@ -84,7 +84,7 @@ namespace klib::kCalendar
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? "%02d/%02d/%02d" : "%02d-%02d-%04d";
-		return FormatToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
+		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
 	// WIDE MULTI-BYTE CHAR
@@ -92,13 +92,13 @@ namespace klib::kCalendar
 	std::wstring wGetTimeText()
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		return FormatToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
+		return ToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
 	std::wstring wGetDateInTextFormat()
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		return FormatToString(L"%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
+		return ToString(L"%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
 	}
 
 	std::wstring_view  wGetMonth(const unsigned short month)
@@ -130,6 +130,6 @@ namespace klib::kCalendar
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
-		return FormatToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
+		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 }

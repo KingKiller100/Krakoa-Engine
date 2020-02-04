@@ -235,6 +235,7 @@
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.hpp" />
     <ClInclude Include="Source Files\Utility\Format\kFormatToString.hpp" />
     <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.hpp" />
+    <ClInclude Include="Source Files\Utility\Format\StringManipulation.h" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging.hpp" />
     <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.hpp" />
     <ClInclude Include="Source Files\Utility\String View\StringView.hpp" />

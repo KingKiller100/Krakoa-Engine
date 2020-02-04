@@ -74,8 +74,8 @@ namespace kTest
 		for (auto& test : kTests_TestsUSet)
 		{			
 			const auto resultTest = test->Run() 
-				? klib::kFormat::FormatToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
-				: klib::kFormat::FormatToString("Failure: Test Name: %s\n%s", test->GetName(), test->GetResult().data()); // Fail Case
+				? klib::kFormat::ToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
+				: klib::kFormat::ToString("Failure: Test Name: %s\n%s", test->GetName(), test->GetResult().data()); // Fail Case
 			
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}

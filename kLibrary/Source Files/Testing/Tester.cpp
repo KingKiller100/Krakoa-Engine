@@ -1,8 +1,6 @@
 #include <pch.hpp>
 #include <Testing/Tester.hpp>
 
-#include <vector>
-#include <memory>
 
 namespace kTest
 {
@@ -11,6 +9,7 @@ namespace kTest
 	{	}
 
 	Tester::Tester(Tester&& other) noexcept
+		: success(true)
 	{
 		*this = std::move(other);
 	}

@@ -289,6 +289,7 @@
     <ClInclude Include="Source Files\Events System\ApplicationEvent.hpp" />
     <ClInclude Include="Source Files\Events System\Event.hpp" />
     <ClInclude Include="Source Files\Events System\KeyEvent.hpp" />
+    <ClInclude Include="Source Files\Events System\MouseEvent.h" />
     <ClInclude Include="Source Files\Krakoa.hpp" />
     <ClInclude Include="Source Files\Precompile.h" />
   </ItemGroup>

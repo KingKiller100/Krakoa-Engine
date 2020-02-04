@@ -10,14 +10,7 @@
 
 namespace kTest
 {
-
-//#pragma warning(push)
-//#pragma warning(disable:4251)
-//	PORT_STL template class KLIB_API std::basic_string<char>;
-//	PORT_STL template class KLIB_API std::basic_string_view<char>;
-//	PORT_STL template class KLIB_API std::basic_stringstream<char>;
-//#pragma warning(pop)
-	
+		
 	class Tester
 	{
 	public:
@@ -49,7 +42,7 @@ namespace kTest
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->result << klib::kFormat::FormatToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__);\
+		this->result << klib::kFormat::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__);\
 		this->success = false; \
 	}\
 

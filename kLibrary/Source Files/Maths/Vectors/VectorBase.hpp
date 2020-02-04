@@ -96,7 +96,7 @@ namespace kMaths
 		virtual T& operator[](const size_t index)
 		{
 			if (index > 3)
-				std::out_of_range("Index is out of range");
+				throw std::out_of_range("Index is out of range");
 
 			switch (index)
 			{

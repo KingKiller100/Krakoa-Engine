@@ -47,6 +47,9 @@
     <ClInclude Include="Source Files\Events System\KeyEvent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source Files\Events System\MouseEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

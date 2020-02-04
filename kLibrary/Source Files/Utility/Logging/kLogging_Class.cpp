@@ -25,7 +25,7 @@ namespace klib::kLogs
 
 	Logging::Logging()
 		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
-		filename(FormatToString("Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
+		filename(ToString("Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
 		initialized_kLogging(false)
 	{	}
 
@@ -117,14 +117,14 @@ namespace klib::kLogs
 
 		if (lvl < LogLevel::ERRR)
 		{
-			AddToLogBuffer(FormatToString("[%s]\t[%s]: %s\n", GetTimeText().c_str(),
+			AddToLogBuffer(ToString("[%s]\t[%s]: %s\n", GetTimeText().c_str(),
 				kLogs_LogLevelMap.at(lvl), 
 				msg.data()),
 				lvl);
 		}
 		else
 		{
-			AddToLogBuffer(FormatToString("[%s]\t[%s]:\t%s\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d\n",
+			AddToLogBuffer(ToString("[%s]\t[%s]:\t%s\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d\n",
 				GetTimeText().c_str(),
 				kLogs_LogLevelMap.at(lvl), 
 				msg.data(), 
@@ -138,7 +138,7 @@ namespace klib::kLogs
 	{
 		if (!(initialized_kLogging)) return;
 
-		AddToLogBuffer(FormatToString("[%s]\t[%s]: [%s]\n", GetTimeText().c_str(),
+		AddToLogBuffer(ToString("[%s]\t[%s]: [%s]\n", GetTimeText().c_str(),
 			type.data(), msg.data()), 
 			LogLevel::BANR);
 	}
@@ -172,7 +172,7 @@ namespace klib::kLogs
 		OutputDebugStringA(logLine.data());
 #endif
 		
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
 		
 		printf_s("%s", logLine.data());

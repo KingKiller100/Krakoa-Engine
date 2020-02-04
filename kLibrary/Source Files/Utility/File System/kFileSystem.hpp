@@ -2,6 +2,7 @@
 
 #include <HelperMacros.hpp>
 
+#include <Utility/Format/StringManipulation.h>
 #include <direct.h>
 #include <corecrt_wdirect.h>
 #include <cstdio>
@@ -126,16 +127,17 @@ namespace klib
 			return isDirCreated;
 		}
 
+	
 		/**
-		 * \brief
-		 *		Deletes file from system
-		 * \param CharType
-		 *		Char type i.e. must be char/wchar_t/u32char_t/etc...
-		 * \param[in] fullFilePath
-		 *		Full file path of the file to delete
-		 * \return
-		 *		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
-		 */
+	 * \brief
+	 *		Deletes file from system
+	 * \tparam CharType
+	 *		Char type i.e. must be char/wchar_t/u32char_t/etc...
+	 * \param[in] fullFilePath
+	 *		Full file path of the file to delete
+	 * \return
+	 *		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
+	 */
 		template<typename CharType = char>
 		bool RemoveFile(const CharType* fullFilePath)
 		{
@@ -189,7 +191,7 @@ namespace klib
 		 *		TRUE if file exist or FALSE if file does not exist
 		 */
 
-		template<class CharType>
+		template<class CharType = char>
 		bool CheckFileExists(const CharType* fullFilePath)
 		{
 			const std::unique_ptr<FILE> f;
@@ -250,10 +252,10 @@ namespace klib
 		 * \return
 		 *		Current working directory as a string
 		 */
-		template<class Char>
+		template<class Char = char>
 		USE_RESULT StringWriter<Char> GetCurrentWorkingDirectory()
 		{
-			StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
+			static StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
 
 			if (fullFolderPathOfCurrentWorkingDirectory.empty())
 			{
@@ -273,6 +275,30 @@ namespace klib
 			return fullFolderPathOfCurrentWorkingDirectory;
 		}
 
+		template<class Char = char>
+		USE_RESULT StringWriter<Char> GetFileName(const StringWriter<Char>& path)
+		{
+			const std::string text = String::Replace(path, '/', '\\');
+			const auto filename = text.substr(text.find_last_of('\\'));
+			return filename;
+		}
 
+		template<class Char = char>
+		USE_RESULT StringWriter<Char> GetFileNameWithoutExtension(const StringWriter<Char>& path)
+		{
+			StringWriter<Char> filename = GetFileName<Char>(path);
+			filename = filename.substr(0, filename.find_first_of('.'));
+			return filename;
+		}
+
+		template<class Char = char>
+		USE_RESULT StringWriter<Char> GetPath(const StringWriter<Char>& path)
+		{
+			StringWriter<Char> parentPath = String::Replace(path, '/', '\\');
+			parentPath = parentPath.substr(0, parentPath.find_last_of('\\'));
+			return parentPath;
+		}
+
+		
 	}
 }

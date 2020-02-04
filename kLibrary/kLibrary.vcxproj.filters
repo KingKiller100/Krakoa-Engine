@@ -161,6 +161,9 @@
     <ClInclude Include="Source Files\pch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source Files\Utility\Format\StringManipulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

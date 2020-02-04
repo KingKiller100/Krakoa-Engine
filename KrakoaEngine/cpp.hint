@@ -5,3 +5,5 @@
 #define KRAKOA_API __declspec(dllimport)
 #define EXPIMP_TEMPLATE
 #define USE_RESULT [[nodiscard]]
+#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlag() const noexcept override { return category; }
+#define EVENT_CLASS_TYPE(type) static EType GetStaticType() { return EType::##type; } virtual EType GetEventType() const noexcept override { return GetStaticType(); } virtual const char* GetName() const noexcept override { return #type; }

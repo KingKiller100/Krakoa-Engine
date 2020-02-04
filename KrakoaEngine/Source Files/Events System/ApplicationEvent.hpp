@@ -9,7 +9,7 @@ namespace krakoa::events
 	using namespace kMaths;
 	using namespace klib;
 
-	class ApplicationEvent : public Event
+	class KRAKOA_API ApplicationEvent : public Event
 	{
 	public:
 		EVENT_CLASS_CATEGORY(E_C_APP)

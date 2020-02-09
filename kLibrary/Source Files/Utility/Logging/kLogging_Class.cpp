@@ -34,6 +34,8 @@ namespace klib::kLogs
 
 	Logging::~Logging()
 	{
+		if (GetLastLoggedEntry() != Logging::kLogs_Empty)
+			FinalOutput();
 	}
 
 	void Logging::InitializeLogging()
@@ -151,7 +153,7 @@ namespace klib::kLogs
 
 	void Logging::FinalOutput()
 	{
-		const auto endLogLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
+		const auto endLogLine = "\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 		AddToLogBuffer(endLogLine, LogLevel::NORM);
 		OutputLogToFile();
 		initialized_kLogging = false;

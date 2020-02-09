@@ -6,16 +6,15 @@
 
 namespace klib::kLogs
 {
-	static std::shared_ptr<Logging> mainlogger;
+	static std::unique_ptr<Logging> mainlogger;
 
 	static void Initialize()
 	{
 
 		if (!(mainlogger))
-			mainlogger = std::shared_ptr<Logging>(new Logging(), [](Logging* ptr) {
-			if (ptr->GetLastLoggedEntry() != Logging::kLogs_Empty)
-				ptr->FinalOutput();
-				});
+		{
+			mainlogger = std::make_unique<Logging>();
+		}
 		mainlogger->InitializeLogging();
 	}
 

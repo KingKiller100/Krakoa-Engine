@@ -14,15 +14,18 @@
 #include <vector>
 
 
-#if _MSVC_LANG >= 201702L
-#include <string_view>
-#endif //_MSVC_LANG >= 201702L
+#if MSVC_PLATFORM_TOOLSET >= 141
+	#include <string_view>
+#endif //MSVC_PLATFORM_TOOLSET >= 141
 
-#if _MSVC_LANG >= 201400L
 // Threading
-#include <future>
-#include <thread>
-#endif //_MSVC_LANG >= 201400L
+#if MSVC_PLATFORM_TOOLSET >= 140
+	#include <future>
+#endif //MSVC_PLATFORM_TOOLSET >= 140
+
+#if MSVC_PLATFORM_TOOLSET >= 110
+	#include <thread>
+#endif //MSVC_PLATFORM_TOOLSET >= 140
 
 // Input/Output Handlers
 #include <fstream>
@@ -31,9 +34,9 @@
 #include <iostream>
 
 // Misc.
-#if _MSVC_LANG >= 201400L
+#if MSVC_PLATFORM_TOOLSET >= 110
 #include <chrono>
-#endif //_MSVC_LANG >= 201400L
+#endif //MSVC_PLATFORM_TOOLSET >= 110
 
 #include <memory>
 #include <sstream>
@@ -49,11 +52,11 @@
 #if KLIB_WINDOWS_OS
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#if _MSVC_LANG >= 201702L
+#if MSVC_PLATFORM_TOOLSET >= 141
 	#include <corecrt.h>
 	#include <corecrt_wdirect.h>
 	#include <corecrt_wstdio.h>
-	#endif //_MSVC_LANG >= 201702L
+	#endif //MSVC_PLATFORM_TOOLSET >= 141
 	
 	#include <direct.h>
 	#include <cstdio>

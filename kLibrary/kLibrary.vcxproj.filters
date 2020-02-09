@@ -63,6 +63,9 @@
     <ClCompile Include="Source Files\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source Files\Utility\Logging\kLogging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Maths\Matrix\Matrix4x4.hpp">

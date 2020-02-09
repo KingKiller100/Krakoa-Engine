@@ -8,16 +8,14 @@ namespace klib::debug
 {
 #if _DEBUG
 	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const char* exp, const char* msg, const char* file, const unsigned line)
-		: std::exception(),
-		report(kFormat::ToString("Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
+		: report(kFormat::ToString("Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
 	{
 		INIT_LOGS();
-		kLogs::GetMainLogger()->OutputToFatalFile( report, file, line);
+		FATAL( report );
 	}
 
 	AssertOnFailedExpressionException::~AssertOnFailedExpressionException() throw()
-	{
-	}
+	{}
 
 
 	char const* AssertOnFailedExpressionException::what() const

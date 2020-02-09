@@ -14,18 +14,14 @@ int main(int argc, char** argv)
 {
 	RunTestsOnkLibrary();
 
-	INIT_LOGS();
-	LOG_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
-
 	auto app = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
 
 	app->Initialize();
 
-	while (app->IsRunning())
-	{
+	do {
 		app->Run();
 		app->Shutdown(); // placed for now so that the application doesn't run endlessly
-	}
+	} while (app->IsRunning());
 	 
 	return 0;
 }

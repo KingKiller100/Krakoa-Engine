@@ -9,6 +9,10 @@ namespace krakoa::events
 	using namespace kMaths;
 	using namespace klib;
 
+#if defined (_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4251)
+
 	class KRAKOA_API ApplicationEvent : public Event
 	{
 	public:
@@ -44,7 +48,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return kFormat::ToString("Window Resize Event: (%d, %d)", GetWidth(), GetHeight());
+			return kFormat::ToString("Window Resize Event: (%.2f, %.2f)", GetWidth(), GetHeight());
 		}
 		
 		EVENT_CLASS_TYPE(WINDOW_RESIZE)
@@ -105,7 +109,7 @@ namespace krakoa::events
 		}
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return kFormat::ToString("Window Moved Event: New Position - (%d, %d)!", GetX(), GetY());
+			return kFormat::ToString("Window Moved Event: New Position - (%.2f, %.2f)", GetX(), GetY());
 		}
 
 		EVENT_CLASS_TYPE(WINDOW_MOVED)
@@ -168,7 +172,9 @@ namespace krakoa::events
 		EVENT_CLASS_TYPE(APP_RENDER)
 	};
 
-	
+
+#pragma warning(pop)
+#endif
 }
 
 

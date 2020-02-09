@@ -14,14 +14,11 @@ namespace klib::kLogs
 	using namespace kFileSystem;
 	using namespace kFormat;
 	
-	LogQueue::value_type startOfkLogFile = "***********************************************************************\nLogging Initialized:\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
-	LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n";
-	LogQueue::value_type endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
+	 //LogQueue::value_type Logging::startOfkLogFile = "***********************************************************************\nLogging Initialized:\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
+	 //constexpr LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n";
+	 //LogQueue::value_type Logging::endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 
 	const char* Logging::kLogs_Empty = "Empty";
-
-	std::unordered_map<LogLevel, const char*> Logging::kLogs_LogLevelMap;
-	std::unordered_map<LogLevel, LoggingConsoleColour> Logging::kLogs_ConsoleColourMap;
 
 	Logging::Logging()
 		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
@@ -37,8 +34,6 @@ namespace klib::kLogs
 
 	Logging::~Logging()
 	{
-		if (GetLastLoggedEntry() != Logging::kLogs_Empty)
-			FinalOutput();
 	}
 
 	void Logging::InitializeLogging()
@@ -50,7 +45,11 @@ namespace klib::kLogs
 		InitializeLogLevelMap();
 		InitializeOutputToConsoleColourMap();
 		
-		const std::string_view startLog = startOfkLogFile;
+		const auto startLog 
+			= "***********************************************************************\nLogging Initialized:\t" 
+			+ GetDateInTextFormat() 
+			+ "\t" + GetTimeText() 
+			+ "\n***********************************************************************\n\n";;
 		AddToLogBuffer(startLog, LogLevel::NORM);
 	}
 
@@ -145,14 +144,14 @@ namespace klib::kLogs
 
 	void Logging::AppendLogFile()
 	{
-		const std::string_view conclusionCurrentLog = endOfkCurrentLog;
+		const auto conclusionCurrentLog = "\n***********************************************************************\n";
 		AddToLogBuffer(conclusionCurrentLog,LogLevel::NORM);
 		OutputLogToFile();
 	}
 
 	void Logging::FinalOutput()
 	{
-		const std::string_view endLogLine = endOfkLogFileLine;
+		const auto endLogLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 		AddToLogBuffer(endLogLine, LogLevel::NORM);
 		OutputLogToFile();
 		initialized_kLogging = false;
@@ -161,7 +160,7 @@ namespace klib::kLogs
 	void Logging::OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line)
 	{
 		AddEntry(msg, LogLevel::FATL, file, line);
-		const std::string_view fatalEOF = endOfkLogFileLine;		
+		const auto fatalEOF = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";;
 		AddToLogBuffer(fatalEOF, LogLevel::FATL);
 		OutputLogToFile();
 	}

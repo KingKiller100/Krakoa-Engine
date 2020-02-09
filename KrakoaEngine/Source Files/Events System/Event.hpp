@@ -4,6 +4,7 @@
 
 #include <Core/EngineCore.hpp>
 
+#include <functional>
 #include <ostream>
 #include <string>
 

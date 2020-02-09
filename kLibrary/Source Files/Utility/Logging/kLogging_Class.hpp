@@ -1,7 +1,5 @@
 #pragma once
 
-#include <HelperMacros.hpp>
-
 #include <string>
 #include <deque>
 #include <unordered_map>
@@ -171,7 +169,7 @@ namespace klib
 			 */
 			void InitializeLogLevelMap();
 
-			static void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
+			void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
 
 			void InitializeOutputToConsoleColourMap();
 			
@@ -184,8 +182,8 @@ namespace klib
 			std::string directory;
 			std::string filename;
 
-			static std::unordered_map<LogLevel, const char*> kLogs_LogLevelMap;
-			static std::unordered_map<LogLevel, LoggingConsoleColour> kLogs_ConsoleColourMap;
+			std::unordered_map<LogLevel, const char*> kLogs_LogLevelMap;
+			std::unordered_map<LogLevel, LoggingConsoleColour> kLogs_ConsoleColourMap;
 
 			bool initialized_kLogging;
 		};

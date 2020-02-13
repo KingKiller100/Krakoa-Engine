@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -58,6 +58,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -99,17 +100,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)Vendors\GLFW\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)Vendors\GLFW\include;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)Vendors\GLFW\include;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
@@ -170,14 +171,19 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)kLibrary\Source Files;</AdditionalIncludeDirectories>
+      <StringPooling>
+      </StringPooling>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -198,6 +204,7 @@
       <PreprocessorDefinitions>_WINDLL;KRAKOA_OS_WINDOWS;KRAKOA_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompile.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)kLibrary\Source Files;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -292,6 +299,7 @@
     <ClInclude Include="Source Files\Events System\MouseEvent.h" />
     <ClInclude Include="Source Files\Krakoa.hpp" />
     <ClInclude Include="Source Files\Precompile.h" />
+    <ClInclude Include="Source Files\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

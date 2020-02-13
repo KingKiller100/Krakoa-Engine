@@ -12,14 +12,14 @@ namespace klib::kCalendar
 {
 	using namespace kFormat;
 
-	const _SYSTEMTIME& GetLocalDateAndTime()
+	_SYSTEMTIME& GetLocalDateAndTime()
 	{
 		static _SYSTEMTIME kCalendar_Local_DateTime;
 		GetLocalTime(&kCalendar_Local_DateTime);
 		return kCalendar_Local_DateTime;
 	}
 
-	const _SYSTEMTIME& GetSystemDateAndTime()
+	_SYSTEMTIME& GetSystemDateAndTime()
 	{
 		static _SYSTEMTIME kCalendar_System_DateTime;
 		GetSystemTime(&kCalendar_System_DateTime);
@@ -39,9 +39,9 @@ namespace klib::kCalendar
 		default: return MAXWORD;
 		}
 	}
-
-	// ASCII
 	
+	// ASCII
+
 	std::string GetTimeText()
 	{
 		const auto dateTime = GetLocalDateAndTime();
@@ -50,11 +50,11 @@ namespace klib::kCalendar
 
 	std::string GetDateInTextFormat()
 	{
-		const auto dateTime = GetLocalDateAndTime();				
+		const auto dateTime = GetLocalDateAndTime();
 		const auto dateStr = ToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek).data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
 		return dateStr;
 	}
-
+	
 	std::string_view GetMonth(const unsigned short month)
 	{
 		static std::array<const char*, 12> kCalendar_MonthsArray = 
@@ -87,6 +87,12 @@ namespace klib::kCalendar
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
+	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second)
+	{
+		const auto time = ToString("%02d:%02d:%02d", hour, minute, second);
+		return time;
+	}
+
 	// WIDE MULTI-BYTE CHAR
 	
 	std::wstring wGetTimeText()
@@ -101,7 +107,7 @@ namespace klib::kCalendar
 		return ToString(L"%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
 	}
 
-	std::wstring_view  wGetMonth(const unsigned short month)
+	std::wstring_view wGetMonth(const unsigned short month)
 	{
 		static std::array<const wchar_t*, 12> kCalendar_MonthsArray =
 		{ L"January", L"February", L"March", L"April", L"May",
@@ -131,5 +137,11 @@ namespace klib::kCalendar
 		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
+	}
+
+	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second)
+	{
+		const auto time = ToString(L"%02d:%02d:%02d", hour, minute, second);
+		return time;
 	}
 }

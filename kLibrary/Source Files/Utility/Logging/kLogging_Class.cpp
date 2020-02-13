@@ -13,12 +13,8 @@ namespace klib::kLogs
 	using namespace kCalendar;
 	using namespace kFileSystem;
 	using namespace kFormat;
-	
-	 //LogQueue::value_type Logging::startOfkLogFile = "***********************************************************************\nLogging Initialized:\t" + GetDateInTextFormat() + "\t" + GetTimeText() + "\n***********************************************************************\n\n";
-	 //constexpr LogQueue::value_type endOfkCurrentLog = "\n***********************************************************************\n";
-	 //LogQueue::value_type Logging::endOfkLogFileLine = "\n\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 
-	const char* Logging::kLogs_Empty = "Empty";
+	const char* Logging::kLogs_Empty = "NO ENTRIES! LOGS ARE EMPTY";
 
 	Logging::Logging()
 		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
@@ -49,8 +45,7 @@ namespace klib::kLogs
 		
 		const auto startLog 
 			= "***********************************************************************\nLogging Initialized:\t" 
-			+ GetDateInTextFormat() 
-			+ "\t" + GetTimeText() 
+			+ GetDateInTextFormat() + "\t" + GetTimeText() 
 			+ "\n***********************************************************************\n\n";;
 		AddToLogBuffer(startLog, LogLevel::NORM);
 	}
@@ -202,9 +197,9 @@ namespace klib::kLogs
 		if (!(logEntryQueue.empty()))
 			return logEntryQueue.back();
 
-		OutputToConsole("NO ENTRIES! LOGS ARE EMPTY", LogLevel::ERRR);
+		OutputToConsole(kLogs_Empty, LogLevel::ERRR);
 		
-		return "EMPTY";
+		return kLogs_Empty;
 	}
 
 	void Logging::ErasePreviousEntries(const size_t numOfEntries)

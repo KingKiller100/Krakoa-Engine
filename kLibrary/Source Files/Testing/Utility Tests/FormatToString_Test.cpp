@@ -21,14 +21,16 @@ namespace kTest::utility
 
 	void FormatToStringTester::FormatToStringTest()
 	{
-		auto tempIntPtr = new int(75);
+		using namespace klib::kFormat;
 
-		const auto testStr  = klib::kFormat::ToString("This test %d ", 1U);
-		const auto testStr2 = klib::kFormat::ToString("will all %s printf function format specifiers like with string literals ", "work");
-		const auto testStr3 = klib::kFormat::ToString("and with different numerical types such as float %02.03f, ", float(kMaths::consts::TAU));
-		const auto testStr4 = klib::kFormat::ToString("doubles %02.07f, ", double(kMaths::consts::E));
-		const auto testStr5 = klib::kFormat::ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
-		const auto testStr6 = klib::kFormat::ToString("pointer addresses i.e. %p (random int ptr address)", tempIntPtr);
+		auto tempIntPtr = std::make_unique<int>(76);
+
+		const auto testStr  = ToString("This test %d ", 1U);
+		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
+		const auto testStr3 = ToString("and with different numerical types such as float %02.03f, ", float(kMaths::consts::TAU));
+		const auto testStr4 = ToString("doubles %2.7f, ", double(kMaths::consts::E));
+		const auto testStr5 = ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
+		const auto testStr6 = ToString("pointer addresses i.e. %p (random int ptr address)", tempIntPtr.get());
 
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
@@ -40,7 +42,7 @@ namespace kTest::utility
 
 	void FormatToStringTester::SingleObjectToStringTest()
 	{
-		const auto test = klib::kFormat::ToString<char, unsigned short>(980);
+		const auto test = klib::kFormat::ToString<char>(980u);
 
 		VERIFY(test == "980");
 	}

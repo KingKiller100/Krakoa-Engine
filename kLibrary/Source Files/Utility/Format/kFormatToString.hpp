@@ -35,5 +35,12 @@ namespace klib
 
 			return std::basic_string<CharType>(buffer);
 		}
+
+		template<class CharType, typename T, typename ...Ts>
+		constexpr std::basic_string<CharType> ToString(const std::basic_string<CharType>& format, T&& arg, Ts&& ...argPack)
+		{
+			const std::basic_string<CharType> text = ToString(format.c_str(), arg, argPack...);
+			return text;
+		}
 	}
 }

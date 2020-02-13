@@ -68,11 +68,11 @@ namespace kTest::utility
 		const auto fullFilePathToDelete = dir + filename + ".log";
 		VERIFY(klib::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
 		
-		LOG_NORM("end");	
+		LOG_NORM("end");
 		last = GET_LAST_LOG_ENTRY();
 		VERIFY(last.find("end") == std::string::npos);
 
-		kFileSystem::RemoveFile((dir + filename + ".log").data());
+		kFileSystem::RemoveFile(fullFilePathToDelete.data());
 		kFileSystem::DeleteDirectory(dir.data());
 	}
 }

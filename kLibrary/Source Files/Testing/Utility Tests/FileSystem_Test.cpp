@@ -50,6 +50,5 @@ namespace kTest::utility
 		VERIFY(DeleteDirectory((cwd + "Create Directory Test\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\Success1\\").c_str()) == true);
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\").c_str()) == true);
-
 	}
 }

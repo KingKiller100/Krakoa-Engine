@@ -9,7 +9,7 @@
 namespace krakoa
 {
 	using namespace klib;
-	kTime::SystemTimer systemTimer = kTime::SystemTimer("System Timer");
+	kTime::SystemTimer systemTimer = kTime::SystemTimer("Krakoa Engine Timer");
 
 	Application::Application()
 	: running(false)
@@ -29,12 +29,6 @@ namespace krakoa
 	void Application::Run()
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
-		
-		const events::WindowResizeEvent e(1000, 800);
-		const events::WindowMovedEvent e2(20, 80);
-
-		LOG_NORM(e.ToString());
-		LOG_INFO(e2.ToString());
 	}
 
 	constexpr bool Application::IsRunning() const

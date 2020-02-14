@@ -100,17 +100,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)Vendors\GLFW\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)KrakoaEngine\Vendors\GLFW\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)Vendors\GLFW\include;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)KrakoaEngine\Vendors\GLFW\include;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)Vendors\GLFW\include;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)KrakoaEngine\Vendors\GLFW\include;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;$(IncludePath)</IncludePath>

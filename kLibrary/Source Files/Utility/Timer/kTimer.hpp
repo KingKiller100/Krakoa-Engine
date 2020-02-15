@@ -5,82 +5,69 @@
 #include <chrono>
 #include <atomic>
 
-namespace klib
+namespace klib::kTime
 {
-	namespace kTime
+	using Millis = std::chrono::milliseconds;
+	using Micros = std::chrono::microseconds;
+	using Nanos = std::chrono::nanoseconds;
+	using Secs = std::chrono::seconds;
+	using Mins = std::chrono::minutes;
+	using Hours = std::chrono::hours;
+
+	template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
+	class Timer
 	{
-//#if defined (_MSC_VER)
-//#pragma warning(push)
-//#pragma warning(disable:4251)
-//		PORT_STL template class KLIB_API std::chrono::time_point< std::chrono::high_resolution_clock, typename std::chrono::high_resolution_clock::duration>;
-//		PORT_STL template class KLIB_API std::chrono::time_point< std::chrono::system_clock, typename std::chrono::system_clock::duration>;
-//		PORT_STL template class KLIB_API std::chrono::time_point< std::chrono::steady_clock, typename std::chrono::steady_clock::duration>;
-//#pragma warning(pop)
-//#endif
+		using Rep = RepresentationType;
+		using Clock = ClockType;
 
-		using Millis = std::chrono::milliseconds;
-		using Micros = std::chrono::microseconds;
-		using Nanos = std::chrono::nanoseconds;
-		using Secs = std::chrono::seconds;
-		using Mins = std::chrono::minutes;
-		using Hours = std::chrono::hours;
+	public:
 
-		template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
-		class Timer
-		//class /*KLIB_API*/ Timer
-		{			
-			using Rep = RepresentationType;
-			using Clock = ClockType;
+		constexpr Timer(const char* name)
+			: name(name), startTimePoint(Clock::now()), lastTimePoint(startTimePoint)
+		{ }
 
-		public:
+		USE_RESULT constexpr const char* GetName() const
+		{
+			return name;
+		}
 
-			constexpr Timer(const char* name) 
-				:  name(name), startTimePoint(Clock::now()), lastTimePoint(startTimePoint)
-			{ }
-			
-			USE_RESULT constexpr const char* GetName() const
-			{
-				return name;
-			}
+		template<typename Units>
+		USE_RESULT constexpr Rep GetLifeTime() const noexcept
+		{
+			std::_Atomic_thread_fence(std::memory_order_relaxed);
+			const auto lifeTime = std::chrono::duration_cast<Units>(Clock::now() - startTimePoint).count();
+			std::_Atomic_thread_fence(std::memory_order_relaxed);
+			return static_cast<Rep>(lifeTime);
+		}
 
-			template<typename Units>
-			USE_RESULT constexpr Rep GetLifeTime() const noexcept
-			{
-				std::_Atomic_thread_fence(std::memory_order_relaxed);
-				const auto lifeTime = std::chrono::duration_cast<Units>(Clock::now() - startTimePoint).count();
-				std::_Atomic_thread_fence(std::memory_order_relaxed);
-				return static_cast<Rep>(lifeTime);
-			}
+		template<typename Units>
+		USE_RESULT constexpr Rep GetDeltaTime() noexcept
+		{
+			std::_Atomic_thread_fence(std::memory_order_relaxed);
 
-			template<typename Units>
-			USE_RESULT constexpr Rep GetDeltaTime() noexcept
-			{
-				std::_Atomic_thread_fence(std::memory_order_relaxed);
-			
-				const auto currentTimePoint = Clock::now();
-				const auto deltaTime = std::chrono::duration_cast<Units>(currentTimePoint - lastTimePoint).count();
-				lastTimePoint = currentTimePoint;
-				
-				std::_Atomic_thread_fence(std::memory_order_relaxed);
-				
-				return static_cast<Rep>(deltaTime);
-			}
+			const auto currentTimePoint = Clock::now();
+			const auto deltaTime = std::chrono::duration_cast<Units>(currentTimePoint - lastTimePoint).count();
+			lastTimePoint = currentTimePoint;
 
-		private:
-			const char* name;
+			std::_Atomic_thread_fence(std::memory_order_relaxed);
 
-			typename const Clock::time_point startTimePoint;
-			typename Clock::time_point lastTimePoint;
-		};
+			return static_cast<Rep>(deltaTime);
+		}
 
-		// Very precise results
-		using HighAccuracyTimer = Timer<>;
-		using SystemTimer = Timer<double, std::chrono::system_clock>;
-		using MonotonicTimer = Timer<double, std::chrono::steady_clock>;
+	private:
+		const char* name;
 
-		// Less precise results
-		using HighAccuracyTimerf = Timer<float>;
-		using SystemTimerf = Timer<float, std::chrono::system_clock>;
-		using MonotonicTimerf = Timer<float, std::chrono::steady_clock>;
-	}
+		typename const Clock::time_point startTimePoint;
+		typename Clock::time_point lastTimePoint;
+	};
+
+	// Very precise results
+	using HighAccuracyTimer = Timer<>;
+	using SystemTimer = Timer<double, std::chrono::system_clock>;
+	using MonotonicTimer = Timer<double, std::chrono::steady_clock>;
+
+	// Less precise results
+	using HighAccuracyTimerf = Timer<float>;
+	using SystemTimerf = Timer<float, std::chrono::system_clock>;
+	using MonotonicTimerf = Timer<float, std::chrono::steady_clock>;
 }

@@ -11,13 +11,18 @@ workspace "Krakoa"
 
 outputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}"
 
-project "kLib"
-    location "kLib"
-    kind "SharedLib"
+project "kLibrary"
+    location "kLibrary"
+    kind "StaticLib"
     language "C++"
+    toolset "v141" 
+    characterset ("MBCS")
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+
+    pchheader "pch.hpp"
+    pchsource "pch.cpp"
 
     files
     {
@@ -31,8 +36,8 @@ project "kLib"
         "%{prj.name}/Source Files",
     }
 
-    filter "system:windows"
-        cppdialect "C++17"
+    filter "system:Windows"
+        cppdialect "C++latest"
         staticruntime "On"
         systemversion "10.0.17763.0"
 
@@ -57,7 +62,7 @@ project "kLib"
 
     filter "configurations:PROFILE"
         defines "KRAKOA_PROFILE"
-        optimize "On"
+        optimize "Debug"
 
 
 
@@ -66,9 +71,15 @@ project "Krakoa"
     location "Krakoa"
     kind "SharedLib"
     language "C++"
+    toolset "v141" 
+    characterset ("MBCS")
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+
+    pchheader "Precompile.hpp"
+    pchsource "Precompile.cpp"
+
 
     files
     {
@@ -89,7 +100,7 @@ project "Krakoa"
         "kLibrary"
     }
 
-    filter "system:windows"
+    filter "system:Windows"
         cppdialect "C++17"
         staticruntime "On"
         systemversion "10.0.17763.0"
@@ -114,7 +125,7 @@ project "Krakoa"
 
     filter "configurations:PROFILE"
         defines "KRAKOA_PROFILE"
-        optimize "On"
+        optimize "Debug"
 
         --filters { "system:windows", "configuration:Release" }
 
@@ -122,10 +133,11 @@ project "Hooper2"
     location "ExampleGames"
     kind "ConsoleApp"
     language "C++"
+    toolset "v141" 
+    characterset ("MBCS")
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
-
     files
     {
         "%{prj.name}/source/**.h",
@@ -146,7 +158,7 @@ project "Hooper2"
         "Krakoa"
     }
 
-    filter "system:windows"
+    filter "system:Windows"
         cppdialect "C++17"
         staticruntime "On"
         systemversion "10.0.17763.0"
@@ -175,4 +187,4 @@ project "Hooper2"
 
     filter "configurations:PROFILE"
         defines "KRAKOA_PROFILE"
-        optimize "On"
+        optimize "Debug"

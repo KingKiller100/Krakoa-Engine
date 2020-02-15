@@ -1,4 +1,4 @@
-#include <Precompile.h>
+#include <Precompile.hpp>
 
 #include <Core/Application.hpp>
 #include <Events System/ApplicationEvent.hpp>

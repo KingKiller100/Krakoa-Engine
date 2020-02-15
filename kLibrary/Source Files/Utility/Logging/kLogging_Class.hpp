@@ -4,190 +4,186 @@
 #include <deque>
 #include <unordered_map>
 
-namespace klib
+namespace klib::kLogs
 {
-	namespace kLogs
+	enum LoggingConsoleColour : unsigned short
 	{
-		
-		enum LoggingConsoleColour : unsigned short
-		{
-			NAVY_BLUE = 1,
-			DARK_GREEN,
-			AQUA_BLUE,
-			DARK_RED,
-			PURPLE,
-			MUSTARD_YELLOW,
-			LIGHT_GREY,
-			GREY,
-			DARK_BLUE,
-			LIGHT_GREEN,
-			LIGHT_BLUE,
-			SCARLET_RED,
-			VIOLET_PURPLE,
-			YELLOW,
-			WHITE,
-			RED_BG_WHITE_TEXT = 79
-		};
-		
-		enum class LogLevel : unsigned short
-		{
-			NORM, // Normal
-			BANR, // Log Banner
-			INFO, // Informative
-			WARN, // Warning
-			ERRR, // Error
-			FATL  // Fatal
-		};
+		NAVY_BLUE = 1,
+		DARK_GREEN,
+		AQUA_BLUE,
+		DARK_RED,
+		PURPLE,
+		MUSTARD_YELLOW,
+		LIGHT_GREY,
+		GREY,
+		DARK_BLUE,
+		LIGHT_GREEN,
+		LIGHT_BLUE,
+		SCARLET_RED,
+		VIOLET_PURPLE,
+		YELLOW,
+		WHITE,
+		RED_BG_WHITE_TEXT = 79
+	};
 
-		using LogQueue = std::deque<std::string>;
+	enum class LogLevel : unsigned short
+	{
+		NORM, // Normal
+		BANR, // Log Banner
+		INFO, // Informative
+		WARN, // Warning
+		ERRR, // Error
+		FATL  // Fatal
+	};
 
-		class Logging
-		{
-		public:
-			Logging();
-			Logging(std::string& filename, std::string& directory);
+	using LogQueue = std::deque<std::string>;
 
-			~Logging();
-			
-			/**
-			 * \brief
-			 *		Initializes logging system
-			 * \note
-			 *		No logging calls will function properly until this is called.
-			 */
-			void InitializeLogging();
+	class Logging
+	{
+	public:
+		Logging();
+		Logging(std::string& filename, std::string& directory);
 
-			/**
-			 * \brief
-			 *		Change the directory the log file outputs to
-			 * \param dir
-			 *		STL string view representing the new directory
-			 */
-			void ChangeOutputDirectory(const std::string_view dir);
+		~Logging();
 
-			/**
-			 * \brief
-			 *		Change name of log filename 
-			 * \param newFileName
-			 *		STL string view representing filename
-			 */
-			void ChangeFilename(const std::string_view newFileName);
+		/**
+		 * \brief
+		 *		Initializes logging system
+		 * \note
+		 *		No logging calls will function properly until this is called.
+		 */
+		void InitializeLogging();
 
-			/**
-			 * \brief
-			 *		Appends the current log file with the current logging cached in the buffer
-			 */
-			void AppendLogFile();
+		/**
+		 * \brief
+		 *		Change the directory the log file outputs to
+		 * \param dir
+		 *		STL string view representing the new directory
+		 */
+		void ChangeOutputDirectory(const std::string_view dir);
 
-			/**
-			 * \brief
-			 *		Outputs cached kLogs to file
-			 */
-			void FinalOutput();
+		/**
+		 * \brief
+		 *		Change name of log filename
+		 * \param newFileName
+		 *		STL string view representing filename
+		 */
+		void ChangeFilename(const std::string_view newFileName);
 
-			/**
-			 * \brief
-			 *		Outputs all cached kLogs up to file with the logged error message at the end
-			 * \param msg
-			 *		Error message
-			 * \param file
-			 * \param line
-			 */
-			void OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line);
+		/**
+		 * \brief
+		 *		Appends the current log file with the current logging cached in the buffer
+		 */
+		void AppendLogFile();
 
-			/**
-			 * \brief
-			 *		Formats log message and level to the appropriate log message and then caches it
-			 * \param[in] msg
-			 *		Log message
-			 * \param lvl
-			 *		Log level type
-			 * \param file
-			 * \param line
-			 */
-			void AddEntry(const std::string_view msg, const LogLevel lvl = LogLevel::NORM, const char* file = "", const unsigned line = 0);
+		/**
+		 * \brief
+		 *		Outputs cached kLogs to file
+		 */
+		void FinalOutput();
 
-			/**
-			 * \brief
-			 *		Formats the log banner to become the appropriate log banner message then caches it
-			 * \param[in] msg
-			 *		Log banner title
-			 * \param type
-			 *		The category/subject of the log banner
-			 */
-			void AddEntryBanner(const std::string_view msg, const std::string_view type);
+		/**
+		 * \brief
+		 *		Outputs all cached kLogs up to file with the logged error message at the end
+		 * \param msg
+		 *		Error message
+		 * \param file
+		 * \param line
+		 */
+		void OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line);
 
-			/**
-			 * \brief
-			 *		Returns previous entry text
-			 *
-			 * \return
-			 *		String of the final log entry
-			*/
-			LogQueue::value_type GetLastLoggedEntry();
+		/**
+		 * \brief
+		 *		Formats log message and level to the appropriate log message and then caches it
+		 * \param[in] msg
+		 *		Log message
+		 * \param lvl
+		 *		Log level type
+		 * \param file
+		 * \param line
+		 */
+		void AddEntry(const std::string_view msg, const LogLevel lvl = LogLevel::NORM, const char* file = "", const unsigned line = 0);
 
-			/**
-			 * \brief
-			 *		Deletes a given number of logs entries last entered
-			 * \param numOfEntries
-			 *		Amount of entries to delete
-			*/
-			void ErasePreviousEntries(const size_t numOfEntries);
+		/**
+		 * \brief
+		 *		Formats the log banner to become the appropriate log banner message then caches it
+		 * \param[in] msg
+		 *		Log banner title
+		 * \param type
+		 *		The category/subject of the log banner
+		 */
+		void AddEntryBanner(const std::string_view msg, const std::string_view type);
 
-			/**
-			 * \brief
-			 *		Deletes all log entries
-			*/
-			void Clear();
+		/**
+		 * \brief
+		 *		Returns previous entry text
+		 *
+		 * \return
+		 *		String of the final log entry
+		*/
+		LogQueue::value_type GetLastLoggedEntry();
 
-		private:
-			/**
-			 * \brief
-			 *		Creates the log file with the cached log entries 
-			 */
-			void OutputLogToFile();
+		/**
+		 * \brief
+		 *		Deletes a given number of logs entries last entered
+		 * \param numOfEntries
+		 *		Amount of entries to delete
+		*/
+		void ErasePreviousEntries(const size_t numOfEntries);
 
-			/**
-			 * \brief
-			 *		Places the cached kLogs from the queue to a single string object
-			 * \return
-			 *		The cached string of all currently cached kLogs
-			 */
-			std::string GetFullLogText();
+		/**
+		 * \brief
+		 *		Deletes all log entries
+		*/
+		void Clear();
 
-			/**
-			 * \brief
-			 *		Adds log message to the cache
-			 * \param logLine
-			 *		Full log message
-			 */
-			void AddToLogBuffer(const std::string_view& logLine, const LogLevel lvl);
+	private:
+		/**
+		 * \brief
+		 *		Creates the log file with the cached log entries
+		 */
+		void OutputLogToFile();
 
-			/**
-			 * \brief
-			 *		Stores all log levels into a map with the string equivalent
-			 */
-			void InitializeLogLevelMap();
+		/**
+		 * \brief
+		 *		Places the cached kLogs from the queue to a single string object
+		 * \return
+		 *		The cached string of all currently cached kLogs
+		 */
+		std::string GetFullLogText();
 
-			void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
+		/**
+		 * \brief
+		 *		Adds log message to the cache
+		 * \param logLine
+		 *		Full log message
+		 */
+		void AddToLogBuffer(const std::string_view& logLine, const LogLevel lvl);
 
-			void InitializeOutputToConsoleColourMap();
-			
-		public:
-			static const char* kLogs_Empty;
-		
-		protected:
-			LogQueue logEntryQueue; // Queue buffer to cache the logged messages
+		/**
+		 * \brief
+		 *		Stores all log levels into a map with the string equivalent
+		 */
+		void InitializeLogLevelMap();
 
-			std::string directory;
-			std::string filename;
+		void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
 
-			std::unordered_map<LogLevel, const char*> kLogs_LogLevelMap;
-			std::unordered_map<LogLevel, LoggingConsoleColour> kLogs_ConsoleColourMap;
+		void InitializeOutputToConsoleColourMap();
 
-			bool initialized_kLogging;
-		};
+	public:
+		static const char* kLogs_Empty;
 
-	}
+	protected:
+		LogQueue logEntryQueue; // Queue buffer to cache the logged messages
+
+		std::string directory;
+		std::string filename;
+
+		std::unordered_map<LogLevel, const char*> kLogs_LogLevelMap;
+		std::unordered_map<LogLevel, LoggingConsoleColour> kLogs_ConsoleColourMap;
+
+		bool initialized_kLogging;
+	};
+
 }
 

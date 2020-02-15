@@ -9,9 +9,60 @@ workspace "Krakoa"
         "Release"
     }
 
-outputDir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+outputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}"
 
-project "KrakoaEngine"
+project "kLib"
+    location "kLib"
+    kind "SharedLib"
+    language "C++"
+
+    targetdir ("bin/" .. outputDir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/source/**.h",
+        "%{prj.name}/source/**.hpp",
+        "%{prj.name}/source/**.cpp"
+    }
+
+    includedirs
+    {
+        "%{prj.name}/Source Files",
+    }
+
+    filter "system:windows"
+        cppdialect "C++17"
+        staticruntime "On"
+        systemversion "10.0.17763.0"
+
+        defines
+        {
+            "KLIB_LIB",
+            "KLIB_WINDOWS_OS",
+            "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
+        }
+
+    filter "configurations:Debug"
+        defines "KRAKOA_DEBUG"
+        symbols "On"
+
+    filter "configurations:Test"
+        defines "KRAKOA_TEST"
+        symbols "On"
+
+    filter "configurations:Release"
+        defines "KRAKOA_RELEASE"
+        optimize "On"
+
+    filter "configurations:PROFILE"
+        defines "KRAKOA_PROFILE"
+        optimize "On"
+
+
+
+
+project "Krakoa"
     location "Krakoa"
     kind "SharedLib"
     language "C++"
@@ -92,7 +143,7 @@ project "Hooper2"
 
     links
     {
-        "KrakoaEngine"
+        "Krakoa"
     }
 
     filter "system:windows"
@@ -107,7 +158,7 @@ project "Hooper2"
 
         postbuildcommands
         {
-            ("{COPY} ../bin/" .. outputDir .. "/KrakoaEngine.dll %{cfg.buildtarget.relpath}")
+            ("{COPY} ../bin/" .. outputDir .. "/Krakoa.dll %{cfg.buildtarget.relpath}")
         }
 
     filter "configurations:Debug"

@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hooper2", "ExampleGames\Hooper2\Hooper2.vcxproj", "{060C9415-6B51-4874-8CAB-81BEC777A6BC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KrakoaEngine", "KrakoaEngine\KrakoaEngine.vcxproj", "{208B7BED-8C5D-4B42-A8CB-57FB5DC73F9E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Krakoa", "Krakoa\Krakoa.vcxproj", "{208B7BED-8C5D-4B42-A8CB-57FB5DC73F9E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kLib", "kLibrary\kLibrary.vcxproj", "{2322A691-8C3A-4724-9E2B-861E6F0E1BD1}"
 EndProject

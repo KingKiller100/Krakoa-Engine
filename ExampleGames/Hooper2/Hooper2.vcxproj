@@ -115,16 +115,16 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PreprocessorDefinitions>KRAKOA_OS_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Krakoa\Source Files;$(SolutionDir)kLibrary\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\KrakoaEngine.dll" /f /q</Command>
+      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\Krakoa.dll" /f /q</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\KrakoaEngine\KrakoaEngine.dll" "$(OutDir)" /q</Command>
+      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\Krakoa\Krakoa.dll" "$(OutDir)" /q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
@@ -135,16 +135,16 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PreprocessorDefinitions>KRAKOA_OS_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Krakoa\Source Files;$(SolutionDir)kLibrary\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\KrakoaEngine.dll" /f /q</Command>
+      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\Krakoa.dll" /f /q</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\KrakoaEngine\KrakoaEngine.dll" "$(OutDir)" /q</Command>
+      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\Krakoa\Krakoa.dll" "$(OutDir)" /q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -154,17 +154,17 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>KRAKOA_OS_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\kweku\Documents\Krakoa Engine\KrakoaEngine\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\kweku\Documents\Krakoa Engine\Krakoa\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\KrakoaEngine.dll" /f /q</Command>
+      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\Krakoa.dll" /f /q</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\KrakoaEngine\KrakoaEngine.dll" "$(OutDir)" /q</Command>
+      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\Krakoa\Krakoa.dll" "$(OutDir)" /q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
@@ -174,17 +174,17 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>KRAKOA_OS_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\kweku\Documents\Krakoa Engine\KrakoaEngine\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\kweku\Documents\Krakoa Engine\Krakoa\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\KrakoaEngine.dll" /f /q</Command>
+      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\Krakoa.dll" /f /q</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\KrakoaEngine\KrakoaEngine.dll" "$(OutDir)" /q</Command>
+      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\Krakoa\Krakoa.dll" "$(OutDir)" /q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -196,7 +196,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>KRAKOA_OS_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\kweku\Documents\Krakoa Engine\KrakoaEngine\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\kweku\Documents\Krakoa Engine\Krakoa\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -205,10 +205,10 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\KrakoaEngine.dll" /f /q</Command>
+      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\Krakoa.dll" /f /q</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\KrakoaEngine\KrakoaEngine.dll" "$(OutDir)" /q</Command>
+      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\Krakoa\Krakoa.dll" "$(OutDir)" /q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -220,7 +220,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>KRAKOA_OS_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)KrakoaEngine\Source Files;$(SolutionDir)kLibrary\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Krakoa\Source Files;$(SolutionDir)kLibrary\Source Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -229,17 +229,17 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\KrakoaEngine.dll" /f /q</Command>
+      <Command>del "$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\Krakoa.dll" /f /q</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\KrakoaEngine\KrakoaEngine.dll" "$(OutDir)" /q</Command>
+      <Command>xcopy /y "$(SolutionDir)bin\$(Platform)\$(Configuration)\Krakoa\Krakoa.dll" "$(OutDir)" /q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\kLibrary\kLibrary.vcxproj">
       <Project>{2322a691-8c3a-4724-9e2b-861e6f0e1bd1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\KrakoaEngine\KrakoaEngine.vcxproj">
+    <ProjectReference Include="..\..\Krakoa\Krakoa.vcxproj">
       <Project>{208b7bed-8c5d-4b42-a8cb-57fb5dc73f9e}</Project>
     </ProjectReference>
   </ItemGroup>

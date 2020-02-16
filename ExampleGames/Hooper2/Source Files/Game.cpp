@@ -1,5 +1,4 @@
 #include <Krakoa.hpp>
-#include <kLib.hpp>
 
 class Hooper2Game : public krakoa::Application
 {

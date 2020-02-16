@@ -18,14 +18,14 @@ namespace klib::kLogs
 
 	Logging::Logging()
 		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
-		filename(ToString("Log %s %02d-00-00.log", GetDateInNumericalFormat(false).c_str(), GetComponentOfTime(TimeComponent::hour))),
-		initialized_kLogging(false)
+		filename(ToString("Log - %s.log", GetDateInNumericalFormat(false).c_str())),
+		enable_kLogging(false)
 	{	}
 
 	Logging::Logging(std::string& filename, std::string& directory)
 		: directory(std::move(directory)),
 		filename(std::move(filename)),
-		initialized_kLogging(false)
+		enable_kLogging(false)
 	{	}
 
 	Logging::~Logging()
@@ -36,18 +36,23 @@ namespace klib::kLogs
 
 	void Logging::InitializeLogging()
 	{
-		if (initialized_kLogging) { return; }
+		if (enable_kLogging) { return; }
 
-		initialized_kLogging = true;
+		enable_kLogging = true;
 
 		InitializeLogLevelMap();
 		InitializeOutputToConsoleColourMap();
 		
 		const auto startLog 
-			= "***********************************************************************\nLogging Initialized:\t" 
-			+ GetDateInTextFormat() + "\t" + GetTimeText() 
+			= "***********************************************************************\n    Logging Initialized:    " 
+			+ GetDateInTextFormat() + "    " + GetTimeText() 
 			+ "\n***********************************************************************\n\n";;
 		AddToLogBuffer(startLog, LogLevel::NORM);
+	}
+
+	void Logging::ToggleLogging() noexcept
+	{
+			enable_kLogging = !enable_kLogging;
 	}
 
 	void Logging::InitializeLogLevelMap()
@@ -109,7 +114,7 @@ namespace klib::kLogs
 	
 	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
 	{
-		if (!(initialized_kLogging)) return;
+		if (!(enable_kLogging) && lvl < LogLevel::ERRR) return;
 
 		if (lvl < LogLevel::ERRR)
 		{
@@ -132,7 +137,7 @@ namespace klib::kLogs
 
 	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type)
 	{
-		if (!(initialized_kLogging)) return;
+		if (!(enable_kLogging)) return;
 
 		AddToLogBuffer(ToString("[%s]\t[%s]: [%s]\n", GetTimeText().c_str(),
 			type.data(), msg.data()), 
@@ -151,7 +156,7 @@ namespace klib::kLogs
 		const auto endLogLine = "\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 		AddToLogBuffer(endLogLine, LogLevel::NORM);
 		OutputLogToFile();
-		initialized_kLogging = false;
+		enable_kLogging = false;
 	}
 
 	void Logging::OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line)
@@ -178,7 +183,7 @@ namespace klib::kLogs
 
 	std::string Logging::GetFullLogText()
 	{
-		if (!(initialized_kLogging))
+		if (!(enable_kLogging))
 		{
 			return "\t\tLOGGING NOT INITIALIZED!\n\tTO USE CALL THE 'INITIALIZE' METHOD BEFORE USES";
 		}

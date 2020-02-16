@@ -1,4 +1,4 @@
-workspace "Krakoa"
+workspace "KrakoaEngine"
     architecture "x64"
 
     configurations
@@ -9,13 +9,13 @@ workspace "Krakoa"
         "Release"
     }
 
-outputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}"
+outputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}\\"
 
 project "kLibrary"
     location "kLibrary"
     kind "StaticLib"
     language "C++"
-    toolset "v141" 
+    toolset "v141"
     characterset ("MBCS")
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
@@ -49,19 +49,19 @@ project "kLibrary"
         }
 
     filter "configurations:Debug"
-        defines "KRAKOA_DEBUG"
+        defines "KLIB_DEBUG"
         symbols "On"
 
     filter "configurations:Test"
-        defines "KRAKOA_TEST"
+        defines "KLIB_TEST"
         symbols "On"
 
     filter "configurations:Release"
-        defines "KRAKOA_RELEASE"
+        defines "KLIB_RELEASE"
         optimize "On"
 
-    filter "configurations:PROFILE"
-        defines "KRAKOA_PROFILE"
+    filter "configurations:Profile"
+        defines "KLIB_PROFILE"
         optimize "Debug"
 
 
@@ -71,7 +71,7 @@ project "Krakoa"
     location "Krakoa"
     kind "SharedLib"
     language "C++"
-    toolset "v141" 
+    toolset "v141"
     characterset ("MBCS")
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
@@ -123,17 +123,17 @@ project "Krakoa"
         defines "KRAKOA_RELEASE"
         optimize "On"
 
-    filter "configurations:PROFILE"
+    filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
         optimize "Debug"
 
         --filters { "system:windows", "configuration:Release" }
 
 project "Hooper2"
-    location "ExampleGames"
+    location "ExampleGames/Hooper2/"
     kind "ConsoleApp"
     language "C++"
-    toolset "v141" 
+    toolset "v141"
     characterset ("MBCS")
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
@@ -168,9 +168,15 @@ project "Hooper2"
             "KRAKOA_OS_WINDOWS"
         }
 
+        prebuildcommands
+        {
+            ("IF EXIST \"$(SolutionDir)bin\\" .. outputDir .. "Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\" .. outputDir .. "Hooper2\\Krakoa.dll\" /f /q)")
+        }
+
+
         postbuildcommands
         {
-            ("{COPY} ../bin/" .. outputDir .. "/Krakoa.dll %{cfg.buildtarget.relpath}")
+            ("xcopy /y \"$(SolutionDir)bin\\" .. outputDir .. "Krakoa\\Krakoa.dll\" \"$(OutDir)\" /q")
         }
 
     filter "configurations:Debug"
@@ -185,6 +191,6 @@ project "Hooper2"
         defines "KRAKOA_RELEASE"
         optimize "On"
 
-    filter "configurations:PROFILE"
+    filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
         optimize "Debug"

@@ -15,27 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source Files\Precompile.cpp">
+    <ClCompile Include="Source Files\Core\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source Files\Core\Application.cpp">
+    <ClCompile Include="Source Files\Precompile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source Files\Precompile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Krakoa.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Core\EntryPoint.hpp">
+    <ClInclude Include="Source Files\Core\Application.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Core\EngineCore.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Core\Application.hpp">
+    <ClInclude Include="Source Files\Core\EntryPoint.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Events System\ApplicationEvent.hpp">
@@ -50,7 +44,13 @@
     <ClInclude Include="Source Files\Events System\MouseEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source Files\Window.h">
+    <ClInclude Include="Source Files\Krakoa.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Precompile.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

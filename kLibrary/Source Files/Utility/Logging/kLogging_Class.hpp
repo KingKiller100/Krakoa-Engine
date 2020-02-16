@@ -1,5 +1,6 @@
 #pragma once
 
+#include <HelperMacros.hpp>
 #include <string>
 #include <deque>
 #include <unordered_map>
@@ -44,7 +45,7 @@ namespace klib::kLogs
 		Logging();
 		Logging(std::string& filename, std::string& directory);
 
-		~Logging();
+		virtual ~Logging();
 
 		/**
 		 * \brief
@@ -53,6 +54,12 @@ namespace klib::kLogs
 		 *		No logging calls will function properly until this is called.
 		 */
 		void InitializeLogging();
+
+		/**
+		 * \brief
+		 *		Toggles if logging system is enabled
+		 */
+		void ToggleLogging() noexcept;
 
 		/**
 		 * \brief
@@ -182,7 +189,7 @@ namespace klib::kLogs
 		std::unordered_map<LogLevel, const char*> kLogs_LogLevelMap;
 		std::unordered_map<LogLevel, LoggingConsoleColour> kLogs_ConsoleColourMap;
 
-		bool initialized_kLogging;
+		bool enable_kLogging;
 	};
 
 }

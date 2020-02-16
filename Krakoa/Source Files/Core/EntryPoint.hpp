@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
 
 
-#ifdef TEST_ALLOWED
+#ifdef TESTING_ENABLED
 #include <Testing/TesterManager.hpp>
 inline void RunTestsOnkLibrary()
 {
@@ -42,4 +42,4 @@ inline void RunTestsOnkLibrary()
 #else
 inline void RunTestsOnkLibrary()
 {	}
-#endif // TEST_ALLOWEDG
+#endif // TESTING_ENABLED

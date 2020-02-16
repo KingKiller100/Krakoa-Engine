@@ -10,7 +10,6 @@ namespace klib::kLogs
 
 	static void Initialize()
 	{
-
 		if (!(mainlogger))
 		{
 			mainlogger = std::make_unique<Logging>();

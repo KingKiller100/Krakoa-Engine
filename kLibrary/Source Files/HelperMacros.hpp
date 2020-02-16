@@ -19,6 +19,6 @@
 #define IS_TRUE 1
 #define IS_FALSE 0
 
-#if defined(TEST_ALLOWED)
+#if defined(KLIB_TEST)
 	#define TESTING_ENABLED 1
 #endif // 

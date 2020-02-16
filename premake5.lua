@@ -1,5 +1,6 @@
 workspace "KrakoaEngine"
     architecture "x64"
+    startproject "Hooper2"
 
     configurations
     {
@@ -9,37 +10,51 @@ workspace "KrakoaEngine"
         "Release"
     }
 
-outputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}\\"
+    flags
+    {
+        "MultiProcessorCompile"
+    }
+    
+    OutputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}\\"
+
+    -- Include Libraries
+    IncludeDir = {}
+    IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
+    
+include "Krakoa/Vendors/GLFW/"
+
 
 project "kLibrary"
     location "kLibrary"
     kind "StaticLib"
     language "C++"
+    cppdialect "C++17"
     toolset "v141"
     characterset ("MBCS")
 
-    targetdir ("bin/" .. outputDir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
+    objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
 
     pchheader "pch.hpp"
-    pchsource "pch.cpp"
+    pchsource "kLibrary/Source Files/pch.cpp"
 
     files
     {
-        "%{prj.name}/source/**.h",
-        "%{prj.name}/source/**.hpp",
-        "%{prj.name}/source/**.cpp"
+        "%{prj.name}/Source Files/**.h",
+        "%{prj.name}/Source Files/**.hpp",
+        "%{prj.name}/Source Files/**.cpp",
+        "%{prj.name}/cpp.hint"
     }
 
     includedirs
     {
         "%{prj.name}/Source Files",
+        "%{IncludeDir.GLFW}"
     }
 
     filter "system:Windows"
-        cppdialect "C++latest"
         staticruntime "On"
-        systemversion "10.0.17763.0"
+        systemversion "latest"
 
         defines
         {
@@ -51,64 +66,75 @@ project "kLibrary"
     filter "configurations:Debug"
         defines "KLIB_DEBUG"
         symbols "On"
+        runtime "Debug"
 
     filter "configurations:Test"
         defines "KLIB_TEST"
         symbols "On"
+        runtime "Debug"
 
     filter "configurations:Release"
         defines "KLIB_RELEASE"
-        optimize "On"
+        optimize "Full"
+        runtime "Release"
 
     filter "configurations:Profile"
         defines "KLIB_PROFILE"
         optimize "Debug"
+        runtime "Release"
 
 
+
+group "Dependencies"
+    include "Krakoa/Vendors/GLFW"
+group ""
 
 
 project "Krakoa"
     location "Krakoa"
     kind "SharedLib"
     language "C++"
+    cppdialect "C++17"
     toolset "v141"
     characterset ("MBCS")
 
-    targetdir ("bin/" .. outputDir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
+    objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
 
     pchheader "Precompile.hpp"
-    pchsource "Precompile.cpp"
+    pchsource "Krakoa/Source Files/Precompile.cpp"
 
 
     files
     {
-        "%{prj.name}/source/**.h",
-        "%{prj.name}/source/**.hpp",
-        "%{prj.name}/source/**.cpp"
+        "%{prj.name}/Source Files/**.h",
+        "%{prj.name}/Source Files/**.hpp",
+        "%{prj.name}/Source Files/**.cpp",
+        "%{prj.name}/cpp.hint"
     }
 
     includedirs
     {
         "kLibrary/Source Files",
         "%{prj.name}/Source Files",
-        "%{prj.name}/Vendors/GLFW/include"
+        "%{IncludeDir.GLFW}"
     }
 
     links
     {
-        "kLibrary"
+        "kLibrary",
+        "GLFW"
     }
 
     filter "system:Windows"
-        cppdialect "C++17"
         staticruntime "On"
-        systemversion "10.0.17763.0"
+        systemversion "latest"
 
         defines
         {
             "KRAKOA_OS_WINDOWS",
-            "KRAKOA_BUILD_DLL"
+            "KRAKOA_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"
@@ -133,23 +159,25 @@ project "Hooper2"
     location "ExampleGames/Hooper2/"
     kind "ConsoleApp"
     language "C++"
+    cppdialect "C++17"
     toolset "v141"
     characterset ("MBCS")
 
-    targetdir ("bin/" .. outputDir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
+    objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
+    
     files
     {
-        "%{prj.name}/source/**.h",
-        "%{prj.name}/source/**.hpp",
-        "%{prj.name}/source/**.cpp"
+        "ExampleGames/%{prj.name}/Source Files/**.h",
+        "ExampleGames/%{prj.name}/Source Files/**.hpp",
+        "ExampleGames/%{prj.name}/Source Files/**.cpp",
     }
 
     includedirs
     {
         "kLibrary/Source Files",
         "Krakoa/Source Files",
-        "%{prj.name}/Vendors/GLFW/include"
+        "Krakoa/Vendors/"
     }
 
 
@@ -159,10 +187,10 @@ project "Hooper2"
     }
 
     filter "system:Windows"
-        cppdialect "C++17"
         staticruntime "On"
-        systemversion "10.0.17763.0"
+        systemversion "latest"
 
+        
         defines
         {
             "KRAKOA_OS_WINDOWS"
@@ -170,13 +198,12 @@ project "Hooper2"
 
         prebuildcommands
         {
-            ("IF EXIST \"$(SolutionDir)bin\\" .. outputDir .. "Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\" .. outputDir .. "Hooper2\\Krakoa.dll\" /f /q)")
+            ("IF EXIST \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" /f /q)")
         }
-
 
         postbuildcommands
         {
-            ("xcopy /y \"$(SolutionDir)bin\\" .. outputDir .. "Krakoa\\Krakoa.dll\" \"$(OutDir)\" /q")
+            ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(OutDir)\" /q")
         }
 
     filter "configurations:Debug"

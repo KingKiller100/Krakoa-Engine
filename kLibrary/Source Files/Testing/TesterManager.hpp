@@ -23,6 +23,5 @@ namespace kTest
 		static void Add(std::unique_ptr<Tester>&& test);
 		static void RunAll();
 		static void ClearAllTests();
-		
 	};
 }

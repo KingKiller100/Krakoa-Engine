@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Utility/Logging/kLogging.hpp>
-
 #include <Core/Application.hpp>
 
 #include <memory>
@@ -29,17 +27,17 @@ int main(int argc, char** argv)
 
 
 
-#ifdef TESTING_ENABLED
+#ifdef KRAKOA_TEST
 #include <Testing/TesterManager.hpp>
-inline void RunTestsOnkLibrary()
-{
-	auto& testManager = kTest::TesterManager::Reference();
-	testManager.Initialize();
-	testManager.InitializeMathsTests();
-	testManager.InitializeUtilityTests();
-	testManager.RunAll();
-};
+	inline void RunTestsOnkLibrary()
+	{
+		auto& testManager = kTest::TesterManager::Reference();
+		testManager.Initialize();
+		testManager.InitializeMathsTests();
+		testManager.InitializeUtilityTests();
+		testManager.RunAll();
+		testManager.Shutdown();
+	};
 #else
-inline void RunTestsOnkLibrary()
-{	}
-#endif // TESTING_ENABLED
+	inline void RunTestsOnkLibrary() {	}
+#endif // KRAKOA_TEST

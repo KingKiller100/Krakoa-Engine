@@ -34,6 +34,7 @@ namespace kTest
 
 	void TesterManager::Shutdown()
 	{
+		ClearAllTests();
 	}
 
 	void TesterManager::Initialize()

@@ -21,4 +21,4 @@
 
 #if defined(KLIB_TEST)
 	#define TESTING_ENABLED 1
-#endif // 
+#endif // KLIB_TEST

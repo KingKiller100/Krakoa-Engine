@@ -52,14 +52,14 @@
 #if KLIB_WINDOWS_OS
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
-#if MSVC_PLATFORM_TOOLSET >= 141
+#if MSVC_PLATFORM_TOOLSET >= 110
 	#include <corecrt.h>
 	#include <corecrt_wdirect.h>
 	#include <corecrt_wstdio.h>
 	#endif //MSVC_PLATFORM_TOOLSET >= 141
-	
-	#include <direct.h>
-	#include <cstdio>
-	#include <Windows.h>
 #endif
+	
+#include <direct.h>
+#include <cstdio>
+#include <Windows.h>
 

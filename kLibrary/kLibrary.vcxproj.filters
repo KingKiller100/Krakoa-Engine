@@ -1,165 +1,201 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Source Files\Maths">
+      <UniqueIdentifier>{15530361-0137-C4B6-6A97-BE09569AAE38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Source Files\Maths\Matrix">
+      <UniqueIdentifier>{19A1B955-8563-EDDF-CE13-7C6C3A15C6BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Maths\Vectors">
+      <UniqueIdentifier>{EA1ADCC9-D62A-889A-3FE4-ECB82B137733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patterns">
+      <UniqueIdentifier>{E9E14A59-554E-0654-1E42-9EB18A6D28BC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Testing">
+      <UniqueIdentifier>{361845D3-22A7-CE9C-CBC5-E297B733DF42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Testing\Maths Tests">
+      <UniqueIdentifier>{F533A0D3-E184-8B15-0AE9-79D7F6981E7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Testing\Utility Tests">
+      <UniqueIdentifier>{8CDC6E24-7818-728E-E12A-8A85CD851AA9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{2C5F8342-18EE-0C0C-C10C-2107AD7A1DB2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\Calendar">
+      <UniqueIdentifier>{B582C2C9-219B-A9F3-EA47-398D561F3E8D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\Debug Helper">
+      <UniqueIdentifier>{82637E5A-EED1-D3D9-37BB-8ED9A368C975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\File System">
+      <UniqueIdentifier>{40C967E8-2C1A-532A-557E-41EC412EE693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\Format">
+      <UniqueIdentifier>{E458C6C7-5066-F4AD-D94C-F0984559C064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\Logging">
+      <UniqueIdentifier>{C2ABA48D-AE66-9439-571E-0D8443B8DEC9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\String View">
+      <UniqueIdentifier>{4D480EE3-3999-F924-62FD-E7E64EAD8C8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility\Timer">
+      <UniqueIdentifier>{FC001F64-E810-CB34-51CA-2F533DF9B9CD}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source Files\Maths\Matrix\Matrix4x4.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Maths\Vectors\Vector2.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Maths\Vectors\Vector3.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Maths\Vectors\Vector4.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Maths\Vectors\VectorBase.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source Files\HelperMacros.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Maths\Constants.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Maths\Matrix\Matrix4x4.hpp">
+      <Filter>Source Files\Maths\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Maths\Vectors\Vector2.hpp">
+      <Filter>Source Files\Maths\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Maths\Vectors\Vector3.hpp">
+      <Filter>Source Files\Maths\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Maths\Vectors\Vector4.hpp">
+      <Filter>Source Files\Maths\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Maths\Vectors\VectorBase.hpp">
+      <Filter>Source Files\Maths\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Maths\kAlgorithms.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Maths</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Maths\kMaths.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Maths</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Patterns\SimpleSingleton.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Patterns</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Testing\Maths Tests\Vectors_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Calendar_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\DebugHelp_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\FileSystem_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\FormatToString_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Logging_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\StringView_Test.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Testing\Utility Tests\Timer_Test.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Testing\Maths Tests</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Testing\Tester.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Testing</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Testing\TesterManager.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\Calendar_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\DebugHelp_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\FileSystem_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\FormatToString_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\Logging_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\StringView_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Testing\Utility Tests\Timer_Test.hpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Calendar\kCalendar.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Calendar</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Debug Helper\kAssert.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Debug Helper</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Debug Helper\kDebugger.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Debug Helper</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\File System\kFileSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Utility\Format\kFormatToString.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\File System</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Format\StringManipulation.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Format</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Format\kFormatToString.hpp">
+      <Filter>Source Files\Utility\Format</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Files\Utility\Format\kUTFStringConverter.hpp">
+      <Filter>Source Files\Utility\Format</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Logging\kLogging.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Logging</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Logging\kLogging_Class.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Logging</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\String View\StringView.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\String View</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\Utility\Timer\kTimer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Files\HelperMacros.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Utility\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\kLib.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Source Files\pch.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source Files\Testing\Maths Tests\Vectors_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Calendar_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\DebugHelp_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\FileSystem_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\FormatToString_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Logging_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\StringView_Test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source Files\Testing\Utility Tests\Timer_Test.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Testing\Maths Tests</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Testing\Tester.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Testing</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Testing\TesterManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Testing</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\Calendar_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\DebugHelp_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\FileSystem_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\FormatToString_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\Logging_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\StringView_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Testing\Utility Tests\Timer_Test.cpp">
+      <Filter>Source Files\Testing\Utility Tests</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Utility\Calendar\kCalendar.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utility\Calendar</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Utility\Debug Helper\kAssert.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utility\Debug Helper</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Utility\Debug Helper\kDebugger.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utility\Debug Helper</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Utility\Format\kUTFStringConverter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utility\Format</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\Utility\Logging\kLogging_Class.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utility\Logging</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\pch.cpp">
       <Filter>Source Files</Filter>

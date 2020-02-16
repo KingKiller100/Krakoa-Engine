@@ -7,12 +7,12 @@
 
 namespace klib::kTime
 {
+	using Hours  = std::chrono::hours;
+	using Mins   = std::chrono::minutes;
+	using Secs   = std::chrono::seconds;
 	using Millis = std::chrono::milliseconds;
 	using Micros = std::chrono::microseconds;
-	using Nanos = std::chrono::nanoseconds;
-	using Secs = std::chrono::seconds;
-	using Mins = std::chrono::minutes;
-	using Hours = std::chrono::hours;
+	using Nanos  = std::chrono::nanoseconds;
 
 	template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
 	class Timer

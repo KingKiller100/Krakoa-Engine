@@ -13,3 +13,5 @@
 #define KLIB_API __declspec(dllexport)
 #define KLIB_API __declspec(dllimport)
 #define PORT_STL
+#define USE_RESULT [[nodiscard]]
+#define USE_RESULT

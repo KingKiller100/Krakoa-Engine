@@ -30,6 +30,11 @@ namespace kMaths
 			return 0;
 		}
 
+		USE_RESULT constexpr T DotProduct(const VectorBase& other) const noexcept
+		{
+			const auto ans = (x * other.x) + (y * other.y) + (z * other.z);
+			return ans;
+		}
 
 		USE_RESULT constexpr T MagnitudeSQ() const noexcept
 		{
@@ -132,59 +137,13 @@ namespace kMaths
 			return VectorBase(this->x / v.x, this->y / v.y, this->z / v.z);
 		}
 
-		// adds to current vector3 value
-		/*VectorBase& operator+=(const VectorBase& v)
-		{
-			*this = *this + v;
-			return *this;
-		}*/
-
-		// divides current vector3 value
-		VectorBase& operator-=(const VectorBase& v)
-		{
-			*this = *this - v;
-			return *this;
-		}
-
-		// divides current vector3 value and sets variable to it
-		VectorBase& operator/=(const VectorBase& v)
-		{
-			*this = *this / v;
-			return *this;
-		}
-
-		// divides current vector3 value by a float and sets variable to it
-	/*	VectorBase& operator/=(const T f)
-		{
-			*this = *this / f;
-			return *this;
-		}*/
-
-		// multiplies current vector3 value and sets variable to it
-		VectorBase& operator*=(const VectorBase& v)
-		{
-			*this = *this * v;
-			return *this;
-		}
-		
-		// Overloads = operator to make one vector axis values equal to another
-		VectorBase& operator=(const VectorBase& v)
-		{
-			x = v.x;
-			y = v.y;
-			z = v.z;
-			w = v.w;
-
-			return *this;
-		}
-
-		// bool operator == returns true if both VectorBaseD values are equal				
+		// bool operator == returns true if both VectorBaseD values are equal
 		bool operator==(const VectorBase& v) const
 		{
 			return (this->x == v.x && this->y == v.y && this->z == v.z);
 		}
 
-		// bool operator != returns true if both VectorBase values are NOT equal			
+		// bool operator != returns true if both VectorBase values are NOT equal
 		bool operator!=(const VectorBase& v) const
 		{
 			return !(*this == v);

@@ -1,5 +1,7 @@
 #include <Precompile.hpp>
-#include "WindowsWindow.hpp"
+#include <Platform/WindowsWindow.hpp>
+
+#include <Maths/kAlgorithms.hpp>
 
 void krakoa::WindowsWindow::OnUpdate()
 {
@@ -8,7 +10,9 @@ void krakoa::WindowsWindow::OnUpdate()
 kMaths::Vector2u& krakoa::WindowsWindow::GetDimensions()
 {
 	const auto s = sizeof data.dimensions;
-	auto l = kMaths::VectorNormalize<Vector2u>(data.dimensions = kMaths::Vector2u());
+	auto q = Vector3u();
+
+	const auto l = kMaths::VectorNormalize<Vector3u>(q);
 	return data.dimensions;
 }
 

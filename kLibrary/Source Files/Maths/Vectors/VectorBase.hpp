@@ -4,28 +4,6 @@
 
 namespace kMaths
 {
-
-	namespace vec_operations
-	{
-		template<typename VecType, class T>
-		VecType operator/(const VecType& lhs, const T rhs)
-		{
-			return VecType(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w);
-		}
-	}
-
-	template<typename T>
-	struct VectorBase;
-
-	// Normalizes a vector
-	template<typename T>
-	static constexpr T VectorNormalize(const T& v) noexcept;
-
-	// Produces the dot product
-	template<typename T>
-	static constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept;
-
-
 	template <typename T>
 	struct VectorBase
 	{
@@ -44,12 +22,12 @@ namespace kMaths
 		virtual ~VectorBase()
 			= default;
 
-		USE_RESULT constexpr double Magnitude() const noexcept
+		USE_RESULT constexpr T Magnitude() const noexcept
 		{
 			if (x || y || z)
-				return std::sqrt(static_cast<double>(MagnitudeSQ()));
+				return static_cast<T>(std::sqrt(static_cast<T>(MagnitudeSQ())));
 
-			return 0.000;
+			return 0;
 		}
 
 
@@ -103,7 +81,7 @@ namespace kMaths
 			this->z = 0;
 		}
 
-		virtual T& operator[](const size_t index)
+		T& operator[](const size_t index)
 		{
 			if (index > 3)
 				throw std::out_of_range("Index is out of range");
@@ -169,7 +147,7 @@ namespace kMaths
 		}
 
 		// divides current vector3 value and sets variable to it
-		virtual VectorBase& operator/=(const VectorBase& v)
+		VectorBase& operator/=(const VectorBase& v)
 		{
 			*this = *this / v;
 			return *this;
@@ -183,19 +161,12 @@ namespace kMaths
 		}*/
 
 		// multiplies current vector3 value and sets variable to it
-		virtual VectorBase& operator*=(const VectorBase& v)
+		VectorBase& operator*=(const VectorBase& v)
 		{
 			*this = *this * v;
 			return *this;
 		}
-
-		// multiply current vector3 value by a float and sets variable to it
-	/*	virtual VectorBase& operator*=(const T f)
-		{
-			*this = *this * f;
-			return *this;
-		}*/
-
+		
 		// Overloads = operator to make one vector axis values equal to another
 		VectorBase& operator=(const VectorBase& v)
 		{
@@ -224,30 +195,12 @@ namespace kMaths
 			return VectorBase(-this->x, -this->y, -this->z, this->w);
 		}
 
-		friend constexpr T VectorNormalize(const T&) noexcept;
+		template<typename VecType>
+		friend constexpr VecType VectorNormalize(const VecType&) noexcept;
 		friend constexpr T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&) noexcept;
-
-		template<typename VecType, class T>
-		friend VecType vec_operations::operator/(const VecType& lhs, const T rhs);
 
 	protected:
 		T x, y, z, w;
 	};
-
-
-	// Normalizes a vector
-	template<typename T>
-	constexpr T VectorNormalize(const T& v) noexcept
-	{
-		const auto mag = v.Magnitude();
-		return mag != 0 ? vec_operations::operator/<T, decltype(mag)>(v, mag) : v;
-	}
-
-	// Produces the dot product
-	template<typename T>
-	constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
-	{
-		return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
-	}
 }
 

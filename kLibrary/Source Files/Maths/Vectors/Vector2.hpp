@@ -18,6 +18,10 @@ namespace kMaths
 		explicit constexpr Vector2(const T x, const T y) noexcept
 		: VectorBase<T>(x, y, 0, 0)
 		{}
+		
+		explicit constexpr Vector2(const T x, const T y, const T, const T) noexcept
+		: VectorBase<T>(x, y, 0, 0)
+		{}
 
 		~Vector2()
 		= default;

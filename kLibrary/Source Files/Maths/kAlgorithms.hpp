@@ -178,4 +178,26 @@ namespace kMaths
 		return lRes;
 	}
 
+
+	// Normalizes a vector
+	template<typename VecType>
+	constexpr VecType VectorNormalize(const VecType& v) noexcept
+	{
+		const auto mag = v.Magnitude();
+
+		if (mag != 0)
+		{
+			const auto res = VecType(v.x / mag, v.y / mag, v.z / mag, v.w);
+			return res;
+		}
+
+		return v;
+	}
+
+	// Produces the dot product
+	template<typename T>
+	constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
+	{
+		return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
+	}
 }

@@ -20,6 +20,10 @@ namespace kMaths
 		: VectorBase<T>(x, y, z, 0)
 		{}
 
+		explicit constexpr Vector3(const T x, const T y, const T z, const T) noexcept
+		: VectorBase<T>(x, y, z, 0)
+		{}
+
 		~Vector3()
 		= default;
 

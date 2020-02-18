@@ -6,6 +6,10 @@
 # Visual Studio Solution File
 *.sln
 
+# Visual Studio project file
+*.vcxproj
+*.vcxproj.*
+
 # Binary directories
 bin/
 bin-int/

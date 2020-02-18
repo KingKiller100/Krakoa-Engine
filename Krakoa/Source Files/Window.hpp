@@ -21,6 +21,7 @@ namespace krakoa
 		{}
 	};
 
+	// Interface class for OS platforms
 	class KRAKOA_API Window
 	{
 	public:
@@ -29,15 +30,15 @@ namespace krakoa
 		virtual ~Window() 
 			= default;
 
-		virtual void OnUpdate() noexcept = 0;
+		virtual void OnUpdate() = 0;
 
-		virtual constexpr kMaths::Vector2u GetDimensions() const  noexcept = 0;
-		virtual constexpr unsigned GetWidth() const noexcept = 0;
-		virtual constexpr unsigned GetWidth() const noexcept = 0;
+		virtual kMaths::Vector2u& GetDimensions() = 0;
+		virtual unsigned GetWidth() const = 0;
+		virtual unsigned GetHeight() const = 0;
 
 		virtual void SetEventCallback(const EventCallbackFunc& cb) = 0;
 		virtual void SetVsync(bool isEnabled) = 0;
-		virtual constexpr bool IsVsyncActive() const noexcept = 0;
+		virtual bool IsVsyncActive() const = 0;
 
 		static std::unique_ptr<Window> Create(const WindowProperties& props = WindowProperties());
 	};

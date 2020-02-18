@@ -184,11 +184,13 @@
     <ClInclude Include="Source Files\Events System\KeyEvent.hpp" />
     <ClInclude Include="Source Files\Events System\MouseEvent.h" />
     <ClInclude Include="Source Files\Krakoa.hpp" />
+    <ClInclude Include="Source Files\Platform\WindowsWindow.hpp" />
     <ClInclude Include="Source Files\Precompile.hpp" />
     <ClInclude Include="Source Files\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source Files\Core\Application.cpp" />
+    <ClCompile Include="Source Files\Platform\WindowsWindow.cpp" />
     <ClCompile Include="Source Files\Precompile.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

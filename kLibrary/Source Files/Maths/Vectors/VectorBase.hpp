@@ -4,12 +4,22 @@
 
 namespace kMaths
 {
+
+	namespace vec_operations
+	{
+		template<typename VecType, class T>
+		VecType operator/(const VecType& lhs, const T rhs)
+		{
+			return VecType(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w);
+		}
+	}
+
 	template<typename T>
 	struct VectorBase;
 
 	// Normalizes a vector
 	template<typename T>
-	static constexpr VectorBase<T> VectorNormalize(const VectorBase<T>& v) noexcept;
+	static constexpr T VectorNormalize(const T& v) noexcept;
 
 	// Produces the dot product
 	template<typename T>
@@ -209,32 +219,28 @@ namespace kMaths
 			return !(*this == v);
 		}
 
-		constexpr bool operator()() const
-		{
-			return x != 0 || y != 0 || z != 0;
-		}
-
 		VectorBase operator-()
 		{
 			return VectorBase(-this->x, -this->y, -this->z, this->w);
 		}
 
-		friend constexpr VectorBase<T> VectorNormalize(const VectorBase<T>&) noexcept;
+		friend constexpr T VectorNormalize(const T&) noexcept;
 		friend constexpr T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&) noexcept;
 
-	private:
-
+		template<typename VecType, class T>
+		friend VecType vec_operations::operator/(const VecType& lhs, const T rhs);
 
 	protected:
 		T x, y, z, w;
 	};
 
+
 	// Normalizes a vector
 	template<typename T>
-	constexpr VectorBase<T> VectorNormalize(const VectorBase<T>& v) noexcept
+	constexpr T VectorNormalize(const T& v) noexcept
 	{
-		const T mag = v.Magnitude();
-		return mag != 0 ? v / mag : v;
+		const auto mag = v.Magnitude();
+		return mag != 0 ? vec_operations::operator/<T, decltype(mag)>(v, mag) : v;
 	}
 
 	// Produces the dot product
@@ -243,6 +249,5 @@ namespace kMaths
 	{
 		return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
 	}
-
 }
 

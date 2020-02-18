@@ -10,6 +10,9 @@
     <Filter Include="Source Files\Events System">
       <UniqueIdentifier>{D2326C6B-BE42-183C-27FC-7C5A132B07D5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Platform">
+      <UniqueIdentifier>{fae78078-e8a0-4f0e-ae27-cc43bcef33f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Files\Core\Application.hpp">
@@ -42,6 +45,9 @@
     <ClInclude Include="Source Files\Window.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source Files\Platform\WindowsWindow.hpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source Files\Core\Application.cpp">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="Source Files\Precompile.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Platform\WindowsWindow.cpp">
+      <Filter>Source Files\Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

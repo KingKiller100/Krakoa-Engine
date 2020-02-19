@@ -186,10 +186,9 @@ namespace kMaths
 			static_cast<T1>(v.Z()))));
 	}
 
-	using Vector3s = Vector3 < int		>; // signed integer
-	using Vector3f = Vector3 < float	>; // floating point
-	using Vector3d = Vector3 < double	>; // double floating point
+	using Vector3s = Vector3 <   int    >; // signed integer
+	using Vector3f = Vector3 <  float   >; // floating point
+	using Vector3d = Vector3 <  double  >; // double floating point
 	using Vector3u = Vector3 < unsigned >; // unsigned integer
-		
 }
 

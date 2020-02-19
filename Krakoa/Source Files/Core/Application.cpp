@@ -6,33 +6,41 @@
 #include <Utility/Timer/kTimer.hpp>
 #include <Utility/Logging/kLogging.hpp>
 
+#include <GLFW/glfw3.h>
+
 namespace krakoa
 {
 	using namespace klib;
 	kTime::SystemTimer systemTimer = kTime::SystemTimer("Krakoa Engine Timer");
 
 	Application::Application()
-	: running(false)
-	{	}
+	: isRunning(false)
+	{
+		INIT_LOGS(kLogs::LogLevel::NORM);
+		window = std::unique_ptr<iWindow>(iWindow::Create());
+	}
 
 	Application::~Application()
 		= default;
 
 	void Application::Initialize()
 	{
-		running = true;
+		isRunning = true;
 
-		INIT_LOGS();
 		LOG_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 	}
 
 	void Application::Run()
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
+
+		//glClearColor(0.75, 0.35, 0, 1);
+		//glClear();
+		window->OnUpdate();
 	}
 
 	constexpr bool Application::IsRunning() const
 	{
-		return running;
+		return isRunning;
 	}
 }

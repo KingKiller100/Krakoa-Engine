@@ -1,14 +1,14 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include <Window.hpp>
+#include <iWindow.hpp>
 
 namespace krakoa
 {
-	class WindowsWindow : public Window
+	class WindowsWindow : public iWindow
 	{
 	public:
-		WindowsWindow();
+		WindowsWindow(const WindowProperties& props);
 		~WindowsWindow();
 
 		// Inherited via Window
@@ -36,11 +36,9 @@ namespace krakoa
 		{
 			std::string title;
 			kMaths::Vector2u dimensions;
-			bool vSync;
+			bool vSyncOn;
 
 			EventCallbackFunc cb;
-		};
-
-		WindowData data;
+		} data;
 	};
 }

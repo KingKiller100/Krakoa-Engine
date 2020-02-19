@@ -34,9 +34,11 @@ namespace klib::kLogs
 			FinalOutput();
 	}
 
-	void Logging::InitializeLogging()
+	void Logging::InitializeLogging(const LogLevel initialMinLevel)
 	{
 		if (enable_kLogging) { return; }
+
+		minimumLoggingLevel = initialMinLevel;
 
 		enable_kLogging = true;
 
@@ -48,6 +50,11 @@ namespace klib::kLogs
 			+ GetDateInTextFormat() + "    " + GetTimeText() 
 			+ "\n***********************************************************************\n\n";;
 		AddToLogBuffer(startLog, LogLevel::NORM);
+	}
+
+	void Logging::SetMinimumLoggingLevel(const LogLevel&& newMin)
+	{
+		minimumLoggingLevel = newMin;
 	}
 
 	void Logging::ToggleLogging() noexcept
@@ -114,7 +121,8 @@ namespace klib::kLogs
 	
 	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
 	{
-		if (!(enable_kLogging) && lvl < LogLevel::ERRR) return;
+		if (!enable_kLogging) return;
+		if (lvl < minimumLoggingLevel) return;
 
 		if (lvl < LogLevel::ERRR)
 		{

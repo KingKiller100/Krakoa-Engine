@@ -8,13 +8,13 @@ namespace klib::kLogs
 {
 	static std::unique_ptr<Logging> mainlogger;
 
-	static void Initialize()
+	static void Initialize(const LogLevel&& initLvl)
 	{
-		if (!(mainlogger))
+		if (!mainlogger)
 		{
 			mainlogger = std::make_unique<Logging>();
 		}
-		mainlogger->InitializeLogging();
+		mainlogger->InitializeLogging(initLvl);
 	}
 
 	static auto& GetMainLogger()
@@ -23,7 +23,7 @@ namespace klib::kLogs
 	}
 }
 
-#define INIT_LOGS()								::klib::kLogs::Initialize();
+#define INIT_LOGS(initialLevel)					::klib::kLogs::Initialize(initialLevel);
 #define CHANGE_LOGS_DESTINATION(destination)	::klib::kLogs::GetMainLogger().ChangeOutputDirectory(destination);
 #define CHANGE_LOGS_FILENAME(name)				::klib::kLogs::GetMainLogger().ChangeFilename(name);
 #define LOG_NORM(msg)							::klib::kLogs::GetMainLogger().AddEntry(msg, ::klib::kLogs::LogLevel::NORM, __FILE__, __LINE__);

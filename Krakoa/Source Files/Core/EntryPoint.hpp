@@ -16,9 +16,14 @@ int main(int argc, char** argv)
 
 	app->Initialize();
 
+	unsigned count = 0;
 	do {
 		app->Run();
-		app->Shutdown(); // placed for now so that the application doesn't run endlessly
+		
+		count++;
+
+		if (count > 10000)
+			app->Shutdown(); // placed for now so that the application doesn't run endlessly
 	} while (app->IsRunning());
 	 
 	return 0;

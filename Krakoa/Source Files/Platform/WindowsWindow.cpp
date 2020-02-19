@@ -2,35 +2,94 @@
 #include <Platform/WindowsWindow.hpp>
 
 #include <Maths/kAlgorithms.hpp>
+#include <Utility/Logging/kLogging.hpp>
+#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/Debug Helper/kAssert.hpp>
 
-void krakoa::WindowsWindow::OnUpdate()
-{
-}
+#include <memory>
 
-kMaths::Vector2u& krakoa::WindowsWindow::GetDimensions()
+namespace krakoa
 {
-	return data.dimensions;
-}
+	using namespace klib;
 
-unsigned krakoa::WindowsWindow::GetWidth() const
-{
-	return data.dimensions.X();
-}
+	static bool isInitialized = false;
 
-unsigned krakoa::WindowsWindow::GetHeight() const
-{
-	return data.dimensions.Y();
-}
+	iWindow* iWindow::Create(const WindowProperties& props)
+	{
+		return new WindowsWindow(props);
+	}
 
-void krakoa::WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)
-{
-}
+	krakoa::WindowsWindow::WindowsWindow(const WindowProperties& props)
+	{
+		Init(props);
+	}
 
-void krakoa::WindowsWindow::SetVsync(bool isEnabled)
-{
-}
+	krakoa::WindowsWindow::~WindowsWindow()
+	{
+		ShutDown();
+	}
 
-bool krakoa::WindowsWindow::IsVsyncActive() const
-{
-	return false;
+	void krakoa::WindowsWindow::Init(const WindowProperties& props)
+	{
+		data.dimensions = props.dimensions;
+		data.title = props.title;
+
+		LOG_INFO(kFormat::ToString("Creating Window %s with dimensions (%d, %d)", data.title.c_str(), data.dimensions.X(), data.dimensions.Y()));
+
+		if (!isInitialized)
+		{
+			const auto success = glfwInit();
+			kAssert(success, "GLFW has failed to be initialized!")
+			isInitialized = true;
+		}
+
+		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
+		glfwMakeContextCurrent(window);
+		glfwSetWindowUserPointer(window, &data);
+		SetVsync(true);
+	}
+
+	void krakoa::WindowsWindow::ShutDown()
+	{
+		glfwDestroyWindow(window);
+	}
+
+	void krakoa::WindowsWindow::OnUpdate()
+	{
+		glfwPollEvents();
+		glfwSwapBuffers(window);
+	}
+
+	kMaths::Vector2u& krakoa::WindowsWindow::GetDimensions()
+	{
+		return data.dimensions;
+	}
+
+	unsigned krakoa::WindowsWindow::GetWidth() const
+	{
+		return data.dimensions.X();
+	}
+
+	unsigned krakoa::WindowsWindow::GetHeight() const
+	{
+		return data.dimensions.Y();
+	}
+
+	void krakoa::WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)
+	{
+		data.cb = cb;
+	}
+
+	void krakoa::WindowsWindow::SetVsync(bool isEnabled)
+	{
+		const auto res = isEnabled ? 1 : 0;
+		glfwSwapInterval(res);
+		data.vSyncOn = isEnabled;
+	}
+
+	bool krakoa::WindowsWindow::IsVsyncActive() const
+	{
+		return data.vSyncOn;
+	}
+
 }

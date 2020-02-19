@@ -22,12 +22,12 @@ namespace krakoa
 	};
 
 	// Interface class for OS platforms
-	class KRAKOA_API Window
+	class KRAKOA_API iWindow
 	{
 	public:
 		using EventCallbackFunc = std::function<void(Event&)>;
 
-		virtual ~Window() 
+		virtual ~iWindow() 
 			= default;
 
 		virtual void OnUpdate() = 0;
@@ -40,6 +40,6 @@ namespace krakoa
 		virtual void SetVsync(bool isEnabled) = 0;
 		virtual bool IsVsyncActive() const = 0;
 
-		static std::unique_ptr<Window> Create(const WindowProperties& props = WindowProperties());
+		static iWindow* Create(const WindowProperties& props = WindowProperties());
 	};
 }

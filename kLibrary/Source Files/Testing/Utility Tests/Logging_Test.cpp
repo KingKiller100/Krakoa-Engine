@@ -17,7 +17,7 @@ namespace kTest::utility
 	{
 		using namespace klib;
 
-		INIT_LOGS();
+		INIT_LOGS(kLogs::LogLevel::NORM);
 
 		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
 		CHANGE_LOGS_DESTINATION(dir);

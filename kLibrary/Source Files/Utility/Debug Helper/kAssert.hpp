@@ -20,7 +20,7 @@ namespace klib
 		private:
 			std::string report;
 		};
-
+	}
 
 #define kAssert(condition, msg)\
 	{\
@@ -32,5 +32,4 @@ namespace klib
 	#define kAssert(condition, msg) ((void)0);
 #endif
 
-	}
 }

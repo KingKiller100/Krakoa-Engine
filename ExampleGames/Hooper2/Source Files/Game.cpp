@@ -14,7 +14,7 @@ public:
 	
 	void Shutdown() override
 	{
-		 running = false;
+		 isRunning = false;
 	}
 };
 

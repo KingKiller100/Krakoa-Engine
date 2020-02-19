@@ -29,8 +29,8 @@ namespace klib::kLogs
 
 	enum class LogLevel : unsigned short
 	{
-		NORM, // Normal
 		BANR, // Log Banner
+		NORM, // Normal
 		INFO, // Informative
 		WARN, // Warning
 		ERRR, // Error
@@ -50,10 +50,22 @@ namespace klib::kLogs
 		/**
 		 * \brief
 		 *		Initializes logging system
+		 * \param[in] initialMinLevel
+		 *		Initial minimum log level
 		 * \note
 		 *		No logging calls will function properly until this is called.
 		 */
-		void InitializeLogging();
+		void InitializeLogging(const LogLevel initialMinLevel);
+
+		/**
+		 * \brief
+		 *		Set minimum level of a log that can be stored
+		 * \param[in] newMinLevel
+		 *		New minimum log level
+		 * \note
+		 *		No logs less than this given level will be stored by the log system.
+		 */
+		void SetMinimumLoggingLevel(const LogLevel&& newMinLevel);
 
 		/**
 		 * \brief
@@ -182,6 +194,8 @@ namespace klib::kLogs
 
 	protected:
 		LogQueue logEntryQueue; // Queue buffer to cache the logged messages
+
+		LogLevel minimumLoggingLevel;
 
 		std::string directory;
 		std::string filename;

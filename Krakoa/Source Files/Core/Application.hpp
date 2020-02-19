@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Core/EngineCore.hpp>
+#include <iWindow.hpp>
+
+#include <memory>
 
 namespace krakoa
 {
@@ -16,7 +19,8 @@ namespace krakoa
 		virtual void Shutdown() = 0;
 
 	protected:
-		bool running;
+		bool isRunning;
+		std::unique_ptr<iWindow> window;
 	};
 
 	Application* CreateApplication();

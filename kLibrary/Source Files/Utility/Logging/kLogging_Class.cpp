@@ -17,13 +17,15 @@ namespace klib::kLogs
 	const char* Logging::kLogs_Empty = "NO ENTRIES! LOGS ARE EMPTY";
 
 	Logging::Logging()
-		: directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
-		filename(ToString("Log - %s.log", GetDateInNumericalFormat(false).c_str())),
+		: minimumLoggingLevel(LogLevel::NORM),
+		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
+		filename(ToString("Logs - %s.log", GetDateInNumericalFormat(false).c_str())),
 		enable_kLogging(false)
 	{	}
 
 	Logging::Logging(std::string& filename, std::string& directory)
-		: directory(std::move(directory)),
+		: minimumLoggingLevel(LogLevel::NORM),
+		directory(std::move(directory)),
 		filename(std::move(filename)),
 		enable_kLogging(false)
 	{	}

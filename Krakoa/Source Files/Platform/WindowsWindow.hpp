@@ -36,7 +36,7 @@ namespace krakoa
 		{
 			std::string title;
 			kMaths::Vector2u dimensions;
-			bool vSyncOn;
+			bool vSyncOn = false;
 
 			EventCallbackFunc cb;
 		} data;

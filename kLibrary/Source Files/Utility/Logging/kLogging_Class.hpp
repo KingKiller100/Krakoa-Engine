@@ -55,7 +55,7 @@ namespace klib::kLogs
 		 * \note
 		 *		No logging calls will function properly until this is called.
 		 */
-		void InitializeLogging(const LogLevel initialMinLevel);
+		void InitializeLogging(const LogLevel& initialMinLevel);
 
 		/**
 		 * \brief

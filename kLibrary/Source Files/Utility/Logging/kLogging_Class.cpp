@@ -36,7 +36,7 @@ namespace klib::kLogs
 			FinalOutput();
 	}
 
-	void Logging::InitializeLogging(const LogLevel initialMinLevel)
+	void Logging::InitializeLogging(const LogLevel& initialMinLevel)
 	{
 		if (enable_kLogging) { return; }
 

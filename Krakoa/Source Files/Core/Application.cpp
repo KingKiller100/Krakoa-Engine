@@ -16,7 +16,7 @@ namespace krakoa
 	Application::Application()
 	: isRunning(false)
 	{
-		INIT_LOGS(kLogs::LogLevel::NORM);
+		::klib::kLogs::Initialize(kLogs::LogLevel::NORM);
 		window = std::unique_ptr<iWindow>(iWindow::Create());
 	}
 

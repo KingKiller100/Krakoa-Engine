@@ -8,11 +8,11 @@ namespace klib::kLogs
 {
 	static std::unique_ptr<Logging> mainlogger;
 
-	static void Initialize(const LogLevel&& initLvl)
+	static void Initialize(const LogLevel initLvl)
 	{
 		if (!mainlogger)
 		{
-			mainlogger = std::make_unique<Logging>();
+			mainlogger = std::unique_ptr<Logging>(new Logging());
 		}
 		mainlogger->InitializeLogging(initLvl);
 	}

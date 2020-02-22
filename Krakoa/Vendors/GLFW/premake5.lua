@@ -1,9 +1,10 @@
 project "GLFW"
 	kind "StaticLib"
 	language "C"
+    characterset ("MBCS")
 
-	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
-	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
+	targetdir ("../../../bin/" .. OutputDir .. "/%{prj.name}")
+	objdir ("../../../bin-int/" .. OutputDir .. "/%{prj.name}")
 
 	files
 	{
@@ -72,4 +73,5 @@ project "GLFW"
 
 	filter "configurations:Release"
 		runtime "Release"
-		optimize "on"
+		optimize "Full"
+		

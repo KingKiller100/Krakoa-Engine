@@ -79,18 +79,22 @@ project "Krakoa"
     filter "configurations:Debug"
         defines "KRAKOA_DEBUG"
         symbols "On"
+        runtime "Debug"
 
     filter "configurations:Test"
         defines "KRAKOA_TEST"
         symbols "On"
+        runtime "Debug"
 
     filter "configurations:Release"
         defines "KRAKOA_RELEASE"
-        optimize "On"
+        optimize "Full"
+        runtime "Release"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
         optimize "Debug"
+        runtime "Release"
 
         --filters { "system:windows", "configuration:Release" }
 
@@ -148,15 +152,19 @@ project "Hooper2"
     filter "configurations:Debug"
         defines "KRAKOA_DEBUG"
         symbols "On"
+        runtime "Debug"
 
     filter "configurations:Test"
         defines "KRAKOA_TEST"
         symbols "On"
+        runtime "Debug"
 
     filter "configurations:Release"
         defines "KRAKOA_RELEASE"
-        optimize "On"
+        optimize "Full"
+        runtime "Release"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
         optimize "Debug"
+        runtime "Release"

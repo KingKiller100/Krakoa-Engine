@@ -81,9 +81,8 @@ namespace klib::kLogs
 		kLogs_ConsoleColourMap.insert(std::make_pair(LogLevel::FATL, LoggingConsoleColour::RED_BG_WHITE_TEXT));
 	}
 	
-	void Logging::AddToLogBuffer(const std::string_view & logLine, const LogLevel lvl)
+	void Logging::AddToLogBuffer(const std::string_view & logLine, const LogLevel lvl) 
 	{
-		OutputToConsole(logLine, lvl);
 		logEntryQueue.emplace_back(logLine.data());
 	}
 
@@ -121,31 +120,29 @@ namespace klib::kLogs
 	
 	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */) noexcept
 	{
-		if (!enable_kLogging) return;
+		if (!enable_kLogging && lvl < LogLevel::ERRR) return;
 		if (lvl < minimumLoggingLevel) return;
 
-		if (lvl < LogLevel::ERRR)
-		{
-			AddToLogBuffer(ToString("[%s]\t[%s]: %s\n", GetTimeText().c_str(),
+		auto logLine = ToString("[%s]\t[%s]: %s", GetTimeText().c_str(),
 				kLogs_LogLevelMap.at(lvl), 
-				msg.data()),
-				lvl);
-		}
-		else
+				msg.data());
+
+		if (lvl >= LogLevel::ERRR)
 		{
-			AddToLogBuffer(ToString("[%s]\t[%s]:\t%s\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d\n",
-				GetTimeText().c_str(),
-				kLogs_LogLevelMap.at(lvl), 
-				msg.data(), 
+			logLine += ToString("\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d",
 				file, 
-				line),
-				lvl);
+				line);
 		}
+
+		logLine += "\n";
+
+		AddToLogBuffer(logLine, lvl);
+		OutputToConsole(logLine, lvl);
 	}
 
-	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type)
+	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type) noexcept
 	{
-		if (!(enable_kLogging)) return;
+		if (!enable_kLogging) return;
 
 		AddToLogBuffer(ToString("[%s]\t[%s]: [%s]\n", GetTimeText().c_str(),
 			type.data(), msg.data()), 

@@ -131,7 +131,7 @@ namespace klib::kLogs
 		 * \param type
 		 *		The category/subject of the log banner
 		 */
-		void AddEntryBanner(const std::string_view msg, const std::string_view type);
+		void AddEntryBanner(const std::string_view msg, const std::string_view type) noexcept;
 
 		/**
 		 * \brief

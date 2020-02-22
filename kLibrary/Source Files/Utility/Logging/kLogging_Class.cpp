@@ -40,10 +40,8 @@ namespace klib::kLogs
 	{
 		if (enable_kLogging) { return; }
 
-		minimumLoggingLevel = initialMinLevel;
-
-		enable_kLogging = true;
-
+		SetMinimumLoggingLevel(initialMinLevel);
+		ToggleLoggingEnabled();
 		InitializeLogLevelMap();
 		InitializeOutputToConsoleColourMap();
 		
@@ -51,17 +49,17 @@ namespace klib::kLogs
 			= "***********************************************************************\n    Logging Initialized:    " 
 			+ GetDateInTextFormat() + "    " + GetTimeText() 
 			+ "\n***********************************************************************\n\n";;
-		AddToLogBuffer(startLog, LogLevel::NORM);
+		AddToLogBuffer(startLog, LogLevel::BANR);
 	}
 
-	void Logging::SetMinimumLoggingLevel(const LogLevel&& newMin)
+	void Logging::SetMinimumLoggingLevel(const LogLevel newMin) noexcept
 	{
 		minimumLoggingLevel = newMin;
 	}
 
-	void Logging::ToggleLogging() noexcept
+	void Logging::ToggleLoggingEnabled() noexcept
 	{
-			enable_kLogging = !enable_kLogging;
+		enable_kLogging = !enable_kLogging;
 	}
 
 	void Logging::InitializeLogLevelMap()
@@ -121,7 +119,7 @@ namespace klib::kLogs
 	}
 
 	
-	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
+	void Logging::AddEntry(const std::string_view msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */) noexcept
 	{
 		if (!enable_kLogging) return;
 		if (lvl < minimumLoggingLevel) return;
@@ -157,14 +155,14 @@ namespace klib::kLogs
 	void Logging::AppendLogFile()
 	{
 		const auto conclusionCurrentLog = "\n***********************************************************************\n";
-		AddToLogBuffer(conclusionCurrentLog,LogLevel::NORM);
+		AddToLogBuffer(conclusionCurrentLog, LogLevel::BANR);
 		OutputLogToFile();
 	}
 
 	void Logging::FinalOutput()
 	{
 		const auto endLogLine = "\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
-		AddToLogBuffer(endLogLine, LogLevel::NORM);
+		AddToLogBuffer(endLogLine, LogLevel::BANR);
 		OutputLogToFile();
 		enable_kLogging = false;
 	}
@@ -232,7 +230,7 @@ namespace klib::kLogs
 	}
 	
 	void Logging::OutputLogToFile()
-	{				
+	{
 		CreateNewDirectories(directory.c_str());
 		OutputToFile((directory + filename).c_str(), GetFullLogText().c_str());
 	}

@@ -16,7 +16,9 @@ namespace krakoa
 	Application::Application()
 	: isRunning(false)
 	{
-		::klib::kLogs::Initialize(kLogs::LogLevel::NORM);
+		INIT_LOGS(kLogs::LogLevel::NORM);
+		LOG_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
+	
 		window = std::unique_ptr<iWindow>(iWindow::Create());
 	}
 
@@ -27,7 +29,6 @@ namespace krakoa
 	{
 		isRunning = true;
 
-		LOG_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 	}
 
 	void Application::Run()

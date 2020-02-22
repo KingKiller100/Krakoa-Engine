@@ -45,7 +45,7 @@ namespace klib::kLogs
 		Logging();
 		Logging(std::string& filename, std::string& directory);
 
-		virtual ~Logging();
+		~Logging();
 
 		/**
 		 * \brief
@@ -65,13 +65,13 @@ namespace klib::kLogs
 		 * \note
 		 *		No logs less than this given level will be stored by the log system.
 		 */
-		void SetMinimumLoggingLevel(const LogLevel&& newMinLevel);
+		void SetMinimumLoggingLevel(const LogLevel newMinLevel) noexcept;
 
 		/**
 		 * \brief
 		 *		Toggles if logging system is enabled
 		 */
-		void ToggleLogging() noexcept;
+		void ToggleLoggingEnabled() noexcept;
 
 		/**
 		 * \brief
@@ -121,7 +121,7 @@ namespace klib::kLogs
 		 * \param file
 		 * \param line
 		 */
-		void AddEntry(const std::string_view msg, const LogLevel lvl = LogLevel::NORM, const char* file = "", const unsigned line = 0);
+		void AddEntry(const std::string_view msg, const LogLevel lvl = LogLevel::NORM, const char* file = "", const unsigned line = 0) noexcept;
 
 		/**
 		 * \brief

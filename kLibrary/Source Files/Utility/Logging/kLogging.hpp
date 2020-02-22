@@ -6,20 +6,16 @@
 
 namespace klib::kLogs
 {
-	static std::unique_ptr<Logging> mainlogger;
+	static auto mainLogger = std::make_unique<Logging>();
 
 	static void Initialize(const LogLevel initLvl)
 	{
-		if (!mainlogger)
-		{
-			mainlogger = std::unique_ptr<Logging>(new Logging());
-		}
-		mainlogger->InitializeLogging(initLvl);
+		mainLogger->InitializeLogging(initLvl);
 	}
 
 	static auto& GetMainLogger()
 	{
-		return *mainlogger;
+		return *mainLogger;
 	}
 }
 

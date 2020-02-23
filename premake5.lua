@@ -62,7 +62,8 @@ project "Krakoa"
     links
     {
         "kLibrary",
-        "GLFW"
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:Windows"
@@ -73,7 +74,7 @@ project "Krakoa"
         {
             "KRAKOA_OS_WINDOWS",
             "KRAKOA_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
+			--"GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"

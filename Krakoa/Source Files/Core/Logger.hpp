@@ -20,7 +20,8 @@ namespace krakoa
 	class KRAKOA_API Logger
 	{
 	public:
-		static void Init();
+		static void CoreInit();
+		static void ClientInit();
 		inline static Logging& GetCoreLogger()            { return *coreLogger; }
 		inline static Logging& GetClientLogger()          { return *clientLogger; }
 
@@ -31,9 +32,9 @@ namespace krakoa
 }
 
 // Initializer
-#define INIT_LOGS()                                 ::krakoa::Logger::Init();
 
 // ENGINE SIDE Log Macros
+#define KRK_INIT_LOGS()                             ::krakoa::Logger::CoreInit();
 #define KRK_SET_MIN(minLvl)                         ::krakoa::Logger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
 #define KRK_TOGGLE_LOGGING()                        ::krakoa::Logger::GetCoreLogger().ToggleLoggingEnabled();
 #define KRK_CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetCoreLogger().ChangeOutputDirectory(destination);
@@ -52,6 +53,7 @@ namespace krakoa
 #define KRK_CLEAR()                                 ::krakoa::Logger::GetCoreLogger().Clear();
 
 // CLIENT SIDE Log Macros
+#define INIT_LOGS()                             ::krakoa::Logger::ClientInit();
 #define SET_MIN(minLvl)                         ::krakoa::Logger::GetClientLogger().SetMinimumLoggingLevel(minLvl);
 #define TOGGLE_LOGGING()                        ::krakoa::Logger::GetClientLogger().ToggleLoggingEnabled();
 #define CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetClientLogger().ChangeOutputDirectory(destination);

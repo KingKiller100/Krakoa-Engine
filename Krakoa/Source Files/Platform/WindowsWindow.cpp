@@ -36,7 +36,7 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		INFO(ToString("Creating Window %s with dimensions (%d, %d)", 
+		KRK_INFO(ToString("Creating Window %s with dimensions (%d, %d)", 
 			data.title.c_str(), 
 			data.dimensions.X(), 
 			data.dimensions.Y()));
@@ -61,6 +61,9 @@ namespace krakoa
 
 	void krakoa::WindowsWindow::OnUpdate()
 	{
+		glClearColor(0.85f, 0.35f, 0.f, 1.f); // Orange background
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}

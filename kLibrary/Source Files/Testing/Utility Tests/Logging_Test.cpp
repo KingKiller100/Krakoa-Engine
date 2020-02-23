@@ -1,7 +1,7 @@
 #include <pch.hpp>
 #include <Testing/Utility Tests/Logging_Test.hpp>
 
-#include <Utility/Logging/kLogging.hpp>
+#include <Utility/Logging/kLogging_Class.hpp>
 #include <Utility/File System/kFileSystem.hpp>
 
 namespace kTest::utility
@@ -15,64 +15,70 @@ namespace kTest::utility
 
 	void LoggingTester::Test()
 	{
-		using namespace klib;
+		using namespace klib::kLogs;
 
-		INIT_LOGS(kLogs::LLevel::NORM);
+		auto testLogger = std::make_unique<Logging>();
+
+		testLogger->InitializeLogging(LLevel::NORM);
 
 		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
-		CHANGE_LOGS_DESTINATION(dir);
+		testLogger->ChangeOutputDirectory(dir);
 
 		const auto filename = "DiffFileName";
-		CHANGE_LOGS_FILENAME(filename);
+		testLogger->ChangeFilename(filename);
 		
-		LOG_BANNER("Welcome to the Krakoa Engine!", "Krakoa");
-		auto last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("Welcome to the Krakoa Engine!") != std::string::npos);
+		testLogger->AddEntryBanner("Welcome to the Log Tests!", "Tests");
+		auto last = testLogger->GetLastLoggedEntry();
+		VERIFY(last.find("Welcome to the Log Tests!") != std::string::npos);
 		
-		LOG_BANNER("BANNER!", "TEST");
-		last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("BANNER!") != std::string::npos)
+		testLogger->AddEntryBanner("BANNER!", "TEST");
+		last = testLogger->GetLastLoggedEntry();
+		VERIFY(last.find("BANNER!") != std::string::npos);
 
-		LOG_NORM("NORMAL!");
-		last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("NORMAL!") != std::string::npos)
+		testLogger->AddEntry("DEBUG!", LLevel::DBUG);
+		last = testLogger->GetLastLoggedEntry();
+		VERIFY(last.find("DEBUG!") != std::string::npos);
 
-		LOG_INFO("INFORMATIVE!");
-		last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("INFORMATIVE!") != std::string::npos)
+		testLogger->AddEntry("NORMAL!");
+		last = testLogger->GetLastLoggedEntry();
+		VERIFY(last.find("NORMAL!") != std::string::npos);
 
-		LOG_NORM("Done");
-		last = GET_LAST_LOG_ENTRY();
-		VERIFY(last.find("Done") != std::string::npos)
+		testLogger->AddEntry("INFORMATIVE!", LLevel::INFO);
+		last = testLogger->GetLastLoggedEntry();
+		VERIFY(last.find("INFORMATIVE!") != std::string::npos);
 
-		LOG_ERRR("ERROR!");
-		last = GET_LAST_LOG_ENTRY();
+		testLogger->AddEntry("Done", LLevel::WARN);
+		last = testLogger->GetLastLoggedEntry();
+		VERIFY(last.find("Done") != std::string::npos);
+
+		testLogger->AddEntry("ERROR!", LLevel::ERRR, __FILE__, __LINE__);
+		last = testLogger->GetLastLoggedEntry();
 		VERIFY(last.find("ERROR!") != std::string::npos);
 
-		ERASE_LOG_ENTRIES(1);
-		last = GET_LAST_LOG_ENTRY();
+		testLogger->ErasePreviousEntries(1);
+		last = testLogger->GetLastLoggedEntry();
 		VERIFY(last.find("ERROR!") == std::string::npos);
 				
-		LOG_ERRR("ERROR AGAIN!");
-		last = GET_LAST_LOG_ENTRY();
+		testLogger->AddEntry("ERROR AGAIN!", LLevel::ERRR, __FILE__, __LINE__);
+		last = testLogger->GetLastLoggedEntry();
 		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
 				
-		FATAL("FATAL!");
+		testLogger->OutputToFatalFile("FATAL!", __FILE__, __LINE__);
 
-		last = GET_LAST_LOG_ENTRY();
+		last = testLogger->GetLastLoggedEntry();
 		VERIFY(last.find("EMPTY") != std::string::npos);
 		
-		FLUSH_LOGS();
-		END_LOGGING();
+		testLogger->Output();
+		testLogger->FinalOutput();
 
 		const auto fullFilePathToDelete = dir + filename + ".log";
 		VERIFY(klib::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
 		
-		LOG_NORM("end");
-		last = GET_LAST_LOG_ENTRY();
+		testLogger->AddEntry("end");
+		last = testLogger->GetLastLoggedEntry();
 		VERIFY(last.find("end") == std::string::npos);
 
-		kFileSystem::RemoveFile(fullFilePathToDelete.data());
-		kFileSystem::DeleteDirectory(dir.data());
+		klib::kFileSystem::RemoveFile(fullFilePathToDelete.data());
+		klib::kFileSystem::DeleteDirectory(dir.data());
 	}
 }

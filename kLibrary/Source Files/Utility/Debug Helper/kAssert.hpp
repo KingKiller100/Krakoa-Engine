@@ -9,11 +9,11 @@ namespace klib
 	{
 #if _DEBUG
 
-		class AssertOnFailedExpressionException final : public std::exception
+		class AssertOnFailedConditionException final : public std::exception
 		{
 		public:
-			AssertOnFailedExpressionException(const char* exp, const char* msg, const char* f, const unsigned l);
-			~AssertOnFailedExpressionException() throw();
+			AssertOnFailedConditionException(const char* exp, const char* msg, const char* f, const unsigned l);
+			~AssertOnFailedConditionException() throw();
 
 			char const* what() const override;
 
@@ -25,7 +25,7 @@ namespace klib
 #define kAssert(condition, msg)\
 	{\
 		if((condition) == false)\
-			throw ::klib::debug::AssertOnFailedExpressionException(#condition, ##msg, __FILE__, (unsigned)(__LINE__));\
+			throw ::klib::debug::AssertOnFailedConditionException(#condition, ##msg, __FILE__, (unsigned)(__LINE__));\
 	}\
 
 #else

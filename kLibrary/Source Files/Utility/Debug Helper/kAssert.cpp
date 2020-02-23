@@ -2,23 +2,24 @@
 #include <Utility/Debug Helper/kAssert.hpp>
 
 #include <Utility/Format/kFormatToString.hpp>
-#include <Utility/Logging/kLogging.hpp>
+#include <Utility/Logging/kLogging_Class.hpp>
 
 namespace klib::debug
 {
 #if _DEBUG
-	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const char* exp, const char* msg, const char* file, const unsigned line)
-		: report(kFormat::ToString("Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
+	AssertOnFailedConditionException::AssertOnFailedConditionException(const char* exp, const char* msg, const char* file, const unsigned line)
+		: report(kFormat::ToString("Condition \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
 	{
-		INIT_LOGS(kLogs::LLevel::FATL);
-		FATAL( report );
+		const auto exceptionLog = std::make_unique<kLogs::Logging>();
+		exceptionLog->ChangeFilename("Assert Condition Failed");
+		exceptionLog->InitializeLogging(kLogs::LLevel::FATL);
+		exceptionLog->OutputToFatalFile(report, file, line);
 	}
 
-	AssertOnFailedExpressionException::~AssertOnFailedExpressionException() throw()
+	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()
 	{}
-
-
-	char const* AssertOnFailedExpressionException::what() const
+	
+	char const* AssertOnFailedConditionException::what() const
 	{
 		return report.c_str();
 	}

@@ -44,7 +44,8 @@ namespace klib::kLogs
 	{
 	public:
 		Logging();
-		Logging(std::string& filename, std::string& directory);
+		Logging(const std::string& filename, const std::string& directory);
+		Logging(std::string&& filename, std::string&& directory);
 
 		~Logging();
 
@@ -94,7 +95,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Appends the current log file with the current logging cached in the buffer
 		 */
-		void AppendLogFile();
+		void Output();
 
 		/**
 		 * \brief
@@ -111,7 +112,7 @@ namespace klib::kLogs
 		 * \param line
 		 */
 		void OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line);
-
+		
 		/**
 		 * \brief
 		 *		Formats log message and level to the appropriate log message and then caches it
@@ -186,7 +187,7 @@ namespace klib::kLogs
 		 */
 		void InitializeLogLevelMap();
 
-		void OutputToConsole(const std::string_view& logLine, const LLevel lvl) noexcept;
+		void OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) noexcept;
 
 		void InitializeOutputToConsoleColourMap();
 

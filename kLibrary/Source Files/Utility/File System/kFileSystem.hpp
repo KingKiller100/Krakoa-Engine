@@ -276,7 +276,7 @@ namespace klib
 		}
 
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> GetFileName(const StringWriter<Char>& path)
+		USE_RESULT StringWriter<Char> GetFileName(const StringWriter<Char>& path) noexcept
 		{
 			const std::string text = String::Replace(path, '/', '\\');
 			const auto filename = text.substr(text.find_last_of('\\'));
@@ -284,7 +284,7 @@ namespace klib
 		}
 
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> GetFileNameWithoutExtension(const StringWriter<Char>& path)
+		USE_RESULT StringWriter<Char> GetFileNameWithoutExtension(const StringWriter<Char>& path) noexcept
 		{
 			StringWriter<Char> filename = GetFileName<Char>(path);
 			filename = filename.substr(0, filename.find_first_of('.'));
@@ -299,6 +299,46 @@ namespace klib
 			return parentPath;
 		}
 
-		
+		template<class Char = char>
+		USE_RESULT StringWriter<Char> AppendFileExtension(const Char* fname, const Char* extension) noexcept
+		{
+			StringReader<Char> filename = fname;
+			const auto isDotAtStartOFExtension = extension[0] == '.';
+
+			const auto dotPos = filename.find_first_of('.');
+			if (dotPos != StringReader<Char>::npos) // Dot is in the filename
+			{
+				const auto extPos = filename.find(extension);
+
+				if (extPos != StringReader<Char>::npos) // Extension is present
+				{
+					if (dotPos <= extPos) // Extension is present after the dot
+					{
+						return filename.data(); // Assume it's all good
+					}
+				}
+
+				StringWriter<Char> appendedFilename = filename.data();
+				if (dotPos == filename.length() - 1)
+				{
+					appendedFilename += extension;
+				}
+				else
+				{
+					if (!isDotAtStartOFExtension)
+						appendedFilename += '.';
+					appendedFilename += extension;
+				}
+
+				return appendedFilename;
+			}
+
+			StringWriter<Char> newFilename = filename.data();
+			if (!isDotAtStartOFExtension)
+				newFilename += '.';
+			newFilename += extension;
+
+			return newFilename;
+		}
 	}
 }

@@ -1,8 +1,8 @@
 #include <pch.hpp>
 #include <Testing/Utility Tests/Logging_Test.hpp>
 
-#include <Utility/File System/kFileSystem.hpp>
 #include <Utility/Logging/kLogging.hpp>
+#include <Utility/File System/kFileSystem.hpp>
 
 namespace kTest::utility
 {		
@@ -17,7 +17,7 @@ namespace kTest::utility
 	{
 		using namespace klib;
 
-		INIT_LOGS(kLogs::LogLevel::NORM);
+		INIT_LOGS(kLogs::LLevel::NORM);
 
 		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
 		CHANGE_LOGS_DESTINATION(dir);

@@ -7,7 +7,7 @@
 
 namespace klib::kLogs
 {
-	enum LoggingConsoleColour : unsigned short
+	enum LConsoleColour : unsigned short
 	{
 		NAVY_BLUE = 1,
 		DARK_GREEN,
@@ -27,9 +27,10 @@ namespace klib::kLogs
 		RED_BG_WHITE_TEXT = 79
 	};
 
-	enum class LogLevel : unsigned short
+	enum class LLevel : unsigned short
 	{
 		BANR, // Log Banner
+		DBUG, // Debug
 		NORM, // Normal
 		INFO, // Informative
 		WARN, // Warning
@@ -55,7 +56,7 @@ namespace klib::kLogs
 		 * \note
 		 *		No logging calls will function properly until this is called.
 		 */
-		void InitializeLogging(const LogLevel& initialMinLevel);
+		void InitializeLogging(const LLevel& initialMinLevel);
 
 		/**
 		 * \brief
@@ -65,7 +66,7 @@ namespace klib::kLogs
 		 * \note
 		 *		No logs less than this given level will be stored by the log system.
 		 */
-		void SetMinimumLoggingLevel(const LogLevel newMinLevel) noexcept;
+		void SetMinimumLoggingLevel(const LLevel newMinLevel) noexcept;
 
 		/**
 		 * \brief
@@ -121,7 +122,7 @@ namespace klib::kLogs
 		 * \param file
 		 * \param line
 		 */
-		void AddEntry(const std::string_view msg, const LogLevel lvl = LogLevel::NORM, const char* file = "", const unsigned line = 0) noexcept;
+		void AddEntry(const std::string_view msg, const LLevel lvl = LLevel::NORM, const char* file = "", const unsigned line = 0) noexcept;
 
 		/**
 		 * \brief
@@ -169,7 +170,7 @@ namespace klib::kLogs
 		 * \return
 		 *		The cached string of all currently cached kLogs
 		 */
-		std::string GetFullLogText();
+		std::string GetFullCache();
 
 		/**
 		 * \brief
@@ -177,7 +178,7 @@ namespace klib::kLogs
 		 * \param logLine
 		 *		Full log message
 		 */
-		void AddToLogBuffer(const std::string_view& logLine, const LogLevel lvl);
+		void AddToLogBuffer(const std::string_view& logLine);
 
 		/**
 		 * \brief
@@ -185,7 +186,7 @@ namespace klib::kLogs
 		 */
 		void InitializeLogLevelMap();
 
-		void OutputToConsole(const std::string_view& logLine, const LogLevel lvl) noexcept;
+		void OutputToConsole(const std::string_view& logLine, const LLevel lvl) noexcept;
 
 		void InitializeOutputToConsoleColourMap();
 
@@ -195,16 +196,12 @@ namespace klib::kLogs
 	protected:
 		LogQueue logEntryQueue; // Queue buffer to cache the logged messages
 
-		LogLevel minimumLoggingLevel;
+		LLevel minimumLoggingLevel;
 
 		std::string directory;
 		std::string filename;
 
-		std::unordered_map<LogLevel, const char*> kLogs_LogLevelMap;
-		std::unordered_map<LogLevel, LoggingConsoleColour> kLogs_ConsoleColourMap;
-
 		bool enable_kLogging;
 	};
-
 }
 

@@ -10,7 +10,7 @@ namespace klib::debug
 	AssertOnFailedExpressionException::AssertOnFailedExpressionException(const char* exp, const char* msg, const char* file, const unsigned line)
 		: report(kFormat::ToString("Expression \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
 	{
-		INIT_LOGS(kLogs::LogLevel::FATL);
+		INIT_LOGS(kLogs::LLevel::FATL);
 		FATAL( report );
 	}
 

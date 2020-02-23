@@ -7,11 +7,11 @@
 
 namespace krakoa
 {
-	#if defined (_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable:4251)
-	EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<iWindow>;
-#pragma warning(pop)
+#if defined (_MSC_VER)
+#	pragma warning(push)
+#	pragma warning(disable:4251)
+		EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<iWindow, std::default_delete<iWindow>>;
+#	pragma warning(pop)
 #endif
 
 	class KRAKOA_API Application

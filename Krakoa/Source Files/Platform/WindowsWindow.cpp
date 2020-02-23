@@ -1,8 +1,8 @@
 #include <Precompile.hpp>
 #include <Platform/WindowsWindow.hpp>
 
-#include <Maths/kAlgorithms.hpp>
-#include <Utility/Logging/kLogging.hpp>
+#include <Core/Logger.hpp>
+
 #include <Utility/Format/kFormatToString.hpp>
 #include <Utility/Debug Helper/kAssert.hpp>
 
@@ -31,10 +31,15 @@ namespace krakoa
 
 	void krakoa::WindowsWindow::Init(const WindowProperties& props)
 	{
+		using namespace klib::kFormat;
+
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		LOG_INFO(kFormat::ToString("Creating Window %s with dimensions (%d, %d)", data.title.c_str(), data.dimensions.X(), data.dimensions.Y()));
+		INFO(ToString("Creating Window %s with dimensions (%d, %d)", 
+			data.title.c_str(), 
+			data.dimensions.X(), 
+			data.dimensions.Y()));
 
 		if (!isInitialized)
 		{

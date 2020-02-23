@@ -4,7 +4,7 @@
 #include <Events System/ApplicationEvent.hpp>
 
 #include <Utility/Timer/kTimer.hpp>
-#include <Utility/Logging/kLogging.hpp>
+#include <Core/Logger.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -16,8 +16,8 @@ namespace krakoa
 	Application::Application()
 	: isRunning(false)
 	{
-		INIT_LOGS(kLogs::LLevel::NORM);
-		LOG_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
+		INIT_LOGS();
+		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 	
 		window = std::unique_ptr<iWindow>(iWindow::Create());
 	}

@@ -7,26 +7,6 @@
 
 namespace klib::kLogs
 {
-	enum LConsoleColour : unsigned short
-	{
-		NAVY_BLUE = 1,
-		DARK_GREEN,
-		AQUA_BLUE,
-		DARK_RED,
-		PURPLE,
-		MUSTARD_YELLOW,
-		LIGHT_GREY,
-		GREY,
-		DARK_BLUE,
-		LIGHT_GREEN,
-		LIGHT_BLUE,
-		SCARLET_RED,
-		VIOLET_PURPLE,
-		YELLOW,
-		WHITE,
-		RED_BG_WHITE_TEXT = 79
-	};
-
 	enum class LLevel : unsigned short
 	{
 		BANR, // Log Banner
@@ -37,11 +17,32 @@ namespace klib::kLogs
 		ERRR, // Error
 		FATL  // Fatal
 	};
-
-	using LogQueue = std::deque<std::string>;
-
+	
 	class Logging
 	{
+	public:
+		using LogQueue = std::deque<std::string>;
+
+		enum LConsoleColour : unsigned short
+		{
+			NAVY_BLUE = 1,
+			DARK_GREEN,
+			AQUA_BLUE,
+			DARK_RED,
+			PURPLE,
+			MUSTARD_YELLOW,
+			LIGHT_GREY,
+			GREY,
+			DARK_BLUE,
+			LIGHT_GREEN,
+			LIGHT_BLUE,
+			SCARLET_RED,
+			VIOLET_PURPLE,
+			YELLOW,
+			WHITE,
+			RED_BG_WHITE_TEXT = 79
+		};
+
 	public:
 		Logging();
 		Logging(const std::string& filename, const std::string& directory);

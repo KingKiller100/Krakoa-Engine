@@ -16,7 +16,7 @@ namespace klib::kLogs
 
 	const char* Logging::kLogs_Empty = "NO ENTRIES! LOGS ARE EMPTY";
 	std::unordered_map<LLevel, const char*> kLogs_LLevelMap;
-	std::unordered_map<LLevel, LConsoleColour> kLogs_ConsoleColourMap;
+	std::unordered_map<LLevel, Logging::LConsoleColour> kLogs_ConsoleColourMap;
 
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
@@ -214,7 +214,7 @@ namespace klib::kLogs
 		return fullLog;
 	}
 
-	LogQueue::value_type Logging::GetLastLoggedEntry()
+	Logging::LogQueue::value_type Logging::GetLastLoggedEntry()
 	{
 		if (!logEntryQueue.empty())
 			return logEntryQueue.back();

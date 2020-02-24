@@ -58,6 +58,8 @@
 #	include <Windows.h>
 #endif
 
-// KRAKOA Lib
+// kLib Lib
+#include <kLib.hpp>
 
+// KRAKOA Lib
 #include <Core/Logger.hpp>

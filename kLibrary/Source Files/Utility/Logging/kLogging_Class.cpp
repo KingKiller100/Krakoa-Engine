@@ -59,7 +59,7 @@ namespace klib::kLogs
 			+ GetDateInTextFormat() + "    " + GetTimeText() 
 			+ "\n***********************************************************************\n\n";;
 		AddToLogBuffer(startLog);
-		OutputToSubSystems(startLog, LLevel::NORM);
+		OutputToSubSystems(startLog, LLevel::BANR);
 	}
 
 	void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
@@ -90,9 +90,9 @@ namespace klib::kLogs
 		if (!kLogs_ConsoleColourMap.empty())
 			return;
 
-		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::BANR, LConsoleColour::LIGHT_GREY));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::BANR, LConsoleColour::WHITE));
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::DBUG, LConsoleColour::AQUA_BLUE));
-		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::NORM, LConsoleColour::WHITE));
+		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::NORM, LConsoleColour::LIGHT_GREY));
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::WARN, LConsoleColour::YELLOW));
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::INFO, LConsoleColour::LIGHT_GREEN));
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::ERRR, LConsoleColour::SCARLET_RED));
@@ -165,7 +165,7 @@ namespace klib::kLogs
 	{
 		const auto endLogLine = "\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 		AddToLogBuffer(endLogLine);
-		OutputToSubSystems(endLogLine, LLevel::NORM);
+		OutputToSubSystems(endLogLine, LLevel::BANR);
 		OutputLogToFile();
 		enable_kLogging = false;
 	}
@@ -186,7 +186,7 @@ namespace klib::kLogs
 		
 		printf_s("%s", logLine.data());
 
-		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::NORM));
+		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
 	}
 
 	void Logging::OutputLogToFile()

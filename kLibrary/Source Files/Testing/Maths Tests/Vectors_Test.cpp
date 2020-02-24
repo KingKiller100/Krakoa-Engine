@@ -58,7 +58,7 @@ namespace kTest::Maths
 		v2.Zero();
 		VERIFY(v2.Magnitude() == 0);
 
-		return true;
+		return success;
 	}
 
 	bool VectorsTester::Vector3Test()
@@ -94,7 +94,7 @@ namespace kTest::Maths
 		v3 *= 2;
 		v3 = tempV3;
 
-		return true;
+		return success;
 	}
 
 	bool VectorsTester::Vector4Test()
@@ -104,6 +104,6 @@ namespace kTest::Maths
 		const auto p = v4.W();
 		VERIFY(p == 1);
 
-		return true;
+		return success;
 	}
 }

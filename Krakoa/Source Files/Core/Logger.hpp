@@ -20,9 +20,12 @@ namespace krakoa
 	class KRAKOA_API Logger
 	{
 	public:
+		// Engine side
 		static void CoreInit();
-		static void ClientInit();
 		inline static Logging& GetCoreLogger()            { return *coreLogger; }
+
+		// client side
+		static void ClientInit();
 		inline static Logging& GetClientLogger()          { return *clientLogger; }
 
 	private:

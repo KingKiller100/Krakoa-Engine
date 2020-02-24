@@ -84,20 +84,17 @@ namespace kMaths
 			this->x = 0;
 			this->y = 0;
 			this->z = 0;
+			this->w = 0;
 		}
 
 		T& operator[](const size_t index)
 		{
-			if (index > 3)
-				throw std::out_of_range("Index is out of range");
-
-			switch (index)
-			{
+			switch (index) {
 			case 0: return this->x;
 			case 1: return this->y;
 			case 2: return this->z;
 			case 3: return this->w;
-			default: return x;
+			default: throw std::out_of_range("Index is out of range");
 			}
 		}
 

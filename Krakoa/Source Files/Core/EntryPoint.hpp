@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	auto app = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
 
 	app->Initialize();
-
+	
 	unsigned count = 0;
 	do {
 		app->Run();

@@ -67,6 +67,135 @@ namespace kMaths
 		{
 			return this->w;
 		}
+
+		// Operators
+
+		constexpr Vector4 operator-() const noexcept
+		{
+			return Vector4(
+				-this->X(),
+				-this->Y(),
+				-this->Z(), 
+				this->W());
+		}
+
+		// Overloads + operator to add two vectors objects
+		template<typename T2>
+		Vector4 operator+(const Vector4<T2>& v) const
+		{
+			return Vector4(
+				this->x + static_cast<T>(v.X()),
+				this->y + static_cast<T>(v.Y()),
+				this->z + static_cast<T>(v.Z()),
+				this->w );
+		}
+
+		// Overloads - operator to subtract two vectors objects
+		template<typename T2>
+		Vector4 operator-(const Vector4<T2>& v) const
+		{
+			return Vector4(
+				this->x - static_cast<T>(v.X()),
+				this->y - static_cast<T>(v.Y()),
+				this->z - static_cast<T>(v.Z()),
+				this->w);
+		}
+
+		// Overloads * operator to multiply two vector objects
+		template<typename T2>
+		Vector4 operator*(const Vector4<T2>& v) const
+		{
+			return Vector4(
+				this->x * static_cast<T>(v.X()),
+				this->y * static_cast<T>(v.Y()),
+				this->z * static_cast<T>(v.Z()),
+				this->w);
+		}
+
+		// Overloads / operator to divide two vectors objects
+		template<typename T2>
+		Vector4 operator/(const Vector4<T2>& v) const
+		{
+			return Vector4(
+				this->x / static_cast<T>(v.X()),
+				this->y / static_cast<T>(v.Y()),
+				this->z / static_cast<T>(v.Z()),
+				this->w);
+		}
+
+		// adds to current vector3 value
+		template<typename T2>
+		Vector4& operator+=(const Vector4<T2>& v)
+		{
+			*this = *this + v;
+			return *this;
+		}
+
+		// divides current vector3 value
+		template<typename T2>
+		Vector4& operator-=(const Vector4<T2>& v)
+		{
+			*this = *this - v;
+			return *this;
+		}
+
+		// divides current vector3 value and sets variable to it
+		template<typename T2>
+		Vector4& operator/=(const Vector4<T2>& v)
+		{
+			*this = *this / v;
+			return *this;
+		}
+
+		// multiplies current vector3 value and sets variable to it
+		template<typename T2>
+		Vector4& operator*=(const Vector4<T2>& v)
+		{
+			*this = *this * v;
+			return *this;
+		}
+
+		Vector4 operator*(const T scalar)
+		{
+			return Vector4(
+				this->X() * scalar, 
+				this->Y() * scalar,
+				this->Z() * scalar,
+				this->W());
+		}
+
+		Vector4 operator/(const T scalar)
+		{
+			return Vector4(
+				this->X() / scalar,
+				this->Y() / scalar,
+				this->Z() / scalar,
+				this->W());
+		}
+
+		Vector4& operator*=(const T scalar)
+		{
+			*this = *this * scalar;
+			return *this;
+		}
+
+		Vector4& operator/=(const T scalar)
+		{
+			*this = *this / scalar;
+			return *this;
+		}
+
+		// Overloads = operator to make one vector values equivalent to another
+		template<typename T2>
+		Vector4& operator=(const Vector4<T2>& v)
+		{
+			this->x = v.X();
+			this->y = v.Y();
+			this->z = v.Z();
+			this->w = v.W();
+
+			return *this;
+		}
 	};
 
 	using Vector4s = Vector4 <   int    >; // signed integer

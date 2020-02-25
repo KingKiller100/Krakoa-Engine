@@ -7,15 +7,15 @@ namespace kMaths
 	template <typename T>
 	struct VectorBase
 	{
-		constexpr VectorBase()
+		constexpr VectorBase() noexcept
 			: x(0), y(0), z(0), w(0)
 		{		}
 
-		constexpr explicit VectorBase(const T _v, const T _w = 0)
+		constexpr explicit VectorBase(const T _v, const T _w = 0) noexcept
 			: x(_v), y(_v), z(_v), w(_w)
 		{		}
 
-		constexpr explicit VectorBase(const T _x, const T _y, const T _z, const T _w = 0)
+		constexpr explicit VectorBase(const T _x, const T _y, const T _z, const T _w = 0) noexcept
 			: x(_x), y(_y), z(_z), w(_w)
 		{		}
 
@@ -63,7 +63,7 @@ namespace kMaths
 
 
 		// Calculates distance between two 3D objects
-		constexpr T Distance(const VectorBase& v)
+		USE_RESULT constexpr T Distance(const VectorBase& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
 			return distanceVec.Magnitude();
@@ -71,7 +71,7 @@ namespace kMaths
 
 
 		// Returns vector times by -1 - does not reassign values (except w element)
-		constexpr void ReverseVector()
+		constexpr void ReverseVector() noexcept
 		{
 			this->x *= -1;
 			this->y *= -1;
@@ -79,7 +79,7 @@ namespace kMaths
 		}
 
 		// Sets all values of the vector to zero (except w element)
-		void Zero()
+		void Zero() noexcept
 		{
 			this->x = 0;
 			this->y = 0;
@@ -87,7 +87,18 @@ namespace kMaths
 			this->w = 0;
 		}
 
-		T& operator[](const size_t index)
+		USE_RESULT constexpr T& operator[](const size_t index)
+		{
+			switch (index) {
+			case 0: return this->x;
+			case 1: return this->y;
+			case 2: return this->z;
+			case 3: return this->w;
+			default: throw std::out_of_range("Index is out of range");
+			}
+		}
+
+		USE_RESULT constexpr const T& operator[](const size_t index) const
 		{
 			switch (index) {
 			case 0: return this->x;

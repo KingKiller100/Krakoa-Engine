@@ -48,7 +48,7 @@ namespace kTest::Maths
 		VERIFY(tempMag <= 30);
 		
 		const auto temp1 = v2.Perpendicular();
-		v2.Distance(temp1);
+		const auto dist = v2.Distance(temp1);
 		
 		const auto temp2 = -v2;
 		VERIFY(v2 != temp2) ;

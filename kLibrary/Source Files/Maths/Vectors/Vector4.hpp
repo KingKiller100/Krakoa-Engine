@@ -12,15 +12,15 @@ namespace kMaths
 		: VectorBase<T>()
 		{}
 
-		explicit constexpr Vector4(const T v, const T w)
+		explicit constexpr Vector4(const T v, const T w) noexcept
 			: VectorBase<T>(v, v, v, w)
 		{}
 		
-		explicit constexpr Vector4(const T x, const T y, const T z, const T w)
+		explicit constexpr Vector4(const T x, const T y, const T z, const T w) noexcept
 			: VectorBase<T>(x, y, z, w)
 		{}
 		
-		explicit constexpr Vector4(const T x, const T y, const T z)
+		explicit constexpr Vector4(const T x, const T y, const T z) noexcept
 		: VectorBase<T>(x, y, z, 0)
 		{}
 

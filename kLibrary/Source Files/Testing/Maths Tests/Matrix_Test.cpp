@@ -1,7 +1,7 @@
 #include <pch.hpp>
 #include <Testing/Maths Tests/Matrix_Test.hpp>
 
-#include <Maths/Matrix/Matrix4x4.hpp>
+#include <Maths/Matrices/Matrix4x4.hpp>
 
 
 namespace kTest::Maths

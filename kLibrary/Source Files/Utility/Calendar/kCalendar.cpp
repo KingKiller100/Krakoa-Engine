@@ -47,10 +47,12 @@ namespace klib::kCalendar
 		return ToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
-	std::string GetDateInTextFormat()
+	std::string GetDateInTextFormat(const bool fullDayname)
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		const auto dateStr = ToString("%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek).data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
+		std::string day = GetDayOfTheWeek(dateTime.wDayOfWeek).data();
+		day = fullDayname ? day : day.substr(0, 3);
+		const auto dateStr = ToString("%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
 		return dateStr;
 	}
 	
@@ -100,10 +102,12 @@ namespace klib::kCalendar
 		return ToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
-	std::wstring wGetDateInTextFormat()
+	std::wstring wGetDateInTextFormat(const bool fullDayname)
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		return ToString(L"%s %d %s %04d", GetDayOfTheWeek(dateTime.wDayOfWeek), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
+		std::wstring day = wGetDayOfTheWeek(dateTime.wDayOfWeek).data();
+		day = fullDayname ? day : day.substr(0, 3);
+		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
 	}
 
 	std::wstring_view wGetMonth(const unsigned short month)

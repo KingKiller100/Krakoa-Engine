@@ -23,6 +23,11 @@ namespace kMaths
 		: VectorBase<T>(x, y, 0, 0)
 		{}
 
+		constexpr Vector2(const Vector2& other)
+		{
+			*this = other;
+		}
+
 		~Vector2()
 		= default;
 
@@ -94,7 +99,7 @@ namespace kMaths
 				this->y / static_cast<T>(v.Y()));
 		}
 
-		// adds to current vector3 value
+		// adds to current Vector2 value
 		template<typename T2>
 		Vector2& operator+=(const Vector2<T2>& v)
 		{
@@ -102,7 +107,7 @@ namespace kMaths
 			return *this;
 		}
 
-		// divides current vector3 value
+		// divides current Vector2 value
 		template<typename T2>
 		Vector2& operator-=(const Vector2<T2>& v)
 		{
@@ -110,7 +115,7 @@ namespace kMaths
 			return *this;
 		}
 
-		// divides current vector3 value and sets variable to it
+		// divides current Vector2 value and sets variable to it
 		template<typename T2>
 		Vector2& operator/=(const Vector2<T2>& v)
 		{
@@ -118,7 +123,7 @@ namespace kMaths
 			return *this;
 		}
 
-		// multiplies current vector3 value and sets variable to it
+		// multiplies current Vector2 value and sets variable to it
 		template<typename T2>
 		Vector2& operator*=(const Vector2<T2>& v)
 		{

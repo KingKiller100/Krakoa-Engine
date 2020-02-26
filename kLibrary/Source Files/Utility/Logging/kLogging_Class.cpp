@@ -55,9 +55,9 @@ namespace klib::kLogs
 		InitializeOutputToConsoleColourMap();
 		
 		const auto startLog = 
-			"***********************************************************************\n    Logging Initialized:    " 
-			+ GetDateInTextFormat() + "    " + GetTimeText() 
-			+ "\n***********************************************************************\n\n";;
+			"************************************************************************\n      Logging Initialized:    " 
+			+ GetDateInTextFormat(false) + "    " + GetTimeText() 
+			+ "\n************************************************************************\n\n";;
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);
 	}

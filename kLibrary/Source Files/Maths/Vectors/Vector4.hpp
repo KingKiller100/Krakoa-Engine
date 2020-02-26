@@ -24,6 +24,11 @@ namespace kMaths
 		: VectorBase<T>(x, y, z, 0)
 		{}
 
+		constexpr Vector4(const Vector4& other) noexcept
+		{
+			*this = other;
+		}
+
 		~Vector4()
 		= default;
 
@@ -164,7 +169,7 @@ namespace kMaths
 				this->W());
 		}
 
-		Vector4 operator/(const T scalar)
+		constexpr Vector4 operator/(const T scalar) const
 		{
 			return Vector4(
 				this->X() / scalar,

@@ -22,7 +22,7 @@ namespace klib
 
 		// ASCII
 		std::string GetTimeText();
-		std::string GetDateInTextFormat();
+		std::string GetDateInTextFormat(const bool fullDayname = true);
 		std::string_view GetMonth(const unsigned short month);
 		std::string_view GetDayOfTheWeek(const unsigned short day);
 		std::string GetDateInNumericalFormat(const bool slash = true);
@@ -30,7 +30,7 @@ namespace klib
 
 		// Wide Multi-Byte Chars
 		std::wstring wGetTimeText();
-		std::wstring wGetDateInTextFormat();
+		std::wstring wGetDateInTextFormat(const bool fullDayname = true);
 		std::wstring_view wGetMonth(const unsigned short month);
 		std::wstring_view wGetDayOfTheWeek(const unsigned short day);
 		std::wstring wGetDateInNumericalFormat(const bool slash = true);

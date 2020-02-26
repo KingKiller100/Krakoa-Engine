@@ -24,6 +24,11 @@ namespace kMaths
 		: VectorBase<T>(x, y, z, 0)
 		{}
 
+		constexpr Vector3(const Vector3& other)
+		{
+			*this = other;
+		}
+
 		~Vector3()
 		= default;
 

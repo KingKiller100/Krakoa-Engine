@@ -70,6 +70,18 @@ namespace kMaths
 			return matrix;
 		}
 
+		Matrix3x3& operator+=(const Matrix3x3& other)
+		{
+			*this = *this + other;
+			return *this;
+		}
+
+		Matrix3x3& operator-=(const Matrix3x3& other)
+		{
+			*this = *this - other;
+			return *this;
+		}
+
 		Matrix3x3 operator*(Matrix3x3& other) noexcept
 		{
 			auto m1 = Vector3<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3]);
@@ -184,6 +196,19 @@ namespace kMaths
 		{
 			indices = std::move(other.indices);
 			return *this;
+		}
+
+		constexpr Matrix3x3 operator-() const noexcept
+		{
+			for (auto& row : indices)
+				row = -row;
+
+			return *this;
+		}
+
+		constexpr Vector3<T>& operator[](const size_t idx)
+		{
+			return indices[idx];
 		}
 
 	public:

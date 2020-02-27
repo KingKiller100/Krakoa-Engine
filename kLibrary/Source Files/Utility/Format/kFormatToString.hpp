@@ -21,7 +21,7 @@ namespace klib
 			return ss.str();
 		}
 
-		// Only designed for ANSI or wide char string
+		// Only designed for char or wide char strings
 		template<class CharType, typename T, typename ...Ts>
 		constexpr std::basic_string<CharType> ToString(const CharType* format, T&& arg, Ts&& ...argPack)
 		{
@@ -45,9 +45,10 @@ namespace klib
 			else
 				return CharType('\0');
 			
-			const auto formattedText = std::basic_string<CharType>(buffer.get(), buffer.get() + length - 1);
+			const auto formattedText = std::basic_string<CharType>(buffer.get(), buffer.get() + (length - 1));
 			return formattedText;
 		}
+
 		template<class CharType, typename T, typename ...Ts>
 		constexpr std::basic_string<CharType> ToString(const std::basic_string<CharType>& format, T&& arg, Ts&& ...argPack)
 		{

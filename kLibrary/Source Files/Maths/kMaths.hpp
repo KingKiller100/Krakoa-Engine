@@ -4,6 +4,7 @@
 
 #include <Maths/kAlgorithms.hpp>
 
+#include <Maths/Matrices/Matrix.hpp>
 #include <Maths/Matrices/Matrix2x2.hpp>
 #include <Maths/Matrices/Matrix3x3.hpp>
 #include <Maths/Matrices/Matrix4x4.hpp>

@@ -65,6 +65,18 @@ namespace kMaths
 			return matrix;
 		}
 
+		Matrix2x2& operator+=(const Matrix2x2& other)
+		{
+			*this = *this + other;
+			return *this;
+		}
+
+		Matrix2x2& operator-=(const Matrix2x2& other)
+		{
+			*this = *this - other;
+			return *this;
+		}
+
 		Matrix2x2 operator*(Matrix2x2& other) noexcept
 		{
 			auto m1 = Vector2<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2]);
@@ -161,6 +173,19 @@ namespace kMaths
 		{
 			indices = std::move(other.indices);
 			return *this;
+		}
+
+		constexpr Matrix2x2 operator-() const noexcept
+		{
+			for (auto& row : indices)
+				row = -row;
+
+			return *this;
+		}
+
+		constexpr Vector2<T>& operator[](const size_t idx)
+		{
+			return indices[idx];
 		}
 
 	public:

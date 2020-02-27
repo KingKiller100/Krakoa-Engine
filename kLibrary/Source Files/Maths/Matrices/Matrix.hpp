@@ -1,101 +1,87 @@
-#pragma once 
-
-#include <Maths/Vectors/Vector4.hpp>
+﻿#pragma once 
 
 #include <array>
 
 namespace kMaths
 {
-	template<typename T>
-	struct Matrix4x4
+	template<typename Type, size_t Rows, size_t Columns>
+	struct Matrix
 	{
 	public:
-		constexpr Matrix4x4() noexcept
-		{}
-		
-		explicit constexpr Matrix4x4(const std::array<Vector4<T>, 4>& newIndices) noexcept
+		constexpr Matrix() noexcept
+		{
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					indices[j][i] = 0;
+				}
+			}
+		}
+
+		explicit constexpr Matrix(const std::array<std::array<Type, Rows>, Columns>& newIndices) noexcept
 			: indices(newIndices)
 		{}
 
-		constexpr Matrix4x4(const Matrix4x4& other)
+		explicit constexpr Matrix(Type initialVal) noexcept
+		{
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					indices[j][i] = initialVal;
+				}
+			}
+		}
+
+		constexpr Matrix(const Matrix& other)
 		{
 			*this = other;
 		}
 
-		constexpr Matrix4x4(Matrix4x4&& other)
+		constexpr Matrix(Matrix&& other)
 		{
 			*this = std::move(other);
 		}
-				
-		~Matrix4x4()
+
+		~Matrix()
 			= default;
 
 		constexpr void Identity()
 		{
-			for (auto& mat : indices)
-				mat.Zero();
-			
-			indices[0][0] = 1;
-			indices[1][1] = 1;
-			indices[2][2] = 1;
-			indices[3][3] = 1;
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					i == j 
+					?	indices[j][i] = 1
+					:	indices[j][i] = 0;
+				}
+			}
 		}
 
-		Matrix4x4 operator+(Matrix4x4& other) noexcept
+		Matrix operator+(Matrix& other) noexcept
 		{
-			const auto m1 = Vector4<T>(other.indices[0][0], other.indices[0][1], other.indices[0][2], other.indices[0][3]);
-			const auto m2 = Vector4<T>(other.indices[1][0], other.indices[1][1], other.indices[1][2], other.indices[1][3]);
-			const auto m3 = Vector4<T>(other.indices[2][0], other.indices[2][1], other.indices[2][2], other.indices[2][3]);
-			const auto m4 = Vector4<T>(other.indices[3][0], other.indices[3][1], other.indices[3][2], other.indices[3][3]);
-			
-			auto res1 = indices[0] + m1;
-			res1.W() =  indices[0][3] + m1.W();
-			auto res2 = indices[1] + m2;
-			res2.W() =  indices[1][3] + m2.W();
-			auto res3 = indices[2] + m3;
-			res3.W() =  indices[2][3] + m3.W();
-			auto res4 = indices[3] + m4;
-			res4.W() =  indices[3][3] + m4.W();
-			
-			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
-
-			return matrix;
+			Matrix m(0.f);
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					m.indices[j][i] = indices[j][i] + other.indices[j][i];
+				}
+			}
+			return m;
 		}
 
-		Matrix4x4 operator-(Matrix4x4& other) noexcept
+		Matrix operator-(Matrix& other) noexcept
 		{
-			const auto m1 = Vector4<T>(other.indices[0][0], other.indices[0][1], other.indices[0][2], other.indices[0][3]);
-			const auto m2 = Vector4<T>(other.indices[1][0], other.indices[1][1], other.indices[1][2], other.indices[1][3]);
-			const auto m3 = Vector4<T>(other.indices[2][0], other.indices[2][1], other.indices[2][2], other.indices[2][3]);
-			const auto m4 = Vector4<T>(other.indices[3][0], other.indices[3][1], other.indices[3][2], other.indices[3][3]);
-
-			auto res1 = indices[0] - m1;
-			res1.W() =  indices[0][3] - m1.W();
-			auto res2 = indices[1] - m2;
-			res2.W() =  indices[1][3] - m2.W();
-			auto res3 = indices[2] - m3;
-			res3.W() =  indices[2][3] - m3.W();
-			auto res4 = indices[3] - m4;
-			res4.W() =  indices[3][3] - m4.W();
-
-			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
-
-			return matrix;
+			Matrix m;
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					m.indices[j][i] = indices[j][i] - other.indices[j][i];
+				}
+			}
+			return m;
 		}
 
-		Matrix4x4& operator+=(const Matrix4x4& other)
-		{
-			*this = *this + other;
-			return *this;
-		}
-
-		Matrix4x4& operator-=(const Matrix4x4& other)
-		{
-			*this = *this - other;
-			return *this;
-		}
-
-		Matrix4x4 operator*(Matrix4x4& other) noexcept
+		/*Matrix operator*(Matrix& other) noexcept
 		{
 			auto m1 = Vector4<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3], other.indices[0][minorIdx4]);
 			auto m2 = Vector4<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2], other.indices[1][minorIdx3], other.indices[1][minorIdx4]);
@@ -127,12 +113,12 @@ namespace kMaths
 			const auto res3 = Vector4<T>(res31, res32, res33, res34);
 			const auto res4 = Vector4<T>(res41, res42, res43, res44);
 
-			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
+			const auto matrix = Matrix({ res1, res2, res3, res4 });
 
 			return matrix;
 		}
 
-		Matrix4x4 operator/(Matrix4x4& other) noexcept
+		Matrix operator/(Matrix& other) noexcept
 		{
 			auto m1 = Vector4<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3], other.indices[0][minorIdx4]);
 			auto m2 = Vector4<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2], other.indices[1][minorIdx3], other.indices[1][minorIdx4]);
@@ -164,101 +150,97 @@ namespace kMaths
 			const auto res3 = Vector4<T>(res31, res32, res33, res34);
 			const auto res4 = Vector4<T>(res41, res42, res43, res44);
 
-			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
+			const auto matrix = Matrix({ res1, res2, res3, res4 });
 
 			return matrix;
-		}
+		}*/
 
-		Matrix4x4& operator*=(const Matrix4x4& other)
+	/*	Matrix& operator*=(const Matrix& other)
 		{
 			*this = *this * other;
 			return *this;
 		}
 
-		Matrix4x4& operator/=(const Matrix4x4& other)
+		Matrix& operator/=(const Matrix& other)
 		{
 			*this = *this / other;
 			return *this;
-		}
+		}*/
 
 		template<typename U>
-		Matrix4x4 operator*(const U scalar)
+		Matrix operator*(const U scalar)
 		{
-			const auto res1 = Vector4<T>(indices[0][0] * scalar, indices[0][1] * scalar, indices[0][2] * scalar, indices[0][3] * scalar);
-			const auto res2 = Vector4<T>(indices[1][0] * scalar, indices[1][1] * scalar, indices[1][2] * scalar, indices[1][3] * scalar);
-			const auto res3 = Vector4<T>(indices[2][0] * scalar, indices[2][1] * scalar, indices[2][2] * scalar, indices[2][3] * scalar);
-			const auto res4 = Vector4<T>(indices[3][0] * scalar, indices[3][1] * scalar, indices[3][2] * scalar, indices[3][3] * scalar);
-
-			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
-
-			return matrix;
+			Matrix m;
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					m.indices[j][i] = indices[j][i] * scalar;
+				}
+			}
+			return m;
 		}
 
 		template<typename U>
-		Matrix4x4 operator/(const U scalar)
+		Matrix operator/(const U scalar)
 		{
-			const auto res1 = Vector4<T>(indices[0][0] / scalar, indices[0][1] / scalar, indices[0][2] / scalar, indices[0][3] / scalar);
-			const auto res2 = Vector4<T>(indices[1][0] / scalar, indices[1][1] / scalar, indices[1][2] / scalar, indices[1][3] / scalar);
-			const auto res3 = Vector4<T>(indices[2][0] / scalar, indices[2][1] / scalar, indices[2][2] / scalar, indices[2][3] / scalar);
-			const auto res4 = Vector4<T>(indices[3][0] / scalar, indices[3][1] / scalar, indices[3][2] / scalar, indices[3][3] / scalar);
-
-			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
-
-			return matrix;
+			Matrix m;
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					m.indices[j][i] = indices[j][i] / scalar;
+				}
+			}
+			return m;
 		}
 
 		template<typename U>
-		Matrix4x4& operator*=(const U scalar)
+		Matrix& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
 			return *this;
 		}
 
 		template<typename U>
-		Matrix4x4& operator/=(const U scalar)
+		Matrix& operator/=(const U scalar)
 		{
 			*this = *this / scalar;
 			return *this;
 		}
 
-		Matrix4x4& operator=(const Matrix4x4& other)
+		Matrix& operator=(const Matrix& other)
 		{
 			indices = other.indices;
 			return *this;
 		}
 
-		Matrix4x4& operator=(Matrix4x4&& other)
+		Matrix& operator=(Matrix&& other)
 		{
 			indices = std::move(other.indices);
 			return *this;
 		}
 
-		constexpr Matrix4x4 operator-() const noexcept
+		constexpr Matrix operator-() const noexcept
 		{
-			for (auto& row : indices)
-				row = -row;
-
+			Matrix m;
+			for (auto j = 0u; j < Columns; ++j) {
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					m.indices[j][i] = -indices[j][i];
+				}
+			}
 			return *this;
 		}
 
-		constexpr Vector4<T>& operator[](const size_t idx)
+		/*const Type& operator[](const size_t idx) const 
 		{
-			return indices [idx];
-		}
+			return indices[idx];
+		}*/
 
 	public:
-		Vector4<T>& _m1 = indices[0];
-		Vector4<T>& _m2 = indices[1];
-		Vector4<T>& _m3 = indices[2];
-		Vector4<T>& _m4 = indices[3];
+		std::array<Type, Rows>& _m1 = indices[0];
+		std::array<Type, Rows>& _m2 = indices[1];
 
 	private:
-		std::array<Vector4<T>, 4> indices{};
-		const size_t minorIdx1 = 0, minorIdx2 = 1, minorIdx3 = 2, minorIdx4 = 3;
+		std::array<std::array<Type, Rows>, Columns> indices{};
 	};
-
-	using Matrix4x4s = Matrix4x4 <   int    >; // signed integer
-	using Matrix4x4f = Matrix4x4 <  float   >; // floating point
-	using Matrix4x4d = Matrix4x4 <  double  >; // double floating point
-	using Matrix4x4u = Matrix4x4 < unsigned >; // unsigned integer
 }

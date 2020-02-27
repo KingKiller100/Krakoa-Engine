@@ -46,7 +46,7 @@ project "Krakoa"
 
     files
     {
-        "%{prj.name}/Source Files/**.h",
+        -- "%{prj.name}/Source Files/**.h",
         "%{prj.name}/Source Files/**.hpp",
         "%{prj.name}/Source Files/**.cpp",
         "%{prj.name}/cpp.hint"
@@ -112,7 +112,7 @@ project "Hooper2"
     
     files
     {
-        "ExampleGames/%{prj.name}/Source Files/**.h",
+        -- "ExampleGames/%{prj.name}/Source Files/**.h",
         "ExampleGames/%{prj.name}/Source Files/**.hpp",
         "ExampleGames/%{prj.name}/Source Files/**.cpp",
     }

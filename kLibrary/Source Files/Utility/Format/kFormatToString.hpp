@@ -1,6 +1,13 @@
 #pragma once
 
+#include <cstdio>
+#include <memory>
 #include <string>
+#include <stdexcept>
+
+#if defined (_MSC_VER)
+#	pragma warning(push)
+#	pragma warning(disable : 4996)
 
 namespace klib
 {
@@ -18,24 +25,29 @@ namespace klib
 		template<class CharType, typename T, typename ...Ts>
 		constexpr std::basic_string<CharType> ToString(const CharType* format, T&& arg, Ts&& ...argPack)
 		{
-			CharType* buffer;
+			size_t length = 0;
+			std::unique_ptr<CharType[]> buffer;
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				buffer = new CharType[1024]();
-				_sprintf_p(buffer, 1024, format, arg, argPack...);
+				length = _snprintf(nullptr, 0, format, arg, argPack...) + 1;
+				if (!length) throw std::runtime_error("Error during \"ToString(...)\" formatting");
+				buffer = std::unique_ptr<CharType[]>(new CharType[length]);
+				sprintf_s(buffer.get(), length, format, arg, argPack...);
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				buffer = new CharType[2048]();
-				_swprintf_p(buffer, 2048, format, arg, argPack...);
+				length = _snwprintf(nullptr, 0, format, arg, argPack...) + 1;
+				if (!length) throw std::runtime_error("Error during \"ToString(...)\" formatting");
+				buffer = std::unique_ptr<CharType[]>(new CharType[length]);
+				swprintf_s(buffer.get(), length, format, arg, argPack...);
 			}
 			else
 				return CharType('\0');
-
-			return std::basic_string<CharType>(buffer);
+			
+			const auto formattedText = std::basic_string<CharType>(buffer.get(), buffer.get() + length - 1);
+			return formattedText;
 		}
-
 		template<class CharType, typename T, typename ...Ts>
 		constexpr std::basic_string<CharType> ToString(const std::basic_string<CharType>& format, T&& arg, Ts&& ...argPack)
 		{
@@ -44,3 +56,6 @@ namespace klib
 		}
 	}
 }
+
+#	pragma warning(pop)
+#endif

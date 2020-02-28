@@ -1,7 +1,8 @@
 #pragma once
-
 #include <Testing/Tester.hpp>
 
+
+#ifdef TESTING_ENABLED
 namespace kTest::Maths
 {
 	class VectorsTester : public Tester
@@ -18,3 +19,4 @@ namespace kTest::Maths
 		bool Vector4Test();
 	};
 }
+#endif

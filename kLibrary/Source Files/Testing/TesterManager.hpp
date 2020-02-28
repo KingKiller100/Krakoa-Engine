@@ -4,6 +4,7 @@
 
 #include <Patterns/SimpleSingleton.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest
 {
 	class Tester;	
@@ -25,3 +26,5 @@ namespace kTest
 		static void ClearAllTests();
 	};
 }
+
+#endif

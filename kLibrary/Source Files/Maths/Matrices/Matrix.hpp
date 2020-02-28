@@ -22,7 +22,7 @@ namespace kMaths
 			: indices(newIndices)
 		{}
 
-		explicit constexpr Matrix(Type initialVal) noexcept
+		explicit constexpr Matrix(const Type initialVal) noexcept
 		{
 			for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
@@ -79,6 +79,18 @@ namespace kMaths
 				}
 			}
 			return m;
+		}
+
+		Matrix& operator+=(const Matrix& other)
+		{
+			*this = *this + other;
+			return *this;
+		}
+
+		Matrix& operator-=(const Matrix& other)
+		{
+			*this = *this - other;
+			return *this;
 		}
 
 		/*Matrix operator*(Matrix& other) noexcept
@@ -231,10 +243,10 @@ namespace kMaths
 			return *this;
 		}
 
-		/*const Type& operator[](const size_t idx) const 
+		constexpr std::array<Type, Rows>& operator[](const size_t idx) 
 		{
 			return indices[idx];
-		}*/
+		}
 
 	public:
 		std::array<Type, Rows>& _m1 = indices[0];

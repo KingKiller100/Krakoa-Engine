@@ -5,6 +5,7 @@
 #include <Utility/String View/StringView.hpp>
 #include <Utility/Timer/kTimer.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	
@@ -90,5 +91,6 @@ namespace kTest::utility
 		VERIFY(s.IsEqual(temp));
 	}
 }
+#endif
 
 

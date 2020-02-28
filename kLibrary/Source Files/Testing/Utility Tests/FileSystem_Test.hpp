@@ -2,6 +2,7 @@
 
 #include <Testing/Tester.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	class FileSystemTester : public Tester
@@ -14,3 +15,4 @@ namespace kTest::utility
 		void Test() override;
 	};
 }
+#endif

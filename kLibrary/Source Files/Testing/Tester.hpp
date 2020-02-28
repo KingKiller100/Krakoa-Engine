@@ -8,9 +8,9 @@
 #include <string>
 #include <sstream>
 
+#ifdef TESTING_ENABLED
 namespace kTest
 {
-		
 	class Tester
 	{
 	public:
@@ -47,3 +47,4 @@ namespace kTest
 	}\
 
 }
+#endif

@@ -1,7 +1,7 @@
 #pragma once
-
 #include <Testing/Tester.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	class CalendarTester : public Tester
@@ -14,4 +14,5 @@ namespace kTest::utility
 		void Test() override;
 	};
 }
+#endif
 

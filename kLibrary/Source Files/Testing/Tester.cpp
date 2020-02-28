@@ -1,6 +1,7 @@
 #include <pch.hpp>
 #include <Testing/Tester.hpp>
 
+#ifdef TESTING_ENABLED
 
 namespace kTest
 {
@@ -48,3 +49,5 @@ namespace kTest
 	}
 	
 }
+
+#endif

@@ -4,6 +4,7 @@
 #include <Utility/Logging/kLogging_Class.hpp>
 #include <Utility/File System/kFileSystem.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {		
 	LoggingTester::LoggingTester()
@@ -82,3 +83,4 @@ namespace kTest::utility
 		klib::kFileSystem::DeleteDirectory(dir.data());
 	}
 }
+#endif

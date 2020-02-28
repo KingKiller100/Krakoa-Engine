@@ -5,9 +5,9 @@
 
 namespace klib
 {
+#if _DEBUG 
 	namespace debug
 	{
-#if _DEBUG
 
 		class AssertOnFailedConditionException final : public std::exception
 		{
@@ -29,7 +29,7 @@ namespace klib
 	}\
 
 #else
-	#define kAssert(condition, msg) ((void)0);
+#	define kAssert(condition, msg) ((void)0);
 #endif
 
 }

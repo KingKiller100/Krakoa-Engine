@@ -3,6 +3,7 @@
 
 #include <Utility/File System/kFileSystem.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 
@@ -52,3 +53,4 @@ namespace kTest::utility
 		VERIFY(DeleteDirectory((cwd + "Create Directories Test\\").c_str()) == true);
 	}
 }
+#endif

@@ -4,6 +4,7 @@
 #include <Maths/kAlgorithms.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	FormatToStringTester::FormatToStringTester()
@@ -46,5 +47,5 @@ namespace kTest::utility
 
 		VERIFY(test == "980");
 	}
-	
 }
+#endif

@@ -1,11 +1,12 @@
 #include <pch.hpp>
 #include <Testing/Maths Tests/Matrix_Test.hpp>
 
+#include <Maths/Matrices/Matrix.hpp>
 #include <Maths/Matrices/Matrix2x2.hpp>
 #include <Maths/Matrices/Matrix3x3.hpp>
 #include <Maths/Matrices/Matrix4x4.hpp>
 
-
+#ifdef TESTING_ENABLED
 namespace kTest::Maths
 {
 	using namespace kMaths;
@@ -19,9 +20,25 @@ namespace kTest::Maths
 
 	void MatricesTester::Test()
 	{
+		VERIFY(DynamicMatrixTest() == true);
 		VERIFY(Matrix2x2Test() == true);
 		VERIFY(Matrix3x3Test() == true);
 		VERIFY(Matrix4x4Test() == true);
+	}
+
+	bool MatricesTester::DynamicMatrixTest()
+	{
+		auto m1 = Matrix<float, 3, 2>(1);
+		m1.Identity();
+
+		auto m2 = Matrix<float, 3, 2>(2);
+
+		const auto m3 = m1 - m2;
+		const auto m4 = m1 / m2;
+		const auto m5 = m1 / 10;
+		const auto m6 = m1 += m2;
+
+		return true;
 	}
 
 	bool MatricesTester::Matrix2x2Test()
@@ -85,3 +102,4 @@ namespace kTest::Maths
 	}
 
 }
+#endif

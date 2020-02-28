@@ -4,6 +4,7 @@
 #include <Utility/Debug Helper/kDebugger.hpp>
 #include <Utility/Debug Helper/kAssert.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {	
 	DebugHelpTester::DebugHelpTester()
@@ -20,6 +21,5 @@ namespace kTest::utility
 		//util::kDebugger::BreakPointHere(); // Works Great!
 		//util::kAssert(false, "Working Great!"); 
 	}
-
-
 }
+#endif

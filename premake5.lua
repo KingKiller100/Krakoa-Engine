@@ -1,5 +1,5 @@
 workspace "KrakoaEngine"
-    architecture "x64"
+    architecture "x86_64"
     startproject "Hooper2"
 
     configurations
@@ -14,7 +14,7 @@ workspace "KrakoaEngine"
     {
         "MultiProcessorCompile"
     }
-    
+
     OutputDir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.architecture}\\"
 
     -- Include Libraries
@@ -83,7 +83,11 @@ project "Krakoa"
         runtime "Debug"
 
     filter "configurations:Test"
-        defines "KRAKOA_TEST"
+        defines 
+        {
+            "KRAKOA_TEST",
+            "KLIB_TEST"
+        }
         symbols "On"
         runtime "Debug"
 
@@ -156,7 +160,11 @@ project "Hooper2"
         runtime "Debug"
 
     filter "configurations:Test"
-        defines "KRAKOA_TEST"
+        defines 
+        {
+            "KRAKOA_TEST",
+            "KLIB_TEST"
+        }
         symbols "On"
         runtime "Debug"
 

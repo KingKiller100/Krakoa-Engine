@@ -5,6 +5,7 @@
 #include <Maths/Vectors/Vector3.hpp>
 #include <Maths/Vectors/Vector4.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::Maths
 {
 	using namespace kMaths;
@@ -107,3 +108,4 @@ namespace kTest::Maths
 		return success;
 	}
 }
+#endif

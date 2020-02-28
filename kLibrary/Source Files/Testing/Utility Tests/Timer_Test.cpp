@@ -3,6 +3,7 @@
 
 #include <Utility/Timer/kTimer.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {	
 	TimerTester::TimerTester()
@@ -30,3 +31,5 @@ namespace kTest::utility
 		std::cout << testTime.GetName() << " Time: " << testTime.GetLifeTime<Millis>() << "ms (Milliseconds)\n";
 	}
 }
+
+#endif

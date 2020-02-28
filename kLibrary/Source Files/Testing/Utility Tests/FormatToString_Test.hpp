@@ -1,7 +1,7 @@
 #pragma once
-
 #include <Testing/Tester.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	class FormatToStringTester : public Tester
@@ -17,3 +17,4 @@ namespace kTest::utility
 		void SingleObjectToStringTest();
 	};
 }
+#endif

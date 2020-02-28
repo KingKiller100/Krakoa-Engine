@@ -4,6 +4,7 @@
 #include <Testing/Tester.hpp>
 
 // Maths Tests
+#include <Testing/Maths Tests/Matrix_Test.hpp>
 #include <Testing/Maths Tests/Vectors_Test.hpp>
 
 // Utility Tests
@@ -20,14 +21,14 @@
 
 #include <unordered_set>
 
+#ifdef TESTING_ENABLED
 namespace kTest
 {
 	std::unordered_set< std::unique_ptr<Tester> > kTests_TestsUSet;
 	std::string kTest_TestResultFilePath;
 	
 	TesterManager::TesterManager(Token)
-	{
-	}
+	{	}
 
 	TesterManager::~TesterManager()
 		= default;
@@ -39,17 +40,16 @@ namespace kTest
 
 	void TesterManager::Initialize()
 	{
-#ifdef TESTING_ENABLED
 		kTest_TestResultFilePath = klib::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\";
 		const auto isMade = klib::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
 		
 		kTest_TestResultFilePath += "Results.txt";
 		klib::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
-#endif // TESTING_ENABLED
 	}
 
 	void TesterManager::InitializeMathsTests()
 	{
+		Add(std::unique_ptr<Tester>(new Maths::MatricesTester()));
 		Add(std::unique_ptr<Tester>(new Maths::VectorsTester()));
 	}
 
@@ -71,7 +71,6 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-#ifdef TESTING_ENABLED
 		for (auto& test : kTests_TestsUSet)
 		{			
 			const auto resultTest = test->Run() 
@@ -80,7 +79,6 @@ namespace kTest
 			
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
-#endif // TESTING_ENABLED
 	}
 
 	void TesterManager::ClearAllTests()
@@ -88,3 +86,4 @@ namespace kTest
 		kTests_TestsUSet.clear();
 	}
 }
+#endif // TESTING_ENAB*LED

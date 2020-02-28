@@ -3,6 +3,7 @@
 
 #include <Utility/Calendar/kCalendar.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	
@@ -32,4 +33,5 @@ namespace kTest::utility
 		calendarTest = kCalendar::GetMonth(3);	
 	}
 }
+#endif
 

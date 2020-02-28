@@ -1,7 +1,7 @@
 #pragma once
-
 #include <Testing/Tester.hpp>
 
+#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	class TimerTester : public Tester
@@ -14,3 +14,4 @@ namespace kTest::utility
 		void Test() override;
 	};
 }
+#endif

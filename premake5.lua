@@ -34,7 +34,7 @@ project "Krakoa"
     kind "SharedLib"
     language "C++"
     cppdialect "C++17"
-    toolset "v141"
+    toolset "v142"
     characterset ("MBCS")
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -79,6 +79,10 @@ project "Krakoa"
 
     filter "configurations:Debug"
         defines "KRAKOA_DEBUG"
+        removefiles
+        {
+            "%{prj.name}/Source Files/**/test*"
+        }
         symbols "On"
         runtime "Debug"
 
@@ -94,11 +98,19 @@ project "Krakoa"
     filter "configurations:Release"
         defines "KRAKOA_RELEASE"
         optimize "Full"
+        removefiles
+        {
+            "%{prj.name}/Source Files/**/test*"
+        }
         runtime "Release"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
         optimize "Debug"
+        removefiles
+        {
+            "%{prj.name}/Source Files/**/test*"
+        }
         runtime "Release"
 
         --filters { "system:windows", "configuration:Release" }
@@ -108,7 +120,7 @@ project "Hooper2"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    toolset "v141"
+    toolset "v142"
     characterset ("MBCS")
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")

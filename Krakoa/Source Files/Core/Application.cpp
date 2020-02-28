@@ -6,8 +6,6 @@
 
 #include <Utility/Timer/kTimer.hpp>
 
-#include <Maths/kMaths.hpp>
-
 namespace krakoa
 {
 	using namespace klib;
@@ -33,11 +31,6 @@ namespace krakoa
 	void Application::Run()
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
-
-		Matrix<float, 3, 2> m1(1);
-		Matrix<float, 3, 2> m2(2);
-
-		auto m3 = m1 + m2;
 
 		window->OnUpdate();
 	}

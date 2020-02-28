@@ -34,22 +34,22 @@ namespace klib::kTime
 		template<typename Units>
 		USE_RESULT constexpr Rep GetLifeTime() const noexcept
 		{
-			std::_Atomic_thread_fence(std::memory_order_relaxed);
+			std::atomic_thread_fence(std::memory_order_relaxed);
 			const auto lifeTime = std::chrono::duration_cast<Units>(Clock::now() - startTimePoint).count();
-			std::_Atomic_thread_fence(std::memory_order_relaxed);
+			std::atomic_thread_fence(std::memory_order_relaxed);
 			return static_cast<Rep>(lifeTime);
 		}
 
 		template<typename Units>
 		USE_RESULT constexpr Rep GetDeltaTime() noexcept
 		{
-			std::_Atomic_thread_fence(std::memory_order_relaxed);
+			std::atomic_thread_fence(std::memory_order_relaxed);
 
 			const auto currentTimePoint = Clock::now();
 			const auto deltaTime = std::chrono::duration_cast<Units>(currentTimePoint - lastTimePoint).count();
 			lastTimePoint = currentTimePoint;
 
-			std::_Atomic_thread_fence(std::memory_order_relaxed);
+			std::atomic_thread_fence(std::memory_order_relaxed);
 
 			return static_cast<Rep>(deltaTime);
 		}

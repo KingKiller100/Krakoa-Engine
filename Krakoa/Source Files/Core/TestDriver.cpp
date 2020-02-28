@@ -11,6 +11,9 @@ namespace tests
 {
 	auto& testMan = kTest::TesterManager::Reference();
 
+	TestDriver::TestDriver()
+	{	}
+
 	void TestDriver::Initialize()
 	{
 		testMan.Initialize();

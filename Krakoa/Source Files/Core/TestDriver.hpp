@@ -6,8 +6,7 @@ namespace tests
 	class TestDriver
 	{
 	public:
-		TestDriver() 
-			= default;
+		TestDriver();
 		void Initialize();
 		void ShutDown();
 		void AddTest(void* test);

@@ -3,7 +3,7 @@ project "kLibrary"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-    toolset "v141"
+    toolset "v142"
     characterset ("MBCS")
 
     targetdir ("../bin/" .. OutputDir .. "/%{prj.name}")
@@ -38,6 +38,10 @@ project "kLibrary"
 
     filter "configurations:Debug"
         defines "KLIB_DEBUG"
+        removefiles
+        {
+            "Source Files/**/*Test*"
+        }
         symbols "On"
         runtime "Debug"
 
@@ -48,11 +52,19 @@ project "kLibrary"
 
     filter "configurations:Release"
         defines "KLIB_RELEASE"
+        removefiles
+        {
+            "Source Files/**/*Test*"
+        }
         optimize "Full"
         runtime "Release"
 
     filter "configurations:Profile"
         defines "KLIB_PROFILE"
+        removefiles
+        {
+            "Source Files/**/*Test*"
+        }
         optimize "Debug"
         runtime "Release"
         

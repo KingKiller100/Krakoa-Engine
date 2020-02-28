@@ -263,8 +263,8 @@ namespace klib
 					GetModuleFileNameA(nullptr, cwdBuffer, sizeof(cwdBuffer));
 				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
 					GetModuleFileNameW(nullptr, cwdBuffer, sizeof(cwdBuffer));
-				else 
-					throw std::runtime_error("Can only support \"char\" and \"wchar_t\" character types")
+				else
+					throw std::runtime_error("Can only support \"char\" and \"wchar_t\" character types");
 
 				fullFolderPathOfCurrentWorkingDirectory = cwdBuffer;
 

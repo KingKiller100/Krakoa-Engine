@@ -9,7 +9,7 @@
 namespace krakoa
 {
 	using namespace klib;
-	kTime::SystemTimer systemTimer = kTime::SystemTimer("Krakoa Engine Timer");
+	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
 
 	Application::Application()
 	: isRunning(false)
@@ -31,7 +31,8 @@ namespace krakoa
 	void Application::Run()
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
-
+		std::cout << "dt: " << deltaTime << "\n";
+		//KRK_NORM(kFormat::ToString("%02.02f fps", deltaTime));
 		window->OnUpdate();
 	}
 

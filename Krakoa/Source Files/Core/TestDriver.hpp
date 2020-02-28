@@ -6,11 +6,13 @@ namespace tests
 	class TestDriver
 	{
 	public:
-		static void Initialize();
-		static void ShutDown();
-		static void AddTest(void* test);
-		static void RunTests();
-		static void ClearAll();
+		TestDriver() 
+			= default;
+		void Initialize();
+		void ShutDown();
+		void AddTest(void* test);
+		void RunTests();
+		void ClearAll();
 	};
 }
 #endif

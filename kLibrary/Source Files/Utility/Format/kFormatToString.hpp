@@ -31,19 +31,19 @@ namespace klib
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
 				length = _snprintf(nullptr, 0, format, arg, argPack...) + 1;
-				if (!length) throw std::runtime_error("Error during \"ToString(...)\" formatting");
+				if (length <= 0) throw std::runtime_error("Error during char type \"ToString(...)\" formatting: string returned length <= 0");
 				buffer = std::unique_ptr<CharType[]>(new CharType[length]);
 				sprintf_s(buffer.get(), length, format, arg, argPack...);
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
 				length = _snwprintf(nullptr, 0, format, arg, argPack...) + 1;
-				if (!length) throw std::runtime_error("Error during \"ToString(...)\" formatting");
+				if (length <= 0) throw std::runtime_error("Error during wchar_t type \"ToString(...)\" formatting: string returned length <= 0");
 				buffer = std::unique_ptr<CharType[]>(new CharType[length]);
 				swprintf_s(buffer.get(), length, format, arg, argPack...);
 			}
 			else
-				return CharType('\0');
+				throw std::runtime_error("Can only support \"char\" and \"wchar_t\" character types");
 			
 			const auto formattedText = std::basic_string<CharType>(buffer.get(), buffer.get() + (length - 1));
 			return formattedText;

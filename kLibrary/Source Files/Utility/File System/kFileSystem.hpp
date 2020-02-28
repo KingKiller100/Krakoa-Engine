@@ -3,6 +3,7 @@
 #include <HelperMacros.hpp>
 
 #include <Utility/Format/StringManipulation.h>
+
 #include <direct.h>
 #include <corecrt_wdirect.h>
 #include <cstdio>
@@ -18,7 +19,7 @@ namespace klib
 	namespace kFileSystem
 	{
 		//Type aliases for STL containers --------------------------------------------------------
-		
+
 		// STL basic_string
 		template<class Char>
 		using StringWriter = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
@@ -36,10 +37,10 @@ namespace klib
 
 		// STL vector of StringTypes
 		template<typename Char>
-		using FileLinesData = std::vector<StringWriter<Char>>;
+		using FileLines = std::vector<StringWriter<Char>>;
 		// --------------------------------------------------------------------------------------
 
-		
+
 		/**
 		 * \brief
 		 *		Outputs a file to the specified directory and fills it with the given data
@@ -106,7 +107,7 @@ namespace klib
 		bool CreateNewDirectories(const CharType* directory)
 		{
 			StringWriter<CharType> dir(directory);
-			
+
 			if (dir.back() != '\\')
 				return false; // Final suffix of directory char type must end with '\\'
 
@@ -127,7 +128,7 @@ namespace klib
 			return isDirCreated;
 		}
 
-	
+
 		/**
 	 * \brief
 	 *		Deletes file from system
@@ -143,18 +144,18 @@ namespace klib
 		{
 
 			if constexpr (std::is_same_v<CharType, char>)
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-			{
-				return DeleteFileA(fullFilePath) == IS_TRUE; // 1 == TRUE
-			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-			{
-				return DeleteFileW(fullFilePath) == IS_TRUE; // 1 == TRUE
-			}
+				if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+				{
+					return DeleteFileA(fullFilePath) == IS_TRUE; // 1 == TRUE
+				}
+				else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+				{
+					return DeleteFileW(fullFilePath) == IS_TRUE; // 1 == TRUE
+				}
 
 			return false;
 		}
-		
+
 		/**
 		 * \brief
 		 *		Deletes a directory
@@ -207,9 +208,9 @@ namespace klib
 				result = _wfopen_s(&file, fullFilePath, L"r");
 			}
 
-			if (file)			
+			if (file)
 				fclose(file);
-			
+
 			return result == 0;
 		}
 
@@ -224,28 +225,25 @@ namespace klib
 		template<class CharType>
 		USE_RESULT inline auto ParseFileData(const CharType* fullFilePath)
 		{
-			FileLinesData<CharType> fileData;
+			FileLines<CharType> fileData;
+			if (!CheckFileExists(fullFilePath))
+				return fileData;
 
-			if (CheckFileExists(fullFilePath))
+			FileReader<CharType> inFile(fullFilePath);
+
+			if (!inFile.is_open())
+				return fileData;
+
+			StringWriter<CharType> data;
+			while (std::getline(inFile, data))
 			{
-				FileReader<CharType> inFile;
-				
-				inFile.open(fullFilePath);
-
-				if (inFile.is_open())
-				{
-					StringWriter<CharType> data;
-					while (std::getline(inFile, data))
-					{
-						fileData.push_back(data);
-					}
-					inFile.close();
-				}
+				fileData.push_back(data);
 			}
-
+			inFile.close();
+			
 			return fileData;
 		}
-		
+
 		/**
 		 * \brief
 		 *		Returns the current directory
@@ -265,11 +263,15 @@ namespace klib
 					GetModuleFileNameA(nullptr, cwdBuffer, sizeof(cwdBuffer));
 				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
 					GetModuleFileNameW(nullptr, cwdBuffer, sizeof(cwdBuffer));
-				 
+				else 
+					throw std::runtime_error("Can only support \"char\" and \"wchar_t\" character types")
+
 				fullFolderPathOfCurrentWorkingDirectory = cwdBuffer;
 
 				// Remove the filename, but keep the end slash
-				fullFolderPathOfCurrentWorkingDirectory.erase(fullFolderPathOfCurrentWorkingDirectory.find_last_of('\\') + 1, fullFolderPathOfCurrentWorkingDirectory.back());
+				fullFolderPathOfCurrentWorkingDirectory.erase
+					(fullFolderPathOfCurrentWorkingDirectory.find_last_of('\\') + 1,
+					fullFolderPathOfCurrentWorkingDirectory.back());
 			}
 
 			return fullFolderPathOfCurrentWorkingDirectory;

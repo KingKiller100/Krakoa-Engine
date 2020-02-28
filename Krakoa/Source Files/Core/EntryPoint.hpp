@@ -33,12 +33,13 @@ int main(int argc, char** argv)
 
 
 #ifdef KRAKOA_TEST
-#include <Core/TestDriver.hpp>
+#	include <Core/TestDriver.hpp>
 	void RunTestsOnkLibrary()
 	{
-		tests::TestDriver::Initialize();
-		tests::TestDriver::RunTests();
-		tests::TestDriver::ShutDown();
+		auto testDriver = tests::TestDriver();
+		testDriver.Initialize();
+		testDriver.RunTests();
+		testDriver.ShutDown();
 	};
 #else
 	inline void RunTestsOnkLibrary() {	}

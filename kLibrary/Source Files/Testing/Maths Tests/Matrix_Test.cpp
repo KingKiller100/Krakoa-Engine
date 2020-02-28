@@ -12,7 +12,7 @@ namespace kTest::Maths
 	using namespace kMaths;
 
 	MatricesTester::MatricesTester()
-		: Tester("Matrix Test 2x2/3x3/4x4")
+		: Tester("Matrix Test Dynamic/2x2/3x3/4x4")
 	{	}
 
 	MatricesTester::~MatricesTester()
@@ -34,7 +34,6 @@ namespace kTest::Maths
 		auto m2 = Matrix<float, 3, 2>(2);
 
 		const auto m3 = m1 - m2;
-		const auto m4 = m1 / m2;
 		const auto m5 = m1 / 10;
 		const auto m6 = m1 += m2;
 

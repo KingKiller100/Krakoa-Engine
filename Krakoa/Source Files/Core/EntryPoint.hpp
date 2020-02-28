@@ -33,15 +33,12 @@ int main(int argc, char** argv)
 
 
 #ifdef KRAKOA_TEST
-#include <Testing/TesterManager.hpp>
-	inline void RunTestsOnkLibrary()
+#include <Core/TestDriver.hpp>
+	void RunTestsOnkLibrary()
 	{
-		auto& testManager = kTest::TesterManager::Reference();
-		testManager.Initialize();
-		testManager.InitializeMathsTests();
-		testManager.InitializeUtilityTests();
-		testManager.RunAll();
-		testManager.Shutdown();
+		tests::TestDriver::Initialize();
+		tests::TestDriver::RunTests();
+		tests::TestDriver::ShutDown();
 	};
 #else
 	inline void RunTestsOnkLibrary() {	}

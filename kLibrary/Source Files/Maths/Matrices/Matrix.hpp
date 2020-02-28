@@ -57,7 +57,7 @@ namespace kMaths
 			}
 		}
 
-		Matrix operator+(Matrix& other) noexcept
+		Matrix operator+(const Matrix& other) noexcept
 		{
 			Matrix m(0.f);
 			for (auto j = 0u; j < Columns; ++j) {
@@ -69,7 +69,7 @@ namespace kMaths
 			return m;
 		}
 
-		Matrix operator-(Matrix& other) noexcept
+		Matrix operator-(const Matrix& other) noexcept
 		{
 			Matrix m;
 			for (auto j = 0u; j < Columns; ++j) {
@@ -81,15 +81,17 @@ namespace kMaths
 			return m;
 		}
 
-		Matrix& operator+=(const Matrix& other)
+		Matrix& operator+=( Matrix& other)
 		{
-			*this = *this + other;
+			auto& self = *this;
+			self = self + other;
 			return *this;
 		}
 
-		Matrix& operator-=(const Matrix& other)
+		Matrix& operator-=(Matrix& other)
 		{
-			*this = *this - other;
+			auto& self = *this;
+			self = self - other;
 			return *this;
 		}
 
@@ -179,6 +181,8 @@ namespace kMaths
 			return *this;
 		}*/
 
+		Matrix operator*(Matrix) = delete;
+		
 		template<typename U>
 		Matrix operator*(const U scalar)
 		{
@@ -192,6 +196,8 @@ namespace kMaths
 			return m;
 		}
 
+		Matrix operator/(Matrix) = delete;
+
 		template<typename U>
 		Matrix operator/(const U scalar)
 		{
@@ -199,7 +205,7 @@ namespace kMaths
 			for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
 				{
-					m.indices[j][i] = indices[j][i] / scalar;
+					m.indices[j][i] = indices[j][i] * static_cast<Type>(scalar);
 				}
 			}
 			return m;

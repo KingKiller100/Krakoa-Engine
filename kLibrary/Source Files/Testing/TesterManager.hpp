@@ -15,15 +15,14 @@ namespace kTest
 		TesterManager(Token);
 		~TesterManager();
 
-		static void Shutdown();
-
-		static void Initialize();
-		
-		static void InitializeMathsTests();
-		static void InitializeUtilityTests();
-		static void Add(std::unique_ptr<Tester>&& test);
-		static void RunAll();
-		static void ClearAllTests();
+		void Initialize();
+		void Shutdown();
+		void InitializeMathsTests();
+		void InitializeUtilityTests();
+		void Add(std::unique_ptr<Tester>&& test);
+		void Add(std::unique_ptr<Tester>& test);
+		void RunAll();
+		void ClearAllTests();
 	};
 }
 

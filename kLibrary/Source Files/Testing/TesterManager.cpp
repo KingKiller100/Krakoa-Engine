@@ -69,6 +69,11 @@ namespace kTest
 		kTests_TestsUSet.insert(std::move(test));
 	}
 
+	void TesterManager::Add(std::unique_ptr<Tester>& test)
+	{
+		kTests_TestsUSet.insert(std::move(test));
+	}
+
 	void TesterManager::RunAll()
 	{
 		for (auto& test : kTests_TestsUSet)

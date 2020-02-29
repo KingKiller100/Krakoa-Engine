@@ -1,9 +1,11 @@
 ﻿#pragma once
 
+#include <Core/EngineCore.hpp>
+
 #ifdef KRAKOA_TEST
 namespace tests
 {
-	class TestDriver
+	class KRAKOA_API TestDriver
 	{
 	public:
 		TestDriver();

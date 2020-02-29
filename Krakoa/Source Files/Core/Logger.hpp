@@ -49,7 +49,8 @@ namespace krakoa
 #define KRK_ERRR(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::ERRR, __FILE__, __LINE__);
 #define KRK_FATAL(msg)                              ::krakoa::Logger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define KRK_BANNER(banner, category)                ::krakoa::Logger::GetCoreLogger().AddEntryBanner(banner, category);
-#define KRK_FLUSH()                                 ::krakoa::Logger::GetCoreLogger().Output();
+#define KRK_SUSPEND()                               ::krakoa::Logger::GetCoreLogger().SuspendFileLogging();
+#define KRK_UNSUSPEND()                             ::krakoa::Logger::GetCoreLogger().UnsuspendFileLogging();
 #define KRK_END()                                   ::krakoa::Logger::GetCoreLogger().FinalOutput();
 #define KRK_GET_LAST()                              ::krakoa::Logger::GetCoreLogger().GetLastLoggedEntry();
 #define KRK_ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetCoreLogger().ErasePreviousEntries(numOfPrevEntries);
@@ -68,7 +69,8 @@ namespace krakoa
 #define ERRR(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::ERRR, __FILE__, __LINE__);
 #define FATAL(msg)                              ::krakoa::Logger::GetClientLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define BANNER(banner, category)                ::krakoa::Logger::GetClientLogger().AddEntryBanner(banner, category);
-#define FLUSH()                                 ::krakoa::Logger::GetClientLogger().Output();
+#define SUSPEND()                               ::krakoa::Logger::GetClientLogger().SuspendFileLogging();
+#define UNSUSPEND()                             ::krakoa::Logger::GetClientLogger().UnsuspendFileLogging();
 #define END()                                   ::krakoa::Logger::GetClientLogger().FinalOutput();
 #define GET_LAST()                              ::krakoa::Logger::GetClientLogger().GetLastLoggedEntry();
 #define ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetClientLogger().ErasePreviousEntries(numOfPrevEntries);

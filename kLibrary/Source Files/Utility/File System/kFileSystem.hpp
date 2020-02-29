@@ -109,7 +109,7 @@ namespace klib
 			StringWriter<CharType> dir(directory);
 
 			if (dir.back() != '\\')
-				return false; // Final suffix of directory char type must end with '\\'
+				dir += '\\'; // Final suffix of directory char type must end with '\\'
 
 			bool isDirCreated = false;
 			auto pos = dir.find_first_of('\\') + 1;

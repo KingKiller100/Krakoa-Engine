@@ -95,8 +95,17 @@ namespace klib::kLogs
 		/**
 		 * \brief
 		 *		Appends the current log file with the current logging cached in the buffer
+		 *		and pauses outputing to log file.
+		 * \note
+		 *		Allows user to keep logging but just keeps it in cache and outputs to subsystems
 		 */
-		void Output();
+		void SuspendFileLogging();
+
+		/**
+		 * \brief
+		 *		Continues logging and flushes cache to file 
+		 */
+		void UnSuspendFileLogging();
 
 		/**
 		 * \brief
@@ -192,6 +201,8 @@ namespace klib::kLogs
 
 		void InitializeOutputToConsoleColourMap();
 
+		void CloseLogFile();
+
 	public:
 		static const char* kLogs_Empty;
 
@@ -204,6 +215,8 @@ namespace klib::kLogs
 		std::string filename;
 
 		bool enable_kLogging;
+		bool cacheEnabled;
+		std::ofstream logFileStream;
 	};
 }
 

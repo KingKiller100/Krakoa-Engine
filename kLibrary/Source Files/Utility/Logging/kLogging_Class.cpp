@@ -5,7 +5,7 @@
 #include <Utility/Format/kFormatToString.hpp>
 #include <Utility/File System/kFileSystem.hpp>
 
-#include <cstdio>
+#include <fstream>
 #include <string_view>
 
 namespace klib::kLogs
@@ -18,11 +18,13 @@ namespace klib::kLogs
 	std::unordered_map<LLevel, const char*> kLogs_LLevelMap;
 	std::unordered_map<LLevel, Logging::LConsoleColour> kLogs_ConsoleColourMap;
 
+
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
 		filename(AppendFileExtension(ToString("Logs - %s", GetDateInNumericalFormat(false).c_str()).c_str(), ".log")),
-		enable_kLogging(false)
+		enable_kLogging(false),
+		cacheEnabled(false)
 	{	}
 
 	Logging::Logging(const std::string& filename, const std::string& directory)
@@ -52,12 +54,11 @@ namespace klib::kLogs
 		SetMinimumLoggingLevel(initialMinLevel);
 		ToggleLoggingEnabled();
 		InitializeLogLevelMap();
-		InitializeOutputToConsoleColourMap();
-		
+		InitializeOutputToConsoleColourMap();		
 		const auto startLog = 
 			"************************************************************************\n      Logging Initialized:    " 
 			+ GetDateInTextFormat(false) + "    " + GetTimeText() 
-			+ "\n************************************************************************\n\n";;
+			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);
 	}
@@ -99,25 +100,42 @@ namespace klib::kLogs
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::FATL, LConsoleColour::RED_BG_WHITE_TEXT));
 	}
 
+	void Logging::CloseLogFile()
+	{
+		if (logFileStream.is_open())
+			logFileStream.close();
+		cacheEnabled = true;
+	}
+
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
 		directory = dir;
 		OutputToSubSystems("New directory:\t " + directory + "\n", LLevel::INFO);
+		SuspendFileLogging();
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
 		filename = AppendFileExtension(newFileName.data(), ".log");
 		OutputToSubSystems("new filename:\t " + filename + "\n", LLevel::INFO);
+		SuspendFileLogging();
 	}
 
-	void Logging::Output()
+	void Logging::SuspendFileLogging()
 	{
 		const auto conclusionCurrentLog = "\n***********************************************************************\n";
 		AddToLogBuffer(conclusionCurrentLog);
 		OutputToSubSystems(conclusionCurrentLog, LLevel::NORM);
 		OutputLogToFile();
+		CloseLogFile();
 	}
+
+	void Logging::UnsuspendFileLogging()
+	{
+		cacheEnabled = false;
+		OutputLogToFile();
+	}
+
 
 	void Logging::OutputToFatalFile(const std::string_view& msg, const char* file, const unsigned line)
 	{
@@ -146,6 +164,7 @@ namespace klib::kLogs
 
 		AddToLogBuffer(logLine);
 		OutputToSubSystems(logLine, lvl);
+		OutputLogToFile();
 	}
 
 	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type) noexcept
@@ -159,13 +178,17 @@ namespace klib::kLogs
 
 		AddToLogBuffer(bannerLine);
 		OutputToSubSystems(bannerLine, LLevel::BANR);
+		OutputLogToFile();
 	}
 
 	void Logging::FinalOutput()
 	{
-		const auto endLogLine = "\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
+		const auto endLogLine = "(\n***********************************************************************\n\t\t"
+								"Logging Concluded" 
+								"\n***********************************************************************\n\n)";
 		AddToLogBuffer(endLogLine);
 		OutputLogToFile();
+		CloseLogFile();
 		enable_kLogging = false;
 	}
 
@@ -190,11 +213,20 @@ namespace klib::kLogs
 
 	void Logging::OutputLogToFile()
 	{
-		const auto path = directory + filename;
-		const auto fullCache = GetFullCache();
+		if (cacheEnabled)
+			return;
 
-		CreateNewDirectories(directory.c_str());
-		OutputToFile(path.c_str(), fullCache.c_str());
+		const auto fullCache = GetFullCache();
+		
+		if (!logFileStream.is_open())
+		{
+			const auto path = directory + filename;
+			CreateNewDirectories(directory.c_str());
+			logFileStream.open(path, std::ios::out | std::ios::app);
+		}
+
+		if (logFileStream)
+			logFileStream << fullCache;
 	}
 
 	std::string Logging::GetFullCache()

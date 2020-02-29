@@ -2,7 +2,7 @@
 
 #include <Maths/Vectors/VectorBase.hpp>
 
-namespace kMaths
+namespace kmaths
 {
 	template <typename T>
 	struct Vector2 : VectorBase<T>
@@ -51,11 +51,14 @@ namespace kMaths
 			return this->y;
 		}
 
-		USE_RESULT constexpr Vector2 Perpendicular() const noexcept
+		USE_RESULT constexpr Vector2 Perpendicular() const
 		{
+			if _CONSTEXPR_IF(!std::is_floating_point_v<T> && !std::is_signed_v<T>)
+				throw std::exception("Cannot make perpenducular for type unsigned (this func uses minus signs");
+			
 			return Vector2(-this->y, this->x);
 		}
-
+		
 		// Operators
 
 		constexpr Vector2 operator- () const noexcept
@@ -167,7 +170,7 @@ namespace kMaths
 	using Vector2s = Vector2 <   int    >; // signed integer
 	using Vector2f = Vector2 <  float   >; // floating point
 	using Vector2d = Vector2 <  double  >; // double floating point
-	using Vector2u = Vector2 < unsigned >; // unsigned integer
+	//using Vector2u = Vector2 < unsigned >; // unsigned integer
 
 }
 

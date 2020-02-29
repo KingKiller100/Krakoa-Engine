@@ -9,7 +9,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::Maths
 {
-	using namespace kMaths;
+	using namespace kmaths;
 	
 	VectorsTester::VectorsTester()
 		: Tester("Vectors 2/3/4 Test")

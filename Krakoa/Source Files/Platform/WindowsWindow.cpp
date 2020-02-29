@@ -79,8 +79,8 @@ namespace krakoa
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
 			{
 				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
-				data.dimensions = kMaths::Vector2u(width, height);
-				WindowResizeEvent e(width, height);
+				data.dimensions = kmaths::Vector2s(width, height);
+				WindowResizeEvent e(static_cast<float>(width), static_cast<float>(height));
 				data.cb(e);
 			});
 		glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
@@ -163,7 +163,7 @@ namespace krakoa
 		glfwSwapBuffers(window);
 	}
 
-	kMaths::Vector2u& krakoa::WindowsWindow::GetDimensions()
+	kmaths::Vector2s& krakoa::WindowsWindow::GetDimensions()
 	{
 		return data.dimensions;
 	}

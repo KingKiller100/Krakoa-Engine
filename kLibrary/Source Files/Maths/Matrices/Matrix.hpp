@@ -2,7 +2,7 @@
 
 #include <array>
 
-namespace kMaths
+namespace kmaths
 {
 	template<typename Type, size_t Rows, size_t Columns>
 	struct Matrix

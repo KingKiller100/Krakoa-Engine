@@ -5,7 +5,6 @@
 #include <Utility/Format/kFormatToString.hpp>
 #include <Utility/File System/kFileSystem.hpp>
 
-#include <fstream>
 #include <string_view>
 
 namespace klib::kLogs
@@ -24,7 +23,7 @@ namespace klib::kLogs
 		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
 		filename(AppendFileExtension(ToString("Logs - %s", GetDateInNumericalFormat(false).c_str()).c_str(), ".log")),
 		enable_kLogging(false),
-		cacheEnabled(false)
+		inCacheMode(false)
 	{	}
 
 	Logging::Logging(const std::string& filename, const std::string& directory)
@@ -73,6 +72,11 @@ namespace klib::kLogs
 		enable_kLogging = !enable_kLogging;
 	}
 
+	void Logging::SetCacheMode(const bool enable)
+	{
+		inCacheMode = enable;
+	}
+
 	void Logging::InitializeLogLevelMap()
 	{
 		if (!kLogs_LLevelMap.empty())
@@ -100,18 +104,12 @@ namespace klib::kLogs
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::FATL, LConsoleColour::RED_BG_WHITE_TEXT));
 	}
 
-	void Logging::CloseLogFile()
-	{
-		if (logFileStream.is_open())
-			logFileStream.close();
-		cacheEnabled = true;
-	}
-
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
 		directory = dir;
 		OutputToSubSystems("New directory:\t " + directory + "\n", LLevel::INFO);
 		SuspendFileLogging();
+		UnsuspendFileLogging();
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
@@ -119,6 +117,7 @@ namespace klib::kLogs
 		filename = AppendFileExtension(newFileName.data(), ".log");
 		OutputToSubSystems("new filename:\t " + filename + "\n", LLevel::INFO);
 		SuspendFileLogging();
+		UnsuspendFileLogging();
 	}
 
 	void Logging::SuspendFileLogging()
@@ -132,7 +131,7 @@ namespace klib::kLogs
 
 	void Logging::UnsuspendFileLogging()
 	{
-		cacheEnabled = false;
+		inCacheMode = false;
 		OutputLogToFile();
 	}
 
@@ -192,6 +191,13 @@ namespace klib::kLogs
 		enable_kLogging = false;
 	}
 
+	void Logging::CloseLogFile()
+	{
+		if (logFileStream.is_open())
+			logFileStream.close();
+		inCacheMode = true;
+	}
+
 	void Logging::AddToLogBuffer(const std::string_view& logLine)
 	{
 		logEntryQueue.emplace_back(logLine.data());
@@ -213,10 +219,10 @@ namespace klib::kLogs
 
 	void Logging::OutputLogToFile()
 	{
-		if (cacheEnabled)
+		if (inCacheMode)
 			return;
 
-		const auto fullCache = GetFullCache();
+		auto fullCache = GetFullCache();
 		
 		if (!logFileStream.is_open())
 		{

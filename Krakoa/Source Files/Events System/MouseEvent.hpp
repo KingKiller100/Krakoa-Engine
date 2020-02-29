@@ -6,7 +6,7 @@
 
 namespace krakoa::events
 {
-	using namespace kMaths;
+	using namespace kmaths;
 
 	class KRAKOA_API MouseEvent : public Event
 	{

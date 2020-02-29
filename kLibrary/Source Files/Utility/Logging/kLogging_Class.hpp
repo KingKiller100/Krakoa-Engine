@@ -1,6 +1,7 @@
 #pragma once
 
 #include <HelperMacros.hpp>
+#include <fstream>
 #include <string>
 #include <deque>
 #include <unordered_map>
@@ -78,6 +79,12 @@ namespace klib::kLogs
 
 		/**
 		 * \brief
+		 *		Toggles whether logs output to system to keep a local cache
+		 */
+		void SetCacheMode(const bool disable);
+
+		/**
+		 * \brief
 		 *		Change the directory the log file outputs to
 		 * \param dir
 		 *		STL string view representing the new directory
@@ -105,7 +112,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Continues logging and flushes cache to file 
 		 */
-		void UnSuspendFileLogging();
+		void UnsuspendFileLogging();
 
 		/**
 		 * \brief
@@ -215,7 +222,7 @@ namespace klib::kLogs
 		std::string filename;
 
 		bool enable_kLogging;
-		bool cacheEnabled;
+		bool inCacheMode;
 		std::ofstream logFileStream;
 	};
 }

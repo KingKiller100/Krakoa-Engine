@@ -4,7 +4,7 @@
 
 #include <array>
 
-namespace kMaths
+namespace kmaths
 {
 	template<typename T>
 	struct Matrix4x4

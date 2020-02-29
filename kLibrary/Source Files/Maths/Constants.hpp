@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace kMaths::consts
+namespace kmaths::consts
 {
 	using AccuracyType = long double;
 

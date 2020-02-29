@@ -9,7 +9,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::Maths
 {
-	using namespace kMaths;
+	using namespace kmaths;
 
 	MatricesTester::MatricesTester()
 		: Tester("Matrix Test Dynamic/2x2/3x3/4x4")

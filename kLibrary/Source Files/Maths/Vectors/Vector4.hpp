@@ -2,7 +2,7 @@
 
 #include <Maths/Vectors/VectorBase.hpp>
 
-namespace kMaths
+namespace kmaths
 {
 	
 	template <typename T>

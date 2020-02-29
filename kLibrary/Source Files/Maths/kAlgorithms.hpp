@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-namespace kMaths
+namespace kmaths
 {
 	template<typename T>
 	USE_RESULT constexpr T Max(const T lhs, const T rhs) noexcept

@@ -16,7 +16,7 @@ namespace krakoa
 		// Inherited via Window
 		virtual void OnUpdate() override;
 
-		virtual kMaths::Vector2u& GetDimensions() override;
+		virtual kmaths::Vector2s& GetDimensions() override;
 
 		virtual unsigned GetWidth() const override;
 		virtual unsigned GetHeight() const override;
@@ -39,7 +39,7 @@ namespace krakoa
 		struct WindowData
 		{
 			std::string title;
-			kMaths::Vector2u dimensions;
+			kmaths::Vector2s dimensions;
 			bool vSyncOn = false;
 
 			EventCallbackFunc cb;

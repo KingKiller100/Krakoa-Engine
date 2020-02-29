@@ -40,6 +40,8 @@ namespace krakoa
 #define KRK_INIT_LOGS()                             ::krakoa::Logger::CoreInit();
 #define KRK_SET_MIN(minLvl)                         ::krakoa::Logger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
 #define KRK_TOGGLE_LOGGING()                        ::krakoa::Logger::GetCoreLogger().ToggleLoggingEnabled();
+#define KRK_DISABLE_FILE_OUTPUT()                   ::krakoa::Logger::GetCoreLogger().SetCacheMode(true);
+#define KRK_ENABLE_FILE_OUTPUT()                   ::krakoa::Logger::GetCoreLogger().SetCacheMode(false);
 #define KRK_CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetCoreLogger().ChangeOutputDirectory(destination);
 #define KRK_CHANGE_LOGS_FILENAME(name)              ::krakoa::Logger::GetCoreLogger().ChangeFilename(name);
 #define KRK_DBUG(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::DBUG);
@@ -60,6 +62,8 @@ namespace krakoa
 #define INIT_LOGS()                             ::krakoa::Logger::ClientInit();
 #define SET_MIN(minLvl)                         ::krakoa::Logger::GetClientLogger().SetMinimumLoggingLevel(minLvl);
 #define TOGGLE_LOGGING()                        ::krakoa::Logger::GetClientLogger().ToggleLoggingEnabled();
+#define DISABLE_FILE_OUTPUT()                   ::krakoa::Logger::GetClientLogger().SetCacheMode(true);
+#define ENABLE_FILE_OUTPUT()                    ::krakoa::Logger::GetClientLogger().SetCacheMode(false);
 #define CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetClientLogger().ChangeOutputDirectory(destination);
 #define CHANGE_LOGS_FILENAME(name)              ::krakoa::Logger::GetClientLogger().ChangeFilename(name);
 #define DBUG(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::DBUG);

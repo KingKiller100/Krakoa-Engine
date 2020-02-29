@@ -7,12 +7,15 @@
 
 namespace krakoa::events
 {
-	using namespace kMaths;
-	using namespace klib;
-
 #if defined (_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable:4251)
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector2<float>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector2<int>;
+
+	using namespace kmaths;
+	using namespace klib;
+
 
 	class KRAKOA_API ApplicationEvent : public Event
 	{

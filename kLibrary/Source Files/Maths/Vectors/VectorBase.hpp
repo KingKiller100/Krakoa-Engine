@@ -2,7 +2,7 @@
 
 #include <HelperMacros.hpp>
 
-namespace kMaths
+namespace kmaths
 {
 	template <typename T>
 	struct VectorBase
@@ -49,7 +49,7 @@ namespace kMaths
 		{
 			if (VectorBase::Magnitude() > max)
 			{
-				*this = kMaths::VectorNormalize(*this) * max;
+				*this = kmaths::VectorNormalize(*this) * max;
 			}
 		}
 

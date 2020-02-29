@@ -165,7 +165,6 @@ namespace klib::kLogs
 	{
 		const auto endLogLine = "\n***********************************************************************\n\t\t Logging Concluded \n***********************************************************************\n\n";
 		AddToLogBuffer(endLogLine);
-		OutputToSubSystems(endLogLine, LLevel::BANR);
 		OutputLogToFile();
 		enable_kLogging = false;
 	}

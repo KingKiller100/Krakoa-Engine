@@ -2,8 +2,6 @@
 #include <Core/Application.hpp>
 
 #include <Core/Logger.hpp>
-#include <Events System/ApplicationEvent.hpp>
-
 #include <Utility/Timer/kTimer.hpp>
 
 namespace krakoa
@@ -12,12 +10,15 @@ namespace krakoa
 	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
 
 	Application::Application()
-	: isRunning(false)
+		: isRunning(false),
+		fpsCounter(60)
 	{
 		KRK_INIT_LOGS();
+		KRK_SET_MIN(kLogs::LLevel::DBUG);
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
-	
+
 		window = std::unique_ptr<iWindow>(iWindow::Create());
+		window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 	}
 
 	Application::~Application()
@@ -28,11 +29,30 @@ namespace krakoa
 		isRunning = true;
 	}
 
+	void Application::OnEvent(events::Event& e)
+	{
+		events::EventDispatcher dispatcher(e);
+
+		dispatcher.Dispatch<events::WindowClosedEvent>([this](events::WindowClosedEvent& e) -> bool
+			{
+				return Application::OnWindowClosed(e);
+			});
+
+		KRK_DBUG(e.ToString());
+	}
+
+	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
+	{
+		isRunning = false;
+		return true;
+	}
+
 	void Application::Run()
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
-		std::cout << "dt: " << deltaTime << "\n";
-		//KRK_NORM(kFormat::ToString("%02.02f fps", deltaTime));
+		const auto fps = fpsCounter.GetFPS(deltaTime);
+		//std::cout << fps << " fps\n";
+
 		window->OnUpdate();
 	}
 

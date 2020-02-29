@@ -43,6 +43,7 @@ namespace krakoa::events
 
 	class KRAKOA_API KeyReleasedEvent : public KeyEvent
 	{
+	public:
 		KeyReleasedEvent(int keycode)
 			: KeyEvent(keycode)
 		{}

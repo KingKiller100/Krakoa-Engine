@@ -37,7 +37,7 @@ namespace krakoa::events
 		
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Mouse Moved Event: (%d, %d)", position.X(), position.Y());
+			return klib::kFormat::ToString("Mouse Moved Event: (%.f, %.f)", position.X(), position.Y());
 		}
 
 		EVENT_CLASS_TYPE(MOUSE_MOVE)
@@ -65,7 +65,7 @@ namespace krakoa::events
 		
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Mouse Scrolled Event: (%d, %d)", offset.X(), offset.Y());
+			return klib::kFormat::ToString("Mouse Scrolled Event: (%.f, %.f)", offset.X(), offset.Y());
 		}
 		
 		EVENT_CLASS_TYPE(MOUSE_SCROLL)

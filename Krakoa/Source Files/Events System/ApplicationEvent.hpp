@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Events System/Event.hpp>
+
 #include <Maths/Vectors/Vector2.hpp>
-#include "Utility/Format/kFormatToString.hpp"
+#include <Utility/Format/kFormatToString.hpp>
 
 namespace krakoa::events
 {

@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <iWindow.hpp>
 
+#include <memory>
+
 namespace krakoa
 {
 	class WindowsWindow : public iWindow
@@ -29,8 +31,10 @@ namespace krakoa
 		virtual void Init(const WindowProperties& props);
 		virtual void ShutDown();
 
+		void SetUpCallBacks();
+
 	private:
-		GLFWwindow* window;
+		GLFWwindow *window;
 
 		struct WindowData
 		{

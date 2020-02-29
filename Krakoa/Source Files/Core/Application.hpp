@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Core/EngineCore.hpp>
+#include <Core/FPSCounter.hpp>
+#include <Events System/Event.hpp>
+#include <Events System/ApplicationEvent.hpp>
 #include <iWindow.hpp>
 
 #include <memory>
@@ -25,9 +28,15 @@ namespace krakoa
 		constexpr  bool IsRunning() const;
 		virtual void Shutdown() = 0;
 
+	private:
+		void OnEvent(events::Event& e);
+		bool OnWindowClosed(events::WindowClosedEvent& e);
+
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> window;
+		FPSCounter fpsCounter;
+
 	};
 
 	Application* CreateApplication();

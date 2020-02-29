@@ -66,6 +66,17 @@ project "Krakoa"
         "opengl32.lib"
     }
 
+    prebuildcommands
+    {
+        ("IF EXIST \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" /f /q)")
+    }
+
+    postbuildcommands
+    {
+        --("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(OutDir)\" /q")
+        ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\\" /q")
+    }
+
     filter "system:Windows"
         staticruntime "On"
         systemversion "latest"
@@ -154,16 +165,6 @@ project "Hooper2"
         defines
         {
             "KRAKOA_OS_WINDOWS"
-        }
-
-        prebuildcommands
-        {
-            ("IF EXIST \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" /f /q)")
-        }
-
-        postbuildcommands
-        {
-            ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(OutDir)\" /q")
         }
 
     filter "configurations:Debug"

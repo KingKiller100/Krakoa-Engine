@@ -16,7 +16,7 @@ namespace krakoa
 		Vector2u dimensions;
 
 		WindowProperties(const std::string&& title = "Krakoa Engine",
-			const Vector2u dimensions = Vector2u(1280, 720))
+			const Vector2u dimensions = Vector2u(700, 400))
 			: title(title), dimensions(dimensions)
 		{}
 	};

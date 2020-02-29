@@ -2,6 +2,9 @@
 #include <Platform/WindowsWindow.hpp>
 
 #include <Core/Logger.hpp>
+#include <Events System/ApplicationEvent.hpp>
+#include <Events System/KeyEvent.hpp>
+#include <Events System/MouseEvent.hpp>
 
 #include <Utility/Format/kFormatToString.hpp>
 #include <Utility/Debug Helper/kAssert.hpp>
@@ -13,6 +16,11 @@ namespace krakoa
 	using namespace klib;
 
 	static bool isInitialized = false;
+
+	static void GLFWErrorCallback(int errorCode, const char* description)
+	{
+		KRK_ERRR(kFormat::ToString("GLFW ERROR: %d:%s", errorCode, description));
+	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
 	{
@@ -36,27 +44,114 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_INFO(ToString("Creating Window %s with dimensions (%d, %d)", 
-			data.title.c_str(), 
-			data.dimensions.X(), 
+		KRK_INFO(ToString("Creating Window %s with dimensions (%d, %d)",
+			data.title.c_str(),
+			data.dimensions.X(),
 			data.dimensions.Y()));
 
 		if (!isInitialized)
 		{
 			const auto success = glfwInit();
-			kAssert(success, "GLFW has failed to be initialized!")
+			glfwSetErrorCallback(GLFWErrorCallback);
+			kAssert(success, "GLFW has failed to be initialized!");
 			isInitialized = true;
 		}
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(window);
-		glfwSetWindowUserPointer(window, &data);
+
+		auto windowPtr = window;
+
+		glfwMakeContextCurrent(windowPtr);
+		glfwSetWindowUserPointer(windowPtr, &data);
 		SetVsync(true);
+
+		SetUpCallBacks();
 	}
 
 	void krakoa::WindowsWindow::ShutDown()
 	{
 		glfwDestroyWindow(window);
+	}
+
+	void WindowsWindow::SetUpCallBacks()
+	{
+		// Set up window callbacks
+		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
+			{
+				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
+				data.dimensions = kMaths::Vector2u(width, height);
+				WindowResizeEvent e(width, height);
+				data.cb(e);
+			});
+		glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
+			{
+				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
+				WindowClosedEvent e;
+				data.cb(e);
+			});
+		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+			{
+				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
+
+				switch (action) {
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent e(key, 0);
+					data.cb(e);
+					break;
+				}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent e(key, 1);
+					data.cb(e);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent e(key);
+					data.cb(e);
+					break;
+				}
+				default:
+					break;
+				}
+			});
+		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
+			{
+				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
+				switch (action) {
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent e(button);
+					data.cb(e);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent e(button);
+					data.cb(e);
+					break;
+				}
+				default:
+					break;
+				}
+			});
+		glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset)
+			{
+				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
+				const auto offsets = Vector2f(static_cast<float>(xOffset), static_cast<float>(yOffset));
+
+				MouseScrolledEvent e(offsets);
+				data.cb(e);
+			});
+		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos)
+			{
+				auto& data = *(WindowData*)(glfwGetWindowUserPointer(window));
+				const auto positions = Vector2f(static_cast<float>(xPos), static_cast<float>(yPos));
+
+				MouseMovedEvent e(positions);
+				data.cb(e);
+			});
 	}
 
 	void krakoa::WindowsWindow::OnUpdate()

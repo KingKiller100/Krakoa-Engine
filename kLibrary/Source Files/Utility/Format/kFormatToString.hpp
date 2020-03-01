@@ -25,18 +25,37 @@ namespace klib
 
 		template<typename T, typename U = T>
 			constexpr 
-				std::enable_if_t<std::is_same_v<U, std::string>, const char*>
-				GetValue(const U && str)
+				std::enable_if_t<std::is_same_v<std::remove_const_t<U>, std::string>, const char*>
+				GetValue(U str)
 		{
 			return str.data();
 		}
 
 		template<typename T, typename U = T>
-		constexpr std::enable_if_t<
-			std::is_arithmetic_v<U>, U>
-			GetValue(const T str)
+		constexpr 
+			std::enable_if_t<std::is_arithmetic_v<U>, U>
+			GetValue(const T obj)
 		{
-			return str;
+			return obj;
+		}
+
+		template<typename T, typename U = T>
+		constexpr 
+			std::enable_if_t<(
+				!std::is_arithmetic_v<std::remove_const_t<U>> &&
+				!std::is_same_v<std::remove_const_t<U>, std::string> &&
+				!std::is_pointer_v<std::remove_const_t<U>>
+				), const char *>
+			GetValue(const T obj)
+		{
+			return obj.ToString().data();
+		}
+
+		template<typename T, typename U = T>
+			std::enable_if_t<std::is_pointer_v<std::remove_const_t<U>>, U>
+			GetValue(U obj)
+		{
+			return obj;
 		}
 
 		// Only designed for char or wide char strings
@@ -45,6 +64,8 @@ namespace klib
 		{
 			size_t length = 0;
 			std::unique_ptr<CharType[]> buffer;
+
+			auto ans = GetValue<T>(arg);
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{

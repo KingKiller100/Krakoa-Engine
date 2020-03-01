@@ -54,9 +54,9 @@ namespace krakoa
 #define KRK_SUSPEND()                               ::krakoa::Logger::GetCoreLogger().SuspendFileLogging();
 #define KRK_UNSUSPEND()                             ::krakoa::Logger::GetCoreLogger().UnsuspendFileLogging();
 #define KRK_END()                                   ::krakoa::Logger::GetCoreLogger().FinalOutput();
-#define KRK_GET_LAST()                              ::krakoa::Logger::GetCoreLogger().GetLastLoggedEntry();
-#define KRK_ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetCoreLogger().ErasePreviousEntries(numOfPrevEntries);
-#define KRK_CLEAR()                                 ::krakoa::Logger::GetCoreLogger().Clear();
+#define KRK_GET_LAST()                              ::krakoa::Logger::GetCoreLogger().GetLastCachedEntry();
+#define KRK_ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries);
+#define KRK_CLEAR()                                 ::krakoa::Logger::GetCoreLogger().ClearCache();
 
 // CLIENT SIDE Log Macros
 #define INIT_LOGS()                             ::krakoa::Logger::ClientInit();
@@ -76,6 +76,6 @@ namespace krakoa
 #define SUSPEND()                               ::krakoa::Logger::GetClientLogger().SuspendFileLogging();
 #define UNSUSPEND()                             ::krakoa::Logger::GetClientLogger().UnsuspendFileLogging();
 #define END()                                   ::krakoa::Logger::GetClientLogger().FinalOutput();
-#define GET_LAST()                              ::krakoa::Logger::GetClientLogger().GetLastLoggedEntry();
-#define ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetClientLogger().ErasePreviousEntries(numOfPrevEntries);
-#define CLEAR()                                 ::krakoa::Logger::GetClientLogger().Clear();
+#define GET_LAST()                              ::krakoa::Logger::GetClientLogger().GetLastCachedEntry();
+#define ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetClientLogger().ErasePreviousCacheEntries(numOfPrevEntries);
+#define CLEAR()                                 ::krakoa::Logger::GetClientLogger().ClearCache();

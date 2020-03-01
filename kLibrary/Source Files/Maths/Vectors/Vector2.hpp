@@ -51,13 +51,25 @@ namespace kmaths
 			return this->y;
 		}
 
-		USE_RESULT constexpr Vector2 Perpendicular() const
+		template<typename U = T>
+		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>, Vector2> Perpendicular() const
 		{
-			if _CONSTEXPR_IF(!std::is_floating_point_v<T> && !std::is_signed_v<T>)
-				throw std::exception("Cannot make perpenducular for type unsigned (this func uses minus signs");
-			
+			return *this;
+		}
+
+		template<typename U = T>
+		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>, Vector2> Perpendicular() const
+		{
 			return Vector2(-this->y, this->x);
 		}
+
+		/*USE_RESULT constexpr Vector2 Perpendicular() const
+		{
+			if _CONSTEXPR_IF(!std::is_signed_v<T>)
+				return *this;
+			
+			return Vector2(-this->y, this->x);
+		}*/
 		
 		// Operators
 

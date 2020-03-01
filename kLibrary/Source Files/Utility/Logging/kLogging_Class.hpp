@@ -159,7 +159,7 @@ namespace klib::kLogs
 		 * \return
 		 *		String of the final log entry
 		*/
-		LogQueue::value_type GetLastLoggedEntry();
+		LogQueue::value_type GetLastCachedEntry();
 
 		/**
 		 * \brief
@@ -167,20 +167,20 @@ namespace klib::kLogs
 		 * \param numOfEntries
 		 *		Amount of entries to delete
 		*/
-		void ErasePreviousEntries(const size_t numOfEntries);
+		void ErasePreviousCacheEntries(const size_t numOfEntries);
 
 		/**
 		 * \brief
 		 *		Deletes all log entries
 		*/
-		void Clear();
+		void ClearCache();
 
 	private:
 		/**
 		 * \brief
 		 *		Creates the log file with the cached log entries
 		 */
-		void OutputLogToFile();
+		void OutputLogToFile(const std::string_view& line);
 
 		/**
 		 * \brief
@@ -223,7 +223,7 @@ namespace klib::kLogs
 
 		bool enable_kLogging;
 		bool inCacheMode;
-		std::ofstream logFileStream;
+		std::fstream logFileStream;
 	};
 }
 

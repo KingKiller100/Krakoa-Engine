@@ -13,7 +13,7 @@ namespace klib::kLogs
 	using namespace kCalendar;
 	using namespace kFileSystem;
 
-	const char* Logging::kLogs_Empty = "NO ENTRIES! LOGS ARE EMPTY";
+	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
 	std::unordered_map<LLevel, const char*> kLogs_LLevelMap;
 	std::unordered_map<LLevel, Logging::LConsoleColour> kLogs_ConsoleColourMap;
 
@@ -42,7 +42,7 @@ namespace klib::kLogs
 
 	Logging::~Logging()
 	{
-		if (GetLastLoggedEntry() != Logging::kLogs_Empty)
+		if (GetLastCachedEntry() != Logging::kLogs_Empty)
 			FinalOutput();
 	}
 
@@ -125,14 +125,13 @@ namespace klib::kLogs
 		const auto conclusionCurrentLog = "\n***********************************************************************\n";
 		AddToLogBuffer(conclusionCurrentLog);
 		OutputToSubSystems(conclusionCurrentLog, LLevel::NORM);
-		OutputLogToFile();
 		CloseLogFile();
 	}
 
 	void Logging::UnsuspendFileLogging()
 	{
 		inCacheMode = false;
-		OutputLogToFile();
+		OutputLogToFile("");
 	}
 
 
@@ -163,7 +162,6 @@ namespace klib::kLogs
 
 		AddToLogBuffer(logLine);
 		OutputToSubSystems(logLine, lvl);
-		OutputLogToFile();
 	}
 
 	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type) noexcept
@@ -177,16 +175,14 @@ namespace klib::kLogs
 
 		AddToLogBuffer(bannerLine);
 		OutputToSubSystems(bannerLine, LLevel::BANR);
-		OutputLogToFile();
 	}
 
 	void Logging::FinalOutput()
 	{
-		const auto endLogLine = "(\n***********************************************************************\n\t\t"
+		const auto endLogLine = "\n***********************************************************************\n\t\t"
 								"Logging Concluded" 
-								"\n***********************************************************************\n\n)";
+								"\n***********************************************************************\n\n";
 		AddToLogBuffer(endLogLine);
-		OutputLogToFile();
 		CloseLogFile();
 		enable_kLogging = false;
 	}
@@ -194,13 +190,19 @@ namespace klib::kLogs
 	void Logging::CloseLogFile()
 	{
 		if (logFileStream.is_open())
+		{
+			logFileStream.flush();
 			logFileStream.close();
+		}
 		inCacheMode = true;
 	}
 
 	void Logging::AddToLogBuffer(const std::string_view& logLine)
 	{
-		logEntryQueue.emplace_back(logLine.data());
+		if (inCacheMode)
+			logEntryQueue.emplace_back(logLine.data());
+		else
+			OutputLogToFile(logLine);
 	}
 
 	void Logging::OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) noexcept
@@ -217,18 +219,19 @@ namespace klib::kLogs
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
 	}
 
-	void Logging::OutputLogToFile()
+	void Logging::OutputLogToFile(const std::string_view& line)
 	{
 		if (inCacheMode)
 			return;
 
 		auto fullCache = GetFullCache();
+		fullCache += line;
 		
 		if (!logFileStream.is_open())
 		{
 			const auto path = directory + filename;
 			CreateNewDirectories(directory.c_str());
-			logFileStream.open(path, std::ios::out | std::ios::app);
+			logFileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
 		}
 
 		if (logFileStream)
@@ -238,10 +241,8 @@ namespace klib::kLogs
 	std::string Logging::GetFullCache()
 	{
 		if (!(enable_kLogging))
-		{
 			return "\t\tLOGGING NOT INITIALIZED!\n\tTO USE CALL THE 'INITIALIZE' METHOD BEFORE USES";
-		}
-		
+
 		LogQueue::value_type fullLog;
 		while (!logEntryQueue.empty())
 		{
@@ -251,25 +252,29 @@ namespace klib::kLogs
 		return fullLog;
 	}
 
-	Logging::LogQueue::value_type Logging::GetLastLoggedEntry()
+	Logging::LogQueue::value_type Logging::GetLastCachedEntry()
 	{
 		if (!logEntryQueue.empty())
 			return logEntryQueue.back();
 
-		OutputToSubSystems(kLogs_Empty, LLevel::ERRR);
-		
+		if (!inCacheMode)
+			return "CHECK LOGGING FILE: " + directory + filename;
+
 		return kLogs_Empty;
 	}
 
-	void Logging::ErasePreviousEntries(const size_t numOfEntries)
+	void Logging::ErasePreviousCacheEntries(const size_t numOfEntries)
 	{
+		if (logEntryQueue.empty())
+			return;
+
 		const auto AfterLastEntryIter = logEntryQueue.cend();
 		const auto startPosition = AfterLastEntryIter - numOfEntries;
 
 		logEntryQueue.erase(startPosition, AfterLastEntryIter);
 	}
 
-	void Logging::Clear()
+	void Logging::ClearCache()
 	{
 		if (!logEntryQueue.empty())
 			logEntryQueue.clear();

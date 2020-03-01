@@ -81,11 +81,11 @@ namespace klib
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				return _mkdir(directory) == 0;
+				return _mkdir(directory) == 0; // 0 == SUCCESS
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				return _wmkdir(directory) == 0;
+				return _wmkdir(directory) == 0; // 0 == SUCCESS
 			}
 
 			return false;
@@ -146,11 +146,11 @@ namespace klib
 			if constexpr (std::is_same_v<CharType, char>)
 				if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 				{
-					return DeleteFileA(fullFilePath) == IS_TRUE; // 1 == TRUE
+					return remove(fullFilePath) == 0; // 0 == SUCCESS
 				}
 				else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 				{
-					return DeleteFileW(fullFilePath) == IS_TRUE; // 1 == TRUE
+					return _wremove(fullFilePath) == 0; // 0 == SUCCESS
 				}
 
 			return false;
@@ -173,11 +173,11 @@ namespace klib
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				return _rmdir(directory) == 0;
+				return _rmdir(directory) == 0; // 0 == SUCCESS
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				return _wrmkdir(directory) == 0;
+				return _wrmkdir(directory) == 0; // 0 == SUCCESS
 			}
 
 			return false;

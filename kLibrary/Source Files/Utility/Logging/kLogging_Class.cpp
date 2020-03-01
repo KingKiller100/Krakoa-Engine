@@ -21,7 +21,7 @@ namespace klib::kLogs
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
-		filename(AppendFileExtension(ToString("Logs - %s", GetDateInNumericalFormat(false).c_str()).c_str(), ".log")),
+		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(false)).c_str(), ".log")),
 		enable_kLogging(false),
 		inCacheMode(false)
 	{	}

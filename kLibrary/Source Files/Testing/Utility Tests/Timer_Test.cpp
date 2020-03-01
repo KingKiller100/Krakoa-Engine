@@ -28,7 +28,7 @@ namespace kTest::utility
 			std::cout << "Emplace_back Test " << i << ": " << dt << "us (Microseconds)\n";
 		}
 
-		std::cout << testTime.GetName() << " Time: " << testTime.GetLifeTime<Millis>() << "ms (Milliseconds)\n";
+		std::cout << testTime.GetName() << "Total Test Time: " << testTime.GetLifeTime<Micros>() / 1000000.0 << "s (Seconds)\n";
 	}
 }
 

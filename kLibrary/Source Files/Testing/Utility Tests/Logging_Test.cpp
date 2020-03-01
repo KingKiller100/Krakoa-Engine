@@ -3,6 +3,7 @@
 
 #include <Utility/Logging/kLogging_Class.hpp>
 #include <Utility/File System/kFileSystem.hpp>
+#include <Utility/Calendar/kCalendar.hpp>
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -24,6 +25,11 @@ namespace kTest::utility
 		
 		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
 		testLogger->ChangeOutputDirectory(dir);
+		
+		testLogger->SuspendFileLogging();
+
+		const auto previousLogFile = dir + "Logs - " + klib::kCalendar::GetDateInNumericalFormat(false) + ".log";
+		klib::kFileSystem::RemoveFile(previousLogFile.c_str());
 
 		const auto filename = "DiffFileName";
 		testLogger->ChangeFilename(filename);
@@ -56,9 +62,9 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("INFORMATIVE!") != std::string::npos);
 
-		testLogger->AddEntry("Done", LLevel::WARN);
+		testLogger->AddEntry("WARN", LLevel::WARN);
 		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("Done") != std::string::npos);
+		VERIFY(last.find("WARN") != std::string::npos);
 
 		testLogger->AddEntry("ERROR!", LLevel::ERRR, __FILE__, __LINE__);
 		last = testLogger->GetLastCachedEntry();
@@ -72,12 +78,13 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
 				
+		testLogger->UnsuspendFileLogging();
+
 		testLogger->OutputToFatalFile("FATAL!", __FILE__, __LINE__);
 
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("EMPTY") != std::string::npos);
 		
-		testLogger->UnsuspendFileLogging();
 		testLogger->FinalOutput();
 
 		const auto fullFilePathToDelete = dir + filename + ".log";

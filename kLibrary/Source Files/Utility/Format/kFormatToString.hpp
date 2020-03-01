@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 #include <stdexcept>
+#include <type_traits>
+#include <xtr1common>
 
 #if defined (_MSC_VER)
 #	pragma warning(push)
@@ -21,9 +23,25 @@ namespace klib
 			return ss.str();
 		}
 
+		template<typename T, typename U = T>
+			constexpr 
+				std::enable_if_t<std::is_same_v<U, std::string>, const char*>
+				GetValue(const U && str)
+		{
+			return str.data();
+		}
+
+		template<typename T, typename U = T>
+		constexpr std::enable_if_t<
+			std::is_arithmetic_v<U>, U>
+			GetValue(const T str)
+		{
+			return str;
+		}
+
 		// Only designed for char or wide char strings
 		template<class CharType, typename T, typename ...Ts>
-		constexpr std::basic_string<CharType> ToString(const CharType* format, T&& arg, Ts&& ...argPack)
+		constexpr std::basic_string<CharType> ToString(const CharType* format, T arg, Ts ...argPack)
 		{
 			size_t length = 0;
 			std::unique_ptr<CharType[]> buffer;

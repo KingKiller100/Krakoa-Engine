@@ -37,6 +37,10 @@ namespace krakoa
 				return Application::OnWindowClosed(e);
 			});
 
+		auto str = std::string("w");
+		const auto ts = kFormat::GetValue<std::string>(str);
+		//const auto ts = kFormat::ToString("%s", kFormat::GetValue(std::string("w")));
+
 		KRK_DBUG(e.ToString());
 	}
 

@@ -32,7 +32,7 @@ namespace krakoa
 
 		virtual void OnUpdate() = 0;
 
-		virtual kmaths::Vector2s& GetDimensions() = 0;
+		virtual kmaths::Vector2u& GetDimensions() = 0;
 		virtual unsigned GetWidth() const = 0;
 		virtual unsigned GetHeight() const = 0;
 

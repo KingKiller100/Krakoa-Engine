@@ -163,7 +163,7 @@ namespace krakoa
 		glfwSwapBuffers(window);
 	}
 
-	kmaths::Vector2s& krakoa::WindowsWindow::GetDimensions()
+	kmaths::Vector2u& krakoa::WindowsWindow::GetDimensions()
 	{
 		return data.dimensions;
 	}

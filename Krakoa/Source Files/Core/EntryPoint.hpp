@@ -6,27 +6,28 @@
 
 extern krakoa::Application* krakoa::CreateApplication();
 
-void RunTestsOnkLibrary();
+bool RunTestsOnkLibrary();
 
 int main(int argc, char** argv)
 {
-	RunTestsOnkLibrary();
+	if (RunTestsOnkLibrary())
+		return EXIT_SUCCESS;
 
 	auto app = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
 
 	app->Initialize();
-	
+
 	unsigned count = 0;
 	do {
 		app->Run();
-		
+
 		count++;
 
 		if (count > 10000)
 			app->Shutdown(); // placed for now so that the application doesn't run endlessly
 	} while (app->IsRunning());
-	 
-	return 0;
+
+	return EXIT_SUCCESS;
 }
 
 
@@ -34,13 +35,14 @@ int main(int argc, char** argv)
 
 #ifdef KRAKOA_TEST
 #	include <Core/TestDriver.hpp>
-	void RunTestsOnkLibrary()
-	{
-		auto testDriver = tests::TestDriver();
-		testDriver.Initialize();
-		testDriver.RunTests();
-		testDriver.ShutDown();
-	};
+bool RunTestsOnkLibrary()
+{
+	auto testDriver = tests::TestDriver();
+	testDriver.Initialize();
+	testDriver.RunTests();
+	testDriver.ShutDown();
+	return true;
+};
 #else
-	inline void RunTestsOnkLibrary() {	}
+inline bool RunTestsOnkLibrary() { return false; }
 #endif // KRAKOA_TEST

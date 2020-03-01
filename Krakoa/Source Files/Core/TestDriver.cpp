@@ -17,6 +17,8 @@ namespace tests
 	void TestDriver::Initialize()
 	{
 		testMan.Initialize();
+		testMan.InitializeMathsTests();
+		testMan.InitializeUtilityTests();
 	}
 
 	void TestDriver::ShutDown()

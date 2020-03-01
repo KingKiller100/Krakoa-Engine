@@ -130,7 +130,7 @@ namespace klib::kLogs
 
 	void Logging::UnsuspendFileLogging()
 	{
-		inCacheMode = false;
+		SetCacheMode(false);
 		OutputLogToFile("");
 	}
 
@@ -194,7 +194,7 @@ namespace klib::kLogs
 			logFileStream.flush();
 			logFileStream.close();
 		}
-		inCacheMode = true;
+		SetCacheMode(true);
 	}
 
 	void Logging::AddToLogBuffer(const std::string_view& logLine)

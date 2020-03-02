@@ -2,7 +2,7 @@ project "kLibrary"
     location "."
     kind "StaticLib"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++latest"
     toolset "v142"
     characterset ("MBCS")
 

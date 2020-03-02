@@ -33,7 +33,7 @@ project "Krakoa"
     location "Krakoa"
     kind "SharedLib"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++latest"
     toolset "v142"
     characterset ("MBCS")
 
@@ -130,7 +130,7 @@ project "Hooper2"
     location "ExampleGames/Hooper2/"
     kind "ConsoleApp"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++latest"
     toolset "v142"
     characterset ("MBCS")
 

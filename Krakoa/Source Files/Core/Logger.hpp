@@ -35,13 +35,20 @@ namespace krakoa
 }
 
 // Initializer
+#define LVL_DBUG                                   ::krakoa::LLevel::DBUG
+#define LVL_NORM                                   ::krakoa::LLevel::NORM
+#define LVL_INFO                                   ::krakoa::LLevel::INFO
+#define LVL_WARN                                   ::krakoa::LLevel::WARN
+#define LVL_ERRR                                   ::krakoa::LLevel::ERRR
+#define LVL_FATL                                   ::krakoa::LLevel::FATL
+
 
 // ENGINE SIDE Log Macros
 #define KRK_INIT_LOGS()                             ::krakoa::Logger::CoreInit();
 #define KRK_SET_MIN(minLvl)                         ::krakoa::Logger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
 #define KRK_TOGGLE_LOGGING()                        ::krakoa::Logger::GetCoreLogger().ToggleLoggingEnabled();
 #define KRK_DISABLE_FILE_OUTPUT()                   ::krakoa::Logger::GetCoreLogger().SetCacheMode(true);
-#define KRK_ENABLE_FILE_OUTPUT()                   ::krakoa::Logger::GetCoreLogger().SetCacheMode(false);
+#define KRK_ENABLE_FILE_OUTPUT()                    ::krakoa::Logger::GetCoreLogger().SetCacheMode(false);
 #define KRK_CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetCoreLogger().ChangeOutputDirectory(destination);
 #define KRK_CHANGE_LOGS_FILENAME(name)              ::krakoa::Logger::GetCoreLogger().ChangeFilename(name);
 #define KRK_DBUG(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::DBUG);

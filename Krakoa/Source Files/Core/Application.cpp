@@ -14,6 +14,7 @@ namespace krakoa
 		fpsCounter(60)
 	{
 		KRK_INIT_LOGS();
+		KRK_SET_MIN(LVL_NORM);
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
 		window = std::unique_ptr<iWindow>(iWindow::Create());

@@ -6,6 +6,7 @@
 #include <Utility/File System/kFileSystem.hpp>
 
 #include <string_view>
+#include <unordered_map>
 
 namespace klib::kLogs
 {

@@ -4,7 +4,6 @@
 #include <fstream>
 #include <string>
 #include <deque>
-#include <unordered_map>
 
 namespace klib::kLogs
 {

@@ -3,8 +3,6 @@
 #include <cstdio>
 #include <memory>
 #include <string>
-#include <stdexcept>
-#include <type_traits>
 #include <xtr1common>
 
 #if defined (_MSC_VER)
@@ -25,15 +23,39 @@ namespace klib
 
 		template<typename T, typename U = T>
 			constexpr 
-				std::enable_if_t<std::is_same_v<std::remove_const_t<U>, std::string>, const char*>
-				GetValue(U str)
+				std::enable_if_t<std::is_same_v<std::remove_const_t<U>, std::string>, std::string>
+				GetValue(const U& str)
 		{
-			return str.data();
+			return str;
+		}
+
+		template<typename T, typename U = T>
+			constexpr 
+				std::enable_if_t<std::is_same_v<std::remove_const_t<U>, std::wstring>, std::wstring>
+				GetValue(const U& str)
+		{
+			return str;
 		}
 
 		template<typename T, typename U = T>
 		constexpr 
-			std::enable_if_t<std::is_arithmetic_v<U>, U>
+			std::enable_if_t<std::is_signed_v<U> && !std::is_floating_point_v<U>, std::string>
+			GetValue(const T obj)
+		{
+			return obj;
+		}
+
+		template<typename T, typename U = T>
+		constexpr 
+			std::enable_if_t<std::is_unsigned_v<U>, std::string>
+			GetValue(const T obj)
+		{
+			return obj
+		}
+
+		template<typename T, typename U = T>
+		constexpr 
+			std::enable_if_t<std::is_floating_point_v<U>, U>
 			GetValue(const T obj)
 		{
 			return obj;
@@ -44,8 +66,9 @@ namespace klib
 			std::enable_if_t<(
 				!std::is_arithmetic_v<std::remove_const_t<U>> &&
 				!std::is_same_v<std::remove_const_t<U>, std::string> &&
-				!std::is_pointer_v<std::remove_const_t<U>>
-				), const char *>
+				!std::is_pointer_v<std::remove_const_t<U>> &&
+				!std::is_unsigned_v<U>
+				), std::string>
 			GetValue(const T obj)
 		{
 			return obj.ToString().data();
@@ -57,15 +80,15 @@ namespace klib
 		{
 			return obj;
 		}
-
+  
 		// Only designed for char or wide char strings
 		template<class CharType, typename T, typename ...Ts>
 		constexpr std::basic_string<CharType> ToString(const CharType* format, T arg, Ts ...argPack)
 		{
+			using StringWriter = std::basic_string<CharType>;
+
 			size_t length = 0;
 			std::unique_ptr<CharType[]> buffer;
-
-			auto ans = GetValue<T>(arg);
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
@@ -82,9 +105,9 @@ namespace klib
 				swprintf_s(buffer.get(), length, format, arg, argPack...);
 			}
 			else
-				throw std::runtime_error("Can only support \"char\" and \"wchar_t\" character types");
+				static_assert(!std::is_same_v<CharType, char> && !std::is_same_v<CharType, wchar_t> , "Can only support \"char\" and \"wchar_t\" character types");
 			
-			const auto formattedText = std::basic_string<CharType>(buffer.get(), buffer.get() + (length - 1));
+			const auto formattedText = StringWriter(buffer.get(), buffer.get() + (length - 1));
 			return formattedText;
 		}
 

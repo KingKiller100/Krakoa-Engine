@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Maths/Vectors/Vector2.hpp>
-
 #include <Core/EngineCore.hpp>
 #include <Events System/Event.hpp>
+
+#include <Maths/Vectors/Vector2.hpp>
 
 namespace krakoa
 {

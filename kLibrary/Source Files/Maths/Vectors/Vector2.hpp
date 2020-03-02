@@ -2,6 +2,9 @@
 
 #include <Maths/Vectors/VectorBase.hpp>
 
+#include <type_traits>
+#include <xtr1common>
+
 namespace kmaths
 {
 	template <typename T>

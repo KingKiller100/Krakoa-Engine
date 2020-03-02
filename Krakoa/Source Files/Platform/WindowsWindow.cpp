@@ -6,10 +6,12 @@
 #include <Events System/KeyEvent.hpp>
 #include <Events System/MouseEvent.hpp>
 
-#include <Utility/Format/kFormatToString.hpp>
 #include <Utility/Debug Helper/kAssert.hpp>
+#include <Utility/Format/kFormatToString.hpp>
 
 #include <memory>
+#include <type_traits>
+#include <xtr1common>
 
 namespace krakoa
 {

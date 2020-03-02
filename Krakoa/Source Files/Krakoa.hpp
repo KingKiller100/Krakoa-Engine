@@ -1,7 +1,7 @@
 #pragma once
 
-// Maths
-#include <Maths/kMaths.hpp>
+// kLibrary
+#include <kLib.hpp>
 
 // For client game applications
 #include <Core/EngineCore.hpp>

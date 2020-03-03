@@ -94,6 +94,7 @@ project "Krakoa"
         {
             "%{prj.name}/Source Files/**/test*"
         }
+        buildoptions "/MDd"
         symbols "On"
         runtime "Debug"
 
@@ -104,6 +105,7 @@ project "Krakoa"
             "KLIB_TEST"
         }
         symbols "On"
+        buildoptions "/MDd"
         runtime "Debug"
 
     filter "configurations:Release"
@@ -113,6 +115,7 @@ project "Krakoa"
         {
             "%{prj.name}/Source Files/**/test*"
         }
+        buildoptions "/MD"
         runtime "Release"
 
     filter "configurations:Profile"
@@ -122,6 +125,7 @@ project "Krakoa"
         {
             "%{prj.name}/Source Files/**/test*"
         }
+        buildoptions "/MD"
         runtime "Release"
 
         --filters { "system:windows", "configuration:Release" }
@@ -160,7 +164,6 @@ project "Hooper2"
     filter "system:Windows"
         staticruntime "On"
         systemversion "latest"
-
         
         defines
         {

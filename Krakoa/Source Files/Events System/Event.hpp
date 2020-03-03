@@ -56,6 +56,11 @@ namespace krakoa::events
 			return GetCategoryFlag() & category;
 		}
 
+		USE_RESULT bool isHandled() const
+		{
+			return handled;
+		}
+
 	protected:
 		bool handled = false;
 	};

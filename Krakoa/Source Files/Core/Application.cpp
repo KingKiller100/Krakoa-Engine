@@ -2,6 +2,8 @@
 #include <Core/Application.hpp>
 
 #include <Core/Logger.hpp>
+#include <Rendering/LayerBase.hpp>
+
 #include <Utility/Timer/kTimer.hpp>
 
 namespace krakoa
@@ -38,6 +40,13 @@ namespace krakoa
 				return Application::OnWindowClosed(e);
 			});
 
+		for (auto iter = layerStack.end(); iter != layerStack.begin();)
+		{
+			(*iter)->OnEvent(e);
+			if (e.isHandled())
+				break;
+		}
+
 		KRK_DBUG(e.ToString());
 	}
 
@@ -47,11 +56,24 @@ namespace krakoa
 		return true;
 	}
 
+	void Application::PushLayer(LayerBase* layer)
+	{
+		layerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(LayerBase* overlay)
+	{
+		layerStack.PushOverlay(overlay);
+	}
+
 	void Application::Run()
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 		//std::cout << fps << " fps\n";
+
+		for (LayerBase* layer : layerStack)
+			layer->OnUpdate();
 
 		window->OnUpdate();
 	}

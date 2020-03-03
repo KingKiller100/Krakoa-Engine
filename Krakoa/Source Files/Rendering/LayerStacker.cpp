@@ -1,16 +1,22 @@
 ﻿#include <Precompile.hpp>
 #include <Rendering/LayerStacker.hpp>
 
+#include <Rendering/LayerBase.hpp>
 
 namespace krakoa
 {
 	LayerStacker::LayerStacker()
-		: layerIter(Begin())
-	{
-	}
+		: layerIter(begin())
+	{	}
 
 	LayerStacker::~LayerStacker()
-		= default;
+	{
+		for (auto layer : layerStack)
+		{
+			delete layer;
+			layer = nullptr;
+		}
+	}
 
 	void LayerStacker::PushLayer(LayerBase* layer)
 	{
@@ -24,8 +30,8 @@ namespace krakoa
 
 	void LayerStacker::PopLayer(LayerBase* layer)
 	{
-		auto iter = std::find(Begin(), End(), layer);
-		if (iter != End())
+		auto iter = std::find(begin(), end(), layer);
+		if (iter != end())
 		{
 			layerStack.erase(iter);
 			layerIter--;
@@ -34,19 +40,19 @@ namespace krakoa
 
 	void LayerStacker::PopOverlay(LayerBase* overlay)
 	{
-		auto iter = std::find(Begin(), End(), overlay);
-		if (iter != End())
+		auto iter = std::find(begin(), end(), overlay);
+		if (iter != end())
 		{
 			layerStack.erase(iter);
 		}
 	}
 
-	std::vector<LayerBase*>::iterator LayerStacker::Begin()
+	std::vector<LayerBase*>::iterator LayerStacker::begin()
 	{
 		return layerStack.begin();
 	}
 
-	std::vector<LayerBase*>::iterator LayerStacker::End()
+	std::vector<LayerBase*>::iterator LayerStacker::end()
 	{
 		return layerStack.end();
 	}

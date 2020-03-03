@@ -4,6 +4,7 @@
 #include <Core/FPSCounter.hpp>
 #include <Events System/Event.hpp>
 #include <Events System/ApplicationEvent.hpp>
+#include <Rendering/LayerStacker.hpp>
 #include <iWindow.hpp>
 
 #include <memory>
@@ -14,8 +15,6 @@ namespace krakoa
 #	pragma warning(push)
 #	pragma warning(disable:4251)
 		EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<iWindow, std::default_delete<iWindow>>;
-#	pragma warning(pop)
-#endif
 
 	class KRAKOA_API Application
 	{
@@ -31,13 +30,18 @@ namespace krakoa
 	private:
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
+		void PushLayer(LayerBase* layer);
+		void PushOverlay(LayerBase* overlay);
 
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> window;
 		FPSCounter fpsCounter;
-
+		LayerStacker layerStack;
 	};
 
 	Application* CreateApplication();
+
+#	pragma warning(pop)
+#endif
 }

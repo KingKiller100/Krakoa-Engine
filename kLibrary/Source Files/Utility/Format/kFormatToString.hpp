@@ -75,7 +75,7 @@ namespace klib
 		}
 
 		template<typename T, typename U = T>
-			std::enable_if_t<std::is_pointer_v<std::remove_const_t<U>>, U>
+			std::enable_if_t<std::is_pointer_v<U> , U>
 			GetValue(U obj)
 		{
 			return obj;
@@ -89,6 +89,8 @@ namespace klib
 
 			size_t length = 0;
 			std::unique_ptr<CharType[]> buffer;
+
+			auto ans = GetValue<T>(arg)
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{

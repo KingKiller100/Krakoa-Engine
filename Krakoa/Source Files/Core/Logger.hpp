@@ -12,35 +12,32 @@ namespace krakoa
 #	pragma warning(push)
 #	pragma warning(disable:4251)
 		EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<klib::kLogs::Logging, std::default_delete<klib::kLogs::Logging>>;
-#	pragma warning(pop)
-#endif
-
-	using namespace klib::kLogs;
 
 	class KRAKOA_API Logger
 	{
 	public:
 		// Engine side
 		static void CoreInit();
-		inline static Logging& GetCoreLogger()            { return *coreLogger; }
+		inline static klib::kLogs::Logging& GetCoreLogger()            { return *coreLogger; }
 
 		// client side
 		static void ClientInit();
-		inline static Logging& GetClientLogger()          { return *clientLogger; }
+		inline static klib::kLogs::Logging& GetClientLogger()          { return *clientLogger; }
 
 	private:
-		static std::unique_ptr<Logging> coreLogger;
-		static std::unique_ptr<Logging> clientLogger;
+		static std::unique_ptr<klib::kLogs::Logging> coreLogger;
+		static std::unique_ptr<klib::kLogs::Logging> clientLogger;
 	};
+#	pragma warning(pop)
+#endif
 }
 
 // Initializer
-#define LVL_DBUG                                   ::krakoa::LLevel::DBUG
-#define LVL_NORM                                   ::krakoa::LLevel::NORM
-#define LVL_INFO                                   ::krakoa::LLevel::INFO
-#define LVL_WARN                                   ::krakoa::LLevel::WARN
-#define LVL_ERRR                                   ::krakoa::LLevel::ERRR
-#define LVL_FATL                                   ::krakoa::LLevel::FATL
+#define LVL_DBUG                                   ::klib::kLogs::LLevel::DBUG
+#define LVL_NORM                                   ::klib::kLogs::LLevel::NORM
+#define LVL_INFO                                   ::klib::kLogs::LLevel::INFO
+#define LVL_WARN                                   ::klib::kLogs::LLevel::WARN
+#define LVL_ERRR                                   ::klib::kLogs::LLevel::ERRR
 
 
 // ENGINE SIDE Log Macros
@@ -51,11 +48,11 @@ namespace krakoa
 #define KRK_ENABLE_FILE_OUTPUT()                    ::krakoa::Logger::GetCoreLogger().SetCacheMode(false);
 #define KRK_CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetCoreLogger().ChangeOutputDirectory(destination);
 #define KRK_CHANGE_LOGS_FILENAME(name)              ::krakoa::Logger::GetCoreLogger().ChangeFilename(name);
-#define KRK_DBUG(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::DBUG);
-#define KRK_NORM(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::NORM);
-#define KRK_INFO(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::INFO);
-#define KRK_WARN(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::WARN);
-#define KRK_ERRR(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, ::klib::kLogs::LLevel::ERRR, __FILE__, __LINE__);
+#define KRK_DBUG(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LVL_DBUG);
+#define KRK_NORM(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LVL_NORM);
+#define KRK_INFO(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LVL_INFO);
+#define KRK_WARN(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LVL_WARN);
+#define KRK_ERRR(msg)                               ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LVL_ERRR, __FILE__, __LINE__);
 #define KRK_FATAL(msg)                              ::krakoa::Logger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define KRK_BANNER(banner, category)                ::krakoa::Logger::GetCoreLogger().AddEntryBanner(banner, category);
 #define KRK_SUSPEND()                               ::krakoa::Logger::GetCoreLogger().SuspendFileLogging();
@@ -73,11 +70,11 @@ namespace krakoa
 #define ENABLE_FILE_OUTPUT()                    ::krakoa::Logger::GetClientLogger().SetCacheMode(false);
 #define CHANGE_LOGS_DESTINATION(destination)    ::krakoa::Logger::GetClientLogger().ChangeOutputDirectory(destination);
 #define CHANGE_LOGS_FILENAME(name)              ::krakoa::Logger::GetClientLogger().ChangeFilename(name);
-#define DBUG(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::DBUG);
-#define NORM(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::NORM);
-#define INFO(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::INFO);
-#define WARN(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::WARN);
-#define ERRR(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, ::klib::kLogs::LLevel::ERRR, __FILE__, __LINE__);
+#define DBUG(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, LVL_DBUG);
+#define NORM(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, LVL_NORM);
+#define INFO(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, LVL_INFO);
+#define WARN(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, LVL_WARN);
+#define ERRR(msg)                               ::krakoa::Logger::GetClientLogger().AddEntry(msg, LVL_ERRR, __FILE__, __LINE__);
 #define FATAL(msg)                              ::krakoa::Logger::GetClientLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define BANNER(banner, category)                ::krakoa::Logger::GetClientLogger().AddEntryBanner(banner, category);
 #define SUSPEND()                               ::krakoa::Logger::GetClientLogger().SuspendFileLogging();

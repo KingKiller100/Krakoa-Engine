@@ -3,6 +3,8 @@
 
 namespace krakoa
 {
+	using namespace klib::kLogs;
+
 	std::unique_ptr<Logging> Logger::coreLogger;
 	std::unique_ptr<Logging> Logger::clientLogger;
 

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <iWindow.hpp>
+
 #include <Core/EngineCore.hpp>
 #include <Core/FPSCounter.hpp>
 #include <Events System/Event.hpp>
 #include <Events System/ApplicationEvent.hpp>
 #include <Rendering/LayerStacker.hpp>
-#include <iWindow.hpp>
 
 #include <memory>
 
@@ -27,11 +28,13 @@ namespace krakoa
 		constexpr  bool IsRunning() const;
 		virtual void Shutdown() = 0;
 
+	protected:
+		void PushLayer(LayerBase* layer);
+		void PushOverlay(LayerBase* overlay);
+
 	private:
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
-		void PushLayer(LayerBase* layer);
-		void PushOverlay(LayerBase* overlay);
 
 	protected:
 		bool isRunning;

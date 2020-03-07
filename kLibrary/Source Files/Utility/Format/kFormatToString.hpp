@@ -39,7 +39,7 @@ namespace klib
 
 		template<typename T, typename U = T>
 		constexpr 
-			std::enable_if_t<std::is_signed_v<U> && !std::is_floating_point_v<U>, std::string>
+			std::enable_if_t<std::is_signed_v<U> && !std::is_floating_point_v<U>, U>
 			GetValue(const T obj)
 		{
 			return obj;
@@ -47,10 +47,10 @@ namespace klib
 
 		template<typename T, typename U = T>
 		constexpr 
-			std::enable_if_t<std::is_unsigned_v<U>, std::string>
+			std::enable_if_t<std::is_unsigned_v<U>, U>
 			GetValue(const T obj)
 		{
-			return obj
+			return obj;
 		}
 
 		template<typename T, typename U = T>
@@ -90,7 +90,7 @@ namespace klib
 			size_t length = 0;
 			std::unique_ptr<CharType[]> buffer;
 
-			auto ans = GetValue<T>(arg)
+			auto ans = GetValue<T>(arg);
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{

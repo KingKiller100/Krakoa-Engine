@@ -15,8 +15,8 @@ namespace klib::kLogs
 	using namespace kFileSystem;
 
 	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
-	std::unordered_map<LLevel, const char*> kLogs_LLevelMap;
-	std::unordered_map<LLevel, Logging::LConsoleColour> kLogs_ConsoleColourMap;
+	static std::unordered_map<LLevel, const char*> kLogs_LLevelMap;
+	static std::unordered_map<LLevel, Logging::LConsoleColour> kLogs_ConsoleColourMap;
 
 
 	Logging::Logging()

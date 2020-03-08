@@ -22,10 +22,12 @@ workspace "KrakoaEngine"
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
     IncludeDir["KLIB"] = "kLibrary/Source Files/"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
+    IncludeDir["ImGUI"] = "Krakoa/Vendors/imgui/"
 
 group "Dependencies"
     include "Krakoa/Vendors/GLFW"
     include "Krakoa/Vendors/GLAD"
+    include "Krakoa/Vendors/imgui"
     include "kLibrary/"
 group ""
 
@@ -45,7 +47,6 @@ project "Krakoa"
     pchheader "Precompile.hpp"
     pchsource "Krakoa/Source Files/Precompile.cpp"
 
-
     files
     {
         "%{prj.name}/Source Files/**.hpp",
@@ -59,6 +60,7 @@ project "Krakoa"
         "%{prj.name}/Source Files",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
+        "%{IncludeDir.ImGUI}",
     }
 
     links
@@ -66,6 +68,7 @@ project "Krakoa"
         "kLibrary",
         "GLFW",
         "GLAD",
+        "ImGui",
         "opengl32.lib"
     }
 

@@ -20,7 +20,7 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		KRK_ERRR(kFormat::ToString("GLFW ERROR: \n\t\t [CODE]:   %d\n\t\t [DESC]:   %s", errorCode, description));
+		KRK_ERRR(kFormat::ToString("GLFW ERROR \n\t\t [CODE]:   %d\n\t\t [DESC]:   %s", errorCode, description));
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)

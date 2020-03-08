@@ -32,8 +32,7 @@ public:
 	Hooper2Game()
 		: Application()
 	{
-		INIT_LOGS();
-		CHANGE_LOGS_FILENAME("Hooper2");
+		INIT_LOGS("Hooper2");
 		SET_LOG_MIN(LOG_LVL_DBUG);
 		PushLayer(new DemoLayer());
 	}

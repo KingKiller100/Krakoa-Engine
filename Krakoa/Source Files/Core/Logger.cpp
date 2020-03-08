@@ -14,13 +14,13 @@ namespace krakoa
 		coreLogger->SetName("Krakoa");
 		coreLogger->ChangeFilename("Krakoa Engine");
 		//coreLogger->SetMinimumLoggingLevel(LLevel::NORM);
-		coreLogger->InitializeLogging();
+		coreLogger->OutputInitialized();
 	}
 
-	void Logger::ClientInit()
+	void Logger::ClientInit(const char* name)
 	{
 		clientLogger = std::make_unique<Logging>();
-		clientLogger->SetName("App");
-		clientLogger->ChangeFilename("App");
+		clientLogger->SetName(name);
+		clientLogger->ChangeFilename(name);
 	}
 }

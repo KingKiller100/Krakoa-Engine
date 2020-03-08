@@ -66,7 +66,7 @@ namespace klib::kLogs
 		InitializeOutputToConsoleColourMap();
 	}
 	
-	void Logging::InitializeLogging()
+	void Logging::OutputInitialized()
 	{
 		if (!enable_kLogging) { return; }
 
@@ -128,7 +128,7 @@ namespace klib::kLogs
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
 		directory = dir;
-		OutputToSubSystems("New directory:\t " + directory + "\n", LLevel::INFO);
+		//OutputToSubSystems("New directory:\t " + directory + "\n", LLevel::INFO);
 		CloseLogFile();
 		ResumeFileLogging();
 	}
@@ -136,7 +136,7 @@ namespace klib::kLogs
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
 		filename = AppendFileExtension(newFileName.data(), ".log");
-		OutputToSubSystems("new filename:\t " + filename + "\n", LLevel::INFO);
+		//OutputToSubSystems("new filename:\t " + filename + "\n", LLevel::INFO);
 		CloseLogFile();
 		ResumeFileLogging();
 	}

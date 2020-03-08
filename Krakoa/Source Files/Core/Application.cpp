@@ -36,7 +36,7 @@ namespace krakoa
 
 		dispatcher.Dispatch<events::WindowClosedEvent>([this](events::WindowClosedEvent& e) -> bool
 			{
-				return Application::OnWindowClosed(e);
+				return OnWindowClosed(e);
 			});
 
 		for (auto iter = layerStack.end(); iter != layerStack.begin();)
@@ -46,8 +46,6 @@ namespace krakoa
 			if (e.isHandled())
 				break;
 		}
-
-		KRK_DBUG(e.ToString());
 	}
 
 	bool Application::OnWindowClosed(events::WindowClosedEvent& e)

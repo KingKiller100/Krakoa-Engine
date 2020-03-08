@@ -21,7 +21,7 @@ namespace kTest::utility
 
 		auto testLogger = std::make_unique<Logging>();
 
-		testLogger->InitializeLogging(LLevel::NORM);
+		testLogger->OutputInitialized(LLevel::NORM);
 		
 		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
 		testLogger->ChangeOutputDirectory(dir);

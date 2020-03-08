@@ -59,10 +59,10 @@ namespace krakoa
 		}
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
+		glfwMakeContextCurrent(window);
 
 		const auto glStatus = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 		kAssert(glStatus, "FAILED: Unable to initialize GLAD");
-		glfwMakeContextCurrent(window);
 		
 		glfwSetWindowUserPointer(window, &data);
 		SetVsync(true);

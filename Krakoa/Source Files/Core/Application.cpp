@@ -68,7 +68,6 @@ namespace krakoa
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
-		//std::cout << fps << " fps\n";
 
 		for (LayerBase* layer : layerStack)
 			layer->OnUpdate();

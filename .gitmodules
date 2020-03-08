@@ -1,3 +1,6 @@
 [submodule "krakoa-engine/vendors/GLFW"]
 	path = krakoa-engine/vendors/GLFW
 	url = https://github.com/KingKiller100/glfw
+[submodule "imgui"]
+	path = krakoa-engine/vendors/imgui
+	url = https://github.com/KingKiller100/imgui

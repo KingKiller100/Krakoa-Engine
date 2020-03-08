@@ -8,15 +8,19 @@ namespace krakoa
 	std::unique_ptr<Logging> Logger::coreLogger;
 	std::unique_ptr<Logging> Logger::clientLogger;
 
-	void krakoa::Logger::CoreInit()
+	void Logger::CoreInit()
 	{
 		coreLogger = std::make_unique<Logging>();
-		coreLogger->InitializeLogging(LLevel::NORM);
+		coreLogger->SetName("Krakoa");
+		coreLogger->ChangeFilename("Krakoa Engine");
+		//coreLogger->SetMinimumLoggingLevel(LLevel::NORM);
+		coreLogger->InitializeLogging();
 	}
 
 	void Logger::ClientInit()
 	{
 		clientLogger = std::make_unique<Logging>();
-		clientLogger->InitializeLogging(LLevel::NORM);
+		clientLogger->SetName("App");
+		clientLogger->ChangeFilename("App");
 	}
 }

@@ -14,7 +14,6 @@ project "kLibrary"
 
     files
     {
-      --  "Source Files/**.h",
         "Source Files/**.hpp",
         "Source Files/**.cpp",
         "cpp.hint"

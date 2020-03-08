@@ -78,7 +78,7 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
 				
-		testLogger->UnsuspendFileLogging();
+		testLogger->ResumeFileLogging();
 
 		testLogger->OutputToFatalFile("FATAL!", __FILE__, __LINE__);
 

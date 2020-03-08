@@ -2,10 +2,10 @@
 
 #if KLIB_LIB
 #	define KLIB_API __declspec(dllexport)
-#	define PORT_STL
+#	define PORT_LIB
 #else
 #	define KLIB_API __declspec(dllimport)
-#	define PORT_STL extern
+#	define PORT_LIB extern
 #endif
 
 #if _MSVC_LANG > 201402L

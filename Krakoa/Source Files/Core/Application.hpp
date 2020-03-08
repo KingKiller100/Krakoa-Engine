@@ -25,7 +25,7 @@ namespace krakoa
 
 		void Initialize();
 		void Run();
-		constexpr  bool IsRunning() const;
+		USE_RESULT constexpr bool IsRunning() const;
 		virtual void Shutdown() = 0;
 
 	protected:

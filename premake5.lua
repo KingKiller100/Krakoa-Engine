@@ -20,14 +20,12 @@ workspace "KrakoaEngine"
     -- Include Libraries
     IncludeDir = {}
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
-    
-include "Krakoa/Vendors/GLFW/"
+    IncludeDir["KLIB"] = "kLibrary/Source Files"
 
 group "Dependencies"
     include "Krakoa/Vendors/GLFW"
+    include "kLibrary/"
 group ""
-
-include "kLibrary/"
 
 project "Krakoa"
     location "Krakoa"
@@ -54,7 +52,7 @@ project "Krakoa"
 
     includedirs
     {
-        "kLibrary/Source Files",
+        "%{IncludeDir.KLIB}",
         "%{prj.name}/Source Files",
         "%{IncludeDir.GLFW}"
     }
@@ -85,6 +83,7 @@ project "Krakoa"
         {
             "KRAKOA_OS_WINDOWS",
             "KRAKOA_BUILD_DLL",
+            "KLIB_LIB",
 			--"GLFW_INCLUDE_NONE"
         }
 
@@ -143,7 +142,6 @@ project "Hooper2"
     
     files
     {
-        -- "ExampleGames/%{prj.name}/Source Files/**.h",
         "ExampleGames/%{prj.name}/Source Files/**.hpp",
         "ExampleGames/%{prj.name}/Source Files/**.cpp",
     }

@@ -23,44 +23,64 @@ namespace klib::kLogs
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
 		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(false)).c_str(), ".log")),
+		name("logger"),
 		enable_kLogging(false),
 		inCacheMode(false)
-	{	}
+	{
+		SetUp();
+	}
 
 	Logging::Logging(const std::string& filename, const std::string& directory)
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(directory),
 		filename(filename),
-		enable_kLogging(false)
-	{	}
+		name("logger"),
+		enable_kLogging(false),
+		inCacheMode(false)
+	{
+		SetUp();
+	}
 
 	Logging::Logging(std::string&& filename, std::string&& directory)
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(std::move(directory)),
 		filename(std::move(filename)),
-		enable_kLogging(false)
-	{	}
+		name("logger"),
+		enable_kLogging(false),
+		inCacheMode(false)
+	{
+		SetUp();
+	}
 
 	Logging::~Logging()
 	{
-		if (GetLastCachedEntry() != Logging::kLogs_Empty)
+		if (GetLastCachedEntry() != kLogs_Empty)
 			FinalOutput();
 	}
 
-	void Logging::InitializeLogging(const LLevel& initialMinLevel)
+	void Logging::SetUp()
 	{
-		if (enable_kLogging) { return; }
-
-		SetMinimumLoggingLevel(initialMinLevel);
+		SetMinimumLoggingLevel(LLevel::NORM);
 		ToggleLoggingEnabled();
 		InitializeLogLevelMap();
-		InitializeOutputToConsoleColourMap();		
+		InitializeOutputToConsoleColourMap();
+	}
+	
+	void Logging::InitializeLogging()
+	{
+		if (!enable_kLogging) { return; }
+
 		const auto startLog = 
 			"************************************************************************\n      Logging Initialized:    " 
 			+ GetDateInTextFormat(false) + "    " + GetTimeText() 
 			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);
+	}
+
+	void Logging::SetName(const std::string_view& newName)
+	{
+		name = newName;
 	}
 
 	void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
@@ -109,27 +129,28 @@ namespace klib::kLogs
 	{
 		directory = dir;
 		OutputToSubSystems("New directory:\t " + directory + "\n", LLevel::INFO);
-		SuspendFileLogging();
-		UnsuspendFileLogging();
+		CloseLogFile();
+		ResumeFileLogging();
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
 		filename = AppendFileExtension(newFileName.data(), ".log");
 		OutputToSubSystems("new filename:\t " + filename + "\n", LLevel::INFO);
-		SuspendFileLogging();
-		UnsuspendFileLogging();
+		CloseLogFile();
+		ResumeFileLogging();
 	}
 
 	void Logging::SuspendFileLogging()
 	{
-		const auto conclusionCurrentLog = "\n***********************************************************************\n";
-		AddToLogBuffer(conclusionCurrentLog);
-		OutputToSubSystems(conclusionCurrentLog, LLevel::NORM);
+		const auto pauseLog = "\n***********************************************************************\n";
+		AddToLogBuffer(pauseLog);
+		OutputToSubSystems(pauseLog, LLevel::NORM);
 		CloseLogFile();
+		SetCacheMode(true);
 	}
 
-	void Logging::UnsuspendFileLogging()
+	void Logging::ResumeFileLogging()
 	{
 		SetCacheMode(false);
 		OutputLogToFile("");
@@ -142,13 +163,14 @@ namespace klib::kLogs
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const std::string_view msg, const LLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */) noexcept
+	void Logging::AddEntry(const std::string_view msg, const LLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
 	{
 		if (!enable_kLogging && lvl < LLevel::ERRR) return;
 		if (lvl < minimumLoggingLevel) return;
 
-		auto logLine = ToString("[%s]\t[%s]: %s",
+		auto logLine = ToString("[%s]   [%s]   [%s]: %s",
 			GetTimeText().c_str(),
+			name.c_str(),
 			kLogs_LLevelMap.at(lvl),
 			msg.data());
 
@@ -165,12 +187,13 @@ namespace klib::kLogs
 		OutputToSubSystems(logLine, lvl);
 	}
 
-	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type) noexcept
+	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type)
 	{
 		if (!enable_kLogging) return;
 
-		const auto bannerLine = ToString("[%s]\t[%s]: [%s]\n",
+		const auto bannerLine = ToString("[%s]   [%s]   [%s]: [%s]\n",
 			GetTimeText().c_str(),
+			name.c_str(),
 			type.data(),
 			msg.data());
 
@@ -195,7 +218,6 @@ namespace klib::kLogs
 			logFileStream.flush();
 			logFileStream.close();
 		}
-		SetCacheMode(true);
 	}
 
 	void Logging::AddToLogBuffer(const std::string_view& logLine)
@@ -211,11 +233,22 @@ namespace klib::kLogs
 #ifdef _DEBUG
 		OutputDebugStringA(logLine.data());
 #endif
-		
+
+		auto log = std::string(logLine);
+
+		/*const auto namePos = log.find(name);
+		if (namePos != std::string::npos)
+		{
+			const auto nameSize = name.length();
+			const auto eoNamePos = namePos + nameSize;
+			const auto numToErase = (log.find_first_of(':', 14) - 1) - eoNamePos;
+			log.erase(eoNamePos, numToErase);
+		}*/
+
 		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
 		
-		printf_s("%s", logLine.data());
+		printf_s("%s", log.data());
 
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
 	}

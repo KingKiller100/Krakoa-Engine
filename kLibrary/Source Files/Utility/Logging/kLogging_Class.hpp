@@ -7,6 +7,14 @@
 
 namespace klib::kLogs
 {
+#if defined (_MSC_VER)
+#	pragma warning(push)
+#	pragma warning(disable:4251)
+#	pragma warning(disable:4275)
+	PORT_LIB template class KLIB_API std::basic_string<char>;
+	PORT_LIB template class KLIB_API std::basic_fstream<char>;
+	PORT_LIB template class KLIB_API std::deque<std::basic_string<char>>;
+
 	enum class LLevel : unsigned short
 	{
 		BANR, // Log Banner
@@ -18,7 +26,7 @@ namespace klib::kLogs
 		FATL  // Fatal
 	};
 	
-	class Logging
+	class KLIB_API Logging
 	{
 	public:
 		using LogQueue = std::deque<std::string>;
@@ -58,8 +66,16 @@ namespace klib::kLogs
 		 * \note
 		 *		No logging calls will function properly until this is called.
 		 */
-		void InitializeLogging(const LLevel& initialMinLevel);
+		void InitializeLogging();
 
+		/**
+		 * \brief
+		 *		Change name of the logger
+		 * \param[in] newName
+		 *		STL string representing a name
+		 */
+		void SetName(const std::string_view& newName);
+		
 		/**
 		 * \brief
 		 *		Set minimum level of a log that can be stored
@@ -80,7 +96,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Toggles whether logs output to system to keep a local cache
 		 */
-		void SetCacheMode(const bool disable);
+		void SetCacheMode(const bool enable);
 
 		/**
 		 * \brief
@@ -111,7 +127,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Continues logging and flushes cache to file 
 		 */
-		void UnsuspendFileLogging();
+		void ResumeFileLogging();
 
 		/**
 		 * \brief
@@ -139,7 +155,7 @@ namespace klib::kLogs
 		 * \param file
 		 * \param line
 		 */
-		void AddEntry(const std::string_view msg, const LLevel lvl = LLevel::NORM, const char* file = "", const unsigned line = 0) noexcept;
+		void AddEntry(const std::string_view msg, const LLevel lvl = LLevel::NORM, const char* file = "", const unsigned line = 0);
 
 		/**
 		 * \brief
@@ -149,7 +165,7 @@ namespace klib::kLogs
 		 * \param type
 		 *		The category/subject of the log banner
 		 */
-		void AddEntryBanner(const std::string_view msg, const std::string_view type) noexcept;
+		void AddEntryBanner(const std::string_view msg, const std::string_view type);
 
 		/**
 		 * \brief
@@ -175,6 +191,8 @@ namespace klib::kLogs
 		void ClearCache();
 
 	private:
+		void SetUp();
+		
 		/**
 		 * \brief
 		 *		Creates the log file with the cached log entries
@@ -219,10 +237,13 @@ namespace klib::kLogs
 
 		std::string directory;
 		std::string filename;
+		std::fstream logFileStream;
 
+		std::string name;
 		bool enable_kLogging;
 		bool inCacheMode;
-		std::fstream logFileStream;
 	};
+#	pragma warning(pop)
+#endif
 }
 

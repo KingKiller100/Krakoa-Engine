@@ -12,7 +12,7 @@ namespace klib::debug
 	{
 		const auto exceptionLog = std::make_unique<kLogs::Logging>();
 		exceptionLog->ChangeFilename("Assert Condition Failed");
-		exceptionLog->InitializeLogging(kLogs::LLevel::FATL);
+		exceptionLog->SetMinimumLoggingLevel(kLogs::LLevel::FATL);
 		exceptionLog->OutputToFatalFile(report, file, line);
 	}
 

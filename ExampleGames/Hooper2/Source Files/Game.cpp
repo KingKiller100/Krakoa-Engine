@@ -1,6 +1,6 @@
 #include <Krakoa.hpp>
 
-class DemoLayer  : public krakoa::LayerBase
+class DemoLayer : public krakoa::LayerBase
 {
 public:
 	DemoLayer()
@@ -22,7 +22,7 @@ public:
 	}
 	void OnEvent(krakoa::events::Event& e) override
 	{
-		//DBUG(__FUNCSIG__);
+		DBUG(e.ToString());
 	}
 };
 
@@ -33,12 +33,14 @@ public:
 		: Application()
 	{
 		INIT_LOGS();
+		CHANGE_LOGS_FILENAME("Hooper2");
+		SET_LOG_MIN(LOG_LVL_DBUG);
 		PushLayer(new DemoLayer());
 	}
 		
 	~Hooper2Game()
 	{
-		Shutdown();
+		Hooper2Game::Shutdown();
 	}
 	
 	void Shutdown() override

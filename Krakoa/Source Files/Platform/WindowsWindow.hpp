@@ -1,9 +1,8 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <iWindow.hpp>
 
-#include <memory>
+struct GLFWwindow;
 
 namespace krakoa
 {
@@ -14,27 +13,27 @@ namespace krakoa
 		~WindowsWindow();
 
 		// Inherited via Window
-		virtual void OnUpdate() override;
+		void OnUpdate() override;
 
-		virtual kmaths::Vector2u& GetDimensions() override;
+		kmaths::Vector2u& GetDimensions() override;
 
-		virtual unsigned GetWidth() const override;
-		virtual unsigned GetHeight() const override;
+		unsigned GetWidth() const override;
+		unsigned GetHeight() const override;
 
-		virtual void SetEventCallback(const EventCallbackFunc& cb) override;
+		void SetEventCallback(const EventCallbackFunc& cb) override;
 
-		virtual void SetVsync(bool isEnabled) override;
+		void SetVsync(bool isEnabled) override;
 
-		virtual bool IsVsyncActive() const override;
+		bool IsVsyncActive() const override;
 
 	private:
 		virtual void Init(const WindowProperties& props);
 		virtual void ShutDown();
 
-		void SetUpCallBacks();
+		void SetUpCallBacks() const;
 
 	private:
-		GLFWwindow *window;
+		GLFWwindow *window{};
 
 		struct WindowData
 		{

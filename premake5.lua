@@ -20,12 +20,16 @@ workspace "KrakoaEngine"
     -- Include Libraries
     IncludeDir = {}
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
-    IncludeDir["KLIB"] = "kLibrary/Source Files"
+    IncludeDir["KLIB"] = "kLibrary/Source Files/"
+    IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
 
 group "Dependencies"
     include "Krakoa/Vendors/GLFW"
+    include "Krakoa/Vendors/GLAD"
     include "kLibrary/"
 group ""
+
+group "Engine" 
 
 project "Krakoa"
     location "Krakoa"
@@ -44,7 +48,6 @@ project "Krakoa"
 
     files
     {
-        -- "%{prj.name}/Source Files/**.h",
         "%{prj.name}/Source Files/**.hpp",
         "%{prj.name}/Source Files/**.cpp",
         "%{prj.name}/cpp.hint"
@@ -54,13 +57,15 @@ project "Krakoa"
     {
         "%{IncludeDir.KLIB}",
         "%{prj.name}/Source Files",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLAD}",
     }
 
     links
     {
         "kLibrary",
         "GLFW",
+        "GLAD",
         "opengl32.lib"
     }
 
@@ -84,7 +89,7 @@ project "Krakoa"
             "KRAKOA_OS_WINDOWS",
             "KRAKOA_BUILD_DLL",
             "KLIB_LIB",
-			--"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"
@@ -128,7 +133,9 @@ project "Krakoa"
         runtime "Release"
 
         --filters { "system:windows", "configuration:Release" }
+group ""
 
+group "Games"
 project "Hooper2"
     location "ExampleGames/Hooper2/"
     kind "ConsoleApp"
@@ -191,3 +198,5 @@ project "Hooper2"
         defines "KRAKOA_PROFILE"
         optimize "Debug"
         runtime "Release"
+
+group ""

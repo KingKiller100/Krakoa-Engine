@@ -1,9 +1,9 @@
 #pragma once
 
+#include <Maths/Vectors/Vector2.hpp>
+
 #include <Core/EngineCore.hpp>
 #include <Events System/Event.hpp>
-
-#include <Maths/Vectors/Vector2.hpp>
 
 namespace krakoa
 {
@@ -13,10 +13,10 @@ namespace krakoa
 	struct WindowProperties
 	{
 		std::string title;
-		Vector2s dimensions;
+		Vector2u dimensions;
 
 		WindowProperties(const std::string&& title = "Krakoa Engine",
-			const Vector2s dimensions = Vector2s(700, 400))
+			const Vector2u dimensions = Vector2u(700, 400))
 			: title(title), dimensions(dimensions)
 		{}
 	};

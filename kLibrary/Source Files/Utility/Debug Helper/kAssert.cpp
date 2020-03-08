@@ -8,7 +8,7 @@ namespace klib::debug
 {
 #if _DEBUG
 	AssertOnFailedConditionException::AssertOnFailedConditionException(const char* exp, const char* msg, const char* file, const unsigned line)
-		: report(kFormat::ToString("Condition \"%s\" was not met! \nMessage: %s. \nFile: %s \nLine: %d", exp, msg, file, line))
+		: report(kFormat::ToString("Condition \"%s\" was not met! \n\t\t [NOTE]:   %s.", exp, msg))
 	{
 		const auto exceptionLog = std::make_unique<kLogs::Logging>();
 		exceptionLog->ChangeFilename("Assert Condition Failed");

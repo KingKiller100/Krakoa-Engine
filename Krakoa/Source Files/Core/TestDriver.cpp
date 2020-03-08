@@ -1,11 +1,6 @@
 ﻿#include <Precompile.hpp>
 #include <Core/TestDriver.hpp>
 
-#include <Testing/Tester.hpp>
-#include <Testing/TesterManager.hpp>
-
-#include <memory>
-
 #ifdef KRAKOA_TEST
 namespace tests
 {

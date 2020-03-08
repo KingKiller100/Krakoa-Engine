@@ -3,7 +3,6 @@
 #include <Core/EngineCore.hpp>
 
 #include <vector>
-#include <memory>
 
 
 namespace krakoa

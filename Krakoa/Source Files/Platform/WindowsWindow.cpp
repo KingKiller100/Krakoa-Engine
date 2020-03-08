@@ -9,9 +9,8 @@
 #include <Utility/Debug Helper/kAssert.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
-#include <memory>
-#include <type_traits>
-#include <xtr1common>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace krakoa
 {
@@ -21,7 +20,7 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		KRK_ERRR(kFormat::ToString("GLFW ERROR: %d:%s", errorCode, description));
+		KRK_ERRR(kFormat::ToString("GLFW ERROR: \n\t\t [CODE]:   %d\n\t\t [DESC]:   %s", errorCode, description));
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -29,14 +28,14 @@ namespace krakoa
 		return new WindowsWindow(props);
 	}
 
-	krakoa::WindowsWindow::WindowsWindow(const WindowProperties& props)
+	WindowsWindow::WindowsWindow(const WindowProperties& props)
 	{
-		Init(props);
+		WindowsWindow::Init(props);
 	}
 
 	krakoa::WindowsWindow::~WindowsWindow()
 	{
-		ShutDown();
+		WindowsWindow::ShutDown();
 	}
 
 	void krakoa::WindowsWindow::Init(const WindowProperties& props)
@@ -55,27 +54,28 @@ namespace krakoa
 		{
 			const auto success = glfwInit();
 			glfwSetErrorCallback(GLFWErrorCallback);
-			kAssert(success, "GLFW has failed to be initialized!");
+			kAssert(success, "FAILED: Unable to initialize GLFW");
 			isInitialized = true;
 		}
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
 
-		auto windowPtr = window;
-
-		glfwMakeContextCurrent(windowPtr);
-		glfwSetWindowUserPointer(windowPtr, &data);
+		const auto glStatus = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+		kAssert(glStatus, "FAILED: Unable to initialize GLAD");
+		glfwMakeContextCurrent(window);
+		
+		glfwSetWindowUserPointer(window, &data);
 		SetVsync(true);
 
 		SetUpCallBacks();
 	}
 
-	void krakoa::WindowsWindow::ShutDown()
+	void WindowsWindow::ShutDown()
 	{
 		glfwDestroyWindow(window);
 	}
 
-	void WindowsWindow::SetUpCallBacks()
+	void WindowsWindow::SetUpCallBacks() const
 	{
 		// Set up window callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
@@ -165,34 +165,34 @@ namespace krakoa
 		glfwSwapBuffers(window);
 	}
 
-	kmaths::Vector2u& krakoa::WindowsWindow::GetDimensions()
+	kmaths::Vector2u& WindowsWindow::GetDimensions()
 	{
 		return data.dimensions;
 	}
 
-	unsigned krakoa::WindowsWindow::GetWidth() const
+	unsigned WindowsWindow::GetWidth() const
 	{
 		return data.dimensions.X();
 	}
 
-	unsigned krakoa::WindowsWindow::GetHeight() const
+	unsigned WindowsWindow::GetHeight() const
 	{
 		return data.dimensions.Y();
 	}
 
-	void krakoa::WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)
+	void WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)
 	{
 		data.cb = cb;
 	}
 
-	void krakoa::WindowsWindow::SetVsync(bool isEnabled)
+	void WindowsWindow::SetVsync(bool isEnabled)
 	{
 		const auto res = isEnabled ? 1 : 0;
 		glfwSwapInterval(res);
 		data.vSyncOn = isEnabled;
 	}
 
-	bool krakoa::WindowsWindow::IsVsyncActive() const
+	bool WindowsWindow::IsVsyncActive() const
 	{
 		return data.vSyncOn;
 	}

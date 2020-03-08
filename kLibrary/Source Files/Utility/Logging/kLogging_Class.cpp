@@ -176,7 +176,7 @@ namespace klib::kLogs
 
 		if (lvl >= LLevel::ERRR)
 		{
-			logLine += ToString("\n\t\t[FILE]:\t%s\n\t\t[LINE]:\t%d",
+			logLine += ToString("\n\t\t [FILE]:   %s\n\t\t [LINE]:   %d",
 				file,
 				line);
 		}
@@ -236,14 +236,14 @@ namespace klib::kLogs
 
 		auto log = std::string(logLine);
 
-		/*const auto namePos = log.find(name);
+		const auto namePos = log.find(name);
 		if (namePos != std::string::npos)
 		{
 			const auto nameSize = name.length();
 			const auto eoNamePos = namePos + nameSize;
 			const auto numToErase = (log.find_first_of(':', 14) - 1) - eoNamePos;
 			log.erase(eoNamePos, numToErase);
-		}*/
+		}
 
 		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));

@@ -5,10 +5,10 @@
 namespace Pattern
 {
 	template<class T>
-	class SimpleSingleton
+	class KLIB_API SimpleSingleton
 	{
 	public:
-		virtual ~SimpleSingleton(void) {}
+		virtual ~SimpleSingleton(void) = default;
 
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
@@ -23,14 +23,15 @@ namespace Pattern
 			return instance;
 		}
 
-	protected:
-		SimpleSingleton()
+		template<typename ThisOrChildType>
+		static void Create()
 		{
-			instance = std::make_unique<T>(Token());
+			instance = std::unique_ptr<T>(new ThisOrChildType());
 		}
 
 	protected:
-		struct Token {};
+		SimpleSingleton()
+			= default;
 
 	private:
 		static std::unique_ptr<T> instance;
@@ -38,4 +39,5 @@ namespace Pattern
 }
 
 template<class T>
-std::unique_ptr<T> Pattern::SimpleSingleton<T>::instance;
+std::unique_ptr<T> KLIB_API Pattern::SimpleSingleton<T>::instance;
+

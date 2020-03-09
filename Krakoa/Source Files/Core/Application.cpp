@@ -57,11 +57,13 @@ namespace krakoa
 	void Application::PushLayer(LayerBase* layer)
 	{
 		layerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(LayerBase* overlay)
 	{
 		layerStack.PushOverlay(overlay);
+		overlay->OnAttach();
 	}
 
 	void Application::Run()
@@ -78,5 +80,10 @@ namespace krakoa
 	constexpr bool Application::IsRunning() const
 	{
 		return isRunning;
+	}
+
+	iWindow& Application::GetWindow() const
+	{
+		return *window;
 	}
 }

@@ -12,6 +12,7 @@
 
 // Rendering
 #include <Rendering/LayerBase.hpp>
+#include <ImGui/ImGuiLayer.hpp>
 
 /*		ENTRY POINT		*/
 #include <Core/EntryPoint.hpp>

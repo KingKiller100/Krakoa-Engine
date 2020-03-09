@@ -13,18 +13,13 @@ int main(int argc, char** argv)
 	if (RunTestsOnkLibrary())
 		return EXIT_SUCCESS;
 
-	auto app = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
+	auto app = krakoa::CreateApplication();
 
 	app->Initialize();
 
 	unsigned count = 0;
 	do {
 		app->Run();
-
-		count++;
-
-		if (count > 10000)
-			app->Shutdown(); // placed for now so that the application doesn't run endlessly
 	} while (app->IsRunning());
 
 	return EXIT_SUCCESS;

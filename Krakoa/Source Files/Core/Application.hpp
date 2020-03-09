@@ -8,6 +8,8 @@
 #include <Events System/ApplicationEvent.hpp>
 #include <Rendering/LayerStacker.hpp>
 
+#include <Patterns/SimpleSingleton.hpp>
+
 #include <memory>
 
 namespace krakoa
@@ -17,7 +19,7 @@ namespace krakoa
 #	pragma warning(disable:4251)
 		EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<iWindow, std::default_delete<iWindow>>;
 
-	class KRAKOA_API Application
+	class KRAKOA_API Application : public Pattern::SimpleSingleton<Application>
 	{
 	public:
 		Application();
@@ -26,8 +28,10 @@ namespace krakoa
 		void Initialize();
 		void Run();
 		USE_RESULT constexpr bool IsRunning() const;
-		virtual void Shutdown() = 0;
+		virtual void Shutdown() {}
 
+		iWindow& GetWindow() const;
+		
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);
@@ -44,7 +48,6 @@ namespace krakoa
 	};
 
 	Application* CreateApplication();
-
 #	pragma warning(pop)
 #endif
 }

@@ -2,7 +2,8 @@
 #include <ImGui/ImGuiLayer.hpp>
 
 #include <Core/Application.hpp>
-#include <imgui.h>
+
+#include <imgui.h> // imgui include must be above any other openGL includes
 #include <Platform/OpenGL/imgui_impl_opengl3.h>
 
 // Temp for keymap
@@ -62,9 +63,10 @@ namespace krakoa
 
 	void ImGuiLayer::OnUpdate()
 	{
-		auto& app = Application::Reference();
 		auto& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
+		auto& app = Application::Get();
+
+		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
 		const auto currentTime = static_cast<float>(glfwGetTime());
 		const auto desiredDeltaTime = (1.f / 60.f);
@@ -74,7 +76,7 @@ namespace krakoa
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
 		
-		static  bool isShowing = true;
+		bool isShowing = true;
 		ImGui::ShowDemoWindow(&isShowing);
 
 		ImGui::Render();

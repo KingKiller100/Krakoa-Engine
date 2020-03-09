@@ -33,7 +33,7 @@ public:
 		: Application()
 	{
 		INIT_LOGS("Hooper2");
-		SET_LOG_MIN(LOG_LVL_DBUG);
+		//SET_LOG_MIN(LOG_LVL_DBUG);
 		PushLayer(new DemoLayer());
 		PushOverlay(new krakoa::ImGuiLayer());
 	}
@@ -51,6 +51,5 @@ public:
 
 krakoa::Application* krakoa::CreateApplication()
 {
-	Application::Create<Hooper2Game>();
-	return Application::Pointer().get();
+	return new Hooper2Game();
 }

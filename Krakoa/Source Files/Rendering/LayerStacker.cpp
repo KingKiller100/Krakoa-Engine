@@ -21,11 +21,13 @@ namespace krakoa
 	void LayerStacker::PushLayer(LayerBase* layer)
 	{
 		layerIter = layerStack.emplace(layerIter, layer);
+		layer->OnAttach();
 	}
 
 	void LayerStacker::PushOverlay(LayerBase* overlay)
 	{
 		layerStack.emplace_back(overlay);
+		overlay->OnAttach();
 	}
 
 	void LayerStacker::PopLayer(LayerBase* layer)

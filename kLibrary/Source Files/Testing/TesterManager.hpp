@@ -9,7 +9,7 @@ namespace kTest
 {
 	class Tester;	
 	
-	class TesterManager : public Pattern::SimpleSingleton<TesterManager>
+	class TesterManager : public pattern::SimpleSingleton<TesterManager>
 	{
 	public:
 		TesterManager(Token);

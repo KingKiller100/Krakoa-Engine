@@ -8,6 +8,8 @@
 
 namespace krakoa
 {
+	Application* Application::instance = nullptr;
+
 	using namespace klib;
 	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
 
@@ -15,6 +17,9 @@ namespace krakoa
 		: isRunning(false),
 		fpsCounter(60)
 	{
+		kAssert(!instance, "Instance of the application already exists!");
+		instance = this;
+
 		KRK_INIT_LOGS();
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
@@ -57,13 +62,11 @@ namespace krakoa
 	void Application::PushLayer(LayerBase* layer)
 	{
 		layerStack.PushLayer(layer);
-		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(LayerBase* overlay)
 	{
 		layerStack.PushOverlay(overlay);
-		overlay->OnAttach();
 	}
 
 	void Application::Run()
@@ -85,5 +88,10 @@ namespace krakoa
 	iWindow& Application::GetWindow() const
 	{
 		return *window;
+	}
+
+	Application& Application::Get()
+	{
+		return *instance;
 	}
 }

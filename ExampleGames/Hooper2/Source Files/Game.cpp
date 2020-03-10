@@ -30,10 +30,10 @@ class Hooper2Game : public krakoa::Application
 {
 public:
 	Hooper2Game()
-		: Application()
+		: Application(Token())
 	{
 		INIT_LOGS("Hooper2");
-		//SET_LOG_MIN(LOG_LVL_DBUG);
+		SET_LOG_MIN(LOG_LVL_DBUG);
 		PushLayer(new DemoLayer());
 		PushOverlay(new krakoa::ImGuiLayer());
 	}

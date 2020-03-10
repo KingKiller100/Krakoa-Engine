@@ -64,9 +64,9 @@ namespace krakoa
 	void ImGuiLayer::OnUpdate()
 	{
 		auto& io = ImGui::GetIO();
-		auto& app = Application::Get();
+		auto& app = Application::Reference();
 
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
 		const auto currentTime = static_cast<float>(glfwGetTime());
 		const auto desiredDeltaTime = (1.f / 60.f);

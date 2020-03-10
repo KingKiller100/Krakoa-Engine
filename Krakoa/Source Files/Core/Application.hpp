@@ -2,6 +2,7 @@
 
 #include <iWindow.hpp>
 
+#include <Patterns/SimpleSingleton.hpp>
 #include <Core/EngineCore.hpp>
 #include <Core/FPSCounter.hpp>
 #include <Events System/Event.hpp>
@@ -17,10 +18,10 @@ namespace krakoa
 #	pragma warning(disable:4251)
 		EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<iWindow, std::default_delete<iWindow>>;
 
-	class KRAKOA_API Application
+	class KRAKOA_API Application : public pattern::SimpleSingleton<Application>
 	{
 	public:
-		Application();
+		Application(Token);
 		virtual ~Application();
 
 		void Initialize();
@@ -29,8 +30,6 @@ namespace krakoa
 		virtual void Shutdown() {}
 
 		iWindow& GetWindow() const;
-		
-		static Application& Get();
 
 	protected:
 		void PushLayer(LayerBase* layer);
@@ -45,8 +44,6 @@ namespace krakoa
 		std::unique_ptr<iWindow> window;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
-
-		static Application* instance;
 	};
 
 	Application* CreateApplication();

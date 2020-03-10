@@ -36,7 +36,7 @@ namespace krakoa
 		if (iter != end())
 		{
 			layerStack.erase(iter);
-			layerIter--;
+			--layerIter;
 		}
 	}
 

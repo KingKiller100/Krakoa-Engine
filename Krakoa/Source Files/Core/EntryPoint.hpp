@@ -13,11 +13,10 @@ int main(int argc, char** argv)
 	if (RunTestsOnkLibrary())
 		return EXIT_SUCCESS;
 
-	auto app = krakoa::CreateApplication();
+	auto app = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
 
 	app->Initialize();
 
-	unsigned count = 0;
 	do {
 		app->Run();
 	} while (app->IsRunning());

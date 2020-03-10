@@ -6,14 +6,14 @@
 
 #include <Utility/Timer/kTimer.hpp>
 
+#include <Patterns/SimpleSingletonImpl.hpp> // Required for singleton base class functionality to work
+
 namespace krakoa
 {
-	Application* Application::instance = nullptr;
-
 	using namespace klib;
 	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
 
-	Application::Application()
+	Application::Application(Token)
 		: isRunning(false),
 		fpsCounter(60)
 	{
@@ -74,10 +74,10 @@ namespace krakoa
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
-		for (LayerBase* layer : layerStack)
-			layer->OnUpdate();
-
 		window->OnUpdate();
+		
+		for (auto layer : layerStack)
+			(layer)->OnUpdate();
 	}
 
 	constexpr bool Application::IsRunning() const
@@ -88,10 +88,5 @@ namespace krakoa
 	iWindow& Application::GetWindow() const
 	{
 		return *window;
-	}
-
-	Application& Application::Get()
-	{
-		return *instance;
 	}
 }

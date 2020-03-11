@@ -1,7 +1,7 @@
 #include <Precompile.hpp>
 #include <Platform/WindowsWindow.hpp>
 
-#include <Core/Logger.hpp>
+#include <Core/Logging/CoreLogger.hpp>
 #include <Events System/ApplicationEvent.hpp>
 #include <Events System/KeyEvent.hpp>
 #include <Events System/MouseEvent.hpp>

@@ -22,6 +22,13 @@ namespace pattern
 			return instance;
 		}
 
+		template<class ThisOrChild>
+		static void Create()
+		{
+			if (!instance)
+				instance = new ThisOrChild(Token());
+		}
+
 	protected:
 		struct Token {};
 

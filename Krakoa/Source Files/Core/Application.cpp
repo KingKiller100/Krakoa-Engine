@@ -1,7 +1,7 @@
 #include <Precompile.hpp>
 #include <Core/Application.hpp>
 
-#include <Core/Logger.hpp>
+#include <Core/Logging/CoreLogger.hpp>
 #include <Rendering/LayerBase.hpp>
 
 #include <Utility/Timer/kTimer.hpp>
@@ -13,15 +13,14 @@ namespace krakoa
 	using namespace klib;
 	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
 
-	Application::Application(Token)
+	Application::Application(Token&)
 		: isRunning(false),
 		fpsCounter(60)
 	{
 		kAssert(!instance, "Instance of the application already exists!");
-		instance = this;
+		//instance = this;
 
 		KRK_INIT_LOGS();
-		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
 		window = std::unique_ptr<iWindow>(iWindow::Create());
 		window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
@@ -33,6 +32,7 @@ namespace krakoa
 	void Application::Initialize()
 	{
 		isRunning = true;
+		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 	}
 
 	void Application::OnEvent(events::Event& e)

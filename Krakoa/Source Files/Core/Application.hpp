@@ -21,7 +21,7 @@ namespace krakoa
 	class KRAKOA_API Application : public pattern::SimpleSingleton<Application>
 	{
 	public:
-		Application(Token);
+		Application(Token&);
 		virtual ~Application();
 
 		void Initialize();

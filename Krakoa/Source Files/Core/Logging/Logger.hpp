@@ -16,16 +16,11 @@ namespace krakoa
 	class KRAKOA_API Logger
 	{
 	public:
-		// Engine side
-		static void CoreInit();
-		static klib::kLogs::Logging& GetCoreLogger()            { return *coreLogger; }
-
 		// client side
 		static void ClientInit(const char * name);
 		static klib::kLogs::Logging& GetClientLogger()          { return *clientLogger; }
 
 	private:
-		static std::unique_ptr<klib::kLogs::Logging> coreLogger;
 		static std::unique_ptr<klib::kLogs::Logging> clientLogger;
 	};
 #	pragma warning(pop)
@@ -38,29 +33,6 @@ namespace krakoa
 #define LOG_LVL_INFO                                    ::klib::kLogs::LLevel::INFO
 #define LOG_LVL_WARN                                    ::klib::kLogs::LLevel::WARN
 #define LOG_LVL_ERRR                                    ::klib::kLogs::LLevel::ERRR
-
-
-// ENGINE SIDE Log Macros
-#define KRK_INIT_LOGS()                                 ::krakoa::Logger::CoreInit();
-#define KRK_SET_LOG_MIN(minLvl)                         ::krakoa::Logger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
-#define KRK_TOGGLE_LOGGING()                            ::krakoa::Logger::GetCoreLogger().ToggleLoggingEnabled();
-#define KRK_DISABLE_FILE_OUTPUT()                       ::krakoa::Logger::GetCoreLogger().SetCacheMode(true);
-#define KRK_ENABLE_FILE_OUTPUT()                        ::krakoa::Logger::GetCoreLogger().SetCacheMode(false);
-#define KRK_CHANGE_LOGS_DESTINATION(destination)        ::krakoa::Logger::GetCoreLogger().ChangeOutputDirectory(destination);
-#define KRK_CHANGE_LOGS_FILENAME(name)                  ::krakoa::Logger::GetCoreLogger().ChangeFilename(name);
-#define KRK_DBUG(msg)                                   ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LOG_LVL_DBUG);
-#define KRK_NORM(msg)                                   ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LOG_LVL_NORM);
-#define KRK_INFO(msg)                                   ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LOG_LVL_INFO);
-#define KRK_WARN(msg)                                   ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LOG_LVL_WARN);
-#define KRK_ERRR(msg)                                   ::krakoa::Logger::GetCoreLogger().AddEntry(msg, LOG_LVL_ERRR, __FILE__, __LINE__);
-#define KRK_FATAL(msg)                                  ::krakoa::Logger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
-#define KRK_BANNER(banner, category)                    ::krakoa::Logger::GetCoreLogger().AddEntryBanner(banner, category);
-#define KRK_SUSPEND()                                   ::krakoa::Logger::GetCoreLogger().SuspendFileLogging();
-#define KRK_RESUME()                                    ::krakoa::Logger::GetCoreLogger().ResumeFileLogging();
-#define KRK_LOG_END()                                   ::krakoa::Logger::GetCoreLogger().FinalOutput();
-#define KRK_LOG_GET_LAST()                              ::krakoa::Logger::GetCoreLogger().GetLastCachedEntry();
-#define KRK_LOG_ERASE_PREV(numOfPrevEntries)            ::krakoa::Logger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries);
-#define KRK_LOG_CLEAR()                                 ::krakoa::Logger::GetCoreLogger().ClearCache();
 
 // CLIENT SIDE Log Macros
 #define INIT_LOGS(name)                                 ::krakoa::Logger::ClientInit(name);

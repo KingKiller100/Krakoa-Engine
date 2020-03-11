@@ -7,7 +7,7 @@
 
 // Core
 #include <Core/EngineCore.hpp>
-#include <Core/Logger.hpp>
+#include <Core/Logging/Logger.hpp>
 #include <Core/Application.hpp>
 
 // Rendering

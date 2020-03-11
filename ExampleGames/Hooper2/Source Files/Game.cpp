@@ -29,20 +29,20 @@ public:
 class Hooper2Game : public krakoa::Application
 {
 public:
-	Hooper2Game()
-		: Application(Token())
+	Hooper2Game(Token&& t)
+		: Application(t)
 	{
 		INIT_LOGS("Hooper2");
 		SET_LOG_MIN(LOG_LVL_DBUG);
 		PushLayer(new DemoLayer());
 		PushOverlay(new krakoa::ImGuiLayer());
 	}
-		
+
 	~Hooper2Game()
 	{
 		Hooper2Game::Shutdown();
 	}
-	
+
 	void Shutdown() override
 	{
 		 isRunning = false;
@@ -51,5 +51,6 @@ public:
 
 krakoa::Application* krakoa::CreateApplication()
 {
-	return new Hooper2Game();
+	Application::Create<Hooper2Game>();
+	return Application::Pointer();
 }

@@ -8,7 +8,6 @@
 namespace krakoa
 {
 	using namespace kmaths;
-	using namespace events;
 
 	struct WindowProperties
 	{
@@ -16,7 +15,7 @@ namespace krakoa
 		Vector2u dimensions;
 
 		WindowProperties(const std::string&& title = "Krakoa Engine",
-			const Vector2u dimensions = Vector2u(700, 400))
+			const Vector2u& dimensions = Vector2u(1024, 640))
 			: title(title), dimensions(dimensions)
 		{}
 	};
@@ -25,7 +24,7 @@ namespace krakoa
 	class KRAKOA_API iWindow
 	{
 	public:
-		using EventCallbackFunc = std::function<void(Event&)>;
+		using EventCallbackFunc = std::function<void(events::Event&)>;
 
 		virtual ~iWindow() 
 			= default;
@@ -33,12 +32,12 @@ namespace krakoa
 		virtual void OnUpdate() = 0;
 
 		virtual kmaths::Vector2u& GetDimensions() = 0;
-		virtual unsigned GetWidth() const = 0;
-		virtual unsigned GetHeight() const = 0;
+		USE_RESULT virtual unsigned GetWidth() const = 0;
+		USE_RESULT virtual unsigned GetHeight() const = 0;
 
 		virtual void SetEventCallback(const EventCallbackFunc& cb) = 0;
 		virtual void SetVsync(bool isEnabled) = 0;
-		virtual bool IsVsyncActive() const = 0;
+		USE_RESULT virtual bool IsVsyncActive() const = 0;
 
 		static iWindow* Create(const WindowProperties& props = WindowProperties());
 	};

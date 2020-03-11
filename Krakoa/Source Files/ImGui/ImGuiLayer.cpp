@@ -4,7 +4,7 @@
 #include <Core/Application.hpp>
 
 #include <imgui.h> // imgui include must be above any other openGL includes
-#include <Platform/OpenGL/imgui_impl_opengl3.h>
+#include <Platform/OpenGL/imgui_impl_opengl3.hpp>
 
 // Temp for keymap
 #include <GLFW/glfw3.h>
@@ -29,7 +29,7 @@ namespace krakoa
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-		// Temp keymap: Become Krakoa keymap
+		// TODO: Temp keymap: Become Krakoa keymap
 		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
 		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
 		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
@@ -64,9 +64,8 @@ namespace krakoa
 	void ImGuiLayer::OnUpdate()
 	{
 		auto& io = ImGui::GetIO();
-		auto& app = Application::Reference();
-
-		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
+		auto& window = Application::Pointer()->GetWindow();
+		io.DisplaySize = ImVec2(static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()));
 
 		const auto currentTime = static_cast<float>(glfwGetTime());
 		const auto desiredDeltaTime = (1.f / 60.f);

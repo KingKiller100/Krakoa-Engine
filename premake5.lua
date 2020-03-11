@@ -63,6 +63,11 @@ project "Krakoa"
         "%{IncludeDir.ImGUI}",
     }
 
+    defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+
     links
     {
         "kLibrary",

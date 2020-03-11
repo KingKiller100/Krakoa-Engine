@@ -17,14 +17,14 @@ namespace krakoa
 
 		kmaths::Vector2u& GetDimensions() override;
 
-		unsigned GetWidth() const override;
-		unsigned GetHeight() const override;
+		USE_RESULT unsigned GetWidth() const override;
+		USE_RESULT unsigned GetHeight() const override;
 
 		void SetEventCallback(const EventCallbackFunc& cb) override;
 
 		void SetVsync(bool isEnabled) override;
 
-		bool IsVsyncActive() const override;
+		USE_RESULT bool IsVsyncActive() const override;
 
 	private:
 		virtual void Init(const WindowProperties& props);

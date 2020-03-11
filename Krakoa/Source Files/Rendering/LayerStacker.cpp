@@ -32,7 +32,7 @@ namespace krakoa
 
 	void LayerStacker::PopLayer(LayerBase* layer)
 	{
-		auto iter = std::find(begin(), end(), layer);
+		const auto iter = std::find(begin(), end(), layer);
 		if (iter != end())
 		{
 			layerStack.erase(iter);
@@ -42,7 +42,7 @@ namespace krakoa
 
 	void LayerStacker::PopOverlay(LayerBase* overlay)
 	{
-		auto iter = std::find(begin(), end(), overlay);
+		const auto iter = std::find(begin(), end(), overlay);
 		if (iter != end())
 		{
 			layerStack.erase(iter);

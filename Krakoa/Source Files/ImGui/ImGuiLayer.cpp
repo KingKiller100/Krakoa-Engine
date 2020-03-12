@@ -22,6 +22,7 @@ namespace krakoa
 
 	void ImGuiLayer::OnAttach()
 	{
+		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 
@@ -63,8 +64,9 @@ namespace krakoa
 
 	void ImGuiLayer::OnUpdate()
 	{
-		auto& io = ImGui::GetIO();
 		auto& window = Application::Pointer()->GetWindow();
+		
+		auto& io = ImGui::GetIO(); (void)io;
 		io.DisplaySize = ImVec2(static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()));
 
 		const auto currentTime = static_cast<float>(glfwGetTime());

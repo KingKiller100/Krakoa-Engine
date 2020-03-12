@@ -1,9 +1,9 @@
 #pragma once
 
 #include <HelperMacros.hpp>
+#include <deque>
 #include <fstream>
 #include <string>
-#include <deque>
 
 namespace klib::kLogs
 {
@@ -61,8 +61,6 @@ namespace klib::kLogs
 		/**
 		 * \brief
 		 *		Initializes logging system
-		 * \param[in] initialMinLevel
-		 *		Initial minimum log level
 		 * \note
 		 *		No logging calls will function properly until this is called.
 		 */
@@ -84,19 +82,25 @@ namespace klib::kLogs
 		 * \note
 		 *		No logs less than this given level will be stored by the log system.
 		 */
-		void SetMinimumLoggingLevel(const LLevel newMinLevel) noexcept;
+		constexpr void SetMinimumLoggingLevel(const LLevel newMinLevel) noexcept;
 
 		/**
 		 * \brief
 		 *		Toggles if logging system is enabled
 		 */
-		void ToggleLoggingEnabled() noexcept;
+		constexpr void ToggleLoggingEnabled() noexcept;
+
+		/**
+		 * \brief
+		 *		Toggles if sub system outputting is enabled
+		 */
+		constexpr void ToggleSubSystemEnabled() noexcept;
 
 		/**
 		 * \brief
 		 *		Toggles whether logs output to system to keep a local cache
 		 */
-		void SetCacheMode(const bool enable);
+		constexpr void SetCacheMode(const bool enable) noexcept;
 
 		/**
 		 * \brief
@@ -219,12 +223,28 @@ namespace klib::kLogs
 		 * \brief
 		 *		Stores all log levels into a map with the string equivalent
 		 */
-		void InitializeLogLevelMap();
+		static void InitializeLogLevelMap();
 
+		/**
+		 * \brief
+		 *		Outputs log message to sub systems (i.e. console and output debug console)
+		 * \param[in] logLine
+		 *		STL string_view representing the log message
+		 * \param[in] lvl
+		 *		Log level
+		 */
 		void OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) noexcept;
 
-		void InitializeOutputToConsoleColourMap();
+		/**
+		 * \brief
+		 *		Initialize map of log level to console colour map 
+		 */
+		static void InitializeOutputToConsoleColourMap();
 
+		/**
+		 * \brief
+		 *		Outputs logs to file then closes it
+		 */
 		void CloseLogFile();
 
 	public:
@@ -240,7 +260,8 @@ namespace klib::kLogs
 		std::fstream logFileStream;
 
 		std::string name;
-		bool enable_kLogging;
+		bool isEnabled;
+		bool subSystemLoggingEnabled;
 		bool inCacheMode;
 	};
 #	pragma warning(pop)

@@ -12,6 +12,7 @@ namespace krakoa
 		coreLogger = std::make_unique<Logging>();
 		coreLogger->SetName("Krakoa");
 		coreLogger->ChangeFilename("Krakoa Engine");
+		coreLogger->ToggleSubSystemEnabled();
 		coreLogger->OutputInitialized();
 	}
 }

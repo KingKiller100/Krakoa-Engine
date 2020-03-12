@@ -35,6 +35,7 @@ namespace krakoa
 		const auto iter = std::find(begin(), end(), layer);
 		if (iter != end())
 		{
+			(*iter)->OnDetach();
 			layerStack.erase(iter);
 			--layerIter;
 		}
@@ -45,6 +46,7 @@ namespace krakoa
 		const auto iter = std::find(begin(), end(), overlay);
 		if (iter != end())
 		{
+			(*iter)->OnDetach();
 			layerStack.erase(iter);
 		}
 	}

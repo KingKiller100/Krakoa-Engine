@@ -182,7 +182,9 @@ namespace klib::kLogs
 
 		if (lvl >= LLevel::ERRR)
 		{
-			logLine += ToString("\n\t\t [FILE]:   %s\n\t\t [LINE]:   %d",
+			logLine += ToString(R"(
+		 [FILE]:   %s
+		 [LINE]:   %d)",
 				file,
 				line);
 		}

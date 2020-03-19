@@ -210,9 +210,11 @@ namespace klib::kLogs
 	void Logging::FinalOutput()
 	{
 		const auto endLogLine 
-		    = "\n***********************************************************************\n\t\t"
-		      "Logging Concluded" 
-		      "\n***********************************************************************\n\n";
+		    = R"(
+***********************************************************************
+                          Logging Concluded                            
+***********************************************************************
+)";
 		AddToLogBuffer(endLogLine);
 		CloseLogFile();
 		isEnabled = false;

@@ -1,10 +1,13 @@
 ﻿#include <Precompile.hpp>
 #include <Core/TestDriver.hpp>
 
+#include <Testing/Tester.hpp>
+#include <Testing/TesterManager.hpp>
+
 #ifdef KRAKOA_TEST
 namespace tests
 {
-	auto& testMan = kTest::TesterManager::Reference();
+	auto& testMan = kTest::TesterManager::Get();
 
 	TestDriver::TestDriver()
 	{	}
@@ -22,8 +25,7 @@ namespace tests
 	}
 	void TestDriver::AddTest(void* test)
 	{
-		auto tPtr = (kTest::Tester*)test;
-		testMan.Add(std::unique_ptr<kTest::Tester>(tPtr));
+		testMan.Add(static_cast<kTest::Tester*>(test));
 	}
 	void TestDriver::RunTests()
 	{

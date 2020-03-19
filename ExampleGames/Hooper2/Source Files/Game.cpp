@@ -34,6 +34,7 @@ public:
 	{
 		INIT_LOGS("Hooper2");
 		SET_LOG_MIN(LOG_LVL_DBUG);
+		
 		PushLayer(new DemoLayer());
 		PushOverlay(new krakoa::ImGuiLayer());
 	}

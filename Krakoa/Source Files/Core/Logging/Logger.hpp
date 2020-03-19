@@ -39,6 +39,7 @@ namespace krakoa
 #define SET LOG_NAME(name)                              ::krakoa::Logger::GetClientLogger().SetName(name);
 #define SET_LOG_MIN(minLvl)                             ::krakoa::Logger::GetClientLogger().SetMinimumLoggingLevel(minLvl);
 #define TOGGLE_LOGGING()                                ::krakoa::Logger::GetClientLogger().ToggleLoggingEnabled();
+#define TOGGLE_SUBSYSTEM_LOGGING()                      ::krakoa::Logger::GetClientLogger().ToggleSubSystemEnabled();
 #define DISABLE_LOGFILE_OUTPUT()                        ::krakoa::Logger::GetClientLogger().SetCacheMode(true);
 #define ENABLE_LOGFILE_OUTPUT()                         ::krakoa::Logger::GetClientLogger().SetCacheMode(false);
 #define CHANGE_LOGS_DESTINATION(destination)            ::krakoa::Logger::GetClientLogger().ChangeOutputDirectory(destination);
@@ -48,7 +49,6 @@ namespace krakoa
 #define INFO(msg)                                       ::krakoa::Logger::GetClientLogger().AddEntry(msg, LOG_LVL_INFO);
 #define WARN(msg)                                       ::krakoa::Logger::GetClientLogger().AddEntry(msg, LOG_LVL_WARN);
 #define ERRR(msg)                                       ::krakoa::Logger::GetClientLogger().AddEntry(msg, LOG_LVL_ERRR, __FILE__, __LINE__);
-//#define FATAL(msg)                                      ::krakoa::Logger::GetClientLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define BANNER(banner, category)                        ::krakoa::Logger::GetClientLogger().AddEntryBanner(banner, category);
 #define LOG_SUSPEND()                                   ::krakoa::Logger::GetClientLogger().SuspendFileLogging();
 #define LOG_RESUME()                                    ::krakoa::Logger::GetClientLogger().ResumeFileLogging();

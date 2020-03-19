@@ -55,27 +55,25 @@ namespace kmaths
 		}
 
 		template<typename U = T>
-		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>, Vector2> Perpendicular() const
-		{
-			return *this;
-		}
-
-		template<typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>, Vector2> Perpendicular() const
 		{
 			return Vector2(-this->y, this->x);
 		}
+
+		template<typename U = T>
+		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>, Vector2> Perpendicular() const = delete;
+
 		
 		// Operators
 
-		constexpr Vector2 operator- () const noexcept
+		USE_RESULT constexpr Vector2 operator- () const noexcept
 		{
 			return Vector2(-this->X(), -this->Y());
 		}
 		
 		// Overloads + operator to add two vectors objects
 		template<typename T2>
-		Vector2 operator+(const Vector2<T2>& v) const
+		constexpr Vector2 operator+(const Vector2<T2>& v) const
 		{
 			return Vector2(
 				this->x + static_cast<T>(v.X()),
@@ -84,7 +82,7 @@ namespace kmaths
 
 		// Overloads - operator to subtract two vectors objects
 		template<typename T2>
-		Vector2 operator-(const Vector2<T2>& v) const
+		constexpr Vector2 operator-(const Vector2<T2>& v) const
 		{
 			return Vector2(
 				this->x - static_cast<T>(v.X()),
@@ -93,7 +91,7 @@ namespace kmaths
 
 		// Overloads * operator to multiply two vector objects
 		template<typename T2>
-		Vector2 operator*(const Vector2<T2>& v) const
+		constexpr Vector2 operator*(const Vector2<T2>& v) const
 		{
 			return Vector2(
 				this->x * static_cast<T>(v.X()),
@@ -102,7 +100,7 @@ namespace kmaths
 
 		// Overloads / operator to divide two vectors objects
 		template<typename T2>
-		Vector2 operator/(const Vector2<T2>& v) const
+		constexpr Vector2 operator/(const Vector2<T2>& v) const
 		{
 			return Vector2(
 				this->x / static_cast<T>(v.X()),
@@ -111,7 +109,7 @@ namespace kmaths
 
 		// adds to current Vector2 value
 		template<typename T2>
-		Vector2& operator+=(const Vector2<T2>& v)
+		constexpr Vector2& operator+=(const Vector2<T2>& v)
 		{
 			*this = *this + v;
 			return *this;
@@ -119,7 +117,7 @@ namespace kmaths
 
 		// divides current Vector2 value
 		template<typename T2>
-		Vector2& operator-=(const Vector2<T2>& v)
+		constexpr Vector2& operator-=(const Vector2<T2>& v)
 		{
 			*this = *this - v;
 			return *this;
@@ -127,7 +125,7 @@ namespace kmaths
 
 		// divides current Vector2 value and sets variable to it
 		template<typename T2>
-		Vector2& operator/=(const Vector2<T2>& v)
+		constexpr Vector2& operator/=(const Vector2<T2>& v)
 		{
 			*this = *this / v;
 			return *this;
@@ -135,29 +133,29 @@ namespace kmaths
 
 		// multiplies current Vector2 value and sets variable to it
 		template<typename T2>
-		Vector2& operator*=(const Vector2<T2>& v)
+		constexpr Vector2& operator*=(const Vector2<T2>& v)
 		{
 			*this = *this * v;
 			return *this;
 		}
 
-		Vector2 operator*(const T scalar)
+		constexpr Vector2 operator*(const T scalar)
 		{
 			return Vector2(this->X() * scalar, this->Y() * scalar);
 		}
 
-		Vector2 operator/(const T scalar)
+		constexpr Vector2 operator/(const T scalar)
 		{
 			return Vector2(this->X() / scalar, this->Y() / scalar);
 		}
 		
-		Vector2& operator*=(const T scalar) 
+		constexpr Vector2& operator*=(const T scalar)
 		{
 			*this = *this * scalar;
 			return *this;
 		}
 
-		Vector2& operator/=(const T scalar) 
+		constexpr Vector2& operator/=(const T scalar)
 		{
 			*this = *this / scalar;
 			return *this;
@@ -165,7 +163,7 @@ namespace kmaths
 		
 		// Overloads = operator to make one vector values equivalent to another
 		template<typename T2>
-		Vector2& operator=(const Vector2<T2>& v)
+		constexpr Vector2& operator=(const Vector2<T2>& v)
 		{
 			this->x = v.X();
 			this->y = v.Y();

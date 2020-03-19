@@ -13,7 +13,5 @@
 #include <Utility/File System/kFileSystem.hpp>
 #include <Utility/Format/kUTFStringConverter.hpp>
 
-//#include <Utility/Logging/kLogging_Class.hpp>
-
 // Macros
 #include <HelperMacros.hpp>

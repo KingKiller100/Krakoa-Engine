@@ -47,7 +47,7 @@ namespace kmaths
 	{
 		return value >= 0 ? Clamp(value, min, max) : -Clamp(value, min, max);
 	}
-	
+
 	template<typename T>
 	USE_RESULT constexpr T Remap(T progress, T actualMin, T actualMax, T remappedMin, T remappedMax) noexcept
 	{
@@ -72,7 +72,7 @@ namespace kmaths
 
 		return inDegrees ? RadiansToDegrees(acos(angle)) : acos(angle);
 	}
-	
+
 	template<typename T>
 	USE_RESULT constexpr T GetRange(const T minVal, const T maxVal) noexcept
 	{
@@ -104,7 +104,7 @@ namespace kmaths
 	}
 
 	template <typename T>
-	T getAccelerationOverTime(T initialVelocity, T distance)
+	USE_RESULT T getAccelerationOverTime(T initialVelocity, T distance) noexcept
 	{
 		const T acceleration = (0 - (initialVelocity * initialVelocity)) / (2 * distance);
 
@@ -139,16 +139,14 @@ namespace kmaths
 			}
 			return fmodf(num, base);
 		}
-		
+
 		T const rem = num % base;
 		if _CONSTEXPR_IF(-1 % 2 == 1)
 		{
 			return rem;
 		}
-		else
-		{
-			return rem < 0 ? rem + base : rem;
-		}
+
+		return rem < 0 ? rem + base : rem;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -181,7 +179,7 @@ namespace kmaths
 
 	// Normalizes a vector
 	template<typename VecType>
-	constexpr VecType VectorNormalize(const VecType& v) noexcept
+	USE_RESULT constexpr VecType VectorNormalize(const VecType& v) noexcept
 	{
 		const auto mag = v.Magnitude();
 
@@ -196,7 +194,7 @@ namespace kmaths
 
 	// Produces the dot product
 	template<typename T>
-	constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
+	USE_RESULT constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
 	{
 		return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
 	}

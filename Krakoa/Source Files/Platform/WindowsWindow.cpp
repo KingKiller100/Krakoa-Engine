@@ -6,7 +6,6 @@
 #include <Events System/KeyEvent.hpp>
 #include <Events System/MouseEvent.hpp>
 
-#include <Utility/Debug Helper/kAssert.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
 #include <glad/glad.h>
@@ -70,7 +69,7 @@ namespace krakoa
 
 		const auto gladStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		KRK_FATAL(gladStatus, "FAILED: Unable to initialize GLAD");
-		
+
 		glfwSetWindowUserPointer(window, &data);
 
 		SetUpCallBacks();
@@ -85,89 +84,86 @@ namespace krakoa
 	{
 		// Set up window callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				data.dimensions = kmaths::Vector2s(width, height);
-				WindowResizeEvent e(static_cast<float>(width), static_cast<float>(height));
-				data.cb(e);
-			});
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			data.dimensions = kmaths::Vector2s(width, height);
+			WindowResizeEvent e(static_cast<float>(width), static_cast<float>(height));
+			data.cb(e);
+		});
 		glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				WindowClosedEvent e;
-				data.cb(e);
-			});
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			WindowClosedEvent e;
+			data.cb(e);
+		});
 		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-				switch (action) {
-				case GLFW_PRESS:
-				{
-					KeyPressedEvent e(key, 0);
-					data.cb(e);
-					break;
-				}
-				case GLFW_REPEAT:
-				{
-					KeyPressedEvent e(key, 1);
-					data.cb(e);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					KeyReleasedEvent e(key);
-					data.cb(e);
-					break;
-				}
-				default:
-					break;
-				}
-			});
+			switch (action) {
+			case GLFW_PRESS:
+			{
+				KeyPressedEvent e(key, 0);
+				data.cb(e);
+				break;
+			}
+			case GLFW_REPEAT:
+			{
+				KeyPressedEvent e(key, 1);
+				data.cb(e);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				KeyReleasedEvent e(key);
+				data.cb(e);
+				break;
+			}
+			default:
+				break;
+			}
+		});
 		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			switch (action) {
+			case GLFW_PRESS:
 			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				switch (action) {
-				case GLFW_PRESS:
-				{
-					MouseButtonPressedEvent e(button);
-					data.cb(e);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					MouseButtonReleasedEvent e(button);
-					data.cb(e);
-					break;
-				}
-				default:
-					break;
-				}
-			});
+				MouseButtonPressedEvent e(button);
+				data.cb(e);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				MouseButtonReleasedEvent e(button);
+				data.cb(e);
+				break;
+			}
+			default:
+				break;
+			}
+		});
 		glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				const auto offsets = Vector2f(static_cast<float>(xOffset), static_cast<float>(yOffset));
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const auto offsets = Vector2f(static_cast<float>(xOffset), static_cast<float>(yOffset));
 
-				MouseScrolledEvent e(offsets);
-				data.cb(e);
-			});
+			MouseScrolledEvent e(offsets);
+			data.cb(e);
+		});
 		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				const auto positions = Vector2f(static_cast<float>(xPos), static_cast<float>(yPos));
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const auto positions = Vector2f(static_cast<float>(xPos), static_cast<float>(yPos));
 
-				MouseMovedEvent e(positions);
-				data.cb(e);
-			});
+			MouseMovedEvent e(positions);
+			data.cb(e);
+		});
 	}
 
 	void krakoa::WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-
-		//glClearColor(0.85f, 0.35f, 0.f, 0.25f); // Orange background
-		//glClear(GL_COLOR_BUFFER_BIT);
 
 		Vector2s size;
 		glfwGetFramebufferSize(window, &size.X(), &size.Y());

@@ -12,6 +12,10 @@ namespace kTest::utility
 		
 	private:
 		void Test() override;
+		bool LogTest() noexcept;
+
+	private:
+		std::string fullFilePathToDelete;
 	};
 }
 #endif

@@ -8,8 +8,8 @@
 namespace krakoa
 {
 #if defined (_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable:4251)
+#	pragma warning(push)
+#	pragma warning(disable:4251)
 
 	class KRAKOA_API LayerBase;
 	class KRAKOA_API LayerStacker
@@ -30,6 +30,6 @@ namespace krakoa
 		std::vector<LayerBase*> layerStack;
 		std::vector<LayerBase*>::iterator layerIter;
 	};
-# pragma warning(pop)
+#	pragma warning(pop)
 #endif
 }

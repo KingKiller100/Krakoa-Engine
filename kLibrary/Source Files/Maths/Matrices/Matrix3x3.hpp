@@ -40,7 +40,7 @@ namespace kmaths
 			indices[2][2] = 1;
 		}
 
-		Matrix3x3 operator+(Matrix3x3& other) noexcept
+		constexpr Matrix3x3 operator+(Matrix3x3& other) noexcept
 		{
 			const auto m1 = Vector3<T>(other.indices[0][0], other.indices[0][1], other.indices[0][2]);
 			const auto m2 = Vector3<T>(other.indices[1][0], other.indices[1][1], other.indices[1][2]);
@@ -55,7 +55,7 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix3x3 operator-(Matrix3x3& other) noexcept
+		constexpr Matrix3x3 operator-(Matrix3x3& other) noexcept
 		{
 			const auto m1 = Vector3<T>(other.indices[0][0], other.indices[0][1], other.indices[0][2]);
 			const auto m2 = Vector3<T>(other.indices[1][0], other.indices[1][1], other.indices[1][2]);
@@ -70,19 +70,19 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix3x3& operator+=(const Matrix3x3& other)
+		constexpr Matrix3x3& operator+=(const Matrix3x3& other)
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		Matrix3x3& operator-=(const Matrix3x3& other)
+		constexpr Matrix3x3& operator-=(const Matrix3x3& other)
 		{
 			*this = *this - other;
 			return *this;
 		}
 
-		Matrix3x3 operator*(Matrix3x3& other) noexcept
+		constexpr Matrix3x3 operator*(Matrix3x3& other) noexcept
 		{
 			auto m1 = Vector3<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3]);
 			auto m2 = Vector3<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2], other.indices[1][minorIdx3]);
@@ -109,7 +109,7 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix3x3 operator/(Matrix3x3& other) noexcept
+		constexpr Matrix3x3 operator/(Matrix3x3& other) noexcept
 		{
 			auto m1 = Vector3<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3]);
 			auto m2 = Vector3<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2], other.indices[1][minorIdx3]);
@@ -136,20 +136,20 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix3x3& operator*=(const Matrix3x3& other)
+		constexpr Matrix3x3& operator*=(const Matrix3x3& other)
 		{
 			*this = *this * other;
 			return *this;
 		}
 
-		Matrix3x3& operator/=(const Matrix3x3& other)
+		constexpr Matrix3x3& operator/=(const Matrix3x3& other)
 		{
 			*this = *this / other;
 			return *this;
 		}
 
 		template<typename U>
-		Matrix3x3 operator*(const U scalar)
+		constexpr Matrix3x3 operator*(const U scalar)
 		{
 			const auto res1 = Vector3<T>(indices[0][0] * scalar, indices[0][1] * scalar, indices[0][2] * scalar);
 			const auto res2 = Vector3<T>(indices[1][0] * scalar, indices[1][1] * scalar, indices[1][2] * scalar);
@@ -161,7 +161,7 @@ namespace kmaths
 		}
 
 		template<typename U>
-		Matrix3x3 operator/(const U scalar)
+		constexpr Matrix3x3 operator/(const U scalar)
 		{
 			const auto res1 = Vector3<T>(indices[0][0] / scalar, indices[0][1] / scalar, indices[0][2] / scalar);
 			const auto res2 = Vector3<T>(indices[1][0] / scalar, indices[1][1] / scalar, indices[1][2] / scalar);
@@ -173,26 +173,26 @@ namespace kmaths
 		}
 
 		template<typename U>
-		Matrix3x3& operator*=(const U scalar)
+		constexpr Matrix3x3& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
 			return *this;
 		}
 
 		template<typename U>
-		Matrix3x3& operator/=(const U scalar)
+		constexpr Matrix3x3& operator/=(const U scalar)
 		{
 			*this = *this / scalar;
 			return *this;
 		}
 
-		Matrix3x3& operator=(const Matrix3x3& other)
+		constexpr Matrix3x3& operator=(const Matrix3x3& other)
 		{
 			indices = other.indices;
 			return *this;
 		}
 
-		Matrix3x3& operator=(Matrix3x3&& other)
+		constexpr Matrix3x3& operator=(Matrix3x3&& other)
 		{
 			indices = std::move(other.indices);
 			return *this;

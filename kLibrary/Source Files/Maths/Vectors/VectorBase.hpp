@@ -65,7 +65,7 @@ namespace kmaths
 		// Calculates distance between two 3D objects
 		USE_RESULT constexpr T Distance(const VectorBase& v) const noexcept
 		{
-			const auto distanceVec = v - *this;
+			const auto distanceVec = VectorBase(v.x - x, v.y - y, v.z - z); //v - *this;
 			return distanceVec.Magnitude();
 		}
 
@@ -109,62 +109,45 @@ namespace kmaths
 			}
 		}
 
-		// Overloads + operator to add two vectors objects
-		VectorBase operator+(const VectorBase& v) const
-		{
-			return VectorBase(this->x + v.x, this->y + v.y, this->z + v.z);
-		}
-
-		// Overloads - operator to subtract two vectors objects
-		VectorBase operator-(const VectorBase& v) const
-		{
-			return VectorBase(this->x - v.x, this->y - v.y, this->z - v.z);
-		}
-
 		// Overloads * operator to multiply a vector and float object
-		VectorBase operator*(const T f) const
+		constexpr VectorBase operator*(const T f) const
 		{
 			return VectorBase(this->x * f, this->y * f, this->z * f);
 		}
 
 		// Overloads * operator to multiply two vector objects
-		VectorBase operator*(const VectorBase& v) const
+		constexpr VectorBase operator*(const VectorBase& v) const
 		{
 			return VectorBase(this->x * v.x, this->y * v.y, this->z * v.z);
 		}
 
 		// Overloads / operator to divide a vector and float object
-		VectorBase operator/(const T f) const
+		constexpr VectorBase operator/(const T f) const
 		{
 			return VectorBase(this->x / f, this->y / f, this->z / f);
 		}
 
 		// Overloads / operator to divide two vectors objects
-		VectorBase operator/(const VectorBase& v) const
+		constexpr VectorBase operator/(const VectorBase& v) const
 		{
 			return VectorBase(this->x / v.x, this->y / v.y, this->z / v.z);
 		}
 
 		// bool operator == returns true if both VectorBaseD values are equal
-		bool operator==(const VectorBase& v) const
+		USE_RESULT constexpr bool operator==(const VectorBase& v) const
 		{
 			return (this->x == v.x && this->y == v.y && this->z == v.z);
 		}
 
 		// bool operator != returns true if both VectorBase values are NOT equal
-		bool operator!=(const VectorBase& v) const
+		USE_RESULT constexpr bool operator!=(const VectorBase& v) const
 		{
 			return !(*this == v);
 		}
 
-		VectorBase operator-()
-		{
-			return VectorBase(-this->x, -this->y, -this->z, this->w);
-		}
-
 		template<typename VecType>
-		friend constexpr VecType VectorNormalize(const VecType&) noexcept;
-		friend constexpr T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&) noexcept;
+		friend USE_RESULT constexpr VecType VectorNormalize(const VecType&) noexcept;
+		friend USE_RESULT constexpr T VectorDotProduct(const VectorBase<T>&, const VectorBase<T>&) noexcept;
 
 	protected:
 		T x, y, z, w;

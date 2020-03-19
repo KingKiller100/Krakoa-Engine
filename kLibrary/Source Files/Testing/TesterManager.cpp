@@ -24,10 +24,12 @@
 #ifdef TESTING_ENABLED
 namespace kTest
 {
+	TesterManager* TesterManager::pInstance = nullptr;
+
 	std::unordered_set< std::unique_ptr<Tester> > kTests_TestsUSet;
 	std::string kTest_TestResultFilePath;
 	
-	TesterManager::TesterManager(Token)
+	TesterManager::TesterManager()
 	{	}
 
 	TesterManager::~TesterManager()
@@ -49,29 +51,24 @@ namespace kTest
 
 	void TesterManager::InitializeMathsTests()
 	{
-		Add(std::unique_ptr<Tester>(new Maths::MatricesTester()));
-		Add(std::unique_ptr<Tester>(new Maths::VectorsTester()));
+		Add(new Maths::MatricesTester());
+		Add(new Maths::VectorsTester());
 	}
 
 	void TesterManager::InitializeUtilityTests()
 	{		
-		Add(std::unique_ptr<Tester>(new utility::CalendarTester()));
-		Add(std::unique_ptr<Tester>(new utility::TimerTester()));
-		Add(std::unique_ptr<Tester>(new utility::FileSystemTester()));
-		Add(std::unique_ptr<Tester>(new utility::FormatToStringTester()));
-		Add(std::unique_ptr<Tester>(new utility::DebugHelpTester()));
-		Add(std::unique_ptr<Tester>(new utility::LoggingTester()));
-		Add(std::unique_ptr<Tester>(new utility::StringViewTester()));
+		Add(new utility::CalendarTester());
+		Add(new utility::TimerTester());
+		Add(new utility::FileSystemTester());
+		Add(new utility::FormatToStringTester());
+		Add(new utility::DebugHelpTester());
+		Add(new utility::LoggingTester());
+		Add(new utility::StringViewTester());
 	}
 
-	void TesterManager::Add(std::unique_ptr<Tester>&& test)
+	void TesterManager::Add(Tester* test)
 	{
-		kTests_TestsUSet.insert(std::move(test));
-	}
-
-	void TesterManager::Add(std::unique_ptr<Tester>& test)
-	{
-		kTests_TestsUSet.insert(std::move(test));
+		kTests_TestsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
 	}
 
 	void TesterManager::RunAll()
@@ -90,5 +87,12 @@ namespace kTest
 	{
 		kTests_TestsUSet.clear();
 	}
+	
+	TesterManager& TesterManager::Get()
+	{
+		if (!pInstance)
+			pInstance = new TesterManager();
+		return *pInstance;
+	}
 }
-#endif // TESTING_ENAB*LED
+#endif // TESTING_ENABLED

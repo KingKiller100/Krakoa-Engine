@@ -26,6 +26,17 @@ project "GLAD"
 		runtime "Debug"
         buildoptions "/MDd"
 		symbols "on"
+	
+	filter "configurations:Test"
+		runtime "Debug"
+		buildoptions "/MDd"
+		symbols "on"
+	
+	filter "configurations:Profile"
+		runtime "Release"
+		optimize "Debug"
+		buildoptions "/MD"
+		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"

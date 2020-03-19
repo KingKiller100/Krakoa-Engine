@@ -2,27 +2,29 @@
 
 #include <HelperMacros.hpp>
 
-#include <Patterns/SimpleSingleton.hpp>
-
 #ifdef TESTING_ENABLED
 namespace kTest
 {
 	class Tester;	
 	
-	class TesterManager : public pattern::SimpleSingleton<TesterManager>
+	class TesterManager
 	{
 	public:
-		TesterManager(Token);
+		TesterManager();
 		~TesterManager();
 
 		void Initialize();
 		void Shutdown();
 		void InitializeMathsTests();
 		void InitializeUtilityTests();
-		void Add(std::unique_ptr<Tester>&& test);
-		void Add(std::unique_ptr<Tester>& test);
+		void Add(Tester* test);
 		void RunAll();
 		void ClearAllTests();
+
+		static TesterManager& Get();
+
+	private:
+		static TesterManager* pInstance;
 	};
 }
 

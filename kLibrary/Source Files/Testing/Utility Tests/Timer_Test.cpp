@@ -2,12 +2,13 @@
 #include <Testing/Utility Tests/Timer_Test.hpp>
 
 #include <Utility/Timer/kTimer.hpp>
+#include <Utility/Format/kFormatToString.hpp>
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
-{	
+{
 	TimerTester::TimerTester()
-		: Tester("Clock Test")
+		: Tester("Timer Test")
 	{	}
 
 	TimerTester::~TimerTester()
@@ -17,18 +18,25 @@ namespace kTest::utility
 	{
 		using namespace klib::kTime;
 
-		HighAccuracyTimer testTime("Clock Test Timer");
+		std::string s;
+		double sum(0);
 
-		std::vector<int> nums;
-		for (auto i = 0; i < 1000; i++)
+		Timer<size_t> testTime("Test Timer");
+
+		const size_t size = 99999;
+		int nums[size];
+		for (auto i = 0; i < size; i++)
 		{
-			nums.emplace_back(i);
+			nums[i] = i;
 			const auto dt = testTime.GetDeltaTime<Micros>();
+			sum += dt;
 			VERIFY(nums[i] == i && dt != 0);
-			std::cout << "Emplace_back Test " << i << ": " << dt << "us (Microseconds)\n";
+			s = klib::kFormat::ToString("Test Time %d : %dus (Microseconds)\n", i, dt);
+			OutputDebugStringA(s.data());
 		}
 
-		std::cout << testTime.GetName() << " Total Test Time: " << testTime.GetLifeTime<Micros>() / 1000000.0 << "s (Seconds)\n";
+		std::cout << testTime.GetName() << " Total Test Time: " << testTime.GetLifeTime<Micros>() / 1000000.0 << "s (Seconds)" << std::endl;
+		std::cout << testTime.GetName() << " Average Execution Time: " << sum / size << "us (Microseconds)" << std::endl;
 	}
 }
 

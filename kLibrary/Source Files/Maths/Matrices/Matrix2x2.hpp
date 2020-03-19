@@ -39,7 +39,7 @@ namespace kmaths
 			indices[1][1] = 1;
 		}
 
-		Matrix2x2 operator+(Matrix2x2& other) noexcept
+		USE_RESULT constexpr Matrix2x2 operator+(Matrix2x2& other) noexcept
 		{
 			const auto m1 = Vector2<T>(other.indices[0][0], other.indices[0][1]);
 			const auto m2 = Vector2<T>(other.indices[1][0], other.indices[1][1]);
@@ -52,7 +52,7 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix2x2 operator-(Matrix2x2& other) noexcept
+		USE_RESULT constexpr Matrix2x2 operator-(Matrix2x2& other) noexcept
 		{
 			const auto m1 = Vector2<T>(other.indices[0][0], other.indices[0][1]);
 			const auto m2 = Vector2<T>(other.indices[1][0], other.indices[1][1]);
@@ -65,22 +65,22 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix2x2& operator+=(const Matrix2x2& other)
+		constexpr Matrix2x2& operator+=(const Matrix2x2& other)
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		Matrix2x2& operator-=(const Matrix2x2& other)
+		constexpr Matrix2x2& operator-=(const Matrix2x2& other)
 		{
 			*this = *this - other;
 			return *this;
 		}
 
-		Matrix2x2 operator*(Matrix2x2& other) noexcept
+		USE_RESULT constexpr Matrix2x2 operator*(Matrix2x2& other) noexcept
 		{
-			auto m1 = Vector2<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2]);
-			auto m2 = Vector2<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2]);
+			const auto m1 = Vector2<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2]);
+			const auto m2 = Vector2<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2]);
 
 			const auto res11 = indices[0][minorIdx1] * m1[0] + indices[0][minorIdx2] * m2[0];
 			const auto res12 = indices[0][minorIdx1] * m1[1] + indices[0][minorIdx2] * m2[1];
@@ -96,10 +96,10 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix2x2 operator/(Matrix2x2& other) noexcept
+		USE_RESULT constexpr Matrix2x2 operator/(Matrix2x2& other) noexcept
 		{
-			auto m1 = Vector2<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2]);
-			auto m2 = Vector2<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2]);
+			const auto m1 = Vector2<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2]);
+			const auto m2 = Vector2<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2]);
 
 			const auto res11 = indices[0][minorIdx1] / m1[0] + indices[0][minorIdx2] / m2[0];
 			const auto res12 = indices[0][minorIdx1] / m1[1] + indices[0][minorIdx2] / m2[1];
@@ -115,20 +115,20 @@ namespace kmaths
 			return matrix;
 		}
 
-		Matrix2x2& operator*=(const Matrix2x2& other)
+		constexpr Matrix2x2& operator*=(const Matrix2x2& other)
 		{
 			*this = *this * other;
 			return *this;
 		}
 
-		Matrix2x2& operator/=(const Matrix2x2& other)
+		constexpr Matrix2x2& operator/=(const Matrix2x2& other)
 		{
 			*this = *this / other;
 			return *this;
 		}
 
 		template<typename U>
-		Matrix2x2 operator*(const U scalar)
+		USE_RESULT constexpr Matrix2x2 operator*(const U scalar)
 		{
 			const auto res1 = Vector2<T>(indices[0][0] * scalar, indices[0][1] * scalar);
 			const auto res2 = Vector2<T>(indices[1][0] * scalar, indices[1][1] * scalar);
@@ -139,7 +139,7 @@ namespace kmaths
 		}
 
 		template<typename U>
-		Matrix2x2 operator/(const U scalar)
+		USE_RESULT constexpr Matrix2x2 operator/(const U scalar)
 		{
 			const auto res1 = Vector2<T>(indices[0][0] / scalar, indices[0][1] / scalar);
 			const auto res2 = Vector2<T>(indices[1][0] / scalar, indices[1][1] / scalar);
@@ -150,32 +150,32 @@ namespace kmaths
 		}
 
 		template<typename U>
-		Matrix2x2& operator*=(const U scalar)
+		constexpr Matrix2x2& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
 			return *this;
 		}
 
 		template<typename U>
-		Matrix2x2& operator/=(const U scalar)
+		constexpr Matrix2x2& operator/=(const U scalar)
 		{
 			*this = *this / scalar;
 			return *this;
 		}
 
-		Matrix2x2& operator=(const Matrix2x2& other)
+		constexpr Matrix2x2& operator=(const Matrix2x2& other)
 		{
 			indices = other.indices;
 			return *this;
 		}
 
-		Matrix2x2& operator=(Matrix2x2&& other)
+		constexpr Matrix2x2& operator=(Matrix2x2&& other)
 		{
 			indices = std::move(other.indices);
 			return *this;
 		}
 
-		constexpr Matrix2x2 operator-() const noexcept
+		USE_RESULT constexpr Matrix2x2 operator-() const noexcept
 		{
 			for (auto& row : indices)
 				row = -row;
@@ -183,7 +183,7 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr Vector2<T>& operator[](const size_t idx)
+		USE_RESULT constexpr Vector2<T>& operator[](const size_t idx)
 		{
 			return indices[idx];
 		}

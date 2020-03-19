@@ -8,6 +8,7 @@
 
 // Temp for keymap
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 
 namespace krakoa
@@ -64,6 +65,9 @@ namespace krakoa
 
 	void ImGuiLayer::OnUpdate()
 	{
+		glClearColor(0.85f, 0.35f, 0.f, 0.25f); // Orange background
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		auto& window = Application::Pointer()->GetWindow();
 		
 		auto& io = ImGui::GetIO(); (void)io;

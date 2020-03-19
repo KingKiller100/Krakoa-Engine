@@ -17,15 +17,24 @@ namespace kTest::utility
 
 	void LoggingTester::Test()
 	{
+		VERIFY(LogTest());
+
+		klib::kFileSystem::RemoveFile(fullFilePathToDelete.data());
+		fullFilePathToDelete.erase(fullFilePathToDelete.find_last_of('\\'));
+		klib::kFileSystem::DeleteDirectory(fullFilePathToDelete.data());
+	}
+
+	bool LoggingTester::LogTest() noexcept
+	{
 		using namespace klib::kLogs;
 
 		auto testLogger = std::make_unique<Logging>();
 
-		testLogger->OutputInitialized(LLevel::NORM);
-		
+		testLogger->OutputInitialized();
+
 		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
 		testLogger->ChangeOutputDirectory(dir);
-		
+
 		testLogger->SuspendFileLogging();
 
 		const auto previousLogFile = dir + "Logs - " + klib::kCalendar::GetDateInNumericalFormat(false) + ".log";
@@ -33,13 +42,13 @@ namespace kTest::utility
 
 		const auto filename = "DiffFileName";
 		testLogger->ChangeFilename(filename);
-		
+
 		testLogger->SetCacheMode(true);
-		
+
 		testLogger->AddEntryBanner("Welcome to the Log Tests!", "Tests");
 		auto last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("Welcome to the Log Tests!") != std::string::npos);
-		
+
 		testLogger->AddEntryBanner("BANNER!", "TEST");
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("BANNER!") != std::string::npos);
@@ -73,29 +82,28 @@ namespace kTest::utility
 		testLogger->ErasePreviousCacheEntries(1);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR!") == std::string::npos);
-				
+
 		testLogger->AddEntry("ERROR AGAIN!", LLevel::ERRR, __FILE__, __LINE__);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
-				
+
 		testLogger->ResumeFileLogging();
 
 		testLogger->OutputToFatalFile("FATAL!", __FILE__, __LINE__);
 
 		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("EMPTY") != std::string::npos);
-		
+		VERIFY(last.find("CHECK LOGGING FILE") != std::string::npos);
+
 		testLogger->FinalOutput();
 
-		const auto fullFilePathToDelete = dir + filename + ".log";
+		fullFilePathToDelete = dir + filename + ".log";
 		VERIFY(klib::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
-		
+
 		testLogger->AddEntry("end");
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("end") == std::string::npos);
 
-		klib::kFileSystem::RemoveFile(fullFilePathToDelete.data());
-		klib::kFileSystem::DeleteDirectory(dir.data());
+		return success;
 	}
 }
 #endif

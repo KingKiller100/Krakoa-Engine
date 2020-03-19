@@ -73,10 +73,10 @@ namespace krakoa
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
-		pWindow->OnUpdate();
-
 		for (auto layer : layerStack)
 			(layer)->OnUpdate();
+
+		pWindow->OnUpdate();
 	}
 
 	constexpr bool Application::IsRunning() const

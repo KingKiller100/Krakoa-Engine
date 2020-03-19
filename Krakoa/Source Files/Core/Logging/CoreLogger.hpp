@@ -18,10 +18,10 @@ namespace krakoa
 	public:
 		// Engine side
 		static void CoreInit();
-		static klib::kLogs::Logging& GetCoreLogger() { return *coreLogger; }
+		static klib::kLogs::Logging& GetCoreLogger() { return *pCoreLogger; }
 
 	private:
-		static std::unique_ptr<klib::kLogs::Logging> coreLogger;
+		static std::unique_ptr<klib::kLogs::Logging> pCoreLogger;
 	};
 #	pragma warning(pop)
 #endif
@@ -48,7 +48,6 @@ namespace krakoa
 #define KRK_INFO(msg)                                   ::krakoa::CoreLogger::GetCoreLogger().AddEntry(msg, LOG_LVL_INFO);
 #define KRK_WARN(msg)                                   ::krakoa::CoreLogger::GetCoreLogger().AddEntry(msg, LOG_LVL_WARN);
 #define KRK_ERRR(msg)                                   ::krakoa::CoreLogger::GetCoreLogger().AddEntry(msg, LOG_LVL_ERRR, __FILE__, __LINE__);
-#define KRK_FATAL(msg)                                  ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define KRK_BANNER(banner, category)                    ::krakoa::CoreLogger::GetCoreLogger().AddEntryBanner(banner, category);
 #define KRK_SUSPEND()                                   ::krakoa::CoreLogger::GetCoreLogger().SuspendFileLogging();
 #define KRK_RESUME()                                    ::krakoa::CoreLogger::GetCoreLogger().ResumeFileLogging();
@@ -56,3 +55,10 @@ namespace krakoa
 #define KRK_LOG_GET_LAST()                              ::krakoa::CoreLogger::GetCoreLogger().GetLastCachedEntry();
 #define KRK_LOG_ERASE_PREV(numOfPrevEntries)            ::krakoa::CoreLogger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries);
 #define KRK_LOG_CLEAR()                                 ::krakoa::CoreLogger::GetCoreLogger().ClearCache();
+
+#ifndef KRAKOA_RELEASE
+#	include <Utility/Debug Helper/kAssert.hpp>
+#	define KRK_FATAL(condition, msg)                                  kAssert(condition, msg);
+#else
+#	define KRK_FATAL(condition, msg)                                  if ( !condition ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#endif // !KRAKOA_RELEASE

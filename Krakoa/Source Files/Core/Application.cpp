@@ -17,13 +17,12 @@ namespace krakoa
 		: isRunning(false),
 		fpsCounter(60)
 	{
-		kAssert(!instance, "Instance of the application already exists!");
-		//instance = this;
-
 		KRK_INIT_LOGS();
 
-		window = std::unique_ptr<iWindow>(iWindow::Create());
-		window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+		KRK_FATAL(!instance, "Instance of the application already exists!");
+
+		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
+		pWindow->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 	}
 
 	Application::~Application()
@@ -74,8 +73,8 @@ namespace krakoa
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
-		window->OnUpdate();
-		
+		pWindow->OnUpdate();
+
 		for (auto layer : layerStack)
 			(layer)->OnUpdate();
 	}
@@ -87,6 +86,6 @@ namespace krakoa
 
 	iWindow& Application::GetWindow() const
 	{
-		return *window;
+		return *pWindow;
 	}
 }

@@ -3,10 +3,13 @@
 #include <iWindow.hpp>
 
 #include <Patterns/SimpleSingleton.hpp>
+
 #include <Core/EngineCore.hpp>
 #include <Core/FPSCounter.hpp>
+
 #include <Events System/Event.hpp>
 #include <Events System/ApplicationEvent.hpp>
+
 #include <Rendering/LayerStacker.hpp>
 
 #include <memory>
@@ -41,12 +44,13 @@ namespace krakoa
 
 	protected:
 		bool isRunning;
-		std::unique_ptr<iWindow> window;
+		std::unique_ptr<iWindow> pWindow;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
 	};
 
 	Application* CreateApplication();
+
 #	pragma warning(pop)
 #endif
 }

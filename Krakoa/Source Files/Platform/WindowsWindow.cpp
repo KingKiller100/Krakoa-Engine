@@ -41,21 +41,18 @@ namespace krakoa
 
 	void krakoa::WindowsWindow::Init(const WindowProperties& props)
 	{
-		using namespace klib::kFormat;
-
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_INFO(ToString("Creating Window %s with dimensions (%d, %d)",
+		KRK_INFO(kFormat::ToString("Creating Window %s with dimensions (%d, %d)",
 			data.title.c_str(),
 			data.dimensions.X(),
 			data.dimensions.Y()));
 
 		if (!isInitialized)
 		{
-			const auto success = glfwInit();
 			glfwSetErrorCallback(GLFWErrorCallback);
-			kAssert(success, "FAILED: Unable to initialize GLFW");
+			KRK_FATAL(glfwInit(), "FAILED: Unable to initialize GLFW");
 			isInitialized = true;
 		}
 
@@ -67,13 +64,13 @@ namespace krakoa
 #endif
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
-		kAssert(window, "Window pointer not created");
+		KRK_FATAL(window, "Window pointer not created");
 		glfwMakeContextCurrent(window);
-
-		const auto glStatus = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
-		kAssert(glStatus, "FAILED: Unable to initialize GLAD");
-		
 		SetVsync(true);
+
+		const auto gladStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		KRK_FATAL(gladStatus, "FAILED: Unable to initialize GLAD");
+		
 		glfwSetWindowUserPointer(window, &data);
 
 		SetUpCallBacks();
@@ -168,11 +165,13 @@ namespace krakoa
 	void krakoa::WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
+
+		//glClearColor(0.85f, 0.35f, 0.f, 0.25f); // Orange background
+		//glClear(GL_COLOR_BUFFER_BIT);
+
 		Vector2s size;
 		glfwGetFramebufferSize(window, &size.X(), &size.Y());
 		glViewport(0, 0, size.X(), size.Y());
-		glClearColor(0.85f, 0.35f, 0.f, 0.25f); // Orange background
-		glClear(GL_COLOR_BUFFER_BIT);
 
 		glfwSwapBuffers(window);
 	}

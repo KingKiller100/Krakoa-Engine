@@ -63,12 +63,12 @@
 //  ES 3.0    300       "#version 300 es"   = WebGL 2.0
 //----------------------------------------
 
+#include <Precompile.hpp>
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#define _CRT_SECURE_NO_WARNINGS
+#	define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <Precompile.hpp>
 #include <imgui.h>
 #include <Platform/OpenGL/imgui_impl_opengl3.hpp>
 #include <glad/glad.h>
@@ -678,3 +678,5 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
 
     ImGui_ImplOpenGL3_DestroyFontsTexture();
 }
+
+

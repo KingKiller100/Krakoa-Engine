@@ -5,14 +5,14 @@ namespace krakoa
 {
 	using namespace klib::kLogs;
 
-	std::unique_ptr<Logging> CoreLogger::coreLogger;
+	std::unique_ptr<Logging> CoreLogger::pCoreLogger;
 
 	void CoreLogger::CoreInit()
 	{
-		coreLogger = std::make_unique<Logging>();
-		coreLogger->SetName("Krakoa");
-		coreLogger->ChangeFilename("Krakoa Engine");
-		coreLogger->ToggleSubSystemEnabled();
-		coreLogger->OutputInitialized();
+		pCoreLogger = std::make_unique<Logging>();
+		pCoreLogger->SetName("Krakoa");
+		pCoreLogger->ChangeFilename("Krakoa Engine");
+		pCoreLogger->ToggleSubSystemEnabled();
+		pCoreLogger->OutputInitialized();
 	}
 }

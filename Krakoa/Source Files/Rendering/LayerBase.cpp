@@ -6,8 +6,7 @@ namespace krakoa
 	LayerBase::LayerBase(const char* name)
 		: debugName(name),
 		enabled(true)
-	{
-	}
+	{}
 
 	LayerBase::~LayerBase()
 		= default;

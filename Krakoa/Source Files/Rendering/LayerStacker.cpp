@@ -6,8 +6,9 @@
 namespace krakoa
 {
 	LayerStacker::LayerStacker()
-		: layerIter(begin())
-	{	}
+	{
+		layerIter = begin();
+	}
 
 	LayerStacker::~LayerStacker()
 	{
@@ -27,7 +28,7 @@ namespace krakoa
 	void LayerStacker::PushOverlay(LayerBase* overlay)
 	{
 		layerStack.emplace_back(overlay);
-		overlay->OnAttach();
+		layerStack.back()->OnAttach();
 	}
 
 	void LayerStacker::PopLayer(LayerBase* layer)

@@ -18,10 +18,10 @@ namespace krakoa
 	public:
 		// client side
 		static void ClientInit(const char * name);
-		static klib::kLogs::Logging& GetClientLogger()          { return *clientLogger; }
+		static klib::kLogs::Logging& GetClientLogger()          { return *pClientLogger; }
 
 	private:
-		static std::unique_ptr<klib::kLogs::Logging> clientLogger;
+		static std::unique_ptr<klib::kLogs::Logging> pClientLogger;
 	};
 #	pragma warning(pop)
 #endif
@@ -48,7 +48,7 @@ namespace krakoa
 #define INFO(msg)                                       ::krakoa::Logger::GetClientLogger().AddEntry(msg, LOG_LVL_INFO);
 #define WARN(msg)                                       ::krakoa::Logger::GetClientLogger().AddEntry(msg, LOG_LVL_WARN);
 #define ERRR(msg)                                       ::krakoa::Logger::GetClientLogger().AddEntry(msg, LOG_LVL_ERRR, __FILE__, __LINE__);
-#define FATAL(msg)                                      ::krakoa::Logger::GetClientLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+//#define FATAL(msg)                                      ::krakoa::Logger::GetClientLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #define BANNER(banner, category)                        ::krakoa::Logger::GetClientLogger().AddEntryBanner(banner, category);
 #define LOG_SUSPEND()                                   ::krakoa::Logger::GetClientLogger().SuspendFileLogging();
 #define LOG_RESUME()                                    ::krakoa::Logger::GetClientLogger().ResumeFileLogging();
@@ -56,3 +56,11 @@ namespace krakoa
 #define LOG_GET_LAST()                                  ::krakoa::Logger::GetClientLogger().GetLastCachedEntry();
 #define LOG_ERASE_PREV(numOfPrevEntries)                ::krakoa::Logger::GetClientLogger().ErasePreviousCacheEntries(numOfPrevEntries);
 #define LOG_CLEAR()                                     ::krakoa::Logger::GetClientLogger().ClearCache();
+
+
+#ifndef KRAKOA_RELEASE
+#	include <Utility/Debug Helper/kAssert.hpp>
+#	define FATAL(condition, msg)                                  kAssert(condition, msg);
+#else
+#	define FATAL(condition, msg)                                  if ( !condition ) ::krakoa::Logger::GetClientLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#endif // !KRAKOA_RELEASE

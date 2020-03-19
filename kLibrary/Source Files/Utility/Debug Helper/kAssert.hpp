@@ -22,7 +22,7 @@ namespace klib
 		};
 	}
 
-#define kAssert(condition, msg)\
+#	define kAssert(condition, msg)\
 	{\
 		if((condition) == false)\
 			throw ::klib::debug::AssertOnFailedConditionException(#condition, ##msg, __FILE__, (unsigned)(__LINE__));\

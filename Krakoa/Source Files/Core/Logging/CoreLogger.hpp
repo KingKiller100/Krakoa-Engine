@@ -52,13 +52,13 @@ namespace krakoa
 #define KRK_SUSPEND()                                   ::krakoa::CoreLogger::GetCoreLogger().SuspendFileLogging();
 #define KRK_RESUME()                                    ::krakoa::CoreLogger::GetCoreLogger().ResumeFileLogging();
 #define KRK_LOG_END()                                   ::krakoa::CoreLogger::GetCoreLogger().FinalOutput();
-#define KRK_LOG_GET_LAST()                              ::krakoa::CoreLogger::GetCoreLogger().GetLastCachedEntry();
-#define KRK_LOG_ERASE_PREV(numOfPrevEntries)            ::krakoa::CoreLogger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries);
+#define KRK_LOG_GET_LAST()                              ::krakoa::CoreLogger::GetCoreLogger().GetLastCachedEntry()
+#define KRK_LOG_ERASE_PREV(numOfPrevEntries)            ::krakoa::CoreLogger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries)
 #define KRK_LOG_CLEAR()                                 ::krakoa::CoreLogger::GetCoreLogger().ClearCache();
 
 #ifndef KRAKOA_RELEASE
 #	include <Utility/Debug Helper/kAssert.hpp>
-#	define KRK_FATAL(condition, msg)                                  kAssert(condition, msg);
+#	define KRK_FATAL(condition, msg)                                  kAssert(condition, msg)
 #else
-#	define KRK_FATAL(condition, msg)                                  if ( !condition ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#	define KRK_FATAL(condition, msg)                                  if ( !condition ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__)
 #endif // !KRAKOA_RELEASE

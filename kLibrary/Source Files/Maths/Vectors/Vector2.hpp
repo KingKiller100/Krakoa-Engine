@@ -28,7 +28,8 @@ namespace kmaths
 
 		constexpr Vector2(const Vector2& other)
 		{
-			*this = other;
+			this->x = other.x;
+			this->y = other.y;
 		}
 
 		~Vector2()
@@ -151,14 +152,18 @@ namespace kmaths
 		
 		constexpr Vector2& operator*=(const T scalar)
 		{
-			*this = *this * scalar;
-			return *this;
+			auto& self = *this;
+			self.x *= scalar;
+			self.y *= scalar;
+			return self;
 		}
 
 		constexpr Vector2& operator/=(const T scalar)
 		{
-			*this = *this / scalar;
-			return *this;
+			auto& self = *this;
+			self.x /= scalar;
+			self.y /= scalar;
+			return self;
 		}
 		
 		// Overloads = operator to make one vector values equivalent to another

@@ -6,13 +6,15 @@
 
 namespace krakoa::events
 {
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector2<float>;
+
 	using namespace kmaths;
 
 	class KRAKOA_API MouseEvent : public Event
 	{
 	public:
 		EVENT_CLASS_CATEGORY(E_C_MOUSE | E_C_INPUT)
-	
+
 	protected:
 		MouseEvent() = default;
 	};
@@ -25,16 +27,16 @@ namespace krakoa::events
 		{}
 
 
-		USE_RESULT Vector2f& GetPositionOffset() noexcept
+		USE_RESULT Vector2f& GetPosition() noexcept
 		{
 			return position;
 		}
 
-		USE_RESULT Vector2f GetPositionOffset() const noexcept
+		USE_RESULT Vector2f GetPosition() const noexcept
 		{
 			return position;
 		}
-		
+
 		USE_RESULT std::string ToString() const noexcept override
 		{
 			return klib::kFormat::ToString("Mouse Moved Event: (%.f, %.f)", position.X(), position.Y());
@@ -53,23 +55,23 @@ namespace krakoa::events
 			: offset(offset)
 		{}
 
-		USE_RESULT Vector2f& GetPositionOffset() noexcept
+		USE_RESULT Vector2f& GetOffset() noexcept
 		{
 			return offset;
 		}
 
-		USE_RESULT Vector2f GetPositionOffset() const noexcept
+		USE_RESULT Vector2f GetOffset() const noexcept
 		{
 			return offset;
 		}
-		
+
 		USE_RESULT std::string ToString() const noexcept override
 		{
 			return klib::kFormat::ToString("Mouse Scrolled Event: (%.f, %.f)", offset.X(), offset.Y());
 		}
-		
+
 		EVENT_CLASS_TYPE(MOUSE_SCROLL)
-		
+
 	private:
 		Vector2f offset;
 	};
@@ -81,13 +83,13 @@ namespace krakoa::events
 		{
 			return button;
 		}
-		
+
 		EVENT_CLASS_TYPE(MOUSE_BUTTON)
 
 	protected:
 		MouseButtonEvent(const int button)
 			: button(button)
-		{}		
+		{}
 	protected:
 		int button;
 	};
@@ -121,7 +123,5 @@ namespace krakoa::events
 
 		EVENT_CLASS_TYPE(MOUSE_RELEASE)
 	};
-
-	
 }
 

@@ -38,6 +38,11 @@ namespace krakoa
 		WindowsWindow::ShutDown();
 	}
 
+	void WindowsWindow::ShutDown()
+	{
+		glfwDestroyWindow(window);
+	}
+
 	void krakoa::WindowsWindow::Init(const WindowProperties& props)
 	{
 		data.dimensions = props.dimensions;
@@ -73,11 +78,6 @@ namespace krakoa
 		glfwSetWindowUserPointer(window, &data);
 
 		SetUpCallBacks();
-	}
-
-	void WindowsWindow::ShutDown()
-	{
-		glfwDestroyWindow(window);
 	}
 
 	void WindowsWindow::SetUpCallBacks() const
@@ -165,9 +165,9 @@ namespace krakoa
 	{
 		glfwPollEvents();
 
-		Vector2s size;
-		glfwGetFramebufferSize(window, &size.X(), &size.Y());
-		glViewport(0, 0, size.X(), size.Y());
+		// Vector2s size;
+		// glfwGetFramebufferSize(window, &size.X(), &size.Y());
+		// glViewport(0, 0, size.X(), size.Y());
 
 		glfwSwapBuffers(window);
 	}

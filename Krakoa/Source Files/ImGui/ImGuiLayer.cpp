@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <functional>
 
 namespace krakoa
 {
@@ -90,7 +91,69 @@ namespace krakoa
 
 	void ImGuiLayer::OnEvent(events::Event& e)
 	{
+		events::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<events::MouseButtonPressedEvent>(KRK_BIND1(ImGuiLayer::OnMousePressedEvent));
+		dispatcher.Dispatch<events::MouseButtonReleasedEvent>(KRK_BIND1(ImGuiLayer::OnMouseReleasedEvent));
+		dispatcher.Dispatch<events::MouseMovedEvent>(KRK_BIND1(ImGuiLayer::OnMouseMovedEvent));
+		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND1(ImGuiLayer::OnMouseScrolledEvent));
+		dispatcher.Dispatch<events::KeyPressedEvent>(KRK_BIND1(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<events::KeyReleasedEvent>(KRK_BIND1(ImGuiLayer::OnKeyReleasedEvent));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(ImGuiLayer::OnWindowResizedEvent));
+	}
 
+	bool ImGuiLayer::OnMousePressedEvent(events::MouseButtonPressedEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		io.MouseDown[e.GetButton()] = true;
+		return false;
+	}
+	bool ImGuiLayer::OnMouseReleasedEvent(events::MouseButtonReleasedEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		io.MouseDown[e.GetButton()] = false;
+		return false;
+	}
+	bool ImGuiLayer::OnMouseMovedEvent(events::MouseMovedEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		io.MousePos = ImVec2(e.GetPosition().X(), e.GetPosition().Y());
+		return false;
+	}
+	bool ImGuiLayer::OnMouseScrolledEvent(events::MouseScrolledEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		io.MouseWheelH += e.GetOffset().X();
+		io.MouseWheel += e.GetOffset().Y();
+		return false;
+	}
+	bool ImGuiLayer::OnKeyPressedEvent(events::KeyPressedEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		io.KeysDown[e.GetKeyCode()] = true;
+
+		io.KeyCtrl   = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+		io.KeyAlt    = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+		io.KeyShift  = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+		io.KeySuper  = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+
+		return false;
+	}
+	bool ImGuiLayer::OnKeyReleasedEvent(events::KeyReleasedEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		io.KeysDown[e.GetKeyCode()] = false;
+		return false;
+	}
+	bool ImGuiLayer::OnWindowResizedEvent(events::WindowResizeEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		const auto width = e.GetDimensions().X();
+		const auto height = e.GetDimensions().Y();
+
+		io.DisplaySize = ImVec2(width, height);
+		io.DisplayFramebufferScale = ImVec2(1.f, 1.f);
+		glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+		return false;
 	}
 }
 

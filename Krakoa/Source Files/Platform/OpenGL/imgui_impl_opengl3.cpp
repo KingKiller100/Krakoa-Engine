@@ -72,7 +72,7 @@
 #include <imgui.h>
 #include <Platform/OpenGL/imgui_impl_opengl3.hpp>
 #include <glad/glad.h>
-#include <stdio.h>
+#include <cstdio>
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
 #include <stddef.h>     // intptr_t
 #else

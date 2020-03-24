@@ -10,17 +10,16 @@ bool RunTestsOnkLibrary();
 
 int main(int argc, char** argv)
 {
-	if (RunTestsOnkLibrary())
-		return EXIT_SUCCESS;
+	if (!RunTestsOnkLibrary())
+	{
+		auto pApp = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
 
-	auto pApp = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
+		pApp->Initialize();
 
-	pApp->Initialize();
-
-	do {
-		pApp->Run();
-	} while (pApp->IsRunning());
-
+		do {
+			pApp->Run();
+		} while (pApp->IsRunning());
+	}
 	return EXIT_SUCCESS;
 }
 
@@ -37,5 +36,5 @@ bool RunTestsOnkLibrary()
 	return true;
 };
 #else
-	bool RunTestsOnkLibrary() { return false; }
+bool RunTestsOnkLibrary() { return false; }
 #endif // KRAKOA_TEST

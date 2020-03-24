@@ -40,6 +40,7 @@ project "Krakoa"
     cppdialect "C++latest"
     toolset "v142"
     characterset ("MBCS")
+	staticruntime "off"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -106,7 +107,6 @@ project "Krakoa"
         {
             "%{prj.name}/Source Files/**/test*"
         }
-        buildoptions "/MDd"
         symbols "On"
         runtime "Debug"
 
@@ -117,7 +117,6 @@ project "Krakoa"
             "KLIB_TEST"
         }
         symbols "On"
-        buildoptions "/MDd"
         runtime "Debug"
 
     filter "configurations:Release"
@@ -127,7 +126,6 @@ project "Krakoa"
         {
             "%{prj.name}/Source Files/**/test*"
         }
-        buildoptions "/MD"
         runtime "Release"
 
     filter "configurations:Profile"
@@ -137,7 +135,6 @@ project "Krakoa"
         {
             "%{prj.name}/Source Files/**/test*"
         }
-        buildoptions "/MD"
         runtime "Release"
 
         --filters { "system:windows", "configuration:Release" }

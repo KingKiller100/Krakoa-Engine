@@ -5,6 +5,7 @@ project "kLibrary"
     cppdialect "C++latest"
     toolset "v142"
     characterset ("MBCS")
+	staticruntime "off"
 
     targetdir ("../bin/" .. OutputDir .. "/%{prj.name}")
     objdir ("../bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -42,13 +43,11 @@ project "kLibrary"
             "Source Files/**/*Test*"
         }
         symbols "On"
-        buildoptions "/MDd"
         runtime "Debug"
 
     filter "configurations:Test"
         defines "KLIB_TEST"
         symbols "On"
-        buildoptions "/MDd"
         runtime "Debug"
 
     filter "configurations:Release"
@@ -58,7 +57,6 @@ project "kLibrary"
             "Source Files/**/*Test*"
         }
         optimize "Full"
-        buildoptions "/MD"
         runtime "Release"
 
     filter "configurations:Profile"
@@ -68,6 +66,5 @@ project "kLibrary"
             "Source Files/**/*Test*"
         }
         optimize "Debug"
-        buildoptions "/MD"
         runtime "Release"
         

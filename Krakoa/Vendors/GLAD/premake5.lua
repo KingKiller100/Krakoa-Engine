@@ -2,6 +2,7 @@ project "GLAD"
 	kind "StaticLib"
 	language "C"
     characterset ("MBCS")
+	staticruntime "off"
 
 	targetdir ("../../../bin/" .. OutputDir .. "/%{prj.name}")
 	objdir ("../../../bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -24,22 +25,18 @@ project "GLAD"
 
 	filter "configurations:Debug"
 		runtime "Debug"
-        buildoptions "/MDd"
 		symbols "on"
 	
 	filter "configurations:Test"
 		runtime "Debug"
-		buildoptions "/MDd"
 		symbols "on"
 	
 	filter "configurations:Profile"
 		runtime "Release"
 		optimize "Debug"
-		buildoptions "/MD"
 		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
-        buildoptions "/MD"
 		optimize "Full"
 		

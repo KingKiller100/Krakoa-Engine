@@ -5,6 +5,8 @@
 #include <Core/EngineCore.hpp>
 #include <Events System/Event.hpp>
 
+#include <any>
+
 namespace krakoa
 {
 	using namespace kmaths;
@@ -38,6 +40,8 @@ namespace krakoa
 		virtual void SetEventCallback(const EventCallbackFunc& cb) = 0;
 		virtual void SetVsync(bool isEnabled) = 0;
 		USE_RESULT virtual bool IsVsyncActive() const = 0;
+
+		virtual std::any GetNativeWindow() const noexcept = 0;
 
 		static iWindow* Create(const WindowProperties& props = WindowProperties());
 	};

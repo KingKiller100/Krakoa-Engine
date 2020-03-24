@@ -1,5 +1,5 @@
 #include <Precompile.hpp>
-#include <Platform/WindowsWindow.hpp>
+#include <Platform/Windows/WindowsWindow.hpp>
 
 #include <Core/Logging/CoreLogger.hpp>
 #include <Events System/ApplicationEvent.hpp>
@@ -165,6 +165,11 @@ namespace krakoa
 			MouseMovedEvent e(positions);
 			data.eventCallBack(e);
 		});
+	}
+
+	std::any WindowsWindow::GetNativeWindow() const noexcept
+	{
+		return window;
 	}
 
 	void krakoa::WindowsWindow::OnUpdate()

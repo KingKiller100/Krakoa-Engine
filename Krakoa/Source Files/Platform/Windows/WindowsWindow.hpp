@@ -26,6 +26,8 @@ namespace krakoa
 
 		USE_RESULT bool IsVsyncActive() const override;
 
+		std::any GetNativeWindow() const noexcept override;
+
 	private:
 		virtual void Init(const WindowProperties& props);
 		virtual void ShutDown();
@@ -43,5 +45,7 @@ namespace krakoa
 
 			EventCallbackFunc eventCallBack;
 		} data;
+
+		// Inherited via iWindow
 	};
 }

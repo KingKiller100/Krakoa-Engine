@@ -85,7 +85,6 @@ project "Krakoa"
 
     postbuildcommands
     {
-        --("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(OutDir)\" /q")
         ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\\" /q")
     }
 

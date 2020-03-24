@@ -41,6 +41,21 @@ namespace krakoa::events
 		int repeatCount;
 	};
 
+	class KRAKOA_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keycode)
+			: KeyEvent(keycode)
+		{}
+
+		USE_RESULT std::string ToString() const noexcept override
+		{
+			return klib::kFormat::ToString("Key Typed Event: %d", keycode);
+		}
+
+		EVENT_CLASS_TYPE(KEY_TYPED)
+	};
+
 	class KRAKOA_API KeyReleasedEvent : public KeyEvent
 	{
 	public:

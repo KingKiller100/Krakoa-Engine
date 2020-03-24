@@ -97,6 +97,7 @@ namespace krakoa
 		dispatcher.Dispatch<events::MouseMovedEvent>(KRK_BIND1(ImGuiLayer::OnMouseMovedEvent));
 		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND1(ImGuiLayer::OnMouseScrolledEvent));
 		dispatcher.Dispatch<events::KeyPressedEvent>(KRK_BIND1(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<events::KeyTypedEvent>(KRK_BIND1(ImGuiLayer::OnKeyTypedEvent));
 		dispatcher.Dispatch<events::KeyReleasedEvent>(KRK_BIND1(ImGuiLayer::OnKeyReleasedEvent));
 		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(ImGuiLayer::OnWindowResizedEvent));
 	}
@@ -116,7 +117,8 @@ namespace krakoa
 	bool ImGuiLayer::OnMouseMovedEvent(events::MouseMovedEvent& e)
 	{
 		auto& io = ImGui::GetIO();
-		io.MousePos = ImVec2(e.GetPosition().X(), e.GetPosition().Y());
+		const auto& pos = e.GetPosition();
+		io.MousePos = ImVec2(pos.X(), pos.Y());
 		return false;
 	}
 	bool ImGuiLayer::OnMouseScrolledEvent(events::MouseScrolledEvent& e)
@@ -131,10 +133,20 @@ namespace krakoa
 		auto& io = ImGui::GetIO();
 		io.KeysDown[e.GetKeyCode()] = true;
 
-		io.KeyCtrl   = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
 		io.KeyAlt    = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
 		io.KeyShift  = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
 		io.KeySuper  = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+		io.KeyCtrl   = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+
+		return false;
+	}
+	bool ImGuiLayer::OnKeyTypedEvent(events::KeyTypedEvent& e)
+	{
+		auto& io = ImGui::GetIO();
+		const unsigned key = e.GetKeyCode();
+
+		if (key > 0 && key < 0x10000)
+			io.AddInputCharacter(key);
 
 		return false;
 	}
@@ -147,8 +159,8 @@ namespace krakoa
 	bool ImGuiLayer::OnWindowResizedEvent(events::WindowResizeEvent& e)
 	{
 		auto& io = ImGui::GetIO();
-		const auto width = e.GetDimensions().X();
-		const auto height = e.GetDimensions().Y();
+		const auto width = e.GetWidth();
+		const auto height = e.GetHeight();
 
 		io.DisplaySize = ImVec2(width, height);
 		io.DisplayFramebufferScale = ImVec2(1.f, 1.f);

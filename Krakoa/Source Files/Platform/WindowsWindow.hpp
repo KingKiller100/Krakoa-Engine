@@ -41,7 +41,7 @@ namespace krakoa
 			kmaths::Vector2u dimensions;
 			bool vSyncOn = false;
 
-			EventCallbackFunc cb;
+			EventCallbackFunc eventCallBack;
 		} data;
 	};
 }

@@ -88,13 +88,19 @@ namespace krakoa
 			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			data.dimensions = kmaths::Vector2s(width, height);
 			WindowResizeEvent e(static_cast<float>(width), static_cast<float>(height));
-			data.cb(e);
+			data.eventCallBack(e);
 		});
 		glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
 			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			WindowClosedEvent e;
-			data.cb(e);
+			data.eventCallBack(e);
+		});
+		glfwSetCharCallback(window, [](GLFWwindow* window, unsigned key)
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			KeyTypedEvent e(key);
+			data.eventCallBack(e);
 		});
 		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
@@ -104,19 +110,19 @@ namespace krakoa
 			case GLFW_PRESS:
 			{
 				KeyPressedEvent e(key, 0);
-				data.cb(e);
+				data.eventCallBack(e);
 				break;
 			}
 			case GLFW_REPEAT:
 			{
 				KeyPressedEvent e(key, 1);
-				data.cb(e);
+				data.eventCallBack(e);
 				break;
 			}
 			case GLFW_RELEASE:
 			{
 				KeyReleasedEvent e(key);
-				data.cb(e);
+				data.eventCallBack(e);
 				break;
 			}
 			default:
@@ -130,13 +136,13 @@ namespace krakoa
 			case GLFW_PRESS:
 			{
 				MouseButtonPressedEvent e(button);
-				data.cb(e);
+				data.eventCallBack(e);
 				break;
 			}
 			case GLFW_RELEASE:
 			{
 				MouseButtonReleasedEvent e(button);
-				data.cb(e);
+				data.eventCallBack(e);
 				break;
 			}
 			default:
@@ -149,7 +155,7 @@ namespace krakoa
 			const auto offsets = Vector2f(static_cast<float>(xOffset), static_cast<float>(yOffset));
 
 			MouseScrolledEvent e(offsets);
-			data.cb(e);
+			data.eventCallBack(e);
 		});
 		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos)
 		{
@@ -157,7 +163,7 @@ namespace krakoa
 			const auto positions = Vector2f(static_cast<float>(xPos), static_cast<float>(yPos));
 
 			MouseMovedEvent e(positions);
-			data.cb(e);
+			data.eventCallBack(e);
 		});
 	}
 
@@ -189,7 +195,7 @@ namespace krakoa
 
 	void WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)
 	{
-		data.cb = cb;
+		data.eventCallBack = cb;
 	}
 
 	void WindowsWindow::SetVsync(bool isEnabled)

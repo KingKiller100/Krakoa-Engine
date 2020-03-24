@@ -28,7 +28,7 @@ namespace krakoa
 		
 		bool OnKeyPressedEvent(events::KeyPressedEvent& e);
 		bool OnKeyReleasedEvent(events::KeyReleasedEvent& e);
-		//bool OnKeyTypedEvent(events::KeyTypedEvent& e);
+		bool OnKeyTypedEvent(events::KeyTypedEvent& e);
 		
 		bool OnWindowResizedEvent(events::WindowResizeEvent& e);
 

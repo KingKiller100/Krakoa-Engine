@@ -185,7 +185,7 @@ namespace kmaths
 
 		if (mag != 0)
 		{
-			const auto res = VecType(v.x / mag, v.y / mag, v.z / mag, v.w);
+			const auto res = VecType(v._x / mag, v._y / mag, v._z / mag, v._w);
 			return res;
 		}
 
@@ -196,6 +196,6 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
 	{
-		return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
+		return (u._x * v._x) + (u._y * v._y) + (u._z * v._z);
 	}
 }

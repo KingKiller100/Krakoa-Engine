@@ -28,8 +28,8 @@ namespace kmaths
 
 		constexpr Vector2(const Vector2& other)
 		{
-			this->x = other.x;
-			this->y = other.y;
+			this->_x = other._x;
+			this->_y = other._y;
 		}
 
 		~Vector2()
@@ -37,28 +37,28 @@ namespace kmaths
 
 		constexpr T& X() noexcept
 		{
-			return this->x;
+			return this->_x;
 		}
 
 		USE_RESULT constexpr T X() const noexcept
 		{
-			return this->x;
+			return this->_x;
 		}
 
 		constexpr T& Y() noexcept
 		{  
-			return this->y;
+			return this->_y;
 		}
 
 		USE_RESULT constexpr T Y() const noexcept
 		{
-			return this->y;
+			return this->_y;
 		}
 
 		template<typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>, Vector2> Perpendicular() const
 		{
-			return Vector2(-this->y, this->x);
+			return Vector2(-this->_y, this->_x);
 		}
 
 		template<typename U = T>
@@ -69,7 +69,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector2 operator- () const noexcept
 		{
-			return Vector2(-this->X(), -this->Y());
+			return Vector2(-this->_x, -this->_y);
 		}
 		
 		// Overloads + operator to add two vectors objects
@@ -77,8 +77,8 @@ namespace kmaths
 		constexpr Vector2 operator+(const Vector2<T2>& v) const
 		{
 			return Vector2(
-				this->x + static_cast<T>(v.X()),
-				this->y + static_cast<T>(v.Y()));
+				this->_x + static_cast<T>(v.X()),
+				this->_y + static_cast<T>(v.Y()));
 		}
 
 		// Overloads - operator to subtract two vectors objects
@@ -86,8 +86,8 @@ namespace kmaths
 		constexpr Vector2 operator-(const Vector2<T2>& v) const
 		{
 			return Vector2(
-				this->x - static_cast<T>(v.X()),
-				this->y - static_cast<T>(v.Y()));
+				this->_x - static_cast<T>(v.X()),
+				this->_y - static_cast<T>(v.Y()));
 		}
 
 		// Overloads * operator to multiply two vector objects
@@ -95,8 +95,8 @@ namespace kmaths
 		constexpr Vector2 operator*(const Vector2<T2>& v) const
 		{
 			return Vector2(
-				this->x * static_cast<T>(v.X()),
-				this->y* static_cast<T>(v.Y()));
+				this->_x * static_cast<T>(v.X()),
+				this->_y * static_cast<T>(v.Y()));
 		}
 
 		// Overloads / operator to divide two vectors objects
@@ -104,8 +104,8 @@ namespace kmaths
 		constexpr Vector2 operator/(const Vector2<T2>& v) const
 		{
 			return Vector2(
-				this->x / static_cast<T>(v.X()),
-				this->y / static_cast<T>(v.Y()));
+				this->_x / static_cast<T>(v.X()),
+				this->_y / static_cast<T>(v.Y()));
 		}
 
 		// adds to current Vector2 value
@@ -142,27 +142,27 @@ namespace kmaths
 
 		constexpr Vector2 operator*(const T scalar)
 		{
-			return Vector2(this->X() * scalar, this->Y() * scalar);
+			return Vector2(this->_x * scalar, this->_y * scalar);
 		}
 
 		constexpr Vector2 operator/(const T scalar)
 		{
-			return Vector2(this->X() / scalar, this->Y() / scalar);
+			return Vector2(this->_x / scalar, this->_y / scalar);
 		}
 		
 		constexpr Vector2& operator*=(const T scalar)
 		{
 			auto& self = *this;
-			self.x *= scalar;
-			self.y *= scalar;
+			self._x *= scalar;
+			self._y *= scalar;
 			return self;
 		}
 
 		constexpr Vector2& operator/=(const T scalar)
 		{
 			auto& self = *this;
-			self.x /= scalar;
-			self.y /= scalar;
+			self._x /= scalar;
+			self._y /= scalar;
 			return self;
 		}
 		
@@ -170,8 +170,8 @@ namespace kmaths
 		template<typename T2>
 		constexpr Vector2& operator=(const Vector2<T2>& v)
 		{
-			this->x = v.X();
-			this->y = v.Y();
+			this->_x = v.X();
+			this->_y = v.Y();
 
 			return *this;
 		}

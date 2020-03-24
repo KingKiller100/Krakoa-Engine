@@ -7,8 +7,8 @@ project "kLibrary"
     characterset ("MBCS")
 	staticruntime "off"
 
-    targetdir ("../bin/" .. OutputDir .. "/%{prj.name}")
-    objdir ("../bin-int/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
+	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
 
     pchheader "pch.hpp"
     pchsource "Source Files/pch.cpp"

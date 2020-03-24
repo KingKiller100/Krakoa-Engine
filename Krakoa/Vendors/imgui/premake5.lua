@@ -6,8 +6,8 @@ project "ImGui"
     characterset ("MBCS")
 	staticruntime "off"
 
-	targetdir ("../../../bin/" .. OutputDir .. "/%{prj.name}")
-	objdir ("../../../bin-int/" .. OutputDir .. "/%{prj.name}")
+	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
+	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
 
 	files
 	{

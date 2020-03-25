@@ -1,16 +1,14 @@
-﻿#include "Input Manager/InputManager.hpp"
+﻿#include "Input/InputManager.hpp"
 
 namespace krakoa::input
 {
 	class WindowsInputManager : public InputManager
 	{
 	public:
-		WindowsInputManager(Token&& t);
+		WindowsInputManager(Token&& t) noexcept;
 		~WindowsInputManager();
 
 	protected:
-		//void CreateImpl() noexcept;
-
 		bool IsKeyPressedImpl(const int keycode) const noexcept override;
 
 		bool IsMouseButtonPressedImpl(const MouseButtonType button) const noexcept override;

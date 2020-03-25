@@ -6,7 +6,7 @@
 
 #include <Utility/Timer/kTimer.hpp>
 
-#include "Input Manager/InputManager.hpp"
+#include "Input/InputManager.hpp"
 
 #include <Patterns/SimpleSingletonImpl.hpp> // Required for singleton base class functionality to work
 
@@ -77,8 +77,6 @@ namespace krakoa
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
-		auto [x, y] = input::InputManager::GetMousePosition();
-		KRK_WARN(klib::kFormat::ToString("Mouse Pos (%.f, %.f)", x, y));
 		layerStack.OnUpdate();
 		pWindow->OnUpdate();
 	}

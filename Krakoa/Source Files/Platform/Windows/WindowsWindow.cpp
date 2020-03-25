@@ -48,7 +48,7 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_INFO(kFormat::ToString("Creating Window %s with dimensions (%d, %d)",
+		KRK_NORM(kFormat::ToString("Creating Window %s with dimensions (%d, %d)",
 			data.title.c_str(),
 			data.dimensions.X(),
 			data.dimensions.Y()));

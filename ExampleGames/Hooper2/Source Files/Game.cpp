@@ -18,11 +18,12 @@ public:
 	}
 	void OnUpdate() override
 	{
-		//INFO(__FUNCSIG__);
+		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_SPACE))
+			DBUG("Space bar has been pressed!");
 	}
 	void OnEvent(krakoa::events::Event& e) override
 	{
-		DBUG(e.ToString());
+		//DBUG(e.ToString());
 	}
 };
 

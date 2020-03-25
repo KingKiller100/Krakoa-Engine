@@ -174,7 +174,7 @@ namespace klib::kLogs
 		if (!isEnabled && lvl < LLevel::ERRR) return;
 		if (lvl < minimumLoggingLevel) return;
 
-		auto logLine = ToString("[%s]   [%s]   [%s]: %s",
+		auto logLine = ToString("[%s]   [%s]   [%s]:    %s",
 			GetTimeText().c_str(),
 			name.c_str(),
 			kLogs_LLevelMap.at(lvl),
@@ -199,7 +199,7 @@ namespace klib::kLogs
 	{
 		if (!isEnabled) return;
 
-		const auto bannerLine = ToString("[%s]   [%s]   [%s]: [%s]\n",
+		const auto bannerLine = ToString("[%s]   [%s]   [%s]:   [%s]\n",
 			GetTimeText().c_str(),
 			name.c_str(),
 			type.data(),

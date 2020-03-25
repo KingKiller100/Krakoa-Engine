@@ -28,7 +28,7 @@ namespace krakoa
 	void LayerStacker::PushOverlay(LayerBase* overlay)
 	{
 		layerStack.emplace_back(overlay);
-		layerStack.back()->OnAttach();
+		overlay->OnAttach();
 	}
 
 	void LayerStacker::PopLayer(LayerBase* layer)
@@ -60,5 +60,11 @@ namespace krakoa
 	std::vector<LayerBase*>::iterator LayerStacker::end()
 	{
 		return layerStack.end();
+	}
+
+	void LayerStacker::OnUpdate() const noexcept
+	{
+		for (auto& layer : layerStack)
+			(layer)->OnUpdate();
 	}
 }

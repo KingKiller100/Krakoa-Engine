@@ -7,9 +7,9 @@
 
 #include <GLFW/glfw3.h>
 
-namespace krakoa
+namespace krakoa::input
 {
-	WindowsInputManager::WindowsInputManager()
+	WindowsInputManager::WindowsInputManager(Token&& t)
 	{
 	}
 
@@ -17,10 +17,43 @@ namespace krakoa
 	{
 	}
 
-	bool WindowsInputManager::IsKeyPressedImpl(int keycode)
+	void InputManager::CreateImpl() noexcept
+	{
+		InputManager::Create<WindowsInputManager>();
+	}
+
+	bool WindowsInputManager::IsKeyPressedImpl(int keycode) const noexcept
 	{
 		const auto window = std::any_cast<GLFWwindow*>(Application::Reference().GetWindow().GetNativeWindow());
-		const auto res = glfwGetKey(window, keycode);
-		return res;
+		const auto state = glfwGetKey(window, keycode);
+		return state == GLFW_PRESS || state == GLFW_REPEAT;
+	}
+
+	bool WindowsInputManager::IsMouseButtonPressedImpl(const MouseButtonType button) const noexcept
+	{
+		const auto window = std::any_cast<GLFWwindow*>(Application::Reference().GetWindow().GetNativeWindow());
+		const auto state = glfwGetMouseButton(window, static_cast<int>(button));
+		return state == GLFW_PRESS;
+	}
+
+	std::pair<float, float> WindowsInputManager::GetMousePositionImpl() const noexcept
+	{
+		const auto window = std::any_cast<GLFWwindow*>(Application::Reference().GetWindow().GetNativeWindow());
+		double xPos, yPos;
+		glfwGetCursorPos(window, &xPos, &yPos);
+		return { static_cast<float>(xPos), static_cast<float>(yPos) };
+	}
+
+	float WindowsInputManager::GetMousePosXImpl() const noexcept
+	{
+		const auto [x, y] = GetMousePosition();
+		return x;
+	}
+
+	float WindowsInputManager::GetMousePosYImpl() const noexcept
+	{
+		const auto [x, y] = GetMousePosition();
+		return y;
 	}
 }
+

@@ -26,6 +26,8 @@ namespace krakoa
 		std::vector<LayerBase*>::iterator begin();
 		std::vector<LayerBase*>::iterator end();
 
+		void OnUpdate() const noexcept;
+
 	private:
 		std::vector<LayerBase*> layerStack;
 		std::vector<LayerBase*>::iterator layerIter;

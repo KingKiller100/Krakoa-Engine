@@ -195,8 +195,7 @@ namespace klib
 		template<class CharType = char>
 		bool CheckFileExists(const CharType* fullFilePath)
 		{
-			const std::unique_ptr<FILE> f;
-			auto file = f.get();
+			FILE* file;
 			auto result = -1;
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)

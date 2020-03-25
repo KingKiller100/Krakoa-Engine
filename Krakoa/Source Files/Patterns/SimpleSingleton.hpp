@@ -12,18 +12,18 @@ namespace pattern
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
 
-		static T& Reference()
+		static inline T& Reference()
 		{
 			return *instance;
 		}
 
-		static T* Pointer() noexcept
+		static inline T* Pointer() noexcept
 		{
 			return instance;
 		}
 
 		template<class ThisOrChild>
-		static void Create()
+		static inline void Create()
 		{
 			if (!instance)
 				instance = new ThisOrChild(Token());

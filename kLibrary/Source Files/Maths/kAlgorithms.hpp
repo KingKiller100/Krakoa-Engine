@@ -3,15 +3,36 @@
 #include <HelperMacros.hpp>
 
 #include <Maths/Constants.hpp>
-#include <Maths/Vectors/VectorBase.hpp>
+
 #include <Maths/Vectors/Vector2.hpp>
 #include <Maths/Vectors/Vector3.hpp>
 #include <Maths/Vectors/Vector4.hpp>
+
+#include <Maths/Matrices/Matrix.hpp>
+#include <Maths/Matrices/Matrix2x2.hpp>
+#include <Maths/Matrices/Matrix3x3.hpp>
+#include <Maths/Matrices/Matrix4x4.hpp>
 
 #include <cmath>
 
 namespace kmaths
 {
+	// Normalizes a vector
+	template<typename VecType>
+	USE_RESULT constexpr VecType VectorNormalize(const VecType& v) noexcept
+	{
+		const auto normalVec = v.Normalize();
+		return normalVec;
+	}
+
+	// Produces the dot product
+	template<unsigned short N, typename T>
+	USE_RESULT constexpr T VectorDotProduct(const VectorN<N, T>& u, const VectorN<N, T>& v) noexcept
+	{
+		const auto result = u.DotProduct(v);
+		return result;
+	}
+
 	template<typename T>
 	USE_RESULT constexpr T Max(const T lhs, const T rhs) noexcept
 	{
@@ -65,10 +86,10 @@ namespace kmaths
 		return pow(base, power);
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T AngleBetweenVectors(const VectorBase<T>& v, const VectorBase<T>& u, const bool inDegrees) noexcept
+	template<unsigned short N, typename T>
+	USE_RESULT constexpr T AngleBetweenVectors(const VectorN<N, T>& v, const VectorN<N, T>& u, const bool inDegrees) noexcept
 	{
-		const T angle = VectorDotProduct<T>(v, u) / (v.Magnitude() * u.Magnitude());
+		const T angle = VectorDotProduct<N, T>(v, u) / (v.Magnitude() * u.Magnitude());
 
 		return inDegrees ? RadiansToDegrees(acos(angle)) : acos(angle);
 	}
@@ -154,7 +175,7 @@ namespace kmaths
 	USE_RESULT inline constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{
 		if (angle == 0)
-			return 0;
+			return Vector2<T>();
 
 		const T rotation = atan2(position.Y(), position.X()) + angle;
 		const T mag = position.Magnitude();
@@ -174,28 +195,5 @@ namespace kmaths
 		lRes += inCenter;
 
 		return lRes;
-	}
-
-
-	// Normalizes a vector
-	template<typename VecType>
-	USE_RESULT constexpr VecType VectorNormalize(const VecType& v) noexcept
-	{
-		const auto mag = v.Magnitude();
-
-		if (mag != 0)
-		{
-			const auto res = VecType(v._x / mag, v._y / mag, v._z / mag, v._w);
-			return res;
-		}
-
-		return v;
-	}
-
-	// Produces the dot product
-	template<typename T>
-	USE_RESULT constexpr T VectorDotProduct(const VectorBase<T>& u, const VectorBase<T>& v) noexcept
-	{
-		return (u._x * v._x) + (u._y * v._y) + (u._z * v._z);
 	}
 }

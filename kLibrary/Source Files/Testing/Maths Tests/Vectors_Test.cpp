@@ -44,7 +44,7 @@ namespace kTest::Maths
 		g = v2 /= 8;
 		VERIFY(g.X() == -2.5 && g.Y() == -11.0);
 
-		v2 *= 10;		
+		v2 *= 10;
 		v2.Truncate(30);
 		const auto tempMag = v2.Magnitude();
 		VERIFY(tempMag <= 30);
@@ -53,7 +53,7 @@ namespace kTest::Maths
 		const auto dist = v2.Distance(temp1);
 		
 		const auto temp2 = -v2;
-		VERIFY(v2 != temp2) ;
+		VERIFY(v2 != temp2);
 
 		const auto temp3 = v2.Magnitude();
 
@@ -71,7 +71,7 @@ namespace kTest::Maths
 		const auto tempV3 = Vector3s(static_cast<int>(v3.Z()));
 		VERIFY(tempV3.X() == static_cast<int>(v3.Z()) && tempV3.Y() == static_cast<int>(v3.Z()) && tempV3.Z() == static_cast<int>(v3.Z()));
 
-		auto v = CrossProduct(v3, tempV3);
+		const auto v = v3.CrossProduct(tempV3);
 
 		const auto ref = v3 [1];
 		VERIFY(ref == 3.4f);

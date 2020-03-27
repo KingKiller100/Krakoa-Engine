@@ -236,6 +236,6 @@ namespace kmaths
 		std::array<Type, Rows>& _m2 = indices[1];
 
 	private:
-		std::array<std::array<Type, Rows>, Columns> indices{};
+		std::array<std::array<Type, Rows>, Columns> indices{ 0 };
 	};
 }

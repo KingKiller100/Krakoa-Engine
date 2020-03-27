@@ -184,6 +184,7 @@ namespace kmaths
 		template<typename U>
 		constexpr Matrix4x4 operator*(const U scalar)
 		{
+			const auto i = indices[0];
 			const auto res1 = Vector4<T>(indices[0][0] * scalar, indices[0][1] * scalar, indices[0][2] * scalar, indices[0][3] * scalar);
 			const auto res2 = Vector4<T>(indices[1][0] * scalar, indices[1][1] * scalar, indices[1][2] * scalar, indices[1][3] * scalar);
 			const auto res3 = Vector4<T>(indices[2][0] * scalar, indices[2][1] * scalar, indices[2][2] * scalar, indices[2][3] * scalar);

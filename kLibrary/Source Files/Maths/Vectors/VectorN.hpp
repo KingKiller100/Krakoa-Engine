@@ -8,6 +8,7 @@ namespace kmaths
 	{
 		static_assert(N > 0, "Must have at least one dimension to use mathematical vectors");
 
+	public:
 		using Type = T;
 
 		constexpr VectorN() noexcept
@@ -45,11 +46,6 @@ namespace kmaths
 		}
 
 		template<typename U = Type>
-		std::enable_if_t < N < 2, const U&> Y() const noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 2, U&> Y() noexcept = delete;
-
-		template<typename U = Type>
 		std::enable_if_t<N >= 2, const U&> Y() const noexcept
 		{
 			return dimensions[1];
@@ -61,10 +57,6 @@ namespace kmaths
 			return dimensions[1];
 		}
 
-		template<typename U = Type>
-		std::enable_if_t < N < 3, U&> Z() noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 3, const U&> Z() const noexcept = delete;
 
 		template<typename U = Type>
 		std::enable_if_t<N >= 3, const U&> Z() const noexcept
@@ -78,10 +70,6 @@ namespace kmaths
 			return dimensions[2];
 		}
 
-		template<typename U = Type>
-		std::enable_if_t < N < 4, const U&> W() const noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 4, U&> W() noexcept = delete;
 		
 		template<typename U = Type>
 		std::enable_if_t<N >= 4, const U&> W() const noexcept
@@ -94,6 +82,19 @@ namespace kmaths
 		{
 			return dimensions[3];
 		}
+
+		template<typename U = Type>
+		std::enable_if_t < N < 2, const U&> Y() const noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 2, U&> Y() noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 3, U&> Z() noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 3, const U&> Z() const noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 4, const U&> W() const noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 4, U&> W() noexcept = delete;
 
 		USE_RESULT constexpr Type Magnitude() const noexcept
 		{
@@ -110,20 +111,26 @@ namespace kmaths
 			return mag;
 		}
 
-		USE_RESULT constexpr T DotProduct(const VectorN& other) const noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr T DotProduct(const VectorN<C, U>& other) const noexcept
 		{
+			const auto size = (N < C) ? N : C;
+
 			auto dp = static_cast<Type>(0);
-			for (auto i = dp; i < N; ++i)
+			for (auto i = 0; i < size; ++i)
 				dp += dimensions[i] * other[i];
 			return dp;
 		}
 
 		USE_RESULT constexpr VectorN Normalize() const
 		{
-			auto temp = dimensions;
 			const auto mag = Magnitude();
-			for (Type& d : temp)
-				d = d / mag;
+			if (mag == static_cast<Type>(0))
+				return VectorN(0);
+
+			auto temp = dimensions;
+			for (auto& d : temp)
+				d /= mag;
 			return VectorN(temp);
 		}
 
@@ -165,41 +172,43 @@ namespace kmaths
 		}
 
 		template<typename U = Type>
-		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
+		USE_RESULT constexpr inline std::enable_if_t<!std::is_unsigned_v<U>
 			&& N == 2,
 			VectorN> Perpendicular() const
 		{
-			return VectorN({ -dimensions[1], dimensions[0] });
+			return VectorN(-Y(), X());
 		}
 
-		template<typename U = Type>
-		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>
+		template<typename U = T>
+		USE_RESULT constexpr inline std::enable_if_t<std::is_unsigned_v<U>
 			|| N != 2,
 			VectorN> Perpendicular() const = delete;
 
 
-		template<typename U = Type>
+		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
+			&& !std::is_unsigned_v<X>
 			&& N == 3,
-			VectorN> CrossProduct(const VectorN& v) const noexcept
+			VectorN> CrossProduct(const VectorN<N, X>& v) const noexcept
 		{
-			return VectorN({ (this->Y() * v.Z() - this->Z() * v.Y()),
+			return VectorN( (this->Y() * v.Z() - this->Z() * v.Y()),
 				(this->Z() * v.X() - this->X() * v.Z()),
-				(this->X() * v.Y() - this->Y() * v.X()) });
+				(this->X() * v.Y() - this->Y() * v.X()) );
 		}
 
-		template<typename U = Type>
+		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>
+			|| std::is_unsigned_v<X>
 			|| N != 3,
 			VectorN> CrossProduct(const VectorN& v) const noexcept
 			= delete;
 
-		Type& operator[](const size_t index)
+		constexpr Type& operator[](const size_t index)
 		{
 			return dimensions[index];
 		}
 
-		const Type& operator[](const size_t index) const
+		constexpr const Type& operator[](const size_t index) const
 		{
 			return dimensions[index];
 		}
@@ -212,26 +221,34 @@ namespace kmaths
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN operator+(const VectorN& other) const noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator+(const VectorN<C, U>& other) const noexcept
 		{
+			const auto size = (N < C) ? N : C;
+
 			auto copy = dimensions;
-			for (auto i = size_t(0); i < N; ++i)
+			for (auto i = 0u; i < size; ++i)
 				copy[i] += other[i];
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN operator-(const VectorN& other) const noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator-(const VectorN<C, U>& other) const noexcept
 		{
+			const auto size = (N < C) ? N : C;
+
 			auto copy = dimensions;
-			for (auto i = size_t(0); i < N; ++i)
+			for (auto i = size_t(0); i < size; ++i)
 				copy[i] -= other[i];
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN operator*(const VectorN& other) const noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator*(const VectorN<C, U>& other) const noexcept
 		{
+			const auto size = (N < C) ? N : C;
 			auto copy = dimensions;
-			for (auto i = size_t(0); i < N; ++i)
+			for (auto i = size_t(0); i < size; ++i)
 				copy[i] *= other[i];
 			return VectorN(copy);
 		}
@@ -244,10 +261,13 @@ namespace kmaths
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN operator/(const VectorN& other) const noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator/(const VectorN<C, U>& other) const noexcept
 		{
+			const auto size = (N < C) ? N : C;
+
 			auto copy = dimensions;
-			for (auto i = size_t(0); i < N; ++i)
+			for (auto i = size_t(0); i < size; ++i)
 				copy[i] /= other[i];
 			return VectorN(copy);
 		}
@@ -260,13 +280,15 @@ namespace kmaths
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN& operator+=(const VectorN& other) noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN& operator+=(const VectorN<C, U>& other) noexcept
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		USE_RESULT constexpr VectorN operator-=(const VectorN& other) noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator-=(const VectorN<C, U>& other) noexcept
 		{
 			*this = *this - other;
 			return *this;
@@ -278,7 +300,8 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr VectorN operator*=(const VectorN& other) noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator*=(const VectorN<C, U>& other) noexcept
 		{
 			*this = *this * other;
 			return *this;
@@ -290,15 +313,21 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr VectorN operator/=(const VectorN& other) noexcept
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr VectorN operator/=(const VectorN<C, U>& other) noexcept
 		{
 			*this = *this / other;
 			return *this;
 		}
 
-		VectorN& operator=(const VectorN& other) noexcept
+		template<unsigned short C, typename U>
+		VectorN& operator=(const VectorN<C, U>& other) noexcept
 		{
-			dimensions = other.dimensions;
+			const auto size = (N < C) ? N : C;
+
+			for (auto i = size_t(0); i < size; ++i)
+				dimensions[i] = static_cast<Type>(other[i]);
+
 			return *this;
 		}
 
@@ -315,6 +344,11 @@ namespace kmaths
 		USE_RESULT constexpr bool operator!=(const VectorN& v) const
 		{
 			return !(*this == v);
+		}
+
+		USE_RESULT constexpr auto NumberOfDimensions() const noexcept
+		{
+			return N;
 		}
 
 	private:

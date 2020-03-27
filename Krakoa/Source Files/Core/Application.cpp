@@ -30,10 +30,10 @@ namespace krakoa
 	Application::~Application()
 		= default;
 
+#include <Maths/Vectors/VectorN.hpp>
 	void Application::Initialize()
 	{
 		isRunning = true;
-
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 		input::InputManager::Initialize();
 	}

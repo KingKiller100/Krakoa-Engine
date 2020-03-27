@@ -7,7 +7,6 @@
 #include <Maths/Matrices/Matrix4x4.hpp>
 
 // Dimensional vectors
-#include <Maths/Vectors/VectorN.hpp>
 #include <Maths/Vectors/Vector2.hpp>
 #include <Maths/Vectors/Vector3.hpp>
 #include <Maths/Vectors/Vector4.hpp>

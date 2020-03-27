@@ -20,7 +20,6 @@ namespace krakoa
 		fpsCounter(60)
 	{
 		KRK_INIT_LOGS();
-
 		KRK_FATAL(!instance, "Instance of the application already exists!");
 
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());

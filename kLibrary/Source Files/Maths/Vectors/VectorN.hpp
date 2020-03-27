@@ -31,9 +31,17 @@ namespace kmaths
 				axis = _v;
 		}
 
-		explicit constexpr VectorN(const std::array<T, N> dimensions) noexcept
-			: dimensions(dimensions)
-		{	}
+		explicit constexpr VectorN(const std::array<T, N> values) noexcept
+		{
+			for (auto i = 0; i < N; ++i)
+				dimensions[i] = values[i];
+		}
+
+		explicit constexpr VectorN(const T values[N]) noexcept
+		{
+			for (auto i = 0; i < N; ++i)
+				dimensions[i] = values[i];
+		}
 
 		const Type& X() const noexcept
 		{
@@ -115,7 +123,6 @@ namespace kmaths
 		USE_RESULT constexpr T DotProduct(const VectorN<C, U>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
-
 			auto dp = static_cast<Type>(0);
 			for (auto i = 0; i < size; ++i)
 				dp += dimensions[i] * other[i];
@@ -128,9 +135,9 @@ namespace kmaths
 			if (mag == static_cast<Type>(0))
 				return VectorN(0);
 
-			auto temp = dimensions;
-			for (auto& d : temp)
-				d /= mag;
+			T temp[N]{ 0 };
+			for (auto i = 0; i < N; ++i)
+				temp[i] = dimensions[i] / mag;
 			return VectorN(temp);
 		}
 
@@ -215,9 +222,9 @@ namespace kmaths
 
 		USE_RESULT constexpr VectorN operator-() const noexcept
 		{
-			auto copy = dimensions;
+			T copy[N]{ 0 };
 			for (size_t i = 0; i < N; ++i)
-				copy[i] *= -1;
+				copy[i] = dimensions[i] * -1;
 			return VectorN(copy);
 		}
 
@@ -225,10 +232,9 @@ namespace kmaths
 		USE_RESULT constexpr VectorN operator+(const VectorN<C, U>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
-
-			auto copy = dimensions;
-			for (auto i = 0u; i < size; ++i)
-				copy[i] += other[i];
+			T copy[N]{ 0 };
+			for (auto i = size_t(0); i < size; ++i)
+				copy[i] = dimensions[i] + other[i];
 			return VectorN(copy);
 		}
 
@@ -236,10 +242,9 @@ namespace kmaths
 		USE_RESULT constexpr VectorN operator-(const VectorN<C, U>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
-
-			auto copy = dimensions;
+			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < size; ++i)
-				copy[i] -= other[i];
+				copy[i] = dimensions[i] - other[i];
 			return VectorN(copy);
 		}
 
@@ -247,17 +252,18 @@ namespace kmaths
 		USE_RESULT constexpr VectorN operator*(const VectorN<C, U>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
-			auto copy = dimensions;
+			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < size; ++i)
-				copy[i] *= other[i];
+				copy[i] = dimensions[i] * other[i];
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN operator*(Type scalar) const noexcept
+		template<typename U>
+		USE_RESULT constexpr VectorN operator*(const U scalar) const noexcept
 		{
-			auto copy = dimensions;
+			T copy[N]{0};
 			for (auto i = size_t(0); i < N; ++i)
-				copy[i] *= scalar;
+				copy[i] = dimensions[i] * scalar;
 			return VectorN(copy);
 		}
 
@@ -265,18 +271,18 @@ namespace kmaths
 		USE_RESULT constexpr VectorN operator/(const VectorN<C, U>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
-
-			auto copy = dimensions;
+			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < size; ++i)
-				copy[i] /= other[i];
+				copy[i] = dimensions[i] / other[i];
 			return VectorN(copy);
 		}
 
-		USE_RESULT constexpr VectorN operator/(Type scalar) const noexcept
+		template<typename U>
+		USE_RESULT constexpr VectorN operator/(const U scalar) const noexcept
 		{
-			auto copy = dimensions;
+			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
-				copy[i] /= scalar;
+				copy[i] = dimensions[i] / scalar;
 			return VectorN(copy);
 		}
 
@@ -294,7 +300,8 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr VectorN operator*=(Type scalar) noexcept
+		template<typename U>
+		USE_RESULT constexpr VectorN operator*=(const U scalar) noexcept
 		{
 			*this = *this * scalar;
 			return *this;
@@ -307,7 +314,8 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr VectorN operator/=(Type scalar) noexcept
+		template<typename U>
+		USE_RESULT constexpr VectorN operator/=(const U scalar) noexcept
 		{
 			*this = *this / scalar;
 			return *this;
@@ -352,6 +360,6 @@ namespace kmaths
 		}
 
 	private:
-		std::array<T, N> dimensions;
+		T dimensions[N];
 	};
 }

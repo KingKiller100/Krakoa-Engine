@@ -1,24 +1,25 @@
 ﻿#pragma once 
 
+#include "../Vectors/VectorN.hpp"
 #include <array>
 
 namespace kmaths
 {
-	template<typename Type, size_t Rows, size_t Columns>
+	template<typename Type, unsigned short Rows, unsigned short Columns>
 	struct Matrix
 	{
 	public:
 		constexpr Matrix() noexcept
 		{
-			for (auto j = 0u; j < Columns; ++j) {
+			/*for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
 				{
 					indices[j][i] = 0;
 				}
-			}
+			}*/
 		}
 
-		explicit constexpr Matrix(const std::array<std::array<Type, Rows>, Columns>& newIndices) noexcept
+		explicit constexpr Matrix(const std::array<VectorN<Rows, Type>, Columns>& newIndices) noexcept
 			: indices(newIndices)
 		{}
 
@@ -45,19 +46,18 @@ namespace kmaths
 		~Matrix()
 			= default;
 
-		constexpr void Identity()
+		constexpr void Identity() noexcept
 		{
 			for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
 				{
-					i == j 
-					?	indices[j][i] = 1
-					:	indices[j][i] = 0;
+					indices[j][i] = 
+						i == j ? 1 : 0;
 				}
 			}
 		}
 
-		constexpr Matrix operator+(const Matrix& other) noexcept
+		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{
 			Matrix m(0.f);
 			for (auto j = 0u; j < Columns; ++j) {
@@ -69,7 +69,7 @@ namespace kmaths
 			return m;
 		}
 
-		constexpr Matrix operator-(const Matrix& other) noexcept
+		USE_RESULT constexpr Matrix operator-(const Matrix& other) const noexcept
 		{
 			Matrix m;
 			for (auto j = 0u; j < Columns; ++j) {
@@ -81,33 +81,29 @@ namespace kmaths
 			return m;
 		}
 
-		constexpr Matrix& operator+=( Matrix& other)
+		constexpr Matrix& operator+=(const Matrix& other)
 		{
-			auto& self = *this;
-			self = self + other;
-			return self;
+			*this = *this + other;
+			return *this;
 		}
 
-		constexpr Matrix& operator-=(Matrix& other)
+		constexpr Matrix& operator-=(const Matrix& other) noexcept
 		{
-			auto& self = *this;
-			self = self - other;
-			return self;
+			*this = *this - other;
+			return *this;
 		}
 
-		/*template<size_t C = Columns, size_t R = Rows>
-		constexpr Matrix<Type, Rows, > operator*(Matrix<Type, C, R>& other) noexcept
+		USE_RESULT constexpr Matrix operator*(const Matrix<Type, Columns, Rows>& other) const noexcept
 		{
-			auto example = other.indices.front().front();
+			auto temp = indices;
 
-			for (size_t i = 0; i < other.indices.size(); ++i)
-			{
-				for (size_t j = 0; j < example.size(); ++j)
+			for (size_t i = 0; i < Columns; ++i) {
+				for (size_t j = 0; j < Rows; ++j)
 				{
 
 				}
 			}
-		}*/
+		}
 
 		/*Matrix operator/(Matrix& other) noexcept
 		{
@@ -146,22 +142,22 @@ namespace kmaths
 			return matrix;
 		}*/
 
-	/*	Matrix& operator*=(const Matrix& other)
-		{
-			*this = *this * other;
-			return *this;
-		}
+		/*	Matrix& operator*=(const Matrix& other)
+			{
+				*this = *this * other;
+				return *this;
+			}
 
-		Matrix& operator/=(const Matrix& other)
-		{
-			*this = *this / other;
-			return *this;
-		}*/
+			Matrix& operator/=(const Matrix& other)
+			{
+				*this = *this / other;
+				return *this;
+			}*/
 
 		Matrix operator*(Matrix) = delete;
-		
+
 		template<typename U>
-		constexpr Matrix operator*(const U scalar)
+		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
 			for (auto j = 0u; j < Columns; ++j) {
@@ -176,7 +172,7 @@ namespace kmaths
 		Matrix operator/(Matrix) = delete;
 
 		template<typename U>
-		constexpr Matrix operator/(const U scalar)
+		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
 			Matrix m;
 			for (auto j = 0u; j < Columns; ++j) {
@@ -214,7 +210,7 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr Matrix operator-() const noexcept
+		USE_RESULT constexpr Matrix operator-() const noexcept
 		{
 			Matrix m;
 			for (auto j = 0u; j < Columns; ++j) {
@@ -226,16 +222,17 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr std::array<Type, Rows>& operator[](const size_t idx) 
+		USE_RESULT constexpr VectorN<Rows, Type>& operator[](const size_t idx) noexcept
 		{
 			return indices[idx];
 		}
 
-	public:
-		std::array<Type, Rows>& _m1 = indices[0];
-		std::array<Type, Rows>& _m2 = indices[1];
+		USE_RESULT constexpr const VectorN<Rows, Type>& operator[](const size_t idx) const noexcept
+		{
+			return indices[idx];
+		}
 
 	private:
-		std::array<std::array<Type, Rows>, Columns> indices{ 0 };
+		std::array<VectorN<Rows, Type>, Columns> indices;
 	};
 }

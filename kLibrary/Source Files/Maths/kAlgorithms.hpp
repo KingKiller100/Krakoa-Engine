@@ -9,17 +9,14 @@
 #include <Maths/Vectors/Vector4.hpp>
 
 #include <Maths/Matrices/Matrix.hpp>
-#include <Maths/Matrices/Matrix2x2.hpp>
-#include <Maths/Matrices/Matrix3x3.hpp>
-#include <Maths/Matrices/Matrix4x4.hpp>
 
 #include <cmath>
 
 namespace kmaths
 {
 	// Normalizes a vector
-	template<typename VecType>
-	USE_RESULT constexpr VecType VectorNormalize(const VecType& v) noexcept
+	template<unsigned short N, typename T>
+	USE_RESULT constexpr auto VectorNormalize(const VectorN<N, T>& v) noexcept
 	{
 		const auto normalVec = v.Normalize();
 		return normalVec;

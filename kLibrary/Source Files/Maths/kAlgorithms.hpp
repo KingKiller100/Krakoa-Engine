@@ -8,25 +8,15 @@
 #include <Maths/Vectors/Vector3.hpp>
 #include <Maths/Vectors/Vector4.hpp>
 
-#include <Maths/Matrices/Matrix.hpp>
-
 #include <cmath>
 
 namespace kmaths
 {
-	// Normalizes a vector
-	template<unsigned short N, typename T>
-	USE_RESULT constexpr auto VectorNormalize(const VectorN<N, T>& v) noexcept
-	{
-		const auto normalVec = v.Normalize();
-		return normalVec;
-	}
-
 	// Produces the dot product
 	template<unsigned short N, typename T>
 	USE_RESULT constexpr T VectorDotProduct(const VectorN<N, T>& u, const VectorN<N, T>& v) noexcept
 	{
-		const auto result = u.DotProduct(v);
+		const auto result = u.DotProduct<N, T>(v);
 		return result;
 	}
 
@@ -169,21 +159,21 @@ namespace kmaths
 
 	//////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT inline constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
+	USE_RESULT constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{
 		if (angle == 0)
 			return Vector2<T>();
 
-		const T rotation = atan2(position.Y(), position.X()) + angle;
-		const T mag = position.Magnitude();
-		const T lXPos = static_cast<T>(cos(rotation) * mag);
-		const T lYPos = static_cast<T>(sin(rotation) * mag);
+		const auto rotation = atan2(position.Y(), position.X()) + angle;
+		const auto mag = position.Magnitude();
+		const auto lXPos = cos(rotation) * mag;
+		const auto lYPos = sin(rotation) * mag;
 		return Vector2<T>(lXPos, lYPos);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT inline constexpr Vector2<T> RotateAbout(const Vector2<T>& inCenter, const Vector2<T>& inPosition, const float& inAngle) noexcept
+	USE_RESULT constexpr Vector2<T> RotateAbout(const Vector2<T>& inCenter, const Vector2<T>& inPosition, const float& inAngle) noexcept
 	{
 		Vector2<T> lRes = inPosition;
 

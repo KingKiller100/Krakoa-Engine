@@ -20,50 +20,60 @@ namespace kTest::Maths
 
 	void VectorsTester::Test()
 	{
-		VERIFY(VectorNTest() == true);
+		VERIFY(MultiDimensionalVectorTest() == true);
 		VERIFY(Vector2Test() == true);
 		VERIFY(Vector3Test() == true);
 		VERIFY(Vector4Test() == true);
 	}
 
-	bool VectorsTester::VectorNTest()
+	bool VectorsTester::MultiDimensionalVectorTest()
 	{
-		auto vec2a = Vector2<float>(4.f);
-		auto vec2b = Vector2d(5, 12.0);
+		auto vec2f = MultiDimensionalVector<2, float>(4.f);
+		auto vec2d = MultiDimensionalVector<2, double>({ 5.0, 12.0 });
 
-		auto res1 = vec2a + vec2b;
-		res1 = vec2a - vec2b;
-		res1 = vec2a * vec2b;
-		res1 = vec2a / vec2b;
+		auto res1 = vec2f + vec2d;
+		VERIFY(res1.X() == 9.0 &&  res1.Y() == 16.0);
+		res1 = vec2f - vec2d;
+		res1 = vec2f * vec2d;
+		res1 = vec2f / vec2d;
 
-		const auto distance = vec2a.Distance(vec2b);
-		vec2a = vec2a.Normalize();
-		const auto dp = vec2a.DotProduct(vec2b);
+		const auto distance = vec2f.Distance(vec2d);
+		vec2f = vec2f.Normalize();
+		const auto dp = vec2f.DotProduct(vec2d);
 
-		vec2b /= vec2a;
-		vec2a += vec2b;
-		vec2a -= vec2b;
-		vec2a *= vec2b;
+		vec2d /= vec2f;
+		vec2f += vec2d;
+		vec2f -= vec2d;
+		vec2f *= vec2d;
 
-		const auto vec3a = Vector3s{ 4,5,6 };
-		const auto vec3b = Vector3<long>{ 1,2,3 };
-		const auto x = vec3a.X();
-		const auto y = vec3a.Y();
-		const auto z = vec3a.Z();
-		//const auto wFail = vec3.W(); should be unable to compile this line as vector3 do not have W axis
-		const auto perp = vec2b.Perpendicular();
-		//const auto perpFail = vec3.Perpendicular();
-		const auto crossP = vec3a.CrossProduct(vec3b);
-		//const auto crossPFail = vec2a.CrossProduct(vec2b); unable to compile due to not having only 3 axis
+		const auto vec3s1 = MultiDimensionalVector<3, int>{ 1,2,3 };
+		const auto vec3s2 = MultiDimensionalVector<3, int>{ 4,5,6 };
+		const auto vec3l = MultiDimensionalVector<3, long>{ 7,8,9 };
 
-		auto vec4a = VectorN<4, unsigned>{};
-		const auto vec4b = VectorN<4, int>{ -3, -5, 8, 19 };
+		auto angle1 = AngleBetweenVectors(MultiDimensionalVector<3, double>{ 41, 55, 67 }, MultiDimensionalVector<3, double>{ 14, 55, 76 });
+		auto angle2 = AngleBetweenVectors(MultiDimensionalVector<3, double>{ 41, 55, 67 }, MultiDimensionalVector<3, double>{ 14, 55, 76 }, true);
+		
+		VERIFY(angle2 == RadiansToDegrees(angle1));
+		VERIFY(angle1 == DegreesToRadians(angle2));
 
-		vec4a -= vec4b;
-		vec4a += vec4b;
+		const auto x = vec3s1.X();
+		const auto y = vec3s1.Y();
+		const auto z = vec3s1.Z();
+		//const auto wFail = vec3.W(); unable to compile this line as vector3 do not have W axis
+		const auto perp = vec2d.Perpendicular();
+		//const auto perpFail = vec3.Perpendicular(); unable to compile due to having more than only 2 axes
+		const auto crossP = vec3s2.CrossProduct(vec3l);
+		//const auto crossPFail = vec2a.CrossProduct(vec2b); unable to compile due to not having only 3 axes
 
-		const auto vecULL = VectorN<30, unsigned long long>(100);
-		const auto vecBool = VectorN<7, bool>({true, false, false, true, false, false, true});
+		auto vec4u = MultiDimensionalVector<4, unsigned>{};
+		const auto vec4c = MultiDimensionalVector<4, char>{ 'H', 'E', 'L', 'L' };
+
+		vec4u += vec3l;
+		vec4u -= vec2d;
+
+
+		const auto vecULL = MultiDimensionalVector<30, unsigned long long>(100);
+		const auto vecBool = MultiDimensionalVector<7, bool>({true, false, false, true, false, false, true});
 
 		const auto b = vecBool[6];
 

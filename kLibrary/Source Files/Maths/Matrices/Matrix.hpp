@@ -1,6 +1,6 @@
 ﻿#pragma once 
 
-#include <Maths/Vectors/VectorN.hpp>
+#include <Maths/Vectors/MultiDimensionalVector.hpp>
 #include <array>
 
 namespace kmaths
@@ -12,7 +12,7 @@ namespace kmaths
 		constexpr Matrix() noexcept
 		{ }
 
-		explicit constexpr Matrix(const std::array<VectorN<Rows, Type>, Columns>& newIndices) noexcept
+		explicit constexpr Matrix(const std::array<MultiDimensionalVector<Rows, Type>, Columns>& newIndices) noexcept
 			: indices(newIndices)
 		{}
 
@@ -45,7 +45,7 @@ namespace kmaths
 				for (auto i = 0u; i < Rows; ++i)
 				{
 					indices[j][i] = 
-						i == j ? 1 : 0;
+						i == j ? static_cast<Type>(1) : static_cast<Type>(0);
 				}
 			}
 		}
@@ -91,7 +91,7 @@ namespace kmaths
 			auto temp = indices;
 
 			for (size_t i = 0; i < Columns; ++i) {
-				VectorN<Rows, Type> row;
+				MultiDimensionalVector<Rows, Type> row;
 				for (size_t j = 0; j < Rows; ++j)
 				{
 					row[j] = other[i][j];
@@ -217,17 +217,17 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr VectorN<Rows, Type>& operator[](const size_t idx) noexcept
+		USE_RESULT constexpr MultiDimensionalVector<Rows, Type>& operator[](const size_t idx) noexcept
 		{
 			return indices[idx];
 		}
 
-		USE_RESULT constexpr const VectorN<Rows, Type>& operator[](const size_t idx) const noexcept
+		USE_RESULT constexpr const MultiDimensionalVector<Rows, Type>& operator[](const size_t idx) const noexcept
 		{
 			return indices[idx];
 		}
 
 	private:
-		std::array<VectorN<Rows, Type>, Columns> indices;
+		std::array<MultiDimensionalVector<Rows, Type>, Columns> indices;
 	};
 }

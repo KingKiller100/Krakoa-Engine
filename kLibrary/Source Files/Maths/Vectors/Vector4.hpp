@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Maths/Vectors/VectorN.hpp>
+#include <Maths/Vectors/MultiDimensionalVector.hpp>
 
 namespace kmaths
 {
 	template<typename T>
-	using Vector4 = VectorN<4, T>;
+	using Vector4 = MultiDimensionalVector<4, T>;
 
 	using Vector4s = Vector4 <   int    >; // signed integer
 	using Vector4f = Vector4 <  float   >; // floating point

@@ -29,7 +29,6 @@ namespace krakoa
 	Application::~Application()
 		= default;
 
-#include <Maths/Vectors/VectorN.hpp>
 	void Application::Initialize()
 	{
 		isRunning = true;

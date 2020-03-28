@@ -80,12 +80,12 @@ project "Krakoa"
 
     prebuildcommands
     {
-        ("IF EXIST \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\Krakoa.dll\" /f /q)")
+        ("IF EXIST \"$(SolutionDir)bin\\Game\\Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\Game\\Hooper2\\Krakoa.dll\" /f /q)")
     }
 
     postbuildcommands
     {
-        ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(SolutionDir)bin\\" .. OutputDir .. "Hooper2\\\" /q")
+        ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(SolutionDir)bin\\Game\\Hooper2\\\" /q")
     }
 
     filter "system:Windows"
@@ -148,7 +148,7 @@ project "Hooper2"
     toolset "v142"
     characterset ("MBCS")
 
-    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("bin/Game/%{prj.name}")
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
     
     files

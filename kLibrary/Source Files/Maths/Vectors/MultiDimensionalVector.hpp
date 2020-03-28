@@ -6,20 +6,20 @@
 namespace kmaths
 {
 	template<unsigned short N, typename T>
-	struct VectorN
+	struct MultiDimensionalVector
 	{
 	public:
 		static_assert(N > 0, "Must have at least one dimension to use mathematical vectors");
 
 		using Type = T;
 
-		constexpr VectorN() noexcept
+		constexpr MultiDimensionalVector() noexcept
 		{
 			for (auto& axis : dimensions)
 				axis = static_cast<Type>(0);
 		}
 
-		explicit constexpr VectorN(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
+		explicit constexpr MultiDimensionalVector(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
 		{
 			dimensions[0] = _x;
 			dimensions[1] = _y;
@@ -27,19 +27,24 @@ namespace kmaths
 			if (_w) dimensions[3] = _w;
 		}
 
-		explicit constexpr VectorN(Type _v) noexcept
+		explicit constexpr MultiDimensionalVector(Type _v) noexcept
 		{
 			for (auto& axis : dimensions)
 				axis = _v;
 		}
 
-		constexpr VectorN(const std::initializer_list<T> l) noexcept
+		constexpr MultiDimensionalVector(const std::initializer_list<T> l)
 		{
+			if (N > l.size())
+				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
+
+			const auto first_iter = l.begin();
+
 			for (auto i = 0; i < N; ++i)
-				dimensions[i] = *(l.begin() + i);
+				dimensions[i] = *(first_iter + i);
 		}
 
-		explicit constexpr VectorN(const T values[N]) noexcept
+		explicit constexpr MultiDimensionalVector(const T values[N]) noexcept
 		{
 			for (auto i = 0; i < N; ++i)
 				dimensions[i] = values[i];
@@ -122,7 +127,7 @@ namespace kmaths
 		}
 
 		template<unsigned short C, typename U>
-		USE_RESULT constexpr T DotProduct(const VectorN<C, U>& other) const noexcept
+		USE_RESULT constexpr T DotProduct(const MultiDimensionalVector<C, U>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
 			auto dp = static_cast<Type>(0);
@@ -131,16 +136,16 @@ namespace kmaths
 			return dp;
 		}
 
-		USE_RESULT constexpr VectorN Normalize() const
+		USE_RESULT constexpr MultiDimensionalVector Normalize() const
 		{
 			const auto mag = Magnitude();
 			if (mag == static_cast<Type>(0))
-				return VectorN();
+				return MultiDimensionalVector();
 
 			T temp[N]{ 0 };
 			for (auto i = 0; i < N; ++i)
 				temp[i] = dimensions[i] / mag;
-			return VectorN(temp);
+			return MultiDimensionalVector(temp);
 		}
 
 		// Restricts vector magnitude to max value
@@ -161,7 +166,7 @@ namespace kmaths
 
 		// Calculates distance between two 3D objects
 		template<unsigned short C, typename U>
-		USE_RESULT constexpr T Distance(const VectorN<C, U>& v) const noexcept
+		USE_RESULT constexpr T Distance(const MultiDimensionalVector<C, U>& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
 			return static_cast<Type>(distanceVec.Magnitude());
@@ -184,24 +189,24 @@ namespace kmaths
 		template<typename U = Type>
 		USE_RESULT constexpr inline std::enable_if_t<!std::is_unsigned_v<U>
 			&& N == 2,
-			VectorN> Perpendicular() const
+			MultiDimensionalVector> Perpendicular() const
 		{
-			return VectorN(-Y(), X());
+			return MultiDimensionalVector(-Y(), X());
 		}
 
 		template<typename U = T>
 		USE_RESULT constexpr inline std::enable_if_t<std::is_unsigned_v<U>
 			|| N != 2,
-			VectorN> Perpendicular() const = delete;
+			MultiDimensionalVector> Perpendicular() const = delete;
 
 
 		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
 			&& !std::is_unsigned_v<X>
 			&& N == 3,
-			VectorN> CrossProduct(const VectorN<N, X>& v) const noexcept
+			MultiDimensionalVector> CrossProduct(const MultiDimensionalVector<N, X>& v) const noexcept
 		{
-			return VectorN( (this->Y() * v.Z() - this->Z() * v.Y()),
+			return MultiDimensionalVector( (this->Y() * v.Z() - this->Z() * v.Y()),
 				            (this->Z() * v.X() - this->X() * v.Z()),
 				            (this->X() * v.Y() - this->Y() * v.X()) );
 		}
@@ -210,7 +215,7 @@ namespace kmaths
 		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>
 			|| std::is_unsigned_v<X>
 			|| N != 3,
-			VectorN> CrossProduct(const VectorN& v) const noexcept
+			MultiDimensionalVector> CrossProduct(const MultiDimensionalVector& v) const noexcept
 			= delete;
 
 		constexpr Type& operator[](const size_t index)
@@ -223,116 +228,128 @@ namespace kmaths
 			return dimensions[index];
 		}
 
-		USE_RESULT constexpr VectorN operator-() const noexcept
+		USE_RESULT constexpr MultiDimensionalVector operator-() const noexcept
 		{
 			T copy[N]{ 0 };
 			for (size_t i = 0; i < N; ++i)
 				copy[i] = dimensions[i] * -1;
-			return VectorN(copy);
+			return MultiDimensionalVector(copy);
 		}
 
 		template<unsigned short C, typename U>
-		USE_RESULT constexpr VectorN operator+(const VectorN<C, U>& other) const noexcept
+		USE_RESULT constexpr MultiDimensionalVector operator+(const MultiDimensionalVector<C, U>& other) const noexcept
 		{
-			const auto size = (N < C) ? N : C;
 			T copy[N]{ 0 };
-			for (auto i = size_t(0); i < size; ++i)
-				copy[i] = dimensions[i] + static_cast<Type>(other[i]);
-			return VectorN(copy);
+			for (auto i = size_t(0); i < N; ++i)
+			{
+				copy[i] = (other.NumberOfDimensions() > i)
+					? dimensions[i] + static_cast<Type>(other[i])
+					: copy[i] = dimensions[i];
+			}
+			return MultiDimensionalVector(copy);
 		}
 
 		template<unsigned short C, typename U>
-		USE_RESULT constexpr VectorN operator-(const VectorN<C, U>& other) const noexcept
+		USE_RESULT constexpr MultiDimensionalVector operator-(const MultiDimensionalVector<C, U>& other) const noexcept
 		{
-			const auto size = (N < C) ? N : C;
 			T copy[N]{ 0 };
-			for (auto i = size_t(0); i < size; ++i)
-				copy[i] = dimensions[i] - static_cast<Type>(other[i]);
-			return VectorN(copy);
+			for (auto i = size_t(0); i < N; ++i)
+			{
+				copy[i] = (other.NumberOfDimensions() > i)
+					? dimensions[i] - static_cast<Type>(other[i])
+					: copy[i] = dimensions[i];
+			}
+			return MultiDimensionalVector(copy);
 		}
 
 		template<unsigned short C, typename U>
-		USE_RESULT constexpr VectorN operator*(const VectorN<C, U>& other) const noexcept
+		USE_RESULT constexpr MultiDimensionalVector operator*(const MultiDimensionalVector<C, U>& other) const noexcept
 		{
-			const auto size = (N < C) ? N : C;
 			T copy[N]{ 0 };
-			for (auto i = size_t(0); i < size; ++i)
-				copy[i] = dimensions[i] * static_cast<Type>(other[i]);
-			return VectorN(copy);
+			for (auto i = size_t(0); i < N; ++i)
+			{
+				copy[i] = (other.NumberOfDimensions() > i)
+					? dimensions[i] * static_cast<Type>(other[i])
+					: copy[i] = dimensions[i];
+			}
+			return MultiDimensionalVector(copy);
+		}
+
+		template<unsigned short C, typename U>
+		USE_RESULT constexpr MultiDimensionalVector operator/(const MultiDimensionalVector<C, U>& other) const noexcept
+		{
+			T copy[N]{ 0 };
+			for (auto i = size_t(0); i < N; ++i)
+			{
+				copy[i] = (other.NumberOfDimensions() > i) 
+					? dimensions[i] / static_cast<Type>(other[i])
+					: copy[i] = dimensions[i];
+			}
+			return MultiDimensionalVector(copy);
 		}
 
 		template<typename U>
-		USE_RESULT constexpr VectorN operator*(const U scalar) const noexcept
+		USE_RESULT constexpr MultiDimensionalVector operator*(const U scalar) const noexcept
 		{
-			T copy[N]{0};
+			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 				copy[i] = dimensions[i] * scalar;
-			return VectorN(copy);
-		}
-
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr VectorN operator/(const VectorN<C, U>& other) const noexcept
-		{
-			const auto size = (N < C) ? N : C;
-			T copy[N]{ 0 };
-			for (auto i = size_t(0); i < size; ++i)
-				copy[i] = dimensions[i] / static_cast<Type>(other[i]);
-			return VectorN(copy);
+			return MultiDimensionalVector(copy);
 		}
 
 		template<typename U>
-		USE_RESULT constexpr VectorN operator/(const U scalar) const noexcept
+		USE_RESULT constexpr MultiDimensionalVector operator/(const U scalar) const noexcept
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 				copy[i] = dimensions[i] / scalar;
-			return VectorN(copy);
+			return MultiDimensionalVector(copy);
 		}
 
 		template<unsigned short C, typename U>
-		constexpr VectorN& operator+=(const VectorN<C, U>& other) noexcept
+		constexpr MultiDimensionalVector& operator+=(const MultiDimensionalVector<C, U>& other) noexcept
 		{
 			*this = *this + other;
 			return *this;
 		}
 
 		template<unsigned short C, typename U>
-		constexpr VectorN operator-=(const VectorN<C, U>& other) noexcept
+		constexpr MultiDimensionalVector operator-=(const MultiDimensionalVector<C, U>& other) noexcept
 		{
 			*this = *this - other;
 			return *this;
 		}
 
 		template<typename U>
-		constexpr VectorN operator*=(const U scalar) noexcept
+		constexpr MultiDimensionalVector operator*=(const U scalar) noexcept
 		{
 			*this = *this * scalar;
 			return *this;
 		}
 
 		template<unsigned short C, typename U>
-		constexpr VectorN operator*=(const VectorN<C, U>& other) noexcept
+		constexpr MultiDimensionalVector operator*=(const MultiDimensionalVector<C, U>& other) noexcept
 		{
 			*this = *this * other;
 			return *this;
 		}
 
 		template<typename U>
-		constexpr VectorN operator/=(const U scalar) noexcept
+		constexpr MultiDimensionalVector operator/=(const U scalar) noexcept
 		{
 			*this = *this / scalar;
 			return *this;
 		}
 
 		template<unsigned short C, typename U>
-		constexpr VectorN operator/=(const VectorN<C, U>& other) noexcept
+		constexpr MultiDimensionalVector operator/=(const MultiDimensionalVector<C, U>& other) noexcept
 		{
 			*this = *this / other;
 			return *this;
 		}
 
 		template<unsigned short C, typename U>
-		VectorN& operator=(const VectorN<C, U>& other) noexcept
+		MultiDimensionalVector& operator=(const MultiDimensionalVector<C, U>& other) noexcept
 		{
 			const auto size = (N < C) ? N : C;
 
@@ -342,8 +359,8 @@ namespace kmaths
 			return *this;
 		}
 
-		// bool operator == returns true if both VectorN values are equal
-		USE_RESULT constexpr bool operator==(const VectorN& v) const
+		// bool operator == returns true if both MultiDimensionalVector values are equal
+		USE_RESULT constexpr bool operator==(const MultiDimensionalVector& v) const
 		{
 			for (size_t i = 0; i < N; ++i)
 				if (dimensions[i] != v[i])
@@ -351,8 +368,8 @@ namespace kmaths
 			return true;
 		}
 
-		// bool operator != returns true if both VectorN values are NOT equal
-		USE_RESULT constexpr bool operator!=(const VectorN& v) const
+		// bool operator != returns true if both MultiDimensionalVector values are NOT equal
+		USE_RESULT constexpr bool operator!=(const MultiDimensionalVector& v) const
 		{
 			return !(*this == v);
 		}

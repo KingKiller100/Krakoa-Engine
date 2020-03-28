@@ -2,22 +2,22 @@
 
 #include <cmath>
 
-namespace kmaths::consts
+namespace kmaths::constants
 {
 	using AccuracyType = long double;
 
-	constexpr AccuracyType E = 2.718281828459045235360287;
-	constexpr AccuracyType LOG2E = 1.44269504088896340736;
-	constexpr AccuracyType LOG10E = 0.434294481903251827651;
-	constexpr AccuracyType LN2 = 0.693147180559945309417;
-	constexpr AccuracyType LN10 = 2.30258509299404568402;
-	constexpr AccuracyType PI = 3.141592653589793238462643;
-	constexpr AccuracyType PI_DIV_2 = 1.57079632679489661923;
-	constexpr AccuracyType PI_DIV_4 = 0.785398163397448309616;
-	constexpr AccuracyType TAU = 2 * PI;
-	constexpr AccuracyType LOG_N = 0.577215664901532860606512;
-	constexpr AccuracyType ROOT2 = 1.414213562373095048801688;
-	constexpr AccuracyType SQRT1_2 = 0.707106781186547524401;
-	constexpr AccuracyType GOLDEN_RATIO = 1.618033988749894848204586;
-	constexpr AccuracyType INVERSE_GOLDEN_RATIO = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
+	constexpr AccuracyType E                         = 2.71828182845905;
+	constexpr AccuracyType LOG2E                     = 1.44269504088896;
+	constexpr AccuracyType LOG10E                    = 0.43429448190325;
+	constexpr AccuracyType LN2                       = 0.69314718055995;
+	constexpr AccuracyType LN10                      = 2.30258509299405;
+	constexpr AccuracyType PI                        = 3.14159265358979;
+	constexpr AccuracyType PI_DIV_2                  = 1.57079632679490;
+	constexpr AccuracyType PI_DIV_4                  = 0.78539816339745;
+	constexpr AccuracyType TAU                       = PI * static_cast<AccuracyType>(2);
+	constexpr AccuracyType LOG_N                     = 0.57721566490153;
+	constexpr AccuracyType ROOT2                     = 1.41421356237310;
+	constexpr AccuracyType SQRT1_2                   = 0.70710678118655;
+	constexpr AccuracyType GOLDEN_RATIO              = 1.61803398874989;
+	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 }

@@ -2,9 +2,9 @@
 #include <Testing/Maths Tests/Matrix_Test.hpp>
 
 #include <Maths/Matrices/Matrix.hpp>
-//#include <Maths/Matrices/Matrix2x2.hpp>
-//#include <Maths/Matrices/Matrix3x3.hpp>
-//#include <Maths/Matrices/Matrix4x4.hpp>
+#include <Maths/Matrices/Matrix2x2.hpp>
+#include <Maths/Matrices/Matrix3x3.hpp>
+#include <Maths/Matrices/Matrix4x4.hpp>
 
 #ifdef TESTING_ENABLED
 namespace kTest::Maths
@@ -40,7 +40,7 @@ namespace kTest::Maths
 		return true;
 	}
 
-	/*bool MatricesTester::Matrix2x2Test()
+	bool MatricesTester::Matrix2x2Test()
 	{
 		auto m = Matrix2x2d();
 		m._m1 = Vector2d(1.0, 1);
@@ -98,7 +98,7 @@ namespace kTest::Maths
 		const auto m5 = m * 10;
 
 		return true;
-	}*/
+	}
 
 }
 #endif

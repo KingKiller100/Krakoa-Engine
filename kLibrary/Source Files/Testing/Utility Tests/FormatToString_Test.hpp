@@ -13,8 +13,8 @@ namespace kTest::utility
 	private:
 		void Test() override;
 
-		void FormatToStringTest();
-		void SingleObjectToStringTest();
+		bool FormatToStringTest();
+		bool SingleObjectToStringTest();
 	};
 }
 #endif

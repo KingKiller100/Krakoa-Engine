@@ -14,7 +14,7 @@ namespace kmaths
 {
 	// Produces the dot product
 	template<unsigned short N, typename T>
-	USE_RESULT constexpr T VectorDotProduct(const VectorN<N, T>& u, const VectorN<N, T>& v) noexcept
+	USE_RESULT constexpr T VectorDotProduct(const MultiDimensionalVector<N, T>& u, const MultiDimensionalVector<N, T>& v) noexcept
 	{
 		const auto result = u.DotProduct<N, T>(v);
 		return result;
@@ -35,13 +35,13 @@ namespace kmaths
 	template<typename  T>
 	USE_RESULT constexpr T RadiansToDegrees(const T radians) noexcept
 	{
-		return radians * (360.0 / consts::TAU);
+		return radians * (static_cast<constants::AccuracyType>(360.0) / constants::TAU);
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T DegreesToRadians(const T degrees) noexcept
 	{
-		return degrees * (consts::TAU / 360.0);
+		return degrees * (constants::PI / static_cast<constants::AccuracyType>(180.0));
 	}
 
 	template<typename T>
@@ -74,7 +74,7 @@ namespace kmaths
 	}
 
 	template<unsigned short N, typename T>
-	USE_RESULT constexpr T AngleBetweenVectors(const VectorN<N, T>& v, const VectorN<N, T>& u, const bool inDegrees) noexcept
+	USE_RESULT constexpr T AngleBetweenVectors(const MultiDimensionalVector<N, T>& v, const MultiDimensionalVector<N, T>& u, const bool inDegrees = false) noexcept
 	{
 		const T angle = VectorDotProduct<N, T>(v, u) / (v.Magnitude() * u.Magnitude());
 

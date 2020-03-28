@@ -10,14 +10,7 @@ namespace kmaths
 	{
 	public:
 		constexpr Matrix() noexcept
-		{
-			/*for (auto j = 0u; j < Columns; ++j) {
-				for (auto i = 0u; i < Rows; ++i)
-				{
-					indices[j][i] = 0;
-				}
-			}*/
-		}
+		{ }
 
 		explicit constexpr Matrix(const std::array<VectorN<Rows, Type>, Columns>& newIndices) noexcept
 			: indices(newIndices)
@@ -33,12 +26,12 @@ namespace kmaths
 			}
 		}
 
-		constexpr Matrix(const Matrix& other)
+		constexpr Matrix(const Matrix& other) noexcept
 		{
 			*this = other;
 		}
 
-		constexpr Matrix(Matrix&& other)
+		constexpr Matrix(Matrix&& other) noexcept
 		{
 			*this = std::move(other);
 		}
@@ -59,11 +52,11 @@ namespace kmaths
 
 		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{
-			Matrix m(0.f);
+			Matrix m;
 			for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
 				{
-					m.indices[j][i] = indices[j][i] + other.indices[j][i];
+					m[j][i] = indices[j][i] + other.indices[j][i];
 				}
 			}
 			return m;
@@ -98,10 +91,12 @@ namespace kmaths
 			auto temp = indices;
 
 			for (size_t i = 0; i < Columns; ++i) {
+				VectorN<Rows, Type> row;
 				for (size_t j = 0; j < Rows; ++j)
 				{
-
+					row[j] = other[i][j];
 				}
+
 			}
 		}
 
@@ -178,7 +173,7 @@ namespace kmaths
 			for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
 				{
-					m.indices[j][i] = indices[j][i] * static_cast<Type>(scalar);
+					m.indices[j][i] = indices[j][i] * scalar;
 				}
 			}
 			return m;

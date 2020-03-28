@@ -7,11 +7,8 @@
 
 namespace krakoa::events
 {
-#if defined (_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable:4251)
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector2<float>;
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector2<int>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::VectorN<2, float>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::VectorN<2, int>;
 
 	using namespace kmaths;
 	using namespace klib;
@@ -25,7 +22,7 @@ namespace krakoa::events
 	protected:
 		ApplicationEvent() = default;
 	};
-	
+
 	class KRAKOA_API WindowResizeEvent : public ApplicationEvent
 	{
 	public:
@@ -54,7 +51,7 @@ namespace krakoa::events
 		{
 			return kFormat::ToString("Window Resize Event: (%.2f, %.2f)", GetWidth(), GetHeight());
 		}
-		
+
 		EVENT_CLASS_TYPE(WINDOW_RESIZE)
 	private:
 		Vector2f dimensions;
@@ -93,7 +90,7 @@ namespace krakoa::events
 		WindowMovedEvent(const Vector2f& newPos)
 			: newPos(newPos)
 		{}
-		
+
 		WindowMovedEvent(const float x, const float y)
 			: newPos(x, y)
 		{}
@@ -121,7 +118,7 @@ namespace krakoa::events
 	private:
 		Vector2f newPos;
 	};
-	
+
 
 	class KRAKOA_API WindowClosedEvent : public ApplicationEvent
 	{
@@ -132,10 +129,10 @@ namespace krakoa::events
 		{
 			return "Window Closed Event!";
 		}
-		
+
 		EVENT_CLASS_TYPE(WINDOW_CLOSE)
 	};
-	
+
 
 	class KRAKOA_API TickEvent : public ApplicationEvent
 	{
@@ -146,7 +143,7 @@ namespace krakoa::events
 		{
 			return "Tick Event!";
 		}
-		
+
 		EVENT_CLASS_TYPE(APP_TICK)
 	};
 
@@ -154,7 +151,7 @@ namespace krakoa::events
 	{
 	public:
 		UpdateEvent() = default;
-		
+
 		USE_RESULT std::string ToString() const noexcept override
 		{
 			return "Update Event!";
@@ -175,10 +172,6 @@ namespace krakoa::events
 
 		EVENT_CLASS_TYPE(APP_RENDER)
 	};
-
-
-#pragma warning(pop)
-#endif
 }
 
 

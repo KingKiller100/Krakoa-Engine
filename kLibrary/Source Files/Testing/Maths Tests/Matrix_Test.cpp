@@ -28,14 +28,16 @@ namespace kTest::Maths
 
 	bool MatricesTester::DynamicMatrixTest()
 	{
+		auto m0 = Matrix<float, 2, 3>(1);
 		auto m1 = Matrix<float, 3, 2>(1);
 		m1.Identity();
-
+		
 		auto m2 = Matrix<float, 3, 2>(2);
 
 		const auto m3 = m1 - m2;
 		const auto m5 = m1 / 10;
-		const auto m6 = m1 += m2;
+		//const auto m6 = m1 * m0;
+		const auto m7 = m1 += m2;
 
 		return true;
 	}
@@ -99,6 +101,5 @@ namespace kTest::Maths
 
 		return true;
 	}
-
 }
 #endif

@@ -16,28 +16,25 @@ namespace kTest::utility
 
 	void TimerTester::Test()
 	{
-		using namespace klib::kTime;
-
 		std::string s;
 		double sum(0);
 
-		Timer<size_t> testTime("Test Timer");
+		klib::kTime::Timer<size_t> testTime("Test Timer");
 
 		const size_t size = 99999;
 		int nums[size];
 		for (auto i = 0; i < size; i++)
 		{
 			nums[i] = i;
-			const auto dt = testTime.GetDeltaTime<Micros>();
+			const auto dt = testTime.GetDeltaTime<klib::kTime::Micros>();
 			sum += dt;
 			VERIFY(nums[i] == i && dt != 0);
 			s = klib::kFormat::ToString("Test Time %d : %dus (Microseconds)\n", i, dt);
 			OutputDebugStringA(s.data());
 		}
 
-		std::cout << testTime.GetName() << " Total Test Time: " << testTime.GetLifeTime<Micros>() / 1000000.0 << "s (Seconds)" << std::endl;
+		std::cout << testTime.GetName() << " Total Test Time: " << testTime.GetLifeTime<klib::kTime::Micros>() / 1000000.0 << "s (Seconds)" << std::endl;
 		std::cout << testTime.GetName() << " Average Execution Time: " << sum / size << "us (Microseconds)" << std::endl;
 	}
 }
-
 #endif

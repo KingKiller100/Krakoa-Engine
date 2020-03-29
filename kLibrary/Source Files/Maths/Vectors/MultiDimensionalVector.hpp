@@ -161,7 +161,8 @@ namespace kmaths
 		constexpr void ToPositives() noexcept
 		{
 			for (auto& d : dimensions)
-				d = (d >= static_cast<Type>(0)) ? d : -d;
+				if (d < static_cast<Type>(0))
+					d = -d;
 		}
 
 		// Calculates distance between two 3D objects

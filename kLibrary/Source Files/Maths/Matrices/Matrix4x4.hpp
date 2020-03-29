@@ -41,7 +41,7 @@ namespace kmaths
 			indices[3][3] = 1;
 		}
 
-		constexpr Matrix4x4 operator+(Matrix4x4& other) noexcept
+		USE_RESULT constexpr Matrix4x4 operator+(const Matrix4x4& other) const noexcept
 		{
 			const auto m1 = Vector4<T>(other.indices[0][0], other.indices[0][1], other.indices[0][2], other.indices[0][3]);
 			const auto m2 = Vector4<T>(other.indices[1][0], other.indices[1][1], other.indices[1][2], other.indices[1][3]);
@@ -49,20 +49,16 @@ namespace kmaths
 			const auto m4 = Vector4<T>(other.indices[3][0], other.indices[3][1], other.indices[3][2], other.indices[3][3]);
 			
 			auto res1 = indices[0] + m1;
-			res1.W() =  indices[0][3] + m1.W();
 			auto res2 = indices[1] + m2;
-			res2.W() =  indices[1][3] + m2.W();
 			auto res3 = indices[2] + m3;
-			res3.W() =  indices[2][3] + m3.W();
 			auto res4 = indices[3] + m4;
-			res4.W() =  indices[3][3] + m4.W();
 			
 			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
 
 			return matrix;
 		}
 
-		constexpr Matrix4x4 operator-(Matrix4x4& other) noexcept
+		USE_RESULT constexpr Matrix4x4 operator-(const Matrix4x4& other) const noexcept
 		{
 			const auto m1 = Vector4<T>(other.indices[0][0], other.indices[0][1], other.indices[0][2], other.indices[0][3]);
 			const auto m2 = Vector4<T>(other.indices[1][0], other.indices[1][1], other.indices[1][2], other.indices[1][3]);
@@ -70,13 +66,9 @@ namespace kmaths
 			const auto m4 = Vector4<T>(other.indices[3][0], other.indices[3][1], other.indices[3][2], other.indices[3][3]);
 
 			auto res1 = indices[0] - m1;
-			res1.W() =  indices[0][3] - m1.W();
 			auto res2 = indices[1] - m2;
-			res2.W() =  indices[1][3] - m2.W();
 			auto res3 = indices[2] - m3;
-			res3.W() =  indices[2][3] - m3.W();
 			auto res4 = indices[3] - m4;
-			res4.W() =  indices[3][3] - m4.W();
 
 			const auto matrix = Matrix4x4({ res1, res2, res3, res4 });
 
@@ -95,7 +87,7 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr Matrix4x4 operator*(Matrix4x4& other) noexcept
+		USE_RESULT constexpr Matrix4x4 operator*(const Matrix4x4& other) const noexcept
 		{
 			const auto m1 = Vector4<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3], other.indices[0][minorIdx4]);
 			const auto m2 = Vector4<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2], other.indices[1][minorIdx3], other.indices[1][minorIdx4]);
@@ -132,7 +124,7 @@ namespace kmaths
 			return matrix;
 		}
 
-		constexpr Matrix4x4 operator/(Matrix4x4& other) noexcept
+		USE_RESULT constexpr Matrix4x4 operator/(const Matrix4x4& other) const noexcept
 		{
 			auto m1 = Vector4<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3], other.indices[0][minorIdx4]);
 			auto m2 = Vector4<T>(other.indices[1][minorIdx1], other.indices[1][minorIdx2], other.indices[1][minorIdx3], other.indices[1][minorIdx4]);
@@ -182,9 +174,8 @@ namespace kmaths
 		}
 
 		template<typename U>
-		constexpr Matrix4x4 operator*(const U scalar)
+		USE_RESULT constexpr Matrix4x4 operator*(U scalar) const noexcept
 		{
-			const auto i = indices[0];
 			const auto res1 = Vector4<T>(indices[0][0] * scalar, indices[0][1] * scalar, indices[0][2] * scalar, indices[0][3] * scalar);
 			const auto res2 = Vector4<T>(indices[1][0] * scalar, indices[1][1] * scalar, indices[1][2] * scalar, indices[1][3] * scalar);
 			const auto res3 = Vector4<T>(indices[2][0] * scalar, indices[2][1] * scalar, indices[2][2] * scalar, indices[2][3] * scalar);
@@ -196,7 +187,7 @@ namespace kmaths
 		}
 
 		template<typename U>
-		constexpr Matrix4x4 operator/(const U scalar)
+		USE_RESULT constexpr Matrix4x4 operator/(U scalar) const noexcept
 		{
 			const auto res1 = Vector4<T>(indices[0][0] / scalar, indices[0][1] / scalar, indices[0][2] / scalar, indices[0][3] / scalar);
 			const auto res2 = Vector4<T>(indices[1][0] / scalar, indices[1][1] / scalar, indices[1][2] / scalar, indices[1][3] / scalar);
@@ -234,15 +225,21 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr Matrix4x4 operator-() const noexcept
+		USE_RESULT constexpr Matrix4x4 operator-() const noexcept
 		{
-			for (auto& row : indices)
+			auto copy = indices;
+			for (auto& row : copy)
 				row = -row;
 
-			return *this;
+			return Matrix4x4( copy );
 		}
 
 		constexpr Vector4<T>& operator[](const size_t idx)
+		{
+			return indices [idx];
+		}
+
+		constexpr const Vector4<T>& operator[](const size_t idx) const noexcept
 		{
 			return indices [idx];
 		}

@@ -5,10 +5,12 @@
 
 namespace kmaths
 {
-	template<typename Type, unsigned short Rows, unsigned short Columns>
+	template<typename T, unsigned short Rows, unsigned short Columns>
 	struct Matrix
 	{
 	public:
+		using Type = T;
+
 		constexpr Matrix() noexcept
 		{ }
 
@@ -86,20 +88,21 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr Matrix operator*(const Matrix<Type, Columns, Rows>& other) const noexcept
+		USE_RESULT constexpr std::enable_if_t<Rows != Columns, Matrix> operator*(const Matrix<Type, Columns, Rows>& other) const noexcept
 		{
-			auto temp = indices;
+			Matrix temp;
 
 			for (size_t i = 0; i < Columns; ++i) {
 				MultiDimensionalVector<Rows, Type> row;
 				for (size_t j = 0; j < Rows; ++j)
 				{
-					row[j] = other[i][j];
+					row[j] = indices[i][j] * other[i][j];
 				}
-
+				temp[i] = row;
 			}
+			return temp;
 		}
-
+		
 		/*Matrix operator/(Matrix& other) noexcept
 		{
 			auto m1 = Vector4<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3], other.indices[0][minorIdx4]);
@@ -148,8 +151,6 @@ namespace kmaths
 				*this = *this / other;
 				return *this;
 			}*/
-
-		Matrix operator*(Matrix) = delete;
 
 		template<typename U>
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept

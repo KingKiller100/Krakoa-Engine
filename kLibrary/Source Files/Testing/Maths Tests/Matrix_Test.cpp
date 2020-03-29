@@ -40,10 +40,12 @@ namespace kTest::Maths
 		const auto m7 = m1 += m2;
 
 		auto m8 = Matrix<float, 2, 3>(1);
-		auto m9 = Matrix<float, 3, 100>(2);
+		auto m9 = Matrix<float, 3, 10>(2);
 
 		const auto m10 = m8 * m9;
+		const auto m11 = m8 / m9;
 
+		const auto mat12 = m8.Transpose();
 		return true;
 	}
 

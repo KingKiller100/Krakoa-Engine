@@ -180,6 +180,14 @@ namespace kmaths
 				dimensions[i] *= -1;
 		}
 
+		USE_RESULT constexpr MultiDimensionalVector Inverse() const noexcept
+		{
+			T copy[N]{ 0 };
+			for (auto i = 0; i < N; ++i)
+				copy[i] = (static_cast<Type>(1) / dimensions[i]);
+			return MultiDimensionalVector(copy);
+		}
+
 		// Sets all values of the vector to zero
 		void Zero() noexcept
 		{

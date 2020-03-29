@@ -36,8 +36,13 @@ namespace kTest::Maths
 
 		const auto m3 = m1 - m2;
 		const auto m5 = m1 / 10;
-		//const auto m6 = m1 * m0;
+		const auto m6 = m0 * m2;
 		const auto m7 = m1 += m2;
+
+		auto m8 = Matrix<float, 2, 3>(1);
+		auto m9 = Matrix<float, 3, 100>(2);
+
+		const auto m10 = m8 * m9;
 
 		return true;
 	}

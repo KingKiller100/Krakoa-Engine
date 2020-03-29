@@ -1,7 +1,7 @@
 #include <pch.hpp>
 #include <Testing/Utility Tests/FormatToString_Test.hpp>
 
-#include <Maths/kAlgorithms.hpp>
+#include <Maths/Constants.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
 #ifdef TESTING_ENABLED

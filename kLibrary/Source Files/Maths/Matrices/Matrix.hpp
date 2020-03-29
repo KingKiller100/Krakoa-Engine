@@ -46,7 +46,7 @@ namespace kmaths
 			for (auto j = 0u; j < Columns; ++j) {
 				for (auto i = 0u; i < Rows; ++i)
 				{
-					indices[j][i] = 
+					indices[j][i] =
 						i == j ? static_cast<Type>(1) : static_cast<Type>(0);
 				}
 			}
@@ -88,21 +88,25 @@ namespace kmaths
 			return *this;
 		}
 
-		USE_RESULT constexpr std::enable_if_t<Rows != Columns, Matrix> operator*(const Matrix<Type, Columns, Rows>& other) const noexcept
+		template<unsigned short C, unsigned short R>
+		USE_RESULT constexpr std::enable_if_t<Rows != Columns && Columns == R, Matrix<Type, Rows, C>> operator*(const Matrix<Type, R, C>& other) const noexcept
 		{
-			Matrix temp;
+			Matrix<Type, Rows, C> temp;
 
-			for (size_t i = 0; i < Columns; ++i) {
-				MultiDimensionalVector<Rows, Type> row;
-				for (size_t j = 0; j < Rows; ++j)
+			for (auto j = 0u; j < C; ++j)
+			{
+				for (auto i = 0u; i < Rows; ++i)
 				{
-					row[j] = indices[i][j] * other[i][j];
+					for (auto k = 0u; k < R; ++k)
+					{
+						temp[j][i] += indices[k][i] * other[i][k];
+					}
 				}
-				temp[i] = row;
 			}
+
 			return temp;
 		}
-		
+
 		/*Matrix operator/(Matrix& other) noexcept
 		{
 			auto m1 = Vector4<T>(other.indices[0][minorIdx1], other.indices[0][minorIdx2], other.indices[0][minorIdx3], other.indices[0][minorIdx4]);

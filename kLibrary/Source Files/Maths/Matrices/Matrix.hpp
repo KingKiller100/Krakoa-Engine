@@ -59,6 +59,39 @@ namespace kmaths
 			return transposeMat;
 		}
 
+		constexpr std::enable_if_t<Rows == Columns && Rows == 2, Matrix> Inverse() const noexcept
+		{
+			decltype(indices) copy;
+
+			const auto a = indices[0][0];
+			const auto b = indices[0][1];
+			const auto c = indices[1][0];
+			const auto d = indices[1][1];
+
+			copy[0][0] = d;
+			copy[0][1] = -b;
+			copy[1][0] = -c;
+			copy[1][1] = a;
+
+			const auto determinent = (a * d) - (b * c);
+			Matrix m ( copy );
+			m /= determinent;
+
+			return m;
+		}
+
+		USE_RESULT constexpr unsigned short GetRows() const noexcept
+		{
+			return Rows;
+		}
+
+		USE_RESULT constexpr unsigned short GetColumns() const noexcept
+		{
+			return Columns;
+		}
+
+
+		// Operators
 		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{
 			Matrix m;
@@ -107,9 +140,24 @@ namespace kmaths
 		}
 
 		template<typename U>
+		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
+		{
+			for (auto i = 0u; i < Rows; ++i)
+				m.indices[i] = indices[i] / scalar;
+			return m;
+		}
+
+		template<typename U>
 		constexpr Matrix& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
+			return *this;
+		}
+
+		template<typename U>
+		constexpr Matrix& operator/=(const U scalar)
+		{
+			*this = *this / scalar;
 			return *this;
 		}
 
@@ -141,16 +189,6 @@ namespace kmaths
 		USE_RESULT constexpr const MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) const noexcept
 		{
 			return indices[idx];
-		}
-
-		USE_RESULT constexpr unsigned short GetRows() const noexcept
-		{
-			return Rows;
-		}
-
-		USE_RESULT constexpr unsigned short GetColumns() const noexcept
-		{
-			return Columns;
 		}
 
 	private:

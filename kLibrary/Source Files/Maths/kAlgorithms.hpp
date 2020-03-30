@@ -32,16 +32,16 @@ namespace kmaths
 		return lhs < rhs ? lhs : rhs;
 	}
 
-	template<typename  T>
+	template<typename T>
 	USE_RESULT constexpr T RadiansToDegrees(const T radians) noexcept
 	{
-		return radians * (static_cast<constants::AccuracyType>(360.0) / constants::TAU);
+		return radians * (static_cast<constants::AccuracyType>(360) / constants::TAU);
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T DegreesToRadians(const T degrees) noexcept
 	{
-		return degrees * (constants::PI / static_cast<constants::AccuracyType>(180.0));
+		return degrees * (constants::TAU / static_cast<constants::AccuracyType>(360));
 	}
 
 	template<typename T>

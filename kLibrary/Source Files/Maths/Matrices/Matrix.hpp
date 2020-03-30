@@ -44,12 +44,9 @@ namespace kmaths
 			for (auto i = 0u; i < Rows; ++i)
 				for (auto j = 0u; j < Columns; ++j)
 					elems[i][j] = (i == j)
-					? static_cast<Type>(1)
-					: static_cast<Type>(0);
+					? TO_TYPE(Type, 1)
+					: TO_TYPE(Type, 0);
 		}
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		constexpr std::enable_if_t<R != C, void> Identity() noexcept = delete;
 
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
 		{
@@ -63,24 +60,39 @@ namespace kmaths
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const noexcept
 		{
-			Matrix m;
+			Matrix lhs;
 			if _CONSTEXPR_IF(Rows == 2)
 			{
 				std::array<MultiDimensionalVector<2, Type>, 2> copy;
 				const auto determinent = GetDeterminent(elems);
-				copy[0][0] = elems[0][0] / determinent;
-				copy[0][1] = -elems[0][1] / determinent;
-				copy[1][0] = -elems[1][0] / determinent;
-				copy[1][1] = elems[1][1] / determinent;
-				m = Matrix(copy);
+				if (determinent != static_cast<Type>(0))
+				{
+					copy[0][0] = elems[0][0] / determinent;
+					copy[0][1] = -elems[0][1] / determinent;
+					copy[1][0] = -elems[1][0] / determinent;
+					copy[1][1] = elems[1][1] / determinent;
+				}
+				lhs = Matrix(copy);
 			}
 			else if _CONSTEXPR_IF(Rows != 2)
-			{}
-			return m;
-		}
+			{
+				lhs = elems;
+				Matrix rhs;
+				rhs.Identity();
+				while (!m.IsIdentity())
+				{
+					if (lhs[0][0] != TO_TYPE(Type, 1))
+					{
+						lhs[0] /= lhs[0][0];
+						rhs[0] /= lhs[0][0];
+					}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R != C, Matrix> Inverse() const noexcept = delete;
+					m;
+				}
+			
+			}
+			return lhs;
+		}
 
 		USE_RESULT constexpr Type GetDeterminent(const std::array<MultiDimensionalVector<2, Type>, 2>& m) const noexcept
 		{
@@ -92,6 +104,32 @@ namespace kmaths
 
 			return determinent;
 		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, bool> IsIdentity() const noexcept
+		{
+			for (auto i = 0; i < Rows; ++i)
+				for (auto j = 0; j < Columns; ++j)
+					if (elems[i][j] != (i == j) ? 1 : 0)
+						return false;
+			return true;
+		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			bool> IsIdentity() const noexcept
+		{
+			return false;
+		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Matrix> Inverse() const noexcept
+			= delete;
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		constexpr std::enable_if_t<R != C,
+			void> Identity() noexcept
+			= delete;
 
 		USE_RESULT constexpr unsigned short GetRows() const noexcept
 		{

@@ -10,18 +10,19 @@ namespace kmaths
 	{
 	public:
 		using Type = T;
+		using Indices = std::array<MultiDimensionalVector<Columns, Type>, Rows>;
 
 		constexpr Matrix() noexcept
 		{ }
 
-		explicit constexpr Matrix(const std::array<MultiDimensionalVector<Columns, Type>, Rows>& newIndices) noexcept
-			: indices(newIndices)
+		explicit constexpr Matrix(const Indices newIndices) noexcept
+			: elems(newIndices)
 		{}
 
 		explicit constexpr Matrix(const Type initialVal) noexcept
 		{
 			for (auto i = 0u; i < Rows; ++i)
-				indices[i] = MultiDimensionalVector<Columns, Type>(initialVal);
+				elems[i] = MultiDimensionalVector<Columns, Type>(initialVal);
 		}
 
 		constexpr Matrix(const Matrix& other) noexcept
@@ -42,7 +43,7 @@ namespace kmaths
 		{
 			for (auto i = 0u; i < Rows; ++i)
 				for (auto j = 0u; j < Columns; ++j)
-					indices[i][j] = (i == j)
+					elems[i][j] = (i == j)
 					? static_cast<Type>(1)
 					: static_cast<Type>(0);
 		}
@@ -55,29 +56,41 @@ namespace kmaths
 			Matrix<Type, Columns, Rows> transposeMat;
 			for (auto i = 0u; i < Rows; ++i)
 				for (auto j = 0u; j < Columns; ++j)
-					transposeMat[j][i] = indices[i][j];
+					transposeMat[j][i] = elems[i][j];
 			return transposeMat;
 		}
 
-		constexpr std::enable_if_t<Rows == Columns && Rows == 2, Matrix> Inverse() const noexcept
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const noexcept
 		{
-			decltype(indices) copy;
-
-			const auto a = indices[0][0];
-			const auto b = indices[0][1];
-			const auto c = indices[1][0];
-			const auto d = indices[1][1];
-
-			copy[0][0] = d;
-			copy[0][1] = -b;
-			copy[1][0] = -c;
-			copy[1][1] = a;
-
-			const auto determinent = (a * d) - (b * c);
-			Matrix m ( copy );
-			m /= determinent;
-
+			Matrix m;
+			if _CONSTEXPR_IF(Rows == 2)
+			{
+				std::array<MultiDimensionalVector<2, Type>, 2> copy;
+				const auto determinent = GetDeterminent(elems);
+				copy[0][0] = elems[0][0] / determinent;
+				copy[0][1] = -elems[0][1] / determinent;
+				copy[1][0] = -elems[1][0] / determinent;
+				copy[1][1] = elems[1][1] / determinent;
+				m = Matrix(copy);
+			}
+			else if _CONSTEXPR_IF(Rows != 2)
+			{}
 			return m;
+		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C, Matrix> Inverse() const noexcept = delete;
+
+		USE_RESULT constexpr Type GetDeterminent(const std::array<MultiDimensionalVector<2, Type>, 2>& m) const noexcept
+		{
+			const auto a = m[0][0];
+			const auto b = m[0][1];
+			const auto c = m[1][0];
+			const auto d = m[1][1];
+			const auto determinent = (a * d) - (b * c);
+
+			return determinent;
 		}
 
 		USE_RESULT constexpr unsigned short GetRows() const noexcept
@@ -90,13 +103,12 @@ namespace kmaths
 			return Columns;
 		}
 
-
 		// Operators
 		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{
 			Matrix m;
 			for (auto i = 0u; i < Rows; ++i)
-				m.indices[i] = indices[i] + other[i];
+				m.elems[i] = elems[i] + other[i];
 			return m;
 		}
 
@@ -104,7 +116,7 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto i = 0u; i < Rows; ++i)
-				m.indices[i] = indices[i] - other[i];
+				m.elems[i] = elems[i] - other[i];
 			return m;
 		}
 
@@ -127,23 +139,25 @@ namespace kmaths
 			for (auto i = 0u; i < Rows; ++i)
 				for (auto j = 0u; j < C; ++j)
 					for (auto k = 0u; k < R; ++k)
-						m[i][j] += indices[i][k] * other[k][j];
+						m[i][j] += elems[i][k] * other[k][j];
 			return m;
 		}
 
 		template<typename U>
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
+			Matrix m;
 			for (auto i = 0u; i < Rows; ++i)
-				m.indices[i] = indices[i] * scalar;
+				m.elems[i] = elems[i] * scalar;
 			return m;
 		}
 
 		template<typename U>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
+			Matrix m;
 			for (auto i = 0u; i < Rows; ++i)
-				m.indices[i] = indices[i] / scalar;
+				m[i] = elems[i] / scalar;
 			return m;
 		}
 
@@ -163,13 +177,13 @@ namespace kmaths
 
 		constexpr Matrix& operator=(const Matrix& other)
 		{
-			indices = other.indices;
+			elems = other.elems;
 			return *this;
 		}
 
 		constexpr Matrix& operator=(Matrix&& other)
 		{
-			indices = std::move(other.indices);
+			elems = std::move(other.elems);
 			return *this;
 		}
 
@@ -177,21 +191,21 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto i = 0u; i < Rows; ++i)
-				m.indices[i] = -indices[i];
+				m.elems[i] = -elems[i];
 			return m;
 		}
 
 		USE_RESULT constexpr MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) noexcept
 		{
-			return indices[idx];
+			return elems[idx];
 		}
 
 		USE_RESULT constexpr const MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) const noexcept
 		{
-			return indices[idx];
+			return elems[idx];
 		}
 
 	private:
-		std::array<MultiDimensionalVector<Columns, Type>, Rows> indices;
+		Indices elems;
 	};
 }

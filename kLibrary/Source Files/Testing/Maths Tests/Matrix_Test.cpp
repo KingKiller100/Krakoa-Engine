@@ -30,8 +30,9 @@ namespace kTest::Maths
 	{
 		auto m0 = Matrix<float, 2, 3>(1);
 		auto m1 = Matrix<float, 3, 2>(1);
-		//m1.Identity();
-		
+		//m1.Identity(); Cannot compile since function is only usable for square matrix
+		//m1.Inverse();	 Cannot compile since function is only usable for square matrix
+
 		for (auto i = 0u; i < m0.GetRows(); ++i) {
 			for (auto j = 0u; j < m0.GetColumns(); ++j)
 			{
@@ -41,7 +42,6 @@ namespace kTest::Maths
 		}
 
 		auto m2 = Matrix<float, 3, 2>(2);
-
 		const auto m3 = m1 - m2;
 		//const auto m5 = m1 / 10;
 		const auto m6 = m0 * m2;
@@ -53,7 +53,15 @@ namespace kTest::Maths
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
 
-		const auto mat12 = m9.Transpose();
+		const auto transposedM9 = m9.Transpose();
+
+		m8.Identity();
+		const auto inverse3x3 = m8.Inverse();
+
+		for (auto i = 0u; i < m8.GetRows(); ++i)
+			for (auto j = 0u; j < m8.GetColumns(); ++j)
+				VERIFY(m8[i][j] == (i == j ? 1 : 0));
+
 		return success;
 	}
 

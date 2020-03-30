@@ -37,7 +37,8 @@ namespace kmaths
 		~Matrix()
 			= default;
 
-		constexpr void Identity() noexcept
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		constexpr std::enable_if_t<R == C, void> Identity() noexcept
 		{
 			for (auto i = 0u; i < Rows; ++i)
 				for (auto j = 0u; j < Columns; ++j)
@@ -45,6 +46,9 @@ namespace kmaths
 					? static_cast<Type>(1)
 					: static_cast<Type>(0);
 		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		constexpr std::enable_if_t<R != C, void> Identity() noexcept = delete;
 
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
 		{
@@ -84,7 +88,7 @@ namespace kmaths
 		}
 
 		template<unsigned short C, unsigned short R>
-		USE_RESULT constexpr std::enable_if_t<Rows != Columns && Columns == R, Matrix<Type, Rows, C>> operator*(const Matrix<Type, R, C>& other) const noexcept
+		USE_RESULT constexpr std::enable_if_t<Columns == R, Matrix<Type, Rows, C>> operator*(const Matrix<Type, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
 			for (auto i = 0u; i < Rows; ++i)
@@ -102,36 +106,10 @@ namespace kmaths
 			return m;
 		}
 
-		template<unsigned short C, unsigned short R>
-		USE_RESULT constexpr std::enable_if_t<Rows != Columns && Columns == R, Matrix<Type, Rows, C>> operator/(const Matrix<Type, R, C>& other) const noexcept
-		{
-			auto otherCopy = other;
-			for (auto i = 0u; i < R; ++i)
-				otherCopy[i] = other[i].Inverse();
-			Matrix<Type, Rows, C> m = *this * otherCopy;
-			return m;
-		}
-
-		template<typename U>
-		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
-		{
-			Matrix m;
-			for (auto i = 0u; i < Rows; ++i)
-				m.indices[i] = indices[i] / scalar;
-			return m;
-		}
-
 		template<typename U>
 		constexpr Matrix& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
-			return *this;
-		}
-
-		template<typename U>
-		constexpr Matrix& operator/=(const U scalar)
-		{
-			*this = *this / scalar;
 			return *this;
 		}
 
@@ -163,6 +141,16 @@ namespace kmaths
 		USE_RESULT constexpr const MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) const noexcept
 		{
 			return indices[idx];
+		}
+
+		USE_RESULT constexpr unsigned short GetRows() const noexcept
+		{
+			return Rows;
+		}
+
+		USE_RESULT constexpr unsigned short GetColumns() const noexcept
+		{
+			return Columns;
 		}
 
 	private:

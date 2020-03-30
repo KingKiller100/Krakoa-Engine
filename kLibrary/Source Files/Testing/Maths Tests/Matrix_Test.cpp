@@ -30,23 +30,31 @@ namespace kTest::Maths
 	{
 		auto m0 = Matrix<float, 2, 3>(1);
 		auto m1 = Matrix<float, 3, 2>(1);
-		m1.Identity();
+		//m1.Identity();
 		
+		for (auto i = 0u; i < m0.GetRows(); ++i) {
+			for (auto j = 0u; j < m0.GetColumns(); ++j)
+			{
+				VERIFY(m0[i][j] == 1);
+				VERIFY(m1[j][i] == 1);
+			}
+		}
+
 		auto m2 = Matrix<float, 3, 2>(2);
 
 		const auto m3 = m1 - m2;
-		const auto m5 = m1 / 10;
+		//const auto m5 = m1 / 10;
 		const auto m6 = m0 * m2;
 		const auto m7 = m1 += m2;
 
-		auto m8 = Matrix<float, 2, 3>(1);
+		auto m8 = Matrix<float, 3, 3>(1);
 		auto m9 = Matrix<float, 3, 10>(2);
 
 		const auto m10 = m8 * m9;
-		const auto m11 = m8 / m9;
+		//const auto m11 = m8 / m9;
 
-		const auto mat12 = m8.Transpose();
-		return true;
+		const auto mat12 = m9.Transpose();
+		return success;
 	}
 
 	bool MatricesTester::Matrix2x2Test()
@@ -64,7 +72,7 @@ namespace kTest::Maths
 		const auto m4 = m / m2;
 		const auto m5 = m / 10;
 
-		return true;
+		return success;
 	}
 
 	bool MatricesTester::Matrix3x3Test()
@@ -84,7 +92,7 @@ namespace kTest::Maths
 		const auto m4 = m * m2;
 		const auto m5 = m / 10;
 
-		return true;
+		return success;
 	}
 
 	bool MatricesTester::Matrix4x4Test()
@@ -106,7 +114,7 @@ namespace kTest::Maths
 		const auto m4 = m * m2;
 		const auto m5 = m * 10;
 
-		return true;
+		return success;
 	}
 }
 #endif

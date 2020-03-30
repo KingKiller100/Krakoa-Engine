@@ -206,7 +206,8 @@ namespace kmaths
 		template<typename U = T>
 		USE_RESULT constexpr inline std::enable_if_t<std::is_unsigned_v<U>
 			|| N != 2,
-			MultiDimensionalVector> Perpendicular() const = delete;
+			MultiDimensionalVector> Perpendicular() const
+			= delete;
 
 
 		template<typename X, typename U = T>

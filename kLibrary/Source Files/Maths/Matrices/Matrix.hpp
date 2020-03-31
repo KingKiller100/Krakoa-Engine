@@ -168,28 +168,7 @@ namespace kmaths
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() noexcept
 		{
-			if (IsZero())
-				return CAST(Type, 0);
-
-			const auto validColumns = [&]() -> bool {
-				for (auto col = 0u; col < Columns; ++col)
-				{
-					bool valid = false;
-					for (auto row = 0u; row < Rows; ++row)
-					{
-						if (elems[row][col] != CAST(Type, 0))
-						{
-							valid = true;
-							break;
-						}
-					}
-					if (!valid)
-						return false;
-				}
-				return true;
-			};
-
-			if (!validColumns())
+			if (IsZero() || !ValidColumns())
 				return CAST(Type, 0);
 
 			if (IsIdentity())
@@ -197,32 +176,23 @@ namespace kmaths
 
 			Type determinant = CAST(Type, 0);
 
-			//auto mod = [](int index, unsigned base) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
-			//{
-			//	const auto rem = index % base;
-			//	if _CONSTEXPR_IF(-1 % 2 == 1)
-			//		return rem;
-			//	else
-			//		return rem < 0 ? rem + base : rem;
-			//};
-
 			for (auto col = 0u; col < Columns; ++col)
 			{
 				const auto newSize = Rows - 1;
 				Matrix<Type, newSize, newSize> minorMatrix;
 
-				auto rowIndex = 0;
-				auto colIndex = 0;
-				for (auto r = 1u; r < Rows; ++r) {
+				auto minorRowIndex = 0;
+				for (auto r = 1u; r < Rows; ++r)
+				{
+					auto minorColIndex = 0;
 					for (auto c = 0u; c < Columns; ++c)
 					{
 						if (c == col)
 							continue;
 
-						minorMatrix[rowIndex][colIndex++] = elems[r][c];
+						minorMatrix[minorRowIndex][minorColIndex++] = elems[r][c];
 					}
-					rowIndex++;
-					colIndex = 0;
+					minorRowIndex++;
 				}
 				const auto subDeterminant = elems[0][col] * minorMatrix.GetDeterminant();
 				determinant += (col & 1) == 0 ? subDeterminant : -subDeterminant;
@@ -363,7 +333,7 @@ namespace kmaths
 
 	private:
 		// Gauss-Jordan Elimination Method
-	/*	constexpr Matrix RowEchalonMethod() noexcept
+		constexpr Matrix RowEchalonMethod() noexcept
 		{
 			auto lhs = elems;
 			auto rhs = Identity<Rows, Columns>();
@@ -384,7 +354,26 @@ namespace kmaths
 			}
 
 			return Matrix();
-		}*/
+		}
+
+		USE_RESULT constexpr bool ValidColumns() const noexcept
+		{
+			for (auto col = 0u; col < Columns; ++col)
+			{
+				bool valid = false;
+				for (auto row = 0u; row < Rows; ++row)
+				{
+					if (elems[row][col] != CAST(Type, 0))
+					{
+						valid = true;
+						break;
+					}
+				}
+				if (!valid)
+					return false;
+			}
+			return true;
+		}
 
 	private:
 		Indices elems;

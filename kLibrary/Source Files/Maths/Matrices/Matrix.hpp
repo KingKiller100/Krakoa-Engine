@@ -113,6 +113,58 @@ namespace kmaths
 			Type> Getdeterminant() const noexcept
 			= delete;
 
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
+		{
+			const auto a = elems[0][0];
+			const auto b = elems[0][1];
+			const auto c = elems[1][0];
+			const auto d = elems[1][1];
+			const auto determinant = (a * d) - (b * d);
+			return determinant;
+		}
+
+		// Rule of Sarrus Impl
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
+		{
+			auto sum = CAST(Type, 1);
+			auto determinant = CAST(Type, 0);
+			bool isReverseColumnSearch = false;
+
+			auto col = 0;
+			auto mod = [](int index) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
+			{
+				const auto rem = index % Rows;
+				if _CONSTEXPR_IF(-1 % 2 == 1)
+					return rem;
+				else
+					return rem < 0 ? rem + Rows : rem;
+			};
+			const auto idxDiff = Columns - 1;
+
+			do {
+				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
+				{
+					sum *= elems[row][mod(col)];
+				}
+				determinant += isReverseColumnSearch ? -sum : sum;
+				sum = 1;
+				col += isReverseColumnSearch ? idxDiff : -idxDiff;
+				if (!isReverseColumnSearch)
+				{
+					if (col == Columns)
+					{
+						col = idxDiff;
+						isReverseColumnSearch = true;
+					}
+				}
+			} while (col > -1);
+
+			return determinant;
+		}
+
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() noexcept
 		{
@@ -145,14 +197,14 @@ namespace kmaths
 
 			Type determinant = CAST(Type, 0);
 
-			auto mod = [](int index, unsigned base) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
-			{
-				const auto rem = index % base;
-				if _CONSTEXPR_IF(-1 % 2 == 1)
-					return rem;
-				else
-					return rem < 0 ? rem + base : rem;
-			};
+			//auto mod = [](int index, unsigned base) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
+			//{
+			//	const auto rem = index % base;
+			//	if _CONSTEXPR_IF(-1 % 2 == 1)
+			//		return rem;
+			//	else
+			//		return rem < 0 ? rem + base : rem;
+			//};
 
 			for (auto col = 0u; col < Columns; ++col)
 			{
@@ -161,18 +213,19 @@ namespace kmaths
 
 				auto rowIndex = 0;
 				auto colIndex = 0;
-				for (auto r = 0u; r < Rows; ++r) {
+				for (auto r = 1u; r < Rows; ++r) {
 					for (auto c = 0u; c < Columns; ++c)
 					{
-						if (r == 0 || c == col)
+						if (c == col)
 							continue;
 
-						minorMatrix[rowIndex - 1][colIndex++] = elems[r][c];
+						minorMatrix[rowIndex][colIndex++] = elems[r][c];
 					}
 					rowIndex++;
 					colIndex = 0;
 				}
-				determinant += elems[0][col] * minorMatrix.GetDeterminant();
+				const auto subDeterminant = elems[0][col] * minorMatrix.GetDeterminant();
+				determinant += (col & 1) == 0 ? subDeterminant : -subDeterminant;
 			}
 
 			return determinant;
@@ -332,58 +385,6 @@ namespace kmaths
 
 			return Matrix();
 		}*/
-
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
-		{
-			const auto a = elems[0][0];
-			const auto b = elems[0][1];
-			const auto c = elems[1][0];
-			const auto d = elems[1][1];
-			const auto determinant = (a * d) - (b * d);
-			return determinant;
-		}
-
-		// Rule of Sarrus Impl
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
-		{
-			auto sum = CAST(Type, 1);
-			auto determinant = CAST(Type, 0);
-			bool isReverseColumnSearch = false;
-
-			auto col = 0;
-			auto mod = [](int index) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
-			{
-				const auto rem = index % Rows;
-				if _CONSTEXPR_IF(-1 % 2 == 1)
-					return rem;
-				else
-					return rem < 0 ? rem + Rows : rem;
-			};
-			const auto idxDiff = Columns - 1;
-
-			do {
-				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
-				{
-					sum *= elems[row][mod(col)];
-				}
-				determinant += isReverseColumnSearch ? -sum : sum;
-				sum = 1;
-				col += isReverseColumnSearch ? idxDiff : -idxDiff;
-				if (!isReverseColumnSearch)
-				{
-					if (col == Columns)
-					{
-						col = idxDiff;
-						isReverseColumnSearch = true;
-					}
-				}
-			} while (col > -1);
-
-			return determinant;
-		}
 
 	private:
 		Indices elems;

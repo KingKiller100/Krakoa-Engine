@@ -52,12 +52,13 @@ namespace kTest::Maths
 
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
-		auto m12 = Matrix<int, 4, 4>();
+		auto m12 = Matrix<int, 5, 5>();
 
-		m12[0] = Vector4s{ 1, 2, 1, 0 };
-		m12[1] = Vector4s{ 4, 11, 8, 0 };
-		m12[2] = Vector4s{ 1, 6, 1, 0 };
-		m12[3] = Vector4s{ 0,0,0,6 };
+		m12[0] = MultiDimensionalVector<5, int>{ 1, 2, 1, 0, 2 };
+		m12[1] = MultiDimensionalVector<5, int>{ 4, 11, 8, 0, 1 };
+		m12[2] = MultiDimensionalVector<5, int>{ 1, 6, 1, 0, 3 };
+		m12[3] = MultiDimensionalVector<5, int>{ 0, 0, 0, 6, 5 };
+		m12[4] = MultiDimensionalVector<5, int>{ 3, 5, 7, 6, 4 };
 
 		const auto determinantM12 = m12.GetDeterminant();
 		const auto transposedM9 = m12.Transpose();

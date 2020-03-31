@@ -21,7 +21,7 @@
 #define IS_TRUE 1
 #define IS_FALSE 0
 
-#define TO_TYPE(type, val) static_cast<type>(val)
+#define CAST(type, val) static_cast<type>(val)
 
 #if defined(KLIB_TEST)
 #	define TESTING_ENABLED 1

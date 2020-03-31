@@ -39,13 +39,15 @@ namespace kmaths
 			= default;
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		constexpr std::enable_if_t<R == C, void> Identity() noexcept
+		static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
 		{
+			Matrix<Type, R, C> identity;
 			for (auto i = 0u; i < Rows; ++i)
 				for (auto j = 0u; j < Columns; ++j)
-					elems[i][j] = (i == j)
-					? TO_TYPE(Type, 1)
-					: TO_TYPE(Type, 0);
+					identity[i][j] = (i == j)
+					? CAST(Type, 1)
+					: CAST(Type, 0);
+			return identity;
 		}
 
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
@@ -58,14 +60,14 @@ namespace kmaths
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const noexcept
+		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const
 		{
 			Matrix lhs;
 			if _CONSTEXPR_IF(Rows == 2)
 			{
 				std::array<MultiDimensionalVector<2, Type>, 2> copy;
-				const auto determinent = GetDeterminent(elems);
-				if (determinent != static_cast<Type>(0))
+				const auto determinent = GetDeterminent();
+				if (determinent != CAST(Type, 0))
 				{
 					copy[0][0] = elems[0][0] / determinent;
 					copy[0][1] = -elems[0][1] / determinent;
@@ -76,31 +78,77 @@ namespace kmaths
 			}
 			else if _CONSTEXPR_IF(Rows != 2)
 			{
-				lhs = elems;
+				lhs = *this;
 				Matrix rhs;
 				rhs.Identity();
-				while (!m.IsIdentity())
+				bool goodToStart = true;
+
+				for (auto i = 0u; i < Rows; ++i)
+					if (!lhs[i][i])
+						goodToStart = false;
+
+				if (!goodToStart)
 				{
-					if (lhs[0][0] != TO_TYPE(Type, 1))
+					bool top = false;
+					bool remaining = false;
+
+				}
+
+				while (!lhs.IsIdentity())
+				{
+					if (lhs[0][0] != CAST(Type, 1))
 					{
 						lhs[0] /= lhs[0][0];
 						rhs[0] /= lhs[0][0];
 					}
 
-					m;
+					throw std::runtime_error("NOT FINISHED IMPLEMENTATION");
 				}
-			
 			}
 			return lhs;
 		}
 
-		USE_RESULT constexpr Type GetDeterminent(const std::array<MultiDimensionalVector<2, Type>, 2>& m) const noexcept
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Type> GetDeterminent(Indices) const noexcept
+			= delete;
+
+		// Rule of Sarrus Impl
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Type> GetDeterminent() const noexcept
 		{
-			const auto a = m[0][0];
-			const auto b = m[0][1];
-			const auto c = m[1][0];
-			const auto d = m[1][1];
-			const auto determinent = (a * d) - (b * c);
+			auto sum = CAST(Type, 1);
+			auto determinent = CAST(Type, 0);
+			bool isReverseColumnSearch = false;
+
+			auto col = 0;
+			auto mod = [](int index) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
+			{
+				const auto rem = index % Rows;
+				if _CONSTEXPR_IF(-1 % 2 == 1)
+					return rem;
+				else
+					return rem < 0 ? rem + Rows : rem;
+			};
+			const auto idxDiff = Columns - 1;
+
+			do {
+				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
+				{
+					sum *= elems[row][mod(col)];
+				}
+				determinent += isReverseColumnSearch ? -sum : sum;
+				sum = 1;
+				col += isReverseColumnSearch ? idxDiff : -idxDiff;
+				if (!isReverseColumnSearch)
+				{
+					if (col == Columns)
+					{
+						col = idxDiff;
+						isReverseColumnSearch = true;
+					}
+				}
+			} while (col > - 1);
 
 			return determinent;
 		}
@@ -110,7 +158,7 @@ namespace kmaths
 		{
 			for (auto i = 0; i < Rows; ++i)
 				for (auto j = 0; j < Columns; ++j)
-					if (elems[i][j] != (i == j) ? 1 : 0)
+					if (elems[i][j] != ((i == j) ? CAST(Type, 1) : CAST(Type, 0)))
 						return false;
 			return true;
 		}
@@ -127,8 +175,8 @@ namespace kmaths
 			Matrix> Inverse() const noexcept
 			= delete;
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		constexpr std::enable_if_t<R != C,
-			void> Identity() noexcept
+		static constexpr std::enable_if_t<R != C,
+			Matrix<Type, R, C>> Identity() noexcept
 			= delete;
 
 		USE_RESULT constexpr unsigned short GetRows() const noexcept
@@ -191,25 +239,9 @@ namespace kmaths
 		}
 
 		template<typename U>
-		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
-		{
-			Matrix m;
-			for (auto i = 0u; i < Rows; ++i)
-				m[i] = elems[i] / scalar;
-			return m;
-		}
-
-		template<typename U>
 		constexpr Matrix& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
-			return *this;
-		}
-
-		template<typename U>
-		constexpr Matrix& operator/=(const U scalar)
-		{
-			*this = *this / scalar;
 			return *this;
 		}
 

@@ -43,7 +43,7 @@ namespace kTest::Maths
 
 		auto m2 = Matrix<float, 3, 2>(2);
 		const auto m3 = m1 - m2;
-		//const auto m5 = m1 / 10;
+		//const auto m5 = m1 / 10; Cannot compile as division does not exist for matrices
 		const auto m6 = m0 * m2;
 		const auto m7 = m1 += m2;
 
@@ -52,11 +52,18 @@ namespace kTest::Maths
 
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
+		auto m12 = Matrix<int, 4, 4>();
 
-		const auto transposedM9 = m9.Transpose();
+		m12[0] = Vector4s{ 1, 2, 1, 0 };
+		m12[1] = Vector4s{ 4, 11, 8, 0 };
+		m12[2] = Vector4s{ 1, 6, 1, 0 };
+		m12[3] = Vector4s{ 0,0,0,6 };
 
-		m8.Identity();
-		const auto inverse3x3 = m8.Inverse();
+		const auto determinentM12 = m12.GetDeterminent();
+		const auto transposedM9 = m12.Transpose();
+		const auto m13 = Matrix<size_t, 4, 4>::Identity();
+
+		const auto inverse3x3 = m13.Inverse();
 
 		for (auto i = 0u; i < m8.GetRows(); ++i)
 			for (auto j = 0u; j < m8.GetColumns(); ++j)

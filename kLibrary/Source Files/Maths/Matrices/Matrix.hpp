@@ -66,13 +66,13 @@ namespace kmaths
 			if _CONSTEXPR_IF(Rows == 2)
 			{
 				std::array<MultiDimensionalVector<2, Type>, 2> copy;
-				const auto determinent = GetDeterminent();
-				if (determinent != CAST(Type, 0))
+				const auto determinant = GetDeterminant();
+				if (determinant != CAST(Type, 0))
 				{
-					copy[0][0] = elems[0][0] / determinent;
-					copy[0][1] = -elems[0][1] / determinent;
-					copy[1][0] = -elems[1][0] / determinent;
-					copy[1][1] = elems[1][1] / determinent;
+					copy[0][0] = elems[0][0] / determinant;
+					copy[0][1] = -elems[0][1] / determinant;
+					copy[1][0] = -elems[1][0] / determinant;
+					copy[1][1] = elems[1][1] / determinant;
 				}
 				lhs = Matrix(copy);
 			}
@@ -110,47 +110,80 @@ namespace kmaths
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
-			Type> GetDeterminent(Indices) const noexcept
+			Type> Getdeterminant() const noexcept
 			= delete;
 
-		// Rule of Sarrus Impl
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C, Type> GetDeterminent() const noexcept
+		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() noexcept
 		{
-			auto sum = CAST(Type, 1);
-			auto determinent = CAST(Type, 0);
-			bool isReverseColumnSearch = false;
+			if (IsZero())
+				return CAST(Type, 0);
 
-			auto col = 0;
-			auto mod = [](int index) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
+			const auto validColumns = [&]() -> bool {
+				for (auto col = 0u; col < Columns; ++col)
+				{
+					bool valid = false;
+					for (auto row = 0u; row < Rows; ++row)
+					{
+						if (elems[row][col] != CAST(Type, 0))
+						{
+							valid = true;
+							break;
+						}
+					}
+					if (!valid)
+						return false;
+				}
+				return true;
+			};
+
+			if (!validColumns())
+				return CAST(Type, 0);
+
+			if (IsIdentity())
+				return CAST(Type, 1);
+
+			Type determinant = CAST(Type, 0);
+
+			auto mod = [](int index, unsigned base) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
 			{
-				const auto rem = index % Rows;
+				const auto rem = index % base;
 				if _CONSTEXPR_IF(-1 % 2 == 1)
 					return rem;
 				else
-					return rem < 0 ? rem + Rows : rem;
+					return rem < 0 ? rem + base : rem;
 			};
-			const auto idxDiff = Columns - 1;
 
-			do {
-				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
-				{
-					sum *= elems[row][mod(col)];
-				}
-				determinent += isReverseColumnSearch ? -sum : sum;
-				sum = 1;
-				col += isReverseColumnSearch ? idxDiff : -idxDiff;
-				if (!isReverseColumnSearch)
-				{
-					if (col == Columns)
+			for (auto col = 0u; col < Columns; ++col)
+			{
+				const auto newSize = Rows - 1;
+				Matrix<Type, newSize, newSize> minorMatrix;
+
+				auto rowIndex = 0;
+				auto colIndex = 0;
+				for (auto r = 0u; r < Rows; ++r) {
+					for (auto c = 0u; c < Columns; ++c)
 					{
-						col = idxDiff;
-						isReverseColumnSearch = true;
-					}
-				}
-			} while (col > - 1);
+						if (r == 0 || c == col)
+							continue;
 
-			return determinent;
+						minorMatrix[rowIndex - 1][colIndex++] = elems[r][c];
+					}
+					rowIndex++;
+					colIndex = 0;
+				}
+				determinant += elems[0][col] * minorMatrix.GetDeterminant();
+			}
+
+			return determinant;
+		}
+
+		USE_RESULT constexpr bool IsZero() const noexcept
+		{
+			for (auto& vec : elems)
+				if (!vec.IsZero())
+					return false;
+			return true;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
@@ -273,6 +306,83 @@ namespace kmaths
 		USE_RESULT constexpr const MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) const noexcept
 		{
 			return elems[idx];
+		}
+
+	private:
+		// Gauss-Jordan Elimination Method
+	/*	constexpr Matrix RowEchalonMethod() noexcept
+		{
+			auto lhs = elems;
+			auto rhs = Identity<Rows, Columns>();
+
+			bool readyToStart = true;
+			bool rowsMask[Rows];
+
+			for (auto i = 0u; i < lhs.size(); ++i)
+			{
+				const auto& vec = lhs[i];
+				if (vec.IsZero())
+					return Matrix();
+
+				rowsMask[i] = vec[i] != CAST(Type, 0);
+
+				if (!rowsMask[i])
+					readyToStart = false;
+			}
+
+			return Matrix();
+		}*/
+
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
+		{
+			const auto a = elems[0][0];
+			const auto b = elems[0][1];
+			const auto c = elems[1][0];
+			const auto d = elems[1][1];
+			const auto determinant = (a * d) - (b * d);
+			return determinant;
+		}
+
+		// Rule of Sarrus Impl
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
+		{
+			auto sum = CAST(Type, 1);
+			auto determinant = CAST(Type, 0);
+			bool isReverseColumnSearch = false;
+
+			auto col = 0;
+			auto mod = [](int index) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
+			{
+				const auto rem = index % Rows;
+				if _CONSTEXPR_IF(-1 % 2 == 1)
+					return rem;
+				else
+					return rem < 0 ? rem + Rows : rem;
+			};
+			const auto idxDiff = Columns - 1;
+
+			do {
+				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
+				{
+					sum *= elems[row][mod(col)];
+				}
+				determinant += isReverseColumnSearch ? -sum : sum;
+				sum = 1;
+				col += isReverseColumnSearch ? idxDiff : -idxDiff;
+				if (!isReverseColumnSearch)
+				{
+					if (col == Columns)
+					{
+						col = idxDiff;
+						isReverseColumnSearch = true;
+					}
+				}
+			} while (col > -1);
+
+			return determinant;
 		}
 
 	private:

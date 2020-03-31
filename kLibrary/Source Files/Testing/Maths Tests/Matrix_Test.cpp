@@ -59,7 +59,7 @@ namespace kTest::Maths
 		m12[2] = Vector4s{ 1, 6, 1, 0 };
 		m12[3] = Vector4s{ 0,0,0,6 };
 
-		const auto determinentM12 = m12.GetDeterminent();
+		const auto determinantM12 = m12.GetDeterminant();
 		const auto transposedM9 = m12.Transpose();
 		const auto m13 = Matrix<size_t, 4, 4>::Identity();
 

@@ -189,10 +189,18 @@ namespace kmaths
 		}
 
 		// Sets all values of the vector to zero
-		void Zero() noexcept
+		constexpr void Zero() noexcept
 		{
 			for (size_t i = 0; i < N; ++i)
-				dimensions[i] = static_cast<Type>(0);
+				dimensions[i] = CAST(Type, 0);
+		}
+
+		USE_RESULT constexpr bool IsZero() const noexcept
+		{
+			for (auto val : dimensions)
+				if (val != CAST(Type, 0))
+					return false;
+			return true;
 		}
 
 		template<typename U = Type>

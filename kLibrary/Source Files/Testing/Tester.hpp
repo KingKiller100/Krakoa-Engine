@@ -20,7 +20,7 @@ namespace kTest
 		virtual ~Tester();
 
 		const char* GetName() const noexcept;
-		std::string GetResult() const noexcept;
+		std::string GetFailureData() const noexcept;
 		
 		bool Run() noexcept;
 

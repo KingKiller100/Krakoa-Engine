@@ -9,6 +9,9 @@ namespace kmaths
 	struct Matrix
 	{
 	public:
+		static_assert(!std::is_unsigned_v<T>, "Type entered for matrix cannot be an unsigned type");
+		static_assert(Rows > 0 && Columns > 0, "Must have at least one row and one column to construct a matrix");
+
 		using Type = T;
 		using Indices = std::array<MultiDimensionalVector<Columns, Type>, Rows>;
 
@@ -52,6 +55,12 @@ namespace kmaths
 
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
 		{
+			if (IsZero())
+				return Matrix();
+
+			if (IsIdentity())
+				return Identity();
+
 			Matrix<Type, Columns, Rows> transposeMat;
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
@@ -62,62 +71,91 @@ namespace kmaths
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const
 		{
-			Matrix lhs;
+			if (IsZero() || !ValidColumns())
+				return Matrix();
+
+			if (IsIdentity())
+				return Identity();
+
+			Matrix inverse;
+			const auto determinant = this->GetDeterminant();
 			if _CONSTEXPR_IF(Rows == 2)
 			{
 				std::array<MultiDimensionalVector<2, Type>, 2> copy;
-				const auto determinant = GetDeterminant();
-				if (determinant != CAST(Type, 0))
+				if (determinant != 0.f)
 				{
-					copy[0][0] = elems[1][1] / determinant;
-					copy[0][1] = -elems[0][1] / determinant;
-					copy[1][0] = -elems[1][0] / determinant;
-					copy[1][1] = elems[0][0] / determinant;
+					copy[0][0] = elems[1][1]  / CAST(Type, determinant);
+					copy[0][1] = -elems[0][1] / CAST(Type, determinant);
+					copy[1][0] = -elems[1][0] / CAST(Type, determinant);
+					copy[1][1] = elems[0][0]  / CAST(Type, determinant);
 				}
 				lhs = Matrix(copy);
 			}
-			else if _CONSTEXPR_IF(Rows != 2)
+			else if _CONSTEXPR_IF(Rows > 2)
 			{
-				for (auto row = 0u; row < Columns; ++row) {
+				int coefficient = 0;
+				for (auto row = 0u; row < Rows; ++row) {
 					for (auto col = 0u; col < Columns; ++col)
 					{
 						const auto minorMatrix = CreateMinorMatrix(row, col);
-						lhs[row][col] = CAST(Type, minorMatrix.GetDeterminant());
+						inverse[row][col] = CAST(Type, minorMatrix.GetDeterminant());
+
+						if _CONSTEXPR_IF(!std::is_unsigned_v<Type>)
+							inverse[row][col] *= ((coefficient & 1) == 0) ? CAST(Type, 1) : CAST(Type, -1);
+
+						coefficient++;
 					}
 				}
+
+				for (auto row = 0u; row < Rows; ++row) {
+					for (auto col = 0u; col < Columns; ++col)
+					{
+						if (row == col)
+							break;
+
+						std::swap(inverse[row][col], inverse[col][row]);
+					}
+				}
+
+				inverse *= (CAST(Type, 1) / determinant);
 			}
-			return lhs;
+			else
+			{
+				return Matrix(CAST(Type, 1) / lhs[0][0]);
+			}
+
+			return inverse;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
-				return 0.0f;
+				return CAST(Type, 0);
 
 			if (IsIdentity())
-				return 1.0f;
+				return CAST(Type, 1);
 
 			const auto a = elems[0][0];
 			const auto b = elems[0][1];
 			const auto c = elems[1][0];
 			const auto d = elems[1][1];
-			const auto determinant = (a * d) - (b * d);
+			const auto determinant = (a * d) - (b * c);
 			return determinant;
 		}
 
 		// Rule of Sarrus Impl
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, float> GetDeterminant() const noexcept
+		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
-				return 0.0f;
+				return CAST(Type, 0);
 
 			if (IsIdentity())
-				return 1.0f;
+				return CAST(Type, 0);
 
-			float sum = 1.0f;
-			float determinant = 0.0f;
+			auto sum = CAST(Type, 1);
+			auto determinant = CAST(Type, 0);
 			bool isReverseColumnSearch = false;
 
 			auto col = 0;
@@ -137,7 +175,7 @@ namespace kmaths
 					sum *= elems[row][mod(col)];
 				}
 				determinant += isReverseColumnSearch ? -sum : sum;
-				sum = 1.0f;
+				sum = CAST(Type, 1);
 				col += isReverseColumnSearch ? idxDiff : -idxDiff;
 				if (!isReverseColumnSearch)
 				{
@@ -153,30 +191,33 @@ namespace kmaths
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, float> GetDeterminant() noexcept
+		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() const
 		{
 			if (IsZero() || !ValidColumns())
-				return 0.0f;
+				return CAST(Type, 0);
 
 			if (IsIdentity())
-				return 1.0f;
+				return CAST(Type, 1);
 
-			auto determinant = 0.0f;
+			auto determinant = CAST(Type, 0);
 
 			for (auto col = 0u; col < Columns; ++col)
 			{
 				const auto newSize = Rows - 1;
 				Matrix<Type, newSize, newSize> minorMatrix = CreateMinorMatrix(0u, col);
-				const auto subDeterminant = CAST(float, elems[0][col] * minorMatrix.GetDeterminant());
+				const auto subDeterminant = elems[0][col] * minorMatrix.GetDeterminant();
 				determinant += (col & 1) == 0 ? subDeterminant : -subDeterminant;
 			}
 
 			return determinant;
 		}
 
-		USE_RESULT constexpr Matrix<Type, Rows -1, Columns - 1> CreateMinorMatrix(unsigned short rowToSkip, unsigned short colToSkip) const noexcept
+		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(unsigned short rowToSkip, unsigned short colToSkip) const
 		{
 			const auto newSize = Rows - 1;
+			if (rowToSkip > newSize || colToSkip > newSize)
+				std::_Xout_of_range("Row/column entered is greater than the size of this matrix's row/column");
+
 			Matrix<Type, newSize, newSize> minorMatrix;
 
 			auto minorRowIndex = 0;
@@ -198,12 +239,28 @@ namespace kmaths
 			return minorMatrix;
 		}
 
+		USE_RESULT constexpr Matrix PowerOf(unsigned power)  const noexcept
+		{
+			if (power == 0)
+				return Identity();
+
+			Matrix temp = *this;
+			for (auto i = 1u; i < power; ++i)
+				temp *= *this;
+			return temp;
+		}
+
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
 			for (auto& vec : elems)
 				if (!vec.IsZero())
 					return false;
 			return true;
+		}
+
+		USE_RESULT constexpr bool IsSquare() const noexcept
+		{
+			return Rows == Columns;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
@@ -290,8 +347,8 @@ namespace kmaths
 			return *this;
 		}
 
-		template<unsigned short C, unsigned short R>
-		USE_RESULT constexpr std::enable_if_t<Columns == R, Matrix<Type, Rows, C>> operator*(const Matrix<Type, R, C>& other) const noexcept
+		template<unsigned short C, unsigned short R = Columns>
+		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<Type, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
 			for (auto row = 0u; row < Rows; ++row)

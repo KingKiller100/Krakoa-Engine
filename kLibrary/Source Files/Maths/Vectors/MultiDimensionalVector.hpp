@@ -311,7 +311,7 @@ namespace kmaths
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
-				copy[i] = dimensions[i] * scalar;
+				copy[i] = dimensions[i] * CAST(Type, scalar);
 			return MultiDimensionalVector(copy);
 		}
 
@@ -320,7 +320,7 @@ namespace kmaths
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
-				copy[i] = dimensions[i] / scalar;
+				copy[i] = dimensions[i] / CAST(Type, scalar);
 			return MultiDimensionalVector(copy);
 		}
 

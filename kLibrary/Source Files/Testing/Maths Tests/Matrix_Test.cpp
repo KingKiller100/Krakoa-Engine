@@ -20,10 +20,18 @@ namespace kTest::Maths
 
 	void MatricesTester::Test()
 	{
+		auto res = true;
 		VERIFY(DynamicMatrixTest() == true);
+		if (!success) res = false;
+		success = true;
 		VERIFY(Matrix2x2Test() == true);
+		if (!success) res = false;
+		success = true;
 		VERIFY(Matrix3x3Test() == true);
+		if (!success) res = false;
+		success = true;
 		VERIFY(Matrix4x4Test() == true);
+		success = res;
 	}
 
 	bool MatricesTester::DynamicMatrixTest()
@@ -61,15 +69,28 @@ namespace kTest::Maths
 		m12[4] = MultiDimensionalVector<5, int>{ 3, 5, 7, 6, 4 };
 
 		const auto determinantM12 = m12.GetDeterminant();
+		VERIFY(determinantM12 == -96);
 		const auto transposedM9 = m12.Transpose();
-		const auto m13 = Matrix<size_t, 4, 4>::Identity();
+
+		const auto m13 = Matrix<long long, 4, 4>::Identity();
+		for (auto r = 0u; r < m13.GetRows(); ++r)
+			for (auto c = 0u; c < m13.GetColumns(); ++c)
+				VERIFY(m13[r][c] == (r == c ? 1 : 0));
 
 		const auto minorMatrix = m12.CreateMinorMatrix(0, 0);
-		const auto inverse3x3 = m13.Inverse();
+		auto m14 = Matrix<double, 3, 3>();
 
-		for (auto i = 0u; i < m8.GetRows(); ++i)
-			for (auto j = 0u; j < m8.GetColumns(); ++j)
-				VERIFY(m8[i][j] == (i == j ? 1 : 0));
+		auto count = 0;
+		for (auto r = 0u; r < m14.GetRows(); ++r)
+			for (auto c = 0u; c < m14.GetColumns(); ++c)
+				m14[r][c] = (c == 0 && r == 0) ? 10.0 : ++count;
+
+		const auto inverse3x3 = m14.Inverse();
+
+		const auto identity = m14 * inverse3x3;
+		for (auto r = 0u; r < m14.GetRows(); ++r)
+			for (auto c = 0u; c < inverse3x3.GetColumns(); ++c)
+				VERIFY(identity[r][c] == (r == c ? 1.0 : 0.0));
 
 		return success;
 	}

@@ -14,7 +14,7 @@ namespace kTest::Maths
 	private:
 		void Test() override;
 		
-		bool MultiDimensionalVectorTest();
+		bool VectorTest();
 		bool Vector2Test();
 		bool Vector3Test();
 		bool Vector4Test();

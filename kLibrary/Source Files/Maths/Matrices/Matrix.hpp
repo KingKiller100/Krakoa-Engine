@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <Maths/Vectors/MultiDimensionalVector.hpp>
+#include <Maths/Vectors/Vector.hpp>
 #include <array>
 
 namespace kmaths
@@ -13,7 +13,7 @@ namespace kmaths
 		static_assert(Rows > 0 && Columns > 0, "Must have at least one row and one column to construct a matrix");
 
 		using Type = T;
-		using Indices = std::array<MultiDimensionalVector<Columns, Type>, Rows>;
+		using Indices = std::array<Vector<Columns, Type>, Rows>;
 
 		constexpr Matrix() noexcept
 		{ }
@@ -24,8 +24,8 @@ namespace kmaths
 
 		explicit constexpr Matrix(const Type initialVal) noexcept
 		{
-			for (auto i = 0u; i < Rows; ++i)
-				elems[i] = MultiDimensionalVector<Columns, Type>(initialVal);
+			for (auto row = 0u; row < Rows; ++row)
+				elems[row] = Vector<Columns, Type>(initialVal);
 		}
 
 		constexpr Matrix(const Matrix& other) noexcept
@@ -81,29 +81,28 @@ namespace kmaths
 			const auto determinant = this->GetDeterminant();
 			if _CONSTEXPR_IF(Rows == 2)
 			{
-				std::array<MultiDimensionalVector<2, Type>, 2> copy;
+				std::array<Vector<2, Type>, 2> copy;
 				if (determinant != 0.f)
 				{
-					copy[0][0] = elems[1][1]  / CAST(Type, determinant);
+					copy[0][0] = elems[1][1] / CAST(Type, determinant);
 					copy[0][1] = -elems[0][1] / CAST(Type, determinant);
 					copy[1][0] = -elems[1][0] / CAST(Type, determinant);
-					copy[1][1] = elems[0][0]  / CAST(Type, determinant);
+					copy[1][1] = elems[0][0] / CAST(Type, determinant);
 				}
 				lhs = Matrix(copy);
 			}
 			else if _CONSTEXPR_IF(Rows > 2)
 			{
-				int coefficient = 0;
+				auto positiveCoefficient = true;
 				for (auto row = 0u; row < Rows; ++row) {
 					for (auto col = 0u; col < Columns; ++col)
 					{
 						const auto minorMatrix = CreateMinorMatrix(row, col);
 						inverse[row][col] = CAST(Type, minorMatrix.GetDeterminant());
 
-						if _CONSTEXPR_IF(!std::is_unsigned_v<Type>)
-							inverse[row][col] *= ((coefficient & 1) == 0) ? CAST(Type, 1) : CAST(Type, -1);
+						inverse[row][col] *= positiveCoefficient ? CAST(Type, 1) : CAST(Type, -1);
 
-						coefficient++;
+						positiveCoefficient = !positiveCoefficient;
 					}
 				}
 
@@ -117,7 +116,7 @@ namespace kmaths
 					}
 				}
 
-				inverse *= (CAST(Type, 1) / determinant);
+				inverse /= determinant;
 			}
 			else
 			{
@@ -322,16 +321,16 @@ namespace kmaths
 		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{
 			Matrix m;
-			for (auto i = 0u; i < Rows; ++i)
-				m.elems[i] = elems[i] + other[i];
+			for (auto row = 0u; row < Rows; ++row)
+				m.elems[row] = elems[row] + other[row];
 			return m;
 		}
 
 		USE_RESULT constexpr Matrix operator-(const Matrix& other) const noexcept
 		{
 			Matrix m;
-			for (auto i = 0u; i < Rows; ++i)
-				m.elems[i] = elems[i] - other[i];
+			for (auto row = 0u; row < Rows; ++row)
+				m.elems[row] = elems[row] - other[row];
 			return m;
 		}
 
@@ -351,10 +350,19 @@ namespace kmaths
 		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<Type, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
-			for (auto row = 0u; row < Rows; ++row)
-				for (auto col = 0u; col < C; ++col)
+			for (auto row = 0u; row < Rows; ++row) {
+				for (auto col = 0u; col < C; ++col) {
 					for (auto index = 0u; index < R; ++index)
+					{
 						m[row][col] += elems[row][index] * other[index][col];
+					}
+
+					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+					{
+						m[row][col] = CAST(Type, CAST(int, (m[row][col] + CAST(Type, 0.000000001)) * 100000000)) / 100000000;
+					}
+				}
+			}
 			return m;
 		}
 
@@ -362,8 +370,17 @@ namespace kmaths
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
-			for (auto i = 0u; i < Rows; ++i)
-				m.elems[i] = elems[i] * scalar;
+			for (auto row = 0u; row < Rows; ++row)
+				m.elems[row] = elems[row] * scalar;
+			return m;
+		}
+
+		template<typename U>
+		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
+		{
+			Matrix m;
+			for (auto row = 0u; row < Rows; ++row)
+				m.elems[row] = elems[row] / scalar;
 			return m;
 		}
 
@@ -371,6 +388,13 @@ namespace kmaths
 		constexpr Matrix& operator*=(const U scalar)
 		{
 			*this = *this * scalar;
+			return *this;
+		}
+
+		template<typename U>
+		constexpr Matrix& operator/=(const U scalar)
+		{
+			*this = *this / scalar;
 			return *this;
 		}
 
@@ -389,17 +413,17 @@ namespace kmaths
 		USE_RESULT constexpr Matrix operator-() const noexcept
 		{
 			Matrix m;
-			for (auto i = 0u; i < Rows; ++i)
-				m.elems[i] = -elems[i];
+			for (auto row = 0u; row < Rows; ++row)
+				m.elems[row] = -elems[row];
 			return m;
 		}
 
-		USE_RESULT constexpr MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) noexcept
+		USE_RESULT constexpr Vector<Columns, Type>& operator[](const size_t idx) noexcept
 		{
 			return elems[idx];
 		}
 
-		USE_RESULT constexpr const MultiDimensionalVector<Columns, Type>& operator[](const size_t idx) const noexcept
+		USE_RESULT constexpr const Vector<Columns, Type>& operator[](const size_t idx) const noexcept
 		{
 			return elems[idx];
 		}

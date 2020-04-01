@@ -28,4 +28,4 @@
 #include <kLib.hpp>
 
 // KRAKOA Lib
-//#include <Core/Logger.hpp>
+#include <Core/Logging/Logger.hpp>

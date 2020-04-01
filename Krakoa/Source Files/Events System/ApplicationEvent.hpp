@@ -7,8 +7,8 @@
 
 namespace krakoa::events
 {
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::MultiDimensionalVector<2, float>;
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::MultiDimensionalVector<2, int>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<2, float>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<2, int>;
 
 	using namespace kmaths;
 	using namespace klib;

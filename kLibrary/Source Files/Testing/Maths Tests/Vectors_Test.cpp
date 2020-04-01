@@ -20,16 +20,16 @@ namespace kTest::Maths
 
 	void VectorsTester::Test()
 	{
-		VERIFY(MultiDimensionalVectorTest() == true);
+		VERIFY(VectorTest() == true);
 		VERIFY(Vector2Test() == true);
 		VERIFY(Vector3Test() == true);
 		VERIFY(Vector4Test() == true);
 	}
 
-	bool VectorsTester::MultiDimensionalVectorTest()
+	bool VectorsTester::VectorTest()
 	{
-		auto vec2f = MultiDimensionalVector<2, float>(4.f);
-		auto vec2d = MultiDimensionalVector<2, double>({ 5, 12 });
+		auto vec2f = Vector<2, float>(4.f);
+		auto vec2d = Vector<2, double>({ 5, 12 });
 
 		auto res1 = vec2f + vec2d;
 		VERIFY(res1.X() == 9.0 &&  res1.Y() == 16.0);
@@ -44,7 +44,7 @@ namespace kTest::Maths
 		VERIFY(distance == 8.06225777f);
 		vec2f = vec2f.Normalize();
 		VERIFY(vec2f.X() == 0.707106769f && vec2f.Y() == 0.707106769f);
-		const auto vec2s = MultiDimensionalVector<2, int>(2);
+		const auto vec2s = Vector<2, int>(2);
 		const auto dp = vec2s.DotProduct(vec2d);
 		VERIFY(dp == 34);
 
@@ -53,12 +53,12 @@ namespace kTest::Maths
 		vec2f -= vec2d;
 		vec2f *= vec2d;
 
-		const auto vec3s1 = MultiDimensionalVector<3, int>{ 1,2,3 };
-		const auto vec3s2 = MultiDimensionalVector<3, int>{ 4,5,6 };
-		const auto vec3l = MultiDimensionalVector<3, long>{ 7,8,9 };
+		const auto vec3s1 = Vector<3, int>{ 1,2,3 };
+		const auto vec3s2 = Vector<3, int>{ 4,5,6 };
+		const auto vec3l = Vector<3, long>{ 7,8,9 };
 
-		auto angle1 = AngleBetweenVectors(MultiDimensionalVector<3, double>{ 41, 55, 67 }, MultiDimensionalVector<3, double>{ 14, 55, 76 });
-		auto angle2 = AngleBetweenVectors(MultiDimensionalVector<3, double>{ 41, 55, 67 }, MultiDimensionalVector<3, double>{ 14, 55, 76 }, true);
+		auto angle1 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 });
+		auto angle2 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 }, true);
 		
 		VERIFY(angle2 == RadiansToDegrees(angle1));
 		VERIFY(angle1 == DegreesToRadians(angle2));
@@ -74,16 +74,16 @@ namespace kTest::Maths
 		VERIFY(crossP.X() == -3 && crossP.Y() == 6 && crossP.Z() == -3);
 		//const auto crossPFail = vec2a.CrossProduct(vec2b); unable to compile due to not having only 3 axes
 
-		auto vec4u = MultiDimensionalVector<4, unsigned>{};
-		const auto vec4c = MultiDimensionalVector<4, char>{ 'H', 'E', 'L', 'L' };
+		auto vec4u = Vector<4, unsigned>{};
+		const auto vec4c = Vector<4, char>{ 'H', 'E', 'L', 'L' };
 
 		vec4u += vec3l;
 		vec4u -= vec2d;
 
-		const auto vecULL = MultiDimensionalVector<30, unsigned long long>(100);
-		const auto vecBool = MultiDimensionalVector<7, bool>({true, false, false, true, false, false, true});
+		const auto vecULL = Vector<30, unsigned long long>(100);
+		const auto vecBool = Vector<7, bool>({true, false, false, true, false, false, true});
 
-		const auto b = vecBool[6];
+		const auto b6 = vecBool[6];
 
 		return success;
 	}

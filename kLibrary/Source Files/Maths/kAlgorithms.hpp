@@ -14,7 +14,7 @@ namespace kmaths
 {
 	// Produces the dot product
 	template<unsigned short N, typename T>
-	USE_RESULT constexpr T VectorDotProduct(const MultiDimensionalVector<N, T>& u, const MultiDimensionalVector<N, T>& v) noexcept
+	USE_RESULT constexpr T VectorDotProduct(const Vector<N, T>& u, const Vector<N, T>& v) noexcept
 	{
 		const auto result = u.DotProduct<N, T>(v);
 		return result;
@@ -74,7 +74,7 @@ namespace kmaths
 	}
 
 	template<unsigned short N, typename T>
-	USE_RESULT constexpr T AngleBetweenVectors(const MultiDimensionalVector<N, T>& v, const MultiDimensionalVector<N, T>& u, const bool inDegrees = false) noexcept
+	USE_RESULT constexpr T AngleBetweenVectors(const Vector<N, T>& v, const Vector<N, T>& u, const bool inDegrees = false) noexcept
 	{
 		const T angle = VectorDotProduct<N, T>(v, u) / (v.Magnitude() * u.Magnitude());
 

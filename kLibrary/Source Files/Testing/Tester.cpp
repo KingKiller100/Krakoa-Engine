@@ -18,7 +18,7 @@ namespace kTest
 	Tester& Tester::operator=(Tester&& other) noexcept
 	{
 		this->name = std::move(other.name);
-		this->result = std::move(other.result);
+		this->failureData = std::move(other.failureData);
 		return *this;
 	}
 
@@ -32,7 +32,7 @@ namespace kTest
 
 	std::string Tester::GetFailureData() const noexcept
 	{
-		return result;
+		return failureData;
 	}
 
 	bool Tester::Run() noexcept

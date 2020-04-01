@@ -42,9 +42,9 @@ namespace kmaths
 		static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
 		{
 			Matrix<Type, R, C> identity;
-			for (auto i = 0u; i < Rows; ++i)
-				for (auto j = 0u; j < Columns; ++j)
-					identity[i][j] = (i == j)
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					identity[row][col] = (row == col)
 					? CAST(Type, 1)
 					: CAST(Type, 0);
 			return identity;
@@ -53,9 +53,9 @@ namespace kmaths
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
 		{
 			Matrix<Type, Columns, Rows> transposeMat;
-			for (auto i = 0u; i < Rows; ++i)
-				for (auto j = 0u; j < Columns; ++j)
-					transposeMat[j][i] = elems[i][j];
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					transposeMat[col][row] = elems[row][col];
 			return transposeMat;
 		}
 
@@ -69,54 +69,35 @@ namespace kmaths
 				const auto determinant = GetDeterminant();
 				if (determinant != CAST(Type, 0))
 				{
-					copy[0][0] = elems[0][0] / determinant;
+					copy[0][0] = elems[1][1] / determinant;
 					copy[0][1] = -elems[0][1] / determinant;
 					copy[1][0] = -elems[1][0] / determinant;
-					copy[1][1] = elems[1][1] / determinant;
+					copy[1][1] = elems[0][0] / determinant;
 				}
 				lhs = Matrix(copy);
 			}
 			else if _CONSTEXPR_IF(Rows != 2)
 			{
-				lhs = *this;
-				Matrix rhs;
-				rhs.Identity();
-				bool goodToStart = true;
-
-				for (auto i = 0u; i < Rows; ++i)
-					if (!lhs[i][i])
-						goodToStart = false;
-
-				if (!goodToStart)
-				{
-					bool top = false;
-					bool remaining = false;
-
-				}
-
-				while (!lhs.IsIdentity())
-				{
-					if (lhs[0][0] != CAST(Type, 1))
+				for (auto row = 0u; row < Columns; ++row) {
+					for (auto col = 0u; col < Columns; ++col)
 					{
-						lhs[0] /= lhs[0][0];
-						rhs[0] /= lhs[0][0];
+						const auto minorMatrix = CreateMinorMatrix(row, col);
+						lhs[row][col] = CAST(Type, minorMatrix.GetDeterminant());
 					}
-
-					throw std::runtime_error("NOT FINISHED IMPLEMENTATION");
 				}
 			}
 			return lhs;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R != C,
-			Type> Getdeterminant() const noexcept
-			= delete;
-
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
 		{
+			if (IsZero() || !ValidColumns())
+				return 0.0f;
+
+			if (IsIdentity())
+				return 1.0f;
+
 			const auto a = elems[0][0];
 			const auto b = elems[0][1];
 			const auto c = elems[1][0];
@@ -127,10 +108,16 @@ namespace kmaths
 
 		// Rule of Sarrus Impl
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
+		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, float> GetDeterminant() const noexcept
 		{
-			auto sum = CAST(Type, 1);
-			auto determinant = CAST(Type, 0);
+			if (IsZero() || !ValidColumns())
+				return 0.0f;
+
+			if (IsIdentity())
+				return 1.0f;
+
+			float sum = 1.0f;
+			float determinant = 0.0f;
 			bool isReverseColumnSearch = false;
 
 			auto col = 0;
@@ -150,7 +137,7 @@ namespace kmaths
 					sum *= elems[row][mod(col)];
 				}
 				determinant += isReverseColumnSearch ? -sum : sum;
-				sum = 1;
+				sum = 1.0f;
 				col += isReverseColumnSearch ? idxDiff : -idxDiff;
 				if (!isReverseColumnSearch)
 				{
@@ -166,39 +153,49 @@ namespace kmaths
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() noexcept
+		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, float> GetDeterminant() noexcept
 		{
 			if (IsZero() || !ValidColumns())
-				return CAST(Type, 0);
+				return 0.0f;
 
 			if (IsIdentity())
-				return CAST(Type, 1);
+				return 1.0f;
 
-			Type determinant = CAST(Type, 0);
+			auto determinant = 0.0f;
 
 			for (auto col = 0u; col < Columns; ++col)
 			{
 				const auto newSize = Rows - 1;
-				Matrix<Type, newSize, newSize> minorMatrix;
-
-				auto minorRowIndex = 0;
-				for (auto r = 1u; r < Rows; ++r)
-				{
-					auto minorColIndex = 0;
-					for (auto c = 0u; c < Columns; ++c)
-					{
-						if (c == col)
-							continue;
-
-						minorMatrix[minorRowIndex][minorColIndex++] = elems[r][c];
-					}
-					minorRowIndex++;
-				}
-				const auto subDeterminant = elems[0][col] * minorMatrix.GetDeterminant();
+				Matrix<Type, newSize, newSize> minorMatrix = CreateMinorMatrix(0u, col);
+				const auto subDeterminant = CAST(float, elems[0][col] * minorMatrix.GetDeterminant());
 				determinant += (col & 1) == 0 ? subDeterminant : -subDeterminant;
 			}
 
 			return determinant;
+		}
+
+		USE_RESULT constexpr Matrix<Type, Rows -1, Columns - 1> CreateMinorMatrix(unsigned short rowToSkip, unsigned short colToSkip) const noexcept
+		{
+			const auto newSize = Rows - 1;
+			Matrix<Type, newSize, newSize> minorMatrix;
+
+			auto minorRowIndex = 0;
+			for (auto r = 0u; r < Rows; ++r)
+			{
+				if (r == rowToSkip)
+					continue;
+
+				auto minorColIndex = 0;
+				for (auto c = 0u; c < Columns; ++c)
+				{
+					if (c == colToSkip)
+						continue;
+
+					minorMatrix[minorRowIndex][minorColIndex++] = elems[r][c];
+				}
+				minorRowIndex++;
+			}
+			return minorMatrix;
 		}
 
 		USE_RESULT constexpr bool IsZero() const noexcept
@@ -210,11 +207,24 @@ namespace kmaths
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, unsigned> Rank() const noexcept
+		{
+			if (IsZero() || !ValidColumns)
+				return 0;
+
+			if (GetDeterminant())
+				return Rows < Columns ? Rows : Columns;
+
+			return 0;
+
+		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, bool> IsIdentity() const noexcept
 		{
-			for (auto i = 0; i < Rows; ++i)
-				for (auto j = 0; j < Columns; ++j)
-					if (elems[i][j] != ((i == j) ? CAST(Type, 1) : CAST(Type, 0)))
+			for (auto row = 0; row < Rows; ++row)
+				for (auto col = 0; col < Columns; ++col)
+					if (elems[row][col] != ((row == col) ? CAST(Type, 1) : CAST(Type, 0)))
 						return false;
 			return true;
 		}
@@ -228,8 +238,14 @@ namespace kmaths
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
+			Type> Getdeterminant() const noexcept
+			= delete;
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Inverse() const noexcept
 			= delete;
+
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		static constexpr std::enable_if_t<R != C,
 			Matrix<Type, R, C>> Identity() noexcept
@@ -278,10 +294,10 @@ namespace kmaths
 		USE_RESULT constexpr std::enable_if_t<Columns == R, Matrix<Type, Rows, C>> operator*(const Matrix<Type, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
-			for (auto i = 0u; i < Rows; ++i)
-				for (auto j = 0u; j < C; ++j)
-					for (auto k = 0u; k < R; ++k)
-						m[i][j] += elems[i][k] * other[k][j];
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < C; ++col)
+					for (auto index = 0u; index < R; ++index)
+						m[row][col] += elems[row][index] * other[index][col];
 			return m;
 		}
 
@@ -339,7 +355,7 @@ namespace kmaths
 			auto rhs = Identity<Rows, Columns>();
 
 			bool readyToStart = true;
-			bool rowsMask[Rows];
+			bool rowsStatus[Rows];
 
 			for (auto i = 0u; i < lhs.size(); ++i)
 			{
@@ -347,13 +363,51 @@ namespace kmaths
 				if (vec.IsZero())
 					return Matrix();
 
-				rowsMask[i] = vec[i] != CAST(Type, 0);
+				rowsStatus[i] = vec[i] != CAST(Type, 0);
 
-				if (!rowsMask[i])
+				if (!rowsStatus[i])
 					readyToStart = false;
 			}
 
-			return Matrix();
+			if (!readyToStart)
+			{
+				for (auto i = 0u; i < Rows; ++i)
+				{
+					if (rowsStatus[i])
+						continue;
+
+					for (auto j = i + 1; j < Rows; ++j)
+					{
+						if (rowsStatus[j])
+							continue;
+
+						if (lhs[j][i] != CAST(Type, 0))
+						{
+							rowsStatus[j] == true;
+							break;
+						}
+
+						if (elems[j][i] != CAST(Type, 0))
+						{
+							std::swap(lhs[i], lhs[j]);
+							break;
+						}
+					}
+				}
+
+				for (auto& status : rowsStatus)
+					if (!status)
+						return Matrix();
+
+				readyToStart = true;
+			}
+
+			if (lhs[0][0] != CAST(Type, 1))
+			{
+
+			}
+
+			return rhs;
 		}
 
 		USE_RESULT constexpr bool ValidColumns() const noexcept

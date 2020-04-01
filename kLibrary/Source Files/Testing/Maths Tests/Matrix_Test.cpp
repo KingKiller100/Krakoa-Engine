@@ -64,6 +64,7 @@ namespace kTest::Maths
 		const auto transposedM9 = m12.Transpose();
 		const auto m13 = Matrix<size_t, 4, 4>::Identity();
 
+		const auto minorMatrix = m12.CreateMinorMatrix(0, 0);
 		const auto inverse3x3 = m13.Inverse();
 
 		for (auto i = 0u; i < m8.GetRows(); ++i)

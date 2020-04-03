@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include <Maths/Vectors/Vector.hpp>
+#include "../Vectors/Vector.hpp"
+#include "../kAlgorithms.hpp"
 #include <array>
 
 namespace kmaths
@@ -158,24 +159,19 @@ namespace kmaths
 			bool isReverseColumnSearch = false;
 
 			auto col = 0;
-			auto mod = [](int index) -> unsigned short // Copied from kAlgorithm's modulus to avoid adding it as an include
-			{
-				const auto rem = index % Rows;
-				if _CONSTEXPR_IF(-1 % 2 == 1)
-					return rem;
-				else
-					return rem < 0 ? rem + Rows : rem;
-			};
 			const auto idxDiff = Columns - 1;
 
 			do {
 				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
 				{
-					sum *= elems[row][mod(col)];
+					const size_t colIdx = modulus(col, CAST(int, Columns));
+					sum *= elems[row][colIdx];
 				}
+				
 				determinant += isReverseColumnSearch ? -sum : sum;
 				sum = CAST(Type, 1);
 				col += isReverseColumnSearch ? idxDiff : -idxDiff;
+				
 				if (!isReverseColumnSearch)
 				{
 					if (col == Columns)
@@ -238,7 +234,8 @@ namespace kmaths
 			return minorMatrix;
 		}
 
-		USE_RESULT constexpr Matrix PowerOf(unsigned power)  const noexcept
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> PowerOf(unsigned power) const
 		{
 			if (power == 0)
 				return Identity();
@@ -268,11 +265,10 @@ namespace kmaths
 			if (IsZero() || !ValidColumns)
 				return 0;
 
-			if (GetDeterminant())
+			if (this->GetDeterminant())
 				return Rows < Columns ? Rows : Columns;
 
 			return 0;
-
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
@@ -291,21 +287,6 @@ namespace kmaths
 		{
 			return false;
 		}
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R != C,
-			Type> Getdeterminant() const noexcept
-			= delete;
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R != C,
-			Matrix> Inverse() const noexcept
-			= delete;
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		static constexpr std::enable_if_t<R != C,
-			Matrix<Type, R, C>> Identity() noexcept
-			= delete;
 
 		USE_RESULT constexpr unsigned short GetRows() const noexcept
 		{
@@ -359,7 +340,7 @@ namespace kmaths
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 					{
-						m[row][col] = CAST(Type, CAST(int, (m[row][col] + CAST(Type, 0.000000001)) * 100000000)) / 100000000;
+						m[row][col] = Round(m[row][col], 9);
 					}
 				}
 			}
@@ -427,6 +408,27 @@ namespace kmaths
 		{
 			return elems[idx];
 		}
+
+		// Deleted version of funtions (under certain conditions)
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Type> Getdeterminant() const noexcept
+			= delete;
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Matrix> Inverse() const noexcept
+			= delete;
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		static constexpr std::enable_if_t<R != C,
+			Matrix<Type, R, C>> Identity() noexcept
+			= delete;
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Matrix> PowerOf(unsigned power)  const noexcept
+			= delete;
 
 	private:
 		// Gauss-Jordan Elimination Method

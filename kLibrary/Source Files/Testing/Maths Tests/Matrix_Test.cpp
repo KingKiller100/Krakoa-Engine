@@ -99,6 +99,8 @@ namespace kTest::Maths
 			}
 		}
 
+		const auto m15 = m14.PowerOf(2);
+
 		return success;
 	}
 

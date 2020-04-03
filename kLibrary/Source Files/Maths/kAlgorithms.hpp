@@ -4,22 +4,10 @@
 
 #include <Maths/Constants.hpp>
 
-#include <Maths/Vectors/Vector2.hpp>
-#include <Maths/Vectors/Vector3.hpp>
-#include <Maths/Vectors/Vector4.hpp>
-
 #include <cmath>
 
 namespace kmaths
 {
-	// Produces the dot product
-	template<unsigned short N, typename T>
-	USE_RESULT constexpr T VectorDotProduct(const Vector<N, T>& u, const Vector<N, T>& v) noexcept
-	{
-		const auto result = u.DotProduct<N, T>(v);
-		return result;
-	}
-
 	template<typename T>
 	USE_RESULT constexpr T Max(const T lhs, const T rhs) noexcept
 	{
@@ -30,6 +18,25 @@ namespace kmaths
 	USE_RESULT constexpr T Min(const T lhs, const T rhs) noexcept
 	{
 		return lhs < rhs ? lhs : rhs;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr T Round(const T value, const unsigned decimalPoints) noexcept
+	{
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+			return value;
+
+		long double dpShifts = 0.1;
+		size_t accuracy = 1;
+		for (auto i = 0u; i < decimalPoints; ++i)
+		{
+			dpShifts *=  0.1;
+			accuracy *= 10;
+		}
+
+		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
+		const T roundedValue = CAST(T, CAST(int, valuePlusDpsByAcc)) / accuracy;
+		return roundedValue;
 	}
 
 	template<typename T>
@@ -67,18 +74,10 @@ namespace kmaths
 		return remappedProgress;
 	}
 
-	template<typename T1, typename T2>
-	USE_RESULT constexpr T1 PowerOfX(T1&& base, T2&& power) noexcept
+	template<typename T>
+	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
 	{
 		return pow(base, power);
-	}
-
-	template<unsigned short N, typename T>
-	USE_RESULT constexpr T AngleBetweenVectors(const Vector<N, T>& v, const Vector<N, T>& u, const bool inDegrees = false) noexcept
-	{
-		const T angle = VectorDotProduct<N, T>(v, u) / (v.Magnitude() * u.Magnitude());
-
-		return inDegrees ? RadiansToDegrees(acos(angle)) : acos(angle);
 	}
 
 	template<typename T>
@@ -143,9 +142,9 @@ namespace kmaths
 		{
 			if (num < 0.0f)
 			{
-				return fmodf(num, base) + base;
+				return fmod(num, base) + base;
 			}
-			return fmodf(num, base);
+			return fmod(num, base);
 		}
 
 		T const rem = num % base;
@@ -155,32 +154,5 @@ namespace kmaths
 		}
 
 		return rem < 0 ? rem + base : rem;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	template<typename T>
-	USE_RESULT constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
-	{
-		if (angle == 0)
-			return Vector2<T>();
-
-		const auto rotation = atan2(position.Y(), position.X()) + angle;
-		const auto mag = position.Magnitude();
-		const auto lXPos = cos(rotation) * mag;
-		const auto lYPos = sin(rotation) * mag;
-		return Vector2<T>(lXPos, lYPos);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	template<typename T>
-	USE_RESULT constexpr Vector2<T> RotateAbout(const Vector2<T>& inCenter, const Vector2<T>& inPosition, const float& inAngle) noexcept
-	{
-		Vector2<T> lRes = inPosition;
-
-		lRes -= inCenter;
-		lRes = Rotate(lRes, inAngle);
-		lRes += inCenter;
-
-		return lRes;
 	}
 }

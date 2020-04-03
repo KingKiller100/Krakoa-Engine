@@ -1,7 +1,7 @@
 #include <pch.hpp>
 #include <Testing/Maths Tests/Vectors_Test.hpp>
 
-#include <Maths/kAlgorithms.hpp>
+#include <Maths/Vectors/VectorMathHelper.hpp>
 #include <Maths/Vectors/Vector2.hpp>
 #include <Maths/Vectors/Vector3.hpp>
 #include <Maths/Vectors/Vector4.hpp>

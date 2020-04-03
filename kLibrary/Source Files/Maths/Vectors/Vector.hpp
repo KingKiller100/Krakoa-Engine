@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "HelperMacros.hpp"
+#include "../../HelperMacros.hpp"
 
 #include <utility>
 
@@ -50,50 +50,50 @@ namespace kmaths
 				dimensions[i] = values[i];
 		}
 
-		const Type& X() const noexcept
+		USE_RESULT constexpr const Type& X() const noexcept
 		{
 			return dimensions[0];
 		}
 
-		Type& X() noexcept
+		USE_RESULT constexpr Type& X() noexcept
 		{
 			return dimensions[0];
 		}
 
 		template<typename U = Type>
-		std::enable_if_t<N >= 2, const U&> Y() const noexcept
+		USE_RESULT constexpr std::enable_if_t<N >= 2, const U&> Y() const noexcept
 		{
 			return dimensions[1];
 		}
 
 		template<typename U = Type>
-		std::enable_if_t<N >= 2, U&> Y() noexcept
+		USE_RESULT constexpr std::enable_if_t<N >= 2, U&> Y() noexcept
 		{
 			return dimensions[1];
 		}
 
 
 		template<typename U = Type>
-		std::enable_if_t<N >= 3, const U&> Z() const noexcept
+		USE_RESULT constexpr std::enable_if_t<N >= 3, const U&> Z() const noexcept
 		{
 			return dimensions[2];
 		}
 
 		template<typename U = Type>
-		std::enable_if_t<N >= 3, U&> Z() noexcept
+		USE_RESULT constexpr std::enable_if_t<N >= 3, U&> Z() noexcept
 		{
 			return dimensions[2];
 		}
 
 		
 		template<typename U = Type>
-		std::enable_if_t<N >= 4, const U&> W() const noexcept
+		USE_RESULT constexpr std::enable_if_t<N >= 4, const U&> W() const noexcept
 		{
 			return dimensions[3];
 		}
 
 		template<typename U = Type>
-		std::enable_if_t<N >= 4, U&> W() noexcept
+		USE_RESULT constexpr std::enable_if_t<N >= 4, U&> W() noexcept
 		{
 			return dimensions[3];
 		}
@@ -225,8 +225,8 @@ namespace kmaths
 			Vector> CrossProduct(const Vector<N, X>& v) const noexcept
 		{
 			return Vector( (this->Y() * v.Z() - this->Z() * v.Y()),
-				            (this->Z() * v.X() - this->X() * v.Z()),
-				            (this->X() * v.Y() - this->Y() * v.X()) );
+				           (this->Z() * v.X() - this->X() * v.Z()),
+				           (this->X() * v.Y() - this->Y() * v.X()) );
 		}
 
 		template<typename X, typename U = T>
@@ -236,12 +236,12 @@ namespace kmaths
 			Vector> CrossProduct(const Vector& v) const noexcept
 			= delete;
 
-		constexpr Type& operator[](const size_t index)
+		USE_RESULT constexpr Type& operator[](const size_t index)
 		{
 			return dimensions[index];
 		}
 
-		constexpr const Type& operator[](const size_t index) const
+		USE_RESULT constexpr const Type& operator[](const size_t index) const
 		{
 			return dimensions[index];
 		}

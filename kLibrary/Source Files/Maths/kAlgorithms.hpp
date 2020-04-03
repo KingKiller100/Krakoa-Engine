@@ -35,7 +35,7 @@ namespace kmaths
 		}
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
-		const T roundedValue = CAST(T, CAST(int, valuePlusDpsByAcc)) / accuracy;
+		const T roundedValue = CAST(T, CAST(long long, valuePlusDpsByAcc)) / accuracy;
 		return roundedValue;
 	}
 

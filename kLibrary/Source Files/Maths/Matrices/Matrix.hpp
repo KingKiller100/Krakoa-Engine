@@ -167,11 +167,11 @@ namespace kmaths
 					const size_t colIdx = modulus(col, CAST(int, Columns));
 					sum *= elems[row][colIdx];
 				}
-				
+
 				determinant += isReverseColumnSearch ? -sum : sum;
 				sum = CAST(Type, 1);
 				col += isReverseColumnSearch ? idxDiff : -idxDiff;
-				
+
 				if (!isReverseColumnSearch)
 				{
 					if (col == Columns)
@@ -260,13 +260,13 @@ namespace kmaths
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C, unsigned> Rank() const noexcept
+		USE_RESULT constexpr std::enable_if_t<R == C, unsigned short> Rank() const noexcept
 		{
-			if (IsZero() || !ValidColumns)
-				return 0;
+			if (IsIdentity())
+				return Rows;
 
-			if (this->GetDeterminant())
-				return Rows < Columns ? Rows : Columns;
+			if (this->GetDeterminant() != CAST(Type, 0))
+				return Min(Rows, Columns);
 
 			return 0;
 		}
@@ -340,14 +340,17 @@ namespace kmaths
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 					{
-						m[row][col] = Round(m[row][col], 9);
+						if _CONSTEXPR_IF(std::is_same_v<Type, double>)
+							m[row][col] = Round(m[row][col], 9);
+						else
+							m[row][col] = Round(m[row][col], 5);
 					}
 				}
 			}
 			return m;
 		}
 
-		template<typename U>
+		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
@@ -356,7 +359,7 @@ namespace kmaths
 			return m;
 		}
 
-		template<typename U>
+		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
 			Matrix m;
@@ -365,14 +368,22 @@ namespace kmaths
 			return m;
 		}
 
-		template<typename U>
-		constexpr Matrix& operator*=(const U scalar)
+		template<unsigned short C, unsigned short R = Columns>
+		constexpr Matrix<Type, Rows, C> operator*=(const Matrix<Type, R, C>& other) noexcept
 		{
-			*this = *this * scalar;
+			*this = *this * other;
 			return *this;
 		}
 
-		template<typename U>
+
+		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
+		constexpr Matrix& operator*=(const U obj)
+		{
+			*this = *this * obj;
+			return *this;
+		}
+
+		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		constexpr Matrix& operator/=(const U scalar)
 		{
 			*this = *this / scalar;

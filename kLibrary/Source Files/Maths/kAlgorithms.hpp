@@ -21,18 +21,13 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Round(const T value, const unsigned decimalPoints) noexcept
+	USE_RESULT constexpr T Round(const T value, const unsigned short decimalPoints) noexcept
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 			return value;
 
-		long double dpShifts = 0.1;
-		size_t accuracy = 1;
-		for (auto i = 0u; i < decimalPoints; ++i)
-		{
-			dpShifts *=  0.1;
-			accuracy *= 10;
-		}
+		const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
+		const auto accuracy = PowerOf<size_t>(10, decimalPoints);
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
 		const T roundedValue = CAST(T, CAST(long long, valuePlusDpsByAcc)) / accuracy;
@@ -77,7 +72,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
 	{
-		return pow(base, power);
+		return CAST(T, pow(base, power));
 	}
 
 	template<typename T>

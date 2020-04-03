@@ -1,6 +1,10 @@
 @ECHO off
 path = %~dp0..\..\%
 pushd %path%
+IF EXIST "%path%.vs\" (
+	del "%path%.vs\" /f /s /q
+	rmdir "%path%.vs\" /s /q
+)
 IF EXIST "%path%bin\" (
 	del "%path%bin\" /f /s /q
 	del "%path%bin-int\" /f /s /q

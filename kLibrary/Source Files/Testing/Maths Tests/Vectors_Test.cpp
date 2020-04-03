@@ -12,7 +12,7 @@ namespace kTest::Maths
 	using namespace kmaths;
 
 	VectorsTester::VectorsTester()
-		: Tester("Vectors 2/3/4 Test")
+		: Tester("Vectors X/2/3/4 Test")
 	{ }
 
 	VectorsTester::~VectorsTester()
@@ -38,7 +38,7 @@ namespace kTest::Maths
 		res1 = vec2f * vec2d;
 		VERIFY(res1.X() == 20 &&  res1.Y() == 48);
 		res1 = vec2f / vec2d;
-		VERIFY(res1.X() == 0.8f &&  res1.Y() == float(1.f/3.f));
+		VERIFY(res1.X() == 0.8f &&  res1.Y() == 1.f/3.f);
 
 		const auto distance = vec2f.Distance(vec2d);
 		VERIFY(distance == 8.06225777f);

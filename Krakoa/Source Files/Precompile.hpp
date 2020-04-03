@@ -20,7 +20,7 @@
 // Windows Libraries
 #if KRAKOA_OS_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
-#		include <Windows.h>
+#	include <Windows.h>
 #	undef WIN32_LEAN_AND_MEAN
 #endif
 

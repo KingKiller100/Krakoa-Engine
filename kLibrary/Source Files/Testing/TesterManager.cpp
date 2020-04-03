@@ -4,8 +4,9 @@
 #include <Testing/Tester.hpp>
 
 // Maths Tests
-#include <Testing/Maths Tests/Matrix_Test.hpp>
 #include <Testing/Maths Tests/Vectors_Test.hpp>
+#include <Testing/Maths Tests/Matrix_Test.hpp>
+#include <Testing/Maths Tests/Quaternion_Test.hpp>
 
 // Utility Tests
 #include <Testing/Utility Tests/Timer_Test.hpp>
@@ -51,8 +52,9 @@ namespace kTest
 
 	void TesterManager::InitializeMathsTests()
 	{
-		Add(new Maths::MatricesTester());
 		Add(new Maths::VectorsTester());
+		Add(new Maths::MatricesTester());
+		Add(new Maths::QuaternionsTester());
 	}
 
 	void TesterManager::InitializeUtilityTests()

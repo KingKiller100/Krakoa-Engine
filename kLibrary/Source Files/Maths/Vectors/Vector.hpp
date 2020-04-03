@@ -44,7 +44,7 @@ namespace kmaths
 				dimensions[i] = *(first_iter + i);
 		}
 
-		explicit constexpr Vector(const T values[N]) noexcept
+		explicit constexpr Vector(const T values[N])
 		{
 			for (auto i = 0; i < N; ++i)
 				dimensions[i] = values[i];
@@ -72,7 +72,6 @@ namespace kmaths
 			return dimensions[1];
 		}
 
-
 		template<typename U = Type>
 		USE_RESULT constexpr std::enable_if_t<N >= 3, const U&> Z() const noexcept
 		{
@@ -97,19 +96,6 @@ namespace kmaths
 		{
 			return dimensions[3];
 		}
-
-		template<typename U = Type>
-		std::enable_if_t < N < 2, const U&> Y() const noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 2, U&> Y() noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 3, U&> Z() noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 3, const U&> Z() const noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 4, const U&> W() const noexcept = delete;
-		template<typename U = Type>
-		std::enable_if_t < N < 4, U&> W() noexcept = delete;
 
 		USE_RESULT constexpr Type Magnitude() const noexcept
 		{
@@ -136,15 +122,17 @@ namespace kmaths
 			return dp;
 		}
 
-		USE_RESULT constexpr Vector Normalize() const
+		USE_RESULT constexpr Vector Normalize() const noexcept
 		{
-			const auto mag = Magnitude();
+			auto mag = Magnitude();
 			if (mag == static_cast<Type>(0))
 				return Vector();
 
+			mag = static_cast<Type>(1) / mag;
+
 			T temp[N]{ 0 };
 			for (auto i = 0; i < N; ++i)
-				temp[i] = dimensions[i] / mag;
+				temp[i] = dimensions[i] * mag;
 			return Vector(temp);
 		}
 
@@ -211,12 +199,6 @@ namespace kmaths
 			return Vector(-Y(), X());
 		}
 
-		template<typename U = T>
-		USE_RESULT constexpr inline std::enable_if_t<std::is_unsigned_v<U>
-			|| N != 2,
-			Vector> Perpendicular() const
-			= delete;
-
 
 		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
@@ -228,13 +210,6 @@ namespace kmaths
 				           (this->Z() * v.X() - this->X() * v.Z()),
 				           (this->X() * v.Y() - this->Y() * v.X()) );
 		}
-
-		template<typename X, typename U = T>
-		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>
-			|| std::is_unsigned_v<X>
-			|| N != 3,
-			Vector> CrossProduct(const Vector& v) const noexcept
-			= delete;
 
 		USE_RESULT constexpr Type& operator[](const size_t index)
 		{
@@ -392,10 +367,37 @@ namespace kmaths
 			return !(*this == v);
 		}
 
-		USE_RESULT constexpr auto NumberOfDimensions() const noexcept
+		USE_RESULT constexpr inline auto NumberOfDimensions() const noexcept
 		{
 			return N;
 		}
+
+		// Deleted version of functions (under certain circumstances
+		template<typename U = Type>
+		std::enable_if_t < N < 2, const U&> Y() const noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 2, U&> Y() noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 3, U&> Z() noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 3, const U&> Z() const noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 4, const U&> W() const noexcept = delete;
+		template<typename U = Type>
+		std::enable_if_t < N < 4, U&> W() noexcept = delete;
+
+		template<typename U = T>
+		USE_RESULT constexpr inline std::enable_if_t<std::is_unsigned_v<U>
+			|| N != 2,
+			Vector> Perpendicular() const
+			= delete;
+
+		template<typename X, typename U = T>
+		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>
+			|| std::is_unsigned_v<X>
+			|| N != 3,
+			Vector> CrossProduct(const Vector& v) const noexcept
+			= delete;
 
 	private:
 		T dimensions[N];

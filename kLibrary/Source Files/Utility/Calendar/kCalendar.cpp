@@ -13,21 +13,24 @@ namespace klib::kCalendar
 {
 	using namespace kFormat;
 
-	_SYSTEMTIME& GetLocalDateAndTime()
+	static const auto localStartTime = GetLocalDateAndTime();
+	static const auto systemStartTime = GetSystemDateAndTime();
+
+	_SYSTEMTIME& GetLocalDateAndTime()  noexcept
 	{
 		static _SYSTEMTIME kCalendar_Local_DateTime;
 		GetLocalTime(&kCalendar_Local_DateTime);
 		return kCalendar_Local_DateTime;
 	}
 
-	_SYSTEMTIME& GetSystemDateAndTime()
+	_SYSTEMTIME& GetSystemDateAndTime()  noexcept
 	{
 		static _SYSTEMTIME kCalendar_System_DateTime;
 		GetSystemTime(&kCalendar_System_DateTime);
 		return kCalendar_System_DateTime;
 	}
 
-	unsigned short GetComponentOfTime(const TimeComponent timeComponent)
+	unsigned short GetComponentOfTime(const TimeComponent timeComponent)  noexcept
 	{
 		const auto now = GetLocalDateAndTime();
 
@@ -43,13 +46,13 @@ namespace klib::kCalendar
 	
 	// ASCII
 
-	std::string GetTimeText()
+	std::string GetTimeText()  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		return ToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
-	std::string GetDateInTextFormat(const bool fullDayname)
+	std::string GetDateInTextFormat(const bool fullDayname)  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		std::string day = GetDayOfTheWeek(dateTime.wDayOfWeek).data();
@@ -58,9 +61,9 @@ namespace klib::kCalendar
 		return dateStr;
 	}
 	
-	std::string_view GetMonth(const unsigned short month)
+	constexpr std::string_view GetMonth(const unsigned short month)  noexcept
 	{
-		static std::array<const char*, 12> kCalendar_MonthsArray = 
+		constexpr std::array<const char*, 12> kCalendar_MonthsArray = 
 		{"January", "February", "March", "April", "May",
 		"June", "July", "August", "September", "October",
 			"November", "December"};
@@ -71,9 +74,9 @@ namespace klib::kCalendar
 		return "Value entered does not index to a month of the year";
 	}
 
-	std::string_view GetDayOfTheWeek(const unsigned short day)
+	constexpr std::string_view GetDayOfTheWeek(const unsigned short day)  noexcept
 	{
-		static std::array<const char*, 7> kCalendar_DaysOfTheWeek =
+		constexpr std::array<const char*, 7> kCalendar_DaysOfTheWeek =
 		{ "Sunday", "Monday", "Tuesday", "Wednesday",
 		"Thursday", "Friday", "Saturday" };
 
@@ -83,28 +86,38 @@ namespace klib::kCalendar
 		return "Value entered does not index to a day of the week";
 	}
 
-	std::string GetDateInNumericalFormat(const bool slash)
+	std::string GetDateInNumericalFormat(const bool slash)  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? "%02d/%02d/%02d" : "%02d-%02d-%04d";
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
-	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second)
+	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second)  noexcept
 	{
 		const auto time = ToString("%02d:%02d:%02d", hour, minute, second);
 		return time;
 	}
 
+	std::string GetLocalStartTimeStr() noexcept
+	{
+		return ToString("%02d:%02d:%02d:%03d", localStartTime.wHour, localStartTime.wMinute, localStartTime.wSecond, localStartTime.wMilliseconds);
+	}
+
+	std::string GetSystemStartTimeStr() noexcept
+	{
+		return ToString("%02d:%02d:%02d:%03d", systemStartTime.wHour, systemStartTime.wMinute, systemStartTime.wSecond, systemStartTime.wMilliseconds);
+	}
+
 	// WIDE MULTI-BYTE CHAR
 	
-	std::wstring wGetTimeText()
+	std::wstring wGetTimeText()  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		return ToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
-	std::wstring wGetDateInTextFormat(const bool fullDayname)
+	std::wstring wGetDateInTextFormat(const bool fullDayname)  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		std::wstring day = wGetDayOfTheWeek(dateTime.wDayOfWeek).data();
@@ -112,9 +125,9 @@ namespace klib::kCalendar
 		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
 	}
 
-	std::wstring_view wGetMonth(const unsigned short month)
+	constexpr std::wstring_view wGetMonth(const unsigned short month) noexcept
 	{
-		static std::array<const wchar_t*, 12> kCalendar_MonthsArray =
+		constexpr  std::array<const wchar_t*, 12> kCalendar_MonthsArray =
 		{ L"January", L"February", L"March", L"April", L"May",
 		L"June", L"July", L"August", L"September", L"October",
 			L"November", L"December" };
@@ -125,9 +138,9 @@ namespace klib::kCalendar
 		return L"Value entered does not index to a month of the year";
 	}
 
-	std::wstring_view  wGetDayOfTheWeek(const unsigned short day)
+	constexpr std::wstring_view  wGetDayOfTheWeek(const unsigned short day) noexcept
 	{
-		static std::array<const wchar_t*, 7> kCalendar_DaysOfTheWeek =
+		constexpr  std::array<const wchar_t*, 7> kCalendar_DaysOfTheWeek =
 		{ L"Sunday", L"Monday", L"Tuesday", L"Wednesday",
 		L"Thursday", L"Friday", L"Saturday" };
 
@@ -137,17 +150,27 @@ namespace klib::kCalendar
 		return L"Value entered does not index to a day of the week";
 	}
 
-	std::wstring wGetDateInNumericalFormat(const bool slash)
+	std::wstring wGetDateInNumericalFormat(const bool slash) noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		const auto dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
-	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second)
+	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept
 	{
 		const auto time = ToString(L"%02d:%02d:%02d", hour, minute, second);
 		return time;
+	}
+
+	std::wstring wGetLocalStartTimeStr() noexcept
+	{
+		return ToString(L"%02d:%02d:%02d:%03d", localStartTime.wHour, localStartTime.wMinute, localStartTime.wSecond, localStartTime.wMilliseconds);
+	}
+
+	std::wstring wGetSystemStartTimeStr() noexcept
+	{
+		return ToString(L"%02d:%02d:%02d:%03d", systemStartTime.wHour, systemStartTime.wMinute, systemStartTime.wSecond, systemStartTime.wMilliseconds);
 	}
 }
 

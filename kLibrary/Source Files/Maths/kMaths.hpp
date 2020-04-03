@@ -1,13 +1,16 @@
 #pragma once
 
 // Matrices
-#include <Maths/Matrices/PredefinedMatrices.hpp>
+#include "Matrices/PredefinedMatrices.hpp"
 
 // Dimensional vectors
-#include <Maths/Vectors/PredefinedVectors.hpp>
+#include "Vectors/PredefinedVectors.hpp"
+
+// Quaternions
+#include "Quaternions/Quaternions.hpp"
 
 // Common mathematical constants
-#include <Maths/Constants.hpp>
+#include "Constants.hpp"
 
 // Common math helper functions
-#include <Maths/kAlgorithms.hpp>
+#include "kAlgorithms.hpp"

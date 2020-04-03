@@ -16,24 +16,28 @@ namespace klib
 			millisec
 		};
 
-		_SYSTEMTIME& GetLocalDateAndTime();
-		_SYSTEMTIME& GetSystemDateAndTime();
-		unsigned short GetComponentOfTime(const TimeComponent timeComponent);
+		_SYSTEMTIME& GetLocalDateAndTime() noexcept;
+		_SYSTEMTIME& GetSystemDateAndTime() noexcept;
+		unsigned short GetComponentOfTime(const TimeComponent timeComponent) noexcept;
 
 		// ASCII
-		std::string GetTimeText();
-		std::string GetDateInTextFormat(const bool fullDayname = true);
-		std::string_view GetMonth(const unsigned short month);
-		std::string_view GetDayOfTheWeek(const unsigned short day);
-		std::string GetDateInNumericalFormat(const bool slash = true);
-		std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second);
+		std::string GetTimeText() noexcept;
+		std::string GetDateInTextFormat(const bool fullDayname = true) noexcept;
+		constexpr std::string_view GetMonth(const unsigned short month) noexcept;
+		constexpr std::string_view GetDayOfTheWeek(const unsigned short day) noexcept;
+		std::string GetDateInNumericalFormat(const bool slash = true) noexcept;
+		std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept;
+		std::string GetLocalStartTimeStr() noexcept;
+		std::string GetSystemStartTimeStr() noexcept;
 
 		// Wide Multi-Byte Chars
-		std::wstring wGetTimeText();
-		std::wstring wGetDateInTextFormat(const bool fullDayname = true);
-		std::wstring_view wGetMonth(const unsigned short month);
-		std::wstring_view wGetDayOfTheWeek(const unsigned short day);
-		std::wstring wGetDateInNumericalFormat(const bool slash = true);
-		std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second);
+		std::wstring wGetTimeText() noexcept;
+		std::wstring wGetDateInTextFormat(const bool fullDayname = true) noexcept;
+		constexpr std::wstring_view wGetMonth(const unsigned short month) noexcept;
+		constexpr std::wstring_view wGetDayOfTheWeek(const unsigned short day) noexcept;
+		std::wstring wGetDateInNumericalFormat(const bool slash = true) noexcept;
+		std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept;
+		std::wstring wGetLocalStartTimeStr() noexcept;
+		std::wstring wGetSystemStartTimeStr() noexcept;
 	}
 }

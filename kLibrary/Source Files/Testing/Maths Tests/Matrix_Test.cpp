@@ -50,7 +50,7 @@ namespace kTest::Maths
 		auto m2 = Matrix<float, 3, 2>(2);
 		const auto m3 = m1 - m2;
 		const auto m4 = m1 / 10;
-		//const auto m5 = m1 / m2; Cannot compile due to division not being possible between matrices
+		//const auto m5 = m1 / m2; // Cannot compile due to division not being possible between matrices
 		const auto m6 = m0 * m2;
 		const auto m7 = m1 += m2;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Core/EngineCore.hpp>
-#include <Events System/Event.hpp>
+#include "../Core/EngineCore.hpp"
+#include "../Events System/Event.hpp"
 
 namespace krakoa
 {

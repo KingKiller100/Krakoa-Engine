@@ -1,4 +1,5 @@
-﻿#include "Input/InputManager.hpp"
+﻿#pragma once
+#include "../InputManager.hpp"
 
 namespace krakoa::input
 {

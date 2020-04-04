@@ -1,4 +1,5 @@
-﻿#include "Patterns/SimpleSingleton.hpp"
+﻿#pragma once
+#include "../Patterns/SimpleSingleton.hpp"
 
 
 namespace krakoa::input

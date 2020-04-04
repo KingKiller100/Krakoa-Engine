@@ -1,14 +1,15 @@
-#include <Precompile.hpp>
-#include <Core/Application.hpp>
+#include "Precompile.hpp"
+#include "Application.hpp"
 
-#include <Core/Logging/CoreLogger.hpp>
-#include <Rendering/LayerBase.hpp>
+#include "Logging/CoreLogger.hpp"
+#include "../Rendering/LayerBase.hpp"
+
+#include "../Input/InputManager.hpp"
+
+#include "../Patterns/SimpleSingletonImpl.hpp"
 
 #include <Utility/Timer/kTimer.hpp>
 
-#include "Input/InputManager.hpp"
-
-#include <Patterns/SimpleSingletonImpl.hpp> // Required for singleton base class functionality to work
 
 namespace krakoa
 {

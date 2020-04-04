@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <Patterns/SimpleSingleton.hpp>
+#include "SimpleSingleton.hpp"
 
 template<class T>
 T* pattern::SimpleSingleton<T>::instance = nullptr;

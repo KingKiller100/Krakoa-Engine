@@ -1,16 +1,15 @@
 #pragma once
 
-#include <iWindow.hpp>
+#include "EngineCore.hpp"
+#include "FPSCounter.hpp"
 
-#include <Patterns/SimpleSingleton.hpp>
+#include "../iWindow.hpp"
+#include "../Patterns/SimpleSingleton.hpp"
 
-#include <Core/EngineCore.hpp>
-#include <Core/FPSCounter.hpp>
+#include "../Events System/Event.hpp"
+#include "../Events System/ApplicationEvent.hpp"
 
-#include <Events System/Event.hpp>
-#include <Events System/ApplicationEvent.hpp>
-
-#include <Rendering/LayerStacker.hpp>
+#include "../Rendering/LayerStacker.hpp"
 
 #include <memory>
 

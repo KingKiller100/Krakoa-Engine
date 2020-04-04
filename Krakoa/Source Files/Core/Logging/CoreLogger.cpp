@@ -1,5 +1,5 @@
-﻿#include <Precompile.hpp>
-#include <Core/Logging/CoreLogger.hpp>
+﻿#include "Precompile.hpp"
+#include "CoreLogger.hpp"
 
 namespace krakoa
 {

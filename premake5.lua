@@ -20,7 +20,7 @@ workspace "KrakoaEngine"
     -- Include Libraries
     IncludeDir = {}
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
-    IncludeDir["KLIB"] = "kLibrary/Source Files/"
+    IncludeDir["KLIB"] = "kLibrary/Include/"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
     IncludeDir["ImGUI"] = "Krakoa/Vendors/imgui/"
 
@@ -58,7 +58,6 @@ project "Krakoa"
     includedirs
     {
         "%{IncludeDir.KLIB}",
-        "%{prj.name}/Source Files",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGUI}",

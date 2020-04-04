@@ -1,8 +1,8 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../Core/EngineCore.hpp"
 
-#include <Core/EngineCore.hpp>
+#include <HelperMacros.hpp>
 
 #include <functional>
 #include <ostream>

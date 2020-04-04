@@ -1,5 +1,5 @@
-﻿#include <Precompile.hpp>
-#include <Core/TestDriver.hpp>
+﻿#include "Precompile.hpp"
+#include "../Core/TestDriver.hpp"
 
 #include <Testing/Tester.hpp>
 #include <Testing/TesterManager.hpp>

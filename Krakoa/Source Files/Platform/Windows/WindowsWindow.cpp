@@ -1,10 +1,10 @@
-#include <Precompile.hpp>
-#include <Platform/Windows/WindowsWindow.hpp>
-
-#include <Core/Logging/CoreLogger.hpp>
-#include <Events System/ApplicationEvent.hpp>
-#include <Events System/KeyEvent.hpp>
-#include <Events System/MouseEvent.hpp>
+#include "Precompile.hpp"
+#include "WindowsWindow.hpp"
+		 
+#include "../../Core/Logging/CoreLogger.hpp"
+#include "../../Events System/ApplicationEvent.hpp"
+#include "../../Events System/KeyEvent.hpp"
+#include "../../Events System/MouseEvent.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
 

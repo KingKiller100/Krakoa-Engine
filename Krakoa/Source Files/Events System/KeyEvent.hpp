@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Events System/Event.hpp>
+#include "Event.hpp"
 #include <Utility/Format/kFormatToString.hpp>
 
 namespace krakoa::events

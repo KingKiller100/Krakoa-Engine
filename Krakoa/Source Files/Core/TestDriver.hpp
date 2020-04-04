@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <Core/EngineCore.hpp>
+#include "../Core/EngineCore.hpp"
 
 #ifdef KRAKOA_TEST
 namespace tests

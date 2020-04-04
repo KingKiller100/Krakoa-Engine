@@ -1,10 +1,10 @@
-﻿#include <Precompile.hpp>
-#include <ImGui/ImGuiLayer.hpp>
-
-#include <Core/Application.hpp>
+﻿#include "Precompile.hpp"
+#include "ImGuiLayer.hpp"
+		 
+#include "../Core/Application.hpp"
 
 #include <imgui.h> // imgui include must be above any other openGL includes
-#include <Platform/OpenGL/imgui_impl_opengl3.hpp>
+#include "../Platform/OpenGL/imgui_impl_opengl3.hpp"
 
 // Temp for keymap
 #include <GLFW/glfw3.h>

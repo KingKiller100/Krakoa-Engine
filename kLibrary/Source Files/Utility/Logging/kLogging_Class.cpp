@@ -1,9 +1,9 @@
-#include <pch.hpp>
-#include <Utility/Logging/kLogging_Class.hpp>
+#include "pch.hpp"
+#include "kLogging_Class.hpp"
 
-#include <Utility/Calendar/kCalendar.hpp>
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/File System/kFileSystem.hpp>
+#include "../Calendar/kCalendar.hpp"
+#include "../Format/kFormatToString.hpp"
+#include "../File System/kFileSystem.hpp"
 
 #include <string_view>
 #include <unordered_map>
@@ -106,7 +106,7 @@ namespace klib::kLogs
 		inCacheMode = enable;
 	}
 
-	void Logging::InitializeLogLevelMap()
+	void Logging::InitializeLogLevelMap() noexcept
 	{
 		if (!kLogs_LLevelMap.empty())
 			return;

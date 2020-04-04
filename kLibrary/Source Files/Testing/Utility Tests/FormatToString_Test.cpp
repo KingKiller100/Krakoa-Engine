@@ -1,8 +1,8 @@
-#include <pch.hpp>
-#include <Testing/Utility Tests/FormatToString_Test.hpp>
+#include "pch.hpp"
+#include "FormatToString_Test.hpp"
 
-#include <Maths/Constants.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include "../../Maths/Constants.hpp"
+#include "../../Utility/Format/kFormatToString.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

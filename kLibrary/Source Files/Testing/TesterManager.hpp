@@ -1,11 +1,11 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../HelperMacros.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	class Tester;	
+	class Tester;
 	
 	class TesterManager
 	{

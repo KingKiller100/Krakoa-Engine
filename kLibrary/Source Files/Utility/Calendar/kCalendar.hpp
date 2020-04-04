@@ -29,6 +29,9 @@ namespace klib
 		std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept;
 		std::string GetLocalStartTimeStr() noexcept;
 		std::string GetSystemStartTimeStr() noexcept;
+		std::string GetLocalStartDateStr(const bool slash = true) noexcept;
+		//std::string GetSystemStartDateStr(const bool slash = true) noexcept;
+
 
 		// Wide Multi-Byte Chars
 		std::wstring wGetTimeText() noexcept;
@@ -39,5 +42,7 @@ namespace klib
 		std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept;
 		std::wstring wGetLocalStartTimeStr() noexcept;
 		std::wstring wGetSystemStartTimeStr() noexcept;
+		std::wstring wGetLocalStartDateStr(const bool slash = true) noexcept;
+		//std::wstring wGetSystemStartDateStr(const bool slash = true) noexcept;
 	}
 }

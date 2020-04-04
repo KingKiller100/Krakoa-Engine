@@ -1,5 +1,5 @@
-#include <pch.hpp>
-#include <Testing/Tester.hpp>
+#include "pch.hpp"
+#include "Tester.hpp"
 
 #ifdef TESTING_ENABLED
 

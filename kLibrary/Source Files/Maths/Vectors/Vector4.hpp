@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Maths/Vectors/Vector.hpp>
+#include "Vector.hpp"
 
 namespace kmaths
 {

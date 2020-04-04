@@ -1,5 +1,5 @@
 #pragma once
-#include <Testing/Tester.hpp>
+#include "../Tester.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::Maths

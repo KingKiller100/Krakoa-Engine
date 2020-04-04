@@ -1,9 +1,9 @@
-#include <pch.hpp>
-#include <Testing/Utility Tests/Logging_Test.hpp>
+#include "pch.hpp"
+#include "Logging_Test.hpp"
 
-#include <Utility/Logging/kLogging_Class.hpp>
-#include <Utility/File System/kFileSystem.hpp>
-#include <Utility/Calendar/kCalendar.hpp>
+#include "../../Utility/Logging/kLogging_Class.hpp"
+#include "../../Utility/File System/kFileSystem.hpp"
+#include "../../Utility/Calendar/kCalendar.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

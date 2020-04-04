@@ -1,8 +1,8 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../../HelperMacros.hpp"
 
-#include <Utility/Debug Helper/kAssert.hpp>
+#include "../Debug Helper/kAssert.hpp"
 
 #include <limits>
 #include <string>

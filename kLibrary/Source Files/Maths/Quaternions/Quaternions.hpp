@@ -120,9 +120,11 @@ namespace kmaths
 		*		This is used to update the orientation quaternion by a rotation
 		*		and time.
 		*
-		* \param[i] vector The vector to add.
+		* \param[i] vector 
+		*		The 3D scaled vector to add.
 		*
-		* @param scale The amount of the vector to add.
+		* \param[in] scale
+		*		Additional scale of the vector
 		*/
 		constexpr void addScaledVector(const Vector3<T>& vector, T scale) noexcept
 		{
@@ -137,6 +139,15 @@ namespace kmaths
 			k += q.k * CAST(T, 0.5);
 		}
 
+		/**
+		* \brief
+		*		Adds the given vector to this, scaled by the given amount.
+		*		This is used to update the orientation quaternion by a rotation
+		*		and time.
+		*
+		* \param[i] vector 
+		*		The 3D vector to rotate by
+		*/
 		void rotateByVector(const Vector3<T>& vector)
 		{
 			Quaternion q(0, vector.X(), vector.Y(), vector.Z());

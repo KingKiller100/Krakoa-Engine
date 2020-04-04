@@ -1,7 +1,7 @@
-#include <pch.hpp>
-#include <Testing/Utility Tests/FileSystem_Test.hpp>
+#include "pch.hpp"
+#include "FileSystem_Test.hpp"
 
-#include <Utility/File System/kFileSystem.hpp>
+#include "../../Utility/File System/kFileSystem.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

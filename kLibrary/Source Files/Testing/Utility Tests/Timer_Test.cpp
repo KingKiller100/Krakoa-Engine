@@ -1,8 +1,8 @@
-#include <pch.hpp>
-#include <Testing/Utility Tests/Timer_Test.hpp>
+#include "pch.hpp"
+#include "../Utility Tests/Timer_Test.hpp"
 
-#include <Utility/Timer/kTimer.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include "../../Utility/Timer/kTimer.hpp"
+#include "../../Utility/Format/kFormatToString.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -25,8 +25,8 @@ namespace kTest::utility
 		int nums[size];
 		for (auto i = 0; i < size; i++)
 		{
-			nums[i] = i;
 			const auto dt = testTime.GetDeltaTime<klib::kTime::Micros>();
+			nums[i] = i;
 			sum += dt;
 			VERIFY(nums[i] == i && dt != 0);
 			s = klib::kFormat::ToString("Test Time %d : %dus (Microseconds)\n", i, dt);

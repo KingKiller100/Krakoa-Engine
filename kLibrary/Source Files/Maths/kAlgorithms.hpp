@@ -1,8 +1,8 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../HelperMacros.hpp"
 
-#include <Maths/Constants.hpp>
+#include "Constants.hpp"
 
 #include <cmath>
 

@@ -1,24 +1,27 @@
-#include <pch.hpp>
-#include <Testing/TesterManager.hpp>
+#include "pch.hpp"
+#include "TesterManager.hpp"
 
-#include <Testing/Tester.hpp>
+#include "Tester.hpp"
 
 // Maths Tests
-#include <Testing/Maths Tests/Vectors_Test.hpp>
-#include <Testing/Maths Tests/Matrix_Test.hpp>
-#include <Testing/Maths Tests/Quaternion_Test.hpp>
+#include "Maths Tests/Vectors_Test.hpp"
+#include "Maths Tests/Matrix_Test.hpp"
+#include "Maths Tests/Quaternion_Test.hpp"
 
-// Utility Tests
-#include <Testing/Utility Tests/Timer_Test.hpp>
-#include <Testing/Utility Tests/Logging_Test.hpp>
-#include <Testing/Utility Tests/Calendar_Test.hpp>
-#include <Testing/Utility Tests/DebugHelp_Test.hpp>
-#include <Testing/Utility Tests/FileSystem_Test.hpp>
-#include <Testing/Utility Tests/StringView_Test.hpp>
-#include <Testing/Utility Tests/FormatToString_Test.hpp>
+// Utility
+#include "Utility Tests/Timer_Test.hpp"
+#include "Utility Tests/Logging_Test.hpp"
+#include "Utility Tests/Calendar_Test.hpp"
+#include "Utility Tests/DebugHelp_Test.hpp"
+#include "Utility Tests/FileSystem_Test.hpp"
+#include "Utility Tests/StringView_Test.hpp"
+#include "Utility Tests/FormatToString_Test.hpp"
 
 // File System to output test results
-#include <Utility/File System/kFileSystem.hpp>
+#include "../Utility/File System/kFileSystem.hpp"
+
+// Times the length of the test
+#include "../Utility/Timer/kTimer.hpp"
 
 #include <unordered_set>
 
@@ -75,7 +78,8 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		for (auto& test : kTests_TestsUSet)
+		klib::kTime::Timer<size_t> totalRunTimeTimer("Total Test Run Time");
+		for (const auto& test : kTests_TestsUSet)
 		{
 			const auto resultTest = test->Run() 
 				? klib::kFormat::ToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
@@ -83,6 +87,8 @@ namespace kTest
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %ds (Seconds)", totalRunTimeTimer.GetLifeTime<klib::kTime::Secs>());
+		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
 	}
 
 	void TesterManager::ClearAllTests()

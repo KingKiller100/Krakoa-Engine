@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdio>
-#include <memory>
 #include <string>
 #include <sstream>
 #include <xtr1common>
@@ -65,10 +64,10 @@ namespace klib
 		template<typename T, typename U = T>
 		constexpr 
 			std::enable_if_t<(
-				!std::is_arithmetic_v<std::remove_const_t<U>> &&
-				!std::is_same_v<std::remove_const_t<U>, std::string> &&
-				!std::is_pointer_v<std::remove_const_t<U>> &&
-				!std::is_unsigned_v<U>
+				!std::is_arithmetic_v<std::decay_t<U>> &&
+				!std::is_same_v<std::decay_t<U>, std::string> &&
+				!std::is_pointer_v<std::decay_t<U>> &&
+				!std::is_unsigned_v<std::decay_t<U>>
 				), std::string>
 			GetValue(const T obj)
 		{
@@ -111,7 +110,7 @@ namespace klib
 				static_assert(!std::is_same_v<CharType, char> && !std::is_same_v<CharType, wchar_t> , "Can only support \"char\" and \"wchar_t\" character types");
 			
 			const auto formattedText = StringWriter(buffer, buffer + (length - 1));
-			delete buffer;
+			delete[] buffer;
 			return formattedText;
 		}
 

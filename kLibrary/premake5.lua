@@ -20,11 +20,6 @@ project "kLibrary"
         "cpp.hint"
     }
 
-    includedirs
-    {
-        "Source Files",
-    }
-
     filter "system:Windows"
         staticruntime "On"
         systemversion "latest"

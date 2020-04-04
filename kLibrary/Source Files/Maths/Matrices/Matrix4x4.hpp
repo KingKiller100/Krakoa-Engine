@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <Maths/Matrices/Matrix.hpp>
+#include "Matrix.hpp"
 
 namespace kmaths
 {

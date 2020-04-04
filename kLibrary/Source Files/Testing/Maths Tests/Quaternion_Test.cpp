@@ -1,4 +1,4 @@
-﻿#include <pch.hpp>
+﻿#include "pch.hpp"
 #include "Quaternion_Test.hpp"
 
 #include "../../Maths/Quaternions/Quaternions.hpp"
@@ -20,7 +20,7 @@ namespace kTest::Maths
 		Vector3f position;
 		
 		for (auto i = 0u; i < position.NumberOfDimensions(); ++i)
-			position[i] = (i + 1) * 2;
+			position[i] = CAST(float, (i + 1) * 2);
 
 		auto transformation = Matrix4x4d();
 

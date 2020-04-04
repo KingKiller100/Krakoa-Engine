@@ -1,8 +1,8 @@
-#include <pch.hpp>
-#include <Testing/Maths Tests/Matrix_Test.hpp>
+#include "pch.hpp"
+#include "Matrix_Test.hpp"
 
-#include <Maths/Matrices/PredefinedMatrices.hpp>
-#include <Maths/Vectors/PredefinedVectors.hpp>
+#include "../../Maths/Vectors/PredefinedVectors.hpp"
+#include "../../Maths/Matrices/PredefinedMatrices.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::Maths

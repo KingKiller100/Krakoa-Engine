@@ -1,7 +1,7 @@
-#include <pch.hpp>
-#include <Testing/Utility Tests/Calendar_Test.hpp>
+#include "pch.hpp"
+#include "Calendar_Test.hpp"
 
-#include <Utility/Calendar/kCalendar.hpp>
+#include "../../Utility/Calendar/kCalendar.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

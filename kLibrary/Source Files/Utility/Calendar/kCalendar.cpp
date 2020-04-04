@@ -1,7 +1,8 @@
-#include <pch.hpp>
-#include <Utility/Calendar/kCalendar.hpp>
+#include "pch.hpp"
+#include "kCalendar.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include "../Format/kFormatToString.hpp"
+#include "../Format/kStringManipulation.hpp"
 
 #include <array>
 
@@ -43,7 +44,7 @@ namespace klib::kCalendar
 		default: return MAXWORD;
 		}
 	}
-	
+
 	// ASCII
 
 	std::string GetTimeText()  noexcept
@@ -60,15 +61,15 @@ namespace klib::kCalendar
 		const auto dateStr = ToString("%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
 		return dateStr;
 	}
-	
+
 	constexpr std::string_view GetMonth(const unsigned short month)  noexcept
 	{
-		constexpr std::array<const char*, 12> kCalendar_MonthsArray = 
-		{"January", "February", "March", "April", "May",
+		constexpr std::array<const char*, 12> kCalendar_MonthsArray =
+		{ "January", "February", "March", "April", "May",
 		"June", "July", "August", "September", "October",
-			"November", "December"};
+			"November", "December" };
 
-		if(month <= kCalendar_MonthsArray.size() || month > 0)
+		if (month <= kCalendar_MonthsArray.size() || month > 0)
 			return kCalendar_MonthsArray[month - 1];
 
 		return "Value entered does not index to a month of the year";
@@ -101,16 +102,51 @@ namespace klib::kCalendar
 
 	std::string GetLocalStartTimeStr() noexcept
 	{
-		return ToString("%02d:%02d:%02d:%03d", localStartTime.wHour, localStartTime.wMinute, localStartTime.wSecond, localStartTime.wMilliseconds);
+		static const auto localTimeStr =
+			ToString("%02d:%02d:%02d:%03d",
+				localStartTime.wHour,
+				localStartTime.wMinute,
+				localStartTime.wSecond,
+				localStartTime.wMilliseconds);
+		return localTimeStr;
 	}
 
 	std::string GetSystemStartTimeStr() noexcept
 	{
-		return ToString("%02d:%02d:%02d:%03d", systemStartTime.wHour, systemStartTime.wMinute, systemStartTime.wSecond, systemStartTime.wMilliseconds);
+		static const auto systemTimeStr =
+			ToString("%02d:%02d:%02d:%03d",
+				systemStartTime.wHour,
+				systemStartTime.wMinute,
+				systemStartTime.wSecond,
+				systemStartTime.wMilliseconds);
+		return systemTimeStr;
+	}
+
+	std::string GetLocalStartDateStr(const bool slash) noexcept
+	{
+		static std::string localDate;
+		if (localDate.empty())
+		{
+			localDate = GetDateInNumericalFormat(slash);
+			return localDate;
+		}
+
+		if (slash)
+		{
+			if (localDate.find('/') == std::string::npos)
+				localDate = String::Replace(std::string_view(localDate.data()), '-', '/');
+		}
+		else
+		{
+			if (localDate.find('-') == std::string::npos)
+				localDate = String::Replace(std::string_view(localDate.data()), '/', '-');
+		}
+
+		return localDate;
 	}
 
 	// WIDE MULTI-BYTE CHAR
-	
+
 	std::wstring wGetTimeText()  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
@@ -165,12 +201,47 @@ namespace klib::kCalendar
 
 	std::wstring wGetLocalStartTimeStr() noexcept
 	{
-		return ToString(L"%02d:%02d:%02d:%03d", localStartTime.wHour, localStartTime.wMinute, localStartTime.wSecond, localStartTime.wMilliseconds);
+		static const auto localTimeStr =
+			ToString(L"%02d:%02d:%02d:%03d",
+				localStartTime.wHour,
+				localStartTime.wMinute,
+				localStartTime.wSecond,
+				localStartTime.wMilliseconds);
+		return localTimeStr;
 	}
 
 	std::wstring wGetSystemStartTimeStr() noexcept
 	{
-		return ToString(L"%02d:%02d:%02d:%03d", systemStartTime.wHour, systemStartTime.wMinute, systemStartTime.wSecond, systemStartTime.wMilliseconds);
+		static const auto systemTimeStr =
+			ToString(L"%02d:%02d:%02d:%03d",
+				systemStartTime.wHour,
+				systemStartTime.wMinute,
+				systemStartTime.wSecond,
+				systemStartTime.wMilliseconds);
+		return systemTimeStr;
+	}
+
+	std::wstring wGetLocalStartDateStr(const bool slash) noexcept
+	{
+		static std::wstring localDate;
+		if (localDate.empty())
+		{
+			localDate = wGetDateInNumericalFormat(slash);
+			return localDate;
+		}
+
+		if (slash)
+		{
+			if (localDate.find('/') == std::wstring::npos)
+				localDate = String::Replace(std::wstring_view(localDate.data()), L'-', L'/');
+		}
+		else
+		{
+			if (localDate.find('-') == std::wstring::npos)
+				localDate = String::Replace(std::wstring_view(localDate.data()), L'/', L'-');
+		}
+
+		return localDate;
 	}
 }
 

@@ -8,7 +8,6 @@ namespace klib
 #if _DEBUG 
 	namespace debug
 	{
-
 		class AssertOnFailedConditionException final : public std::exception
 		{
 		public:
@@ -31,5 +30,4 @@ namespace klib
 #else
 #	define kAssert(condition, msg) ((void)0);
 #endif
-
 }

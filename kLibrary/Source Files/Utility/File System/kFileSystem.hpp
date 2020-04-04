@@ -1,8 +1,8 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../../HelperMacros.hpp"
 
-#include <Utility/Format/StringManipulation.h>
+#include "../Format/kStringManipulation.hpp"
 
 #include <direct.h>
 #include <corecrt_wdirect.h>
@@ -12,7 +12,8 @@
 #include <vector>
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#include <Windows.h>
+#	include <Windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 namespace klib
 {
@@ -50,9 +51,11 @@ namespace klib
 		 *		The data to fill the file with.
 		 */
 		template<class CharType = char>
-		void OutputToFile(const CharType* fullFilePath, const CharType* content)
+		constexpr void OutputToFile(const CharType* fullFilePath, const CharType* content)
 		{
-			FileWriter<CharType> outFile(fullFilePath, std::ios::out | std::ios::app);
+			static FileWriter<CharType> outFile;
+
+			outFile.open(fullFilePath, std::ios::out | std::ios::app);
 
 			if (outFile.is_open())
 			{
@@ -77,7 +80,7 @@ namespace klib
 		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 		 */
 		template<class CharType = char>
-		bool CreateNewDirectory(const CharType* directory)
+		constexpr bool CreateNewDirectory(const CharType* directory) noexcept
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
@@ -104,7 +107,7 @@ namespace klib
 		 *		path already exist, only
 		 */
 		template<class CharType = char>
-		bool CreateNewDirectories(const CharType* directory)
+		constexpr bool CreateNewDirectories(const CharType* directory)
 		{
 			StringWriter<CharType> dir(directory);
 
@@ -130,20 +133,19 @@ namespace klib
 
 
 		/**
-	 * \brief
-	 *		Deletes file from system
-	 * \tparam CharType
-	 *		Char type i.e. must be char/wchar_t/u32char_t/etc...
-	 * \param[in] fullFilePath
-	 *		Full file path of the file to delete
-	 * \return
-	 *		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
-	 */
+		* \brief
+		*		Deletes file from system
+		* \tparam CharType
+		*		Char type i.e. must be char/wchar_t/u32char_t/etc...
+		* \param[in] fullFilePath
+		*		Full file path of the file to delete
+		* \return
+		*		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
+		*/
 		template<typename CharType = char>
-		bool RemoveFile(const CharType* fullFilePath)
+		constexpr bool RemoveFile(const CharType* fullFilePath)
 		{
-
-			if constexpr (std::is_same_v<CharType, char>)
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 				if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 				{
 					return remove(fullFilePath) == 0; // 0 == SUCCESS
@@ -193,7 +195,7 @@ namespace klib
 		 */
 
 		template<class CharType = char>
-		bool CheckFileExists(const CharType* fullFilePath)
+		constexpr bool CheckFileExists(const CharType* fullFilePath) noexcept
 		{
 			FILE* file;
 			auto result = -1;
@@ -222,7 +224,7 @@ namespace klib
 		 *		A vector of every line of data in the file, as a string
 		 */
 		template<class CharType>
-		USE_RESULT inline auto ParseFileData(const CharType* fullFilePath)
+		USE_RESULT constexpr auto ParseFileData(const CharType* fullFilePath)
 		{
 			FileLines<CharType> fileData;
 			if (!CheckFileExists(fullFilePath))
@@ -250,7 +252,7 @@ namespace klib
 		 *		Current working directory as a string
 		 */
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> GetCurrentWorkingDirectory()
+		USE_RESULT constexpr StringWriter<Char> GetCurrentWorkingDirectory() noexcept
 		{
 			static StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
 
@@ -263,7 +265,7 @@ namespace klib
 				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
 					GetModuleFileNameW(nullptr, cwdBuffer, sizeof(cwdBuffer));
 				else
-					throw std::runtime_error("Can only support \"char\" and \"wchar_t\" character types");
+					static_assert(std::is_same_v<Char, char> || std::is_same_v<Char, wchar_t>, "Can only support \"char\" and \"wchar_t\" character types");
 
 				fullFolderPathOfCurrentWorkingDirectory = cwdBuffer;
 
@@ -277,7 +279,7 @@ namespace klib
 		}
 
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> GetFileName(const StringWriter<Char>& path) noexcept
+		USE_RESULT constexpr StringWriter<Char> GetFileName(const StringWriter<Char>& path) noexcept
 		{
 			const std::string text = String::Replace(path, '/', '\\');
 			const auto filename = text.substr(text.find_last_of('\\'));
@@ -285,7 +287,7 @@ namespace klib
 		}
 
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> GetFileNameWithoutExtension(const StringWriter<Char>& path) noexcept
+		USE_RESULT constexpr StringWriter<Char> GetFileNameWithoutExtension(const StringWriter<Char>& path) noexcept
 		{
 			StringWriter<Char> filename = GetFileName<Char>(path);
 			filename = filename.substr(0, filename.find_first_of('.'));
@@ -293,7 +295,7 @@ namespace klib
 		}
 
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> GetPath(const StringWriter<Char>& path)
+		USE_RESULT constexpr StringWriter<Char> GetPath(const StringWriter<Char>& path)
 		{
 			StringWriter<Char> parentPath = String::Replace(path, '/', '\\');
 			parentPath = parentPath.substr(0, parentPath.find_last_of('\\'));
@@ -301,7 +303,7 @@ namespace klib
 		}
 
 		template<class Char = char>
-		USE_RESULT StringWriter<Char> AppendFileExtension(const Char* fname, const Char* extension) noexcept
+		USE_RESULT constexpr StringWriter<Char> AppendFileExtension(const Char* fname, const Char* extension) noexcept
 		{
 			StringReader<Char> filename = fname;
 			const auto isDotAtStartOFExtension = extension[0] == '.';
@@ -343,6 +345,4 @@ namespace klib
 		}
 	}
 }
-
-#undef WIN32_LEAN_AND_MEAN
 

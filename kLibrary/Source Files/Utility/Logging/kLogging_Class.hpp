@@ -1,6 +1,6 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../../HelperMacros.hpp"
 #include <deque>
 #include <fstream>
 #include <string>
@@ -223,7 +223,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Stores all log levels into a map with the string equivalent
 		 */
-		static void InitializeLogLevelMap();
+		static void InitializeLogLevelMap() noexcept;
 
 		/**
 		 * \brief

@@ -1,9 +1,9 @@
-#include <pch.hpp>
+#include "pch.hpp"
 
-#include <Testing/Utility Tests/StringView_Test.hpp>
+#include "StringView_Test.hpp"
 
-#include <Utility/String View/StringView.hpp>
-#include <Utility/Timer/kTimer.hpp>
+#include "../../Utility/String View/StringView.hpp"
+#include "../../Utility/Timer/kTimer.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

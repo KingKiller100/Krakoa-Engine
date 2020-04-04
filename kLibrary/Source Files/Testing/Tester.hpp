@@ -1,9 +1,9 @@
 #pragma once
 
-#include <HelperMacros.hpp>
+#include "../HelperMacros.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/File System/kFileSystem.hpp>
+#include "../Utility/Format/kFormatToString.hpp"
+#include "../Utility/File System/kFileSystem.hpp"
 
 #include <string>
 

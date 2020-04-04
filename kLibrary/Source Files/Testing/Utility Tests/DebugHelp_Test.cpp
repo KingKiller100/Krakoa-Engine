@@ -1,8 +1,8 @@
-#include <pch.hpp>
-#include <Testing/Utility Tests/DebugHelp_Test.hpp>
+#include "pch.hpp"
+#include "DebugHelp_Test.hpp"
 
-#include <Utility/Debug Helper/kDebugger.hpp>
-#include <Utility/Debug Helper/kAssert.hpp>
+#include "../../Utility/Debug Helper/kDebugger.hpp"
+#include "../../Utility/Debug Helper/kAssert.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

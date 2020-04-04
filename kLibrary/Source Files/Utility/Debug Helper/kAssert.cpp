@@ -1,8 +1,8 @@
-#include <pch.hpp>
-#include <Utility/Debug Helper/kAssert.hpp>
+#include "pch.hpp"
+#include "kAssert.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/Logging/kLogging_Class.hpp>
+#include "../Format/kFormatToString.hpp"
+#include "../Logging/kLogging_Class.hpp"
 
 namespace klib::debug
 {

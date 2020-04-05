@@ -67,4 +67,10 @@ namespace krakoa
 		for (auto& layer : layerStack)
 			(layer)->OnUpdate();
 	}
+
+	void LayerStacker::OnRender() const noexcept
+	{
+		for (auto& layer : layerStack)
+			(layer)->OnRender();
+	}
 }

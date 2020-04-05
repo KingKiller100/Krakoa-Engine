@@ -25,6 +25,10 @@ public:
 	{
 		//DBUG(e.ToString());
 	}
+
+	void OnRender() override
+	{
+	}
 };
 
 class Hooper2Game : public krakoa::Application
@@ -38,7 +42,7 @@ public:
 		SET_LOG_MIN(LOG_LVL_DBUG);
 		
 		PushLayer(new DemoLayer());
-		PushOverlay(new krakoa::ImGuiLayer());
+		//PushOverlay(new krakoa::ImGuiLayer());
 	}
 
 	~Hooper2Game()

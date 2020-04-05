@@ -3,13 +3,19 @@
 #include "EngineCore.hpp"
 #include "FPSCounter.hpp"
 
+// Window
 #include "../iWindow.hpp"
+
+// Pattern
 #include "../Patterns/SimpleSingleton.hpp"
 
+// Events
 #include "../Events System/Event.hpp"
 #include "../Events System/ApplicationEvent.hpp"
 
+// Rendering
 #include "../Rendering/LayerStacker.hpp"
+//#include "../ImGui/ImGuiLayer.hpp"
 
 #include <memory>
 
@@ -44,6 +50,7 @@ namespace krakoa
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;
+		//ImGuiLayer* pImGuiLayer;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
 	};

@@ -14,6 +14,7 @@ namespace krakoa
 		virtual void OnAttach() = 0;
 		virtual void OnDetach() = 0;
 		virtual void OnUpdate() = 0;
+		virtual void OnRender() = 0;
 		virtual void OnEvent(events::Event& e) = 0;
 
 		constexpr const char* GetName() const;

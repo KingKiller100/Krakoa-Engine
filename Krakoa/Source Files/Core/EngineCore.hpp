@@ -20,3 +20,5 @@
 // Binding
 #define KRK_BIND1(func) std::bind(&func, this, PL_HOLDER(1))
 #define KRK_BIND2(func) std::bind(&func, this, PL_HOLDER(1), PL_HOLDER(2))
+
+#define ANY_CAST(dest, source) std::any_cast<dest>(source)

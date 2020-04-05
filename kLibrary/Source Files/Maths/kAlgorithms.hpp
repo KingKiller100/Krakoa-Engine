@@ -8,6 +8,12 @@
 
 namespace kmaths
 {
+	template<typename SourceType, typename DestType>
+	USE_RESULT constexpr DestType ToType(const SourceType&& source)
+	{
+		return CAST(DestType, source);
+	}
+
 	template<typename T>
 	USE_RESULT constexpr T Max(const T lhs, const T rhs) noexcept
 	{

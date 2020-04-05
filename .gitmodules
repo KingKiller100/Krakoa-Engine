@@ -1,1 +1,4 @@
 
+[submodule "Krakoa\\Vendors\\ImGui"]
+	path = Krakoa\\Vendors\\ImGui
+	url = https://github.com/KingKiller100/imgui

@@ -2,7 +2,6 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++latest"
-    toolset "v142"
     characterset ("MBCS")
 	staticruntime "off"
 

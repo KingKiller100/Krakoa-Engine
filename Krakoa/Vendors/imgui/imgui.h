@@ -52,10 +52,10 @@ Index of this file:
 //-----------------------------------------------------------------------------
 
 // Includes
-#include <cfloat>                  // FLT_MIN, FLT_MAX
-#include <cstdarg>                 // va_list, va_start, va_end
-#include <cstddef>                 // ptrdiff_t, NULL
-#include <cstring>                 // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
+#include <float.h>                  // FLT_MIN, FLT_MAX
+#include <stdarg.h>                 // va_list, va_start, va_end
+#include <stddef.h>                 // ptrdiff_t, NULL
+#include <string.h>                 // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
 
 // Version
 // (Integer encoded as XYYZZ for use in #if preprocessor conditionals. Work in progress versions typically starts at XYY99 then bounce up to XYY00, XYY01 etc. when release tagging happens)
@@ -75,7 +75,7 @@ Index of this file:
 
 // Helper Macros
 #ifndef IM_ASSERT
-#include <cassert>
+#include <assert.h>
 #define IM_ASSERT(_EXPR)            assert(_EXPR)                               // You can override the default assert handler by editing imconfig.h
 #endif
 #if !defined(IMGUI_USE_STB_SPRINTF) && (defined(__clang__) || defined(__GNUC__))
@@ -1287,7 +1287,7 @@ struct ImVector
     inline ImVector()                                       { Size = Capacity = 0; Data = NULL; }
     inline ImVector(const ImVector<T>& src)                 { Size = Capacity = 0; Data = NULL; operator=(src); }
     inline ImVector<T>& operator=(const ImVector<T>& src)   { clear(); resize(src.Size); memcpy(Data, src.Data, (size_t)Size * sizeof(T)); return *this; }
-    inline ~ImVector()                                      { if (Data) ImGui::MemFree(Data); }
+    inline ~ImVector()                                      { if (Data) IM_FREE(Data); }
 
     inline bool         empty() const                       { return Size == 0; }
     inline int          size() const                        { return Size; }

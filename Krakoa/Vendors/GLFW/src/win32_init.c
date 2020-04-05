@@ -57,7 +57,7 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 
 // GLFW DLL entry point
 //
-BOOL WINAPI DllMain(HINSTANCE pInstance, DWORD reason, LPVOID reserved)
+BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
 {
     return TRUE;
 }

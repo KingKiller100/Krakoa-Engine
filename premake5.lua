@@ -38,7 +38,7 @@ project "Krakoa"
     kind "SharedLib"
     language "C++"
     cppdialect "C++latest"
-    toolset "v142"
+    -- toolset "v142"
     characterset ("MBCS")
 	staticruntime "off"
 
@@ -144,7 +144,7 @@ project "Hooper2"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++latest"
-    toolset "v142"
+    -- toolset "v142"
     characterset ("MBCS")
 
     targetdir ("bin/Game/%{prj.name}")

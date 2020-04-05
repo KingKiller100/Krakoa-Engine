@@ -5840,7 +5840,7 @@ GLFWAPI const char** glfwGetRequiredInstanceExtensions(uint32_t* count);
  *
  *  @ingroup vulkan
  */
-GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance pInstance, const char* procname);
+GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
 
 /*! @brief Returns whether the specified queue family can present images.
  *
@@ -5877,7 +5877,7 @@ GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance pInstance, const char* 
  *
  *  @ingroup vulkan
  */
-GLFWAPI int glfwGetPhysicalDevicePresentationSupport(VkInstance pInstance, VkPhysicalDevice device, uint32_t queuefamily);
+GLFWAPI int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
 
 /*! @brief Creates a Vulkan surface for the specified window.
  *
@@ -5938,7 +5938,7 @@ GLFWAPI int glfwGetPhysicalDevicePresentationSupport(VkInstance pInstance, VkPhy
  *
  *  @ingroup vulkan
  */
-GLFWAPI VkResult glfwCreateWindowSurface(VkInstance pInstance, GLFWwindow* pWindow, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
 #endif /*VK_VERSION_1_0*/
 

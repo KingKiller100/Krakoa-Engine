@@ -26,8 +26,8 @@ namespace krakoa
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
 		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
 
-		//pImGuiLayer = new ImGuiLayer();
-		//PushOverlay(pImGuiLayer);
+		pImGuiLayer = new ImGuiLayer();
+		PushOverlay(pImGuiLayer);
 	}
 
 	Application::~Application()
@@ -81,9 +81,9 @@ namespace krakoa
 
 		layerStack.OnUpdate();
 
-		//pImGuiLayer->BeginDraw();
+		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();
-		//pImGuiLayer->EndDraw();
+		pImGuiLayer->EndDraw();
 
 		pWindow->OnUpdate();
 	}

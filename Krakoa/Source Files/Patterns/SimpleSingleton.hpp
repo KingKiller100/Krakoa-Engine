@@ -7,23 +7,24 @@ namespace pattern
 	class KRAKOA_API SimpleSingleton
 	{
 	public:
-		SimpleSingleton() {}
+		constexpr SimpleSingleton() noexcept
+		{}
 
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
 
-		static inline T& Reference()
+		constexpr static inline T& Reference()
 		{
 			return *instance;
 		}
 
-		static inline T* Pointer() noexcept
+		constexpr static inline T* Pointer()
 		{
 			return instance;
 		}
 
 		template<class ThisOrChild>
-		static inline void Create()
+		constexpr static inline void Create()
 		{
 			if (!instance)
 				instance = new ThisOrChild(Token());

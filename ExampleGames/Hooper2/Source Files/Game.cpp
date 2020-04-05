@@ -21,13 +21,13 @@ public:
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_SPACE))
 			DBUG("Space bar has been pressed!");
 	}
+
+	void OnRender() override
+	{}
+
 	void OnEvent(krakoa::events::Event& e) override
 	{
 		//DBUG(e.ToString());
-	}
-
-	void OnRender() override
-	{
 	}
 };
 
@@ -56,8 +56,7 @@ public:
 	}
 };
 
-krakoa::Application* krakoa::CreateApplication()
+void krakoa::CreateApplication()
 {
 	Application::Create<Hooper2Game>();
-	return Application::Pointer();
 }

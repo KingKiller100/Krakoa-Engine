@@ -14,4 +14,9 @@ namespace krakoa
 		pClientLogger->ChangeFilename(name);
 		pClientLogger->OutputInitialized();
 	}
+
+	klib::kLogs::Logging & Logger::GetClientLogger()
+	{
+		return *pClientLogger;
+	}
 }

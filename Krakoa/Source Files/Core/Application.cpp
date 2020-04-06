@@ -90,7 +90,7 @@ namespace krakoa
 		pWindow->OnUpdate();
 	}
 
-	constexpr bool Application::IsRunning() const
+	bool Application::IsRunning() const
 	{
 		return isRunning;
 	}

@@ -1,11 +1,18 @@
 #pragma once
 
 #if KLIB_LIB
-#	define KLIB_API __declspec(dllexport)
-#	define PORT_LIB
-#else
-#	define KLIB_API __declspec(dllimport)
-#	define PORT_LIB extern
+//#	if KLIB_DYNAMIC_LINK
+//#		ifdef KLIB_BUILD_DLL
+//#			define KLIB_API __declspec(dllexport)
+//#			define PORT_LIB
+//#		else
+//#			define KLIB_API __declspec(dllimport)
+//#			define PORT_LIB extern
+//#		endif
+//#	else
+//#		define KLIB_API 
+//#		define PORT_LIB 
+//#	endif
 #endif
 
 #if _MSVC_LANG > 201402L

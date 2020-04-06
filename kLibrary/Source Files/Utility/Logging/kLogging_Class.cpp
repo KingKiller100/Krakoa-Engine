@@ -96,7 +96,7 @@ namespace klib::kLogs
 		isEnabled = !isEnabled;
 	}
 
-	constexpr void Logging::ToggleSubSystemEnabled() noexcept
+	void Logging::ToggleSubSystemEnabled() noexcept
 	{
 		subSystemLoggingEnabled = !subSystemLoggingEnabled;
 	}

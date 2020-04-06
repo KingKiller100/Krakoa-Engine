@@ -3,7 +3,7 @@ project "ImGui"
 	language "C++"
 	cppdialect "C++latest"
     characterset ("MBCS")
-	staticruntime "off"
+	staticruntime "on"
 
 	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
 	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -29,7 +29,6 @@ project "ImGui"
 
 	filter "system:windows"
 		systemversion "latest"
-		staticruntime "On"
 		
 	filter "system:linux"
 		pic "On"

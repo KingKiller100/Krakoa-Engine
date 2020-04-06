@@ -1,20 +1,13 @@
 #pragma once
 
 #include "../../HelperMacros.hpp"
+
 #include <deque>
 #include <fstream>
 #include <string>
 
 namespace klib::kLogs
 {
-#if defined (_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable:4251)
-#	pragma warning(disable:4275)
-	PORT_LIB template class KLIB_API std::basic_string<char>;
-	PORT_LIB template class KLIB_API std::basic_fstream<char>;
-	PORT_LIB template class KLIB_API std::deque<std::basic_string<char>>;
-
 	enum class LLevel : unsigned short
 	{
 		BANR, // Log Banner
@@ -26,7 +19,7 @@ namespace klib::kLogs
 		FATL  // Fatal
 	};
 	
-	class KLIB_API Logging
+	class Logging
 	{
 	public:
 		using LogQueue = std::deque<std::string>;
@@ -94,7 +87,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Toggles if sub system outputting is enabled
 		 */
-		constexpr void ToggleSubSystemEnabled() noexcept;
+		void ToggleSubSystemEnabled() noexcept;
 
 		/**
 		 * \brief
@@ -264,7 +257,5 @@ namespace klib::kLogs
 		bool subSystemLoggingEnabled;
 		bool inCacheMode;
 	};
-#	pragma warning(pop)
-#endif
 }
 

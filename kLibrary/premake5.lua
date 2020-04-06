@@ -4,7 +4,7 @@ project "kLibrary"
     language "C++"
     cppdialect "C++latest"
     characterset ("MBCS")
-	staticruntime "off"
+	staticruntime "on"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
 	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -20,7 +20,6 @@ project "kLibrary"
     }
 
     filter "system:Windows"
-        staticruntime "On"
         systemversion "latest"
 
         defines

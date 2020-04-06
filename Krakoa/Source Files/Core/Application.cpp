@@ -42,15 +42,19 @@ namespace krakoa
 		pImGuiLayer = new ImGuiLayer();
 		PushOverlay(pImGuiLayer);
 
+		input::InputManager::Initialize();
 
+		// bind data to the vertex array
 		glGenVertexArrays(1, &vertexArray);
 		glBindVertexArray(vertexArray);
 
+		// bind data to vertex buffer
 		glGenBuffers(1, &vertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
+		// Vertices points
 		kmaths::Matrix3x3f vertices;
-		vertices[0] = { -0.5f, -0.5f };
+		vertices[0] = { -0.5f, -0.5f, 0.f };
 		vertices[1] = { 0.5f, -0.5f, 0.f };
 		vertices[2] = { 0.f, 0.5f, 0.f };
 
@@ -64,7 +68,30 @@ namespace krakoa
 		unsigned indices[3] = { 0, 1, 2 };
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof indices, indices, GL_STATIC_DRAW);
 
-		input::InputManager::Initialize();
+		const std::string_view vertexSource = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 in_position;
+
+			void main()
+			{
+				gl_Position = vec4(in_position, 1.0);
+			}
+		)";
+
+
+		const std::string_view fragmentSource = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 out_color;
+
+			void main()
+			{
+				out_color = vec4(0.0, 0.2, 0.8, 1.0);
+			}
+		)";
+
+		pShader = std::unique_ptr<graphics::ShaderOpenGL>(new graphics::ShaderOpenGL(vertexSource, fragmentSource));
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -112,6 +139,7 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
+		pShader->Bind();
 		glBindVertexArray(vertexArray);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 

@@ -68,14 +68,14 @@ namespace klib::kLogs
 		InitializeLogLevelMap();
 		InitializeOutputToConsoleColourMap();
 	}
-	
+
 	void Logging::OutputInitialized()
 	{
 		if (!isEnabled) { return; }
 
-		const auto startLog = 
-			"************************************************************************\n      Logging Initialized:    " 
-			+ GetDateInTextFormat(false) + "    " + GetTimeText() 
+		const auto startLog =
+			"************************************************************************\n      Logging Initialized:    "
+			+ GetDateInTextFormat(false) + "    " + GetTimeText()
 			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);
@@ -211,8 +211,8 @@ namespace klib::kLogs
 
 	void Logging::FinalOutput()
 	{
-		const auto endLogLine 
-		    = R"(
+		const auto endLogLine
+			= R"(
 ***********************************************************************
                           Logging Concluded                            
 ***********************************************************************
@@ -243,7 +243,7 @@ namespace klib::kLogs
 	{
 		if (!subSystemLoggingEnabled)
 			return;
-		
+
 #ifdef _DEBUG
 		OutputDebugStringA(logLine.data());
 #endif
@@ -261,7 +261,7 @@ namespace klib::kLogs
 
 		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
-		
+
 		printf_s("%s", log.data());
 
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
@@ -274,7 +274,7 @@ namespace klib::kLogs
 
 		auto fullCache = GetFullCache();
 		fullCache += line;
-		
+
 		if (!logFileStream.is_open())
 		{
 			const auto path = directory + filename;
@@ -288,8 +288,11 @@ namespace klib::kLogs
 
 	std::string Logging::GetFullCache()
 	{
-		if (!(isEnabled))
-			return "\t\tLOGGING NOT INITIALIZED!\n\tTO USE CALL THE 'INITIALIZE' METHOD BEFORE USES";
+		if (!isEnabled)
+		{
+			OutputToSubSystems("\t\tLOGGING DISABLED!\n\RESART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LLevel::WARN);
+			return "";
+		}
 
 		LogQueue::value_type fullLog;
 		while (!logEntryQueue.empty())

@@ -24,7 +24,7 @@ namespace klib
 #	define kAssert(condition, msg)\
 	{\
 		if((condition) == false)\
-			throw ::klib::debug::AssertOnFailedConditionException(#condition, ##msg, __FILE__, (unsigned)(__LINE__));\
+			throw ::klib::debug::AssertOnFailedConditionException(#condition, msg, __FILE__, (unsigned)(__LINE__));\
 	}\
 
 #else

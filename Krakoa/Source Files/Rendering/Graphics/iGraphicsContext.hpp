@@ -2,8 +2,6 @@
 
 #include "../../Core/EngineCore.hpp"
 
-#include <any>
-
 namespace krakoa::graphics
 {
 	class iContext

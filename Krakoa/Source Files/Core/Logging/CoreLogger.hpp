@@ -8,11 +8,6 @@
 
 namespace krakoa
 {
-#if defined (_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable:4251)
-	EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<klib::kLogs::Logging, std::default_delete<klib::kLogs::Logging>>;
-
 	class KRAKOA_API CoreLogger
 	{
 	public:
@@ -23,8 +18,6 @@ namespace krakoa
 	private:
 		static std::unique_ptr<klib::kLogs::Logging> pCoreLogger;
 	};
-#	pragma warning(pop)
-#endif
 }
 
 // Initializer

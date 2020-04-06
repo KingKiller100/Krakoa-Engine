@@ -21,11 +21,6 @@
 
 namespace krakoa
 {
-#if defined (_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable:4251)
-		EXPIMP_TEMPLATE template class KRAKOA_API std::unique_ptr<iWindow, std::default_delete<iWindow>>;
-
 	class KRAKOA_API Application : public pattern::SimpleSingleton<Application>
 	{
 	public:
@@ -56,8 +51,4 @@ namespace krakoa
 	};
 
 	void CreateApplication();
-
-		EXPIMP_TEMPLATE template class KRAKOA_API pattern::SimpleSingleton<Application>;
-#	pragma warning(pop)
-#endif
 }

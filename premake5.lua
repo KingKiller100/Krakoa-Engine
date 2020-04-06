@@ -35,12 +35,11 @@ group "Engine"
 
 project "Krakoa"
     location "Krakoa"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
-    -- toolset "v142"
     characterset ("MBCS")
-	staticruntime "off"
+	staticruntime "on"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -75,16 +74,6 @@ project "Krakoa"
         "GLAD",
         "ImGui",
         "opengl32.lib"
-    }
-
-    prebuildcommands
-    {
-        ("IF EXIST \"$(SolutionDir)bin\\Game\\Hooper2\\Krakoa.dll\" ( del \"$(SolutionDir)bin\\Game\\Hooper2\\Krakoa.dll\" /f /q)")
-    }
-
-    postbuildcommands
-    {
-        ("xcopy /y \"$(SolutionDir)bin\\" .. OutputDir .. "Krakoa\\Krakoa.dll\" \"$(SolutionDir)bin\\Game\\Hooper2\\\" /q")
     }
 
     filter "system:Windows"
@@ -144,8 +133,8 @@ project "Hooper2"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++latest"
-    -- toolset "v142"
     characterset ("MBCS")
+    staticruntime "On"
 
     targetdir ("bin/Game/%{prj.name}")
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -161,9 +150,7 @@ project "Hooper2"
         "kLibrary/Source Files",
         "Krakoa/Source Files",
         "Krakoa/Vendors/",
-        "Krakoa/Vendors/"
     }
-
 
     links
     {
@@ -171,7 +158,6 @@ project "Hooper2"
     }
 
     filter "system:Windows"
-        staticruntime "On"
         systemversion "latest"
         
         defines

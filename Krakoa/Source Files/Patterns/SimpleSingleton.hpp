@@ -4,7 +4,7 @@
 namespace pattern
 {
 	template <class T>
-	class KRAKOA_API SimpleSingleton
+	class SimpleSingleton
 	{
 	public:
 		constexpr SimpleSingleton() noexcept

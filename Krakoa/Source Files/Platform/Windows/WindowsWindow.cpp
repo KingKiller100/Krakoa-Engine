@@ -2,13 +2,16 @@
 #include "WindowsWindow.hpp"
 		 
 #include "../../Core/Logging/CoreLogger.hpp"
+
 #include "../../Events System/ApplicationEvent.hpp"
 #include "../../Events System/KeyEvent.hpp"
 #include "../../Events System/MouseEvent.hpp"
 
+// Renderer
+#include "../../Platform/OpenGL/OpenGLContext.hpp";
+
 #include <Utility/Format/kFormatToString.hpp>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace krakoa
@@ -69,13 +72,12 @@ namespace krakoa
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
 		KRK_FATAL(window, "Window pointer not created");
-		glfwMakeContextCurrent(window);
-		SetVsync(true);
-
-		const auto gladStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		KRK_FATAL(gladStatus, "FAILED: Unable to initialize GLAD");
+		
+		pRenderContext = std::make_unique<graphics::OpenGLContext>(window);
+		pRenderContext->Init();
 
 		glfwSetWindowUserPointer(window, &data);
+		SetVsync(true);
 
 		SetUpCallBacks();
 	}
@@ -179,8 +181,7 @@ namespace krakoa
 		// Vector2s size;
 		// glfwGetFramebufferSize(window, &size.X(), &size.Y());
 		// glViewport(0, 0, size.X(), size.Y());
-
-		glfwSwapBuffers(window);
+		pRenderContext->SwapBuffers();
 	}
 
 	kmaths::Vector2u& WindowsWindow::GetDimensions()

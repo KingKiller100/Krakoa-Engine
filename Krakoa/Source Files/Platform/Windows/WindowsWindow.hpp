@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../iWindow.hpp"
+#include "../../Rendering/Graphics/iGraphicsContext.hpp"
 
 struct GLFWwindow;
 
@@ -35,7 +36,8 @@ namespace krakoa
 		void SetUpCallBacks() const;
 
 	private:
-		GLFWwindow *window{};
+		GLFWwindow *window;
+		std::unique_ptr<graphics::iContext> pRenderContext;
 
 		struct WindowData
 		{

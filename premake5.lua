@@ -160,6 +160,7 @@ project "Hooper2"
     {
         "kLibrary/Source Files",
         "Krakoa/Source Files",
+        "Krakoa/Vendors/",
         "Krakoa/Vendors/"
     }
 

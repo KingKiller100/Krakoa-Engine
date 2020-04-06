@@ -27,10 +27,11 @@ namespace krakoa
 		std::vector<LayerBase*>::iterator end();
 
 		void OnUpdate() const noexcept;
+		void OnRender() const noexcept;
 
 	private:
 		std::vector<LayerBase*> layerStack;
-		std::vector<LayerBase*>::iterator layerIter;
+		unsigned layerIterIndex;
 	};
 #	pragma warning(pop)
 #endif

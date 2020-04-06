@@ -4,7 +4,7 @@
 
 #include <memory>
 
-extern krakoa::Application* krakoa::CreateApplication();
+extern void krakoa::CreateApplication();
 
 bool RunTestsOnkLibrary();
 
@@ -12,7 +12,8 @@ int main(int argc, char** argv)
 {
 	if (!RunTestsOnkLibrary())
 	{
-		auto pApp = std::unique_ptr<krakoa::Application>(krakoa::CreateApplication());
+		krakoa::CreateApplication();
+		auto pApp = std::unique_ptr<krakoa::Application>(krakoa::Application::Pointer());
 
 		pApp->Initialize();
 

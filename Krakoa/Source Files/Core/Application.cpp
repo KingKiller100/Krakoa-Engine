@@ -24,7 +24,7 @@ namespace krakoa
 		KRK_FATAL(!instance, "Instance of the application already exists!");
 
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
-		pWindow->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
 	}
 
 	Application::~Application()
@@ -32,8 +32,13 @@ namespace krakoa
 
 	void Application::Initialize()
 	{
-		isRunning = true;
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
+
+		isRunning = true;
+
+		pImGuiLayer = new ImGuiLayer();
+		PushOverlay(pImGuiLayer);
+
 		input::InputManager::Initialize();
 	}
 
@@ -77,6 +82,11 @@ namespace krakoa
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
 		layerStack.OnUpdate();
+
+		pImGuiLayer->BeginDraw();
+		layerStack.OnRender();
+		pImGuiLayer->EndDraw();
+
 		pWindow->OnUpdate();
 	}
 

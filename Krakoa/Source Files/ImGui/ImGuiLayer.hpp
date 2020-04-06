@@ -18,20 +18,11 @@ namespace krakoa
 		void OnAttach() override;
 		void OnDetach() override;
 		void OnUpdate() override;
+		void OnRender() override;
 		void OnEvent(events::Event& e) override;
 
-	private:
-		bool OnMousePressedEvent(events::MouseButtonPressedEvent& e);
-		bool OnMouseReleasedEvent(events::MouseButtonReleasedEvent& e);
-		bool OnMouseMovedEvent(events::MouseMovedEvent& e);
-		bool OnMouseScrolledEvent(events::MouseScrolledEvent& e);
-		
-		bool OnKeyPressedEvent(events::KeyPressedEvent& e);
-		bool OnKeyReleasedEvent(events::KeyReleasedEvent& e);
-		bool OnKeyTypedEvent(events::KeyTypedEvent& e);
-		
-		bool OnWindowResizedEvent(events::WindowResizeEvent& e);
-
+		void BeginDraw();
+		void EndDraw();
 
 	private:
 		float time;

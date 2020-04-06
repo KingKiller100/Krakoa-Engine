@@ -1,5 +1,7 @@
 #include <Krakoa.hpp>
 
+#include <imgui/imgui.h>
+
 class DemoLayer : public krakoa::LayerBase
 {
 public:
@@ -21,6 +23,14 @@ public:
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_SPACE))
 			DBUG("Space bar has been pressed!");
 	}
+
+	void OnRender() override
+	{
+		ImGui::Begin("Demo");
+		ImGui::Text("This is the demo layer's window");
+		ImGui::End();
+	}
+
 	void OnEvent(krakoa::events::Event& e) override
 	{
 		//DBUG(e.ToString());
@@ -38,7 +48,7 @@ public:
 		SET_LOG_MIN(LOG_LVL_DBUG);
 		
 		PushLayer(new DemoLayer());
-		PushOverlay(new krakoa::ImGuiLayer());
+		//PushOverlay(new krakoa::ImGuiLayer());
 	}
 
 	~Hooper2Game()
@@ -52,8 +62,7 @@ public:
 	}
 };
 
-krakoa::Application* krakoa::CreateApplication()
+void krakoa::CreateApplication()
 {
 	Application::Create<Hooper2Game>();
-	return Application::Pointer();
 }

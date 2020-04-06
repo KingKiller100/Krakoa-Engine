@@ -29,7 +29,7 @@ namespace krakoa
 
 		void Initialize();
 		void Run();
-		USE_RESULT constexpr bool IsRunning() const;
+		USE_RESULT bool IsRunning() const;
 		virtual void Shutdown() {}
 
 		iWindow& GetWindow() const;

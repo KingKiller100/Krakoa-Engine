@@ -87,7 +87,7 @@ namespace klib::kLogs
 		 * \brief
 		 *		Toggles if sub system outputting is enabled
 		 */
-		constexpr void ToggleSubSystemEnabled() noexcept;
+		void ToggleSubSystemEnabled() noexcept;
 
 		/**
 		 * \brief

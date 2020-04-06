@@ -44,7 +44,8 @@ public:
 		: Application(t)
 	{
 		INIT_LOGS("Hooper2");
-		TOGGLE_SUBSYSTEM_LOGGING();
+		//TOGGLE_SUBSYSTEM_LOGGING();
+		::krakoa::Logger::GetClientLogger().ToggleSubSystemEnabled();
 		SET_LOG_MIN(LOG_LVL_DBUG);
 		
 		PushLayer(new DemoLayer());

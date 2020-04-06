@@ -13,7 +13,7 @@ namespace krakoa
 	public:
 		// client side
 		static void ClientInit(const char * name);
-		static klib::kLogs::Logging& GetClientLogger()          { return *pClientLogger; }
+		static klib::kLogs::Logging& GetClientLogger();
 
 	private:
 		static std::unique_ptr<klib::kLogs::Logging> pClientLogger;

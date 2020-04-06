@@ -6,9 +6,8 @@
 namespace krakoa
 {
 	LayerStacker::LayerStacker()
-	{
-		layerIter = begin();
-	}
+		: layerIterIndex(0)
+	{}
 
 	LayerStacker::~LayerStacker()
 	{
@@ -21,7 +20,8 @@ namespace krakoa
 
 	void LayerStacker::PushLayer(LayerBase* layer)
 	{
-		layerIter = layerStack.emplace(layerIter, layer);
+		layerStack.emplace(layerStack.begin() + layerIterIndex, layer);
+		layerIterIndex++;
 		layer->OnAttach();
 	}
 
@@ -38,7 +38,7 @@ namespace krakoa
 		{
 			(*iter)->OnDetach();
 			layerStack.erase(iter);
-			--layerIter;
+			--layerIterIndex;
 		}
 	}
 

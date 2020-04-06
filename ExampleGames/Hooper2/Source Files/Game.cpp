@@ -1,5 +1,7 @@
 #include <Krakoa.hpp>
 
+#include <imgui/imgui.h>
+
 class DemoLayer : public krakoa::LayerBase
 {
 public:
@@ -23,7 +25,11 @@ public:
 	}
 
 	void OnRender() override
-	{}
+	{
+		ImGui::Begin("Demo");
+		ImGui::Text("This is the demo layer's window");
+		ImGui::End();
+	}
 
 	void OnEvent(krakoa::events::Event& e) override
 	{

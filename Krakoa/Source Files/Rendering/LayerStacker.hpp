@@ -31,7 +31,7 @@ namespace krakoa
 
 	private:
 		std::vector<LayerBase*> layerStack;
-		std::vector<LayerBase*>::iterator layerIter;
+		unsigned layerIterIndex;
 	};
 #	pragma warning(pop)
 #endif

@@ -25,9 +25,6 @@ namespace krakoa
 
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
 		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
-
-		pImGuiLayer = new ImGuiLayer();
-		PushOverlay(pImGuiLayer);
 	}
 
 	Application::~Application()
@@ -35,8 +32,13 @@ namespace krakoa
 
 	void Application::Initialize()
 	{
-		isRunning = true;
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
+
+		isRunning = true;
+
+		pImGuiLayer = new ImGuiLayer();
+		PushOverlay(pImGuiLayer);
+
 		input::InputManager::Initialize();
 	}
 

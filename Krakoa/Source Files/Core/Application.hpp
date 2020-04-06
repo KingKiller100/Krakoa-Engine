@@ -48,6 +48,9 @@ namespace krakoa
 		ImGuiLayer* pImGuiLayer;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
+
+	private:
+		unsigned vertexArray, vertexBuffer, indexBuffer;
 	};
 
 	void CreateApplication();

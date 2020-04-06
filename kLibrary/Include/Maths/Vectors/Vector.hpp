@@ -33,14 +33,16 @@ namespace kmaths
 				axis = _v;
 		}
 
-		constexpr Vector(const std::initializer_list<T> l)
+		constexpr Vector(const std::initializer_list<T>& l)
 		{
-			if (N > l.size())
+			const auto size = l.size();
+
+			if (N < size)
 				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
 
 			const auto first_iter = l.begin();
 
-			for (auto i = 0; i < N; ++i)
+			for (auto i = 0; i < size; ++i)
 				dimensions[i] = *(first_iter + i);
 		}
 
@@ -84,7 +86,7 @@ namespace kmaths
 			return dimensions[2];
 		}
 
-		
+
 		template<typename U = Type>
 		USE_RESULT constexpr std::enable_if_t<N >= 4, const U&> W() const noexcept
 		{
@@ -199,16 +201,21 @@ namespace kmaths
 			return Vector(-Y(), X());
 		}
 
-
 		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
 			&& !std::is_unsigned_v<X>
 			&& N == 3,
 			Vector> CrossProduct(const Vector<N, X>& v) const noexcept
 		{
-			return Vector( (this->Y() * v.Z() - this->Z() * v.Y()),
-				           (this->Z() * v.X() - this->X() * v.Z()),
-				           (this->X() * v.Y() - this->Y() * v.X()) );
+			return Vector((this->Y() * v.Z() - this->Z() * v.Y()),
+				(this->Z() * v.X() - this->X() * v.Z()),
+				(this->X() * v.Y() - this->Y() * v.X()));
+		}
+
+		USE_RESULT constexpr Type* GetPointerToData() const
+		{
+			Type& first = (Type)dimensions[0];
+			return std::addressof<Type>(first);
 		}
 
 		USE_RESULT constexpr Type& operator[](const size_t index)
@@ -274,7 +281,7 @@ namespace kmaths
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.NumberOfDimensions() > i) 
+				copy[i] = (other.NumberOfDimensions() > i)
 					? dimensions[i] / static_cast<Type>(other[i])
 					: copy[i] = dimensions[i];
 			}
@@ -400,6 +407,6 @@ namespace kmaths
 			= delete;
 
 	private:
-		T dimensions[N];
+		T dimensions[N]{ 0 };
 	};
 }

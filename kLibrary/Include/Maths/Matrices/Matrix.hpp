@@ -298,6 +298,11 @@ namespace kmaths
 			return Columns;
 		}
 
+		USE_RESULT constexpr Type* GetPointerToData() const
+		{
+			return elems[0].GetPointerToData();
+		}
+
 		// Operators
 		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{

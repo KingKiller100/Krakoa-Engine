@@ -8,7 +8,7 @@
 #include "../../Events System/MouseEvent.hpp"
 
 // Renderer
-#include "../../Platform/OpenGL/OpenGLContext.hpp";
+#include "../../Platform/OpenGL/OpenGLContext.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
 

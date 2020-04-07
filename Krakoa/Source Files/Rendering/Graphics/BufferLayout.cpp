@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "BufferLayout.hpp"
 
+#include <GLAD/glad.h>
+
 
 namespace krakoa::graphics
 {
@@ -13,7 +15,7 @@ namespace krakoa::graphics
 		CalculateOffsetAndStride();
 	}
 
-	constexpr uint32_t BufferLayout::GetStride() const noexcept
+	uint32_t BufferLayout::GetStride() const noexcept
 	{
 		return stride;
 	}
@@ -62,5 +64,6 @@ namespace krakoa::graphics
 	{
 		return elements[index];
 	}
+
 
 }

@@ -10,8 +10,6 @@
 #include "../Rendering/Graphics/BufferLayout.hpp"
 #include "../Platform/OpenGL/OpenGLShader.hpp"
 
-
-
 #include <Utility/Timer/kTimer.hpp>
 #include <Maths/Matrices/PredefinedMatrices.hpp>
 #include <Maths/Vectors/PredefinedVectors.hpp>
@@ -22,6 +20,29 @@ namespace krakoa
 {
 	using namespace klib;
 	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
+
+	GLenum ShaderDataTypeToRenderAPIBaseType(graphics::ShaderDataType type)
+	{
+		switch (type) {
+		case krakoa::graphics::ShaderDataType::INT:	      return GL_INT;
+		case krakoa::graphics::ShaderDataType::INT2:      return GL_INT;
+		case krakoa::graphics::ShaderDataType::INT3:      return GL_INT;
+		case krakoa::graphics::ShaderDataType::INT4:      return GL_INT;
+		case krakoa::graphics::ShaderDataType::FLOAT:     return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::FLOAT2:    return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::FLOAT3:    return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::FLOAT4:    return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::MAT2:      return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::MAT3:      return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::MAT4:      return GL_FLOAT;
+		case krakoa::graphics::ShaderDataType::BOOL:      return GL_BOOL;
+		default:
+		{
+			KRK_FATAL(false, "Unknown ShaderDataType");
+			return 0;
+		}
+		}
+	}
 
 	Application::Application(Token&)
 		: isRunning(false),
@@ -63,30 +84,17 @@ namespace krakoa
 
 		// Triangle creation code
 		// Vertices points
-		kmaths::Matrix3x3f vertices;
-		vertices[0] = Vector3f(-0.5f, -0.5f, 0.f);
-		vertices[1] = Vector3f(0.5f, -0.5f, 0.f);
-		vertices[2] = Vector3f(0.f, 0.5f, 0.f);
+		kmaths::Matrix<float, 3, 7> vertices;
+		vertices[0] = { -0.5f, -0.5f, 0.f, 0.95, 0.3, 0.10, 1.0 };
+		vertices[1] = { 0.5f, -0.5f, 0.f, 0.25, 0.9, 0.85, 1.0 };
+		vertices[2] = { 0.f, 0.5f, 0.f, 0.95, 0.3, 0.78, 1.0 };
 
 		graphics::BufferLayout bufferLayout = {
-			{graphics::ShaderDataType::FLOAT3, "in_Position"}
+			{graphics::ShaderDataType::FLOAT3, "in_Position"},
+			{graphics::ShaderDataType::FLOAT4, "in_Colour"}
 		};
 
 		pVertexArray = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
-		pVertexBuffer->SetLayout(bufferLayout);
-
-		for (auto idx = 0u; idx < bufferLayout.GetSize(); ++idx)
-		{
-			glEnableVertexAttribArray(idx);
-			glVertexAttribPointer(idx,
-				graphics::GetComponentCount(bufferLayout[idx].type),
-				graphics::ShaderDataTypeToRenderAPIBaseType(bufferLayout[idx].type),
-				bufferLayout[idx].normalized ? GL_TRUE : GL_FALSE, 
-				bufferLayout.GetStride(), 
-				(const void*)bufferLayout[idx].offset);
-		}
-
-		// bind data to the vertex array
 
 		pVertexBuffer = std::unique_ptr<graphics::iVertexBuffer>(
 			graphics::iVertexBuffer::Create(
@@ -94,6 +102,19 @@ namespace krakoa
 				sizeof(vertices))
 			);
 
+		pVertexBuffer->SetLayout(bufferLayout);
+
+		for (auto idx = 0u; idx < bufferLayout.GetSize(); ++idx)
+		{
+			glEnableVertexAttribArray(idx);
+			glVertexAttribPointer(idx,
+				graphics::GetComponentCount(bufferLayout[idx].type),
+				ShaderDataTypeToRenderAPIBaseType(bufferLayout[idx].type),
+				bufferLayout[idx].normalized ? GL_TRUE : GL_FALSE, 
+				bufferLayout.GetStride(), 
+				(const void*)bufferLayout[idx].offset);
+		}
+		
 		uint32_t indices[3] = { 0, 1, 2 };
 		pIndexBuffer = std::unique_ptr<graphics::iIndexBuffer>(
 			graphics::iIndexBuffer::Create(
@@ -105,11 +126,14 @@ namespace krakoa
 			#version 330 core
 
 			layout(location = 0) in vec3 in_Position;
+			layout(location = 1) in vec4 in_Colour;
 
 			out vec3 v_Position;
+			out vec4 v_Colour;
 
 			void main()
 			{
+				v_Colour = in_Colour;
 				v_Position = in_Position;
 				gl_Position = vec4(in_Position, 1.0);
 			}
@@ -122,10 +146,11 @@ namespace krakoa
 			layout(location = 0) out vec4 out_color;
 
 			in vec3 v_Position;
+			in vec4 v_Colour;
 
 			void main()
 			{
-				out_color = vec4(v_Position + 0.25, 1.0);
+				out_color = v_Colour;
 			}
 		)";
 

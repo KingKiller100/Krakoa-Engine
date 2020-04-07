@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "OpenGLVertexArray.hpp"
 
+#include "../../Rendering/Graphics/BufferLayout.hpp"
+
 #include <GLAD/glad.h>
 
 namespace krakoa::graphics

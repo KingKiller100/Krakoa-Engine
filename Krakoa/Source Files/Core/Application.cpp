@@ -2,12 +2,15 @@
 #include "Application.hpp"
 
 #include "Logging/CoreLogger.hpp"
-#include "../Rendering/LayerBase.hpp"
-#include "../Rendering/Renderer.hpp"
 
 #include "../Input/InputManager.hpp"
 
+#include "../Rendering/LayerBase.hpp"
+#include "../Rendering/Renderer.hpp"
+#include "../Rendering/Graphics/BufferLayout.hpp"
 #include "../Platform/OpenGL/OpenGLShader.hpp"
+
+
 
 #include <Utility/Timer/kTimer.hpp>
 #include <Maths/Matrices/PredefinedMatrices.hpp>
@@ -65,16 +68,30 @@ namespace krakoa
 		vertices[1] = Vector3f(0.5f, -0.5f, 0.f);
 		vertices[2] = Vector3f(0.f, 0.5f, 0.f);
 
-		// bind data to the vertex array
-		pVertexArray = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
+		graphics::BufferLayout bufferLayout = {
+			{graphics::ShaderDataType::FLOAT3, "in_Position"}
+		};
 
+		pVertexArray = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
+		pVertexBuffer->SetLayout(bufferLayout);
+
+		for (auto idx = 0u; idx < bufferLayout.GetSize(); ++idx)
+		{
+			glEnableVertexAttribArray(idx);
+			glVertexAttribPointer(idx,
+				graphics::GetComponentCount(bufferLayout[idx].type),
+				graphics::ShaderDataTypeToRenderAPIBaseType(bufferLayout[idx].type),
+				bufferLayout[idx].normalized ? GL_TRUE : GL_FALSE, 
+				bufferLayout.GetStride(), 
+				(const void*)bufferLayout[idx].offset);
+		}
+
+		// bind data to the vertex array
 
 		pVertexBuffer = std::unique_ptr<graphics::iVertexBuffer>(
 			graphics::iVertexBuffer::Create(
 				vertices.GetPointerToData(),
-				sizeof(vertices),
-				vertices.GetRows(),
-				vertices.GetColumns())
+				sizeof(vertices))
 			);
 
 		uint32_t indices[3] = { 0, 1, 2 };

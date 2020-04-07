@@ -290,7 +290,7 @@ namespace klib::kLogs
 	{
 		if (!isEnabled)
 		{
-			OutputToSubSystems("\t\tLOGGING DISABLED!\n\RESART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LLevel::WARN);
+			OutputToSubSystems("\t\tLOGGING DISABLED!\nRESART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LLevel::WARN);
 			return "";
 		}
 

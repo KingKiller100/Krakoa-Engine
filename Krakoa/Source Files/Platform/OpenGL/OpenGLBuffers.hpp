@@ -7,14 +7,18 @@ namespace krakoa::graphics
 	class OpenGLVertexBuffer : public iVertexBuffer
 	{
 	public:
-		OpenGLVertexBuffer(float* vertices, uint32_t size, uint32_t rows, uint32_t columns);
+		OpenGLVertexBuffer(float* vertices, uint32_t size);
 		~OpenGLVertexBuffer();
 
 		void Bind() const override;
 		void Unbind() const override;
 
+		const BufferLayout& GetLayout() const override;
+		void SetLayout(const BufferLayout& layout) override;
+
 	private:
 		uint32_t rendererID;
+		BufferLayout bufferLayout;
 	};
 
 	class OpenGLIndexBuffer : public iIndexBuffer

@@ -64,6 +64,4 @@ namespace krakoa::graphics
 	{
 		return elements[index];
 	}
-
-
 }

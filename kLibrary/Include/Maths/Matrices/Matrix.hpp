@@ -303,6 +303,17 @@ namespace kmaths
 			return elems[0].GetPointerToData();
 		}
 
+		USE_RESULT constexpr static Matrix CreateMatrixFromPointer(Type* ptr, size_t bytes)
+		{
+			const size_t size = bytes / sizeof(Type);
+
+			Matrix temp;
+			for (auto row = 0; row < Rows; ++row)
+				for (auto col = 0; col < Columns; ++col)
+					temp[row][col] = ptr[col + Rows * row];
+			return temp;
+		}
+
 		// Operators
 		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
 		{

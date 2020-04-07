@@ -12,7 +12,7 @@ namespace krakoa::graphics
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		static iVertexBuffer* Create(float* vertices, uint32_t size);
+		static iVertexBuffer* Create(float* vertices, uint32_t size, uint32_t rows, uint32_t columns);
 	};
 
 	class iIndexBuffer

@@ -9,13 +9,15 @@ namespace krakoa::graphics
 	// Vertex Buffer /////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float * vertices, uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(float * vertices, uint32_t size, uint32_t rows, uint32_t columns)
 	{
 		// Create buffer
 		glGenBuffers(1, &rendererID);
 		Bind();
 		// send GPU buffer data
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, rows, GL_FLOAT, GL_FALSE, columns * sizeof(float), nullptr);
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()

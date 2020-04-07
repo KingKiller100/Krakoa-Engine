@@ -50,6 +50,8 @@ namespace krakoa
 
 		graphics::Renderer::Create();
 
+		// Rendering code - should go in renderer;
+
 		// Rendering hardware info
 		KRK_INFO("OpenGL info:");
 		KRK_INFO(klib::kFormat::ToString("\t Vendor: %s", glGetString(GL_VENDOR)));
@@ -57,29 +59,23 @@ namespace krakoa
 		KRK_INFO(klib::kFormat::ToString("\t Version: %s", glGetString(GL_VERSION)));
 
 		// Triangle creation code
-
-		// bind data to the vertex array
-		glGenVertexArrays(1, &vertexArray);
-		glBindVertexArray(vertexArray);
-
 		// Vertices points
 		kmaths::Matrix3x3f vertices;
-		vertices[0] = Vector3f( -0.5f, -0.5f, 0.f );
-		vertices[1] = Vector3f( 0.5f, -0.5f, 0.f );
-		vertices[2] = Vector3f( 0.f, 0.5f, 0.f );
+		vertices[0] = Vector3f(-0.5f, -0.5f, 0.f);
+		vertices[1] = Vector3f(0.5f, -0.5f, 0.f);
+		vertices[2] = Vector3f(0.f, 0.5f, 0.f);
+
+		// bind data to the vertex array
+		pVertexArray = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
+
 
 		pVertexBuffer = std::unique_ptr<graphics::iVertexBuffer>(
 			graphics::iVertexBuffer::Create(
-				vertices.GetPointerToData(), 
-				sizeof(vertices))
+				vertices.GetPointerToData(),
+				sizeof(vertices),
+				vertices.GetRows(),
+				vertices.GetColumns())
 			);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 
-			vertices.GetRows(), 
-			GL_FLOAT, GL_FALSE,
-			vertices.GetColumns() * sizeof(decltype(vertices)::Type),
-			nullptr);
 
 		uint32_t indices[3] = { 0, 1, 2 };
 		pIndexBuffer = std::unique_ptr<graphics::iIndexBuffer>(
@@ -165,7 +161,7 @@ namespace krakoa
 		pImGuiLayer->EndDraw();
 
 		pShader->Bind();
-		glBindVertexArray(vertexArray);
+		pVertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, pIndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 		pWindow->OnUpdate();

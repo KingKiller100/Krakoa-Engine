@@ -11,11 +11,11 @@ namespace krakoa::graphics
 	iVertexBuffer::~iVertexBuffer()
 		= default;
 
-	iVertexBuffer * iVertexBuffer::Create(float * vertices, uint32_t size)
+	iVertexBuffer * iVertexBuffer::Create(float * vertices, uint32_t size, uint32_t rows, uint32_t columns)
 	{
 		switch (Renderer::Reference().GetAPI()) {
 		case RendererAPI::NONE: KRK_FATAL(false, "RedererAPI::NONE not supported yet!");
-		case RendererAPI::OPENGL: return new OpenGLVertexBuffer(vertices, size);
+		case RendererAPI::OPENGL: return new OpenGLVertexBuffer(vertices, size, rows, columns);
 		default:  KRK_FATAL(false, "Unknown RendererAPI type!");
 		}
 		return nullptr;

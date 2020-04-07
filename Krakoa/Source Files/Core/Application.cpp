@@ -6,6 +6,8 @@
 
 #include "../Input/InputManager.hpp"
 
+#include "../Platform/OpenGL/OpenGLShader.hpp"
+
 #include "../Patterns/SimpleSingletonImpl.hpp"
 
 #include <Utility/Timer/kTimer.hpp>
@@ -96,7 +98,7 @@ namespace krakoa
 			}
 		)";
 
-		pShader = std::unique_ptr<graphics::ShaderOpenGL>(new graphics::ShaderOpenGL(vertexSource, fragmentSource));
+		pShader = std::unique_ptr<graphics::iShader>(new graphics::ShaderOpenGL(vertexSource, fragmentSource));
 	}
 
 	void Application::OnEvent(events::Event& e)

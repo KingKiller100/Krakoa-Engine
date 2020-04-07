@@ -16,7 +16,7 @@
 // Rendering
 #include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"
-#include "../Platform/OpenGL/OpenGLShader.hpp"
+#include "../Rendering/Graphics/iShader.hpp"
 
 
 #include <memory>
@@ -53,7 +53,7 @@ namespace krakoa
 
 	private:
 		unsigned vertexArray, vertexBuffer, indexBuffer;
-		std::unique_ptr<graphics::ShaderOpenGL> pShader;
+		std::unique_ptr<graphics::iShader> pShader;
 	};
 
 	void CreateApplication();

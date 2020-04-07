@@ -5,11 +5,9 @@
 
 #include <GLAD/glad.h>
 
-#include <vector>
-
 namespace krakoa::graphics
 {
-	ShaderOpenGL::ShaderOpenGL(const std::string_view & vertexSource, const std::string_view & fragmentSource)
+	OpenGLShader::OpenGLShader(const std::string_view & vertexSource, const std::string_view & fragmentSource)
 	{
 
 		// Create an empty vertex shader handle
@@ -117,17 +115,17 @@ namespace krakoa::graphics
 		glDetachShader(rendererID, fragmentShader);
 	}
 
-	ShaderOpenGL::~ShaderOpenGL()
+	OpenGLShader::~OpenGLShader()
 	{
 		glDeleteProgram(rendererID);
 	}
 
-	void ShaderOpenGL::Bind()
+	void OpenGLShader::Bind()
 	{
 		glUseProgram(rendererID);
 	}
 
-	void ShaderOpenGL::Unbind()
+	void OpenGLShader::Unbind()
 	{
 		glUseProgram(0);
 

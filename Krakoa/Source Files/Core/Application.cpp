@@ -3,12 +3,11 @@
 
 #include "Logging/CoreLogger.hpp"
 #include "../Rendering/LayerBase.hpp"
+#include "../Rendering/Renderer.hpp"
 
 #include "../Input/InputManager.hpp"
 
 #include "../Platform/OpenGL/OpenGLShader.hpp"
-
-#include "../Patterns/SimpleSingletonImpl.hpp"
 
 #include <Utility/Timer/kTimer.hpp>
 #include <Maths/Matrices/PredefinedMatrices.hpp>
@@ -27,9 +26,6 @@ namespace krakoa
 	{
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
-
-		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
-		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
 	}
 
 	Application::~Application()
@@ -41,34 +37,56 @@ namespace krakoa
 
 		isRunning = true;
 
+		// Initialize Window
+		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
+		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
+
+		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
 		PushOverlay(pImGuiLayer);
 
+		// Initialize InputManager
 		input::InputManager::Initialize();
+
+		graphics::Renderer::Create();
+
+		// Rendering hardware info
+		KRK_INFO("OpenGL info:");
+		KRK_INFO(klib::kFormat::ToString("\t Vendor: %s", glGetString(GL_VENDOR)));
+		KRK_INFO(klib::kFormat::ToString("\t Renderer: %s", glGetString(GL_RENDERER)));
+		KRK_INFO(klib::kFormat::ToString("\t Version: %s", glGetString(GL_VERSION)));
+
+		// Triangle creation code
 
 		// bind data to the vertex array
 		glGenVertexArrays(1, &vertexArray);
 		glBindVertexArray(vertexArray);
 
-		// bind data to vertex buffer
-		glGenBuffers(1, &vertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
 		// Vertices points
 		kmaths::Matrix3x3f vertices;
-		vertices[0] = { -0.5f, -0.5f, 0.f };
-		vertices[1] = { 0.5f, -0.5f, 0.f };
-		vertices[2] = { 0.f, 0.5f, 0.f };
+		vertices[0] = Vector3f( -0.5f, -0.5f, 0.f );
+		vertices[1] = Vector3f( 0.5f, -0.5f, 0.f );
+		vertices[2] = Vector3f( 0.f, 0.5f, 0.f );
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.GetPointerToData(), GL_STATIC_DRAW);
+		pVertexBuffer = std::unique_ptr<graphics::iVertexBuffer>(
+			graphics::iVertexBuffer::Create(
+				vertices.GetPointerToData(), 
+				sizeof(vertices))
+			);
+
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, vertices.GetRows(), GL_FLOAT, GL_FALSE, vertices.GetColumns() * sizeof(float), nullptr);
+		glVertexAttribPointer(0, 
+			vertices.GetRows(), 
+			GL_FLOAT, GL_FALSE,
+			vertices.GetColumns() * sizeof(decltype(vertices)::Type),
+			nullptr);
 
-		glGenBuffers(1, &indexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-		unsigned indices[3] = { 0, 1, 2 };
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof indices, indices, GL_STATIC_DRAW);
+		uint32_t indices[3] = { 0, 1, 2 };
+		pIndexBuffer = std::unique_ptr<graphics::iIndexBuffer>(
+			graphics::iIndexBuffer::Create(
+				indices,
+				sizeof(indices) / sizeof(uint32_t))
+			);
 
 		const std::string_view vertexSource = R"(
 			#version 330 core
@@ -98,7 +116,7 @@ namespace krakoa
 			}
 		)";
 
-		pShader = std::unique_ptr<graphics::iShader>(new graphics::ShaderOpenGL(vertexSource, fragmentSource));
+		pShader = std::unique_ptr<graphics::iShader>(new graphics::OpenGLShader(vertexSource, fragmentSource));
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -148,7 +166,7 @@ namespace krakoa
 
 		pShader->Bind();
 		glBindVertexArray(vertexArray);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, pIndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 		pWindow->OnUpdate();
 	}

@@ -23,7 +23,7 @@ namespace pattern
 			return instance;
 		}
 
-		template<class ThisOrChild>
+		template<class ThisOrChild = T>
 		constexpr static void Create()
 		{
 			if (!instance)
@@ -38,3 +38,5 @@ namespace pattern
 	};
 }
 
+template<class T>
+T* pattern::SimpleSingleton<T>::instance = nullptr;

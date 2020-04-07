@@ -17,7 +17,7 @@
 #include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"
 #include "../Rendering/Graphics/iShader.hpp"
-
+#include "../Rendering/Graphics/iBuffers.hpp"
 
 #include <memory>
 
@@ -52,8 +52,10 @@ namespace krakoa
 		LayerStacker layerStack;
 
 	private:
-		unsigned vertexArray, vertexBuffer, indexBuffer;
+		unsigned vertexArray;
 		std::unique_ptr<graphics::iShader> pShader;
+		std::unique_ptr<graphics::iVertexBuffer> pVertexBuffer;
+		std::unique_ptr<graphics::iIndexBuffer> pIndexBuffer;
 	};
 
 	void CreateApplication();

@@ -36,7 +36,9 @@ namespace krakoa::graphics
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
-		= default;
+	{
+		glDeleteVertexArrays(1, &rendererID);
+	}
 
 	void OpenGLVertexArray::Bind() const noexcept
 	{

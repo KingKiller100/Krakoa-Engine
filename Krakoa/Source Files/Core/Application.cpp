@@ -60,9 +60,10 @@ namespace krakoa
 		KRK_INFO(klib::kFormat::ToString("\t Version: %s", glGetString(GL_VERSION)));
 
 		pTriangeVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
+		pSquareVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
 
+		// Triangle creation code
 		{
-			// Triangle creation code
 			// Vertices points
 			kmaths::Matrix<float, 3, 7> vertices = {
 				{ -0.5f, -0.5f, 0.f, 0.95f, 0.3f, 0.10f, 1.0f },
@@ -89,11 +90,7 @@ namespace krakoa
 			);
 
 
-		}
-
-
-
-		const std::string_view vertexSource = R"(
+			const std::string_view triangleVS = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -111,7 +108,7 @@ namespace krakoa
 		)";
 
 
-		const std::string_view fragmentSource = R"(
+			const std::string_view triangleFS = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 out_color;
@@ -125,7 +122,64 @@ namespace krakoa
 			}
 		)";
 
-		pShader = std::unique_ptr<graphics::iShader>(new graphics::OpenGLShader(vertexSource, fragmentSource));
+			pTriangleShader = std::unique_ptr<graphics::iShader>(new graphics::OpenGLShader(triangleVS, triangleFS));
+		}
+
+		// Square creation code
+		{
+			kmaths::Matrix4x3f squareVertices = {
+				{ -0.75f, -0.75f, 0.f},
+				{ 0.75f, -0.75f, 0.f },
+				{ 0.75f, 0.75f, 0.0f },
+				{ -0.75f, 0.75f, 0.0f }
+			};
+
+			// Vertex buffer
+			auto squareVB = graphics::iVertexBuffer::Create(squareVertices.GetPointerToData(), sizeof(squareVertices));
+
+			squareVB->SetLayout({
+				{graphics::ShaderDataType::FLOAT3, "a_Position"}
+				}
+			);
+
+			pSquareVA->AddVertexBuffer(squareVB);
+
+			// Index buffer
+			uint32_t indices[6] = { 0, 1, 2, 2, 3, 0 };
+			pSquareVA->SetIndexBuffer(graphics::iIndexBuffer::Create(
+				indices,
+				sizeof(indices) / sizeof(uint32_t))
+			);
+
+
+			const std::string_view squareVS = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_Position;
+
+			out vec3 v_Position;
+
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			}
+		)";
+
+
+			const std::string_view squareFS = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 out_color;
+
+			void main()
+			{
+				out_color = vec4(0.0, 0.5, 0.25, 0.50);
+			}
+		)";
+
+			pSquareShader = std::unique_ptr<graphics::iShader>(new graphics::OpenGLShader(squareVS, squareFS));
+		}
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -173,7 +227,11 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
-		pShader->Bind();
+		pSquareShader->Bind();
+		pSquareVA->Bind();
+		glDrawElements(GL_TRIANGLES, pSquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
+		pTriangleShader->Bind();
 		pTriangeVA->Bind();
 		glDrawElements(GL_TRIANGLES, pTriangeVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 

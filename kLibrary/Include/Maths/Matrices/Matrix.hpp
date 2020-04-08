@@ -29,6 +29,19 @@ namespace kmaths
 				elems[row] = Vector<Columns, Type>(initialVal);
 		}
 
+		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list  )
+		{
+			const auto size = list.size();
+
+			if (Rows < size)
+				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
+
+			const auto first_iter = list.begin();
+
+			for (auto row = 0u; row < Rows; ++row)
+				elems[row] = *(first_iter + row);
+		}
+
 		constexpr Matrix(const Matrix& other) noexcept
 		{
 			*this = other;

@@ -59,15 +59,16 @@ namespace krakoa
 		KRK_INFO(klib::kFormat::ToString("\t Renderer: %s", glGetString(GL_RENDERER)));
 		KRK_INFO(klib::kFormat::ToString("\t Version: %s", glGetString(GL_VERSION)));
 
-		pVertexArray = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
+		pTriangeVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
 
 		{
 			// Triangle creation code
 			// Vertices points
-			kmaths::Matrix<float, 3, 7> vertices;
-			vertices[0] = { -0.5f, -0.5f, 0.f, 0.95f, 0.3f, 0.10f, 1.0f };
-			vertices[1] = { 0.5f, -0.5f, 0.f, 0.25f, 0.9f, 0.85f, 1.0f };
-			vertices[2] = { 0.f, 0.5f, 0.f, 0.95f, 0.3f, 0.78f, 1.0f };
+			kmaths::Matrix<float, 3, 7> vertices = {
+				{ -0.5f, -0.5f, 0.f, 0.95f, 0.3f, 0.10f, 1.0f },
+				{ 0.5f, -0.5f, 0.f, 0.25f, 0.9f, 0.85f, 1.0f },
+				{ 0.0f, 0.5f, 0.0f, 0.95f, 0.3f, 0.78f, 1.0f }
+			};
 
 			// Vertex buffer
 			auto pVertexBuffer = graphics::iVertexBuffer::Create(vertices.GetPointerToData(), sizeof(vertices));
@@ -78,15 +79,19 @@ namespace krakoa
 				}
 			);
 
-			pVertexArray->AddVertexBuffer(pVertexBuffer);
+			pTriangeVA->AddVertexBuffer(pVertexBuffer);
+
+			// Index buffer
+			uint32_t indices[3] = { 0, 1, 2 };
+			pTriangeVA->SetIndexBuffer(graphics::iIndexBuffer::Create(
+				indices,
+				sizeof(indices) / sizeof(uint32_t))
+			);
+
+
 		}
 
-		// Index buffer
-		uint32_t indices[3] = { 0, 1, 2 };
-		pVertexArray->SetIndexBuffer(graphics::iIndexBuffer::Create(
-			indices, 
-			sizeof(indices) / sizeof(uint32_t))
-		);
+
 
 		const std::string_view vertexSource = R"(
 			#version 330 core
@@ -169,8 +174,8 @@ namespace krakoa
 		pImGuiLayer->EndDraw();
 
 		pShader->Bind();
-		pVertexArray->Bind();
-		glDrawElements(GL_TRIANGLES, pVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		pTriangeVA->Bind();
+		glDrawElements(GL_TRIANGLES, pTriangeVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 		pWindow->OnUpdate();
 	}

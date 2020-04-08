@@ -23,7 +23,7 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		KRK_ERRR(kFormat::ToString("GLFW ERROR \n\t\t [CODE]:   %d\n\t\t [DESC]:   %s", errorCode, description));
+		KRK_ERRR(kFormat::ToString("GLFW ERROR \n               [CODE]: %d\n               [DESC]: %s", errorCode, description));
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -178,9 +178,6 @@ namespace krakoa
 	{
 		glfwPollEvents();
 
-		// Vector2s size;
-		// glfwGetFramebufferSize(window, &size.X(), &size.Y());
-		// glViewport(0, 0, size.X(), size.Y());
 		pRenderContext->SwapBuffers();
 	}
 

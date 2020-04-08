@@ -14,10 +14,7 @@ namespace kmaths
 		using Type = T;
 
 		constexpr Vector() noexcept
-		{
-			for (auto& axis : dimensions)
-				axis = static_cast<Type>(0);
-		}
+		{}
 
 		explicit constexpr Vector(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
 		{

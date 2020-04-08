@@ -65,10 +65,7 @@ namespace krakoa
 	}
 
 	void ImGuiLayer::OnUpdate()
-	{
-		glClearColor(0.85f, 0.35f, 0.f, 0.25f); // Orange background
-		glClear(GL_COLOR_BUFFER_BIT);
-	}
+	{}
 
 	void ImGuiLayer::OnRender()
 	{

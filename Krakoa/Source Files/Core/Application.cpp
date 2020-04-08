@@ -7,6 +7,7 @@
 
 #include "../Rendering/LayerBase.hpp"
 #include "../Rendering/Renderer.hpp"
+#include "../Rendering/RenderCommand.hpp"
 #include "../Rendering/Graphics/BufferLayout.hpp"
 #include "../Platform/OpenGL/OpenGLShader.hpp"
 
@@ -14,7 +15,6 @@
 #include <Maths/Matrices/PredefinedMatrices.hpp>
 #include <Maths/Vectors/PredefinedVectors.hpp>
 
-#include <glad/glad.h>
 
 namespace krakoa
 {
@@ -50,14 +50,6 @@ namespace krakoa
 		input::InputManager::Initialize();
 
 		graphics::Renderer::Create();
-
-		// Rendering code - should go in renderer;
-
-		// Rendering hardware info
-		KRK_INFO("OpenGL info:");
-		KRK_INFO(klib::kFormat::ToString("\t Vendor: %s", glGetString(GL_VENDOR)));
-		KRK_INFO(klib::kFormat::ToString("\t Renderer: %s", glGetString(GL_RENDERER)));
-		KRK_INFO(klib::kFormat::ToString("\t Version: %s", glGetString(GL_VERSION)));
 
 		pTriangeVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
 		pSquareVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
@@ -220,6 +212,10 @@ namespace krakoa
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
+		const auto& renderer = graphics::Renderer::Reference();
+
+		graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
+		graphics::RenderCommand::Clear();
 
 		layerStack.OnUpdate();
 
@@ -227,13 +223,17 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
+		renderer.BeginScene();
+
 		pSquareShader->Bind();
 		pSquareVA->Bind();
-		glDrawElements(GL_TRIANGLES, pSquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		renderer.Submit(*pSquareVA);
 
 		pTriangleShader->Bind();
 		pTriangeVA->Bind();
-		glDrawElements(GL_TRIANGLES, pTriangeVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		renderer.Submit(*pTriangeVA);
+
+		renderer.EndScene();
 
 		pWindow->OnUpdate();
 	}

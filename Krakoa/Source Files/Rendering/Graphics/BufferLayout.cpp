@@ -1,9 +1,6 @@
 ﻿#include "Precompile.hpp"
 #include "BufferLayout.hpp"
 
-#include <GLAD/glad.h>
-
-
 namespace krakoa::graphics
 {
 	BufferLayout::BufferLayout() noexcept
@@ -20,7 +17,7 @@ namespace krakoa::graphics
 		return stride;
 	}
 
-	constexpr const std::vector<BufferElement>& BufferLayout::GetElements() const noexcept
+	const std::vector<BufferElement>& BufferLayout::GetElements() const noexcept
 	{
 		return elements;
 	}

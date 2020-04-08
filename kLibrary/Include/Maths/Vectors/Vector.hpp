@@ -33,7 +33,7 @@ namespace kmaths
 				axis = _v;
 		}
 
-		constexpr Vector(const std::initializer_list<T>& l)
+		constexpr Vector(const std::initializer_list<Type>& l)
 		{
 			const auto size = l.size();
 
@@ -43,7 +43,7 @@ namespace kmaths
 			const auto first_iter = l.begin();
 
 			for (auto i = 0; i < size; ++i)
-				dimensions[i] = *(first_iter + i);
+				dimensions[i] = CAST(Type, *(first_iter + i));
 		}
 
 		explicit constexpr Vector(const T values[N])

@@ -91,7 +91,7 @@ namespace krakoa::graphics
 
 		uint32_t GetStride() const noexcept;
 
-		constexpr const std::vector<BufferElement>& GetElements() const noexcept;
+		const std::vector<BufferElement>& GetElements() const noexcept;
 		void CalculateOffsetAndStride() noexcept;
 
 		std::vector<BufferElement>::iterator begin();

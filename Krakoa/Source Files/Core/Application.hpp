@@ -55,9 +55,7 @@ namespace krakoa
 	private:
 		// To go in Renderer
 		std::unique_ptr<graphics::iShader> pShader;
-		std::unique_ptr<graphics::iIndexBuffer> pIndexBuffer;
 		std::unique_ptr<graphics::iVertexArray> pVertexArray;
-		std::unique_ptr<graphics::iVertexBuffer> pVertexBuffer;
 	};
 
 	void CreateApplication();

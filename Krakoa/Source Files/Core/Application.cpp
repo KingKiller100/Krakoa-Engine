@@ -223,17 +223,19 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
-		renderer.BeginScene();
+		{
+			renderer.BeginScene();
 
-		pSquareShader->Bind();
-		pSquareVA->Bind();
-		renderer.Submit(*pSquareVA);
+			pSquareShader->Bind();
+			pSquareVA->Bind();
+			renderer.Submit(*pSquareVA);
 
-		pTriangleShader->Bind();
-		pTriangeVA->Bind();
-		renderer.Submit(*pTriangeVA);
+			pTriangleShader->Bind();
+			pTriangeVA->Bind();
+			renderer.Submit(*pTriangeVA);
 
-		renderer.EndScene();
+			renderer.EndScene();
+		}
 
 		pWindow->OnUpdate();
 	}

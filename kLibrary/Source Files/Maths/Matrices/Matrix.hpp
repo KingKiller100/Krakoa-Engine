@@ -115,11 +115,12 @@ namespace kmaths
 					{
 						const auto minorMatrix = CreateMinorMatrix(row, col);
 						inverse[row][col] = CAST(Type, minorMatrix.GetDeterminant());
-
-						inverse[row][col] *= positiveCoefficient ? CAST(Type, 1) : CAST(Type, -1);
+						if (!positiveCoefficient) inverse[row][col] *= CAST(Type, -1);
 
 						positiveCoefficient = !positiveCoefficient;
 					}
+
+					positiveCoefficient = !positiveCoefficient;
 				}
 
 				inverse = inverse.Mirror();
@@ -178,7 +179,7 @@ namespace kmaths
 				return CAST(Type, 0);
 
 			if (IsIdentity())
-				return CAST(Type, 0);
+				return CAST(Type, 1);
 
 			auto sum = CAST(Type, 1);
 			auto determinant = CAST(Type, 0);
@@ -253,7 +254,8 @@ namespace kmaths
 					if (c == colToSkip)
 						continue;
 
-					minorMatrix[minorRowIndex][minorColIndex++] = elems[r][c];
+					minorMatrix[minorRowIndex][minorColIndex++] =
+						elems[r][c];
 				}
 				minorRowIndex++;
 			}

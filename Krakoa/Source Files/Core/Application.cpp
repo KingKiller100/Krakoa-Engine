@@ -231,7 +231,7 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
-		camera.SetPosition({ 0.5f, 0.f, 0.0f });
+		camera.SetPosition({ 0.5f, 0.5f, 0.0f });
 		camera.SetRotation( 45.f );
 
 		{

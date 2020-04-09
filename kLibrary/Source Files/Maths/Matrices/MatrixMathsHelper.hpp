@@ -34,7 +34,8 @@ namespace kmaths
 		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? CAST(T, 1) : CAST(T, -1))
 			/ (zFar - zNear);
 		res[3][0] = -(right + left) / (right - left);
-		res[3][1] = -zNear / (zFar - zNear);
+		res[3][1] = -(top + bottom) / (top - bottom);
+		res[3][2] = -zNear / (zFar - zNear);
 		return res;
 	}
 
@@ -47,7 +48,8 @@ namespace kmaths
 		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? CAST(T, 2) : CAST(T, -2))
 			/ (zFar - zNear);
 		res[3][0] = -(right + left) / (right - left);
-		res[3][1] = -(zFar + zNear) / (zFar - zNear);
+		res[3][1] = -(top + bottom) / (top - bottom);
+		res[3][2] = -(zFar + zNear) / (zFar - zNear);
 		return res;
 	}
 
@@ -75,8 +77,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Rotate(const Matrix4x4<T>& m, T angle, const Vector3<T>& v) noexcept
 	{ 
-		const T cosA = std::cos(angle);
-		const T sinA = std::sin(angle);
+		const T cosA = std::cos(kmaths::DegreesToRadians(angle));
+		const T sinA = std::sin(kmaths::DegreesToRadians(angle));
 
 		Vector3<T> axis = v.Normalize();
 		Vector3<T> temp = (CAST(T, 1) - cosA) * axis;

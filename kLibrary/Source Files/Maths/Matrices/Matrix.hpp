@@ -6,6 +6,7 @@
 
 namespace kmaths
 {
+	// Row Major Matrix
 	template<typename T, unsigned short Rows, unsigned short Columns>
 	struct Matrix
 	{
@@ -80,6 +81,7 @@ namespace kmaths
 
 			Matrix inverse;
 			const auto determinant = this->GetDeterminant();
+
 			if _CONSTEXPR_IF(Rows == 2)
 			{
 				std::array<Vector<2, Type>, 2> copy;
@@ -90,7 +92,7 @@ namespace kmaths
 					copy[1][0] = -elems[1][0] / CAST(Type, determinant);
 					copy[1][1] = elems[0][0] / CAST(Type, determinant);
 				}
-				lhs = Matrix(copy);
+				inverse = Matrix(copy);
 			}
 			else if _CONSTEXPR_IF(Rows > 2)
 			{
@@ -107,15 +109,7 @@ namespace kmaths
 					}
 				}
 
-				for (auto row = 0u; row < Rows; ++row) {
-					for (auto col = 0u; col < Columns; ++col)
-					{
-						if (row == col)
-							break;
-
-						std::swap(inverse[row][col], inverse[col][row]);
-					}
-				}
+				inverse = inverse.Mirror();
 
 				inverse /= determinant;
 			}
@@ -125,6 +119,25 @@ namespace kmaths
 			}
 
 			return inverse;
+		}
+
+		// Draws a mirror line down a square matrix through the identical row-column indices and swaps values
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Mirror() const noexcept
+		{
+			Matrix temp = *this;
+
+			for (auto row = 0u; row < Rows; ++row) {
+				for (auto col = 0u; col < Columns; ++col)
+				{
+					if (row == col)
+						break;
+
+					std::swap(temp[row][col], temp[col][row]);
+				}
+			}
+
+			return temp;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
@@ -419,6 +432,11 @@ namespace kmaths
 		{
 			return elems[idx];
 		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Matrix> Mirror() const noexcept
+			= delete;
 
 		// Deleted version of funtions (under certain conditions)
 		template<unsigned short R = Rows, unsigned short C = Columns>

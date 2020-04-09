@@ -19,6 +19,19 @@ project "kLibrary"
         "cpp.hint"
     }
 
+    prebuildcommands
+    {
+        ("IF EXIST \"$(ProjectDir)Include Files\\\" ( del /f /s /q \"$(ProjectDir)Include Files\\\" ) ELSE (mkdir \"Include Files\")"),
+    }
+
+    postbuildcommands
+    {
+        ("xcopy /s \"$(ProjectDir)Source Files\" \"$(ProjectDir)Include Files\""),
+        ("FOR /R \"$(ProjectDir)Include Files\" %%f in (**.cpp) do (del /f /s /q %%f \"$(ProjectDir)Include Files\")"),
+        ("del \"$(ProjectDir)Include Files\\pch.hpp\" /s /f /q"),
+        ("del \"$(ProjectDir)Include Files\\pch.cpp\" /s /f /q")
+    }
+
     filter "system:Windows"
         systemversion "latest"
 

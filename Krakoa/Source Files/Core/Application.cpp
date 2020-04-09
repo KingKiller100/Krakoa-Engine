@@ -212,7 +212,6 @@ namespace krakoa
 	{
 		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
-		const auto& renderer = graphics::Renderer::Reference();
 
 		graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		graphics::RenderCommand::Clear();
@@ -224,6 +223,7 @@ namespace krakoa
 		pImGuiLayer->EndDraw();
 
 		{
+			const auto& renderer = graphics::Renderer::Reference();
 			renderer.BeginScene();
 
 			pSquareShader->Bind();

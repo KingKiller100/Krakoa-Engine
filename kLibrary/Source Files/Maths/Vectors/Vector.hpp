@@ -405,7 +405,7 @@ namespace kmaths
 			= delete;
 
 	private:
-		T dimensions[N];
+		T dimensions[N]{};
 	};
 
 	template<unsigned short N, typename T, typename U>

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Graphics/iVertexArray.hpp"
+#include "Rendering Resources/iVertexArray.hpp"
 
 #include <Maths/Vectors/Vector4.hpp>
 

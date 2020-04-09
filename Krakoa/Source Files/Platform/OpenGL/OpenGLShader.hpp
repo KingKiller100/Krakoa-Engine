@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Rendering/Graphics/iShader.hpp"
+#include "../../Rendering/Rendering Resources/iShader.hpp"
 
 #include <string>
 

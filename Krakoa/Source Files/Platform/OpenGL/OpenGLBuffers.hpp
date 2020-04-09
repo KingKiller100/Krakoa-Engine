@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Rendering/Graphics/iBuffers.hpp"
+#include "../../Rendering/Rendering Resources/iBuffers.hpp"
 
 namespace krakoa::graphics
 {

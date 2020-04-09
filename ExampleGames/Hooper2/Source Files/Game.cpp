@@ -11,18 +11,14 @@ public:
 
 	// Inherited via LayerBase
 	void OnAttach() override
-	{
-		//INFO(__FUNCSIG__);
-	}
+	{}
+
 	void OnDetach() override
 	{
 		//INFO(__FUNCSIG__);
 	}
 	void OnUpdate() override
-	{
-		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_SPACE))
-			DBUG("Space bar has been pressed!");
-	}
+	{}
 
 	void OnRender() override
 	{
@@ -35,6 +31,8 @@ public:
 	{
 		//DBUG(e.ToString());
 	}
+
+private:
 };
 
 class Hooper2Game : public krakoa::Application
@@ -44,8 +42,7 @@ public:
 		: Application(t)
 	{
 		INIT_LOGS("Hooper2");
-		//TOGGLE_SUBSYSTEM_LOGGING();
-		::krakoa::Logger::GetClientLogger().ToggleSubSystemEnabled();
+		TOGGLE_SUBSYSTEM_LOGGING();
 		SET_LOG_MIN(LOG_LVL_DBUG);
 		
 		PushLayer(new DemoLayer());

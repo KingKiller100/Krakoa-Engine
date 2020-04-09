@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Graphics/iVertexArray.hpp"
+#include "Rendering Resources/iVertexArray.hpp"
 #include "iRendererAPI.hpp"
 
 namespace krakoa::graphics

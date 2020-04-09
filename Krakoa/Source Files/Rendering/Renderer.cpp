@@ -2,7 +2,7 @@
 #include "Renderer.hpp"
 #include "RenderCommand.hpp"
 
-#include "../Rendering/Graphics/iShader.hpp"
+#include "../Rendering/Rendering Resources/iShader.hpp"
 
 namespace krakoa::graphics
 {

@@ -6,18 +6,31 @@
 // For client game applications
 
 // Core
-#include <Core/EngineCore.hpp>
-#include <Core/Logging/Logger.hpp>
-#include <Core/Application.hpp>
+#include "Core/EngineCore.hpp"
+#include "Core/Application.hpp"
+#include "Core/Logging/Logger.hpp"
 
 // Input
-#include <Input/InputManager.hpp>
-#include <Input/KeyCode.hpp>
-#include <Input/MouseButtonCode.hpp>
+#include "Input/KeyCode.hpp"
+#include "Input/InputManager.hpp"
+#include "Input/MouseButtonCode.hpp"
+
+// Camera
+#include "Camera/OrthographicCamera.hpp"
 
 // Rendering
-#include <Rendering/LayerBase.hpp>
-#include <ImGui/ImGuiLayer.hpp>
+#include "Rendering/Renderer.hpp"
+#include "Rendering/RenderCommand.hpp"
+
+// Rendering Resources
+#include "Rendering/Rendering Resources/iShader.hpp"
+#include "Rendering/Rendering Resources/iBuffers.hpp"
+#include "Rendering/Rendering Resources/iVertexArray.hpp"
+#include "Rendering/Rendering Resources/BufferLayout.hpp"
+
+// Layers
+#include "Rendering/LayerBase.hpp"
+#include "ImGui/ImGuiLayer.hpp"
 
 /*		ENTRY POINT		*/
-#include <Core/EntryPoint.hpp>
+#include "Core/EntryPoint.hpp"

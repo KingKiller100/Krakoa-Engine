@@ -30,6 +30,19 @@ namespace kmaths
 				elems[row] = Vector<Columns, Type>(initialVal);
 		}
 
+		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list)
+		{
+			const auto size = list.size();
+
+			if (Rows < size)
+				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
+
+			const auto first_iter = list.begin();
+
+			for (auto row = 0u; row < Rows; ++row)
+				elems[row] = *(first_iter + row);
+		}
+
 		constexpr Matrix(const Matrix& other) noexcept
 		{
 			*this = other;
@@ -44,7 +57,7 @@ namespace kmaths
 			= default;
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
+		USE_RESULT constexpr static std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
 		{
 			Matrix<Type, R, C> identity;
 			for (auto row = 0u; row < Rows; ++row)
@@ -309,6 +322,11 @@ namespace kmaths
 		USE_RESULT constexpr unsigned short GetColumns() const noexcept
 		{
 			return Columns;
+		}
+
+		USE_RESULT constexpr Type* GetPointerToData() const
+		{
+			return elems[0].GetPointerToData();
 		}
 
 		// Operators

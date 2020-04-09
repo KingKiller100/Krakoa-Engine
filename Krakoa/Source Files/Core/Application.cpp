@@ -5,6 +5,8 @@
 
 #include "../Input/InputManager.hpp"
 
+
+
 #include "../Rendering/LayerBase.hpp"
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/RenderCommand.hpp"
@@ -23,7 +25,8 @@ namespace krakoa
 
 	Application::Application(Token&)
 		: isRunning(false),
-		fpsCounter(60)
+		fpsCounter(60),
+		camera(-1.6f, 1.6f, -1.f, 1.f) // Aspect ratio from window size
 	{
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
@@ -50,6 +53,8 @@ namespace krakoa
 		input::InputManager::Initialize();
 
 		graphics::Renderer::Create();
+		graphics::Renderer::Reference().BeginScene(camera);
+
 
 		pTriangeVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
 		pSquareVA = std::unique_ptr<graphics::iVertexArray>(graphics::iVertexArray::Create());
@@ -91,11 +96,13 @@ namespace krakoa
 			out vec3 v_Position;
 			out vec4 v_Colour;
 
+			uniform mat4 u_vpMat;
+
 			void main()
 			{
 				v_Colour = a_Colour;
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_vpMat * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -150,11 +157,13 @@ namespace krakoa
 			layout(location = 0) in vec3 a_Position;
 
 			out vec3 v_Position;
+			uniform mat4 u_vpMat;
 
 			void main()
 			{
 				v_Position = a_Position;
 				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_vpMat * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -222,18 +231,13 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
+		camera.SetPosition({ 0.5f, 0.f, 0.0f });
+		camera.SetRotation( 45.f );
+
 		{
-			const auto& renderer = graphics::Renderer::Reference();
-			renderer.BeginScene();
-
-			pSquareShader->Bind();
-			pSquareVA->Bind();
-			renderer.Submit(*pSquareVA);
-
-			pTriangleShader->Bind();
-			pTriangeVA->Bind();
-			renderer.Submit(*pTriangeVA);
-
+			auto& renderer = graphics::Renderer::Reference();
+			renderer.Submit(*pSquareShader, *pSquareVA);
+			renderer.Submit(*pTriangleShader, *pTriangeVA);
 			renderer.EndScene();
 		}
 

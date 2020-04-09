@@ -12,8 +12,10 @@ namespace krakoa::graphics
 		OpenGLShader(const std::string_view& vertexSource, const std::string_view& fragmentSource);
 		~OpenGLShader();
 
-		void Bind() override;
-		void Unbind() override;
+		void Bind() const override;
+		void Unbind() const override;
+
+		void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m) override;
 
 	private:
 		uint32_t rendererID;

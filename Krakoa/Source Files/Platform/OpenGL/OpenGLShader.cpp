@@ -120,15 +120,21 @@ namespace krakoa::graphics
 		glDeleteProgram(rendererID);
 	}
 
-	void OpenGLShader::Bind()
+	void OpenGLShader::Bind() const
 	{
 		glUseProgram(rendererID);
 	}
 
-	void OpenGLShader::Unbind()
+	void OpenGLShader::Unbind() const
 	{
 		glUseProgram(0);
 
+	}
+
+	void OpenGLShader::UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)
+	{
+		const auto location = glGetUniformLocation(rendererID, name.data());
+		glUniformMatrix4fv(location, 1, GL_FALSE, m.GetPointerToData());
 	}
 
 }

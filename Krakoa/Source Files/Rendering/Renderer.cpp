@@ -2,6 +2,7 @@
 #include "Renderer.hpp"
 #include "RenderCommand.hpp"
 
+#include "../Rendering/Graphics/iShader.hpp"
 
 namespace krakoa::graphics
 {
@@ -14,9 +15,9 @@ namespace krakoa::graphics
 	Renderer::~Renderer()
 		= default;
 
-	void Renderer::BeginScene() const
+	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-
+		camera_VPMat = &camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene() const
@@ -24,8 +25,10 @@ namespace krakoa::graphics
 
 	}
 
-	void Renderer::Submit(const iVertexArray& vertexArray) const
+	void Renderer::Submit(iShader& shader, const iVertexArray& vertexArray) const
 	{
+		shader.Bind();
+		shader.UploadUniformMatrix4x4("u_vpMat", *camera_VPMat);
 		vertexArray.Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}

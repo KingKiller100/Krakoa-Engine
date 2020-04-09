@@ -13,6 +13,9 @@
 #include "../Events System/Event.hpp"
 #include "../Events System/ApplicationEvent.hpp"
 
+// Camera
+#include "../Camera/OrthographicCamera.hpp"
+
 // Rendering
 #include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"
@@ -51,6 +54,7 @@ namespace krakoa
 		ImGuiLayer* pImGuiLayer;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
+		OrthographicCamera camera;
 
 	private:
 		// To go in Renderer

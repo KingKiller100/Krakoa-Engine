@@ -2,10 +2,13 @@
 
 #include "iRendererAPI.hpp"
 
+#include "../Camera/OrthographicCamera.hpp"
+
 #include "../Patterns/SimpleSingleton.hpp"
 
 namespace krakoa::graphics
 {
+	class iShader;
 
 	class Renderer : public pattern::SimpleSingleton<Renderer>
 	{
@@ -13,11 +16,13 @@ namespace krakoa::graphics
 		Renderer(Token&&);
 		~Renderer();
 		 
-		void BeginScene() const;
+		void BeginScene(OrthographicCamera& camera);
 		void EndScene() const;
-		void Submit(const iVertexArray& vertexArray) const;
+		void Submit(iShader& shader, const iVertexArray& vertexArray) const;
 
 		inline iRendererAPI::API GetAPI() const noexcept { return iRendererAPI::GetAPI(); }
 
+	private:
+		const kmaths::Matrix4x4f* camera_VPMat;
 	};
 }

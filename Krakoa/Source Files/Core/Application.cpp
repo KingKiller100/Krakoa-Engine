@@ -10,7 +10,7 @@
 #include "../Rendering/LayerBase.hpp"
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/RenderCommand.hpp"
-#include "../Rendering/Graphics/BufferLayout.hpp"
+#include "../Rendering/Rendering Resources//BufferLayout.hpp"
 #include "../Platform/OpenGL/OpenGLShader.hpp"
 
 #include <Utility/Timer/kTimer.hpp>

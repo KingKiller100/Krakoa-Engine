@@ -19,9 +19,9 @@
 // Rendering
 #include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"
-#include "../Rendering/Graphics/iShader.hpp"
-#include "../Rendering/Graphics/iBuffers.hpp"
-#include "../Rendering/Graphics/iVertexArray.hpp"
+#include "../Rendering/Rendering Resources/iShader.hpp"
+#include "../Rendering/Rendering Resources/iBuffers.hpp"
+#include "../Rendering/Rendering Resources/iVertexArray.hpp"
 
 #include <memory>
 

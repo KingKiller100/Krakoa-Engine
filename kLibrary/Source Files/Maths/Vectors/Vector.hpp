@@ -209,7 +209,6 @@ namespace kmaths
 			return Vector(-Y(), X());
 		}
 
-
 		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
 			&& !std::is_unsigned_v<X>

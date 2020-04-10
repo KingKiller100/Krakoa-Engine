@@ -55,13 +55,6 @@ namespace krakoa
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
 		OrthographicCamera camera;
-
-	private:
-		// To go in Renderer
-		std::unique_ptr<graphics::iShader> pTriangleShader;
-		std::unique_ptr<graphics::iShader> pSquareShader;
-		std::unique_ptr<graphics::iVertexArray> pTriangeVA;
-		std::unique_ptr<graphics::iVertexArray> pSquareVA;
 	};
 
 	void CreateApplication();

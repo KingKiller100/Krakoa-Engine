@@ -2,6 +2,7 @@
 
 #include "../Vectors/Vector.hpp"
 #include "../kAlgorithms.hpp"
+
 #include <array>
 
 namespace kmaths

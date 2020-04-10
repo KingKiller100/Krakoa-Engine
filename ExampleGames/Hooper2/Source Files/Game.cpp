@@ -157,9 +157,11 @@ public:
 		pSquareVA->Unbind();
 	}
 
-	void OnUpdate() override
+	void OnUpdate(float deltaTime) override
 	{
-		MoveCamera();
+		DBUG(klib::kFormat::ToString("Delta Time: %.4f", deltaTime));
+
+		MoveCamera(deltaTime);
 
 		krakoa::graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		krakoa::graphics::RenderCommand::Clear();
@@ -183,22 +185,22 @@ public:
 	}
 
 private:
-	void MoveCamera() noexcept
+	void MoveCamera(float deltaTime) noexcept
 	{
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-			cameraPos.Y() += cameraMoveSpeed;
+			cameraPos.Y() += cameraMoveSpeed * deltaTime;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-			cameraPos.Y() -= cameraMoveSpeed;
+			cameraPos.Y() -= cameraMoveSpeed * deltaTime;
 
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
-			cameraPos.X() -= cameraMoveSpeed;
+			cameraPos.X() -= cameraMoveSpeed * deltaTime;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
-			cameraPos.X() += cameraMoveSpeed;
+			cameraPos.X() += cameraMoveSpeed * deltaTime;
 
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_A))
-			cameraRotation += cameraRotateSpeed;
+			cameraRotation += cameraRotateSpeed * deltaTime;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_D))
-			cameraRotation -= cameraRotateSpeed;
+			cameraRotation -= cameraRotateSpeed * deltaTime;
 
 		camera.SetPosition(cameraPos);
 		camera.SetRotation(cameraRotation);

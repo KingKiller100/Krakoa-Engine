@@ -64,7 +64,7 @@ namespace krakoa
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnUpdate()
+	void ImGuiLayer::OnUpdate(float deltaTime)
 	{}
 
 	void ImGuiLayer::OnRender()

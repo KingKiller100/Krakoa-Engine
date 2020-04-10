@@ -19,7 +19,7 @@ namespace kTest::utility
 		std::string s;
 		double sum(0);
 
-		klib::kTime::Timer<size_t> testTime("Test Timer");
+		klib::kTime::HighAccuracyTimer testTime("Test Timer");
 
 		const size_t size = 99999;
 		int nums[size];

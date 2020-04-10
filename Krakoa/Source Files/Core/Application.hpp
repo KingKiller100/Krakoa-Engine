@@ -14,8 +14,8 @@
 #include "../Events System/ApplicationEvent.hpp"
 
 // Rendering
-#include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"
+#include "../Rendering/LayerStacker.hpp"
 
 #include <memory>
 
@@ -33,6 +33,7 @@ namespace krakoa
 		virtual void Shutdown() {}
 
 		iWindow& GetWindow() const;
+
 
 	protected:
 		void PushLayer(LayerBase* layer);

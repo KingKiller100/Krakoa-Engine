@@ -62,10 +62,10 @@ namespace krakoa
 		return layerStack.end();
 	}
 
-	void LayerStacker::OnUpdate() const noexcept
+	void LayerStacker::OnUpdate(const float deltaTime) const noexcept
 	{
 		for (auto& layer : layerStack)
-			(layer)->OnUpdate();
+			(layer)->OnUpdate(deltaTime);
 	}
 
 	void LayerStacker::OnRender() const noexcept

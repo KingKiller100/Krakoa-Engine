@@ -1,10 +1,9 @@
 ﻿#include "Precompile.hpp"
 #include "iShader.hpp"
 
-#include "../../Core/Logging/CoreLogger.hpp"
-
 #include "../Renderer.hpp"
 
+#include "../../Core/Logging/CoreLogger.hpp"
 #include "../../Platform/OpenGL/OpenGLShader.hpp"
 
 namespace krakoa::graphics

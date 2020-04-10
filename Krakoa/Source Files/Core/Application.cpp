@@ -6,14 +6,11 @@
 #include "../Input/InputManager.hpp"
 
 #include <Utility/Timer/kTimer.hpp>
-#include <Maths/Matrices/PredefinedMatrices.hpp>
-#include <Maths/Vectors/PredefinedVectors.hpp>
-
 
 namespace krakoa
 {
 	using namespace klib;
-	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
+	kTime::HighAccuracyTimerf systemTimer("Krakoa Engine Timer");
 
 	Application::Application(Token&)
 		: isRunning(false),
@@ -21,6 +18,7 @@ namespace krakoa
 	{
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
+		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
@@ -32,7 +30,6 @@ namespace krakoa
 
 	void Application::Initialize()
 	{
-		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
 		isRunning = true;
 
@@ -80,10 +77,10 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
+		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Secs>();
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
-		layerStack.OnUpdate();
+		layerStack.OnUpdate(deltaTime);
 
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();

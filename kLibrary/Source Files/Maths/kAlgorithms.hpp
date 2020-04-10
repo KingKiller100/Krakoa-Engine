@@ -43,13 +43,15 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T RadiansToDegrees(const T radians) noexcept
 	{
-		return radians * (static_cast<constants::AccuracyType>(360) / constants::TAU);
+		constexpr static T convertR2D = CAST(T, 360) / constants::TAU;
+		return radians * convertR2D;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T DegreesToRadians(const T degrees) noexcept
 	{
-		return degrees * (constants::TAU / static_cast<constants::AccuracyType>(360));
+		constexpr static T convertD2R = CAST(T, constants::TAU) / 360;
+		return degrees * convertD2R;
 	}
 
 	template<typename T>

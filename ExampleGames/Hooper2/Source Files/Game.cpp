@@ -8,8 +8,9 @@ public:
 	RendererLayer()
 		: LayerBase("Renderer"),
 		camera(-1.6f, 1.6f, -1.f, 1.f), // Aspect ratio from window size
-		cameraSpeed(0.05f),
-		cameraRotation(0.f)
+		cameraRotation(0.f),
+		cameraMoveSpeed(0.05f),
+		cameraRotateSpeed(3.f)
 	{}
 
 	// Inherited via LayerBase
@@ -185,19 +186,19 @@ private:
 	void MoveCamera() noexcept
 	{
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-			cameraPos.Y() += cameraSpeed;
+			cameraPos.Y() += cameraMoveSpeed;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-			cameraPos.Y() -= cameraSpeed;
+			cameraPos.Y() -= cameraMoveSpeed;
 
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
-			cameraPos.X() -= cameraSpeed;
+			cameraPos.X() -= cameraMoveSpeed;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
-			cameraPos.X() += cameraSpeed;
+			cameraPos.X() += cameraMoveSpeed;
 
-		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_W))
-			cameraRotation += cameraSpeed;
-		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_S))
-			cameraRotation -= cameraSpeed;
+		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_A))
+			cameraRotation += cameraRotateSpeed;
+		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_D))
+			cameraRotation -= cameraRotateSpeed;
 
 		camera.SetPosition(cameraPos);
 		camera.SetRotation(cameraRotation);
@@ -213,8 +214,9 @@ private:
 
 	krakoa::OrthographicCamera camera;
 	kmaths::Vector3f cameraPos;
-	const float cameraSpeed;
 	float cameraRotation;
+	const float cameraMoveSpeed;
+	const float cameraRotateSpeed;
 };
 
 class Hooper2Game : public krakoa::Application

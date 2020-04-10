@@ -13,9 +13,6 @@
 #include "../Events System/Event.hpp"
 #include "../Events System/ApplicationEvent.hpp"
 
-// Camera
-#include "../Camera/OrthographicCamera.hpp"
-
 // Rendering
 #include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"

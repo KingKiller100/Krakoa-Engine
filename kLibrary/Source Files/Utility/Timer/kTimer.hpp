@@ -7,12 +7,12 @@
 
 namespace klib::kTime
 {
-	using Hours  = std::chrono::hours;
-	using Mins   = std::chrono::minutes;
-	using Secs   = std::chrono::seconds;
+	using Hours = std::chrono::hours;
+	using Mins = std::chrono::minutes;
+	using Secs = std::chrono::seconds;
 	using Millis = std::chrono::milliseconds;
 	using Micros = std::chrono::microseconds;
-	using Nanos  = std::chrono::nanoseconds;
+	using Nanos = std::chrono::nanoseconds;
 
 	template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
 	class Timer
@@ -61,28 +61,34 @@ namespace klib::kTime
 			static constexpr Rep thousandth = (CAST(Rep, 1) / 1000);
 			static constexpr Rep sixtieth = CAST(Rep, 1) / 60;
 
+			Rep time = 0;
+
 			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::hours>)
 			{
-				return std::chrono::duration_cast<Mins>(now - prev).count() * sixtieth;
+				time = std::chrono::duration_cast<Mins>(now - prev).count() * sixtieth;
 			}
 			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::minutes>)
 			{
-				return std::chrono::duration_cast<Secs>(now - prev).count() * sixtieth;
+				time = std::chrono::duration_cast<Secs>(now - prev).count() * sixtieth;
 			}
 			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::seconds>)
 			{
-				return std::chrono::duration_cast<Millis>(now - prev).count() * thousandth;
+				time = std::chrono::duration_cast<Millis>(now - prev).count() * thousandth;
 			}
 			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::milliseconds>)
 			{
-				return std::chrono::duration_cast<Micros>(now - prev).count() * thousandth;
+				time = std::chrono::duration_cast<Micros>(now - prev).count() * thousandth;
 			}
 			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::microseconds>)
 			{
-				return std::chrono::duration_cast<Nanos>(now - prev).count() * thousandth;
+				time = std::chrono::duration_cast<Nanos>(now - prev).count() * thousandth;
+			}
+			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::nanoseconds>)
+			{
+				return std::chrono::duration_cast<Nanos>(now - prev).count();
 			}
 
-			return std::chrono::duration_cast<Nanos>(now - prev).count();
+			return time;
 		}
 
 	private:

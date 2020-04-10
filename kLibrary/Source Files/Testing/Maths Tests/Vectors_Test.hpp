@@ -15,9 +15,6 @@ namespace kTest::Maths
 		void Test() override;
 		
 		bool VectorTest();
-		bool Vector2Test();
-		bool Vector3Test();
-		bool Vector4Test();
 	};
 }
 #endif

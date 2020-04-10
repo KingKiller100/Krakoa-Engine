@@ -4,6 +4,8 @@
 #include "../../Utility/Timer/kTimer.hpp"
 #include "../../Utility/Format/kFormatToString.hpp"
 
+#include <iostream>
+
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
@@ -29,7 +31,7 @@ namespace kTest::utility
 			nums[i] = i;
 			sum += dt;
 			VERIFY(nums[i] == i && dt != 0);
-			s = klib::kFormat::ToString("Test Time %d : %dus (Microseconds)\n", i, dt);
+			s = klib::kFormat::ToString("Test Time %d : %fus (Microseconds)\n", i, dt);
 			OutputDebugStringA(s.data());
 		}
 

@@ -19,9 +19,6 @@
 // Rendering
 #include "../Rendering/LayerStacker.hpp"
 #include "../ImGui/ImGuiLayer.hpp"
-#include "../Rendering/Rendering Resources/iShader.hpp"
-#include "../Rendering/Rendering Resources/iBuffers.hpp"
-#include "../Rendering/Rendering Resources/iVertexArray.hpp"
 
 #include <memory>
 
@@ -54,7 +51,6 @@ namespace krakoa
 		ImGuiLayer* pImGuiLayer;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
-		OrthographicCamera camera;
 	};
 
 	void CreateApplication();

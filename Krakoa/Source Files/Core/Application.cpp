@@ -5,12 +5,6 @@
 
 #include "../Input/InputManager.hpp"
 
-#include "../Rendering/LayerBase.hpp"
-#include "../Rendering/Renderer.hpp"
-#include "../Rendering/RenderCommand.hpp"
-#include "../Rendering/Rendering Resources//BufferLayout.hpp"
-#include "../Platform/OpenGL/OpenGLShader.hpp"
-
 #include <Utility/Timer/kTimer.hpp>
 #include <Maths/Matrices/PredefinedMatrices.hpp>
 #include <Maths/Vectors/PredefinedVectors.hpp>
@@ -23,8 +17,7 @@ namespace krakoa
 
 	Application::Application(Token&)
 		: isRunning(false),
-		fpsCounter(60),
-		camera(-1.6f, 1.6f, -1.f, 1.f) // Aspect ratio from window size
+		fpsCounter(60)
 	{
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
@@ -42,9 +35,6 @@ namespace krakoa
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
 		isRunning = true;
-
-		graphics::Renderer::Create();
-		graphics::Renderer::Reference().BeginScene(camera);
 
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
@@ -98,9 +88,6 @@ namespace krakoa
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
-
-		camera.SetPosition({ 0.5f, 0.5f, 0.0f });
-		camera.SetRotation(45.f);
 
 		pWindow->OnUpdate();
 	}

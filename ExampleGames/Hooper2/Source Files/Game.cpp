@@ -6,12 +6,18 @@ class RendererLayer : public krakoa::LayerBase
 {
 public:
 	RendererLayer()
-		: LayerBase("Renderer")
+		: LayerBase("Renderer"),
+		camera(-1.6f, 1.6f, -1.f, 1.f), // Aspect ratio from window size
+		cameraSpeed(0.05f),
+		cameraRotation(0.f)
 	{}
 
 	// Inherited via LayerBase
 	void OnAttach() override
 	{
+		krakoa::graphics::Renderer::Create();
+		krakoa::graphics::Renderer::Reference().BeginScene(camera);
+
 		pTriangleVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 		pSquareVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 
@@ -152,6 +158,8 @@ public:
 
 	void OnUpdate() override
 	{
+		MoveCamera();
+
 		krakoa::graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		krakoa::graphics::RenderCommand::Clear();
 
@@ -174,11 +182,39 @@ public:
 	}
 
 private:
+	void MoveCamera() noexcept
+	{
+		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
+			cameraPos.Y() += cameraSpeed;
+		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
+			cameraPos.Y() -= cameraSpeed;
+
+		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
+			cameraPos.X() -= cameraSpeed;
+		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
+			cameraPos.X() += cameraSpeed;
+
+		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_W))
+			cameraRotation += cameraSpeed;
+		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_S))
+			cameraRotation -= cameraSpeed;
+
+		camera.SetPosition(cameraPos);
+		camera.SetRotation(cameraRotation);
+	}
+
+
+private:
 	// To go in Renderer
 	std::unique_ptr<krakoa::graphics::iShader> pTriangleShader;
 	std::unique_ptr<krakoa::graphics::iShader> pSquareShader;
 	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
 	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
+
+	krakoa::OrthographicCamera camera;
+	kmaths::Vector3f cameraPos;
+	const float cameraSpeed;
+	float cameraRotation;
 };
 
 class Hooper2Game : public krakoa::Application

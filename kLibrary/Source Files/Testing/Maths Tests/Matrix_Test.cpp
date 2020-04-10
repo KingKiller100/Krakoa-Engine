@@ -68,6 +68,8 @@ namespace kTest::Maths
 			for (auto c = 0u; c < m13.GetColumns(); ++c)
 				VERIFY(m13[r][c] == (r == c ? 1 : 0));
 
+		VERIFY(m13.IsIdentity());
+
 		const auto minorMatrix = m12.CreateMinorMatrix(0, 0);
 		auto m14 = Matrix<double, 3, 3>();
 
@@ -75,6 +77,8 @@ namespace kTest::Maths
 		for (auto r = 0u; r < m14.GetRows(); ++r)
 			for (auto c = 0u; c < m14.GetColumns(); ++c)
 				m14[r][c] = (c == 0 && r == 0) ? 10.0 : ++count;
+
+		VERIFY(!m14.IsIdentity());
 
 		const auto inverse3x3 = m14.Inverse();
 

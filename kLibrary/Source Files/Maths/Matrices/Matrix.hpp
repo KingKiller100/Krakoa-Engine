@@ -111,7 +111,10 @@ namespace kmaths
 			else if _CONSTEXPR_IF(Rows > 2)
 			{
 				auto positiveCoefficient = true;
-				for (auto row = 0u; row < Rows; ++row) {
+				for (auto row = 0u; row < Rows; ++row)
+				{
+					positiveCoefficient = (row & 1) == 0;
+
 					for (auto col = 0u; col < Columns; ++col)
 					{
 						const auto minorMatrix = CreateMinorMatrix(row, col);
@@ -120,8 +123,6 @@ namespace kmaths
 
 						positiveCoefficient = !positiveCoefficient;
 					}
-
-					positiveCoefficient = !positiveCoefficient;
 				}
 
 				inverse = inverse.Mirror();

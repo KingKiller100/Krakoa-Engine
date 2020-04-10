@@ -78,7 +78,7 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		klib::kTime::Timer<size_t> totalRunTimeTimer("Total Test Run Time");
+		klib::kTime::HighAccuracyTimer totalRunTimeTimer("Total Test Run Time");
 		for (const auto& test : kTests_TestsUSet)
 		{
 			const auto resultTest = test->Run() 
@@ -87,7 +87,7 @@ namespace kTest
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %ds (Seconds)", totalRunTimeTimer.GetLifeTime<klib::kTime::Secs>());
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %fs (Seconds)", totalRunTimeTimer.GetLifeTime<klib::kTime::Secs>());
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
 	}
 

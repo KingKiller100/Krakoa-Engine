@@ -41,7 +41,7 @@ namespace kTest
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->failureData.append(klib::kFormat::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
+		this->failureData.append(klib::kFormat::ToString("\n\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 		this->success = false; \
 	}\
 

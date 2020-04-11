@@ -6,6 +6,8 @@
 
 #include "../Patterns/SimpleSingleton.hpp"
 
+#include <Maths/Matrices/MatrixMathsHelper.hpp>
+
 namespace krakoa::graphics
 {
 	class iShader;
@@ -18,7 +20,7 @@ namespace krakoa::graphics
 		 
 		void BeginScene(OrthographicCamera& camera);
 		void EndScene() const;
-		void Submit(iShader& shader, const iVertexArray& vertexArray) const;
+		void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>()) const;
 
 		inline iRendererAPI::API GetAPI() const noexcept { return iRendererAPI::GetAPI(); }
 

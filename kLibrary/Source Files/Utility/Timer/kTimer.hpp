@@ -2,17 +2,18 @@
 
 #include "../../HelperMacros.hpp"
 
-#include <chrono>
 #include <atomic>
+#include <chrono>
+#include <ratio>
 
 namespace klib::kTime
 {
-	using Hours = std::chrono::hours;
-	using Mins = std::chrono::minutes;
-	using Secs = std::chrono::seconds;
-	using Millis = std::chrono::milliseconds;
-	using Micros = std::chrono::microseconds;
-	using Nanos = std::chrono::nanoseconds;
+	using Hours = std::chrono::minutes;
+	using Mins = std::chrono::seconds;
+	using Secs = std::chrono::milliseconds;
+	using Millis = std::chrono::microseconds;
+	using Micros = std::chrono::nanoseconds;
+	using Nanos = std::chrono::duration<long long, std::pico>;
 
 	template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
 	class Timer
@@ -58,37 +59,14 @@ namespace klib::kTime
 		template<typename Units>
 		USE_RESULT constexpr Rep ConvertToUsableValue(const typename Clock::time_point& now, const typename Clock::time_point& prev) const noexcept
 		{
-			static constexpr Rep thousandth = (CAST(Rep, 1) / 1000);
-			static constexpr Rep sixtieth = CAST(Rep, 1) / 60;
+			constexpr static Rep thousandth = (CAST(Rep, 1) / 1000);
+			constexpr static Rep sixtieth = CAST(Rep, 1) / 60;
 
-			Rep time = 0;
-
-			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::hours>)
-			{
-				time = std::chrono::duration_cast<Mins>(now - prev).count() * sixtieth;
-			}
-			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::minutes>)
-			{
-				time = std::chrono::duration_cast<Secs>(now - prev).count() * sixtieth;
-			}
-			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::seconds>)
-			{
-				time = std::chrono::duration_cast<Millis>(now - prev).count() * thousandth;
-			}
-			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::milliseconds>)
-			{
-				time = std::chrono::duration_cast<Micros>(now - prev).count() * thousandth;
-			}
-			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::microseconds>)
-			{
-				time = std::chrono::duration_cast<Nanos>(now - prev).count() * thousandth;
-			}
-			if _CONSTEXPR_IF(std::is_same_v<Units, std::chrono::nanoseconds>)
-			{
-				return std::chrono::duration_cast<Nanos>(now - prev).count();
-			}
-
-			return time;
+			if _CONSTEXPR_IF(std::is_same_v<Units, Hours>
+				|| std::is_same_v<Units, Mins>)
+				return std::chrono::duration_cast<Units>(now - prev).count() * sixtieth;
+			else
+				return std::chrono::duration_cast<Units>(now - prev).count() * thousandth;
 		}
 
 	private:

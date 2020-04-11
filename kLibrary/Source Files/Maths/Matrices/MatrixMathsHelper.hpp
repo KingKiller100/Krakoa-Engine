@@ -14,9 +14,16 @@ namespace kmaths
 	};
 
 	template<typename T>
+	USE_RESULT constexpr static Matrix4x4<T> GetTransformIdentity() noexcept
+	{
+		static const auto identityMat = Matrix4x4<T>::Identity();
+		return identityMat;
+	}
+
+	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Ortho(const T left, const T right, const T bottom, const T top) noexcept
 	{
-		auto res = Matrix4x4<T>::Identity();
+		auto res = GetTransformIdentity<T>();
 		res[0][0] = CAST(T, 2) / (right - left);
 		res[1][1] = CAST(T, 2) / (top - bottom);
 		res[2][2] = CAST(T, -1);
@@ -28,7 +35,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Ortho_ZO(const ZAxisDirection zDir, const T left, const T right, const T bottom, const T top, const T zNear, const T zFar) noexcept
 	{
-		auto res = Matrix4x4<T>::Identity();
+		auto res = GetTransformIdentity<T>();
 		res[0][0] = CAST(T, 2) / (right - left);
 		res[1][1] = CAST(T, 2) / (top - bottom);
 		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? CAST(T, 1) : CAST(T, -1))
@@ -42,7 +49,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Ortho_NO(const ZAxisDirection zDir, const T left, const T right, const T bottom, const T top, const T zNear, const T zFar) noexcept
 	{
-		auto res = Matrix4x4<T>::Identity();
+		auto res = GetTransformIdentity<T>();
 		res[0][0] = CAST(T, 2) / (right - left);
 		res[1][1] = CAST(T, 2) / (top - bottom);
 		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? CAST(T, 2) : CAST(T, -2))
@@ -56,7 +63,7 @@ namespace kmaths
 	/*template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Ortho(const ZAxisDirection zDir, const T left, const T right, const T bottom, const T top, const T zNear, const T zFar) noexcept
 	{
-		return 
+		return
 	}*/
 
 	template<typename T>
@@ -70,13 +77,13 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Translate(const Vector3<T>& v) noexcept
 	{
-		const auto translate = Translate<T>(Matrix4x4<T>::Identity(), v);
+		const auto translate = Translate<T>(GetTransformIdentity<T>(), v);
 		return translate;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Rotate(const Matrix4x4<T>& m, T angle, const Vector3<T>& v) noexcept
-	{ 
+	{
 		const T cosA = std::cos(kmaths::DegreesToRadians(angle));
 		const T sinA = std::sin(kmaths::DegreesToRadians(angle));
 
@@ -108,7 +115,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Rotate(T angle, const Vector3<T>& v) noexcept
 	{
-		const auto rotate = Rotate(Matrix4x4<T>::Identity(), angle, v);
+		const auto rotate = Rotate(GetTransformIdentity<T>(), angle, v);
 		return rotate;
 	}
 
@@ -127,7 +134,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Scale(const Vector3<T>& v) noexcept
 	{
-		const auto m = Matrix4x4<T>::Identity();
+		const auto m = GetTransformIdentity<T>();
 		const auto scale = {
 			m[0] * v[0],
 			m[1] * v[1],
@@ -136,7 +143,4 @@ namespace kmaths
 		};
 		return scale;
 	}
-
-
-
 }

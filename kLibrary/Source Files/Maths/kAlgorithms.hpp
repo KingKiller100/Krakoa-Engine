@@ -14,14 +14,14 @@ namespace kmaths
 		return CAST(DestType, source);
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T Max(const T lhs, const T rhs) noexcept
+	template<typename T1, typename T2>
+	USE_RESULT constexpr T1 Max(T1&& lhs, T2&& rhs) noexcept
 	{
 		return lhs > rhs ? lhs : rhs;
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T Min(const T lhs, const T rhs) noexcept
+	template<typename T1, typename T2>
+	USE_RESULT constexpr T1 Min(T1&& lhs, T2&& rhs) noexcept
 	{
 		return lhs < rhs ? lhs : rhs;
 	}

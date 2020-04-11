@@ -48,12 +48,10 @@ namespace krakoa::time
 		const auto dt = now - lastTime;
 		lastTime = now;
 		KRK_INFO(kFormat::ToString("glfw Func Time: %.4f", glfwDT));*/
-		
-		const auto timeStep = CAST(float, timer.GetDeltaTime<klib::kTime::Millis>() / 1000);
 
 		if (!isTimeIncrementFixed)
-			return timeStep;
-
-		return kmaths::Min(timeStep, targetIncrement);
+			return CAST(float, timer.GetDeltaTime<klib::kTime::Millis>() / 1000);
+		else
+			return kmaths::Min(CAST(float, timer.GetDeltaTime<klib::kTime::Millis>() / 1000), targetIncrement);
 	}
 }

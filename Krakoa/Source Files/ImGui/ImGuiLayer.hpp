@@ -23,8 +23,5 @@ namespace krakoa
 
 		void BeginDraw();
 		void EndDraw();
-
-	private:
-		float time;
 	};
 }

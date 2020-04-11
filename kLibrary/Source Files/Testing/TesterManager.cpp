@@ -87,7 +87,7 @@ namespace kTest
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %fs (Seconds)", totalRunTimeTimer.GetLifeTime<klib::kTime::Secs>());
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %fm (Minutes)", totalRunTimeTimer.GetLifeTime<klib::kTime::Mins>());
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
 	}
 

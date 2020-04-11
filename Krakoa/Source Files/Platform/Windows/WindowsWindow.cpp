@@ -77,7 +77,7 @@ namespace krakoa
 		pRenderContext->Init();
 
 		glfwSetWindowUserPointer(window, &data);
-		SetVsync(true);
+		SetVsync(false);
 
 		SetUpCallBacks();
 	}

@@ -5,16 +5,14 @@
 
 #include "../Input/InputManager.hpp"
 
-#include <Utility/Timer/kTimer.hpp>
-
 namespace krakoa
 {
 	using namespace klib;
-	kTime::HighAccuracyTimerf systemTimer("Krakoa Engine Timer");
 
 	Application::Application(Token&)
 		: isRunning(false),
-		fpsCounter(60)
+		fpsCounter(60),
+		timeStep(24.f)
 	{
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
@@ -77,7 +75,9 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Secs>();
+		timeStep.Update();
+
+		const auto deltaTime = timeStep.GetDeltaTime(); 
 		const auto fps = fpsCounter.GetFPS(deltaTime);
 
 		layerStack.OnUpdate(deltaTime);

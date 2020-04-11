@@ -9,8 +9,8 @@ public:
 		: LayerBase("Renderer"),
 		camera(-1.6f, 1.6f, -1.f, 1.f), // Aspect ratio from window size
 		cameraRotation(0.f),
-		cameraMoveSpeed(0.05f),
-		cameraRotateSpeed(3.f)
+		cameraMoveSpeed(20.f),
+		cameraRotateSpeed(100.f)
 	{}
 
 	// Inherited via LayerBase

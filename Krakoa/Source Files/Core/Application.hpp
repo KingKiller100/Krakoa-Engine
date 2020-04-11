@@ -1,7 +1,11 @@
 #pragma once
 
 #include "EngineCore.hpp"
+
 #include "FPSCounter.hpp"
+
+// Time Step
+#include "../TimeStep.hpp"
 
 // Window
 #include "../iWindow.hpp"
@@ -34,7 +38,6 @@ namespace krakoa
 
 		iWindow& GetWindow() const;
 
-
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);
@@ -49,6 +52,9 @@ namespace krakoa
 		ImGuiLayer* pImGuiLayer;
 		FPSCounter fpsCounter;
 		LayerStacker layerStack;
+
+	private:
+		time::TimeStep timeStep;
 	};
 
 	void CreateApplication();

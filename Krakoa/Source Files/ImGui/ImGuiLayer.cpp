@@ -18,8 +18,7 @@
 namespace krakoa
 {
 	ImGuiLayer::ImGuiLayer()
-		: LayerBase("ImGuiLayer"),
-		time(0.0f)
+		: LayerBase("ImGuiLayer")
 	{	}
 
 	ImGuiLayer::~ImGuiLayer()

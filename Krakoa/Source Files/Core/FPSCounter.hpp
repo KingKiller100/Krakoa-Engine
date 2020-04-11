@@ -10,7 +10,6 @@ namespace krakoa
 		FPSCounter(const double updateRate);
 		virtual ~FPSCounter();
 
-
 		double GetFPS(const double deltaTime) ;
 
 	private:

@@ -131,10 +131,60 @@ namespace krakoa::graphics
 
 	}
 
+	void OpenGLShader::UploadUniformInt(const std::string_view& name, const int val)
+	{
+		const auto location = GetUniformLocation(name);
+		glUniform1i(location, val);
+	}
+
+	void OpenGLShader::UploadUniformFloat(const std::string_view& name, const float val)
+	{
+		const auto location = GetUniformLocation(name);
+		glUniform1f(location, val);
+	}
+
+	void OpenGLShader::UploadUniformVec2(const std::string_view& name, const kmaths::Vector2f& v)
+	{
+		const auto location = GetUniformLocation(name);
+		glUniform2f(location, v.X(), v.Y());
+	}
+
+	void OpenGLShader::UploadUniformVec3(const std::string_view& name, const kmaths::Vector3f& v)
+	{
+		const auto location = GetUniformLocation(name);
+		glUniform3f(location, v.X(), v.Y(), v.Z());
+	}
+
+	void OpenGLShader::UploadUniformVec4(const std::string_view& name, const kmaths::Vector4f& v)
+	{
+		const auto location = GetUniformLocation(name);
+		glUniform4f(location, v.X(), v.Y(), v.Z(), v.W());
+	}
+
+	void OpenGLShader::UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m)
+	{
+		const auto location = GetUniformLocation(name);
+		glUniformMatrix3fv(location, 1, GL_FALSE, m.GetPointerToData());
+	}
+
 	void OpenGLShader::UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)
 	{
-		const auto location = glGetUniformLocation(rendererID, name.data());
+		const auto location = GetUniformLocation(name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, m.GetPointerToData());
+	}
+
+	int OpenGLShader::GetUniformLocation(const std::string_view& name) noexcept
+	{
+		const auto found_iter = uniformLocationUMap.find(name.data());
+		if (found_iter == uniformLocationUMap.end())
+		{
+			const auto location = glGetUniformLocation(rendererID, name.data());
+			uniformLocationUMap.insert(std::make_pair(name, location));
+			return location;
+		}
+
+		const auto location = found_iter->second;
+		return location;
 	}
 
 }

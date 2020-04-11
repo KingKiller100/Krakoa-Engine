@@ -21,59 +21,54 @@ public:
 		krakoa::graphics::Renderer::Create();
 		krakoa::graphics::Renderer::Reference().BeginScene(camera);
 
-		pTriangleVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 		pSquareVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 
 		// Triangle creation code
 		{
 			// Vertices points
-			kmaths::Matrix<float, 3, 7> vertices = {
-				{ -0.5f, -0.5f, 0.f, 0.95f, 0.3f, 0.10f, 1.0f },
-				{ 0.5f, -0.5f, 0.f, 0.25f, 0.9f, 0.85f, 1.0f },
-				{ 0.0f, 0.5f, 0.0f, 0.95f, 0.3f, 0.78f, 1.0f }
+			kmaths::Matrix3x3f vertices = {
+				{ -0.5f, -0.5f, 0.f },
+				{ 0.5f, -0.5f, 0.f },
+				{ 0.0f, 0.5f, 0.0f }
 			};
 
 			// Vertex buffer
 			auto pVertexBuffer = krakoa::graphics::iVertexBuffer::Create(vertices.GetPointerToData(), sizeof(vertices));
 
 			pVertexBuffer->SetLayout({
-				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
-				{ krakoa::graphics::ShaderDataType::FLOAT4, "a_Colour" }
+				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" }
 				}
 			);
 
-			pTriangleVA->AddVertexBuffer(pVertexBuffer);
-
 			// Index buffer
 			uint32_t indices[3] = { 0, 1, 2 };
-			pTriangleVA->SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
+			pSquareVA->SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
 
-
-			const std::string_view triangleVS = R"(
+			const std::string_view vertexShader = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Colour;
 
 			out vec3 v_Position;
 			out vec4 v_Colour;
  
 			uniform mat4 u_VpMat;
 			uniform mat4 u_TransformMat;
+			uniform vec4 u_Colour;
 
 			void main()
 			{
-				v_Colour = a_Colour;
+				v_Colour = u_Colour;
 				v_Position = a_Position;
 				gl_Position = u_VpMat * u_TransformMat * vec4(a_Position, 1.0);
 			}
 		)";
 
 
-			const std::string_view triangleFS = R"(
+			const std::string_view fragmentShader = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 out_color;
@@ -88,7 +83,7 @@ public:
 		)";
 
 			pColoursShader = std::unique_ptr<krakoa::graphics::iShader>(
-				krakoa::graphics::iShader::Create(triangleVS, triangleFS)
+				krakoa::graphics::iShader::Create(vertexShader, fragmentShader)
 				);
 		}
 
@@ -116,85 +111,47 @@ public:
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
-
-
-			const std::string_view squareVS = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-
-			out vec3 v_Position;
-
-			uniform mat4 u_VpMat;
-			uniform mat4 u_TransformMat;
-
-			void main()
-			{
-				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
-				gl_Position = u_VpMat * u_TransformMat * vec4(a_Position, 1.0);
-			}
-		)";
-
-
-			const std::string_view squareFS = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 out_color;
-
-			void main()
-			{
-				out_color = vec4(0.0, 0.5, 0.25, 0.50);
-			}
-		)";
-
-			pGreenShader = std::unique_ptr<krakoa::graphics::iShader>(
-				krakoa::graphics::iShader::Create(squareVS, squareFS)
-				);
 		}
 	}
 
 	void OnDetach() override
 	{
 		pColoursShader->Unbind();
-		pTriangleVA->Unbind();
-		pGreenShader->Unbind();
 		pSquareVA->Unbind();
 	}
 
 	void OnUpdate(float deltaTime) override
 	{
-		DBUG(klib::kFormat::ToString("Delta Time: %.4f", deltaTime));
+		DBUG(klib::kFormat::ToString("FPS: %.4f", 1.f / deltaTime));
 
 		MoveCamera(deltaTime);
 
 		krakoa::graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		krakoa::graphics::RenderCommand::Clear();
 
-
 		auto& renderer = krakoa::graphics::Renderer::Reference();
 
-		/*	const auto squareTransform = kmaths::Translate(squarePos);
-			renderer.Submit(*pSquareShader, *pSquareVA, squareTransform);*/
+		pColoursShader->Bind();
+		pColoursShader->UploadUniformVec4("u_Colour", squareColour);
 
 		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
+
 		for (auto y = 0; y < 20; ++y) {
 			for (auto x = 0; x < 20; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * 2.f, y * 2.f, 0.f };
 				const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;
-				renderer.Submit(*pGreenShader, *pSquareVA, miniSquareTransform);
+				renderer.Submit(*pColoursShader, *pSquareVA, miniSquareTransform);
 			}
 		}
-		renderer.Submit(*pColoursShader, *pTriangleVA);
 
 		renderer.EndScene();
 	}
 
 	void OnRender() override
 	{
-		ImGui::Begin("Demo");
-		ImGui::Text("This is the demo layer's window");
+		ImGui::Begin("Square Settings");
+		ImGui::ColorEdit4("Square Colour", squareColour.GetPointerToData());
 		ImGui::End();
 	}
 
@@ -207,14 +164,14 @@ private:
 	void MoveCamera(float deltaTime) noexcept
 	{
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-			squarePos.Y() = cameraPos.Y() += cameraMoveSpeed * deltaTime;
+			cameraPos.Y() += cameraMoveSpeed * deltaTime;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-			squarePos.Y() = cameraPos.Y() -= cameraMoveSpeed * deltaTime;
+			cameraPos.Y() -= cameraMoveSpeed * deltaTime;
 
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
-			squarePos.X() = cameraPos.X() -= cameraMoveSpeed * deltaTime;
+			cameraPos.X() -= cameraMoveSpeed * deltaTime;
 		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
-			squarePos.X() = cameraPos.X() += cameraMoveSpeed * deltaTime;
+			cameraPos.X() += cameraMoveSpeed * deltaTime;
 
 		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_A))
 			cameraRotation += cameraRotateSpeed * deltaTime;
@@ -229,17 +186,16 @@ private:
 private:
 	// To go in Renderer
 	std::unique_ptr<krakoa::graphics::iShader> pColoursShader;
-	std::unique_ptr<krakoa::graphics::iShader> pGreenShader;
-	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
 	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
 
 	krakoa::OrthographicCamera camera;
 	kmaths::Vector3f cameraPos;
 	float cameraRotation;
+
 	const float cameraMoveSpeed;
 	const float cameraRotateSpeed;
 
-	kmaths::Vector3f squarePos;
+	kmaths::Vector4f squareColour;
 };
 
 class Hooper2Game : public krakoa::Application

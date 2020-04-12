@@ -23,7 +23,7 @@ public:
 
 		pSquareVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 
-		// Triangle creation code
+		// Square creation code
 		{
 			// Vertices points
 			kmaths::Matrix3x3f vertices = {
@@ -46,44 +46,14 @@ public:
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
+		}
 
-			const std::string_view vertexShader = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-
-			out vec3 v_Position;
-			out vec4 v_Colour;
- 
-			uniform mat4 u_VpMat;
-			uniform mat4 u_TransformMat;
-			uniform vec4 u_Colour;
-
-			void main()
-			{
-				v_Colour = u_Colour;
-				v_Position = a_Position;
-				gl_Position = u_VpMat * u_TransformMat * vec4(a_Position, 1.0);
-			}
-		)";
-
-
-			const std::string_view fragmentShader = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 out_color;
-
-			in vec3 v_Position;
-			in vec4 v_Colour;
-
-			void main()
-			{
-				out_color = v_Colour;
-			}
-		)";
-
+		// Shader creation code
+		{
 			pColoursShader = std::unique_ptr<krakoa::graphics::iShader>(
-				krakoa::graphics::iShader::Create(vertexShader, fragmentShader)
+				krakoa::graphics::iShader::Create(
+					"..\\..\\..\\ExampleGames\\Hooper2\\Source Files\\Shaders\\OpenGL\\ColourVertexShader.glsl", // vertex shader source
+					"..\\..\\..\\ExampleGames\\Hooper2\\Source Files\\Shaders\\OpenGL\\ColourFragmentShader.glsl") // fragment shader source
 				);
 		}
 

@@ -7,9 +7,9 @@
 namespace klib::String
 {
 	template<class Char>
-	USE_RESULT constexpr std::basic_string<Char> Replace(const std::basic_string_view<Char>& str, const Char oldChar, const Char newChar) noexcept
+	USE_RESULT constexpr std::basic_string<ONLY_TYPE(Char)> Replace(const std::basic_string_view<ONLY_TYPE(Char)>& str, const ONLY_TYPE(Char) oldChar, const ONLY_TYPE(Char) newChar) noexcept
 	{
-		using String = std::basic_string<Char>;
+		using String = std::basic_string<ONLY_TYPE(Char)>;
 
 		auto text = String(str);
 

@@ -30,6 +30,9 @@
 
 #define CAST(type, val) static_cast<type>(val)
 
+#define ONLY_TYPE(type) std::decay_t<std::remove_pointer_t<type>>
+
+
 #if defined(KLIB_TEST)
 #	define TESTING_ENABLED 1
 #endif // KLIB_TEST

@@ -5,7 +5,6 @@
 
 namespace krakoa::graphics
 {
-
 	class iShader
 	{
 	public:
@@ -22,6 +21,6 @@ namespace krakoa::graphics
 		virtual void UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m) = 0;
 		virtual void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m) = 0;
 
-		static iShader* Create(const std::string_view & vertexSource, const std::string_view & fragmentSource);
+		static iShader* Create(const std::string_view & vertexSourceFilePath, const std::string_view & fragmentSourceFilePath);
 	};
 }

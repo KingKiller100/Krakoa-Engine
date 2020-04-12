@@ -123,8 +123,6 @@ project "Krakoa"
             "%{prj.name}/Source Files/**/test*"
         }
         runtime "Release"
-
-        --filters { "system:windows", "configuration:Release" }
 group ""
 
 group "Games"

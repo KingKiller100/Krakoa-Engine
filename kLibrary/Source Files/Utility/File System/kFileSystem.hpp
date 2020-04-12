@@ -20,25 +20,25 @@ namespace klib
 	namespace kFileSystem
 	{
 		//Type aliases for STL containers --------------------------------------------------------
-
+		
 		// STL basic_string
 		template<class Char>
-		using StringWriter = std::basic_string<Char, std::char_traits<Char>, std::allocator<Char>>;
+		using StringWriter = std::basic_string<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>, std::allocator<ONLY_TYPE(Char)>>;
 
 		template<class Char>
-		using StringReader = std::basic_string_view<Char>;
+		using StringReader = std::basic_string_view<ONLY_TYPE(Char)>;
 
 		// STL basic_ifstream
 		template<class Char>
-		using FileReader = std::basic_ifstream<Char, std::char_traits<Char>>;
+		using FileReader = std::basic_ifstream<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>>;
 
 		// STL basic_ofstream
 		template<class Char>
-		using FileWriter = std::basic_ofstream<Char, std::char_traits<Char>>;
+		using FileWriter = std::basic_ofstream<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>>;
 
 		// STL vector of StringTypes
 		template<typename Char>
-		using FileLines = std::vector<StringWriter<Char>>;
+		using FileLines = std::vector<StringWriter<ONLY_TYPE(Char)>>;
 		// --------------------------------------------------------------------------------------
 
 
@@ -51,11 +51,11 @@ namespace klib
 		 *		The data to fill the file with.
 		 */
 		template<class CharType = char>
-		constexpr void OutputToFile(const CharType* fullFilePath, const CharType* content)
+		constexpr void OutputToFile(const StringReader<CharType>& fullFilePath, const CharType* content)
 		{
 			static FileWriter<CharType> outFile;
 
-			outFile.open(fullFilePath, std::ios::out | std::ios::app);
+			outFile.open(fullFilePath.data(), std::ios::out | std::ios::app);
 
 			if (outFile.is_open())
 			{
@@ -65,8 +65,7 @@ namespace klib
 #ifdef _DEBUG
 			else
 			{
-				auto dirStr = StringReader<CharType>(fullFilePath);
-				OutputDebugStringA((StringWriter<CharType>("Cannot open file ") + dirStr.substr(dirStr.find_last_of('\\')).data()).c_str());
+				OutputDebugStringA((StringWriter<CharType>("Cannot create/open file ") + dirStr.data()).c_str());
 			}
 #endif // DEBUG
 		}
@@ -80,15 +79,15 @@ namespace klib
 		 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 		 */
 		template<class CharType = char>
-		constexpr bool CreateNewDirectory(const CharType* directory) noexcept
+		constexpr bool CreateNewDirectory(const StringReader<CharType>& directory) noexcept
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				return _mkdir(directory) == 0; // 0 == SUCCESS
+				return _mkdir(directory.data()) == 0; // 0 == SUCCESS
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				return _wmkdir(directory) == 0; // 0 == SUCCESS
+				return _wmkdir(directory.data()) == 0; // 0 == SUCCESS
 			}
 
 			return false;
@@ -107,15 +106,17 @@ namespace klib
 		 *		path already exist, only
 		 */
 		template<class CharType = char>
-		constexpr bool CreateNewDirectories(const CharType* directory)
+		constexpr bool CreateNewDirectories(const StringReader<CharType>& directory)
 		{
-			StringWriter<CharType> dir(directory);
+			using Char = std::decay_t<CharType>;
 
-			if (dir.back() != '\\')
-				dir += '\\'; // Final suffix of directory char type must end with '\\'
+			StringWriter<Char> dir(directory);
+
+			if (dir.back() != Char('\\'))
+				dir += Char('\\'); // Final suffix of directory char type must end with '\\'
 
 			bool isDirCreated = false;
-			auto pos = dir.find_first_of('\\') + 1;
+			auto pos = dir.find_first_of(Char('\\')) + 1;
 
 			StringWriter<CharType> nextDirectory;
 
@@ -123,7 +124,7 @@ namespace klib
 			{
 				isDirCreated = CreateNewDirectory<CharType>(nextDirectory.c_str());
 
-				const auto nextForwardSlash = dir.find_first_of('\\', pos) + 1;
+				const auto nextForwardSlash = dir.find_first_of(Char('\\'), pos) + 1;
 				nextDirectory = dir.substr(0, nextForwardSlash);
 				pos = nextForwardSlash;
 			}
@@ -143,16 +144,16 @@ namespace klib
 		*		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
 		*/
 		template<typename CharType = char>
-		constexpr bool RemoveFile(const CharType* fullFilePath)
+		constexpr bool RemoveFile(const StringReader<CharType>& fullFilePath)
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 				if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 				{
-					return remove(fullFilePath) == 0; // 0 == SUCCESS
+					return remove(fullFilePath.data()) == 0; // 0 == SUCCESS
 				}
 				else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 				{
-					return _wremove(fullFilePath) == 0; // 0 == SUCCESS
+					return _wremove(fullFilePath.data()) == 0; // 0 == SUCCESS
 				}
 
 			return false;
@@ -171,15 +172,15 @@ namespace klib
 		 *		- This directory is not the current directory of this application.
 		 */
 		template<class CharType = char>
-		bool DeleteDirectory(const CharType* directory)
+		bool DeleteDirectory(const StringReader<CharType>& directory)
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				return _rmdir(directory) == 0; // 0 == SUCCESS
+				return _rmdir(directory.data()) == 0; // 0 == SUCCESS
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				return _wrmkdir(directory) == 0; // 0 == SUCCESS
+				return _wrmkdir(directory.data()) == 0; // 0 == SUCCESS
 			}
 
 			return false;
@@ -195,18 +196,18 @@ namespace klib
 		 */
 
 		template<class CharType = char>
-		constexpr bool CheckFileExists(const CharType* fullFilePath) noexcept
+		constexpr bool CheckFileExists(const StringReader<CharType>& fullFilePath) noexcept
 		{
 			FILE* file;
 			auto result = -1;
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				result = fopen_s(&file, fullFilePath, "r");
+				result = fopen_s(&file, fullFilePath.data(), "r");
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				result = _wfopen_s(&file, fullFilePath, L"r");
+				result = _wfopen_s(&file, fullFilePath.data(), L"r");
 			}
 
 			if (file)
@@ -223,14 +224,14 @@ namespace klib
 		 * \return
 		 *		A vector of every line of data in the file, as a string
 		 */
-		template<class CharType>
-		USE_RESULT constexpr auto ParseFileData(const CharType* fullFilePath)
+		template<class CharType = char>
+		USE_RESULT constexpr auto ParseFileData(const StringReader<CharType>& fullFilePath)
 		{
 			FileLines<CharType> fileData;
 			if (!CheckFileExists(fullFilePath))
 				return fileData;
 
-			FileReader<CharType> inFile(fullFilePath);
+			FileReader<CharType> inFile(fullFilePath.data());
 
 			if (!inFile.is_open())
 				return fileData;
@@ -241,7 +242,7 @@ namespace klib
 				fileData.push_back(data);
 			}
 			inFile.close();
-			
+
 			return fileData;
 		}
 
@@ -251,9 +252,11 @@ namespace klib
 		 * \return
 		 *		Current working directory as a string
 		 */
-		template<class Char = char>
-		USE_RESULT constexpr StringWriter<Char> GetCurrentWorkingDirectory() noexcept
+		template<class CharType = char>
+		USE_RESULT constexpr StringWriter<CharType>& GetCurrentWorkingDirectory()
 		{
+			using Char = ONLY_TYPE(Char);
+
 			static StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
 
 			if (fullFolderPathOfCurrentWorkingDirectory.empty())
@@ -271,39 +274,41 @@ namespace klib
 
 				// Remove the filename, but keep the end slash
 				fullFolderPathOfCurrentWorkingDirectory.erase
-					(fullFolderPathOfCurrentWorkingDirectory.find_last_of('\\') + 1,
+				(fullFolderPathOfCurrentWorkingDirectory.find_last_of(Char('\\')) + 1,
 					fullFolderPathOfCurrentWorkingDirectory.back());
 			}
 
 			return fullFolderPathOfCurrentWorkingDirectory;
 		}
 
-		template<class Char = char>
-		USE_RESULT constexpr StringWriter<Char> GetFileName(const StringWriter<Char>& path) noexcept
+		template<class CharType = char>
+		USE_RESULT constexpr StringWriter<CharType> GetFileName(const StringWriter<CharType>& path) noexcept
 		{
-			const std::string text = String::Replace(path, '/', '\\');
-			const auto filename = text.substr(text.find_last_of('\\'));
+			using Char = std::decay_t<std::remove_pointer_t<CharType>>;
+			const auto text = String::Replace<Char>(path, Char('/'), Char('\\'));
+			const auto filename = text.substr(text.find_last_of(Char('\\')));
 			return filename;
 		}
 
 		template<class Char = char>
 		USE_RESULT constexpr StringWriter<Char> GetFileNameWithoutExtension(const StringWriter<Char>& path) noexcept
 		{
-			StringWriter<Char> filename = GetFileName<Char>(path);
+			StringWriter<Char> filename = GetFileName<ONLY_TYPE(Char)>(path);
 			filename = filename.substr(0, filename.find_first_of('.'));
 			return filename;
 		}
 
-		template<class Char = char>
-		USE_RESULT constexpr StringWriter<Char> GetPath(const StringWriter<Char>& path)
+		template<class CharType = char>
+		USE_RESULT constexpr StringWriter<CharType> GetPath(const StringWriter<CharType>& path)
 		{
-			StringWriter<Char> parentPath = String::Replace(path, '/', '\\');
+			using Char = ONLY_TYPE(CharType);
+			auto parentPath = String::Replace<ONLY_TYPE(Char)>(path, Char('/'), Char('\\'));
 			parentPath = parentPath.substr(0, parentPath.find_last_of('\\'));
 			return parentPath;
 		}
 
 		template<class Char = char>
-		USE_RESULT constexpr StringWriter<Char> AppendFileExtension(const Char* fname, const Char* extension) noexcept
+		USE_RESULT constexpr StringWriter<Char> AppendFileExtension(const ONLY_TYPE(Char)* fname, const ONLY_TYPE(Char)* extension) noexcept
 		{
 			StringReader<Char> filename = fname;
 			const auto isDotAtStartOFExtension = extension[0] == '.';

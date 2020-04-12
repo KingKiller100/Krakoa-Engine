@@ -134,12 +134,12 @@ namespace klib::kCalendar
 		if (slash)
 		{
 			if (localDate.find('/') == std::string::npos)
-				localDate = String::Replace(std::string_view(localDate.data()), '-', '/');
+				localDate = String::Replace<char>(localDate, '-', '/');
 		}
 		else
 		{
 			if (localDate.find('-') == std::string::npos)
-				localDate = String::Replace(std::string_view(localDate.data()), '/', '-');
+				localDate = String::Replace<char>(localDate, '/', '-');
 		}
 
 		return localDate;
@@ -233,12 +233,12 @@ namespace klib::kCalendar
 		if (slash)
 		{
 			if (localDate.find('/') == std::wstring::npos)
-				localDate = String::Replace<wchar_t>(localDate.data(), L'-', L'/');
+				localDate = String::Replace<wchar_t>(localDate, L'-', L'/');
 		}
 		else
 		{
 			if (localDate.find('-') == std::wstring::npos)
-				localDate = String::Replace<wchar_t>(localDate.data(), L'/', L'-');
+				localDate = String::Replace<wchar_t>(localDate, L'/', L'-');
 		}
 
 		return localDate;

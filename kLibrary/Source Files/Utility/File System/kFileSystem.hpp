@@ -255,7 +255,7 @@ namespace klib
 		template<class CharType = char>
 		USE_RESULT constexpr StringWriter<CharType>& GetCurrentWorkingDirectory()
 		{
-			using Char = ONLY_TYPE(Char);
+			using Char = ONLY_TYPE(CharType);
 
 			static StringWriter<Char> fullFolderPathOfCurrentWorkingDirectory;
 

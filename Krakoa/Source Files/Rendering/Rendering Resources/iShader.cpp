@@ -21,7 +21,7 @@ namespace krakoa::graphics
 		const auto formattedFSPath = klib::kString::Replace(fragmentSourceFilePath, '/', '\\');
 
 		const auto vsPath = currentDir + formattedVSPath.data();
-		const auto fsPath = currentDir + formattedVSPath.data();
+		const auto fsPath = currentDir + formattedFSPath.data();
 
 		const auto vsData = klib::kFileSystem::ParseFileData(vsPath);
 		const auto fsData = klib::kFileSystem::ParseFileData(fsPath);

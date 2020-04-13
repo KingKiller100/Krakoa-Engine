@@ -11,6 +11,7 @@ namespace kTest::utility
 		StringManipulationTester();
 		~StringManipulationTester();
 
+	private:
 		void Test() override;
 	};
 

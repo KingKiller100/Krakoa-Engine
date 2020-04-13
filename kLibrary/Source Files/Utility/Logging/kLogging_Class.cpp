@@ -21,7 +21,7 @@ namespace klib::kLogs
 
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
-		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
+		directory(GetExeDirectory<char>() + "Logs\\"),
 		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(false)).c_str(), ".log")),
 		name("logger"),
 		isEnabled(false),
@@ -81,29 +81,9 @@ namespace klib::kLogs
 		OutputToSubSystems(startLog, LLevel::BANR);
 	}
 
-	void Logging::SetName(const std::string_view& newName)
-	{
-		name = newName;
-	}
-
-	constexpr void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
-	{
-		minimumLoggingLevel = newMin;
-	}
-
 	constexpr void Logging::ToggleLoggingEnabled() noexcept
 	{
 		isEnabled = !isEnabled;
-	}
-
-	void Logging::ToggleSubSystemEnabled() noexcept
-	{
-		subSystemLoggingEnabled = !subSystemLoggingEnabled;
-	}
-
-	constexpr void Logging::SetCacheMode(const bool enable) noexcept
-	{
-		inCacheMode = enable;
 	}
 
 	void Logging::InitializeLogLevelMap() noexcept
@@ -133,17 +113,45 @@ namespace klib::kLogs
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::FATL, LConsoleColour::RED_BG_WHITE_TEXT));
 	}
 
+	void Logging::SetName(const std::string_view& newName)
+	{
+		name = newName;
+	}
+
+	constexpr void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
+	{
+		minimumLoggingLevel = newMin;
+	}
+
+	void Logging::ToggleSubSystemEnabled() noexcept
+	{
+		subSystemLoggingEnabled = !subSystemLoggingEnabled;
+	}
+
+	constexpr void Logging::SetCacheMode(const bool enable) noexcept
+	{
+		inCacheMode = enable;
+	}
+
+	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & fname)
+	{
+		CloseLogFile();
+		directory = dir;
+		filename = AppendFileExtension(fname.data(), ".log");
+		ResumeFileLogging();
+	}
+
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
-		directory = dir;
 		CloseLogFile();
+		directory = dir;
 		ResumeFileLogging();
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
-		filename = AppendFileExtension(newFileName.data(), ".log");
 		CloseLogFile();
+		filename = AppendFileExtension(newFileName.data(), ".log");
 		ResumeFileLogging();
 	}
 

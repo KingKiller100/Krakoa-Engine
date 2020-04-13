@@ -12,7 +12,7 @@ namespace kTest::utility
 		
 	private:
 		void Test() override;
-		bool LogTest() noexcept;
+		bool LogTest();
 
 	private:
 		std::string fullFilePathToDelete;

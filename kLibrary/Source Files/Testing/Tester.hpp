@@ -3,7 +3,6 @@
 #include "../HelperMacros.hpp"
 
 #include "../Utility/Format/kFormatToString.hpp"
-#include "../Utility/File System/kFileSystem.hpp"
 
 #include <string>
 
@@ -32,9 +31,10 @@ namespace kTest
 		virtual void Test() = 0;
 		
 	protected:
+		bool success;
+		
 		std::string name;
 		std::string failureData;
-		bool success;
 	};
 	
 	 // If results are wrong, change name to failed test function signature and line, else continues to next line

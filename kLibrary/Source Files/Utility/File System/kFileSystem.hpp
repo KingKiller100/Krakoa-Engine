@@ -29,7 +29,7 @@ namespace klib::kFileSystem
 
 	// STL vector of StringWriters
 	template<typename Char>
-	using FileLines = std::vector<klib::kString::StringWriter<Char>>;
+	using FileLines = std::vector<kString::StringWriter<Char>>;
 
 	// --------------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ namespace klib::kFileSystem
 	 *		The data to fill the file with.
 	 */
 	template<class CharType = char>
-	constexpr void OutputToFile(const klib::kString::StringWriter<CharType>& fullFilePath, const CharType* content)
+	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const CharType* content)
 	{
 		static FileWriter<CharType> outFile;
 
@@ -57,7 +57,8 @@ namespace klib::kFileSystem
 #ifdef _DEBUG
 		else
 		{
-			OutputDebugStringA(kString::StringWriter<CharType>("Cannot create/open file ") + dirStr.data()).c_str());
+			const auto failMsg = kString::StringWriter<CharType>("Cannot create/open file ") + fullFilePath.data();
+			OutputDebugStringA(failMsg.c_str());
 		}
 #endif // DEBUG
 	}
@@ -71,7 +72,7 @@ namespace klib::kFileSystem
 	 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 	 */
 	template<class CharType = char>
-	constexpr bool CreateNewDirectory(const klib::kString::StringReader<CharType>& directory) noexcept
+	constexpr bool CreateNewDirectory(const kString::StringReader<CharType>& directory) noexcept
 	{
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
@@ -98,11 +99,11 @@ namespace klib::kFileSystem
 	 *		path already exist, only
 	 */
 	template<class CharType = char>
-	constexpr bool CreateNewDirectories(const klib::kString::StringReader<CharType>& directory)
+	constexpr bool CreateNewDirectories(const kString::StringReader<CharType>& directory)
 	{
 		using Char = ONLY_TYPE(CharType);
 
-		klib::kString::StringWriter<Char> dir(directory);
+		kString::StringWriter<Char> dir(directory);
 
 		if (dir.back() != Char('\\'))
 			dir += Char('\\'); // Final suffix of directory char type must end with '\\'
@@ -110,7 +111,7 @@ namespace klib::kFileSystem
 		bool isDirCreated = false;
 		auto pos = dir.find_first_of(Char('\\')) + 1;
 
-		klib::kString::StringWriter<CharType> nextDirectory;
+		kString::StringWriter<CharType> nextDirectory;
 
 		while (pos != 0)
 		{
@@ -139,14 +140,13 @@ namespace klib::kFileSystem
 	constexpr bool RemoveFile(const kString::StringReader<CharType>& fullFilePath)
 	{
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-			{
-				return remove(fullFilePath.data()) == 0; // 0 == SUCCESS
-			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-			{
-				return _wremove(fullFilePath.data()) == 0; // 0 == SUCCESS
-			}
+		{
+			return remove(fullFilePath.data()) == 0; // 0 == SUCCESS
+		}
+		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+		{
+			return _wremove(fullFilePath.data()) == 0; // 0 == SUCCESS
+		}
 
 		return false;
 	}
@@ -243,7 +243,7 @@ namespace klib::kFileSystem
 
 	/**
 	 * \brief
-	 *		Returns the current directory
+	 *		Returns the current working directory
 	 * \return
 	 *		Current working directory as a string
 	 */
@@ -252,23 +252,87 @@ namespace klib::kFileSystem
 	{
 		using Char = ONLY_TYPE(CharType);
 
-		static klib::kString::StringWriter<Char> cwdFullPath;
+		static kString::StringWriter<Char> cwdFullPath;
 
 		if (cwdFullPath.empty())
 		{
-			Char cwdBuffer[1024];
-
+			Char* cwdBuffer;
+			DWORD length = 0;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
-				::GetCurrentDirectoryA(sizeof(cwdBuffer), cwdBuffer);
+			{
+				length = ::GetCurrentDirectoryA(0, nullptr);
+				cwdBuffer = new Char[length]{};
+				::GetCurrentDirectoryA(length, cwdBuffer);
+			}
 			else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
-				::GetCurrentDirectoryW(sizeof(cwdBuffer), cwdBuffer);
+			{
+				length = ::GetCurrentDirectoryW(0, nullptr);
+				cwdBuffer = new Char[length]{};
+				::GetCurrentDirectoryW(length, cwdBuffer);
+			}
 			else
-				static_assert(std::is_same_v<Char, char> || std::is_same_v<Char, wchar_t>, "Can only support \"char\" and \"wchar_t\" character types");
+			{
+				const auto dummyBuffer = GetCurrentWorkingDirectory<char>();
+				for (auto& c : dummyBuffer)
+				{
+					cwdFullPath += c;
+				}
+				return cwdFullPath;
+			}
 
-			fullFolderPathOfCurrentWorkingDirectory = std::move(cwdBuffer);
+			cwdFullPath = kString::StringWriter<Char>(cwdBuffer, cwdBuffer + (length - 1));
+			cwdFullPath += (Char('\\'));
+
+			delete[] cwdBuffer;
 		}
 
-		return fullFolderPathOfCurrentWorkingDirectory;
+		return cwdFullPath;
+	}
+
+	/**
+	 * \brief
+	 *		Returns the current exe directory
+	 * \return
+	 *		Current working directory as a string
+	 */
+	template<class CharType = char>
+	USE_RESULT constexpr kString::StringWriter<CharType>& GetExeDirectory()
+	{
+		using Char = ONLY_TYPE(CharType);
+
+		static kString::StringWriter<Char> exeFullPath;
+
+		if (exeFullPath.empty())
+		{
+			DWORD length = 0;
+			const auto bufferSize = 1024;
+			Char* exeBuffer = new Char[bufferSize]{}
+			;
+			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
+			{
+				length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
+			{
+				length = ::GetModuleFileNameW(nullptr, exeBuffer, bufferSize);
+			}
+			else
+			{
+				const auto dummyBuffer = GetExeDirectory<char>();
+				for (auto& c : dummyBuffer)
+				{
+					exeFullPath += c;
+				}
+				return exeFullPath;
+			}
+
+			exeFullPath = kString::StringWriter<Char>(exeBuffer, exeBuffer + length);
+			exeFullPath.erase(exeFullPath.find_last_of("\\") + 1);
+
+			delete[] exeBuffer;
+		}
+
+		return exeFullPath;
 	}
 
 	template<class CharType = char>
@@ -276,7 +340,7 @@ namespace klib::kFileSystem
 	{
 		using Char = std::decay_t<std::remove_pointer_t<CharType>>;
 		const auto text = kString::Replace<Char>(path, Char('/'), Char('\\'));
-		const auto filename = text.substr(text.find_last_of(Char('\\')));
+		const auto filename = text.substr(text.find_last_of(Char('\\')) + 1);
 		return filename;
 	}
 
@@ -298,7 +362,7 @@ namespace klib::kFileSystem
 	}
 
 	template<class Char = char>
-	USE_RESULT constexpr kString::StringWriter<Char> AppendFileExtension(const ONLY_TYPE(Char)* fname, const ONLY_TYPE(Char)* extension) noexcept
+	USE_RESULT constexpr kString::StringWriter<Char> AppendFileExtension(const kString::StringReader<Char>& fname, const kString::StringReader<Char>& extension) noexcept
 	{
 		using StrW = kString::StringWriter<Char>;
 		using StrR = kString::StringReader<Char>;

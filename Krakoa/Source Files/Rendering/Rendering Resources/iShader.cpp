@@ -15,7 +15,7 @@ namespace krakoa::graphics
 
 	iShader * iShader::Create(const std::string_view & vertexSourceFilePath, const std::string_view & fragmentSourceFilePath)
 	{
-		const auto currentDir = klib::kFileSystem::GetCurrentWorkingDirectory();
+		const auto currentDir = klib::kFileSystem::GetExeDirectory();
 
 		const auto vsPath = currentDir + vertexSourceFilePath.data();
 		const auto fsPath = currentDir + fragmentSourceFilePath.data();

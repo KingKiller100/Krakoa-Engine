@@ -100,6 +100,16 @@ namespace klib::kLogs
 		 *		Change the directory the log file outputs to
 		 * \param dir
 		 *		STL string view representing the new directory
+		 * \param fname
+		 *		STL string view representing the new filename
+		 */
+		void ChangeOutputPath(const std::string_view& dir, const std::string_view& fname);
+
+		/**
+		 * \brief
+		 *		Change the directory the log file outputs to
+		 * \param dir
+		 *		STL string view representing the new directory
 		 */
 		void ChangeOutputDirectory(const std::string_view dir);
 

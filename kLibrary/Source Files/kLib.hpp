@@ -11,6 +11,7 @@
 #include <Utility/Format/kFormatToString.hpp>
 #include <Utility/String View/StringView.hpp>
 #include <Utility/File System/kFileSystem.hpp>
+#include <Utility/Format/kStringManipulation.hpp>
 //#include <Utility/Format/kUTFStringConverter.hpp>
 
 // Macros

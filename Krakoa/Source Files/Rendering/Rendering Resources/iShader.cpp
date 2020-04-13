@@ -30,10 +30,10 @@ namespace krakoa::graphics
 		std::string fs;
 
 		for (auto& line : vsData)
-			vs.append(line);
+			vs.append(line + '\n');
 
 		for (auto& line : fsData)
-			fs.append(line);
+			fs.append(line + '\n');
 
 		switch (Renderer::Reference().GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;

@@ -16,7 +16,7 @@ namespace krakoa::graphics
 		switch (Renderer::Reference().GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::API::OPENGL: return new OpenGLVertexBuffer(vertices, size);
-		default:  KRK_FATAL(false, "Unknown RendererAPI type!");
+		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}
@@ -29,7 +29,7 @@ namespace krakoa::graphics
 		switch (Renderer::Reference().GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::API::OPENGL: return new OpenGLIndexBuffer(indices, count);
-		default:  KRK_FATAL(false, "Unknown RendererAPI type!");
+		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}

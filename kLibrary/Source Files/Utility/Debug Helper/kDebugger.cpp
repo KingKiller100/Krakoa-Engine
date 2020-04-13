@@ -8,12 +8,12 @@ namespace klib::kDebugger
 	void CheckRemoteDebuggerAttached(const char* filename) noexcept
 	{
 #ifdef  _DEBUG
-		if (::IsDebuggerPresent() == IS_TRUE)
+		if (::IsDebuggerPresent() == KLIB_TRUE)
 			return;
 
 		while (kFileSystem::CheckFileExists(filename))
 		{
-			if (::IsDebuggerPresent() == IS_TRUE)
+			if (::IsDebuggerPresent() == KLIB_TRUE)
 			{
 				return;
 			}

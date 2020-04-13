@@ -15,7 +15,7 @@ public:
 		cameraRotateSpeed(100.f)
 	{}
 
-	// Inherited via LayerBase
+	
 	void OnAttach() override
 	{
 		krakoa::graphics::Renderer::Create();
@@ -49,8 +49,8 @@ public:
 
 			pColoursShader = std::unique_ptr<krakoa::graphics::iShader>(
 				krakoa::graphics::iShader::Create(
-					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\ColourVertexShader.glsl", // vertex shader source
-					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\ColourFragmentShader.glsl") // fragment shader source
+					"../../../ExampleGames/Hooper2/Shaders/OpenGL/ColourVertexShader.glsl", // vertex shader source
+					"../../../ExampleGames/Hooper2/Shaders/OpenGL/ColourFragmentShader.glsl") // fragment shader source
 				);
 		}
 
@@ -59,10 +59,10 @@ public:
 			pSquareVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 
 			kmaths::Matrix<float, 4, 5> squareVertices = {
-				{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
-				{ -0.5f,  0.5f, 0.0f, 0.0f, 1.0f },
-				{  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },
-				{  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
+					{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
+					{ -0.5f,  0.5f, 0.0f, 0.0f, 1.0f },
+					{  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },
+					{  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
 			};
 
 			// Vertex buffer
@@ -84,18 +84,18 @@ public:
 
 			pTextureShader = std::unique_ptr<krakoa::graphics::iShader>(
 				krakoa::graphics::iShader::Create(
-					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\TextureVertexShader.glsl", // vertex shader source
-					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\TextureFragmentShader.glsl") // fragment shader source
+					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureVertexShader.glsl", // vertex shader source
+					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureFragmentShader.glsl") // fragment shader source
 				);
 		}
 	}
 
 	void OnDetach() override
 	{
-		pColoursShader->Unbind();
+		pTextureShader->Unbind();
 		pSquareVA->Unbind();
 
-		pTextureShader->Unbind();
+		pColoursShader->Unbind();
 		pTriangleVA->Unbind();
 	}
 
@@ -109,8 +109,6 @@ public:
 		krakoa::graphics::RenderCommand::Clear();
 
 		auto& renderer = krakoa::graphics::Renderer::Reference();
-
-		pTextureShader->Bind();
 
 		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
 		for (auto y = 0; y < 5; ++y) {

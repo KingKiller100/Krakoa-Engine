@@ -17,8 +17,11 @@ namespace krakoa::graphics
 	{
 		const auto currentDir = klib::kFileSystem::GetExeDirectory();
 
-		const auto vsPath = currentDir + vertexSourceFilePath.data();
-		const auto fsPath = currentDir + fragmentSourceFilePath.data();
+		const auto formattedVSPath = klib::kString::Replace(vertexSourceFilePath, '/', '\\');
+		const auto formattedFSPath = klib::kString::Replace(fragmentSourceFilePath, '/', '\\');
+
+		const auto vsPath = currentDir + formattedVSPath.data();
+		const auto fsPath = currentDir + formattedVSPath.data();
 
 		const auto vsData = klib::kFileSystem::ParseFileData(vsPath);
 		const auto fsData = klib::kFileSystem::ParseFileData(fsPath);

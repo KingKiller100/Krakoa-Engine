@@ -14,7 +14,7 @@ namespace kmaths
 	};
 
 	template<typename T>
-	USE_RESULT constexpr static Matrix4x4<T> GetTransformIdentity() noexcept
+	USE_RESULT constexpr static const Matrix4x4<T>& GetTransformIdentity() noexcept
 	{
 		static const auto identityMat = Matrix4x4<T>::Identity();
 		return identityMat;

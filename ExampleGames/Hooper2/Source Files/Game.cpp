@@ -21,10 +21,11 @@ public:
 		krakoa::graphics::Renderer::Create();
 		krakoa::graphics::Renderer::Reference().BeginScene(camera);
 
-		pSquareVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
 
-		// Square creation code
+		// Triangle creation code
 		{
+			pTriangleVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
+
 			// Vertices points
 			kmaths::Matrix3x3f vertices = {
 				{ -0.5f, -0.5f, 0.f },
@@ -36,41 +37,40 @@ public:
 			auto pVertexBuffer = krakoa::graphics::iVertexBuffer::Create(vertices.GetPointerToData(), sizeof(vertices));
 
 			pVertexBuffer->SetLayout({
-				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" }
-				}
-			);
+				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
+				});
 
 			// Index buffer
 			uint32_t indices[3] = { 0, 1, 2 };
-			pSquareVA->SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
+			pTriangleVA->SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
-		}
 
-		// Shader creation code
-		{
 			pColoursShader = std::unique_ptr<krakoa::graphics::iShader>(
 				krakoa::graphics::iShader::Create(
-					"..\\..\\..\\ExampleGames\\Hooper2\\Source Files\\Shaders\\OpenGL\\ColourVertexShader.glsl", // vertex shader source
-					"..\\..\\..\\ExampleGames\\Hooper2\\Source Files\\Shaders\\OpenGL\\ColourFragmentShader.glsl") // fragment shader source
+					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\ColourVertexShader.glsl", // vertex shader source
+					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\ColourFragmentShader.glsl") // fragment shader source
 				);
 		}
 
 		// Square creation code
 		{
-			kmaths::Matrix4x3f squareVertices = {
-				{ -0.75f, -0.75f, 0.f},
-				{ 0.75f, -0.75f, 0.f },
-				{ 0.75f, 0.75f, 0.0f },
-				{ -0.75f, 0.75f, 0.0f }
+			pSquareVA = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
+
+			kmaths::Matrix<float, 4, 5> squareVertices = {
+				{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
+				{ -0.5f,  0.5f, 0.0f, 0.0f, 1.0f },
+				{  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },
+				{  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
 			};
 
 			// Vertex buffer
 			auto squareVB = krakoa::graphics::iVertexBuffer::Create(squareVertices.GetPointerToData(), sizeof(squareVertices));
 
 			squareVB->SetLayout({
-				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" }
+				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
+				{ krakoa::graphics::ShaderDataType::FLOAT2, "a_TexCoord" },
 				});
 
 			pSquareVA->AddVertexBuffer(squareVB);
@@ -81,6 +81,12 @@ public:
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
+
+			pTextureShader = std::unique_ptr<krakoa::graphics::iShader>(
+				krakoa::graphics::iShader::Create(
+					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\TextureVertexShader.glsl", // vertex shader source
+					"..\\..\\..\\ExampleGames\\Hooper2\\Shaders\\OpenGL\\TextureFragmentShader.glsl") // fragment shader source
+				);
 		}
 	}
 
@@ -88,11 +94,14 @@ public:
 	{
 		pColoursShader->Unbind();
 		pSquareVA->Unbind();
+
+		pTextureShader->Unbind();
+		pTriangleVA->Unbind();
 	}
 
 	void OnUpdate(float deltaTime) override
 	{
-		DBUG(klib::kFormat::ToString("FPS: %.4f", 1.f / deltaTime));
+		fps = unsigned(1.f / deltaTime);
 
 		MoveCamera(deltaTime);
 
@@ -101,27 +110,30 @@ public:
 
 		auto& renderer = krakoa::graphics::Renderer::Reference();
 
-		pColoursShader->Bind();
-		pColoursShader->UploadUniformVec4("u_Colour", squareColour);
+		pTextureShader->Bind();
 
 		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
-
 		for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
 			{
-				const auto miniSquarePos = kmaths::Vector3f{ x * 2.f, y * 2.f, 0.f };
+				const auto miniSquarePos = kmaths::Vector3f{ x * 0.2f, y * 0.2f, 0.f };
 				const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;
-				renderer.Submit(*pColoursShader, *pSquareVA, miniSquareTransform);
+				renderer.Submit(*pTextureShader, *pSquareVA, miniSquareTransform);
 			}
 		}
+
+		pColoursShader->Bind();
+		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
+		renderer.Submit(*pColoursShader, *pTriangleVA);
 
 		renderer.EndScene();
 	}
 
 	void OnRender() override
 	{
-		ImGui::Begin("Square Settings");
-		ImGui::ColorEdit4("Square Colour", squareColour.GetPointerToData());
+		ImGui::Begin("Triangle Settings");
+		ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
+		ImGui::Text("FPS: %d", fps);
 		ImGui::End();
 	}
 
@@ -154,18 +166,23 @@ private:
 
 
 private:
-	// To go in Renderer
+	// Temp ----------------------------------------------------
 	std::unique_ptr<krakoa::graphics::iShader> pColoursShader;
+	std::unique_ptr<krakoa::graphics::iShader> pTextureShader;
+
 	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
+	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
+	// ---------------------------------------------------------
 
 	krakoa::OrthographicCamera camera;
 	kmaths::Vector3f cameraPos;
 	float cameraRotation;
-
 	const float cameraMoveSpeed;
 	const float cameraRotateSpeed;
 
-	kmaths::Vector4f squareColour;
+	unsigned fps;
+
+	kmaths::Vector4f triangleColour;
 };
 
 class Hooper2Game : public krakoa::Application

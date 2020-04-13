@@ -17,6 +17,9 @@
 #	error SORRY BLOKE, KRAKOA ONLY SUPPORTS WINDOWS!
 #endif
 
+#define KRK_TRUE KLIB_TRUE
+#define KRK_FALSE KLIB_FALSE
+
 #define BIT_SHIFT(n) (1 << n)
 
 // Standard Placeholders

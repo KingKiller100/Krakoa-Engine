@@ -23,6 +23,7 @@ workspace "KrakoaEngine"
     IncludeDir["KLIB"] = "kLibrary/Include Files/"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
     IncludeDir["ImGUI"] = "Krakoa/Vendors/imgui/"
+    IncludeDir["STBI"] = "Krakoa/Vendors/STB_Image/"
 
 group "Dependencies"
     include "Krakoa/Vendors/GLFW"
@@ -51,6 +52,8 @@ project "Krakoa"
     {
         "%{prj.name}/Source Files/**.hpp",
         "%{prj.name}/Source Files/**.cpp",
+        "%{prj.name}/Vendors/STB_Image/**.hpp",
+        "%{prj.name}/Vendors/STB_Image/**.cpp",
         "%{prj.name}/cpp.hint"
     }
 
@@ -60,6 +63,7 @@ project "Krakoa"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGUI}",
+        "%{IncludeDir.STBI}",
     }
 
     defines

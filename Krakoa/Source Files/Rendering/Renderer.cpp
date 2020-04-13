@@ -27,6 +27,8 @@ namespace krakoa::graphics
 
 	void Renderer::Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform) const
 	{
+		KRK_FATAL(!vertexArray.GetVertexBuffers().empty(), "No vertex buffer attached to this vertex array!");
+
 		shader.Bind();
 		shader.UploadUniformMatrix4x4("u_VpMat", *camera_VPMat);
 		shader.UploadUniformMatrix4x4("u_TransformMat", transform);

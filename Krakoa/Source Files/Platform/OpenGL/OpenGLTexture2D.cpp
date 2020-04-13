@@ -1,5 +1,5 @@
 ﻿#include "Precompile.hpp"
-#include "OpenGLTexture.hpp"
+#include "OpenGLTexture2D.hpp"
 
 #include "../../Core/Logging/CoreLogger.hpp"
 

@@ -2,9 +2,9 @@
 
 layout(location = 0) out vec4 out_Colour;
 
-in vec4 v_Colour;
+uniform vec4 u_Colour;
 
 void main()
 {
-	out_Colour = v_Colour;
+	out_Colour = u_Colour;
 }

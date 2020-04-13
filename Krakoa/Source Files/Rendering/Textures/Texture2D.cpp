@@ -3,7 +3,7 @@
 
 #include "../Renderer.hpp"
 
-#include "../../Platform//OpenGL/OpenGLTexture.hpp"
+#include "../../Platform//OpenGL/OpenGLTexture2D.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
 namespace krakoa::graphics

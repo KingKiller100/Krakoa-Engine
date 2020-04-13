@@ -15,7 +15,7 @@ public:
 		cameraRotateSpeed(100.f)
 	{}
 
-	
+
 	void OnAttach() override
 	{
 		krakoa::graphics::Renderer::Create();
@@ -34,11 +34,13 @@ public:
 			};
 
 			// Vertex buffer
-			auto pVertexBuffer = krakoa::graphics::iVertexBuffer::Create(vertices.GetPointerToData(), sizeof(vertices));
+			auto triangleVB = krakoa::graphics::iVertexBuffer::Create(vertices.GetPointerToData(), sizeof(vertices));
 
-			pVertexBuffer->SetLayout({
+			triangleVB->SetLayout({
 				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
 				});
+
+			pTriangleVA->AddVertexBuffer(triangleVB);
 
 			// Index buffer
 			uint32_t indices[3] = { 0, 1, 2 };
@@ -110,6 +112,12 @@ public:
 
 		auto& renderer = krakoa::graphics::Renderer::Reference();
 
+		const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) * kmaths::Scale<float>({ 2.f, 2.f, 1.f });
+
+		pColoursShader->Bind();
+		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
+		renderer.Submit(*pColoursShader, *pTriangleVA, triangleTransform);
+
 		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
 		for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
@@ -119,10 +127,6 @@ public:
 				renderer.Submit(*pTextureShader, *pSquareVA, miniSquareTransform);
 			}
 		}
-
-		pColoursShader->Bind();
-		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
-		renderer.Submit(*pColoursShader, *pTriangleVA);
 
 		renderer.EndScene();
 	}

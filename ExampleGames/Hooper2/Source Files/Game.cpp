@@ -106,8 +106,8 @@ public:
 
 		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
 
-		for (auto y = 0; y < 20; ++y) {
-			for (auto x = 0; x < 20; ++x)
+		for (auto y = 0; y < 5; ++y) {
+			for (auto x = 0; x < 5; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * 2.f, y * 2.f, 0.f };
 				const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;

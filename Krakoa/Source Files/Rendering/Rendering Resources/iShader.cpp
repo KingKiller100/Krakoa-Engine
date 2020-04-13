@@ -37,7 +37,7 @@ namespace krakoa::graphics
 
 		switch (Renderer::Reference().GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLShader(vertexSourceFilePath, fragmentSourceFilePath);
+		case iRendererAPI::API::OPENGL: return new OpenGLShader(vs, fs);
 		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
 		}
 

@@ -12,7 +12,7 @@ namespace krakoa
 	Application::Application(Token&)
 		: isRunning(false),
 		fpsCounter(24),
-		timeStep()
+		timeStep(120)
 	{
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");

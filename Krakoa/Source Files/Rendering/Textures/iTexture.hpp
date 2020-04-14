@@ -13,6 +13,6 @@ namespace krakoa::graphics
 		virtual uint32_t Geteight() const noexcept = 0;
 		virtual const kmaths::Vector2u& GetDimensions() const noexcept = 0;
 
-		virtual void Bind() const = 0;
+		virtual void Bind(const uint32_t slot = 0) const = 0;
 	};
 }

@@ -14,7 +14,7 @@ namespace krakoa::graphics
 		uint32_t Geteight() const noexcept override;
 		const kmaths::Vector2u& GetDimensions() const noexcept override;
 
-		void Bind() const override;
+		void Bind(const uint32_t slot = 0) const override;
 
 	private:
 		std::string path;

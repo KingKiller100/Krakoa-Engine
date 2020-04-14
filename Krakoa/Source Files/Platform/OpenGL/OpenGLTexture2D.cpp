@@ -52,9 +52,9 @@ namespace krakoa::graphics
 		return dimensions;
 	}
 
-	void OpenGLTexture2D::Bind() const
+	void OpenGLTexture2D::Bind(const uint32_t slot = 0) const
 	{
-		glBindTextureUnit(0, rendererID);
+		glBindTextureUnit(slot, rendererID);
 	}
 
 }

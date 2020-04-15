@@ -332,8 +332,8 @@ namespace klib::kFileSystem
 		{
 			DWORD length = 0;
 			const auto bufferSize = 1024;
-			Char* exeBuffer = new Char[bufferSize]{}
-			;
+			Char* exeBuffer = new Char[bufferSize]{};
+
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <HelperMacros.hpp>
+
 #ifdef KRAKOA_OS_WINDOWS
 #	if KRAKOA_DYNAMIC_LINK
 #		ifdef KRAKOA_BUILD_DLL

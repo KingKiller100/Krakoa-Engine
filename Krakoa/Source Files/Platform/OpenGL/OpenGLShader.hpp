@@ -10,7 +10,7 @@ namespace krakoa::graphics
 	class OpenGLShader : public iShader
 	{
 	public:
-		OpenGLShader(const std::string_view& vertexSource, const std::string_view& fragmentSource);
+		OpenGLShader(const std::string_view& vsFile, const std::string_view& fsFile);
 		~OpenGLShader();
 
 		void Bind() const override;
@@ -25,7 +25,10 @@ namespace krakoa::graphics
 		void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m) override;
 
 	private:
-		int GetUniformLocation(const std::string_view& name) noexcept;
+		virtual ShaderSource ParseAPIShaderFile(const std::string_view& filePath) override;
+
+		uint32_t CompileShader(const unsigned type, const std::string_view& source) const;
+		int32_t GetUniformLocation(const std::string_view& name);
 
 	private:
 		uint32_t rendererID;

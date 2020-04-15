@@ -203,7 +203,7 @@ namespace krakoa
 
 	void WindowsWindow::SetVsync(bool isEnabled)
 	{
-		const auto res = isEnabled ? 1 : 0;
+		const auto res = isEnabled ? KRK_TRUE : KRK_FALSE;
 		glfwSwapInterval(res);
 		data.vSyncOn = isEnabled;
 	}

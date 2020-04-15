@@ -13,7 +13,6 @@ namespace krakoa
 		WindowsWindow(const WindowProperties& props);
 		~WindowsWindow();
 
-		// Inherited via Window
 		void OnUpdate() override;
 
 		kmaths::Vector2u& GetDimensions() override;
@@ -48,6 +47,5 @@ namespace krakoa
 			EventCallbackFunc eventCallBack;
 		} data;
 
-		// Inherited via iWindow
 	};
 }

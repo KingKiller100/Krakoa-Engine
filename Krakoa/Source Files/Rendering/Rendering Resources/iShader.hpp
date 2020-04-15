@@ -5,6 +5,12 @@
 
 namespace krakoa::graphics
 {
+	struct ShaderSource
+	{
+		std::string vertexSource;
+		std::string fragmentSource;
+	};
+
 	class iShader
 	{
 	public:
@@ -22,5 +28,8 @@ namespace krakoa::graphics
 		virtual void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m) = 0;
 
 		static iShader* Create(const std::string_view & vertexSourceFilePath, const std::string_view & fragmentSourceFilePath);
+
+	private:
+		virtual ShaderSource ParseAPIShaderFile(const std::string_view& filePath) = 0;
 	};
 }

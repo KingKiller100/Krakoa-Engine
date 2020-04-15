@@ -11,69 +11,9 @@ namespace krakoa::graphics
 {
 	OpenGLShader::OpenGLShader(const std::string_view & vertexSource, const std::string_view & fragmentSource)
 	{
-
-		// Create an empty vertex shader handle
-		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-		// Send the vertex shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		const GLchar *source = (const GLchar *)vertexSource.data();
-		glShaderSource(vertexShader, 1, &source, 0);
-
-		// Compile the vertex shader
-		glCompileShader(vertexShader);
-
-		GLint isCompiled = 0;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			// The maxLength includes the NULL character
-			GLchar* infoLog = new GLchar[maxLength];
-			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, infoLog);
-
-			// We don't need the shader anymore.
-			glDeleteShader(vertexShader);
-
-			KRK_ERRR("Vertex Shader Compilation Error: ");
-			KRK_FATAL(false, infoLog);
-			delete[] infoLog;
-			return;
-		}
-
-		// Create an empty fragment shader handle
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-		// Send the fragment shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		source = (const GLchar *)fragmentSource.data();
-		glShaderSource(fragmentShader, 1, &source, 0);
-
-		// Compile the fragment shader
-		glCompileShader(fragmentShader);
-
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			// The maxLength includes the NULL character
-			GLchar* infoLog = new GLchar[maxLength];
-			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, infoLog);
-
-			// We don't need the shader anymore.
-			glDeleteShader(fragmentShader);
-			// Either of them. Don't leak shaders.
-			glDeleteShader(vertexShader);
-
-			KRK_ERRR("Fragment Shader Compilation Error: ");
-			KRK_FATAL(false, infoLog);
-			delete[] infoLog;
-			return;
-		}
+		const auto sources = ParseAPIShaderFile(shaderPath);
+		const GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexSource);
+		const GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
 
 		// Vertex and fragment shaders are successfully compiled.
 		// Now time to link them together into a program.
@@ -115,6 +55,47 @@ namespace krakoa::graphics
 		// Always detach shaders after a successful link.
 		glDetachShader(rendererID, vertexShader);
 		glDetachShader(rendererID, fragmentShader);
+	}
+
+	uint32_t OpenGLShader::CompileShader(const unsigned type, const std::string_view& source) const
+	{
+		// Create an empty vertex/fragment shader handle
+		const GLuint shaderID = glCreateShader(type);
+
+		// Send the vertex shader source code to GL
+		// Note that std::string's .c_str is NULL character terminated.
+		auto data = CAST(const GLchar*, source.data());
+		glShaderSource(shaderID, 1, &data, 0);
+
+		// Compile the vertex shader
+		glCompileShader(shaderID);
+
+		GLint isCompiled = 0;
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
+		{
+			GLint maxLength = 0;
+			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
+
+			// The maxLength includes the NULL character
+			GLchar* infoLog = CAST(GLchar*, alloca(maxLength * sizeof (GLchar)));
+			glGetShaderInfoLog(shaderID, maxLength, &maxLength, infoLog);
+
+			// We don't need the shader anymore.
+			glDeleteShader(shaderID);
+
+			KRK_ERRR(klib::kFormat::ToString("%s Shader Compilation Error: ", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment")));
+			KRK_FATAL(false, infoLog);
+			delete[] infoLog;
+			return -1;
+		}
+
+		return shaderID;
+	}
+
+	ShaderSource OpenGLShader::ParseAPIShaderFile(const std::string_view& filePath)
+	{
+		return ShaderSource();
 	}
 
 	OpenGLShader::~OpenGLShader()
@@ -174,7 +155,7 @@ namespace krakoa::graphics
 		glUniformMatrix4fv(location, 1, GL_FALSE, m.GetPointerToData());
 	}
 
-	int OpenGLShader::GetUniformLocation(const std::string_view& name) noexcept
+	int OpenGLShader::GetUniformLocation(const std::string_view& name)
 	{
 		const auto found_iter = uniformLocationUMap.find(name.data());
 		if (found_iter != uniformLocationUMap.end())

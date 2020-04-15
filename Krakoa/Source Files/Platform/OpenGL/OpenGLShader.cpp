@@ -20,8 +20,8 @@ namespace krakoa::graphics
 
 	ShaderSource OpenGLShader::ParseShaderFile(const std::string_view& filePath) const
 	{
-		const auto path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
-		const auto shaderData = klib::kFileSystem::ParseFileData(path);
+		texturePath = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
+		const auto shaderData = klib::kFileSystem::ParseFileData(texturePath);
 
 		KRK_FATAL(!shaderData.empty(), "Shader file is empty");
 

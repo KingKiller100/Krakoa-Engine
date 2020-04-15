@@ -3,6 +3,9 @@
 #include <imgui/imgui.h>
 
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
+#include <Maths/kAlgorithms.hpp>
+
+#include <cmath>
 
 class RendererLayer : public krakoa::LayerBase
 {
@@ -111,7 +114,9 @@ public:
 
 	void OnUpdate(float deltaTime) override
 	{
-		fps = unsigned(1.f / deltaTime);
+		static size_t count = 0;
+
+		frameTimes[kmaths::modulus(count++, frameTimes.size())] = (1.f / deltaTime);
 
 		MoveCamera(deltaTime);
 
@@ -120,8 +125,8 @@ public:
 		renderer.SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		renderer.Clear();
 
-
-		const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) * kmaths::Scale<float>({ 2.f, 2.f, 1.f });
+		const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) * 
+			kmaths::Scale<float>({ 2.f, 2.f, 1.f });
 
 		pColoursShader->Bind();
 		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
@@ -146,7 +151,13 @@ public:
 	{
 		ImGui::Begin("Triangle Settings");
 		ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
-		ImGui::Text("FPS: %d", fps);
+
+		const auto loops = frameTimes.size();
+		decltype(frameTimes)::value_type sum = 0;
+		for (auto i = 0; i < loops; ++i)
+			sum += frameTimes[i];
+		const auto fps = sum / loops;
+		ImGui::Text("Average FPS: %d", fps);
 		ImGui::End();
 	}
 
@@ -195,7 +206,7 @@ private:
 	const float cameraMoveSpeed;
 	const float cameraRotateSpeed;
 
-	unsigned fps;
+	std::array<unsigned, 20> frameTimes;
 
 	kmaths::Vector4f triangleColour;
 };

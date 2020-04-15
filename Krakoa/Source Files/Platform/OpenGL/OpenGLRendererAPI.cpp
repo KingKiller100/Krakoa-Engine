@@ -5,14 +5,11 @@
 
 #include <Utility/Format/kFormatToString.hpp>
 
+#include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
 
 namespace krakoa::graphics
 {
-	static void OpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
-	{
-	}
-
 	void OpenGLRendererAPI::Initialize()
 	{
 		OutputRenderingArchitecture();
@@ -21,7 +18,7 @@ namespace krakoa::graphics
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEBUG_OUTPUT);
-		/*glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
+		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
 		{
 			const auto msgFormat = klib::kFormat::ToString(
 				"OpenGL %s:\n type = 0x%08x\n severity = 0x%08x\n message = %s\n",
@@ -44,7 +41,7 @@ namespace krakoa::graphics
 					message));
 			}
 		}, 
-			nullptr);*/
+			nullptr);
 
 	}
 
@@ -55,6 +52,7 @@ namespace krakoa::graphics
 		KRK_INFO(klib::kFormat::ToString("Version: %s", glGetString(GL_VERSION)));
 		KRK_INFO(klib::kFormat::ToString("Vendor: %s", glGetString(GL_VENDOR)));
 		KRK_INFO(klib::kFormat::ToString("Hardware: %s", glGetString(GL_RENDERER)));
+		KRK_INFO(klib::kFormat::ToString("GLFW Version: %s", glfwGetVersionString()));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const kmaths::Vector4f& colour)

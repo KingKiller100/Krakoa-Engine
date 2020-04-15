@@ -34,7 +34,7 @@ namespace krakoa::graphics
 
 	private:
 		uint32_t rendererID;
-		std::string filepath;
+		mutable std::string texturePath;
 		std::unordered_map<std::string, int32_t> uniformLocationUMap;
 	};
 }

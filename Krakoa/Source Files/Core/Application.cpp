@@ -5,6 +5,8 @@
 
 #include "../Input/InputManager.hpp"
 
+#include <Utility/Debug Helper/kDebugger.hpp>
+
 namespace krakoa
 {
 	using namespace klib;
@@ -14,6 +16,8 @@ namespace krakoa
 		fpsCounter(24),
 		timeStep()
 	{
+		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
+
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");

@@ -22,6 +22,10 @@
 #include "Rendering/Renderer.hpp"
 #include "Rendering/RenderCommand.hpp"
 
+// Textures
+#include "Rendering/Textures/iTexture.hpp"
+#include "Rendering/Textures/Texture2D.hpp"
+
 // Rendering Resources
 #include "Rendering/Rendering Resources/iShader.hpp"
 #include "Rendering/Rendering Resources/iBuffers.hpp"

@@ -68,7 +68,10 @@ public:
 			};
 
 			// Vertex buffer
-			auto squareVB = krakoa::graphics::iVertexBuffer::Create(squareVertices.GetPointerToData(), sizeof(squareVertices));
+			auto squareVB = krakoa::graphics::iVertexBuffer::Create(
+				squareVertices.GetPointerToData(), 
+				sizeof(squareVertices)
+			);
 
 			squareVB->SetLayout({
 				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
@@ -90,6 +93,13 @@ public:
 					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureFragmentShader.glsl") // fragment shader source
 				);
 		}
+
+		pWinTexture = std::unique_ptr<krakoa::graphics::iTexture>(
+			krakoa::graphics::Texture2D::Create("Assets\\Win.png")
+			);
+
+		pTextureShader->Bind();
+		pTextureShader->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnDetach() override
@@ -124,6 +134,7 @@ public:
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * 0.2f, y * 0.2f, 0.f };
 				const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;
+				pWinTexture->Bind();
 				renderer.Submit(*pTextureShader, *pSquareVA, miniSquareTransform);
 			}
 		}
@@ -174,6 +185,8 @@ private:
 
 	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
 	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
+
+	std::unique_ptr<krakoa::graphics::iTexture> pWinTexture;
 	// ---------------------------------------------------------
 
 	krakoa::OrthographicCamera camera;

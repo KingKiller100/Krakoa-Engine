@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "NotImplementedException.hpp"
 
-namespace klib::exceptions
+namespace klib::kDebug::kExceptions
 {
 	NotImplementedException::NotImplementedException()
 	{}

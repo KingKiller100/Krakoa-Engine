@@ -3,7 +3,7 @@
 
 #include "../File System/kFileSystem.hpp"
 
-namespace klib::kDebugger
+namespace klib::kDebug
 {
 	void CheckRemoteDebuggerAttached(const char* filename) noexcept
 	{

@@ -20,16 +20,16 @@ namespace krakoa::graphics
 		dimensions.X() = width;
 		dimensions.Y() = height;
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
+		glGenTextures(1, &rendererID);
 		glTextureStorage2D(rendererID, 1, GL_RGB8, width, height);
 
 		glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-		glTextureSubImage2D(rendererID, 0, 0, 0, width, height, channels == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
-
+		glTextureSubImage2D(rendererID, 0, 0, 0, width, height, channels == 3 ? GL_RGB8 : GL_RGBA8, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		 
 		stbi_image_free(data);
-
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -52,7 +52,7 @@ namespace krakoa::graphics
 		return dimensions;
 	}
 
-	void OpenGLTexture2D::Bind(const uint32_t slot = 0) const
+	void OpenGLTexture2D::Bind(const uint32_t slot) const
 	{
 		glBindTextureUnit(slot, rendererID);
 	}

@@ -3,6 +3,8 @@
 
 #include "../../Core/Logging/CoreLogger.hpp"
 
+#include <Utility/Format/kFormatToString.hpp>
+
 #include <GLAD/glad.h>
 
 namespace krakoa::graphics
@@ -128,7 +130,6 @@ namespace krakoa::graphics
 	void OpenGLShader::Unbind() const
 	{
 		glUseProgram(0);
-
 	}
 
 	void OpenGLShader::UploadUniformInt(const std::string_view& name, const int val)
@@ -176,14 +177,15 @@ namespace krakoa::graphics
 	int OpenGLShader::GetUniformLocation(const std::string_view& name) noexcept
 	{
 		const auto found_iter = uniformLocationUMap.find(name.data());
-		if (found_iter == uniformLocationUMap.end())
+		if (found_iter != uniformLocationUMap.end())
 		{
-			const auto location = glGetUniformLocation(rendererID, name.data());
-			uniformLocationUMap.insert(std::make_pair(name, location));
+			const auto location = found_iter->second;
 			return location;
 		}
 
-		const auto location = found_iter->second;
+		const auto location = glGetUniformLocation(rendererID, name.data());
+		KRK_FATAL(location >= 0, klib::kFormat::ToString("uniform %s does not exist inside this shader", name.data()));
+		uniformLocationUMap.insert(std::make_pair(name, location));
 		return location;
 	}
 

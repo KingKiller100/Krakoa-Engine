@@ -4,11 +4,11 @@
 #include "../Format/kFormatToString.hpp"
 #include "../Logging/kLogging_Class.hpp"
 
-namespace klib::debug
+namespace klib::kDebug
 {
 #if _DEBUG
-	AssertOnFailedConditionException::AssertOnFailedConditionException(const char* exp, const char* msg, const char* file, const unsigned line)
-		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [NOTE]: %s.", exp, msg))
+	AssertOnFailedConditionException::AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const unsigned line)
+		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [NOTE]: %s.", exp.data(), msg.data()))
 	{
 		auto exceptionLog = kLogs::Logging();
 		exceptionLog.SetName("kAssert");
@@ -20,7 +20,7 @@ namespace klib::debug
 
 	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()
 	{}
-	
+
 	char const* AssertOnFailedConditionException::what() const
 	{
 		return report.c_str();

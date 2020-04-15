@@ -26,10 +26,9 @@ project "kLibrary"
 
     postbuildcommands
     {
-        ("xcopy /s \"$(ProjectDir)Source Files\" \"$(ProjectDir)Include Files\""),
-        ("FOR /R \"$(ProjectDir)Include Files\" %%f in (**.cpp) do (del /f /s /q %%f \"$(ProjectDir)Include Files\")"),
+        ("xcopy /s /y \"$(ProjectDir)Source Files\" \"$(ProjectDir)Include Files\""),
+        ("del /s /q /f \"$(ProjectDir)Include Files\\*.cpp\""),
         ("del \"$(ProjectDir)Include Files\\pch.hpp\" /s /f /q"),
-        ("del \"$(ProjectDir)Include Files\\pch.cpp\" /s /f /q")
     }
 
     filter "system:Windows"

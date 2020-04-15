@@ -43,7 +43,7 @@ namespace klib::kFileSystem
 	 *		The data to fill the file with.
 	 */
 	template<class CharType = char>
-	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const CharType* content)
+	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringReader<CharType>& content)
 	{
 		static FileWriter<CharType> outFile;
 
@@ -51,7 +51,7 @@ namespace klib::kFileSystem
 
 		if (outFile.is_open())
 		{
-			outFile << content;
+			outFile << content.data();
 			outFile.close();
 		}
 #ifdef _DEBUG
@@ -82,6 +82,13 @@ namespace klib::kFileSystem
 		{
 			return _wmkdir(directory.data()) == 0; // 0 == SUCCESS
 		}
+		else
+		{
+			kString::StringWriter<char> temp;
+			for (auto& c : directory)
+				temp += CAST(char, c);
+			return CreateNewDirectory<char>(temp);
+		}
 
 		return false;
 	}
@@ -111,11 +118,11 @@ namespace klib::kFileSystem
 		bool isDirCreated = false;
 		auto pos = dir.find_first_of(Char('\\')) + 1;
 
-		kString::StringWriter<CharType> nextDirectory;
+		kString::StringWriter<Char> nextDirectory;
 
 		while (pos != 0)
 		{
-			isDirCreated = CreateNewDirectory<CharType>(nextDirectory.c_str());
+			isDirCreated = CreateNewDirectory<Char>(nextDirectory.c_str());
 
 			const auto nextForwardSlash = dir.find_first_of(Char('\\'), pos) + 1;
 			nextDirectory = dir.substr(0, nextForwardSlash);
@@ -147,6 +154,14 @@ namespace klib::kFileSystem
 		{
 			return _wremove(fullFilePath.data()) == 0; // 0 == SUCCESS
 		}
+		else
+		{
+			kString::StringWriter<char> temp;
+			for (auto& c : fullFilePath)
+				temp += CAST(char, c);
+			return RemoveFile<char>(temp);
+		}
+
 
 		return false;
 	}
@@ -174,7 +189,13 @@ namespace klib::kFileSystem
 		{
 			return _wrmkdir(directory.data()) == 0; // 0 == SUCCESS
 		}
-
+		else
+		{
+			kString::StringWriter<char> temp;
+			for (auto& c : directory)
+				temp += CAST(char, c);
+			return DeleteDirectory<char>(temp);
+		}
 		return false;
 	}
 
@@ -200,6 +221,13 @@ namespace klib::kFileSystem
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
 			result = _wfopen_s(&file, fullFilePath.data(), L"r");
+		}
+		else
+		{
+			kString::StringWriter<char> temp;
+			for (auto& c : fullFilePath)
+				temp += CAST(char, c);
+			result = CheckFileExists<char>(temp);
 		}
 
 		if (file)
@@ -274,9 +302,7 @@ namespace klib::kFileSystem
 			{
 				const auto dummyBuffer = GetCurrentWorkingDirectory<char>();
 				for (auto& c : dummyBuffer)
-				{
 					cwdFullPath += c;
-				}
 				return cwdFullPath;
 			}
 
@@ -320,9 +346,7 @@ namespace klib::kFileSystem
 			{
 				const auto dummyBuffer = GetExeDirectory<char>();
 				for (auto& c : dummyBuffer)
-				{
 					exeFullPath += c;
-				}
 				return exeFullPath;
 			}
 

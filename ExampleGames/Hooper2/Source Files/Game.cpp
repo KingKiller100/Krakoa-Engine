@@ -95,7 +95,7 @@ public:
 		}
 
 		pWinTexture = std::unique_ptr<krakoa::graphics::iTexture>(
-			krakoa::graphics::Texture2D::Create("Assets\\Win.png")
+			krakoa::graphics::iTexture2D::Create("Assets\\Win.png")
 			);
 
 		pTextureShader->Bind();
@@ -128,12 +128,13 @@ public:
 		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
 		renderer.Submit(*pColoursShader, *pTriangleVA, triangleTransform);
 
-		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
+		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.5f));
 		for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
 			{
-				const auto miniSquarePos = kmaths::Vector3f{ x * 0.2f, y * 0.2f, 0.f };
+				const auto miniSquarePos = kmaths::Vector3f{ x * 2.f, y * 2.0f, 0.f };
 				const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;
+				pTextureShader->Bind();
 				pWinTexture->Bind();
 				renderer.Submit(*pTextureShader, *pSquareVA, miniSquareTransform);
 			}

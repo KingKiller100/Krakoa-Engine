@@ -177,7 +177,7 @@ namespace klib::kLogs
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const std::string_view msg, const LLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
+	void Logging::AddEntry(const std::string_view& msg, const LLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
 	{
 		if (!isEnabled && lvl < LLevel::ERRR) return;
 		if (lvl < minimumLoggingLevel) return;

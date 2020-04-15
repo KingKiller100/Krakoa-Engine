@@ -24,7 +24,7 @@
 
 // Textures
 #include "Rendering/Textures/iTexture.hpp"
-#include "Rendering/Textures/Texture2D.hpp"
+#include "Rendering/Textures/iTexture2D.hpp"
 
 // Rendering Resources
 #include "Rendering/Rendering Resources/iShader.hpp"

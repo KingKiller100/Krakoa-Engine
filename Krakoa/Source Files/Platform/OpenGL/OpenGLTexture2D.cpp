@@ -9,27 +9,43 @@
 
 namespace krakoa::graphics
 {
-	OpenGLTexture2D::OpenGLTexture2D(const std::string_view& path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string_view& path, const bool cache)
 		: path(path)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(KRK_TRUE);
-		auto data = stbi_load(path.data(), &width, &height, &channels, 0);
-		KRK_FATAL(data, "Failed to load image");
+		buffer = stbi_load(path.data(), &width, &height, &channels, 0);
+		KRK_FATAL(buffer, "Failed to load image");
 
-		dimensions.X() = width;
-		dimensions.Y() = height;
+		dimensions = kmaths::Vector2u( width, height );
 
 		glGenTextures(1, &rendererID);
-		glTextureStorage2D(rendererID, 1, GL_RGB8, width, height);
+		glBindTexture(GL_TEXTURE_2D, rendererID);
 
-		glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTextureSubImage2D(rendererID, 0, 0, 0, width, height, channels == 3 ? GL_RGB8 : GL_RGBA8, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		unsigned internalFormat = 0;
+		unsigned fileFormat = 0;
+
+		if (channels == 3)
+		{
+			internalFormat = GL_RGB8;
+			fileFormat = GL_RGB;
+		}
+		else if (channels == 4)
+		{
+			internalFormat = GL_RGBA8;
+			fileFormat = GL_RGBA;
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, fileFormat, GL_UNSIGNED_BYTE, buffer);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		 
-		stbi_image_free(data);
+		if (!cache && buffer)
+		stbi_image_free(buffer);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -54,7 +70,8 @@ namespace krakoa::graphics
 
 	void OpenGLTexture2D::Bind(const uint32_t slot) const
 	{
-		glBindTextureUnit(slot, rendererID);
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, rendererID);
 	}
 
 }

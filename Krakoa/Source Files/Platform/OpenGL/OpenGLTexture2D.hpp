@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include "../../Rendering/Textures/Texture2D.hpp"
+#include "../../Rendering/Textures/iTexture2D.hpp"
 
 namespace krakoa::graphics
 {
-	class OpenGLTexture2D : public Texture2D
+	class OpenGLTexture2D : public iTexture2D
 	{
 	public:
-		OpenGLTexture2D(const std::string_view& path);
+		OpenGLTexture2D(const std::string_view& path, const bool cache = false);
 		~OpenGLTexture2D();
 
 		uint32_t GetWidth() const noexcept override;
@@ -21,6 +21,7 @@ namespace krakoa::graphics
 		kmaths::Vector2u dimensions;
 
 		uint32_t rendererID;
+		unsigned char* buffer;
 	};
 }
 

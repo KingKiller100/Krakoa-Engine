@@ -7,9 +7,9 @@ namespace krakoa::graphics
 	class RenderCommand
 	{
 	public:
-		inline static void OutputRenderingArchitecture()
+		inline static void Initialize()
 		{
-			rendererAPI->OutputRenderingArchitecture();
+			rendererAPI->Initialize();
 		}
 
 		inline static void Clear()

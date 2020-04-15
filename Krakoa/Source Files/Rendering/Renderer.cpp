@@ -9,7 +9,7 @@ namespace krakoa::graphics
 	Renderer::Renderer(Token &&)
 	{
 		KRK_BANNER("Rendering Architecture Info", "GRAPHICS");
-		RenderCommand::OutputRenderingArchitecture();
+		RenderCommand::Initialize();
 	}
 
 	Renderer::~Renderer()

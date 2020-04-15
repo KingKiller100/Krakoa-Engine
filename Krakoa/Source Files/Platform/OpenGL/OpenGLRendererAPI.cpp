@@ -7,6 +7,14 @@
 
 namespace krakoa::graphics
 {
+	void OpenGLRendererAPI::Initialize()
+	{
+		OutputRenderingArchitecture();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	void OpenGLRendererAPI::OutputRenderingArchitecture()
 	{
 		// Rendering hardware info
@@ -40,5 +48,4 @@ namespace krakoa::graphics
 			nullptr
 		);
 	}
-
 }

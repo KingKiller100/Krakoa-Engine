@@ -162,7 +162,7 @@ namespace klib::kLogs
 		 * \param file
 		 * \param line
 		 */
-		void AddEntry(const std::string_view msg, const LLevel lvl = LLevel::NORM, const char* file = "", const unsigned line = 0);
+		void AddEntry(const std::string_view& msg, const LLevel lvl = LLevel::NORM, const char* file = "", const unsigned line = 0);
 
 		/**
 		 * \brief

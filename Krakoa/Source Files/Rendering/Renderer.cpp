@@ -36,4 +36,14 @@ namespace krakoa::graphics
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	void Renderer::Clear() const
+	{
+		RenderCommand::Clear();
+	}
+
+	void Renderer::SetClearColour(const kmaths::Vector4f& colour) const
+	{
+		RenderCommand::SetClearColour(colour);
+	}
+
 }

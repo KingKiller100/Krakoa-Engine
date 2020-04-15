@@ -8,10 +8,10 @@ namespace klib::kDebug
 {
 #if _DEBUG
 	AssertOnFailedConditionException::AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const unsigned line)
-		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [NOTE]: %s.", exp.data(), msg.data()))
+		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [DETAILS]: %s.", exp.data(), msg.data()))
 	{
 		auto exceptionLog = kLogs::Logging();
-		exceptionLog.SetName("kAssert");
+		exceptionLog.SetName("ASSERT");
 		exceptionLog.ChangeFilename("Assert Condition Failed");
 		exceptionLog.ToggleSubSystemEnabled();
 		exceptionLog.SetMinimumLoggingLevel(kLogs::LLevel::FATL);

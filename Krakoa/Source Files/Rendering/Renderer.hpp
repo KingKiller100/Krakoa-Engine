@@ -17,10 +17,13 @@ namespace krakoa::graphics
 	public:
 		Renderer(Token&&);
 		~Renderer();
-		 
+
 		void BeginScene(OrthographicCamera& camera);
 		void EndScene() const;
 		void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>()) const;
+		 
+		void Clear() const;
+		void SetClearColour(const kmaths::Vector4f& colour) const;
 
 		inline iRendererAPI::API GetAPI() const noexcept { return iRendererAPI::GetAPI(); }
 

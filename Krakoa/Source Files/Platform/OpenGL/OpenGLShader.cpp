@@ -4,17 +4,95 @@
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
+#include <Utility/File System/kFileSystem.hpp>
 
 #include <GLAD/glad.h>
 
 namespace krakoa::graphics
 {
-	OpenGLShader::OpenGLShader(const std::string_view & vertexSource, const std::string_view & fragmentSource)
+	OpenGLShader::OpenGLShader(const std::string_view & shaderFilePath)
 	{
-		const auto sources = ParseAPIShaderFile(shaderPath);
-		const GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexSource);
-		const GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+		const auto sources = ParseShaderFile(shaderFilePath);
+		const GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, sources.vertexSource);
+		const GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.fragmentSource);
+		CreateProgram(vertexShader, fragmentShader);
+	}
 
+	ShaderSource OpenGLShader::ParseShaderFile(const std::string_view& filePath) const
+	{
+		const auto path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
+		const auto shaderData = klib::kFileSystem::ParseFileData(path);
+
+		KRK_FATAL(!shaderData.empty(), "Shader file is empty");
+
+		std::string vs;
+		std::string fs;
+
+		bool isVertexSource;
+		for (auto& line : shaderData)
+		{
+			if (line[0] == '#')
+			{
+				if (line.find("__Vertex__") != std::string::npos)
+				{
+					isVertexSource = true;
+					continue;
+				}
+				else if (line.find("__Fragment__") != std::string::npos
+					|| line.find("__Pixel__") != std::string::npos)
+				{
+					isVertexSource = false;
+					continue;
+				}
+
+			}
+
+			if (isVertexSource)
+				vs.append(line + '\n');
+			else
+				fs.append(line + '\n');
+		}
+
+		return ShaderSource{ vs, fs };
+	}
+
+	uint32_t OpenGLShader::CompileShader(const unsigned type, const std::string_view& source) const
+	{
+		// Create an empty vertex/fragment shader handle
+		const GLuint shaderID = glCreateShader(type);
+
+		// Send the vertex shader source code to GL
+		// Note that std::string's .c_str is NULL character terminated.
+		auto data = CAST(const GLchar*, source.data());
+		glShaderSource(shaderID, 1, &data, 0);
+
+		// Compile the vertex shader
+		glCompileShader(shaderID);
+
+		GLint isCompiled = 0;
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
+		{
+			GLint maxLength = 0;
+			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
+
+			// The maxLength includes the NULL character
+			GLchar* infoLog = new GLchar[maxLength];
+			glGetShaderInfoLog(shaderID, maxLength, &maxLength, infoLog);
+
+			// We don't need the shader anymore.
+			glDeleteShader(shaderID);
+
+			KRK_FATAL(false, klib::kFormat::ToString("%s Shader Compilation Error: \n%s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), infoLog));
+			delete[] infoLog;
+			return -1;
+		}
+
+		return shaderID;
+	}
+
+	void OpenGLShader::CreateProgram(const uint32_t vertexShader, const uint32_t fragmentShader)
+	{
 		// Vertex and fragment shaders are successfully compiled.
 		// Now time to link them together into a program.
 		// Get a program object.
@@ -46,8 +124,7 @@ namespace krakoa::graphics
 			glDeleteShader(fragmentShader);
 
 
-			KRK_ERRR("Shader Linking Error: ");
-			KRK_FATAL(false, infoLog);
+			KRK_FATAL(false, klib::kFormat::ToString("Shader Linking Error: \n%s", infoLog));
 			delete[] infoLog;
 			return;
 		}
@@ -55,47 +132,6 @@ namespace krakoa::graphics
 		// Always detach shaders after a successful link.
 		glDetachShader(rendererID, vertexShader);
 		glDetachShader(rendererID, fragmentShader);
-	}
-
-	uint32_t OpenGLShader::CompileShader(const unsigned type, const std::string_view& source) const
-	{
-		// Create an empty vertex/fragment shader handle
-		const GLuint shaderID = glCreateShader(type);
-
-		// Send the vertex shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		auto data = CAST(const GLchar*, source.data());
-		glShaderSource(shaderID, 1, &data, 0);
-
-		// Compile the vertex shader
-		glCompileShader(shaderID);
-
-		GLint isCompiled = 0;
-		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
-
-			// The maxLength includes the NULL character
-			GLchar* infoLog = CAST(GLchar*, alloca(maxLength * sizeof (GLchar)));
-			glGetShaderInfoLog(shaderID, maxLength, &maxLength, infoLog);
-
-			// We don't need the shader anymore.
-			glDeleteShader(shaderID);
-
-			KRK_ERRR(klib::kFormat::ToString("%s Shader Compilation Error: ", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment")));
-			KRK_FATAL(false, infoLog);
-			delete[] infoLog;
-			return -1;
-		}
-
-		return shaderID;
-	}
-
-	ShaderSource OpenGLShader::ParseAPIShaderFile(const std::string_view& filePath)
-	{
-		return ShaderSource();
 	}
 
 	OpenGLShader::~OpenGLShader()
@@ -157,15 +193,17 @@ namespace krakoa::graphics
 
 	int OpenGLShader::GetUniformLocation(const std::string_view& name)
 	{
+		GLint location;
+
 		const auto found_iter = uniformLocationUMap.find(name.data());
 		if (found_iter != uniformLocationUMap.end())
 		{
-			const auto location = found_iter->second;
+			location = found_iter->second;
 			return location;
 		}
 
-		const auto location = glGetUniformLocation(rendererID, name.data());
-		KRK_FATAL(location >= 0, klib::kFormat::ToString("uniform %s does not exist inside this shader", name.data()));
+		location = glGetUniformLocation(rendererID, name.data());
+		if (location < 0) KRK_INFO(klib::kFormat::ToString("uniform %s does not exist inside this shader", name.data()));
 		uniformLocationUMap.insert(std::make_pair(name, location));
 		return location;
 	}

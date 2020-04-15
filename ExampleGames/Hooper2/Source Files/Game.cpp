@@ -43,7 +43,7 @@ public:
 			pTriangleVA->AddVertexBuffer(triangleVB);
 
 			// Index buffer
-			uint32_t indices[3] = { 0, 1, 2 };
+			uint32_t indices[] = { 0, 1, 2 };
 			pTriangleVA->SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
@@ -51,8 +51,7 @@ public:
 
 			pColoursShader = std::unique_ptr<krakoa::graphics::iShader>(
 				krakoa::graphics::iShader::Create(
-					"../../../ExampleGames/Hooper2/Shaders/OpenGL/ColourVertexShader.glsl", // vertex shader source
-					"../../../ExampleGames/Hooper2/Shaders/OpenGL/ColourFragmentShader.glsl") // fragment shader source
+					"../../../ExampleGames/Hooper2/Shaders/OpenGL/ColourShader") // shader source
 				);
 		}
 
@@ -89,8 +88,7 @@ public:
 
 			pTextureShader = std::unique_ptr<krakoa::graphics::iShader>(
 				krakoa::graphics::iShader::Create(
-					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureVertexShader.glsl", // vertex shader source
-					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureFragmentShader.glsl") // fragment shader source
+					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureShader") // shader source
 				);
 		}
 
@@ -117,10 +115,11 @@ public:
 
 		MoveCamera(deltaTime);
 
-		krakoa::graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
-		krakoa::graphics::RenderCommand::Clear();
-
 		auto& renderer = krakoa::graphics::Renderer::Reference();
+
+		renderer.SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
+		renderer.Clear();
+
 
 		const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) * kmaths::Scale<float>({ 2.f, 2.f, 1.f });
 
@@ -128,7 +127,7 @@ public:
 		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
 		renderer.Submit(*pColoursShader, *pTriangleVA, triangleTransform);
 
-		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.5f));
+		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
 		for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
 			{

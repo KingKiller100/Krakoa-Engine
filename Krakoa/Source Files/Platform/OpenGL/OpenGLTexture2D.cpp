@@ -14,8 +14,8 @@ namespace krakoa::graphics
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(KRK_TRUE);
-		buffer = stbi_load(path.data(), &width, &height, &channels, 0);
-		KRK_FATAL(buffer, "Failed to load image");
+		buffer = stbi_load(path.data(), &width, &height, &channels, 4);
+		KRK_FATAL(buffer != nullptr, "Failed to load image");
 
 		dimensions = kmaths::Vector2u( width, height );
 

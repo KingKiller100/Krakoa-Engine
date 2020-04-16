@@ -10,6 +10,8 @@ namespace krakoa
 	public:
 		OrthographicCamera(const float left, const float right, const float bottom, const float top) noexcept;
 
+		void SetProjection(const float left, const float right, const float bottom, const float top) noexcept;
+
 		constexpr const kmaths::Vector3f& GetPosition() const noexcept;
 		void SetPosition(const kmaths::Vector3f& pos) noexcept;
 

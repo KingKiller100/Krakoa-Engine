@@ -13,6 +13,12 @@ namespace krakoa
 		UpdateViewProjectionMatrix();
 	}
 
+	void OrthographicCamera::SetProjection(const float left, const float right, const float bottom, const float top) noexcept
+	{
+		projectionMat = kmaths::Ortho_ZO(kmaths::ZAxisDirection::LEFT_HAND, left, right, bottom, top, -1.f, 1.f);
+		UpdateViewProjectionMatrix();
+	}
+
 	constexpr void OrthographicCamera::RecalculateViewMatrix() noexcept
 	{
 		const auto transformMat = kmaths::Translate(position) *

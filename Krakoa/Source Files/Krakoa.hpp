@@ -17,6 +17,7 @@
 
 // Camera
 #include "Camera/OrthographicCamera.hpp"
+#include "Camera/OrthographicCameraController.hpp"
 
 // Rendering
 #include "Rendering/Renderer.hpp"

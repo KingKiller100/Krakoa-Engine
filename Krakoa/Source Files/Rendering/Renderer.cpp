@@ -15,9 +15,9 @@ namespace krakoa::graphics
 	Renderer::~Renderer()
 		= default;
 
-	void Renderer::BeginScene(OrthographicCamera& camera)
+	void Renderer::BeginScene(const OrthographicCamera& camera)
 	{
-		camera_VPMat = &camera.GetViewProjectionMatrix();
+		camera_VPMat = std::addressof(camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer::EndScene() const

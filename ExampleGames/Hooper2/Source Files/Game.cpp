@@ -12,16 +12,18 @@ class RendererLayer : public krakoa::LayerBase
 public:
 	RendererLayer()
 		: LayerBase("Renderer"),
-		camera(-1.6f, 1.6f, -1.f, 1.f), // Aspect ratio from window size
-		cameraRotation(0.f),
-		cameraMoveSpeed(20.f),
-		cameraRotateSpeed(100.f)
-	{}
+		cameraController((float)krakoa::Application::Reference().GetWindow().GetWidth() / // Aspect ratio from window size
+			krakoa::Application::Reference().GetWindow().GetHeight(),
+			true) // Aspect ratio from window size
+	{
+		cameraController.SetRotationSpeed(180.f);
+		cameraController.SetTranslationSpeed(5.f);
+	}
 
 
 	void OnAttach() override
 	{
-		krakoa::graphics::Renderer::Reference().BeginScene(camera);
+		krakoa::graphics::Renderer::Reference().BeginScene(cameraController.GetCamera());
 
 		auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
 
@@ -105,18 +107,47 @@ public:
 
 	void OnUpdate(float deltaTime) override
 	{
-		static size_t count = 0;
+		cameraController.OnUpdate(deltaTime);
+		StoreCurrentFPS(deltaTime);
+		SendRendererCommands();
+	}
 
+	void OnRender() override
+	{
+		ImGui::Begin("Triangle Settings");
+
+		ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
+
+		const auto loops = frameTimes.size();
+		decltype(frameTimes)::value_type sum = 0;
+		for (auto i = 0; i < loops; ++i)
+			sum += frameTimes[i];
+		const auto fps = sum / loops;
+		ImGui::Text("Average FPS: %d", fps + 1);
+
+		ImGui::End();
+	}
+
+	void OnEvent(krakoa::events::Event& e) override
+	{
+		cameraController.OnEvent(e);
+	}
+
+private:
+	void StoreCurrentFPS(const float dt) noexcept
+	{
+		static size_t fpsIndex = 0;
+		fpsIndex = kmaths::modulus(fpsIndex, frameTimes.size());
+		frameTimes[fpsIndex++] = CAST(unsigned, (1.f / dt));
+	}
+
+	void SendRendererCommands() noexcept
+	{
+		const auto& renderer = krakoa::graphics::Renderer::Reference();
 		const auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
+		
 		auto& colourShader = shaderLib.Get("Shader 0");
 		auto& textureShader = shaderLib.Get("Texture");
-
-
-		frameTimes[kmaths::modulus(count++, frameTimes.size())] = (1.f / deltaTime);
-
-		MoveCamera(deltaTime);
-
-		auto& renderer = krakoa::graphics::Renderer::Reference();
 
 		renderer.SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		renderer.Clear();
@@ -139,53 +170,7 @@ public:
 				renderer.Submit(textureShader, *pSquareVA, miniSquareTransform);
 			}
 		}
-
-		renderer.EndScene();
 	}
-
-	void OnRender() override
-	{
-		ImGui::Begin("Triangle Settings");
-
-		ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
-
-		const auto loops = frameTimes.size();
-		decltype(frameTimes)::value_type sum = 0;
-		for (auto i = 0; i < loops; ++i)
-			sum += frameTimes[i];
-		const auto fps = sum / loops;
-		ImGui::Text("Average FPS: %d", fps);
-
-		ImGui::End();
-	}
-
-	void OnEvent(krakoa::events::Event& e) override
-	{
-		//DBUG(e.ToString());
-	}
-
-private:
-	void MoveCamera(float deltaTime) noexcept
-	{
-		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-			cameraPos.Y() += cameraMoveSpeed * deltaTime;
-		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-			cameraPos.Y() -= cameraMoveSpeed * deltaTime;
-
-		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
-			cameraPos.X() -= cameraMoveSpeed * deltaTime;
-		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
-			cameraPos.X() += cameraMoveSpeed * deltaTime;
-
-		if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_A))
-			cameraRotation += cameraRotateSpeed * deltaTime;
-		else if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_D))
-			cameraRotation -= cameraRotateSpeed * deltaTime;
-
-		camera.SetPosition(cameraPos);
-		camera.SetRotation(cameraRotation);
-	}
-
 
 private:
 	// Temp ----------------------------------------------------
@@ -195,11 +180,7 @@ private:
 	std::unique_ptr<krakoa::graphics::iTexture> pWinTexture;
 	// ---------------------------------------------------------
 
-	krakoa::OrthographicCamera camera;
-	kmaths::Vector3f cameraPos;
-	float cameraRotation;
-	const float cameraMoveSpeed;
-	const float cameraRotateSpeed;
+	krakoa::OrthographicCameraController cameraController;
 
 	std::array<unsigned, 20> frameTimes;
 

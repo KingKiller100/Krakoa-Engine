@@ -7,7 +7,7 @@
 
 namespace krakoa::input
 {
-	WindowsInputManager::WindowsInputManager(Token&& t) noexcept
+	WindowsInputManager::WindowsInputManager(Token&&) noexcept
 	{	}
 
 	WindowsInputManager::~WindowsInputManager()

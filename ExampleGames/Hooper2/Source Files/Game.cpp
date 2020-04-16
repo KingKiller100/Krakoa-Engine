@@ -21,9 +21,9 @@ public:
 
 	void OnAttach() override
 	{
-		krakoa::graphics::Renderer::Create();
 		krakoa::graphics::Renderer::Reference().BeginScene(camera);
 
+		auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
 
 		// Triangle creation code
 		{
@@ -52,10 +52,7 @@ public:
 				sizeof(indices) / sizeof(uint32_t))
 			);
 
-			pColoursShader = std::unique_ptr<krakoa::graphics::iShader>(
-				krakoa::graphics::iShader::Create(
-					"../../../ExampleGames/Hooper2/Shaders/OpenGL/ColourShader") // shader source
-				);
+			shaderLib.Load("../../../ExampleGames/Hooper2/Assets/Shaders/OpenGL/ColourShader");
 		}
 
 		// Square creation code
@@ -71,7 +68,7 @@ public:
 
 			// Vertex buffer
 			auto squareVB = krakoa::graphics::iVertexBuffer::Create(
-				squareVertices.GetPointerToData(), 
+				squareVertices.GetPointerToData(),
 				sizeof(squareVertices)
 			);
 
@@ -88,33 +85,32 @@ public:
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
-
-			pTextureShader = std::unique_ptr<krakoa::graphics::iShader>(
-				krakoa::graphics::iShader::Create(
-					"../../../ExampleGames/Hooper2/Shaders/OpenGL/TextureShader") // shader source
-				);
 		}
 
+		auto& textureShader = shaderLib.Load("Texture", "../../../ExampleGames/Hooper2/Assets/Shaders/OpenGL/TextureShader");
+
 		pWinTexture = std::unique_ptr<krakoa::graphics::iTexture>(
-			krakoa::graphics::iTexture2D::Create("Assets\\Win.png")
+			krakoa::graphics::iTexture2D::Create("Assets/Win.png")
 			);
 
-		pTextureShader->Bind();
-		pTextureShader->UploadUniformInt("u_Texture", 0);
+		textureShader.Bind();
+		textureShader.UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnDetach() override
 	{
-		pTextureShader->Unbind();
 		pSquareVA->Unbind();
-
-		pColoursShader->Unbind();
 		pTriangleVA->Unbind();
 	}
 
 	void OnUpdate(float deltaTime) override
 	{
 		static size_t count = 0;
+
+		const auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
+		auto& colourShader = shaderLib.Get("Shader 0");
+		auto& textureShader = shaderLib.Get("Texture");
+
 
 		frameTimes[kmaths::modulus(count++, frameTimes.size())] = (1.f / deltaTime);
 
@@ -125,12 +121,12 @@ public:
 		renderer.SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
 		renderer.Clear();
 
-		const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) * 
+		const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) *
 			kmaths::Scale<float>({ 2.f, 2.f, 1.f });
 
-		pColoursShader->Bind();
-		pColoursShader->UploadUniformVec4("u_Colour", triangleColour);
-		renderer.Submit(*pColoursShader, *pTriangleVA, triangleTransform);
+		colourShader.Bind();
+		colourShader.UploadUniformVec4("u_Colour", triangleColour);
+		renderer.Submit(colourShader, *pTriangleVA, triangleTransform);
 
 		const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
 		for (auto y = 0; y < 5; ++y) {
@@ -138,9 +134,9 @@ public:
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * 2.f, y * 2.0f, 0.f };
 				const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;
-				pTextureShader->Bind();
+				textureShader.Bind();
 				pWinTexture->Bind();
-				renderer.Submit(*pTextureShader, *pSquareVA, miniSquareTransform);
+				renderer.Submit(textureShader, *pSquareVA, miniSquareTransform);
 			}
 		}
 
@@ -150,6 +146,7 @@ public:
 	void OnRender() override
 	{
 		ImGui::Begin("Triangle Settings");
+
 		ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
 
 		const auto loops = frameTimes.size();
@@ -158,6 +155,7 @@ public:
 			sum += frameTimes[i];
 		const auto fps = sum / loops;
 		ImGui::Text("Average FPS: %d", fps);
+
 		ImGui::End();
 	}
 
@@ -191,9 +189,6 @@ private:
 
 private:
 	// Temp ----------------------------------------------------
-	std::unique_ptr<krakoa::graphics::iShader> pColoursShader;
-	std::unique_ptr<krakoa::graphics::iShader> pTextureShader;
-
 	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
 	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
 
@@ -220,9 +215,6 @@ public:
 		INIT_LOGS("Hooper2");
 		TOGGLE_SUBSYSTEM_LOGGING();
 		SET_LOG_MIN(LOG_LVL_DBUG);
-
-		PushLayer(new RendererLayer());
-		//PushOverlay(new krakoa::ImGuiLayer());
 	}
 
 	~Hooper2Game()
@@ -230,10 +222,17 @@ public:
 		Hooper2Game::Shutdown();
 	}
 
+	void Initialize() override
+	{
+		Application::Initialize();
+		PushLayer(new RendererLayer());
+	}
+
 	void Shutdown() override
 	{
 		isRunning = false;
 	}
+
 };
 
 void krakoa::CreateApplication()

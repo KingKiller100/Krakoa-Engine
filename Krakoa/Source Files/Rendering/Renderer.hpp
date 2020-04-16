@@ -2,9 +2,8 @@
 
 #include "iRendererAPI.hpp"
 
-#include "../Camera/OrthographicCamera.hpp"
-
 #include "../Patterns/SimpleSingleton.hpp"
+#include "../Camera/OrthographicCamera.hpp"
 
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 

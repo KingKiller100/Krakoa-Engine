@@ -44,13 +44,13 @@ namespace klib::kString
 	template<class Char = char>
 	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const StringReader<Char>& tokens, const bool preserveToken = false)
 	{
-		using Str = StringWriter<Char>;
+		using StrW = StringWriter<Char>;
 
-		std::vector<Str> lines;
+		std::vector<StrW> lines;
 
 		size_t prevPos = 0;
 		size_t tokenPos = 0;
-		while (tokenPos != Str::npos)
+		while (tokenPos != StrW::npos)
 		{
 			tokenPos = str.find_first_of(tokens.data(), prevPos);
 			lines.emplace_back(str.substr(prevPos, (preserveToken ? tokenPos + 1 : tokenPos) - prevPos));

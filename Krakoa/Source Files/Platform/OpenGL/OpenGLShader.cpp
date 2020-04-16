@@ -4,13 +4,15 @@
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kStringManipulation.hpp>
 #include <Utility/File System/kFileSystem.hpp>
 
 #include <GLAD/glad.h>
 
 namespace krakoa::graphics
 {
-	OpenGLShader::OpenGLShader(const std::string_view & shaderFilePath)
+	OpenGLShader::OpenGLShader(const std::string_view& name, const std::string_view & shaderFilePath)
+		: name(name)
 	{
 		const auto sources = ParseShaderFile(shaderFilePath);
 		BuildShader(sources);
@@ -18,7 +20,7 @@ namespace krakoa::graphics
 
 	std::unordered_map<uint32_t, std::string> OpenGLShader::ParseShaderFile(const std::string_view& filePath) const
 	{
-		const auto path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
+		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
 		const auto shaderData = klib::kFileSystem::ParseFileData(path);
 
 		KRK_FATAL(!shaderData.empty(), klib::kFormat::ToString("Shader file is empty: %s", path.data()));
@@ -51,9 +53,6 @@ namespace krakoa::graphics
 			
 			currentSource->append(line + '\n');
 		}
-
-		const auto parent = klib::kFileSystem::GetPath(path);
-		name = parent.substr(parent.find_last_of('\\') + 1) + '\\' + klib::kFileSystem::GetFileNameWithoutExtension(path);
 
 		return sources;
 	}
@@ -254,7 +253,7 @@ namespace krakoa::graphics
 		return location;
 	}
 
-	std::string& OpenGLShader::GetName() const noexcept
+	const std::string& OpenGLShader::GetName() const noexcept
 	{
 		return name;
 	}

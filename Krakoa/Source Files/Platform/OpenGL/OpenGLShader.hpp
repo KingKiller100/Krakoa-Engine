@@ -10,7 +10,7 @@ namespace krakoa::graphics
 	class OpenGLShader : public iShader
 	{
 	public:
-		OpenGLShader(const std::string_view & shaderFilePath);
+		OpenGLShader(const std::string_view& name, const std::string_view & shaderFilePath);
 		~OpenGLShader();
 
 		void Bind() const override;
@@ -24,7 +24,7 @@ namespace krakoa::graphics
 		void UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m) override;
 		void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m) override;
 
-		std::string& GetName() const noexcept override;
+		const std::string& GetName() const noexcept override;
 
 	private:
 		std::unordered_map<uint32_t, std::string> ParseShaderFile(const std::string_view& filePath) const override;
@@ -36,7 +36,8 @@ namespace krakoa::graphics
 
 	private:
 		uint32_t rendererID;
-		mutable std::string name;
+		std::string name;
+		mutable std::string path;
 		std::unordered_map<std::string, int32_t> uniformLocationUMap;
 	};
 }

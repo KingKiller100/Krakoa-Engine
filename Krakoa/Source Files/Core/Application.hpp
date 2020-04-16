@@ -31,7 +31,7 @@ namespace krakoa
 		Application(Token&);
 		virtual ~Application();
 
-		void Initialize();
+		virtual void Initialize();
 		void Run();
 		USE_RESULT bool IsRunning() const;
 		virtual void Shutdown() {}

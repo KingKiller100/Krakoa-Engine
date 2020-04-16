@@ -5,6 +5,9 @@
 
 #include "../Input/InputManager.hpp"
 
+#include "../Rendering/Renderer.hpp"
+#include "../Rendering/ShaderLibrary.hpp"
+
 #include <Utility/Debug Helper/kDebugger.hpp>
 
 namespace krakoa
@@ -41,6 +44,8 @@ namespace krakoa
 
 		// Initialize InputManager
 		input::InputManager::Initialize();
+		graphics::Renderer::Create();
+		graphics::ShaderLibrary::Create();
 	}
 
 	void Application::OnEvent(events::Event& e)

@@ -6,7 +6,7 @@ namespace krakoa::input
 	class WindowsInputManager : public InputManager
 	{
 	public:
-		WindowsInputManager(Token&& t) noexcept;
+		WindowsInputManager(Token&&) noexcept;
 		~WindowsInputManager();
 
 	protected:

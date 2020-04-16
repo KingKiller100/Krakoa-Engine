@@ -27,6 +27,7 @@
 #include "Rendering/Textures/iTexture2D.hpp"
 
 // Rendering Resources
+#include "Rendering/ShaderLibrary.hpp"
 #include "Rendering/Rendering Resources/iShader.hpp"
 #include "Rendering/Rendering Resources/iBuffers.hpp"
 #include "Rendering/Rendering Resources/iVertexArray.hpp"

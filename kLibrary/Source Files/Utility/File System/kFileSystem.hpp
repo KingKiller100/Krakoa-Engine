@@ -372,7 +372,7 @@ namespace klib::kFileSystem
 	USE_RESULT constexpr kString::StringWriter<Char> GetFileNameWithoutExtension(const kString::StringWriter<Char>& path) noexcept
 	{
 		kString::StringWriter<Char> filename = GetFileName<ONLY_TYPE(Char)>(path);
-		filename = filename.substr(0, filename.find_first_of('.'));
+		filename = filename.erase(filename.find_first_of('.'));
 		return filename;
 	}
 

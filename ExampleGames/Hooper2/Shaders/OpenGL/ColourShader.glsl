@@ -1,4 +1,4 @@
-#Shader __Vertex__
+#Shader __VERTEX__
 
 #version 330 core
 
@@ -12,7 +12,7 @@ void main()
 	gl_Position = u_VpMat * u_TransformMat * vec4(a_Position, 1.0);
 }
 
-#Shader __Fragment__
+#Shader __FRAGMENT__
 
 #version 330 core
 

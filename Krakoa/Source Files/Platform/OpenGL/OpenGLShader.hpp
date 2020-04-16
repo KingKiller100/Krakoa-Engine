@@ -24,17 +24,19 @@ namespace krakoa::graphics
 		void UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m) override;
 		void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m) override;
 
+		std::string& GetName() const noexcept override;
+
 	private:
-		virtual ShaderSource ParseShaderFile(const std::string_view& filePath) const override;
+		std::unordered_map<uint32_t, std::string> ParseShaderFile(const std::string_view& filePath) const override;
 
 		void CreateProgram(const uint32_t vertexShader, const uint32_t fragmentShader);
 
-		uint32_t CompileShader(const unsigned type, const std::string_view& source) const;
+		void BuildShader(const std::unordered_map<uint32_t, std::string>& sources);
 		int32_t GetUniformLocation(const std::string_view& name);
 
 	private:
 		uint32_t rendererID;
-		mutable std::string texturePath;
+		mutable std::string name;
 		std::unordered_map<std::string, int32_t> uniformLocationUMap;
 	};
 }

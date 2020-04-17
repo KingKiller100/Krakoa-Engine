@@ -2,6 +2,8 @@
 #include "Renderer.hpp"
 #include "RenderCommand.hpp"
 
+#include "Renderer2D.hpp"
+#include "../Camera/OrthographicCamera.hpp"
 #include "../Rendering/Rendering Resources/iShader.hpp"
 
 namespace krakoa::graphics
@@ -10,6 +12,7 @@ namespace krakoa::graphics
 	{
 		KRK_BANNER("Rendering Architecture Info", "GRAPHICS");
 		RenderCommand::Initialize();
+		graphics::Renderer2D::Initialize();
 	}
 
 	Renderer::~Renderer()

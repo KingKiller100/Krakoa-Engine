@@ -6,7 +6,7 @@ namespace klib::kDebug::kExceptions
 {
 	class NotImplementedException : public std::exception
 	{
-		NotImplementedException();
+	public:
 		NotImplementedException(const char* what);
 
 		~NotImplementedException() throw();

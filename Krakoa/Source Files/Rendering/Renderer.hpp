@@ -3,9 +3,10 @@
 #include "iRendererAPI.hpp"
 
 #include "../Patterns/SimpleSingleton.hpp"
-#include "../Camera/OrthographicCamera.hpp"
 
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
+
+namespace krakoa { class OrthographicCamera; }
 
 namespace krakoa::graphics
 {

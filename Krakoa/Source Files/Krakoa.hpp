@@ -21,6 +21,7 @@
 
 // Rendering
 #include "Rendering/Renderer.hpp"
+#include "Rendering/Renderer2D.hpp"
 #include "Rendering/RenderCommand.hpp"
 
 // Textures

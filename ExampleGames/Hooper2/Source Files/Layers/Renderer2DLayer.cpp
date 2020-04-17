@@ -2,14 +2,7 @@
 
 #include <imgui/imgui.h>
 
-#include <Core/Application.hpp>
-#include <Rendering/Renderer.hpp>
-#include <Rendering/Rendering Resources/iShader.hpp>
-#include <Rendering/ShaderLibrary.hpp>
-#include <Rendering/Textures/iTexture2D.hpp>
-
-#include <Maths/Matrices/MatrixMathsHelper.hpp>
-#include <Maths/kAlgorithms.hpp>
+#include <Krakoa.hpp>
 
 Renderer2DLayer::Renderer2DLayer() noexcept
 : LayerBase("Renderer"),
@@ -132,15 +125,11 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	auto& colourShader = shaderLib.Get("Shader 0");
 	auto& textureShader = shaderLib.Get("Texture");
 
-	renderer.SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
-	renderer.Clear();
+	krakoa::graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
+	krakoa::graphics::RenderCommand::Clear();
 
-	const auto triangleTransform = kmaths::Translate<float>({ 0.f, 0.f, 0.f }) *
-		kmaths::Scale<float>({ 2.f, 2.f, 1.f });
-
-	colourShader.Bind();
-	colourShader.UploadUniformVec4("u_Colour", triangleColour);
-	renderer.Submit(colourShader, *pTriangleVA, triangleTransform);
+	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
+	krakoa::graphics::Renderer2D::DrawTriangle(kmaths::Vector3f(), { 1.f, 1.f }, triangleColour, { 2.f, 2.f, 1.f });
 
 	const auto scale = kmaths::Scale<float>(kmaths::Vector3f(0.1f));
 	for (auto y = 0; y < 5; ++y) {
@@ -153,4 +142,6 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 			renderer.Submit(textureShader, *pSquareVA, miniSquareTransform);
 		}
 	}
+
+	krakoa::graphics::Renderer2D::EndScene();
 }

@@ -3,9 +3,6 @@
 
 namespace klib::kDebug::kExceptions
 {
-	NotImplementedException::NotImplementedException()
-	{}
-
 	NotImplementedException::NotImplementedException(const char* what)
 		: exception(what)
 	{ }

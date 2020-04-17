@@ -8,6 +8,7 @@
 #include "../Layers/FPS/FPSLayer.hpp"
 
 #include "../Rendering/Renderer.hpp"
+#include "../Rendering/Renderer2D.hpp"
 #include "../Rendering/ShaderLibrary.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
@@ -33,7 +34,10 @@ namespace krakoa
 	}
 
 	Application::~Application()
-		= default;
+	{
+		graphics::Renderer2D::ShutDown();
+	}
+
 
 	void Application::Initialize()
 	{
@@ -47,8 +51,8 @@ namespace krakoa
 		input::InputManager::Initialize();
 
 		// Initialize Graphics Stuff
-		graphics::Renderer::Create();
 		graphics::ShaderLibrary::Create();
+		graphics::Renderer::Create();
 	}
 
 	void Application::OnEvent(events::Event& e)

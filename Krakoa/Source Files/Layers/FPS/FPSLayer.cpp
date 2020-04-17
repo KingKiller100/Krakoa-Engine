@@ -15,7 +15,12 @@ namespace krakoa
 		= default;
 
 	void FPSLayer::OnAttach()
-	{}
+	{
+		for (auto& frameTime : sampleTimes)
+		{
+			frameTime = 0;
+		}
+	}
 
 	void FPSLayer::OnDetach()
 	{}
@@ -31,7 +36,7 @@ namespace krakoa
 		ImGui::Begin("Frames Per Seconds (FPS)");
 
 		const auto fps = CalculateAverageFPS();
-		ImGui::Text("Average FPS: %.2f", fps);
+		ImGui::Text("Average FPS: %.2f", fps + 1);
 
 		ImGui::End();
 	}

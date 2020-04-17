@@ -69,7 +69,9 @@ namespace krakoa
 	bool Application::OnWindowResize(events::WindowResizeEvent & e) noexcept
 	{
 		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
-		graphics::Renderer::Reference().OnWindowResize(0, 0, e.GetWidth(), e.GetHeight());
+		const auto width = CAST(float, e.GetWidth());
+		const auto height = CAST(float, e.GetHeight());
+		graphics::Renderer::Reference().OnWindowResize(0, 0, width, height);
 		return false;
 	}
 

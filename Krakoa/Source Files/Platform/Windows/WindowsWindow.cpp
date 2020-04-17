@@ -90,7 +90,7 @@ namespace krakoa
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
 			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			data.dimensions = kmaths::Vector2u(width, height);
+			data.dimensions = kmaths::Vector2u(CAST(unsigned, width), CAST(unsigned, height) );
 			WindowResizeEvent e(static_cast<float>(width), static_cast<float>(height));
 			data.eventCallBack(e);
 		});

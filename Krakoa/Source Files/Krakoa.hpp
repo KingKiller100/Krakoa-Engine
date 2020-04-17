@@ -37,6 +37,3 @@
 // Layers
 #include "Layers/LayerBase.hpp"
 #include "Layers/ImGui/ImGuiLayer.hpp"
-
-/*		ENTRY POINT		*/
-#include "Core/EntryPoint.hpp"

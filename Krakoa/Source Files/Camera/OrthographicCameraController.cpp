@@ -80,8 +80,8 @@ namespace krakoa
 	{
 		if (e.GetHeight() != 0.f)
 		{
-			const float width = e.GetWidth();
-			const float height = e.GetHeight();
+			const auto width =  CAST(float, e.GetWidth() );
+			const auto height = CAST(float, e.GetHeight());
 			aspectRatio = width / height;
 		}
 		else

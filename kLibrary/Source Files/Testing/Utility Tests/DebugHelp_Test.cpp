@@ -17,9 +17,9 @@ namespace kTest::utility
 
 	void DebugHelpTester::Test()
 {
-		klib::kDebugger::CheckRemoteDebuggerAttached("waitforremotedebugger");
-		//util::kDebugger::BreakPointHere(); // Works Great!
-		//util::kAssert(false, "Working Great!"); 
+		klib::kDebug::CheckRemoteDebuggerAttached("waitforremotedebugger");
+		//klib::kDebug::BreakPointHere(); // Works Great!
+		//klib::kAssert(false, "Working Great!"); 
 	}
 }
 #endif

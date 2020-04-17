@@ -158,7 +158,7 @@ namespace klib::kCalendar
 		const auto dateTime = GetLocalDateAndTime();
 		std::wstring day = wGetDayOfTheWeek(dateTime.wDayOfWeek).data();
 		day = fullDayname ? day : day.substr(0, 3);
-		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth), dateTime.wYear);
+		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
 	}
 
 	constexpr std::wstring_view wGetMonth(const unsigned short month) noexcept

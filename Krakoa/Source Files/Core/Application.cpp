@@ -35,7 +35,7 @@ namespace krakoa
 
 	Application::~Application()
 	{
-		graphics::Renderer2D::ShutDown();
+		graphics::Renderer::ShutDown();
 	}
 
 
@@ -52,7 +52,7 @@ namespace krakoa
 
 		// Initialize Graphics Stuff
 		graphics::ShaderLibrary::Create();
-		graphics::Renderer::Create();
+		graphics::Renderer::Initialize();
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -75,7 +75,7 @@ namespace krakoa
 		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
 		const auto width = CAST(float, e.GetWidth());
 		const auto height = CAST(float, e.GetHeight());
-		graphics::Renderer::Reference().OnWindowResize(0, 0, width, height);
+		graphics::Renderer::OnWindowResize(0, 0, width, height);
 		return false;
 	}
 

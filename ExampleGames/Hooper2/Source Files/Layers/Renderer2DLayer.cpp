@@ -5,10 +5,10 @@
 #include <Krakoa.hpp>
 
 Renderer2DLayer::Renderer2DLayer() noexcept
-: LayerBase("Renderer"),
-cameraController((float)krakoa::Application::Reference().GetWindow().GetWidth() / // Aspect ratio from window size
-	krakoa::Application::Reference().GetWindow().GetHeight(),
-	true) // Aspect ratio from window size
+	: LayerBase("Renderer"),
+	cameraController((float)krakoa::Application::Reference().GetWindow().GetWidth() / // Aspect ratio from window size
+		krakoa::Application::Reference().GetWindow().GetHeight(),
+		true) // Aspect ratio from window size
 {
 	cameraController.SetRotationSpeed(180.f);
 	cameraController.SetTranslationSpeed(5.f);
@@ -16,7 +16,7 @@ cameraController((float)krakoa::Application::Reference().GetWindow().GetWidth() 
 
 void Renderer2DLayer::OnAttach()
 {
-	krakoa::graphics::Renderer::Reference().BeginScene(cameraController.GetCamera());
+	krakoa::graphics::Renderer::BeginScene(cameraController.GetCamera());
 
 	auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
 
@@ -119,14 +119,13 @@ void Renderer2DLayer::OnEvent(krakoa::events::Event & e)
 
 void Renderer2DLayer::SendRendererCommands() noexcept
 {
-	const auto& renderer = krakoa::graphics::Renderer::Reference();
 	const auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
 
 	auto& colourShader = shaderLib.Get("Shader 0");
 	auto& textureShader = shaderLib.Get("Texture");
 
-	krakoa::graphics::RenderCommand::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
-	krakoa::graphics::RenderCommand::Clear();
+	krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 0.25f }); // Orange background colour
+	krakoa::graphics::Renderer::Clear();
 
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 	krakoa::graphics::Renderer2D::DrawTriangle(kmaths::Vector3f(), { 1.f, 1.f }, triangleColour, { 2.f, 2.f, 1.f });
@@ -139,9 +138,10 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 			const auto miniSquareTransform = kmaths::Translate(miniSquarePos) * scale;
 			textureShader.Bind();
 			pWinTexture->Bind();
-			renderer.Submit(textureShader, *pSquareVA, miniSquareTransform);
+			krakoa::graphics::Renderer::Submit(textureShader, *pSquareVA, miniSquareTransform);
 		}
 	}
+	krakoa::graphics::Renderer::EndScene();
 
 	krakoa::graphics::Renderer2D::EndScene();
 }

@@ -2,8 +2,6 @@
 
 #include "iRendererAPI.hpp"
 
-#include "../Patterns/SimpleSingleton.hpp"
-
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 namespace krakoa { class OrthographicCamera; }
@@ -12,24 +10,24 @@ namespace krakoa::graphics
 {
 	class iShader;
 
-	class Renderer : public pattern::SimpleSingleton<Renderer>
+	class Renderer
 	{
 	public:
-		Renderer(Token&&);
-		~Renderer();
+		static void Initialize();
+		static void ShutDown();
 
-		void OnWindowResize(const float x, const float y, const float width, const float height) const noexcept;
+		static void OnWindowResize(const float x, const float y, const float width, const float height)  noexcept;
 
-		void BeginScene(const OrthographicCamera& camera);
-		void EndScene() const;
-		void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>()) const;
-		 
-		void Clear() const;
-		void SetClearColour(const kmaths::Vector4f& colour) const;
+		static void BeginScene(const OrthographicCamera& camera);
+		static void EndScene();
+		static void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>());
 
-		inline iRendererAPI::API GetAPI() const noexcept { return iRendererAPI::GetAPI(); }
+		static void Clear();
+		static void SetClearColour(const kmaths::Vector4f& colour);
+
+		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
 
 	private:
-		const kmaths::Matrix4x4f* camera_VPMat;
+		static const kmaths::Matrix4x4f* camera_VPMat;
 	};
 }

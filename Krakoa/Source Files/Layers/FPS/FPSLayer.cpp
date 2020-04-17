@@ -7,7 +7,6 @@
 
 namespace krakoa
 {
-
 	FPSLayer::FPSLayer() noexcept
 		: LayerBase("FPS Layer")
 	{}
@@ -24,7 +23,7 @@ namespace krakoa
 	void FPSLayer::OnUpdate(float deltaTime)
 	{
 		currentIdx = kmaths::modulus(currentIdx, sampleTimes.size());
-		sampleTimes[currentIdx++] = CAST(unsigned, (1.f / deltaTime));
+		sampleTimes[currentIdx++] = 1u / deltaTime;
 	}
 
 	void FPSLayer::OnRender()
@@ -42,7 +41,7 @@ namespace krakoa
 
 	float FPSLayer::CalculateAverageFPS() const noexcept
 	{
-		decltype(sampleTimes)::value_type sum = 0;
+		float sum = 0;
 
 		for (auto frameTime : sampleTimes)
 			sum += frameTime;

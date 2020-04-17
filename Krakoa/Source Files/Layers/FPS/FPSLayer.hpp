@@ -21,7 +21,7 @@ namespace krakoa
 		float CalculateAverageFPS() const noexcept;
 
 	private:
-		std::array<float, 20> sampleTimes;
+		std::array<unsigned, 100> sampleTimes;
 		size_t currentIdx;
 	};
 }

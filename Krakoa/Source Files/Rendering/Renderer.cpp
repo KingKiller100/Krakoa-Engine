@@ -15,6 +15,11 @@ namespace krakoa::graphics
 	Renderer::~Renderer()
 		= default;
 
+	void Renderer::OnWindowResize(const float x, const float y, const float width, const float height) const noexcept
+	{
+		RenderCommand::OnWindowResize(x, y, width, height);
+	}
+
 	void Renderer::BeginScene(const OrthographicCamera& camera)
 	{
 		camera_VPMat = std::addressof(camera.GetViewProjectionMatrix());

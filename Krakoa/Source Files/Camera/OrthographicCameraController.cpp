@@ -41,13 +41,6 @@ namespace krakoa
 		camera.SetRotation(rotationZ);
 	}
 
-	void OrthographicCameraController::OnEvent(events::Event& e)
-	{
-		events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND1(OrthographicCameraController::OnMouseScrolledEvent));
-		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(OrthographicCameraController::OnWindowResizeEvent));
-	}
-
 	krakoa::OrthographicCamera& OrthographicCameraController::GetCamera() noexcept
 	{
 		return camera;
@@ -68,6 +61,13 @@ namespace krakoa
 		camTranslationSpeed = transSpeed;
 	}
 
+	void OrthographicCameraController::OnEvent(events::Event& e)
+	{
+		events::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND1(OrthographicCameraController::OnMouseScrolledEvent));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(OrthographicCameraController::OnWindowResizeEvent));
+	}
+
 	bool OrthographicCameraController::OnMouseScrolledEvent(const events::MouseScrolledEvent& e)
 	{
 		zoomLevel -= e.GetY() * 0.05f;
@@ -78,7 +78,14 @@ namespace krakoa
 
 	bool OrthographicCameraController::OnWindowResizeEvent(const events::WindowResizeEvent& e)
 	{
-		aspectRatio = e.GetWidth() / e.GetHeight();
+		if (e.GetHeight() != 0.f)
+		{
+			const float width = e.GetWidth();
+			const float height = e.GetHeight();
+			aspectRatio = width / height;
+		}
+		else
+			aspectRatio = 0;
 		UpdateCameraProjectionMat();
 		return false;
 	}
@@ -88,5 +95,4 @@ namespace krakoa
 		const auto xVal = aspectRatio * zoomLevel;
 		camera.SetProjection(-xVal, xVal, -zoomLevel, zoomLevel);
 	}
-
 }

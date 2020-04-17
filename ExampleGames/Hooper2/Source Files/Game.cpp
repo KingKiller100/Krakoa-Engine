@@ -108,23 +108,13 @@ public:
 	void OnUpdate(float deltaTime) override
 	{
 		cameraController.OnUpdate(deltaTime);
-		StoreCurrentFPS(deltaTime);
 		SendRendererCommands();
 	}
 
 	void OnRender() override
 	{
 		ImGui::Begin("Triangle Settings");
-
 		ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
-
-		const auto loops = frameTimes.size();
-		decltype(frameTimes)::value_type sum = 0;
-		for (auto i = 0; i < loops; ++i)
-			sum += frameTimes[i];
-		const auto fps = sum / loops;
-		ImGui::Text("Average FPS: %d", fps + 1);
-
 		ImGui::End();
 	}
 
@@ -134,13 +124,6 @@ public:
 	}
 
 private:
-	void StoreCurrentFPS(const float dt) noexcept
-	{
-		static size_t fpsIndex = 0;
-		fpsIndex = kmaths::modulus(fpsIndex, frameTimes.size());
-		frameTimes[fpsIndex++] = CAST(unsigned, (1.f / dt));
-	}
-
 	void SendRendererCommands() noexcept
 	{
 		const auto& renderer = krakoa::graphics::Renderer::Reference();

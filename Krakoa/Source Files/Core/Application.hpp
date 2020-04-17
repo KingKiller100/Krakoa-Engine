@@ -2,8 +2,6 @@
 
 #include "EngineCore.hpp"
 
-#include "FPSCounter.hpp"
-
 // Time Step
 #include "../TimeStep.hpp"
 
@@ -18,8 +16,8 @@
 #include "../Events System/ApplicationEvent.hpp"
 
 // Rendering
-#include "../ImGui/ImGuiLayer.hpp"
-#include "../Rendering/LayerStacker.hpp"
+#include "../Layers/ImGui/ImGuiLayer.hpp"
+#include "../Layers/LayerStacker.hpp"
 
 #include <memory>
 
@@ -45,16 +43,17 @@ namespace krakoa
 	private:
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
+		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
 
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;
-		ImGuiLayer* pImGuiLayer;
-		FPSCounter fpsCounter;
 		LayerStacker layerStack;
 
 	private:
+		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;
+		bool isMinimized;
 	};
 
 	void CreateApplication();

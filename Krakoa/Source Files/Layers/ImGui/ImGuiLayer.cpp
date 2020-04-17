@@ -1,8 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "ImGuiLayer.hpp"
 
-#include "../Core/EngineCore.hpp"
-#include "../Core/Application.hpp"
+#include "../../Core/EngineCore.hpp"
+#include "../../Core/Application.hpp"
 
 #include <imgui.h> // ImGui include must be above any other openGL includes
 
@@ -18,7 +18,8 @@
 namespace krakoa
 {
 	ImGuiLayer::ImGuiLayer()
-		: LayerBase("ImGuiLayer")
+		: LayerBase("ImGuiLayer"),
+		isShowing(true)
 	{	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -67,9 +68,8 @@ namespace krakoa
 	{}
 
 	void ImGuiLayer::OnRender()
-	{
-		static bool showWindow = true;
-		ImGui::ShowDemoWindow(&showWindow);
+	{		
+		ImGui::ShowDemoWindow(&isShowing);
 	}
 
 	void ImGuiLayer::OnEvent(events::Event& e)
@@ -102,6 +102,11 @@ namespace krakoa
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backupCurrentContext);
 		}
+	}
+
+	void ImGuiLayer::ToggleVisibility() noexcept
+	{
+		isShowing = !isShowing;
 	}
 }
 

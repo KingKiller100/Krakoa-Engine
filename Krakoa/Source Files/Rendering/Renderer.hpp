@@ -17,6 +17,8 @@ namespace krakoa::graphics
 		Renderer(Token&&);
 		~Renderer();
 
+		void OnWindowResize(const float x, const float y, const float width, const float height) const noexcept;
+
 		void BeginScene(const OrthographicCamera& camera);
 		void EndScene() const;
 		void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>()) const;

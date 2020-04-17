@@ -5,6 +5,8 @@
 
 #include "../Input/InputManager.hpp"
 
+#include "../Layers/FPS/FPSLayer.hpp"
+
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/ShaderLibrary.hpp"
 
@@ -15,9 +17,9 @@ namespace krakoa
 	using namespace klib;
 
 	Application::Application(Token&)
-		: isRunning(false),
-		fpsCounter(24),
-		timeStep()
+		: isRunning(true),
+		timeStep(),
+		isMinimized(false)
 	{
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 
@@ -35,15 +37,16 @@ namespace krakoa
 
 	void Application::Initialize()
 	{
-
-		isRunning = true;
-
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
 		PushOverlay(pImGuiLayer);
 
+		PushOverlay(new FPSLayer());
+
 		// Initialize InputManager
 		input::InputManager::Initialize();
+
+		// Initialize Graphics Stuff
 		graphics::Renderer::Create();
 		graphics::ShaderLibrary::Create();
 	}
@@ -51,25 +54,23 @@ namespace krakoa
 	void Application::OnEvent(events::Event& e)
 	{
 		events::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND1(Application::OnWindowClosed));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(Application::OnWindowResize));
 
-		dispatcher.Dispatch<events::WindowClosedEvent>([this](events::WindowClosedEvent& e) -> bool
-			{
-				return OnWindowClosed(e);
-			});
-
-		for (auto iter = layerStack.end(); iter != layerStack.begin();)
-		{
-			--iter;
-			(*iter)->OnEvent(e);
-			if (e.isHandled())
-				break;
-		}
+		layerStack.OnEvent(e);
 	}
 
 	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
 	{
 		Shutdown();
 		return true;
+	}
+
+	bool Application::OnWindowResize(events::WindowResizeEvent & e) noexcept
+	{
+		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
+		graphics::Renderer::Reference().OnWindowResize(0, 0, e.GetWidth(), e.GetHeight());
+		return false;
 	}
 
 	void Application::PushLayer(LayerBase* layer)
@@ -86,10 +87,12 @@ namespace krakoa
 	{
 		timeStep.Update();
 
-		const auto deltaTime = timeStep.GetDeltaTime(); 
-		const auto fps = fpsCounter.GetFPS(deltaTime);
+		const auto deltaTime = timeStep.GetDeltaTime();
 
-		layerStack.OnUpdate(deltaTime);
+		if (!isMinimized)
+		{
+			layerStack.OnUpdate(deltaTime);
+		}
 
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();

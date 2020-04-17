@@ -17,6 +17,7 @@ namespace krakoa::graphics
 
 	public:
 		virtual void Initialize() = 0;
+		virtual void SetViewport(const float x, const float y, const float width, const float height) const noexcept = 0;
 		virtual void Clear() = 0;
 		virtual void DrawIndexed(const iVertexArray& vertexArray) = 0;
 		virtual void SetClearColour(const kmaths::Vector4f& colour)  = 0;

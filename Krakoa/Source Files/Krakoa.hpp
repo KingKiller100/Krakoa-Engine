@@ -35,8 +35,8 @@
 #include "Rendering/Rendering Resources/BufferLayout.hpp"
 
 // Layers
-#include "Rendering/LayerBase.hpp"
-#include "ImGui/ImGuiLayer.hpp"
+#include "Layers/LayerBase.hpp"
+#include "Layers/ImGui/ImGuiLayer.hpp"
 
 /*		ENTRY POINT		*/
 #include "Core/EntryPoint.hpp"

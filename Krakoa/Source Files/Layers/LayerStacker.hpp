@@ -2,15 +2,13 @@
 
 #include "../Core/EngineCore.hpp"
 
+#include "../Events System/Event.hpp"
+
 #include <vector>
 
 
 namespace krakoa
 {
-#if defined (_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable:4251)
-
 	class KRAKOA_API LayerBase;
 	class KRAKOA_API LayerStacker
 	{
@@ -26,13 +24,15 @@ namespace krakoa
 		std::vector<LayerBase*>::iterator begin();
 		std::vector<LayerBase*>::iterator end();
 
+		const std::vector<LayerBase*>::const_iterator begin() const ;
+		const std::vector<LayerBase*>::const_iterator end() const;
+
 		void OnUpdate(const float deltaTime) const noexcept;
+		void OnEvent(krakoa::events::Event& e) const noexcept;
 		void OnRender() const noexcept;
 
 	private:
 		std::vector<LayerBase*> layerStack;
 		unsigned layerIterIndex;
 	};
-#	pragma warning(pop)
-#endif
 }

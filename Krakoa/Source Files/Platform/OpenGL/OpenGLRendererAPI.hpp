@@ -12,6 +12,8 @@ namespace krakoa::graphics
 		void DrawIndexed(const iVertexArray& vertexArray) override;
 		void SetClearColour(const kmaths::Vector4f& colour) override;
 
+		void SetViewport(const float x, const float y, const float width, const float height) const noexcept override;
+
 	private:
 		void OutputRenderingArchitecture() override;
 	};

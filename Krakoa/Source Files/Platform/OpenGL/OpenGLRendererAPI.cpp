@@ -79,4 +79,10 @@ namespace krakoa::graphics
 			nullptr
 		);
 	}
+
+	void OpenGLRendererAPI::SetViewport(const float x, const float y, const float width, const float height) const noexcept
+	{
+		glViewport(x, y, width, height);
+	}
+
 }

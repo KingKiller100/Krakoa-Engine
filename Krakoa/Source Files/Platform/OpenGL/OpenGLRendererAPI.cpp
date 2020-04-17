@@ -5,6 +5,7 @@
 
 #include <Utility/Format/kFormatToString.hpp>
 
+#include <imgui.h>
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
 
@@ -53,6 +54,7 @@ namespace krakoa::graphics
 		KRK_INFO(klib::kFormat::ToString("Vendor: %s", glGetString(GL_VENDOR)));
 		KRK_INFO(klib::kFormat::ToString("Hardware: %s", glGetString(GL_RENDERER)));
 		KRK_INFO(klib::kFormat::ToString("GLFW Version: %s", glfwGetVersionString()));
+		KRK_INFO(klib::kFormat::ToString("ImGui Version: %s", IMGUI_VERSION));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const kmaths::Vector4f& colour)

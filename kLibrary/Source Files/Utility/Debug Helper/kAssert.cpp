@@ -4,21 +4,23 @@
 #include "../Format/kFormatToString.hpp"
 #include "../Logging/kLogging_Class.hpp"
 
-namespace klib::debug
+namespace klib::kDebug
 {
 #if _DEBUG
-	AssertOnFailedConditionException::AssertOnFailedConditionException(const char* exp, const char* msg, const char* file, const unsigned line)
-		: report(kFormat::ToString("Condition \"%s\" was not met! \n\t\t [NOTE]:   %s.", exp, msg))
+	AssertOnFailedConditionException::AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const unsigned line)
+		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [DETAILS]: %s.", exp.data(), msg.data()))
 	{
-		const auto exceptionLog = std::make_unique<kLogs::Logging>();
-		exceptionLog->ChangeFilename("Assert Condition Failed");
-		exceptionLog->SetMinimumLoggingLevel(kLogs::LLevel::FATL);
-		exceptionLog->OutputToFatalFile(report, file, line);
+		auto exceptionLog = kLogs::Logging();
+		exceptionLog.SetName("ASSERT");
+		exceptionLog.ChangeFilename("Assert Condition Failed");
+		exceptionLog.ToggleSubSystemEnabled();
+		exceptionLog.SetMinimumLoggingLevel(kLogs::LLevel::FATL);
+		exceptionLog.AddEntry(report, kLogs::LLevel::FATL, file, line);
 	}
 
 	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()
 	{}
-	
+
 	char const* AssertOnFailedConditionException::what() const
 	{
 		return report.c_str();

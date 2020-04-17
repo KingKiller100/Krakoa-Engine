@@ -2,27 +2,32 @@
 #include "Application.hpp"
 
 #include "Logging/CoreLogger.hpp"
-#include "../Rendering/LayerBase.hpp"
 
 #include "../Input/InputManager.hpp"
 
-#include "../Patterns/SimpleSingletonImpl.hpp"
+#include "../Layers/FPS/FPSLayer.hpp"
 
-#include <Utility/Timer/kTimer.hpp>
+#include "../Rendering/Renderer.hpp"
+#include "../Rendering/ShaderLibrary.hpp"
 
+#include <Utility/Debug Helper/kDebugger.hpp>
 
 namespace krakoa
 {
 	using namespace klib;
-	kTime::HighAccuracyTimer systemTimer("Krakoa Engine Timer");
 
 	Application::Application(Token&)
-		: isRunning(false),
-		fpsCounter(60)
+		: isRunning(true),
+		timeStep(),
+		isMinimized(false)
 	{
+		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
+
 		KRK_INIT_LOGS();
 		KRK_FATAL(!instance, "Instance of the application already exists!");
+		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
+		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
 		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
 	}
@@ -32,38 +37,40 @@ namespace krakoa
 
 	void Application::Initialize()
 	{
-		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
-
-		isRunning = true;
-
+		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
 		PushOverlay(pImGuiLayer);
 
+		PushOverlay(new FPSLayer());
+
+		// Initialize InputManager
 		input::InputManager::Initialize();
+
+		// Initialize Graphics Stuff
+		graphics::Renderer::Create();
+		graphics::ShaderLibrary::Create();
 	}
 
 	void Application::OnEvent(events::Event& e)
 	{
 		events::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND1(Application::OnWindowClosed));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(Application::OnWindowResize));
 
-		dispatcher.Dispatch<events::WindowClosedEvent>([this](events::WindowClosedEvent& e) -> bool
-			{
-				return OnWindowClosed(e);
-			});
-
-		for (auto iter = layerStack.end(); iter != layerStack.begin();)
-		{
-			--iter;
-			(*iter)->OnEvent(e);
-			if (e.isHandled())
-				break;
-		}
+		layerStack.OnEvent(e);
 	}
 
 	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
 	{
 		Shutdown();
 		return true;
+	}
+
+	bool Application::OnWindowResize(events::WindowResizeEvent & e) noexcept
+	{
+		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
+		graphics::Renderer::Reference().OnWindowResize(0, 0, e.GetWidth(), e.GetHeight());
+		return false;
 	}
 
 	void Application::PushLayer(LayerBase* layer)
@@ -78,10 +85,14 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		const auto deltaTime = systemTimer.GetDeltaTime<kTime::Millis>();
-		const auto fps = fpsCounter.GetFPS(deltaTime);
+		timeStep.Update();
 
-		layerStack.OnUpdate();
+		const auto deltaTime = timeStep.GetDeltaTime();
+
+		if (!isMinimized)
+		{
+			layerStack.OnUpdate(deltaTime);
+		}
 
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();

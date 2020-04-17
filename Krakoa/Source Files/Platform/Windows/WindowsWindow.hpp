@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../iWindow.hpp"
-#include "../../Rendering/Graphics/iGraphicsContext.hpp"
+#include "../../Rendering/Rendering Resources/iGraphicsContext.hpp"
 
 struct GLFWwindow;
 
@@ -13,7 +13,6 @@ namespace krakoa
 		WindowsWindow(const WindowProperties& props);
 		~WindowsWindow();
 
-		// Inherited via Window
 		void OnUpdate() override;
 
 		kmaths::Vector2u& GetDimensions() override;
@@ -48,6 +47,5 @@ namespace krakoa
 			EventCallbackFunc eventCallBack;
 		} data;
 
-		// Inherited via iWindow
 	};
 }

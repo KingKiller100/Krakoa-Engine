@@ -21,7 +21,7 @@ namespace klib::kLogs
 
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
-		directory(GetCurrentWorkingDirectory<char>() + "Logs\\"),
+		directory(GetExeDirectory<char>() + "Logs\\"),
 		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(false)).c_str(), ".log")),
 		name("logger"),
 		isEnabled(false),
@@ -68,42 +68,22 @@ namespace klib::kLogs
 		InitializeLogLevelMap();
 		InitializeOutputToConsoleColourMap();
 	}
-	
+
 	void Logging::OutputInitialized()
 	{
 		if (!isEnabled) { return; }
 
-		const auto startLog = 
-			"************************************************************************\n      Logging Initialized:    " 
-			+ GetDateInTextFormat(false) + "    " + GetTimeText() 
+		const auto startLog =
+			"************************************************************************\n      Logging Initialized:    "
+			+ GetDateInTextFormat(false) + "    " + GetTimeText()
 			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);
 	}
 
-	void Logging::SetName(const std::string_view& newName)
-	{
-		name = newName;
-	}
-
-	constexpr void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
-	{
-		minimumLoggingLevel = newMin;
-	}
-
 	constexpr void Logging::ToggleLoggingEnabled() noexcept
 	{
 		isEnabled = !isEnabled;
-	}
-
-	void Logging::ToggleSubSystemEnabled() noexcept
-	{
-		subSystemLoggingEnabled = !subSystemLoggingEnabled;
-	}
-
-	constexpr void Logging::SetCacheMode(const bool enable) noexcept
-	{
-		inCacheMode = enable;
 	}
 
 	void Logging::InitializeLogLevelMap() noexcept
@@ -133,17 +113,45 @@ namespace klib::kLogs
 		kLogs_ConsoleColourMap.insert(std::make_pair(LLevel::FATL, LConsoleColour::RED_BG_WHITE_TEXT));
 	}
 
+	void Logging::SetName(const std::string_view& newName)
+	{
+		name = newName;
+	}
+
+	constexpr void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
+	{
+		minimumLoggingLevel = newMin;
+	}
+
+	void Logging::ToggleSubSystemEnabled() noexcept
+	{
+		subSystemLoggingEnabled = !subSystemLoggingEnabled;
+	}
+
+	constexpr void Logging::SetCacheMode(const bool enable) noexcept
+	{
+		inCacheMode = enable;
+	}
+
+	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & fname)
+	{
+		CloseLogFile();
+		directory = dir;
+		filename = AppendFileExtension(fname.data(), ".log");
+		ResumeFileLogging();
+	}
+
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
-		directory = dir;
 		CloseLogFile();
+		directory = dir;
 		ResumeFileLogging();
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
-		filename = AppendFileExtension(newFileName.data(), ".log");
 		CloseLogFile();
+		filename = AppendFileExtension(newFileName.data(), ".log");
 		ResumeFileLogging();
 	}
 
@@ -169,12 +177,12 @@ namespace klib::kLogs
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const std::string_view msg, const LLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
+	void Logging::AddEntry(const std::string_view& msg, const LLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
 	{
 		if (!isEnabled && lvl < LLevel::ERRR) return;
 		if (lvl < minimumLoggingLevel) return;
 
-		auto logLine = ToString("[%s]   [%s]   [%s]:    %s",
+		auto logLine = ToString("[%s] [%s] [%s]:  %s",
 			GetTimeText().c_str(),
 			name.c_str(),
 			kLogs_LLevelMap.at(lvl),
@@ -182,14 +190,15 @@ namespace klib::kLogs
 
 		if (lvl >= LLevel::ERRR)
 		{
-			logLine += ToString(R"(
-		 [FILE]:   %s
-		 [LINE]:   %d)",
+			logLine.append(ToString(R"(
+               [FILE]: %s
+               [LINE]: %d)",
 				file,
-				line);
+				line)
+				);
 		}
 
-		logLine += "\n";
+		logLine.append("\n");
 
 		AddToLogBuffer(logLine);
 		OutputToSubSystems(logLine, lvl);
@@ -199,7 +208,7 @@ namespace klib::kLogs
 	{
 		if (!isEnabled) return;
 
-		const auto bannerLine = ToString("[%s]   [%s]   [%s]:   [%s]\n",
+		const auto bannerLine = ToString("[%s] [%s] [%s]: [%s]\n",
 			GetTimeText().c_str(),
 			name.c_str(),
 			type.data(),
@@ -211,8 +220,8 @@ namespace klib::kLogs
 
 	void Logging::FinalOutput()
 	{
-		const auto endLogLine 
-		    = R"(
+		const auto endLogLine
+			= R"(
 ***********************************************************************
                           Logging Concluded                            
 ***********************************************************************
@@ -243,7 +252,7 @@ namespace klib::kLogs
 	{
 		if (!subSystemLoggingEnabled)
 			return;
-		
+
 #ifdef _DEBUG
 		OutputDebugStringA(logLine.data());
 #endif
@@ -261,7 +270,7 @@ namespace klib::kLogs
 
 		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
-		
+
 		printf_s("%s", log.data());
 
 		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
@@ -274,7 +283,7 @@ namespace klib::kLogs
 
 		auto fullCache = GetFullCache();
 		fullCache += line;
-		
+
 		if (!logFileStream.is_open())
 		{
 			const auto path = directory + filename;
@@ -288,8 +297,11 @@ namespace klib::kLogs
 
 	std::string Logging::GetFullCache()
 	{
-		if (!(isEnabled))
-			return "\t\tLOGGING NOT INITIALIZED!\n\tTO USE CALL THE 'INITIALIZE' METHOD BEFORE USES";
+		if (!isEnabled)
+		{
+			OutputToSubSystems("\t\tLOGGING DISABLED!\nRESART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LLevel::WARN);
+			return "";
+		}
 
 		LogQueue::value_type fullLog;
 		while (!logEntryQueue.empty())

@@ -3,17 +3,15 @@
 
 #include "../../Core/Application.hpp"
 
-#include "../../Patterns/SimpleSingletonImpl.hpp"
-
 #include <GLFW/glfw3.h>
 
 namespace krakoa::input
 {
-	WindowsInputManager::WindowsInputManager(Token&& t) noexcept
+	WindowsInputManager::WindowsInputManager(Token&&) noexcept
 	{	}
 
 	WindowsInputManager::~WindowsInputManager()
-	{	}
+		= default;
 
 	void InputManager::CreateImpl() noexcept
 	{

@@ -17,31 +17,27 @@ namespace kTest::utility
 
 	void LoggingTester::Test()
 	{
-		VERIFY(LogTest());
+		VERIFY(LogTest() == true);
 
 		klib::kFileSystem::RemoveFile(fullFilePathToDelete.data());
 		fullFilePathToDelete.erase(fullFilePathToDelete.find_last_of('\\'));
 		klib::kFileSystem::DeleteDirectory(fullFilePathToDelete.data());
 	}
 
-	bool LoggingTester::LogTest() noexcept
+	bool LoggingTester::LogTest()
 	{
 		using namespace klib::kLogs;
 
 		auto testLogger = std::make_unique<Logging>();
 
-		testLogger->OutputInitialized();
+		const auto filename = "DiffFileName";
+		const auto dir = klib::kFileSystem::GetExeDirectory() + "Test Results\\Log Test Dir\\";
 
-		const auto dir = klib::kFileSystem::GetCurrentWorkingDirectory() + "Test Results\\Log Test Dir\\";
-		testLogger->ChangeOutputDirectory(dir);
+		testLogger->ChangeOutputPath(dir, filename);
 
 		testLogger->SuspendFileLogging();
 
-		const auto previousLogFile = dir + "Logs - " + klib::kCalendar::GetDateInNumericalFormat(false) + ".log";
-		klib::kFileSystem::RemoveFile(previousLogFile.c_str());
-
-		const auto filename = "DiffFileName";
-		testLogger->ChangeFilename(filename);
+		testLogger->OutputInitialized();
 
 		testLogger->SetCacheMode(true);
 

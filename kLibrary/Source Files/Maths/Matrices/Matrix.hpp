@@ -2,10 +2,12 @@
 
 #include "../Vectors/Vector.hpp"
 #include "../kAlgorithms.hpp"
+
 #include <array>
 
 namespace kmaths
 {
+	// Row Major Matrix
 	template<typename T, unsigned short Rows, unsigned short Columns>
 	struct Matrix
 	{
@@ -29,6 +31,19 @@ namespace kmaths
 				elems[row] = Vector<Columns, Type>(initialVal);
 		}
 
+		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list)
+		{
+			const auto size = list.size();
+
+			if (Rows < size)
+				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
+
+			const auto first_iter = list.begin();
+
+			for (auto row = 0u; row < Rows; ++row)
+				elems[row] = *(first_iter + row);
+		}
+
 		constexpr Matrix(const Matrix& other) noexcept
 		{
 			*this = other;
@@ -43,7 +58,7 @@ namespace kmaths
 			= default;
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
+		USE_RESULT constexpr static std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
 		{
 			Matrix<Type, R, C> identity;
 			for (auto row = 0u; row < Rows; ++row)
@@ -80,6 +95,7 @@ namespace kmaths
 
 			Matrix inverse;
 			const auto determinant = this->GetDeterminant();
+
 			if _CONSTEXPR_IF(Rows == 2)
 			{
 				std::array<Vector<2, Type>, 2> copy;
@@ -90,32 +106,26 @@ namespace kmaths
 					copy[1][0] = -elems[1][0] / CAST(Type, determinant);
 					copy[1][1] = elems[0][0] / CAST(Type, determinant);
 				}
-				lhs = Matrix(copy);
+				inverse = Matrix(copy);
 			}
 			else if _CONSTEXPR_IF(Rows > 2)
 			{
 				auto positiveCoefficient = true;
-				for (auto row = 0u; row < Rows; ++row) {
+				for (auto row = 0u; row < Rows; ++row)
+				{
+					positiveCoefficient = (row & 1) == 0;
+
 					for (auto col = 0u; col < Columns; ++col)
 					{
 						const auto minorMatrix = CreateMinorMatrix(row, col);
 						inverse[row][col] = CAST(Type, minorMatrix.GetDeterminant());
-
-						inverse[row][col] *= positiveCoefficient ? CAST(Type, 1) : CAST(Type, -1);
+						if (!positiveCoefficient) inverse[row][col] *= CAST(Type, -1);
 
 						positiveCoefficient = !positiveCoefficient;
 					}
 				}
 
-				for (auto row = 0u; row < Rows; ++row) {
-					for (auto col = 0u; col < Columns; ++col)
-					{
-						if (row == col)
-							break;
-
-						std::swap(inverse[row][col], inverse[col][row]);
-					}
-				}
+				inverse = inverse.Mirror();
 
 				inverse /= determinant;
 			}
@@ -125,6 +135,25 @@ namespace kmaths
 			}
 
 			return inverse;
+		}
+
+		// Draws a mirror line down a square matrix through the identical row-column indices and swaps values
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Mirror() const noexcept
+		{
+			Matrix temp = *this;
+
+			for (auto row = 0u; row < Rows; ++row) {
+				for (auto col = 0u; col < Columns; ++col)
+				{
+					if (row == col)
+						break;
+
+					std::swap(temp[row][col], temp[col][row]);
+				}
+			}
+
+			return temp;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
@@ -152,7 +181,7 @@ namespace kmaths
 				return CAST(Type, 0);
 
 			if (IsIdentity())
-				return CAST(Type, 0);
+				return CAST(Type, 1);
 
 			auto sum = CAST(Type, 1);
 			auto determinant = CAST(Type, 0);
@@ -227,7 +256,8 @@ namespace kmaths
 					if (c == colToSkip)
 						continue;
 
-					minorMatrix[minorRowIndex][minorColIndex++] = elems[r][c];
+					minorMatrix[minorRowIndex][minorColIndex++] =
+						elems[r][c];
 				}
 				minorRowIndex++;
 			}
@@ -296,6 +326,11 @@ namespace kmaths
 		USE_RESULT constexpr unsigned short GetColumns() const noexcept
 		{
 			return Columns;
+		}
+
+		USE_RESULT constexpr Type* GetPointerToData() const
+		{
+			return elems[0].GetPointerToData();
 		}
 
 		// Operators
@@ -419,6 +454,11 @@ namespace kmaths
 		{
 			return elems[idx];
 		}
+
+		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R != C,
+			Matrix> Mirror() const noexcept
+			= delete;
 
 		// Deleted version of funtions (under certain conditions)
 		template<unsigned short R = Rows, unsigned short C = Columns>

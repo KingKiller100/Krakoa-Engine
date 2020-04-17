@@ -28,23 +28,23 @@ namespace krakoa::events
 	class KRAKOA_API WindowResizeEvent : public ApplicationEvent
 	{
 	public:
-		WindowResizeEvent(const Vector2f& dimensions)
+		WindowResizeEvent(const Vector2u& dimensions)
 			: dimensions(dimensions)
 		{}
 
-		WindowResizeEvent(const float width, const float height)
+		WindowResizeEvent(const unsigned width, const unsigned height)
 			: dimensions(width, height)
 		{}
 
-		USE_RESULT float GetWidth() const noexcept
+		USE_RESULT unsigned GetWidth() const noexcept
 		{
 			return dimensions.X();
 		}
-		USE_RESULT float GetHeight() const noexcept
+		USE_RESULT unsigned GetHeight() const noexcept
 		{
 			return dimensions.Y();
 		}
-		USE_RESULT Vector2f& GetDimensions() noexcept
+		USE_RESULT Vector2u& GetDimensions() noexcept
 		{
 			return dimensions;
 		}
@@ -56,7 +56,7 @@ namespace krakoa::events
 
 		EVENT_CLASS_TYPE(WINDOW_RESIZE)
 	private:
-		Vector2f dimensions;
+		Vector2u dimensions;
 	};
 
 	class KRAKOA_API WindowOpenEvent : public ApplicationEvent

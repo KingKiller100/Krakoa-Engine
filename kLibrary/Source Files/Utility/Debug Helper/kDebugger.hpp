@@ -2,7 +2,7 @@
 
 namespace klib
 {
-	namespace kDebugger
+	namespace kDebug
 	{
 		void CheckRemoteDebuggerAttached(const char* filename) noexcept;
 

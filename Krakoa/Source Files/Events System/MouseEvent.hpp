@@ -32,10 +32,21 @@ namespace krakoa::events
 			return position;
 		}
 
-		USE_RESULT Vector2f GetPosition() const noexcept
+		USE_RESULT const Vector2f& GetPosition() const noexcept
 		{
 			return position;
 		}
+
+		USE_RESULT float GetX() const noexcept
+		{
+			return position.X();
+		}
+
+		USE_RESULT float GetY() const noexcept
+		{
+			return position.Y();
+		}
+
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
@@ -60,9 +71,19 @@ namespace krakoa::events
 			return offset;
 		}
 
-		USE_RESULT Vector2f GetOffset() const noexcept
+		USE_RESULT const Vector2f& GetOffset() const noexcept
 		{
 			return offset;
+		}
+
+		USE_RESULT float GetX() const noexcept
+		{
+			return offset.X();
+		}
+
+		USE_RESULT float GetY() const noexcept
+		{
+			return offset.Y();
 		}
 
 		USE_RESULT std::string ToString() const noexcept override

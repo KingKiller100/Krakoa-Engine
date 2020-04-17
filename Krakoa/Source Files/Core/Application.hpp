@@ -1,7 +1,9 @@
 #pragma once
 
 #include "EngineCore.hpp"
-#include "FPSCounter.hpp"
+
+// Time Step
+#include "../TimeStep.hpp"
 
 // Window
 #include "../iWindow.hpp"
@@ -14,8 +16,8 @@
 #include "../Events System/ApplicationEvent.hpp"
 
 // Rendering
-#include "../Rendering/LayerStacker.hpp"
-#include "../ImGui/ImGuiLayer.hpp"
+#include "../Layers/ImGui/ImGuiLayer.hpp"
+#include "../Layers/LayerStacker.hpp"
 
 #include <memory>
 
@@ -27,7 +29,7 @@ namespace krakoa
 		Application(Token&);
 		virtual ~Application();
 
-		void Initialize();
+		virtual void Initialize();
 		void Run();
 		USE_RESULT bool IsRunning() const;
 		virtual void Shutdown() {}
@@ -41,13 +43,17 @@ namespace krakoa
 	private:
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
+		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
 
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;
-		ImGuiLayer* pImGuiLayer;
-		FPSCounter fpsCounter;
 		LayerStacker layerStack;
+
+	private:
+		ImGuiLayer* pImGuiLayer;
+		time::TimeStep timeStep;
+		bool isMinimized;
 	};
 
 	void CreateApplication();

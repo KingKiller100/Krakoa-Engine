@@ -8,7 +8,7 @@
 #include "../../Events System/MouseEvent.hpp"
 
 // Renderer
-#include "../../Platform/OpenGL/OpenGLContext.hpp";
+#include "../../Platform/OpenGL/OpenGLContext.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
 
@@ -23,7 +23,7 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		KRK_ERRR(kFormat::ToString("GLFW ERROR \n\t\t [CODE]:   %d\n\t\t [DESC]:   %s", errorCode, description));
+		KRK_ERRR(kFormat::ToString("GLFW ERROR \n               [CODE]: %d\n               [DESC]: %s", errorCode, description));
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -64,8 +64,10 @@ namespace krakoa
 		}
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+
 #if defined(__APPLE__)
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
@@ -178,9 +180,6 @@ namespace krakoa
 	{
 		glfwPollEvents();
 
-		// Vector2s size;
-		// glfwGetFramebufferSize(window, &size.X(), &size.Y());
-		// glViewport(0, 0, size.X(), size.Y());
 		pRenderContext->SwapBuffers();
 	}
 
@@ -206,7 +205,7 @@ namespace krakoa
 
 	void WindowsWindow::SetVsync(bool isEnabled)
 	{
-		const auto res = isEnabled ? 1 : 0;
+		const auto res = isEnabled ? KRK_TRUE : KRK_FALSE;
 		glfwSwapInterval(res);
 		data.vSyncOn = isEnabled;
 	}

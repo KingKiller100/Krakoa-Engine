@@ -2,7 +2,7 @@
 #include "kCalendar.hpp"
 
 #include "../Format/kFormatToString.hpp"
-#include "../Format/kStringManipulation.hpp"
+#include "../String/kStringManipulation.hpp"
 
 #include <array>
 
@@ -134,12 +134,12 @@ namespace klib::kCalendar
 		if (slash)
 		{
 			if (localDate.find('/') == std::string::npos)
-				localDate = String::Replace(std::string_view(localDate.data()), '-', '/');
+				localDate = kString::Replace<char>(localDate, '-', '/');
 		}
 		else
 		{
 			if (localDate.find('-') == std::string::npos)
-				localDate = String::Replace(std::string_view(localDate.data()), '/', '-');
+				localDate = kString::Replace<char>(localDate, '/', '-');
 		}
 
 		return localDate;
@@ -233,12 +233,12 @@ namespace klib::kCalendar
 		if (slash)
 		{
 			if (localDate.find('/') == std::wstring::npos)
-				localDate = String::Replace(std::wstring_view(localDate.data()), L'-', L'/');
+				localDate = kString::Replace<wchar_t>(localDate, L'-', L'/');
 		}
 		else
 		{
 			if (localDate.find('-') == std::wstring::npos)
-				localDate = String::Replace(std::wstring_view(localDate.data()), L'/', L'-');
+				localDate = kString::Replace<wchar_t>(localDate, L'/', L'-');
 		}
 
 		return localDate;

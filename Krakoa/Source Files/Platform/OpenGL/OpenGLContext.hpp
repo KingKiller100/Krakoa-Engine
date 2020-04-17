@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Rendering/Graphics/iGraphicsContext.hpp"
+#include "../../Rendering/Rendering Resources/iGraphicsContext.hpp"
 
 struct GLFWwindow;
 

@@ -14,10 +14,7 @@ namespace kmaths
 		using Type = T;
 
 		constexpr Vector() noexcept
-		{
-			for (auto& axis : dimensions)
-				axis = static_cast<Type>(0);
-		}
+		{}
 
 		explicit constexpr Vector(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
 		{
@@ -127,6 +124,8 @@ namespace kmaths
 			auto mag = Magnitude();
 			if (mag == static_cast<Type>(0))
 				return Vector();
+			else if (mag == static_cast<T>(1))
+				return *this;
 
 			mag = static_cast<Type>(1) / mag;
 
@@ -191,6 +190,17 @@ namespace kmaths
 			return true;
 		}
 
+		USE_RESULT constexpr Type* GetPointerToData() const
+		{
+			Type& first = (Type)dimensions[0];
+			return std::addressof<Type>(first);
+		}
+
+		USE_RESULT constexpr inline auto NumberOfDimensions() const noexcept
+		{
+			return N;
+		}
+
 		template<typename U = Type>
 		USE_RESULT constexpr inline std::enable_if_t<!std::is_unsigned_v<U>
 			&& N == 2,
@@ -198,7 +208,6 @@ namespace kmaths
 		{
 			return Vector(-Y(), X());
 		}
-
 
 		template<typename X, typename U = T>
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
@@ -367,11 +376,6 @@ namespace kmaths
 			return !(*this == v);
 		}
 
-		USE_RESULT constexpr inline auto NumberOfDimensions() const noexcept
-		{
-			return N;
-		}
-
 		// Deleted version of functions (under certain circumstances
 		template<typename U = Type>
 		std::enable_if_t < N < 2, const U&> Y() const noexcept = delete;
@@ -400,6 +404,18 @@ namespace kmaths
 			= delete;
 
 	private:
-		T dimensions[N];
+		T dimensions[N]{};
 	};
+
+	template<unsigned short N, typename T, typename U>
+	USE_RESULT constexpr Vector<N, T> operator*(const U&& scalar, const Vector<N, T>& v) noexcept
+	{
+		return v * scalar;
+	}
+
+	template<unsigned short N, typename T, typename U>
+	USE_RESULT constexpr Vector<N, T> operator/(const U&& scalar, const Vector<N, T>& v) noexcept
+	{
+		return v / scalar;
+	}
 }

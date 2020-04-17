@@ -18,18 +18,7 @@ namespace kTest::Maths
 
 	void MatricesTester::Test()
 	{
-		auto res = true;
 		VERIFY(DynamicMatrixTest() == true);
-		if (!success) res = false;
-		success = true;
-		VERIFY(Matrix2x2Test() == true);
-		if (!success) res = false;
-		success = true;
-		VERIFY(Matrix3x3Test() == true);
-		if (!success) res = false;
-		success = true;
-		VERIFY(Matrix4x4Test() == true);
-		success = res;
 	}
 
 	bool MatricesTester::DynamicMatrixTest()
@@ -79,6 +68,8 @@ namespace kTest::Maths
 			for (auto c = 0u; c < m13.GetColumns(); ++c)
 				VERIFY(m13[r][c] == (r == c ? 1 : 0));
 
+		VERIFY(m13.IsIdentity());
+
 		const auto minorMatrix = m12.CreateMinorMatrix(0, 0);
 		auto m14 = Matrix<double, 3, 3>();
 
@@ -86,6 +77,8 @@ namespace kTest::Maths
 		for (auto r = 0u; r < m14.GetRows(); ++r)
 			for (auto c = 0u; c < m14.GetColumns(); ++c)
 				m14[r][c] = (c == 0 && r == 0) ? 10.0 : ++count;
+
+		VERIFY(!m14.IsIdentity());
 
 		const auto inverse3x3 = m14.Inverse();
 
@@ -100,65 +93,6 @@ namespace kTest::Maths
 		}
 
 		const auto m15 = m14.PowerOf(2);
-
-		return success;
-	}
-
-	bool MatricesTester::Matrix2x2Test()
-	{
-		auto m = Matrix2x2d();
-		m[0] = Vector2d(1.0, 1);
-		m[1] = Vector2d(2.0, 1);
-		m.Identity();
-
-		auto m2 = Matrix2x2d();
-		m2[0] = Vector2d(1.0, 1);
-		m2[1] = Vector2d(2.0, 1);
-
-		const auto m3 = m - m2;
-		const auto m5 = m / 10;
-
-		return success;
-	}
-
-	bool MatricesTester::Matrix3x3Test()
-	{
-		auto m = Matrix3x3s();
-		m[0] = Vector3u(1u, 2u, 3u);
-		m[1] = Vector3u(2u, 3u, 4u);
-		m[2] = Vector3u(3u, 5u, 6u);
-		m.Identity();
-
-		auto m2 = Matrix3x3s();
-		m2[0] = Vector3u(1u, 2u, 3u);
-		m2[1] = Vector3u(2u, 3u, 4u);
-		m2[2] = Vector3u(3u, 5u, 6u);
-
-		const auto m3 = m - m2;
-		const auto m4 = m * m2;
-		const auto m5 = m / 10;
-
-		return success;
-	}
-
-	bool MatricesTester::Matrix4x4Test()
-	{
-		auto m = Matrix4x4f();
-		m[0] = Vector4f(1.f, 1);
-		m[1] = Vector4f(2.f, 1);
-		m[2] = Vector4f(3.f, 1);
-		m[3] = Vector4f(4.f, 1);
-		m.Identity();
-
-		auto m2 = Matrix4x4f();
-		m2[0] = Vector4f(1.f, 1);
-		m2[1] = Vector4f(2.f, 1);
-		m2[2] = Vector4f(3.f, 1);
-		m2[3] = Vector4f(4.f, 1);
-
-		const auto m3 = m + m2;
-		const auto m4 = m * m2;
-		const auto m5 = m * 10;
 
 		return success;
 	}

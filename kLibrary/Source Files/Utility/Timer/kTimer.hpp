@@ -2,17 +2,18 @@
 
 #include "../../HelperMacros.hpp"
 
-#include <chrono>
 #include <atomic>
+#include <chrono>
+#include <ratio>
 
 namespace klib::kTime
 {
-	using Hours  = std::chrono::hours;
-	using Mins   = std::chrono::minutes;
-	using Secs   = std::chrono::seconds;
-	using Millis = std::chrono::milliseconds;
-	using Micros = std::chrono::microseconds;
-	using Nanos  = std::chrono::nanoseconds;
+	using Hours = std::chrono::minutes;
+	using Mins = std::chrono::seconds;
+	using Secs = std::chrono::milliseconds;
+	using Millis = std::chrono::microseconds;
+	using Micros = std::chrono::nanoseconds;
+	using Nanos = std::chrono::duration<long long, std::pico>;
 
 	template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
 	class Timer
@@ -35,9 +36,9 @@ namespace klib::kTime
 		USE_RESULT constexpr Rep GetLifeTime() const noexcept
 		{
 			std::atomic_thread_fence(std::memory_order_relaxed);
-			const auto lifeTime = std::chrono::duration_cast<Units>(Clock::now() - startTimePoint).count();
+			const auto lifeTime = ConvertToUsableValue<Units>(Clock::now(), startTimePoint);
 			std::atomic_thread_fence(std::memory_order_relaxed);
-			return static_cast<Rep>(lifeTime);
+			return lifeTime;
 		}
 
 		template<typename Units>
@@ -46,12 +47,26 @@ namespace klib::kTime
 			std::atomic_thread_fence(std::memory_order_relaxed);
 
 			const auto currentTimePoint = Clock::now();
-			const auto deltaTime = std::chrono::duration_cast<Units>(currentTimePoint - lastTimePoint).count();
+			const auto deltaTime = ConvertToUsableValue<Units>(currentTimePoint, lastTimePoint);
 			lastTimePoint = currentTimePoint;
 
 			std::atomic_thread_fence(std::memory_order_relaxed);
 
-			return static_cast<Rep>(deltaTime);
+			return deltaTime;
+		}
+
+	private:
+		template<typename Units>
+		USE_RESULT constexpr Rep ConvertToUsableValue(const typename Clock::time_point& now, const typename Clock::time_point& prev) const noexcept
+		{
+			constexpr static Rep thousandth = (CAST(Rep, 1) / 1000);
+			constexpr static Rep sixtieth = CAST(Rep, 1) / 60;
+
+			if _CONSTEXPR_IF(std::is_same_v<Units, Hours>
+				|| std::is_same_v<Units, Mins>)
+				return std::chrono::duration_cast<Units>(now - prev).count() * sixtieth;
+			else
+				return std::chrono::duration_cast<Units>(now - prev).count() * thousandth;
 		}
 
 	private:
@@ -61,12 +76,10 @@ namespace klib::kTime
 		typename Clock::time_point lastTimePoint;
 	};
 
-	// Very precise results
 	using HighAccuracyTimer = Timer<>;
 	using SystemTimer = Timer<double, std::chrono::system_clock>;
 	using MonotonicTimer = Timer<double, std::chrono::steady_clock>;
 
-	// Less precise results
 	using HighAccuracyTimerf = Timer<float>;
 	using SystemTimerf = Timer<float, std::chrono::system_clock>;
 	using MonotonicTimerf = Timer<float, std::chrono::steady_clock>;

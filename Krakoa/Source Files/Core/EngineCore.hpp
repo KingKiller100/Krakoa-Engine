@@ -1,5 +1,7 @@
 #pragma once
 
+#include <HelperMacros.hpp>
+
 #ifdef KRAKOA_OS_WINDOWS
 #	if KRAKOA_DYNAMIC_LINK
 #		ifdef KRAKOA_BUILD_DLL
@@ -16,6 +18,9 @@
 #else
 #	error SORRY BLOKE, KRAKOA ONLY SUPPORTS WINDOWS!
 #endif
+
+#define KRK_TRUE KLIB_TRUE
+#define KRK_FALSE KLIB_FALSE
 
 #define BIT_SHIFT(n) (1 << n)
 

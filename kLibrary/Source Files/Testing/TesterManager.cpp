@@ -15,6 +15,7 @@
 #include "Utility Tests/DebugHelp_Test.hpp"
 #include "Utility Tests/FileSystem_Test.hpp"
 #include "Utility Tests/StringView_Test.hpp"
+#include "Utility Tests/StringManipulation_Test.hpp"
 #include "Utility Tests/FormatToString_Test.hpp"
 
 // File System to output test results
@@ -46,7 +47,7 @@ namespace kTest
 
 	void TesterManager::Initialize()
 	{
-		kTest_TestResultFilePath = klib::kFileSystem::GetCurrentWorkingDirectory<char>() + "Test Results\\";
+		kTest_TestResultFilePath = klib::kFileSystem::GetExeDirectory<char>() + "Test Results\\";
 		const auto isMade = klib::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
 		
 		kTest_TestResultFilePath += "Results.txt";
@@ -69,6 +70,7 @@ namespace kTest
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
 		Add(new utility::StringViewTester());
+		Add(new utility::StringManipulationTester());
 	}
 
 	void TesterManager::Add(Tester* test)
@@ -78,7 +80,7 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		klib::kTime::Timer<size_t> totalRunTimeTimer("Total Test Run Time");
+		klib::kTime::HighAccuracyTimer totalRunTimeTimer("Total Test Run Time");
 		for (const auto& test : kTests_TestsUSet)
 		{
 			const auto resultTest = test->Run() 
@@ -87,7 +89,7 @@ namespace kTest
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %ds (Seconds)", totalRunTimeTimer.GetLifeTime<klib::kTime::Secs>());
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %.3fm (Minutes)", totalRunTimeTimer.GetLifeTime<klib::kTime::Mins>());
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
 	}
 

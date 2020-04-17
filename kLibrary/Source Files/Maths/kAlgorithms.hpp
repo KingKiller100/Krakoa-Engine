@@ -14,14 +14,14 @@ namespace kmaths
 		return CAST(DestType, source);
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T Max(const T lhs, const T rhs) noexcept
+	template<typename T1, typename T2>
+	USE_RESULT constexpr T1 Max(T1&& lhs, T2&& rhs) noexcept
 	{
 		return lhs > rhs ? lhs : rhs;
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T Min(const T lhs, const T rhs) noexcept
+	template<typename T1, typename T2>
+	USE_RESULT constexpr T1 Min(T1&& lhs, T2&& rhs) noexcept
 	{
 		return lhs < rhs ? lhs : rhs;
 	}
@@ -43,13 +43,15 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T RadiansToDegrees(const T radians) noexcept
 	{
-		return radians * (static_cast<constants::AccuracyType>(360) / constants::TAU);
+		constexpr static T convertR2D = CAST(T, 360) / constants::TAU;
+		return radians * convertR2D;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T DegreesToRadians(const T degrees) noexcept
 	{
-		return degrees * (constants::TAU / static_cast<constants::AccuracyType>(360));
+		constexpr static T convertD2R = CAST(T, constants::TAU) / 360;
+		return degrees * convertD2R;
 	}
 
 	template<typename T>

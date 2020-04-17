@@ -2,7 +2,7 @@
 
 #include <exception>
 
-namespace klib::exceptions
+namespace klib::kDebug::kExceptions
 {
 	class NotImplementedException : public std::exception
 	{

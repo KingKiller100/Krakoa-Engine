@@ -14,9 +14,6 @@ namespace kTest::Maths
 		void Test() override;
 
 		bool DynamicMatrixTest();
-		bool Matrix2x2Test();
-		bool Matrix3x3Test();
-		bool Matrix4x4Test();
 	};
 }
 #endif

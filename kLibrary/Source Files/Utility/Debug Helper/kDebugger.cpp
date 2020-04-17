@@ -3,17 +3,17 @@
 
 #include "../File System/kFileSystem.hpp"
 
-namespace klib::kDebugger
+namespace klib::kDebug
 {
 	void CheckRemoteDebuggerAttached(const char* filename) noexcept
 	{
 #ifdef  _DEBUG
-		if (::IsDebuggerPresent() == IS_TRUE)
+		if (::IsDebuggerPresent() == KLIB_TRUE)
 			return;
 
 		while (kFileSystem::CheckFileExists(filename))
 		{
-			if (::IsDebuggerPresent() == IS_TRUE)
+			if (::IsDebuggerPresent() == KLIB_TRUE)
 			{
 				return;
 			}

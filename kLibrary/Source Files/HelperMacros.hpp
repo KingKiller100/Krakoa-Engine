@@ -25,10 +25,13 @@
 #	endif
 #endif
 
-#define IS_TRUE 1
-#define IS_FALSE 0
+#define KLIB_TRUE 1
+#define KLIB_FALSE 0
 
 #define CAST(type, val) static_cast<type>(val)
+
+#define ONLY_TYPE(type) std::decay_t<std::remove_pointer_t<type>>
+
 
 #if defined(KLIB_TEST)
 #	define TESTING_ENABLED 1

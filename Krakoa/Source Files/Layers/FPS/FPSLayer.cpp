@@ -28,7 +28,7 @@ namespace krakoa
 	void FPSLayer::OnUpdate(float deltaTime)
 	{
 		currentIdx = kmaths::modulus(currentIdx, sampleTimes.size());
-		sampleTimes[currentIdx++] = 1u / deltaTime;
+		sampleTimes[currentIdx++] = CAST(unsigned, 1.f / deltaTime);
 	}
 
 	void FPSLayer::OnRender()

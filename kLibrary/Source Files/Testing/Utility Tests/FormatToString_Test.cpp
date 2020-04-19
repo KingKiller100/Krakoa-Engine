@@ -29,7 +29,7 @@ namespace kTest::utility
 		const auto testStr  = ToString("This test %d ", 1U);
 		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
 		const auto testStr3 = ToString("and with different numerical types such as float %02.03f, ", float(kmaths::constants::TAU));
-		const auto testStr4 = ToString("doubles %2.7f, ", double(kmaths::constants::E));
+		const auto testStr4 = ToString("doubles %.7f, ", double(kmaths::constants::E));
 		const auto testStr5 = ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. %p (random int ptr address)", tempIntPtr.get());
 

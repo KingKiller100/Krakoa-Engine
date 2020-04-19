@@ -16,7 +16,7 @@ namespace krakoa::graphics
 		static void Initialize();
 		static void ShutDown();
 
-		static void OnWindowResize(const float x, const float y, const float width, const float height)  noexcept;
+		static void OnWindowResize(const int x, const int y, const int width, const int height)  noexcept;
 
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();

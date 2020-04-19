@@ -35,6 +35,14 @@ namespace klib
 			return str.data();
 		}
 
+		template<typename T, typename C = std::basic_string_view<ONLY_TYPE(T)>, typename U = T>
+		constexpr
+			std::enable_if_t < std::is_same_v < U, std::basic_string_view<typename U::value_type>>, const typename T::value_type*>
+			GetValue(const C& str)
+		{
+			return str.data();
+		}
+
 		template<typename T, typename U = T>
 		constexpr
 			std::enable_if_t<std::is_arithmetic_v<U>
@@ -49,7 +57,14 @@ namespace klib
 		constexpr
 			std::enable_if_t<(
 				!std::is_arithmetic_v<std::decay_t<U>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<typename U::value_type>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<wchar_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char16_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char32_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<wchar_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char16_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char32_t>> &&
 				!std::is_pointer_v<std::decay_t<U>> &&
 				!std::is_unsigned_v<std::decay_t<U>>
 				), const typename T::value_type*>
@@ -134,7 +149,7 @@ namespace klib
 				const auto closePos = text.find_first_of(closerSymbol, i);
 				for (auto j = 1; (i + j) < closePos; ++j)
 				{
-					objIndex += text[i + j];
+					objIndex += (char)text[i + j];
 				}
 
 				const short idx = (short)std::stoi(objIndex);

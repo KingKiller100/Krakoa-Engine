@@ -22,7 +22,7 @@ namespace krakoa::graphics
 		graphics::Renderer2D::ShutDown();
 	}
 
-	void Renderer::OnWindowResize(const float x, const float y, const float width, const float height) noexcept
+	void Renderer::OnWindowResize(const int x, const int y, const int width, const int height) noexcept
 	{
 		RenderCommand::OnWindowResize(x, y, width, height);
 	}

@@ -2,16 +2,15 @@
 
 #include "../String/kStringTypeTraits.hpp"
 
-#include <cstdio>
-#include <string>
-#include <sstream>
-#include <xtr1common>
-
 #include <any>
 #include <array>
+#include <cstdio>
 #include <deque>
+#include <string>
+#include <sstream>
 #include <variant>
 #include <vector>
+#include <xtr1common>
 
 #if defined (_MSC_VER)
 #	pragma warning(push)
@@ -81,10 +80,16 @@ namespace klib
 			std::enable_if_t<(
 				!std::is_arithmetic_v<std::decay_t<U>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string<char>> &&
+#ifdef __cpp_char8_t
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char8_t>> &&
+#endif
 				!std::is_same_v<std::decay_t<U>, std::basic_string<wchar_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string<char16_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string<char32_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
+#ifdef __cpp_char8_t
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char8_t>>&&
+#endif
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<wchar_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char16_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char32_t>> &&

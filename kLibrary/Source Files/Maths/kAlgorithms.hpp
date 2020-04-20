@@ -15,13 +15,13 @@ namespace kmaths
 	}
 
 	template<typename T1, typename T2>
-	USE_RESULT constexpr T1 Max(T1&& lhs, T2&& rhs) noexcept
+	USE_RESULT constexpr T1 Max(const T1& lhs, const T2& rhs) noexcept
 	{
 		return lhs > rhs ? lhs : rhs;
 	}
 
 	template<typename T1, typename T2>
-	USE_RESULT constexpr T1 Min(T1&& lhs, T2&& rhs) noexcept
+	USE_RESULT constexpr T1 Min(const T1& lhs, const T2& rhs) noexcept
 	{
 		return lhs < rhs ? lhs : rhs;
 	}

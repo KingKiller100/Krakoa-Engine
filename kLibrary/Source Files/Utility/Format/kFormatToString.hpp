@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../String/kStringTypeTraits.hpp"
+
 #include <cstdio>
 #include <string>
 #include <sstream>
@@ -45,8 +47,29 @@ namespace klib
 
 		template<typename T, typename U = T>
 		constexpr
+			std::enable_if_t<std::is_pointer_v<U>
+			&& !type_trait::Is_CharType<ONLY_TYPE(U)>::Value
+			&& !type_trait::Is_StringType<ONLY_TYPE(U)>::Value
+			, const void*>
+			GetValue(const T obj)
+		{
+			return (const void*)obj;
+		}
+
+		template<typename T, typename U = T>
+		constexpr
+			std::enable_if_t<std::is_pointer_v<U>
+			&& type_trait::Is_CharType<ONLY_TYPE(U)>::Value
+			&& !type_trait::Is_StringType<ONLY_TYPE(U)>::Value
+			, const T>
+			GetValue(const T obj)
+		{
+			return obj;
+		}
+
+		template<typename T, typename U = T>
+		constexpr
 			std::enable_if_t<std::is_arithmetic_v<U>
-			|| std::is_pointer_v<U>
 			, U>
 			GetValue(const T obj)
 		{
@@ -124,21 +147,23 @@ namespace klib
 
 			constexpr static auto npos = std::basic_string<CharType>::npos;
 
-			auto text = std::basic_string<CharType>(format);
+			auto formatStr = std::basic_string<CharType>(format);
 
-			if (text.find(printfSymbol) != npos)
-				return MakeStringFromData<CharType>(format, GetValue<T>(arg), GetValue<Ts>(argPack)...);
+			if (auto pfSymPos = formatStr.find(printfSymbol); pfSymPos != npos)
+			{
+				return MakeStringFromData<CharType>(formatStr, GetValue<T>(arg), GetValue<Ts>(argPack)...);
+			}
 
 			std::basic_string<CharType> res;
 			std::array<std::any, std::variant_size_v<ParseTypes> -1> elems = { GetValue<T>(arg), GetValue<Ts>(argPack)... };
 
 			std::deque<std::pair<short, std::string>> identifiers;
-			for (auto i = text.find_first_of(openerSymbol); i != npos; i = text.find_first_of(openerSymbol, i + 1))
+			for (auto i = formatStr.find_first_of(openerSymbol); i != npos; i = formatStr.find_first_of(openerSymbol, i + 1))
 			{
-				if (text[i + 1] == text[i] ||
-					text[i + 1] == CharType(' ') ||
-					text[i + 1] == CharType('\t') ||
-					text[i + 1] == CharType('\0'))
+				if (formatStr[i + 1] == formatStr[i] ||
+					formatStr[i + 1] == CharType(' ') ||
+					formatStr[i + 1] == CharType('\t') ||
+					formatStr[i + 1] == CharType('\0'))
 				{
 					i += 2;
 					continue;
@@ -146,10 +171,10 @@ namespace klib
 
 				std::string objIndex;
 
-				const auto closePos = text.find_first_of(closerSymbol, i);
+				const auto closePos = formatStr.find_first_of(closerSymbol, i);
 				for (auto j = 1; (i + j) < closePos; ++j)
 				{
-					objIndex += (char)text[i + j];
+					objIndex += (char)formatStr[i + j];
 				}
 
 				const short idx = (short)std::stoi(objIndex);
@@ -161,8 +186,8 @@ namespace klib
 			for (const auto& id : identifiers)
 			{
 				auto& val = elems[id.first];
-				const auto inputPos = text.find_first_of(closerSymbol) + 1;
-				auto sub = text.substr(0, inputPos);
+				const auto inputPos = formatStr.find_first_of(closerSymbol) + 1;
+				auto sub = formatStr.substr(0, inputPos);
 				auto colonPos = sub.find(CharType(':'));
 				CharType padding;
 				if (colonPos != npos)
@@ -176,7 +201,8 @@ namespace klib
 				if (colonPos != npos)
 				{
 					sub.insert(replacePos + 1, 1, padding);
-					replacePos++;
+					sub.insert(replacePos + 1, 1, CharType('0'));
+					replacePos += 2;
 				}
 
 				if (id.second.find(CharType('*')) != npos)
@@ -189,9 +215,9 @@ namespace klib
 					}
 					else
 					{
-						throw std::runtime_error("Non-char type pointer not recognised/supported");
-						//sub[replacePos + 1] = CharType('p');
-						//res.append(MakeStringFromData(sub, data));
+						sub[replacePos + 1] = CharType('p');
+						auto data = std::any_cast<const void*>(val);
+						res.append(MakeStringFromData(sub, data));
 					}
 				}
 				else if (id.second.find("unsigned") != npos)
@@ -270,7 +296,7 @@ namespace klib
 					sub[replacePos + 1] = CharType('f');
 					if (colonPos != npos)
 					{
-						sub.insert(replacePos, 1, CharType('.'));
+						sub[replacePos - 1] = CharType('.');
 					}
 					res.append(MakeStringFromData(sub, data));
 				}
@@ -289,7 +315,7 @@ namespace klib
 					throw std::runtime_error("Type entered not recognised/supported");
 				}
 
-				text.erase(0, inputPos);
+				formatStr.erase(0, inputPos);
 				identifiers.pop_front();
 			}
 

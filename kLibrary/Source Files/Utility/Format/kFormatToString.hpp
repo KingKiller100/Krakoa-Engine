@@ -20,26 +20,22 @@ namespace klib
 {
 	namespace kFormat
 	{
-		template<class CharType, typename T>
-		constexpr std::basic_string<CharType> ToString(T object)
-		{
-			std::basic_stringstream<CharType> ss;
-			ss << object;
-			return ss.str();
-		}
-
-		template<typename T, typename U = T>
+		// C++ STL string/string_view
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t <type_trait::Is_StringType_V<U>, const typename T::value_type*>
+			std::enable_if_t <type_trait::Is_CharType_V<C>
+			&& type_trait::Is_StringType_V<U>,
+			const typename T::value_type*>
 			GetValue(const T& str)
 		{
 			return str.data();
 		}
 
-		// Non C string, but primative ptrs
-		template<typename T, typename U = T>
+		// Non C string, but primative type ptrs
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<std::is_pointer_v<U>
+			std::enable_if_t<type_trait::Is_CharType_V<C>
+			&& std::is_pointer_v<U>
 			&& !type_trait::Is_CharType<ONLY_TYPE(U)>::Value
 			&& !type_trait::Is_StringType<ONLY_TYPE(U)>::Value
 			, const void*>
@@ -49,9 +45,10 @@ namespace klib
 		}
 
 		// C string ptrs
-		template<typename T, typename U = T>
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<std::is_pointer_v<U>
+			std::enable_if_t<type_trait::Is_CharType_V<C>
+			&& std::is_pointer_v<U>
 			&& type_trait::Is_CharType_V<ONLY_TYPE(U)>
 			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
 			, const T>
@@ -60,54 +57,45 @@ namespace klib
 			return obj;
 		}
 
-		// primative types (int, double, unsigned long long,...)
-		template<typename T, typename U = T>
+		// Primative types (int, double, unsigned long long,...) but not bool
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<std::is_arithmetic_v<U>
+			std::enable_if_t<type_trait::Is_CharType_V<C>
+			&& std::is_arithmetic_v<U>
 			, const U>
-			GetValue(const T& obj)
+			GetValue(const T obj)
 		{
 			return obj;
 		}
 
 		// Non-primative types
-		template<typename T, typename U = T>
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<(
-				!std::is_arithmetic_v<std::decay_t<U>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<wchar_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char16_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char32_t>> &&
-#ifdef __cpp_char8_t
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char8_t>> &&
-#endif
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<wchar_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char16_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char32_t>> &&
-#ifdef __cpp_char8_t
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char8_t>> &&
-#endif
-				!std::is_pointer_v<std::decay_t<U>>
-				), const char*>
+			std::enable_if_t<(type_trait::Is_CharType_V<C>
+				&& !std::is_arithmetic_v<std::decay_t<U>>
+				&& !type_trait::Is_StringType_V<U>
+				&& !std::is_pointer_v<std::decay_t<U>>
+				), const CharType*>
 			GetValue(const T& obj)
 		{
 			return obj.ToString().data();
 		}
 
-		template<typename T, typename U = T>
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t < type_trait::Is_StringType_V<U>, const typename T::value_type*>
+			std::enable_if_t <type_trait::Is_CharType_V<C>
+			&& type_trait::Is_StringType_V<U>,
+			const T*>
 			GetValuePtr(const T& str)
 		{
-			return str.data();
+			return &str;
 		}
 
 		// Non C string, but primative ptrs
-		template<typename T, typename U = T>
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<std::is_pointer_v<U>
+			std::enable_if_t <type_trait::Is_CharType_V<C>
+			&& std::is_pointer_v<U>
 			&& !type_trait::Is_CharType_V<ONLY_TYPE(U)>
 			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
 			, const void*>
@@ -117,9 +105,10 @@ namespace klib
 		}
 
 		// C string ptrs
-		template<typename T, typename U = T>
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<std::is_pointer_v<U>
+			std::enable_if_t <type_trait::Is_CharType_V<C>
+			&& std::is_pointer_v<U>
 			&& type_trait::Is_CharType_V<ONLY_TYPE(U)>
 			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
 			, const T>
@@ -129,36 +118,24 @@ namespace klib
 		}
 
 		// primative types (int, double, unsigned long long,...)
-		template<typename T, typename U = T>
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<std::is_arithmetic_v<U>
+			std::enable_if_t <type_trait::Is_CharType_V<C>
+			&& std::is_arithmetic_v<U>
 			, const U*>
 			GetValuePtr(const T& obj)
 		{
 			return &obj;
 		}
 
-		// Non-primative types
-		template<typename T, typename C = std::basic_string<ONLY_TYPE(T)>, typename U = T>
+		// Non-primative custom types - Must have a function ToString that returns a C++ STL string type
+		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t<(
-				!std::is_arithmetic_v<std::decay_t<U>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<wchar_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char16_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char32_t>> &&
-#ifdef __cpp_char8_t
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char8_t>> &&
-#endif
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<wchar_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char16_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char32_t>> &&
-#ifdef __cpp_char8_t
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char8_t>> &&
-#endif
-				!std::is_pointer_v<std::decay_t<U>>
-				), const T*>
+			std::enable_if_t <( type_trait::Is_CharType_V<C>
+				&& !std::is_arithmetic_v<std::decay_t<U>>
+				&& !type_trait::Is_StringType_V<U>
+				&& !std::is_pointer_v<std::decay_t<U>>
+				), const C*>
 			GetValuePtr(const T& obj)
 		{
 			return obj.ToString().data();
@@ -204,7 +181,7 @@ namespace klib
 
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharType, typename T, typename ...Ts>
-		USE_RESULT constexpr inline std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
+		constexpr inline std::basic_string<CharType> ToString(std::basic_string<CharType>& format, const T arg, const Ts ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 
@@ -214,23 +191,20 @@ namespace klib
 
 			static constexpr auto npos = std::basic_string<CharType>::npos;
 
-			auto formatStr = std::basic_string<CharType>(format);
-
-			if (auto pfSymPos = formatStr.find(printfSymbol); pfSymPos != npos)
+			if (auto pfSymPos = format.find(printfSymbol); pfSymPos != npos)
 			{
-				return MakeStringFromData<CharType>(formatStr, GetValue<T>(arg), GetValue<Ts>(argPack)...);
+				return MakeStringFromData<CharType>(format, GetValue<CharType, T>(arg), GetValue<CharType, Ts>(argPack)...);
 			}
 
-			std::basic_string<CharType> finalString;
-			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { GetValuePtr<T>(arg), GetValuePtr<Ts>(argPack)... };
+			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { GetValuePtr<CharType, T>(arg), GetValuePtr<CharType, Ts>(argPack)... };
 
 			std::deque<std::pair<unsigned char, std::string>> identifiers;
-			for (auto i = formatStr.find_first_of(openerSymbol); i != npos; i = formatStr.find_first_of(openerSymbol, i + 1))
+			for (auto i = format.find_first_of(openerSymbol); i != npos; i = format.find_first_of(openerSymbol, i + 1))
 			{
-				if (formatStr[i + 1] == formatStr[i] ||
-					formatStr[i + 1] == CharType(' ') ||
-					formatStr[i + 1] == CharType('\t') ||
-					formatStr[i + 1] == CharType('\0'))
+				if (format[i + 1] == format[i] ||
+					format[i + 1] == CharType(' ') ||
+					format[i + 1] == CharType('\t') ||
+					format[i + 1] == CharType('\0'))
 				{
 					i += 2;
 					continue;
@@ -238,10 +212,10 @@ namespace klib
 
 				std::string objIndex;
 
-				const auto closePos = formatStr.find_first_of(closerSymbol, i);
+				const auto closePos = format.find_first_of(closerSymbol, i);
 				for (auto j = 1; (i + j) < closePos; ++j)
 				{
-					objIndex += (char)formatStr[i + j];
+					objIndex += (char)format[i + j];
 				}
 
 				const auto idx = (unsigned char)std::stoi(objIndex);
@@ -250,14 +224,15 @@ namespace klib
 			}
 			identifiers.shrink_to_fit();
 
+			std::basic_string<CharType> finalString;
 			for (const auto& id : identifiers)
 			{
 				auto& val = elems[id.first];
-				const auto inputPos = formatStr.find_first_of(closerSymbol) + 1;
-				auto currentSection = formatStr.substr(0, inputPos);
+				const auto inputPos = format.find_first_of(closerSymbol) + 1;
+				auto currentSection = format.substr(0, inputPos);
 				auto replacePos = currentSection.find_first_of(openerSymbol);
 				auto colonPos = currentSection.find(CharType(':'), replacePos);
-				CharType padding;
+				auto padding = CharType('\0');
 				if (colonPos != npos)
 				{
 					padding = currentSection[colonPos + 1];
@@ -265,19 +240,32 @@ namespace klib
 				currentSection[replacePos] = printfSymbol;
 				currentSection.erase(replacePos + 2);
 
-				if (colonPos != npos)
+				if (padding != CharType('\0'))
 				{
 					currentSection.insert(replacePos + 1, 1, padding);
 					currentSection.insert(replacePos + 1, 1, CharType('0'));
 					replacePos += 2;
 				}
 
-
 				if (id.second.find("void") != npos)
 				{
 					currentSection[replacePos + 1] = CharType('p');
 					auto data = std::any_cast<const void*>(val);
 					finalString.append(MakeStringFromData(currentSection, data));
+				}
+				else if (id.second.find("basic_string_view") != npos)
+				{
+					const auto data = std::any_cast<const std::basic_string_view<CharType>*>(val);
+					currentSection.erase(replacePos);
+					currentSection.insert(replacePos, data->data());
+					finalString.append(currentSection);
+				}
+				else if (id.second.find("basic_string") != npos)
+				{
+					const auto data = std::any_cast<const std::basic_string<CharType>*>(val);
+					currentSection.erase(replacePos);
+					currentSection.insert(replacePos, data->data());
+					finalString.append(currentSection);
 				}
 				else if (id.second.find("char") != npos)
 				{
@@ -293,6 +281,11 @@ namespace klib
 					if (id.second.find("char") != npos)
 					{
 						auto data = std::any_cast<const unsigned char*>(val);
+						finalString.append(MakeStringFromData(currentSection, *data));
+					}
+					else if (id.second.find("short") != npos)
+					{
+						auto data = std::any_cast<const unsigned short*>(val);
 						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else if (id.second.find("int") != npos)
@@ -403,21 +396,30 @@ namespace klib
 					throw std::runtime_error("Type entered not recognised/supported");
 				}
 
-				formatStr.erase(0, inputPos);
+				format.erase(0, inputPos);
 				identifiers.pop_front();
 			}
 
-			if (!formatStr.empty())
-				finalString.append(formatStr);
+			if (!format.empty())
+				finalString.append(format);
 
 			return finalString;
 		}
 
 		template<class CharType, typename T, typename ...Ts>
-		constexpr inline std::basic_string<CharType> ToString(const std::basic_string<CharType>& format, T&& arg, Ts&& ...argPack)
+		constexpr inline std::basic_string<CharType> ToString(const CharType* format, T&& arg, Ts&& ...argPack)
 		{
-			const std::basic_string<CharType> text = ToString(format.c_str(), arg, argPack...);
+			std::basic_string<CharType> formatStr = format;
+			const std::basic_string<CharType> text = ToString(formatStr, arg, argPack...);
 			return text;
+		}
+
+		template<class CharType, typename T>
+		constexpr std::basic_string<CharType> ToString(T object)
+		{
+			std::basic_stringstream<CharType> ss;
+			ss << object;
+			return ss.str();
 		}
 	}
 }

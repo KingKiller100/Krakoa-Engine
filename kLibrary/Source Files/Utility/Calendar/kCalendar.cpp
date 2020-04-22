@@ -50,7 +50,8 @@ namespace klib::kCalendar
 	std::string GetTimeText()  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		return ToString("%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
+		const auto dateStr = ToString("{0:2}:{1:2}:{2:2}:{3:3}", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
+		return dateStr;
 	}
 
 	std::string GetDateInTextFormat(const bool fullDayname)  noexcept

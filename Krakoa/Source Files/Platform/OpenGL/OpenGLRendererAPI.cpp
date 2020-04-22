@@ -19,29 +19,30 @@ namespace krakoa::graphics
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEBUG_OUTPUT);
-		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
-		{
-			const auto msgFormat = klib::kFormat::ToString(
-				"OpenGL %s:\n type = 0x%08x\n severity = 0x%08x\n message = %s\n",
-				type == GL_DEBUG_TYPE_ERROR
-				? "ERROR"
-				: "CALLBACK");
+		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+			{
+				const auto msgType = klib::kFormat::ToString("OpenGL %s:",
+					type == GL_DEBUG_TYPE_ERROR
+					? "ERROR"
+					: "CALLBACK");
+				auto msgFormat = msgType +
+					"\n type = 0x%08x\n severity = 0x%08x\n message = %s\n";
 
-			if (type == GL_DEBUG_TYPE_ERROR)
-			{
-				KRK_ERRR(klib::kFormat::ToString(msgFormat,
-					type,
-					severity,
-					message));
-			}
-			else
-			{
-				KRK_DBUG(klib::kFormat::ToString(msgFormat,
-					type,
-					severity,
-					message));
-			}
-		}, 
+				if (type == GL_DEBUG_TYPE_ERROR)
+				{
+					KRK_ERRR(klib::kFormat::ToString(msgFormat,
+						type,
+						severity,
+						message));
+				}
+				else
+				{
+					KRK_DBUG(klib::kFormat::ToString(msgFormat,
+						type,
+						severity,
+						message));
+				}
+			},
 			nullptr);
 
 	}
@@ -77,7 +78,7 @@ namespace krakoa::graphics
 		glDrawElements(
 			GL_TRIANGLES,
 			vertexArray.GetIndexBuffer()->GetCount(),
-			GL_UNSIGNED_INT, 
+			GL_UNSIGNED_INT,
 			nullptr
 		);
 	}

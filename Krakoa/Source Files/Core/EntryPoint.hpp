@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	{
 		krakoa::CreateApplication();
 		auto pApp = std::unique_ptr<krakoa::Application>(krakoa::Application::Pointer());
-		
+
 		pApp->Initialize();
 
 		do {

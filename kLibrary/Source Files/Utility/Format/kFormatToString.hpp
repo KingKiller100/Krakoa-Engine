@@ -204,7 +204,7 @@ namespace klib
 
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharType, typename T, typename ...Ts>
-		constexpr inline std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
+		USE_RESULT constexpr inline std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 

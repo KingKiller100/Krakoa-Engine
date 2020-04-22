@@ -69,7 +69,7 @@ namespace krakoa::graphics
 				ShaderDataTypeToRenderAPIBaseType(layout.type),
 				layout.normalized ? GL_TRUE : GL_FALSE,
 				bufferLayout.GetStride(),
-				(const void*) layout.offset);
+				(const void *)layout.offset);
 		}
 
 		vertexBuffers.emplace_back(std::shared_ptr<iVertexBuffer>(vertexBuffer));

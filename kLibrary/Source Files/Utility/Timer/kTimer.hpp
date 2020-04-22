@@ -23,17 +23,17 @@ namespace klib::kTime
 
 	public:
 
-		constexpr Timer(const char* name)
+		constexpr Timer(const char* name) noexcept
 			: name(name), startTimePoint(Clock::now()), lastTimePoint(startTimePoint)
 		{ }
 
-		USE_RESULT constexpr const char* GetName() const
+		USE_RESULT constexpr const char* GetName() const noexcept
 		{
 			return name;
 		}
 
 		template<typename Units>
-		USE_RESULT constexpr Rep GetLifeTime() const noexcept
+		USE_RESULT constexpr Rep GetLifeTime() const noexcept(std::is_arithmetic_v<Rep>)
 		{
 			std::atomic_thread_fence(std::memory_order_relaxed);
 			const auto lifeTime = ConvertToUsableValue<Units>(Clock::now(), startTimePoint);
@@ -42,7 +42,7 @@ namespace klib::kTime
 		}
 
 		template<typename Units>
-		USE_RESULT constexpr Rep GetDeltaTime() noexcept
+		USE_RESULT constexpr Rep GetDeltaTime() noexcept(std::is_arithmetic_v<Rep>)
 		{
 			std::atomic_thread_fence(std::memory_order_relaxed);
 
@@ -57,10 +57,10 @@ namespace klib::kTime
 
 	private:
 		template<typename Units>
-		USE_RESULT constexpr Rep ConvertToUsableValue(const typename Clock::time_point& now, const typename Clock::time_point& prev) const noexcept
+		USE_RESULT constexpr Rep ConvertToUsableValue(const typename Clock::time_point& now, const typename Clock::time_point& prev) const noexcept(std::is_arithmetic_v<Rep>)
 		{
-			constexpr static Rep thousandth = (CAST(Rep, 1) / 1000);
-			constexpr static Rep sixtieth = CAST(Rep, 1) / 60;
+			static constexpr Rep thousandth = (CAST(Rep, 1) / 1000);
+			static constexpr Rep sixtieth = CAST(Rep, 1) / 60;
 
 			if _CONSTEXPR_IF(std::is_same_v<Units, Hours>
 				|| std::is_same_v<Units, Mins>)

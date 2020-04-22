@@ -28,22 +28,15 @@ namespace klib
 			return ss.str();
 		}
 
-		template<typename T, typename C = std::basic_string<ONLY_TYPE(T)>, typename U = T>
+		template<typename T, typename U = T>
 		constexpr
-			std::enable_if_t < std::is_same_v < U, std::basic_string<typename U::value_type>>, const typename T::value_type*>
-			GetValue(const C& str)
+			std::enable_if_t <type_trait::Is_StringType_V<U>, const typename T::value_type*>
+			GetValue(const T& str)
 		{
 			return str.data();
 		}
 
-		template<typename T, typename C = std::basic_string_view<ONLY_TYPE(T)>, typename U = T>
-		constexpr
-			std::enable_if_t < std::is_same_v < U, std::basic_string_view<typename U::value_type>>, const typename T::value_type*>
-			GetValue(const C& str)
-		{
-			return str.data();
-		}
-
+		// Non C string, but primative ptrs
 		template<typename T, typename U = T>
 		constexpr
 			std::enable_if_t<std::is_pointer_v<U>
@@ -55,83 +48,152 @@ namespace klib
 			return (const void*)obj;
 		}
 
+		// C string ptrs
 		template<typename T, typename U = T>
 		constexpr
 			std::enable_if_t<std::is_pointer_v<U>
-			&& type_trait::Is_CharType<ONLY_TYPE(U)>::Value
-			&& !type_trait::Is_StringType<ONLY_TYPE(U)>::Value
+			&& type_trait::Is_CharType_V<ONLY_TYPE(U)>
+			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
 			, const T>
 			GetValue(const T obj)
 		{
 			return obj;
 		}
 
+		// primative types (int, double, unsigned long long,...)
 		template<typename T, typename U = T>
 		constexpr
 			std::enable_if_t<std::is_arithmetic_v<U>
-			, U>
-			GetValue(const T obj)
+			, const U>
+			GetValue(const T& obj)
 		{
 			return obj;
 		}
 
+		// Non-primative types
+		template<typename T, typename U = T>
+		constexpr
+			std::enable_if_t<(
+				!std::is_arithmetic_v<std::decay_t<U>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<wchar_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char16_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char32_t>> &&
+#ifdef __cpp_char8_t
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char8_t>> &&
+#endif
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<wchar_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char16_t>> &&
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char32_t>> &&
+#ifdef __cpp_char8_t
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char8_t>> &&
+#endif
+				!std::is_pointer_v<std::decay_t<U>>
+				), const char*>
+			GetValue(const T& obj)
+		{
+			return obj.ToString().data();
+		}
+
+		template<typename T, typename U = T>
+		constexpr
+			std::enable_if_t < type_trait::Is_StringType_V<U>, const typename T::value_type*>
+			GetValuePtr(const T& str)
+		{
+			return str.data();
+		}
+
+		// Non C string, but primative ptrs
+		template<typename T, typename U = T>
+		constexpr
+			std::enable_if_t<std::is_pointer_v<U>
+			&& !type_trait::Is_CharType_V<ONLY_TYPE(U)>
+			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
+			, const void*>
+			GetValuePtr(const T obj)
+		{
+			return (const void*)obj;
+		}
+
+		// C string ptrs
+		template<typename T, typename U = T>
+		constexpr
+			std::enable_if_t<std::is_pointer_v<U>
+			&& type_trait::Is_CharType_V<ONLY_TYPE(U)>
+			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
+			, const T>
+			GetValuePtr(const T obj)
+		{
+			return obj;
+		}
+
+		// primative types (int, double, unsigned long long,...)
+		template<typename T, typename U = T>
+		constexpr
+			std::enable_if_t<std::is_arithmetic_v<U>
+			, const U*>
+			GetValuePtr(const T& obj)
+		{
+			return &obj;
+		}
+
+		// Non-primative types
 		template<typename T, typename C = std::basic_string<ONLY_TYPE(T)>, typename U = T>
 		constexpr
 			std::enable_if_t<(
 				!std::is_arithmetic_v<std::decay_t<U>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string<char>> &&
-#ifdef __cpp_char8_t
-				!std::is_same_v<std::decay_t<U>, std::basic_string<char8_t>> &&
-#endif
 				!std::is_same_v<std::decay_t<U>, std::basic_string<wchar_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string<char16_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string<char32_t>> &&
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
 #ifdef __cpp_char8_t
-				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char8_t>>&&
+				!std::is_same_v<std::decay_t<U>, std::basic_string<char8_t>> &&
 #endif
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<wchar_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char16_t>> &&
 				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char32_t>> &&
-				!std::is_pointer_v<std::decay_t<U>> &&
-				!std::is_unsigned_v<std::decay_t<U>>
-				), const typename T::value_type*>
-			GetValue(const T obj)
+#ifdef __cpp_char8_t
+				!std::is_same_v<std::decay_t<U>, std::basic_string_view<char8_t>> &&
+#endif
+				!std::is_pointer_v<std::decay_t<U>>
+				), const T*>
+			GetValuePtr(const T& obj)
 		{
 			return obj.ToString().data();
 		}
 
 		template<typename CharType, typename T, typename ...Ts>
-		constexpr inline std::basic_string<CharType> MakeStringFromData(const std::basic_string<CharType>& format, T data, Ts ...params)
+		constexpr std::basic_string<CharType> MakeStringFromData(const std::basic_string<CharType>& format, T arg1, Ts ...argN)
 		{
-			size_t length = 0;
 			CharType* buffer;
+			int length = -1;
 
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				length = _snprintf(nullptr, 0, format.data(), data, params...) + 1;
+				length = _snprintf(nullptr, 0, format.data(), arg1, argN...) + 1;
 				if (length <= 0) throw std::runtime_error("Error during char type \"ToString(...)\" formatting: string returned length <= 0");
 				buffer = new CharType[length]();
-				sprintf_s(buffer, length, format.data(), data, params...);
+				sprintf_s(buffer, length, format.data(), arg1, argN...);
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				length = _snwprintf(nullptr, 0, format.data(), data, params...) + 1;
+				length = _snwprintf(nullptr, 0, format.data(), arg1, argN...) + 1;
 				if (length <= 0) throw std::runtime_error("Error during wchar_t type \"ToString(...)\" formatting: string returned length <= 0");
 				buffer = new CharType[length]();
-				swprintf_s(buffer, length, format.data(), data, params...);
+				swprintf_s(buffer, length, format.data(), arg1, argN...);
 			}
 			else
 			{
 				std::string str;
-				for (auto& c : format)
+				for (const auto& c : format)
 					str += (char)c;
-				str = MakeStringFromData<char>(str.data(), data, params...);
+				str = MakeStringFromData<char>(str.data(), arg1, argN...);
 				std::basic_string<CharType> text;
-				for (auto& c : str)
-				{
-					text += c;
-				}
+				for (const auto& c : str)
+					text += (CharType)c;
+
 				return text;
 			}
 
@@ -142,15 +204,15 @@ namespace klib
 
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharType, typename T, typename ...Ts>
-		constexpr inline std::basic_string<CharType> ToString(const CharType* format, T arg, Ts ...argPack)
+		constexpr inline std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
 		{
-			using ParseTypes = std::variant<std::monostate, T, Ts...>;
+			using DataTypes = std::variant<std::monostate, T, Ts...>;
 
-			constexpr static auto printfSymbol = CharType('%');
-			constexpr static auto openerSymbol = CharType('{');
-			constexpr static auto closerSymbol = CharType('}');
+			static constexpr auto printfSymbol = CharType('%');
+			static constexpr auto openerSymbol = CharType('{');
+			static constexpr auto closerSymbol = CharType('}');
 
-			constexpr static auto npos = std::basic_string<CharType>::npos;
+			static constexpr auto npos = std::basic_string<CharType>::npos;
 
 			auto formatStr = std::basic_string<CharType>(format);
 
@@ -159,10 +221,10 @@ namespace klib
 				return MakeStringFromData<CharType>(formatStr, GetValue<T>(arg), GetValue<Ts>(argPack)...);
 			}
 
-			std::basic_string<CharType> res;
-			std::array<std::any, std::variant_size_v<ParseTypes> -1> elems = { GetValue<T>(arg), GetValue<Ts>(argPack)... };
+			std::basic_string<CharType> finalString;
+			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { GetValuePtr<T>(arg), GetValuePtr<Ts>(argPack)... };
 
-			std::deque<std::pair<short, std::string>> identifiers;
+			std::deque<std::pair<unsigned char, std::string>> identifiers;
 			for (auto i = formatStr.find_first_of(openerSymbol); i != npos; i = formatStr.find_first_of(openerSymbol, i + 1))
 			{
 				if (formatStr[i + 1] == formatStr[i] ||
@@ -182,7 +244,7 @@ namespace klib
 					objIndex += (char)formatStr[i + j];
 				}
 
-				const short idx = (short)std::stoi(objIndex);
+				const auto idx = (unsigned char)std::stoi(objIndex);
 
 				identifiers.push_back(std::make_pair(idx, elems[idx].type().name()));
 			}
@@ -192,128 +254,149 @@ namespace klib
 			{
 				auto& val = elems[id.first];
 				const auto inputPos = formatStr.find_first_of(closerSymbol) + 1;
-				auto sub = formatStr.substr(0, inputPos);
-				auto colonPos = sub.find(CharType(':'));
+				auto currentSection = formatStr.substr(0, inputPos);
+				auto replacePos = currentSection.find_first_of(openerSymbol);
+				auto colonPos = currentSection.find(CharType(':'), replacePos);
 				CharType padding;
 				if (colonPos != npos)
 				{
-					padding = sub[colonPos + 1];
+					padding = currentSection[colonPos + 1];
 				}
-				auto replacePos = sub.find_first_of(openerSymbol);
-				sub[replacePos] = CharType('%');
-				sub.erase(replacePos + 2);
+				currentSection[replacePos] = printfSymbol;
+				currentSection.erase(replacePos + 2);
 
 				if (colonPos != npos)
 				{
-					sub.insert(replacePos + 1, 1, padding);
-					sub.insert(replacePos + 1, 1, CharType('0'));
+					currentSection.insert(replacePos + 1, 1, padding);
+					currentSection.insert(replacePos + 1, 1, CharType('0'));
 					replacePos += 2;
 				}
 
-				if (id.second.find(CharType('*')) != npos)
+
+				if (id.second.find("void") != npos)
 				{
-					if (id.second.find("char") != npos)
-					{
-						sub[replacePos + 1] = CharType('s');
-						auto data = std::any_cast<const CharType*>(val);
-						res.append(MakeStringFromData(sub, data));
-					}
-					else
-					{
-						sub[replacePos + 1] = CharType('p');
-						auto data = std::any_cast<const void*>(val);
-						res.append(MakeStringFromData(sub, data));
-					}
+					currentSection[replacePos + 1] = CharType('p');
+					auto data = std::any_cast<const void*>(val);
+					finalString.append(MakeStringFromData(currentSection, data));
+				}
+				else if (id.second.find("char") != npos)
+				{
+					const auto data = std::any_cast<const CharType*>(val);
+					currentSection.erase(replacePos);
+					currentSection.insert(replacePos, data);
+					finalString.append(currentSection);
 				}
 				else if (id.second.find("unsigned") != npos)
 				{
-					unsigned long long data;
-					sub[replacePos + 1] = CharType('u');
+					currentSection[replacePos + 1] = CharType('u');
 
 					if (id.second.find("char") != npos)
 					{
-						data = (unsigned long long)std::any_cast<unsigned char>(val);
+						auto data = std::any_cast<const unsigned char*>(val);
+						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else if (id.second.find("int") != npos)
 					{
-						data = (unsigned long long)std::any_cast<unsigned int>(val);
+						auto data = std::any_cast<const unsigned int*>(val);
+						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else if (auto longPos = id.second.find("long"); longPos != npos)
 					{
 						auto long2Pos = id.second.find_first_of("long", longPos + 4);
 						if (long2Pos != npos)
 						{
-							data = std::any_cast<unsigned long long>(val);
-							sub.insert(replacePos + 1, 1, CharType('l'));
+							auto data = std::any_cast<const unsigned long long*>(val);
+							currentSection.insert(replacePos + 1, 1, CharType('l'));
+							finalString.append(MakeStringFromData(currentSection, *data));
 						}
 						else
 						{
-							data = (unsigned long long)std::any_cast<unsigned long>(val);
-							sub.insert(replacePos + 1, 2, CharType('l'));
+							auto data = std::any_cast<const unsigned long*>(val);
+							currentSection.insert(replacePos + 1, 2, CharType('l'));
+							finalString.append(MakeStringFromData(currentSection, *data));
 						}
 					}
-
-					res.append(MakeStringFromData(sub, data));
 				}
 				else if (auto longPos = id.second.find("long"); longPos != npos)
 				{
 					auto long2Pos = id.second.find_first_of("long", longPos + 4);
 					if (long2Pos != npos)
 					{
-						auto data = std::any_cast<long long>(val);
-						sub.insert(replacePos + 1, 2, CharType('l'));
-						res.append(MakeStringFromData(sub, data));
+						const auto data = std::any_cast<const long long*>(val);
+						currentSection.insert(replacePos + 1, 2, CharType('l'));
+						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else if (id.second.find_first_of("double", longPos + 4) != npos)
 					{
-						auto data = std::any_cast<long double>(val);
-						sub[replacePos + 1] = CharType('f');
-						res.append(MakeStringFromData(sub, data));
+						auto data = std::any_cast<const long double*>(val);
+						currentSection[replacePos + 1] = CharType('f');
+						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else if (id.second.find_first_of("int", longPos + 4) != npos)
 					{
-						auto data = std::any_cast<long int>(val);
-						sub[replacePos + 1] = CharType('l');
-						res.append(MakeStringFromData(sub, data));
+						auto data = std::any_cast<const long int*>(val);
+						currentSection[replacePos + 1] = CharType('l');
+						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else
 					{
-						auto data = std::any_cast<long>(val);
-						sub[replacePos + 1] = CharType('l');
-						res.append(MakeStringFromData(sub, data));
+						auto data = std::any_cast<const long*>(val);
+						currentSection[replacePos + 1] = CharType('l');
+						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 				}
 				else if (id.second.find("short") != npos)
 				{
-					auto data = std::any_cast<short>(val);
-					sub[replacePos + 1] = CharType('d');
-					res.append(MakeStringFromData(sub, data));
+					auto data = std::any_cast<const short*>(val);
+					currentSection[replacePos + 1] = CharType('d');
+					finalString.append(MakeStringFromData(currentSection, *data));
 				}
 				else if (id.second.find("int") != npos)
 				{
-					auto data = std::any_cast<int>(val);
-					sub[replacePos + 1] = CharType('d');
-					res.append(MakeStringFromData(sub, data));
+					auto data = std::any_cast<const int*>(val);
+					currentSection[replacePos + 1] = CharType('d');
+					finalString.append(MakeStringFromData(currentSection, *data));
 				}
 				else if (id.second.find("double") != npos)
 				{
-					auto data = std::any_cast<double>(val);
-					sub[replacePos + 1] = CharType('f');
+					const auto data = std::any_cast<const double*>(val);
+					currentSection[replacePos + 1] = CharType('f');
 					if (colonPos != npos)
 					{
-						sub[replacePos - 1] = CharType('.');
+						currentSection[replacePos - 1] = CharType('.');
 					}
-					res.append(MakeStringFromData(sub, data));
+					finalString.append(MakeStringFromData(currentSection, *data));
 				}
 				else if (id.second.find("float") != npos)
 				{
-					auto data = std::any_cast<float>(val);
-					sub[replacePos + 1] = CharType('f');
+					const auto data = std::any_cast<const float*>(val);
+					currentSection[replacePos + 1] = CharType('f');
 					if (colonPos != npos)
 					{
-						sub.insert(replacePos, 1, CharType('.'));
+						currentSection[replacePos - 1] = CharType('.');
 					}
-					res.append(MakeStringFromData(sub, data));
+					finalString.append(MakeStringFromData(currentSection, *data));
+				}
+				else if (id.second.find("bool") != npos)
+				{
+					const auto res = std::any_cast<const bool*>(val);
+					std::basic_string_view<CharType> data;
+					if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+						data = *res ? "true" : "false";
+					else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+						data = *res ? L"true" : L"false";
+					else if _CONSTEXPR_IF(std::is_same_v<CharType, char16_t>)
+						data = *res ? u"true" : u"false";
+					else if _CONSTEXPR_IF(std::is_same_v<CharType, char32_t>)
+						data = *res ? U"true" : U"false";
+#ifdef __cpp_char8_t
+					else if _CONSTEXPR_IF(std::is_same_v<CharType, char8_t>)
+						data = *res ? u8"true" : u8"false";
+#endif
+					currentSection.erase(replacePos);
+					currentSection.insert(replacePos, data);
+
+					finalString.append(currentSection);
 				}
 				else
 				{
@@ -324,7 +407,10 @@ namespace klib
 				identifiers.pop_front();
 			}
 
-			return res;
+			if (!formatStr.empty())
+				finalString.append(formatStr);
+
+			return finalString;
 		}
 
 		template<class CharType, typename T, typename ...Ts>

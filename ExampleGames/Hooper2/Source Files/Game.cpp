@@ -28,9 +28,7 @@ public:
 	}
 
 	void Shutdown() override
-	{
-		isRunning = false;
-	}
+	{}
 };
 
 void krakoa::CreateApplication()

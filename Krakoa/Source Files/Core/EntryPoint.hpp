@@ -20,6 +20,8 @@ int main(int argc, char** argv)
 		do {
 			pApp->Run();
 		} while (pApp->IsRunning());
+
+		pApp->Shutdown();
 	}
 	return EXIT_SUCCESS;
 }

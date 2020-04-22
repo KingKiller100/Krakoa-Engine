@@ -62,6 +62,10 @@ namespace klib::type_trait
 #endif
 
 	template<typename T>
+	constexpr bool Is_CharType_V = Is_CharType<T>::Value;
+
+
+	template<typename T>
 	struct Is_StringType : FalseConstant<T>
 	{};
 
@@ -108,6 +112,10 @@ namespace klib::type_trait
 	struct Is_StringType<std::u8string_view> : TrueConstant<std::u8string_view>
 	{};
 #endif
+
+
+	template<typename T>
+	constexpr bool Is_StringType_V = Is_StringType<T>::Value;
 
 }
 

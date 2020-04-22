@@ -66,7 +66,7 @@ namespace krakoa
 
 	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
 	{
-		Shutdown();
+		isRunning = false;
 		return true;
 	}
 

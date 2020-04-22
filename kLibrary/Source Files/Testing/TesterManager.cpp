@@ -84,12 +84,12 @@ namespace kTest
 		for (const auto& test : kTests_TestsUSet)
 		{
 			const auto resultTest = test->Run() 
-				? klib::kFormat::ToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
-				: klib::kFormat::ToString("Failure: Test Name: %s\n%s", test->GetName(), test->GetFailureData().data()); // Fail Case
+				? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
+				: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData().data()); // Fail Case
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %.3fm (Minutes)", totalRunTimeTimer.GetLifeTime<klib::kTime::Mins>());
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0:3}m (Minutes)", totalRunTimeTimer.GetLifeTime<klib::kTime::Mins>());
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
 	}
 

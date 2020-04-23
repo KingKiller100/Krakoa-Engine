@@ -20,33 +20,51 @@ namespace kTest::utility
 		VERIFY(SingleObjectToStringTest() == true);
 	}
 
+	struct Entity
+	{
+		const std::string& ToString() const
+		{
+			return str;
+		}
+
+		std::string str = "Bitches ain't shit but hoes and tricks";
+	};
+
 	bool FormatToStringTester::FormatToStringTest()
 	{
 		using namespace klib::kFormat;
 
+		Entity e;
 		auto tempIntPtr = std::make_unique<int>(76);
 
 		const auto testStr  = ToString("This test %d ", 1U);
 		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
-		const auto testStr3 = ToString("and with different numerical types such as float %02.03f, ", float(kmaths::constants::TAU));
-		const auto testStr4 = ToString("doubles %.7f, ", double(kmaths::constants::E));
+		const auto testStr3W = ToString(L"and with different numerical types such as float %.03f, ", float(kmaths::constants::TAU));
+		const auto testStr4 = ToString("doubles {0:7}, ", kmaths::constants::E);
 		const auto testStr5 = ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
-		const auto testStr6 = ToString("pointer addresses i.e. %p (random int ptr address)", tempIntPtr.get());
+		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
+		const auto testStr7 = ToString("%s", e);
 
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
-		VERIFY(testStr3 == "and with different numerical types such as float 6.283, ");
+		VERIFY(testStr3W == L"and with different numerical types such as float 6.283, ");
 		VERIFY(testStr4 == "doubles 2.7182818, ");
 		VERIFY(testStr5 == "signed (-50) or unsigned integers (200), ");
-		VERIFY(testStr6.find("pointer addresses ") != std::string::npos);
+		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
+		VERIFY(testStr7 == "Bitches ain't shit but hoes and tricks");
 
 		return success;
 	}
 
 	bool FormatToStringTester::SingleObjectToStringTest()
 	{
-		const auto test = klib::kFormat::ToString<char>(980u);
-		VERIFY(test == "980");
+#ifdef __cpp_char8_t
+		const auto test = klib::kFormat::ToString<char8_t>(980u);
+		VERIFY(test == u8"980");
+#else
+		const auto test = klib::kFormat::ToString<char16_t>(980u);
+		VERIFY(test == u"980");
+#endif
 		return success;
 	}
 }

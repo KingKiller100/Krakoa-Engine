@@ -30,7 +30,7 @@ namespace kTest
 		return name.c_str();
 	}
 
-	std::string Tester::GetFailureData() const noexcept
+	const std::string& Tester::GetFailureData() const noexcept
 	{
 		return failureData;
 	}

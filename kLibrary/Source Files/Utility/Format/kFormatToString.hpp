@@ -131,14 +131,16 @@ namespace klib
 		// Non-primative custom types - Must have a function ToString that returns a C++ STL string type
 		template<typename CharType, typename T, typename C = CharType, typename U = T>
 		constexpr
-			std::enable_if_t <( type_trait::Is_CharType_V<C>
+			std::enable_if_t <(type_trait::Is_CharType_V<C>
 				&& !std::is_arithmetic_v<std::decay_t<U>>
 				&& !type_trait::Is_StringType_V<U>
 				&& !std::is_pointer_v<std::decay_t<U>>
-				), const C*>
-			GetValuePtr(const T& obj)
+				), const std::basic_string<C>*>
+			GetValuePtr(T obj)
 		{
-			return obj.ToString().data();
+			static std::basic_string<CharType> str;
+			str = obj.ToString();
+			return &str;
 		}
 
 		template<typename CharType, typename T, typename ...Ts>
@@ -214,12 +216,9 @@ namespace klib
 
 				const auto closePos = format.find_first_of(closerSymbol, i);
 				for (auto j = 1; (i + j) < closePos; ++j)
-				{
 					objIndex += (char)format[i + j];
-				}
 
 				const auto idx = (unsigned char)std::stoi(objIndex);
-
 				identifiers.push_back(std::make_pair(idx, elems[idx].type().name()));
 			}
 			identifiers.shrink_to_fit();
@@ -295,7 +294,7 @@ namespace klib
 					}
 					else if (auto longPos = id.second.find("long"); longPos != npos)
 					{
-						auto long2Pos = id.second.find_first_of("long", longPos + 4);
+						auto long2Pos = id.second.find_first_of("long long");
 						if (long2Pos != npos)
 						{
 							auto data = std::any_cast<const unsigned long long*>(val);
@@ -310,25 +309,26 @@ namespace klib
 						}
 					}
 				}
-				else if (auto longPos = id.second.find("long"); longPos != npos)
+				else if (const auto longPos = id.second.find("long"); longPos != npos)
 				{
-					auto long2Pos = id.second.find_first_of("long", longPos + 4);
-					if (long2Pos != npos)
-					{
-						const auto data = std::any_cast<const long long*>(val);
-						currentSection.insert(replacePos + 1, 2, CharType('l'));
-						finalString.append(MakeStringFromData(currentSection, *data));
-					}
-					else if (id.second.find_first_of("double", longPos + 4) != npos)
+					if (id.second.find_first_of("double", longPos + 4) != npos)
 					{
 						auto data = std::any_cast<const long double*>(val);
 						currentSection[replacePos + 1] = CharType('f');
+						if (colonPos != npos)
+							currentSection[replacePos - 1] = CharType('.');
 						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else if (id.second.find_first_of("int", longPos + 4) != npos)
 					{
 						auto data = std::any_cast<const long int*>(val);
 						currentSection[replacePos + 1] = CharType('l');
+						finalString.append(MakeStringFromData(currentSection, *data));
+					}
+					else if (const auto long2Pos = id.second.find_first_of("long long"); long2Pos != npos)
+					{
+						const auto data = std::any_cast<const long long*>(val);
+						currentSection.insert(replacePos + 1, 2, CharType('l'));
 						finalString.append(MakeStringFromData(currentSection, *data));
 					}
 					else
@@ -355,9 +355,7 @@ namespace klib
 					const auto data = std::any_cast<const double*>(val);
 					currentSection[replacePos + 1] = CharType('f');
 					if (colonPos != npos)
-					{
 						currentSection[replacePos - 1] = CharType('.');
-					}
 					finalString.append(MakeStringFromData(currentSection, *data));
 				}
 				else if (id.second.find("float") != npos)
@@ -365,9 +363,7 @@ namespace klib
 					const auto data = std::any_cast<const float*>(val);
 					currentSection[replacePos + 1] = CharType('f');
 					if (colonPos != npos)
-					{
 						currentSection[replacePos - 1] = CharType('.');
-					}
 					finalString.append(MakeStringFromData(currentSection, *data));
 				}
 				else if (id.second.find("bool") != npos)
@@ -407,7 +403,7 @@ namespace klib
 		}
 
 		template<class CharType, typename T, typename ...Ts>
-		constexpr inline std::basic_string<CharType> ToString(const CharType* format, T&& arg, Ts&& ...argPack)
+		constexpr inline std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
 		{
 			std::basic_string<CharType> formatStr = format;
 			const std::basic_string<CharType> text = ToString(formatStr, arg, argPack...);

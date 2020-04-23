@@ -63,14 +63,14 @@ namespace kTest
 
 	void TesterManager::InitializeUtilityTests()
 	{		
-		Add(new utility::CalendarTester());
-		Add(new utility::TimerTester());
-		Add(new utility::FileSystemTester());
+		Add(new utility::StringManipulationTester());
 		Add(new utility::FormatToStringTester());
+		Add(new utility::CalendarTester());
+		Add(new utility::FileSystemTester());
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
 		Add(new utility::StringViewTester());
-		Add(new utility::StringManipulationTester());
+		Add(new utility::TimerTester());
 	}
 
 	void TesterManager::Add(Tester* test)
@@ -85,7 +85,7 @@ namespace kTest
 		{
 			const auto resultTest = test->Run() 
 				? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
-				: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData().data()); // Fail Case
+				: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData()); // Fail Case
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
@@ -93,7 +93,7 @@ namespace kTest
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::Mins>();
 		const auto mins = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - mins;
-		const unsigned secs = 60 * remainder;
+		const unsigned secs = 60u * CAST(unsigned, remainder);
 
 		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}m  {1}s", mins, secs);
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());

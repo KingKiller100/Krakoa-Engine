@@ -24,7 +24,7 @@ namespace krakoa::graphics
 	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string_view& filepath)
 	{
 		static auto no_name_shader_count = 0ull;
-		const auto& name = klib::kFormat::ToString("Shader %u", no_name_shader_count++);
+		const auto& name = klib::kFormat::ToString("Shader {0}", no_name_shader_count++);
 		const auto shader = iShader::Create(name, filepath);
 		return Add(name, shader);
 	}

@@ -119,14 +119,14 @@ namespace krakoa::graphics
 	{
 		if (!pPrimativesData->pColourShader.expired())
 		{
-			auto& colourShader = pPrimativesData->pColourShader.lock();
+			auto colourShader = pPrimativesData->pColourShader.lock();
 			colourShader->Bind();
 			colourShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
 		}
 
 		if (!pPrimativesData->pTextureShader.expired())
 		{
-			auto& textureShader = pPrimativesData->pTextureShader.lock();
+			auto textureShader = pPrimativesData->pTextureShader.lock();
 			textureShader->Bind();
 			textureShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
 		}
@@ -145,7 +145,7 @@ namespace krakoa::graphics
 		if (pPrimativesData->pColourShader.expired())
 			throw std::runtime_error("Colour shader has been destroyed");
 
-		auto& colourShader = pPrimativesData->pColourShader.lock();
+		auto colourShader = pPrimativesData->pColourShader.lock();
 
 		colourShader->Bind();
 		colourShader->SetVec4("u_Colour", colour);
@@ -165,23 +165,37 @@ namespace krakoa::graphics
 
 	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
-		throw klib::kDebug::kExceptions::NotImplementedException("Quad drawing not supported yet");
+		if (pPrimativesData->pColourShader.expired())
+			throw std::runtime_error("Colour shader has been destroyed");
+
+		auto colourShader = pPrimativesData->pColourShader.lock();
+
+		colourShader->Bind();
+		colourShader->SetVec4("u_Colour", colour);
+
+		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
+		colourShader->SetMat4x4("u_TransformMat", transform);
+
+		auto& quadVA = *pPrimativesData->pQuadVertexArray;
+		quadVA.Bind();
+		RenderCommand::DrawIndexed(quadVA);
 	}
 
-	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector4f colour /*= kmaths::Vector4f(1.f)*/)
 	{
-		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation);
+		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation, colour);
 	}
 
-	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector4f colour /*= kmaths::Vector4f(1.f)*/)
 	{
 		if (pPrimativesData->pTextureShader.expired())
 			throw std::runtime_error("Texture shader has been destroyed");
 
-		auto& textureShader = pPrimativesData->pTextureShader.lock();
+		auto textureShader = pPrimativesData->pTextureShader.lock();
 		auto& quadVA = *pPrimativesData->pQuadVertexArray;
 
 		textureShader->Bind();
+		textureShader->SetVec4("u_Colour", colour);
 
 		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
 		textureShader->SetMat4x4("u_TransformMat", transform);

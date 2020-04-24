@@ -118,7 +118,7 @@ namespace klib::kLogs
 		name = newName;
 	}
 
-	constexpr void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
+	void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
 	{
 		minimumLoggingLevel = newMin;
 	}

@@ -45,6 +45,8 @@ namespace krakoa::graphics
 			},
 			nullptr);
 
+		glEnable(GL_DEPTH_TEST);
+
 	}
 
 	void OpenGLRendererAPI::OutputRenderingArchitecture()

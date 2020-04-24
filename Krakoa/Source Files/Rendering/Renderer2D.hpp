@@ -23,7 +23,7 @@ namespace krakoa::graphics
 		static void DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float degreesOfRotation = 0.f);
 		static void DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale = kmaths::Vector3f(1.f), const float degreesOfRotation = 0.f);
 
-		static void DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float degreesOfRotation = 0.f);
-		static void DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale = kmaths::Vector3f(1.f), const float degreesOfRotation = 0.f);
+		static void DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float degreesOfRotation = 0.f, const kmaths::Vector4f colour = kmaths::Vector4f(1.f));
+		static void DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale = kmaths::Vector3f(1.f), const float degreesOfRotation = 0.f, const kmaths::Vector4f colour = kmaths::Vector4f(1.f));
 	};
 }

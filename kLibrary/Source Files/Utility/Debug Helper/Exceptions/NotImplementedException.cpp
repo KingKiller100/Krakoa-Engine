@@ -4,7 +4,7 @@
 namespace klib::kDebug::kExceptions
 {
 	NotImplementedException::NotImplementedException(const char* what)
-		: exception(what)
+		: runtime_error(what)
 	{ }
 
 	NotImplementedException::~NotImplementedException() throw()
@@ -12,6 +12,6 @@ namespace klib::kDebug::kExceptions
 
 	char const* NotImplementedException::what() const
 	{
-		return exception::what();
+		return runtime_error::what();
 	}
 }

@@ -40,8 +40,8 @@ namespace krakoa::graphics
 		KRK_FATAL(!vertexArray.GetVertexBuffers().empty(), "No vertex buffer attached to this vertex array!");
 
 		shader.Bind();
-		shader.UploadUniformMatrix4x4("u_VpMat", *camera_VPMat);
-		shader.UploadUniformMatrix4x4("u_TransformMat", transform);
+		shader.SetMat4x4("u_VpMat", *camera_VPMat);
+		shader.SetMat4x4("u_TransformMat", transform);
 		vertexArray.Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}

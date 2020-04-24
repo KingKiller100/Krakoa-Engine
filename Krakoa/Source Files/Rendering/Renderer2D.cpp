@@ -22,6 +22,9 @@ namespace krakoa::graphics
 	{
 		std::unique_ptr<iVertexArray> pQuadVertexArray;
 		std::unique_ptr<iVertexArray> pTriangleVertexArray;
+
+		std::weak_ptr<iShader> pColourShader;
+		std::weak_ptr<iShader> pTextureShader;
 	};
 
 	Primatives2DData* pPrimativesData = new Primatives2DData();
@@ -58,51 +61,53 @@ namespace krakoa::graphics
 				sizeof(indices) / sizeof(uint32_t))
 			);
 
-			shaderLib.Load("ColourShader", "../../../ExampleGames/Hooper2/Assets/Shaders/OpenGL/ColourShader");
+			pPrimativesData->pColourShader = shaderLib.Load("ColourShader", "../../../Krakoa/Assets/Shaders/OpenGL/ColourShader");
 		}
 
 		// Quad creation code
-		//{
-		//	pPrimativesData->pQuadVertexArray = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
-		//	auto& quadVA = *pPrimativesData->pQuadVertexArray;
+		{
+			pPrimativesData->pQuadVertexArray = std::unique_ptr<krakoa::graphics::iVertexArray>(krakoa::graphics::iVertexArray::Create());
+			auto& quadVA = *pPrimativesData->pQuadVertexArray;
 
 
-		//	kmaths::Matrix<float, 4, 5> squareVertices = {
-		//			{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
-		//			{ -0.5f,  0.5f, 0.0f, 0.0f, 1.0f },
-		//			{  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },
-		//			{  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
-		//	};
+			kmaths::Matrix<float, 4, 5> squareVertices = {
+					{ -0.5f, -0.5f, 0.0f, 0.0f, 0.0f },
+					{ -0.5f,  0.5f, 0.0f, 0.0f, 1.0f },
+					{  0.5f,  0.5f, 0.0f, 1.0f, 1.0f },
+					{  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
+			};
 
-		//	// Vertex buffer
-		//	auto squareVB = krakoa::graphics::iVertexBuffer::Create(
-		//		squareVertices.GetPointerToData(),
-		//		sizeof(squareVertices)
-		//	);
+			// Vertex buffer
+			auto squareVB = krakoa::graphics::iVertexBuffer::Create(
+				squareVertices.GetPointerToData(),
+				sizeof(squareVertices)
+			);
 
-		//	squareVB->SetLayout({
-		//		{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
-		//		{ krakoa::graphics::ShaderDataType::FLOAT2, "a_TexCoord" },
-		//		});
+			squareVB->SetLayout({
+				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
+				{ krakoa::graphics::ShaderDataType::FLOAT2, "a_TexCoord" },
+				});
 
-		//	quadVA.AddVertexBuffer(squareVB);
+			quadVA.AddVertexBuffer(squareVB);
 
-		//	// Index buffer
-		//	uint32_t indices[6] = { 0, 1, 2, 2, 3, 0 };
-		//	quadVA.SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
-		//		indices,
-		//		sizeof(indices) / sizeof(uint32_t))
-		//	);
-		//}
+			// Index buffer
+			uint32_t indices[6] = { 0, 1, 2, 2, 3, 0 };
+			quadVA.SetIndexBuffer(krakoa::graphics::iIndexBuffer::Create(
+				indices,
+				sizeof(indices) / sizeof(uint32_t))
+			);
+		}
 
-		//auto& textureShader = shaderLib.Load("TextureShader", "../../../ExampleGames/Hooper2/Assets/Shaders/OpenGL/TextureShader");
+		auto& textureShader = shaderLib.Load("TextureShader", "../../../Krakoa/Assets/Shaders/OpenGL/TextureShader");
 
-		//const auto winTexture = std::unique_ptr<krakoa::graphics::iTexture>(
-		//	krakoa::graphics::iTexture2D::Create("Assets/Win.png")
-		//	);
+		if (!textureShader.expired())
+		{
+			auto textureShaderS_Ptr = textureShader.lock();
+			textureShaderS_Ptr->Bind();
+			textureShaderS_Ptr->SetInt("u_Texture", 0);
+		}
 
-		//textureShader.Bind();
-		//textureShader.UploadUniformInt("u_Texture", 0);
+		pPrimativesData->pTextureShader = textureShader;
 	}
 
 	void Renderer2D::ShutDown()
@@ -112,45 +117,80 @@ namespace krakoa::graphics
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
-		auto& colourShader = ShaderLibrary::Reference().Get("ColourShader");
-		colourShader.Bind();
-		colourShader.UploadUniformMatrix4x4("u_VpMat", camera.GetViewProjectionMatrix());
-		colourShader.UploadUniformMatrix4x4("u_TransformMat", kmaths::TransformMatrix<float>::Identity());
+		if (!pPrimativesData->pColourShader.expired())
+		{
+			auto& colourShader = pPrimativesData->pColourShader.lock();
+			colourShader->Bind();
+			colourShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
+		}
+
+		if (!pPrimativesData->pTextureShader.expired())
+		{
+			auto& textureShader = pPrimativesData->pTextureShader.lock();
+			textureShader->Bind();
+			textureShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
+		}
 	}
 
 	void Renderer2D::EndScene()
-	{
+	{}
 
+	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	{
+		DrawTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation);
 	}
 
-	void Renderer2D::DrawQuad(const kmaths::Vector2f& position, const kmaths::Vector2f& dimensions, const kmaths::Vector4f& colour, const kmaths::Vector2f& scale)
+	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
-		DrawQuad(kmaths::Vector3f(position.X(), position.Y()), dimensions, colour, kmaths::Vector3f(scale.X(), scale.Y()));
+		if (pPrimativesData->pColourShader.expired())
+			throw std::runtime_error("Colour shader has been destroyed");
+
+		auto& colourShader = pPrimativesData->pColourShader.lock();
+
+		colourShader->Bind();
+		colourShader->SetVec4("u_Colour", colour);
+
+		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
+		colourShader->SetMat4x4("u_TransformMat", transform);
+
+		auto& triangleVA = *pPrimativesData->pTriangleVertexArray;
+		triangleVA.Bind();
+		RenderCommand::DrawIndexed(triangleVA);
 	}
 
-	void Renderer2D::DrawQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& dimensions, const kmaths::Vector4f& colour, const kmaths::Vector3f& scale)
+	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	{
+		DrawQuad(colour, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation);
+	}
+
+	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
 		throw klib::kDebug::kExceptions::NotImplementedException("Quad drawing not supported yet");
 	}
 
-	void Renderer2D::DrawTriangle(const kmaths::Vector2f& position, const kmaths::Vector2f& dimensions, const kmaths::Vector4f& colour, const kmaths::Vector2f& scale)
+	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
-		DrawTriangle(kmaths::Vector3f(position.X(), position.Y()), dimensions, colour, kmaths::Vector3f(scale.X(), scale.Y()));
+		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation);
 	}
 
-	void Renderer2D::DrawTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& dimensions, const kmaths::Vector4f& colour, const kmaths::Vector3f& scale)
+	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
-		auto& colourShader = ShaderLibrary::Reference().Get("ColourShader");
-		auto& triangleVA = *pPrimativesData->pTriangleVertexArray;
+		if (pPrimativesData->pTextureShader.expired())
+			throw std::runtime_error("Texture shader has been destroyed");
 
-		colourShader.Bind();
-		colourShader.UploadUniformVec4("u_Colour", colour);
+		auto& textureShader = pPrimativesData->pTextureShader.lock();
+		auto& quadVA = *pPrimativesData->pQuadVertexArray;
 
-		const auto transform = kmaths::Translate(position) * kmaths::Scale(scale);
-		colourShader.UploadUniformMatrix4x4("u_TransformMat", transform);
+		textureShader->Bind();
 
-		triangleVA.Bind();
-		RenderCommand::DrawIndexed(triangleVA);
+		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
+		textureShader->SetMat4x4("u_TransformMat", transform);
+
+		texture.Bind();
+
+		quadVA.Bind();
+		RenderCommand::DrawIndexed(quadVA);
+
 	}
 
 }

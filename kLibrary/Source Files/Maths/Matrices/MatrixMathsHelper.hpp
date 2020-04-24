@@ -60,12 +60,6 @@ namespace kmaths
 		return res;
 	}
 
-	/*template<typename T>
-	USE_RESULT constexpr Matrix4x4<T> Ortho(const ZAxisDirection zDir, const T left, const T right, const T bottom, const T top, const T zNear, const T zFar) noexcept
-	{
-		return
-	}*/
-
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Translate(const Matrix4x4<T>& m, const Vector3<T>& v)
 	{
@@ -81,6 +75,7 @@ namespace kmaths
 		return translate;
 	}
 
+	// Rotate transform in degrees
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Rotate(const Matrix4x4<T>& m, T angle, const Vector3<T>& v) noexcept
 	{
@@ -112,6 +107,7 @@ namespace kmaths
 		return res;
 	}
 
+	// Rotate transform in degrees
 	template<typename T>
 	USE_RESULT constexpr Matrix4x4<T> Rotate(T angle, const Vector3<T>& v) noexcept
 	{

@@ -194,10 +194,20 @@ namespace krakoa::graphics
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::SetInt(const std::string_view& name, const int val)
+	{
+		UploadUniformInt(name, val);
+	}
+
 	void OpenGLShader::UploadUniformInt(const std::string_view& name, const int val)
 	{
 		const auto location = GetUniformLocation(name);
 		glUniform1i(location, val);
+	}
+
+	void OpenGLShader::SetFloat(const std::string_view& name, const float val)
+	{
+		UploadUniformFloat(name, val);
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string_view& name, const float val)
@@ -206,10 +216,20 @@ namespace krakoa::graphics
 		glUniform1f(location, val);
 	}
 
+	void OpenGLShader::SetVec2(const std::string_view& name, const kmaths::Vector2f& v)
+	{
+		UploadUniformVec2(name, v);
+	}
+
 	void OpenGLShader::UploadUniformVec2(const std::string_view& name, const kmaths::Vector2f& v)
 	{
 		const auto location = GetUniformLocation(name);
 		glUniform2f(location, v.X(), v.Y());
+	}
+
+	void OpenGLShader::SetVec3(const std::string_view& name, const kmaths::Vector3f& v)
+	{
+		UploadUniformVec3(name, v);
 	}
 
 	void OpenGLShader::UploadUniformVec3(const std::string_view& name, const kmaths::Vector3f& v)
@@ -218,16 +238,31 @@ namespace krakoa::graphics
 		glUniform3f(location, v.X(), v.Y(), v.Z());
 	}
 
+	void OpenGLShader::SetVec4(const std::string_view& name, const kmaths::Vector4f& v)
+	{
+		UploadUniformVec4(name, v);
+	}
+
 	void OpenGLShader::UploadUniformVec4(const std::string_view& name, const kmaths::Vector4f& v)
 	{
 		const auto location = GetUniformLocation(name);
 		glUniform4f(location, v.X(), v.Y(), v.Z(), v.W());
 	}
 
+	void OpenGLShader::SetMat3x3(const std::string_view& name, const kmaths::Matrix3x3f& m)
+	{
+		UploadUniformMatrix3x3(name, m);
+	}
+
 	void OpenGLShader::UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m)
 	{
 		const auto location = GetUniformLocation(name);
 		glUniformMatrix3fv(location, 1, GL_FALSE, m.GetPointerToData());
+	}
+
+	void OpenGLShader::SetMat4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)
+	{
+		UploadUniformMatrix4x4(name, m);
 	}
 
 	void OpenGLShader::UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)

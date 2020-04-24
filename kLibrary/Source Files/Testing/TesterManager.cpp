@@ -95,7 +95,7 @@ namespace kTest
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::Mins>();
 		const auto mins = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - mins;
-		const unsigned secs = 60u * CAST(unsigned, remainder);
+		const unsigned secs = CAST(unsigned, 60.0 * remainder);
 
 		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}m  {1}s", mins, secs);
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());

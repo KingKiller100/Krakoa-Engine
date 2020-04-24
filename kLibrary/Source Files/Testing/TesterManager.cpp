@@ -15,6 +15,7 @@
 #include "Utility Tests/DebugHelp_Test.hpp"
 #include "Utility Tests/FileSystem_Test.hpp"
 #include "Utility Tests/StringView_Test.hpp"
+#include "Utility Tests/UTFConverter_Test.hpp"
 #include "Utility Tests/StringManipulation_Test.hpp"
 #include "Utility Tests/FormatToString_Test.hpp"
 
@@ -69,6 +70,7 @@ namespace kTest
 		Add(new utility::FileSystemTester());
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
+		Add(new utility::UTFConverterTester());
 		Add(new utility::StringViewTester());
 		Add(new utility::TimerTester());
 	}

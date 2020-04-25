@@ -8,8 +8,7 @@ namespace krakoa
 		ProfilerStack::profilerResults =
 		std::make_unique<std::stack<klib::kProfiler::ProfilerResult>>();
 
-	std::stack<klib::kProfiler::ProfilerResult>& ProfilerStack::GetStack()
-	{
-		return *profilerResults;
-	}
+	std::unique_ptr<std::vector<klib::kProfiler::ProfilerResult>>
+		ProfilerList::profilerResults =
+		std::make_unique<std::vector<klib::kProfiler::ProfilerResult>>();
 }

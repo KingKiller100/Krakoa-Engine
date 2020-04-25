@@ -16,13 +16,12 @@ Renderer2DLayer::Renderer2DLayer() noexcept
 
 void Renderer2DLayer::OnAttach()
 {
-	krakoa::graphics::Renderer::BeginScene(cameraController.GetCamera());
+	//krakoa::graphics::Renderer::BeginScene(cameraController.GetCamera());
 
 	pWinTexture = std::unique_ptr<krakoa::graphics::iTexture2D>(
 		krakoa::graphics::iTexture2D::Create("Assets/Win.png")
 		);
 }
-
 
 void Renderer2DLayer::OnDetach()
 {
@@ -38,8 +37,8 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 
 void Renderer2DLayer::OnRender()
 {
-	ImGui::Begin("Triangle Settings");
-	ImGui::ColorEdit4("Triangle Colour", triangleColour.GetPointerToData());
+	ImGui::Begin("Geometry Colour Settings");
+	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
 	ImGui::End();
 }
 
@@ -50,10 +49,10 @@ void Renderer2DLayer::OnEvent(krakoa::events::Event & e)
 
 void Renderer2DLayer::SendRendererCommands() noexcept
 {
-	const auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
-
+	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
+	
 	{
-		PROFILE_SCOPE("Renderer Colour Clearing");
+		PROFILE_SCOPE("Renderer colour clearing");
 
 #ifdef _DEBUG
 		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
@@ -63,11 +62,10 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 		krakoa::graphics::Renderer::Clear();
 	}
-	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 
 	{
 		PROFILE_SCOPE("Renderer coloured triangle");
-		krakoa::graphics::Renderer2D::DrawTriangle(triangleColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
+		krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
 	}
 
 	{
@@ -83,9 +81,9 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawQuad(triangleColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), kmaths::Vector3f(0.2f));
+		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), kmaths::Vector3f(0.2f));
 	}
 
-	krakoa::graphics::Renderer::EndScene();
+	//krakoa::graphics::Renderer::EndScene();
 	krakoa::graphics::Renderer2D::EndScene();
 }

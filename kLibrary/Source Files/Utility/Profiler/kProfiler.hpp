@@ -52,3 +52,4 @@ namespace klib::kProfiler
 }
 
 #define PUSH_PROFILER(stack, name) klib::kProfiler::Profiler profiler##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& profileResult) { stack.push(profileResult); })
+#define EMPLACE_PROFILER(list, name) klib::kProfiler::Profiler profiler##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& profileResult) { list.push_back(profileResult); })

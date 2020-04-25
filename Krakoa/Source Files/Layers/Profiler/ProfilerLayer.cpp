@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 
+#include <algorithm>
+
 namespace krakoa
 {
 
@@ -31,16 +33,19 @@ namespace krakoa
 	{
 		std::string outputText;
 		ImGui::Begin("Profiler");
-		auto& profilerResults = ProfilerStack::GetStack();
-		while (!profilerResults.empty())
+		auto& profilerResults = ProfilerList::GetList();
+
+		std::sort(profilerResults.begin(), profilerResults.end(), 
+			[](klib::kProfiler::ProfilerResult& r1, klib::kProfiler::ProfilerResult& r2) {return r1.result > r2.result; });
+
+		for (auto& result : profilerResults)
 		{
-			auto& result = profilerResults.top();
 			outputText.append(result.name);
 			outputText.append(":   %.3fms");
 			ImGui::Text(outputText.data(), result.result);
-			profilerResults.pop();
 			outputText.clear();
 		} 
+		profilerResults.clear();
 
 		ImGui::End();
 	}

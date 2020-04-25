@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <Krakoa.hpp>
 #include <Layers/LayerBase.hpp>
 #include <Rendering/Rendering Resources/iVertexArray.hpp>
 #include <Rendering/Textures/iTexture2D.hpp>
@@ -36,5 +35,5 @@ private:
 
 	krakoa::OrthographicCameraController cameraController;
 
-	kmaths::Vector4f triangleColour;
+	kmaths::Vector4f geometryColour;
 };

@@ -6,6 +6,7 @@
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
+#include "../Layers/Profiler/ProfilerLayer.hpp"
 
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/Renderer2D.hpp"
@@ -45,6 +46,7 @@ namespace krakoa
 		pImGuiLayer = new ImGuiLayer();
 		PushOverlay(pImGuiLayer);
 
+		PushOverlay(new ProfilerLayer());
 		PushOverlay(new FPSLayer());
 
 		// Initialize InputManager

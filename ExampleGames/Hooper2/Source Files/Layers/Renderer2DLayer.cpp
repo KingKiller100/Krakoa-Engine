@@ -52,14 +52,17 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 {
 	const auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
 
+	{
+		PROFILE_SCOPE("Render Prep");
+
 #ifdef _DEBUG
-	krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
 #else
-	krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
+		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
 #endif // DEBUG
 
-	krakoa::graphics::Renderer::Clear();
-
+		krakoa::graphics::Renderer::Clear();
+	}
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 	krakoa::graphics::Renderer2D::DrawTriangle(triangleColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
 

@@ -38,3 +38,4 @@
 // Layers
 #include "Layers/LayerBase.hpp"
 #include "Layers/ImGui/ImGuiLayer.hpp"
+#include "Layers/Profiler/ProfilerLayer.hpp"

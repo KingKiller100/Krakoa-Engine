@@ -23,7 +23,8 @@ namespace krakoa::graphics
 		std::unique_ptr<iVertexArray> pQuadVertexArray;
 		std::unique_ptr<iVertexArray> pTriangleVertexArray;
 
-		std::weak_ptr<iShader> pColourShader;
+		std::unique_ptr<iTexture2D> pWhiteTexture;
+
 		std::weak_ptr<iShader> pTextureShader;
 	};
 
@@ -31,7 +32,6 @@ namespace krakoa::graphics
 
 	void Renderer2D::Initialize()
 	{
-		auto& shaderLib = krakoa::graphics::ShaderLibrary::Reference();
 
 		// Triangle creation code
 		{
@@ -60,8 +60,6 @@ namespace krakoa::graphics
 				indices,
 				sizeof(indices) / sizeof(uint32_t))
 			);
-
-			pPrimativesData->pColourShader = shaderLib.Load("ColourShader", "../../../Krakoa/Assets/Shaders/OpenGL/ColourShader");
 		}
 
 		// Quad creation code
@@ -98,15 +96,18 @@ namespace krakoa::graphics
 			);
 		}
 
-		auto& textureShader = shaderLib.Load("TextureShader", "../../../Krakoa/Assets/Shaders/OpenGL/TextureShader");
+		pPrimativesData->pWhiteTexture = std::unique_ptr<iTexture2D>(iTexture2D::Create(1u, 1u));
+		uint32_t whiteTexture = 0xffffffff;
+		pPrimativesData->pWhiteTexture->SetData(&whiteTexture, sizeof(whiteTexture));
 
+		auto& shaderLib = ShaderLibrary::Reference();
+		auto& textureShader = shaderLib.Load("TextureShader", "../../../Krakoa/Assets/Shaders/OpenGL/TextureShader");
 		if (!textureShader.expired())
 		{
 			auto textureShaderS_Ptr = textureShader.lock();
 			textureShaderS_Ptr->Bind();
 			textureShaderS_Ptr->SetInt("u_Texture", 0);
 		}
-
 		pPrimativesData->pTextureShader = textureShader;
 	}
 
@@ -117,13 +118,6 @@ namespace krakoa::graphics
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
-		if (!pPrimativesData->pColourShader.expired())
-		{
-			auto colourShader = pPrimativesData->pColourShader.lock();
-			colourShader->Bind();
-			colourShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
-		}
-
 		if (!pPrimativesData->pTextureShader.expired())
 		{
 			auto textureShader = pPrimativesData->pTextureShader.lock();
@@ -142,13 +136,12 @@ namespace krakoa::graphics
 
 	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
-		if (pPrimativesData->pColourShader.expired())
-			throw std::runtime_error("Colour shader has been destroyed");
+		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
 
-		auto colourShader = pPrimativesData->pColourShader.lock();
+		auto colourShader = pPrimativesData->pTextureShader.lock();
 
-		colourShader->Bind();
 		colourShader->SetVec4("u_Colour", colour);
+		pPrimativesData->pWhiteTexture->Bind();
 
 		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
 		colourShader->SetMat4x4("u_TransformMat", transform);
@@ -156,6 +149,7 @@ namespace krakoa::graphics
 		auto& triangleVA = *pPrimativesData->pTriangleVertexArray;
 		triangleVA.Bind();
 		RenderCommand::DrawIndexed(triangleVA);
+		//pPrimativesData->pWhiteTexture->Unbind();
 	}
 
 	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
@@ -165,13 +159,12 @@ namespace krakoa::graphics
 
 	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
-		if (pPrimativesData->pColourShader.expired())
-			throw std::runtime_error("Colour shader has been destroyed");
+		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
 
-		auto colourShader = pPrimativesData->pColourShader.lock();
+		auto colourShader = pPrimativesData->pTextureShader.lock();
 
-		colourShader->Bind();
 		colourShader->SetVec4("u_Colour", colour);
+		pPrimativesData->pWhiteTexture->Bind();
 
 		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
 		colourShader->SetMat4x4("u_TransformMat", transform);
@@ -179,6 +172,7 @@ namespace krakoa::graphics
 		auto& quadVA = *pPrimativesData->pQuadVertexArray;
 		quadVA.Bind();
 		RenderCommand::DrawIndexed(quadVA);
+		pPrimativesData->pWhiteTexture->Unbind();
 	}
 
 	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector4f colour /*= kmaths::Vector4f(1.f)*/)
@@ -188,23 +182,21 @@ namespace krakoa::graphics
 
 	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector4f colour /*= kmaths::Vector4f(1.f)*/)
 	{
-		if (pPrimativesData->pTextureShader.expired())
-			throw std::runtime_error("Texture shader has been destroyed");
+		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
 
 		auto textureShader = pPrimativesData->pTextureShader.lock();
 		auto& quadVA = *pPrimativesData->pQuadVertexArray;
 
-		textureShader->Bind();
 		textureShader->SetVec4("u_Colour", colour);
 
 		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
 		textureShader->SetMat4x4("u_TransformMat", transform);
 
 		texture.Bind();
-
 		quadVA.Bind();
 		RenderCommand::DrawIndexed(quadVA);
 
+		texture.Unbind();
 	}
 
 }

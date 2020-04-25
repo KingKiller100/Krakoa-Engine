@@ -408,13 +408,13 @@ namespace kmaths
 	};
 
 	template<unsigned short N, typename T, typename U>
-	USE_RESULT constexpr Vector<N, T> operator*(const U&& scalar, const Vector<N, T>& v) noexcept
+	USE_RESULT constexpr Vector<N, T> operator*(U&& scalar, const Vector<N, T>& v) noexcept
 	{
 		return v * scalar;
 	}
 
 	template<unsigned short N, typename T, typename U>
-	USE_RESULT constexpr Vector<N, T> operator/(const U&& scalar, const Vector<N, T>& v) noexcept
+	USE_RESULT constexpr Vector<N, T> operator/(U&& scalar, const Vector<N, T>& v) noexcept
 	{
 		return v / scalar;
 	}

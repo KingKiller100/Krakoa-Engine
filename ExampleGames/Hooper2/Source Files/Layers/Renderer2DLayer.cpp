@@ -70,7 +70,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 			krakoa::graphics::Renderer2D::DrawQuad(*pWinTexture, miniSquarePos, kmaths::Vector2f(0.2f));
 		}
 	}
-	krakoa::graphics::Renderer2D::DrawQuad(*pWinTexture, kmaths::Vector3f(-1.f, -.5f, 0.5f), kmaths::Vector3f(0.2f), 0, triangleColour);
+	krakoa::graphics::Renderer2D::DrawQuad(triangleColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), kmaths::Vector3f(0.2f));
 
 	krakoa::graphics::Renderer::EndScene();
 	krakoa::graphics::Renderer2D::EndScene();

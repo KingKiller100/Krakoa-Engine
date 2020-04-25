@@ -66,12 +66,12 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 
 	{
-		PROFILE_SCOPE("Renderer coloured triangle drawing");
+		PROFILE_SCOPE("Renderer coloured triangle");
 		krakoa::graphics::Renderer2D::DrawTriangle(triangleColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
 	}
 
 	{
-		PROFILE_SCOPE("Textured quad drawing");
+		PROFILE_SCOPE("Textured quad");
 		for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
 			{
@@ -82,7 +82,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	}
 
 	{
-		PROFILE_SCOPE("Renderer coloured quad drawing");
+		PROFILE_SCOPE("Renderer coloured quad");
 		krakoa::graphics::Renderer2D::DrawQuad(triangleColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), kmaths::Vector3f(0.2f));
 	}
 

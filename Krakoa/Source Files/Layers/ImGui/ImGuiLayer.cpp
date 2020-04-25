@@ -69,7 +69,7 @@ namespace krakoa
 
 	void ImGuiLayer::OnRender()
 	{		
-		ImGui::ShowDemoWindow(&isShowing);
+		//ImGui::ShowDemoWindow(&isShowing);
 	}
 
 	void ImGuiLayer::OnEvent(events::Event& e)

@@ -44,6 +44,7 @@ namespace krakoa
 	{
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
+		pImGuiLayer->ToggleVisibility();
 		PushOverlay(pImGuiLayer);
 
 		PushOverlay(new ProfilerLayer());

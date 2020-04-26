@@ -15,7 +15,6 @@
 
 #include <Maths/Matrices/PredefinedMatrices.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
-#include <Utility/Debug Helper/Exceptions/NotImplementedException.hpp>
 
 namespace krakoa::graphics
 {
@@ -128,19 +127,20 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::EndScene()
-	{}
-
-	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
 	{
 		KRK_PROFILE_FUNCTION();
-		
-		DrawTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation);
 	}
 
-	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	{
+		DrawTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()));
+
+	}
+
+	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
 
 		auto colourShader = pPrimativesData->pTextureShader.lock();
@@ -148,7 +148,8 @@ namespace krakoa::graphics
 		colourShader->SetVec4("u_Colour", colour);
 		pPrimativesData->pWhiteTexture->Bind();
 
-		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
+		const auto transform = kmaths::Translate(position)
+			* kmaths::Scale(scale);
 		colourShader->SetMat4x4("u_TransformMat", transform);
 
 		auto& triangleVA = *pPrimativesData->pTriangleVertexArray;
@@ -158,17 +159,15 @@ namespace krakoa::graphics
 		pPrimativesData->pWhiteTexture->Unbind();
 	}
 
-	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
-		KRK_PROFILE_FUNCTION();
-		
-		DrawQuad(colour, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation);
+		DrawQuad(colour, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()));
 	}
 
-	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/)
+	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
 
 		auto colourShader = pPrimativesData->pTextureShader.lock();
@@ -176,7 +175,8 @@ namespace krakoa::graphics
 		colourShader->SetVec4("u_Colour", colour);
 		pPrimativesData->pWhiteTexture->Bind();
 
-		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
+		const auto transform = kmaths::Translate(position)
+			* kmaths::Scale(scale);
 		colourShader->SetMat4x4("u_TransformMat", transform);
 
 		auto& quadVA = *pPrimativesData->pQuadVertexArray;
@@ -186,25 +186,110 @@ namespace krakoa::graphics
 		pPrimativesData->pWhiteTexture->Unbind();
 	}
 
-	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector4f colour /*= kmaths::Vector4f(1.f)*/)
+	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f tintColour /*= kmaths::Vector4f(1.f)*/)
 	{
-		KRK_PROFILE_FUNCTION();
-		
-		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), degreesOfRotation, colour);
+		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), kmaths::Vector3f(scale.X(), scale.Y()), tintColour);
 	}
 
-	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector4f colour /*= kmaths::Vector4f(1.f)*/)
+	void Renderer2D::DrawQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const kmaths::Vector4f tintColour /*= kmaths::Vector4f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
 
 		auto textureShader = pPrimativesData->pTextureShader.lock();
 		auto& quadVA = *pPrimativesData->pQuadVertexArray;
 
-		textureShader->SetVec4("u_Colour", colour);
+		textureShader->SetVec4("u_Colour", tintColour);
 
-		const auto transform = kmaths::Translate(position) * kmaths::Rotate(degreesOfRotation, position)  * kmaths::Scale(scale);
+		const auto transform = kmaths::Translate(position)
+			* kmaths::Scale(scale);
+		textureShader->SetMat4x4("u_TransformMat", transform);
+
+		texture.Bind();
+		quadVA.Bind();
+		RenderCommand::DrawIndexed(quadVA);
+
+		texture.Unbind();
+
+	}
+
+	void Renderer2D::DrawRotatedTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	{
+		DrawRotatedTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, kmaths::Vector3f(scale.X(), scale.Y()));
+	}
+
+	void Renderer2D::DrawRotatedTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
+
+		auto colourShader = pPrimativesData->pTextureShader.lock();
+
+		colourShader->SetVec4("u_Colour", colour);
+		pPrimativesData->pWhiteTexture->Bind();
+
+		const auto transform = kmaths::Translate(position)
+			* kmaths::Rotate2D(degreesOfRotation)
+			* kmaths::Scale(scale);
+		colourShader->SetMat4x4("u_TransformMat", transform);
+
+		auto& triangleVA = *pPrimativesData->pTriangleVertexArray;
+		triangleVA.Bind();
+		RenderCommand::DrawIndexed(triangleVA);
+
+		pPrimativesData->pWhiteTexture->Unbind();
+
+	}
+
+	void Renderer2D::DrawRotatedQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	{
+		DrawRotatedQuad(colour, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, kmaths::Vector3f(scale.X(), scale.Y()));
+	}
+
+	void Renderer2D::DrawRotatedQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
+
+		auto colourShader = pPrimativesData->pTextureShader.lock();
+
+		colourShader->SetVec4("u_Colour", colour);
+		pPrimativesData->pWhiteTexture->Bind();
+
+		const auto transform = kmaths::Translate(position)
+			* kmaths::Rotate2D(degreesOfRotation)
+			* kmaths::Scale(scale);
+		colourShader->SetMat4x4("u_TransformMat", transform);
+
+		auto& quadVA = *pPrimativesData->pQuadVertexArray;
+		quadVA.Bind();
+		RenderCommand::DrawIndexed(quadVA);
+
+		pPrimativesData->pWhiteTexture->Unbind();
+	}
+
+	void Renderer2D::DrawRotatedQuad(const iTexture2D& texture, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f tintColour /*= kmaths::Vector4f(1.f)*/)
+	{
+		DrawRotatedQuad(texture, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, kmaths::Vector3f(scale.X(), scale.Y()), tintColour);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const iTexture2D& texture, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector3f& scale /*= kmaths::Vector3f(1.f)*/, const kmaths::Vector4f tintColour /*= kmaths::Vector4f(1.f)*/)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		KRK_FATAL(!pPrimativesData->pTextureShader.expired(), "Texture shader has been destroyed");
+
+		auto textureShader = pPrimativesData->pTextureShader.lock();
+		auto& quadVA = *pPrimativesData->pQuadVertexArray;
+
+		textureShader->SetVec4("u_Colour", tintColour);
+
+		const auto transform = kmaths::Translate(position)
+			* kmaths::Rotate2D(degreesOfRotation)
+			* kmaths::Scale(scale);
 		textureShader->SetMat4x4("u_TransformMat", transform);
 
 		texture.Bind();

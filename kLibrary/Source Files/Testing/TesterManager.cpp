@@ -92,7 +92,7 @@ namespace kTest
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
 
-		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::Mins>();
+		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::kUnits::Mins>();
 		const auto mins = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - mins;
 		const unsigned secs = CAST(unsigned, 60.0 * remainder);

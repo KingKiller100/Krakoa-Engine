@@ -45,11 +45,13 @@ namespace krakoa
 
 	void WindowsWindow::ShutDown()
 	{
+		KRK_PROFILE_FUNCTION();
 		glfwDestroyWindow(window);
 	}
 
 	void krakoa::WindowsWindow::Init(const WindowProperties& props)
 	{
+		KRK_PROFILE_FUNCTION();
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
@@ -88,6 +90,7 @@ namespace krakoa
 
 	void WindowsWindow::SetUpCallBacks() const
 	{
+		KRK_PROFILE_FUNCTION();
 		// Set up window callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
 			{
@@ -182,33 +185,39 @@ namespace krakoa
 
 	void krakoa::WindowsWindow::OnUpdate()
 	{
-		glfwPollEvents();
+		KRK_PROFILE_FUNCTION();
 
+		glfwPollEvents();
 		pRenderContext->SwapBuffers();
 	}
 
-	kmaths::Vector2u& WindowsWindow::GetDimensions()
+	const kmaths::Vector2u& WindowsWindow::GetDimensions() const
 	{
+		KRK_PROFILE_FUNCTION();
 		return data.dimensions;
 	}
 
 	unsigned WindowsWindow::GetWidth() const
 	{
+		KRK_PROFILE_FUNCTION();
 		return data.dimensions.X();
 	}
 
 	unsigned WindowsWindow::GetHeight() const
 	{
+		KRK_PROFILE_FUNCTION();
 		return data.dimensions.Y();
 	}
 
 	void WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)
 	{
+		KRK_PROFILE_FUNCTION();
 		data.eventCallBack = cb;
 	}
 
 	void WindowsWindow::SetVsync(bool isEnabled)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto res = isEnabled ? KRK_TRUE : KRK_FALSE;
 		glfwSwapInterval(res);
 		data.vSyncOn = isEnabled;
@@ -216,6 +225,7 @@ namespace krakoa
 
 	bool WindowsWindow::IsVsyncActive() const
 	{
+		KRK_PROFILE_FUNCTION();
 		return data.vSyncOn;
 	}
 

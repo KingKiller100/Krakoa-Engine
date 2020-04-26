@@ -8,12 +8,15 @@
 
 namespace klib::kTime
 {
-	using Hours = std::chrono::minutes;
-	using Mins = std::chrono::seconds;
-	using Secs = std::chrono::milliseconds;
-	using Millis = std::chrono::microseconds;
-	using Micros = std::chrono::nanoseconds;
-	using Nanos = std::chrono::duration<long long, std::pico>;
+	namespace kUnits
+	{
+		using Hours = std::chrono::minutes;
+		using Mins = std::chrono::seconds;
+		using Secs = std::chrono::milliseconds;
+		using Millis = std::chrono::microseconds;
+		using Micros = std::chrono::nanoseconds;
+		using Nanos = std::chrono::duration<long long, std::pico>;
+	}
 
 	template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
 	class Timer
@@ -55,6 +58,19 @@ namespace klib::kTime
 			return deltaTime;
 		}
 
+		template<typename Units>
+		USE_RESULT constexpr Rep GetStartTime() noexcept(std::is_arithmetic_v<Rep>)
+		{
+			return std::chrono::time_point_cast<Units>(startTimePoint).time_since_epoch().count();
+		}
+
+		template<typename Units>
+		USE_RESULT constexpr Rep Now() noexcept(std::is_arithmetic_v<Rep>)
+		{
+			const auto currentTimePoint = Clock::now();
+			return std::chrono::time_point_cast<Units>(currentTimePoint).time_since_epoch().count();
+		}
+
 	private:
 		template<typename Units>
 		USE_RESULT constexpr Rep ConvertToUsableValue(const typename Clock::time_point& now, const typename Clock::time_point& prev) const noexcept(std::is_arithmetic_v<Rep>)
@@ -62,8 +78,8 @@ namespace klib::kTime
 			static constexpr Rep thousandth = (CAST(Rep, 1) / 1000);
 			static constexpr Rep sixtieth = CAST(Rep, 1) / 60;
 
-			if _CONSTEXPR_IF(std::is_same_v<Units, Hours>
-				|| std::is_same_v<Units, Mins>)
+			if _CONSTEXPR_IF(std::is_same_v<Units, kUnits::Hours>
+				|| std::is_same_v<Units, kUnits::Mins>)
 				return std::chrono::duration_cast<Units>(now - prev).count() * sixtieth;
 			else
 				return std::chrono::duration_cast<Units>(now - prev).count() * thousandth;

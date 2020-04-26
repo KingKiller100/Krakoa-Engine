@@ -24,6 +24,8 @@ namespace krakoa
 		timeStep(),
 		isMinimized(false)
 	{
+		KRK_PROFILE_FUNCTION();
+
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 
 		KRK_INIT_LOGS();
@@ -44,6 +46,7 @@ namespace krakoa
 	void Application::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
+
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
 		pImGuiLayer->ToggleVisibility();
@@ -57,6 +60,7 @@ namespace krakoa
 		// Initialize Graphics Stuff
 		graphics::ShaderLibrary::Create();
 		graphics::Renderer::Initialize();
+
 	}
 
 	void Application::OnEvent(events::Event& e)

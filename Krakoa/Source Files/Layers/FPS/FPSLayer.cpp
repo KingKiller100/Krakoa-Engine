@@ -16,6 +16,8 @@ namespace krakoa
 
 	void FPSLayer::OnAttach()
 	{
+		KRK_PROFILE_FUNCTION();
+
 		for (auto& frameTime : sampleTimes)
 		{
 			frameTime = 0;
@@ -27,12 +29,16 @@ namespace krakoa
 
 	void FPSLayer::OnUpdate(float deltaTime)
 	{
+		KRK_PROFILE_FUNCTION();
+
 		currentIdx = kmaths::modulus(currentIdx, sampleTimes.size());
 		sampleTimes[currentIdx++] = CAST(unsigned, 1.f / deltaTime);
 	}
 
 	void FPSLayer::OnRender()
 	{
+		KRK_PROFILE_FUNCTION();
+
 		ImGui::Begin("Frames Per Seconds (FPS)");
 
 		const auto fps = CalculateAverageFPS();
@@ -46,8 +52,9 @@ namespace krakoa
 
 	float FPSLayer::CalculateAverageFPS() const noexcept
 	{
-		float sum = 0;
+		KRK_PROFILE_FUNCTION();
 
+		float sum = 0;
 		for (auto frameTime : sampleTimes)
 			sum += frameTime;
 

@@ -85,7 +85,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), kmaths::Vector3f(0.2f));
+		krakoa::graphics::Renderer2D::DrawRotatedQuad(geometryColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), 45.f, kmaths::Vector3f(0.2f));
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();

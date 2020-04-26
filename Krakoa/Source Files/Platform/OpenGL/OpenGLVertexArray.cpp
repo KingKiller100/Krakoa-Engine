@@ -38,6 +38,7 @@ namespace krakoa::graphics
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		KRK_PROFILE_FUNCTION();
 		glDeleteVertexArrays(1, &rendererID);
 	}
 
@@ -50,6 +51,7 @@ namespace krakoa::graphics
 
 	void OpenGLVertexArray::Unbind() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		glBindVertexArray(0);
 	}
 

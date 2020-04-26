@@ -93,50 +93,12 @@ namespace krakoa
 		std::ofstream   outputStream;
 		std::mutex      mutexLock;
 	};
-
-	class InstrumentationTimer
-	{
-	public:
-
-		InstrumentationTimer(const std::string& name)
-			: m_result({ name, 0, 0, 0 })
-			, m_stopped(false)
-		{
-			m_startTimepoint = std::chrono::high_resolution_clock::now();
-		}
-
-		~InstrumentationTimer()
-		{
-			if (!m_stopped)
-			{
-				Stop();
-			}
-		}
-
-		void Stop()
-		{
-			auto endTimepoint = std::chrono::high_resolution_clock::now();
-
-			m_result.start = std::chrono::time_point_cast<std::chrono::microseconds>(m_startTimepoint).time_since_epoch().count();
-			m_result.end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-			m_result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
-			Instrumentor::Instance().WriteProfile(m_result);
-
-			m_stopped = true;
-		}
-
-	private:
-		ProfilerResult m_result;
-
-		std::chrono::time_point<std::chrono::high_resolution_clock> m_startTimepoint;
-		bool m_stopped;
-	};
 }
 
 #ifdef KRAKOA_PROFILE
 #define KRK_PROFILE_SESSION_BEGIN(name, filepath) krakoa::Instrumentor::Instance().BeginSession(name, filepath)
 #define KRK_PROFILE_SESSION_END() krakoa::Instrumentor::Instance().EndSession()
-#define KRK_PROFILE_SCOPE(name) krakoa::InstrumentationTimer timer##__LINE__(name)
+#define KRK_PROFILE_SCOPE(name) klib::kProfiler::Profiler timer##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& result) { krakoa::Instrumentor::Instance().WriteProfile(result); })
 #define KRK_PROFILE_FUNCTION()  KRK_PROFILE_SCOPE(__FUNCSIG__)
 #else
 #define KRK_PROFILE_SESSION_BEGIN(name, filepath) 

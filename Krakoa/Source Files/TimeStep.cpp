@@ -6,7 +6,7 @@
 
 namespace krakoa::time
 {
-	klib::kTime::HighAccuracyTimer timer("Time Step Timer");
+	klib::kTime::HighAccuracyTimerf timer("Time Step Timer");
 
 	TimeStep::TimeStep()
 		: lifeTime(0.f), deltaTime(0.f),
@@ -22,36 +22,37 @@ namespace krakoa::time
 
 	float TimeStep::GetLifeTime() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return lifeTime;
 	}
 
 	float TimeStep::GetDeltaTime() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return deltaTime;
 	}
 
 	void TimeStep::Update() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		deltaTime = CalculateDeltaTime();
 		lifeTime = CalculateLifeTime();
 	}
 
 	float TimeStep::CalculateLifeTime() const noexcept
 	{
-		return CAST(float, timer.GetLifeTime<klib::kTime::Millis>() / 1000);
+		KRK_PROFILE_FUNCTION();
+		constexpr auto thousandth = 1.f / 1000;
+		return timer.GetLifeTime<klib::kTime::kUnits::Millis>() * thousandth;
 	}
 
 	float TimeStep::CalculateDeltaTime() const noexcept
 	{
-		/*static auto lastTime = 0.f;
-		const auto now = (float)glfwGetTime();
-		const auto dt = now - lastTime;
-		lastTime = now;
-		KRK_INFO(kFormat::ToString("glfw Func Time: %.4f", glfwDT));*/
-
+		KRK_PROFILE_FUNCTION();
+		constexpr auto thousandth = 1.f / 1000;
 		if (!isTimeIncrementFixed)
-			return CAST(float, timer.GetDeltaTime<klib::kTime::Millis>() / 1000);
+			return timer.GetDeltaTime<klib::kTime::kUnits::Millis>() * thousandth;
 		else
-			return kmaths::Min(CAST(float, timer.GetDeltaTime<klib::kTime::Millis>() / 1000), targetIncrement);
+			return kmaths::Min(timer.GetDeltaTime<klib::kTime::kUnits::Millis>() * thousandth, targetIncrement);
 	}
 }

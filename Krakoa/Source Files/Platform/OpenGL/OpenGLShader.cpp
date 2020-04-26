@@ -8,6 +8,7 @@
 #include <Utility/File System/kFileSystem.hpp>
 
 #include <GLAD/glad.h>
+#include "../../Instrumentor.hpp"
 
 namespace krakoa::graphics
 {
@@ -20,6 +21,7 @@ namespace krakoa::graphics
 
 	std::unordered_map<uint32_t, std::string> OpenGLShader::ParseShaderFile(const std::string_view& filePath) const
 	{
+		KRK_PROFILE_FUNCTION();
 		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
 		const auto shaderData = klib::kFileSystem::ParseFileData(path);
 
@@ -59,6 +61,7 @@ namespace krakoa::graphics
 
 	void OpenGLShader::BuildShader(const std::unordered_map<uint32_t, std::string>& sources)
 	{
+		KRK_PROFILE_FUNCTION();
 		auto iter = sources.begin();
 		std::array<GLuint, 3> shaderIDs;
 
@@ -139,6 +142,7 @@ namespace krakoa::graphics
 
 	void OpenGLShader::CreateProgram(const uint32_t vertexShader, const uint32_t fragmentShader)
 	{
+		KRK_PROFILE_FUNCTION();
 		// Vertex and fragment shaders are successfully compiled.
 		// Now time to link them together into a program.
 		// Get a program object.
@@ -181,16 +185,19 @@ namespace krakoa::graphics
 
 	OpenGLShader::~OpenGLShader()
 	{
+		KRK_PROFILE_FUNCTION();
 		glDeleteProgram(rendererID);
 	}
 
 	void OpenGLShader::Bind() const
 	{
+		KRK_PROFILE_FUNCTION();
 		glUseProgram(rendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
+		KRK_PROFILE_FUNCTION();
 		glUseProgram(0);
 	}
 
@@ -201,6 +208,7 @@ namespace krakoa::graphics
 
 	void OpenGLShader::UploadUniformInt(const std::string_view& name, const int val)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform1i(location, val);
 	}
@@ -212,17 +220,20 @@ namespace krakoa::graphics
 
 	void OpenGLShader::UploadUniformFloat(const std::string_view& name, const float val)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform1f(location, val);
 	}
 
 	void OpenGLShader::SetVec2(const std::string_view& name, const kmaths::Vector2f& v)
 	{
+		KRK_PROFILE_FUNCTION();
 		UploadUniformVec2(name, v);
 	}
 
 	void OpenGLShader::UploadUniformVec2(const std::string_view& name, const kmaths::Vector2f& v)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform2f(location, v.X(), v.Y());
 	}
@@ -234,6 +245,7 @@ namespace krakoa::graphics
 
 	void OpenGLShader::UploadUniformVec3(const std::string_view& name, const kmaths::Vector3f& v)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform3f(location, v.X(), v.Y(), v.Z());
 	}
@@ -245,6 +257,7 @@ namespace krakoa::graphics
 
 	void OpenGLShader::UploadUniformVec4(const std::string_view& name, const kmaths::Vector4f& v)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform4f(location, v.X(), v.Y(), v.Z(), v.W());
 	}
@@ -256,6 +269,7 @@ namespace krakoa::graphics
 
 	void OpenGLShader::UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniformMatrix3fv(location, 1, GL_FALSE, m.GetPointerToData());
 	}
@@ -267,12 +281,14 @@ namespace krakoa::graphics
 
 	void OpenGLShader::UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, m.GetPointerToData());
 	}
 
 	int OpenGLShader::GetUniformLocation(const std::string_view& name)
 	{
+		KRK_PROFILE_FUNCTION();
 		GLint location;
 
 		const auto found_iter = uniformLocationUMap.find(name.data());

@@ -1,9 +1,17 @@
 #pragma once
 
 #include "../Timer/kTimer.hpp"
+#include <thread>
 
 namespace klib::kProfiler
 {
+	struct ProfilerResult
+	{
+		const std::string name;
+		int64_t start, end;
+		uint32_t threadID;
+	};
+
 	template<typename ProfilerFunc>
 	class Profiler
 	{
@@ -12,7 +20,7 @@ namespace klib::kProfiler
 
 	public:
 		Profiler(const char* name, Func&& func)
-			: name(name), timer("Profiler"), isRunning(true),
+			: result({ name, 0, 0, 0 }), timer("Profiler"), isRunning(true),
 			timerFunc(std::forward<Func&&>(func))
 		{}
 
@@ -22,31 +30,23 @@ namespace klib::kProfiler
 				Stop();
 		}
 
-		const char* GetName() const
-		{
-			return name;
-		}
-
 	private:
 		void Stop()
 		{
+			const auto endTimepoint = timer.Now<kTime::kUnits::Millis>();
+			result.end = endTimepoint;
+			result.start = timer.GetStartTime<kTime::kUnits::Millis>();
+			result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
 			isRunning = false;
-			const auto result = timer.GetLifeTime<kTime::Millis>();
-			timerFunc({ name, result });
+
+			timerFunc(result);
 		}
 
 	private:
-		const char* name;
-		kTime::HighAccuracyTimerf timer;
+		ProfilerResult result;
+		kTime::Timer<int64_t> timer;
 		bool isRunning;
 		Func timerFunc;
-	};
-
-	struct ProfilerResult
-	{
-		const std::string name;
-		long long start, end;
-		uint32_t threadID;
 	};
 }
 

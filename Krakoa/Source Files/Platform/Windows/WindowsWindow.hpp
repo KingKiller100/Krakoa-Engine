@@ -15,7 +15,7 @@ namespace krakoa
 
 		void OnUpdate() override;
 
-		kmaths::Vector2u& GetDimensions() override;
+		const kmaths::Vector2u& GetDimensions() const override;
 
 		USE_RESULT unsigned GetWidth() const override;
 		USE_RESULT unsigned GetHeight() const override;

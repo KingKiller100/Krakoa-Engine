@@ -1,6 +1,7 @@
 #include "Precompile.hpp"
 #include "OpenGLContext.hpp"
 
+#include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <GLFW/glfw3.h>
@@ -14,6 +15,7 @@ namespace krakoa::graphics
 
 	void OpenGLContext::Init()
 	{
+		KRK_PROFILE_FUNCTION();
 		glfwMakeContextCurrent(windowHandle);
 		const auto gladStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		KRK_FATAL(gladStatus, "FAILED: Unable to initialize GLAD");
@@ -21,6 +23,7 @@ namespace krakoa::graphics
 
 	void OpenGLContext::SwapBuffers()
 	{
+		KRK_PROFILE_FUNCTION();
 		glfwSwapBuffers(windowHandle);
 	}
 }

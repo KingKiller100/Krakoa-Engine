@@ -25,31 +25,62 @@ namespace klib::kString
 	std::u16string UTF32ConvertToUTF16(const std::u32string_view& utf32Str);
 
 
-	template<typename SourceChar, typename DestChar, typename U1 = SourceChar, typename U2 = DestChar>
+	template<typename DestChar, typename SourceChar, typename U1 = DestChar, typename U2 = SourceChar>
 	USE_RESULT std::enable_if_t<
 		type_trait::Is_CharType_V<U1>
-		&& type_trait::Is_CharType_V<U2>> Convert(const SourceChar* source, DestChar*& dest) noexcept
+		&& type_trait::Is_CharType_V<U2>,
+	const DestChar*> Convert(const SourceChar* source) noexcept
 	{
-		if (dest)
-			delete[] dest;
-
 		if _CONSTEXPR_IF(std::is_same_v<SourceChar, char>
 			&& std::is_same_v<DestChar, char16_t>)
-			dest = UTF8ConvertToUTF16(source);
+			return UTF8ConvertToUTF16(source);
 		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char>
 			&& std::is_same_v<DestChar, char32_t>)
-			dest = UTF8ConvertToUTF32(source);
-		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char16_t>
+			return UTF8ConvertToUTF32(source);
+
+		if _CONSTEXPR_IF(std::is_same_v<SourceChar, char16_t>
 			&& std::is_same_v<DestChar, char32_t>)
-			dest = UTF16ConvertToUTF32(source);
+			return UTF16ConvertToUTF32(source);
 		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char16_t>
 			&& std::is_same_v<DestChar, char>)
-			dest = UTF16ConvertToUTF8(source);
-		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char32_t>
+			return UTF16ConvertToUTF8(source);
+
+		if _CONSTEXPR_IF(std::is_same_v<SourceChar, char32_t>
 			&& std::is_same_v<DestChar, char16_t>)
-			dest = UTF32ConvertToUTF16(source);
+			return UTF32ConvertToUTF16(source);
 		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char32_t>
 			&& std::is_same_v<DestChar, char>)
-			dest = UTF32ConvertToUTF8(source);
+			return UTF32ConvertToUTF8(source);
+	}
+
+
+	template<typename DestChar, typename SourceChar, typename U1 = DestChar, typename U2 = SourceChar>
+	USE_RESULT std::enable_if_t<
+		type_trait::Is_StringType_V<std::basic_string_view<U1>>
+		&& type_trait::Is_StringType_V<std::basic_string_view<U2>>
+		&& type_trait::Is_CharType_V<U1>
+		&& type_trait::Is_CharType_V<U2>,
+		std::basic_string<DestChar>> Convert(const std::basic_string_view<SourceChar>& source) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_same_v<SourceChar, char>
+			&& std::is_same_v<DestChar, char16_t>)
+			return UTF8ConvertToUTF16(source);
+		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char>
+			&& std::is_same_v<DestChar, char32_t>)
+			return UTF8ConvertToUTF32(source);
+
+		if _CONSTEXPR_IF(std::is_same_v<SourceChar, char16_t>
+			&& std::is_same_v<DestChar, char32_t>)
+			return UTF16ConvertToUTF32(source);
+		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char16_t>
+			&& std::is_same_v<DestChar, char>)
+			return UTF16ConvertToUTF8(source);
+
+		if _CONSTEXPR_IF(std::is_same_v<SourceChar, char32_t>
+			&& std::is_same_v<DestChar, char16_t>)
+			return UTF32ConvertToUTF16(source);
+		else if _CONSTEXPR_IF(std::is_same_v<SourceChar, char32_t>
+			&& std::is_same_v<DestChar, char>)
+			return UTF32ConvertToUTF8(source);
 	}
 }

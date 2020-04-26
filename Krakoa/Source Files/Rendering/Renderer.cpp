@@ -3,6 +3,8 @@
 #include "RenderCommand.hpp"
 
 #include "Renderer2D.hpp"
+
+#include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
 #include "../Rendering/Rendering Resources/iShader.hpp"
 
@@ -12,6 +14,7 @@ namespace krakoa::graphics
 
 	void Renderer::Initialize()
 	{
+		KRK_PROFILE_FUNCTION();
 		KRK_BANNER("Rendering Architecture Info", "GRAPHICS");
 		RenderCommand::Initialize();
 		graphics::Renderer2D::Initialize();
@@ -19,16 +22,19 @@ namespace krakoa::graphics
 
 	void Renderer::ShutDown()
 	{
+		KRK_PROFILE_FUNCTION();
 		graphics::Renderer2D::ShutDown();
 	}
 
 	void Renderer::OnWindowResize(const int x, const int y, const int width, const int height) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		RenderCommand::OnWindowResize(x, y, width, height);
 	}
 
 	void Renderer::BeginScene(const OrthographicCamera& camera)
 	{
+		KRK_PROFILE_FUNCTION();
 		camera_VPMat = &camera.GetViewProjectionMatrix();
 	}
 
@@ -37,6 +43,7 @@ namespace krakoa::graphics
 
 	void Renderer::Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform)
 	{
+		KRK_PROFILE_FUNCTION();
 		KRK_FATAL(!vertexArray.GetVertexBuffers().empty(), "No vertex buffer attached to this vertex array!");
 
 		shader.Bind();
@@ -48,11 +55,13 @@ namespace krakoa::graphics
 
 	void Renderer::Clear()
 	{
+		KRK_PROFILE_FUNCTION();
 		RenderCommand::Clear();
 	}
 
 	void Renderer::SetClearColour(const kmaths::Vector4f& colour)
 	{
+		KRK_PROFILE_FUNCTION();
 		RenderCommand::SetClearColour(colour);
 	}
 

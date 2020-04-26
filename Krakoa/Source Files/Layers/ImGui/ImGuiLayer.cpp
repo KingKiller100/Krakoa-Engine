@@ -27,6 +27,8 @@ namespace krakoa
 
 	void ImGuiLayer::OnAttach()
 	{
+		KRK_PROFILE_FUNCTION();
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -69,6 +71,8 @@ namespace krakoa
 
 	void ImGuiLayer::OnRender()
 	{		
+		KRK_PROFILE_FUNCTION();
+
 		ImGui::ShowDemoWindow(&isShowing);
 	}
 
@@ -77,6 +81,8 @@ namespace krakoa
 
 	void ImGuiLayer::BeginDraw()
 	{
+		KRK_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -84,6 +90,8 @@ namespace krakoa
 
 	void ImGuiLayer::EndDraw()
 	{
+		KRK_PROFILE_FUNCTION();
+
 		// Get Display Dimensions
 		auto& io = ImGui::GetIO();
 		const auto& app = Application::Reference();
@@ -106,6 +114,8 @@ namespace krakoa
 
 	void ImGuiLayer::ToggleVisibility() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+
 		isShowing = !isShowing;
 	}
 }

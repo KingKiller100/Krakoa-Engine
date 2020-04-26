@@ -19,6 +19,7 @@ bin/
 bin-int/
 
 #Users
+ExampleGames/Hooper2/*.json
 
 # User-specific files
 *.rsuser

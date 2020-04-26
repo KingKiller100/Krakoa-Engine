@@ -20,8 +20,9 @@ namespace klib::kProfiler
 
 	public:
 		Profiler(const char* name, Func&& func)
-			: result({ name, 0, 0, 0 }), timer("Profiler"), isRunning(true),
-			timerFunc(std::forward<Func&&>(func))
+			: result({ name, 0, 0, 0 }), isRunning(true),
+			timerFunc(std::forward<Func&&>(func)), 
+			timer("Profiler")
 		{}
 
 		~Profiler()
@@ -37,18 +38,17 @@ namespace klib::kProfiler
 			result.end = endTimepoint;
 			result.start = timer.GetStartTime<kTime::kUnits::Millis>();
 			result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
-			isRunning = false;
 
 			timerFunc(result);
+
+			isRunning = false;
 		}
 
 	private:
 		ProfilerResult result;
-		kTime::Timer<int64_t> timer;
 		bool isRunning;
 		Func timerFunc;
+
+		kTime::Timer<int64_t> timer;
 	};
 }
-
-#define PUSH_PROFILER(stack, name) klib::kProfiler::Profiler profiler##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& profileResult) { stack.push(profileResult); })
-#define EMPLACE_PROFILER(list, name) klib::kProfiler::Profiler profiler##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& profileResult) { list.push_back(profileResult); })

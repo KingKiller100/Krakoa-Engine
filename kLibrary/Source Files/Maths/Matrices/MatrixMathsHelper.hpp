@@ -83,7 +83,7 @@ namespace kmaths
 		const T sinA = std::sin(kmaths::DegreesToRadians(angle));
 
 		Vector3<T> axis = v.Normalize();
-		Vector3<T> temp = (CAST(T, 1) - cosA) * axis;
+		Vector3<T> temp = axis * (CAST(T, 1) - cosA);
 
 		TransformMatrix<T> rotate;
 		rotate[0][0] = cosA + temp[0] * axis[0];

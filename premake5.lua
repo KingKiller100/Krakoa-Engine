@@ -93,7 +93,11 @@ project "Krakoa"
         }
 
     filter "configurations:Debug"
-        defines "KRAKOA_DEBUG"
+        defines 
+        {
+            "KRAKOA_DEBUG",
+            "KLIB_DEBUG"
+        }
         removefiles
         {
             "%{prj.name}/Source Files/**/test*"
@@ -168,7 +172,11 @@ project "Hooper2"
         }
 
     filter "configurations:Debug"
-        defines "KRAKOA_DEBUG"
+        defines 
+        {
+            "KRAKOA_DEBUG",
+            "KLIB_DEBUG"
+        }
         symbols "On"
         runtime "Debug"
 

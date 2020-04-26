@@ -72,7 +72,7 @@ namespace kTest::Maths
 		//const auto crossPFail = vec2a.CrossProduct(vec2b); unable to compile due to not having only 3 axes
 
 		auto vec4u = Vector<4, unsigned>{};
-		const auto vec4c = Vector<4, char>{ 'H', 'E', 'L', 'L' };
+		const auto vec5c = Vector<5, char>{ 'H', 'E', 'L', 'P', '\0' };
 
 		const auto w = vec4u.W();
 

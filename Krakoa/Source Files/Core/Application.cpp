@@ -6,11 +6,12 @@
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
-#include "../Layers/Profiler/ProfilerLayer.hpp"
 
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/Renderer2D.hpp"
 #include "../Rendering/ShaderLibrary.hpp"
+
+#include "../Instrumentor.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
 
@@ -42,12 +43,12 @@ namespace krakoa
 
 	void Application::Initialize()
 	{
+		KRK_PROFILE_FUNCTION();
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
 		pImGuiLayer->ToggleVisibility();
 		PushOverlay(pImGuiLayer);
 
-		PushOverlay(new ProfilerLayer());
 		PushOverlay(new FPSLayer());
 
 		// Initialize InputManager
@@ -60,6 +61,7 @@ namespace krakoa
 
 	void Application::OnEvent(events::Event& e)
 	{
+		KRK_PROFILE_FUNCTION();
 		events::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND1(Application::OnWindowClosed));
 		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(Application::OnWindowResize));
@@ -69,12 +71,14 @@ namespace krakoa
 
 	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
 	{
+		KRK_PROFILE_FUNCTION();
 		isRunning = false;
 		return true;
 	}
 
 	bool Application::OnWindowResize(events::WindowResizeEvent & e) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
 		const auto width = CAST(int, e.GetWidth());
 		const auto height = CAST(int, e.GetHeight());
@@ -84,16 +88,20 @@ namespace krakoa
 
 	void Application::PushLayer(LayerBase* layer)
 	{
+		KRK_PROFILE_FUNCTION();
 		layerStack.PushLayer(layer);
 	}
 
 	void Application::PushOverlay(LayerBase* overlay)
 	{
+		KRK_PROFILE_FUNCTION();
 		layerStack.PushOverlay(overlay);
 	}
 
 	void Application::Run()
 	{
+		KRK_PROFILE_FUNCTION();
+	
 		timeStep.Update();
 
 		const auto deltaTime = timeStep.GetDeltaTime();

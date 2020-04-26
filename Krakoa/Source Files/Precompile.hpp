@@ -3,8 +3,13 @@
 // STL libraries
 
 // Containers
-#include <vector>
+#include <any>
+#include <array>
+#include <map>
+#include <string>
 #include <sstream>
+#include <unordered_map>
+#include <vector>
 
 #if _MSVC_LANG >= 201400L
 //	Threading
@@ -28,4 +33,5 @@
 #include <kLib.hpp>
 
 // KRAKOA Lib
-//#include <Core/Logging/Logger.hpp>
+#include "Instrumentor.hpp"
+#include "Core/Logging/CoreLogger.hpp"

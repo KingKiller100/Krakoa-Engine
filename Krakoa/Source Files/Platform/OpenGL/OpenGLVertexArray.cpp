@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "OpenGLVertexArray.hpp"
 
+#include "../../Instrumentor.hpp"
 #include "../../Rendering/Rendering Resources/BufferLayout.hpp"
 
 #include <GLAD/glad.h>
@@ -42,6 +43,8 @@ namespace krakoa::graphics
 
 	void OpenGLVertexArray::Bind() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+
 		glBindVertexArray(rendererID);
 	}
 
@@ -52,6 +55,8 @@ namespace krakoa::graphics
 
 	void OpenGLVertexArray::AddVertexBuffer(iVertexBuffer* vertexBuffer)
 	{
+		KRK_PROFILE_FUNCTION();
+	
 		KRK_FATAL(!vertexBuffer->GetLayout().GetElements().empty(), "Vertex buffer has no layout");
 
 		Bind();
@@ -77,6 +82,8 @@ namespace krakoa::graphics
 
 	void OpenGLVertexArray::SetIndexBuffer(iIndexBuffer* indexBuffer) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		Bind();
 		indexBuffer->Bind();
 

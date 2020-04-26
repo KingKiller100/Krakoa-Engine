@@ -49,7 +49,7 @@ namespace krakoa
 #define KRK_LOG_ERASE_PREV(numOfPrevEntries)            ::krakoa::CoreLogger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries)
 #define KRK_LOG_CLEAR()                                 ::krakoa::CoreLogger::GetCoreLogger().ClearCache();
 
-#ifndef KRAKOA_RELEASE
+#ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
 #	define KRK_FATAL(condition, msg)                                  kAssert(condition, msg)
 #else

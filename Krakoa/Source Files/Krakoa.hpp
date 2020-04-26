@@ -6,6 +6,7 @@
 // For client game applications
 
 // Core
+#include "Instrumentor.hpp"
 #include "Core/EngineCore.hpp"
 #include "Core/Application.hpp"
 #include "Core/Logging/Logger.hpp"
@@ -38,4 +39,3 @@
 // Layers
 #include "Layers/LayerBase.hpp"
 #include "Layers/ImGui/ImGuiLayer.hpp"
-#include "Layers/Profiler/ProfilerLayer.hpp"

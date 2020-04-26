@@ -7,6 +7,8 @@
 #include "../../Events System/KeyEvent.hpp"
 #include "../../Events System/MouseEvent.hpp"
 
+#include "../../Instrumentor.hpp"
+
 // Renderer
 #include "../../Platform/OpenGL/OpenGLContext.hpp"
 

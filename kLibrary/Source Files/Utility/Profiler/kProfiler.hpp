@@ -2,8 +2,6 @@
 
 #include "../Timer/kTimer.hpp"
 
-#include <stack>
-
 namespace klib::kProfiler
 {
 	template<typename ProfilerFunc>
@@ -46,8 +44,9 @@ namespace klib::kProfiler
 
 	struct ProfilerResult
 	{
-		const char * name;
-		float result;
+		const std::string name;
+		long long start, end;
+		uint32_t threadID;
 	};
 }
 

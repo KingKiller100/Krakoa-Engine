@@ -25,10 +25,10 @@ namespace kmaths
 			: elems(newIndices)
 		{}
 
-		explicit constexpr Matrix(const Type initialVal) noexcept
+		explicit constexpr Matrix(Type&& initialVal) noexcept
 		{
 			for (auto row = 0u; row < Rows; ++row)
-				elems[row] = Vector<Columns, Type>(initialVal);
+				elems[row] = Vector<Columns, Type>(std::forward<Type&&>(initialVal));
 		}
 
 		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list)

@@ -27,9 +27,9 @@ namespace krakoa::graphics
 			rendererAPI->SetClearColour(colour);
 		}
 
-		inline static void DrawIndexed(const iVertexArray& vertexArray) 
+		inline static void DrawIndexed(const iVertexArray& vertexArray, uint32_t count = 0)
 		{
-			rendererAPI->DrawIndexed(vertexArray);
+			rendererAPI->DrawIndexed(vertexArray, count);
 		}
 
 	private:

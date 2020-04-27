@@ -16,6 +16,14 @@ namespace kmaths
 		constexpr Vector() noexcept
 		{}
 
+		constexpr Vector(const std::initializer_list<T> l) noexcept
+		{
+			const auto first_iter = l.begin();
+			const auto loops = l.size() < N ? l.size() : N;
+			for (auto i = 0; i < loops; ++i)
+				dimensions[i] =  first_iter[i];
+		}
+
 		explicit constexpr Vector(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
 		{
 			dimensions[0] = _x;
@@ -24,27 +32,15 @@ namespace kmaths
 			if (_w) dimensions[3] = _w;
 		}
 
-		explicit constexpr Vector(Type _v) noexcept
+		explicit constexpr Vector(Type&& _v) noexcept
 		{
-			for (auto& axis : dimensions)
-				axis = _v;
-		}
-
-		constexpr Vector(const std::initializer_list<T> l)
-		{
-			if (N > l.size())
-				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
-
-			const auto first_iter = l.begin();
-
-			for (auto i = 0; i < N; ++i)
-				dimensions[i] = *(first_iter + i);
+			for (auto& val : dimensions)
+				val = std::forward<Type&&>(_v);
 		}
 
 		explicit constexpr Vector(const T values[N])
 		{
-			for (auto i = 0; i < N; ++i)
-				dimensions[i] = values[i];
+			memcpy(dimensions, values, sizeof(dimensions));
 		}
 
 		USE_RESULT constexpr const Type& X() const noexcept

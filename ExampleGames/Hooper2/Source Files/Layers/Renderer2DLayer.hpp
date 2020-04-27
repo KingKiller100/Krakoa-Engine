@@ -26,12 +26,7 @@ private:
 	void SendRendererCommands() noexcept;
 
 private:
-	// Temp ----------------------------------------------------
-	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
-	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
-
 	std::unique_ptr<krakoa::graphics::iTexture2D> pWinTexture;
-	// ---------------------------------------------------------
 
 	krakoa::OrthographicCameraController cameraController;
 

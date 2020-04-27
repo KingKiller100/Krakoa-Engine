@@ -23,29 +23,29 @@ namespace krakoa::graphics
 
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-			{
-				const auto msgType = klib::kFormat::ToString("OpenGL %s:",
-					type == GL_DEBUG_TYPE_ERROR
-					? "ERROR"
-					: "CALLBACK");
-				auto msgFormat = msgType +
-					"\n type = 0x%08x\n severity = 0x%08x\n message = %s\n";
+		{
+			const auto msgType = klib::kFormat::ToString("OpenGL %s:",
+				type == GL_DEBUG_TYPE_ERROR
+				? "ERROR"
+				: "CALLBACK");
+			auto msgFormat = msgType +
+				"\n type = 0x%08x\n severity = 0x%08x\n message = %s\n";
 
-				if (type == GL_DEBUG_TYPE_ERROR)
-				{
-					KRK_ERRR(klib::kFormat::ToString(msgFormat,
-						type,
-						severity,
-						message));
-				}
-				else
-				{
-					KRK_DBUG(klib::kFormat::ToString(msgFormat,
-						type,
-						severity,
-						message));
-				}
-			},
+			if (type == GL_DEBUG_TYPE_ERROR)
+			{
+				KRK_ERRR(klib::kFormat::ToString(msgFormat,
+					type,
+					severity,
+					message));
+			}
+			else
+			{
+				KRK_DBUG(klib::kFormat::ToString(msgFormat,
+					type,
+					severity,
+					message));
+			}
+		},
 			nullptr);
 
 		glEnable(GL_DEPTH_TEST);
@@ -82,12 +82,17 @@ namespace krakoa::graphics
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const iVertexArray& vertexArray)
+	void OpenGLRendererAPI::DrawIndexed(const iVertexArray& vertexArray, uint32_t count)
 	{
 		KRK_PROFILE_FUNCTION();
+
+		if (count == 0)
+			count = vertexArray.GetIndexBuffer()->GetCount();
+
+
 		glDrawElements(
 			GL_TRIANGLES,
-			vertexArray.GetIndexBuffer()->GetCount(),
+			count,
 			GL_UNSIGNED_INT,
 			nullptr
 		);

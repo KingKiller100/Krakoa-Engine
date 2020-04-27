@@ -14,3 +14,4 @@
 #include "Matrix4x2.hpp"
 #include "Matrix4x3.hpp"
 #include "Matrix4x4.hpp"
+#include "TransformMatrix.hpp"

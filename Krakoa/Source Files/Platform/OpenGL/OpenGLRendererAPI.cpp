@@ -8,6 +8,7 @@
 #include <imgui.h>
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
+#include "../../Instrumentor.hpp"
 
 namespace krakoa::graphics
 {
@@ -15,39 +16,45 @@ namespace krakoa::graphics
 	{
 		OutputRenderingArchitecture();
 
+		KRK_PROFILE_FUNCTION();
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEBUG_OUTPUT);
-		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
-		{
-			const auto msgFormat = klib::kFormat::ToString(
-				"OpenGL %s:\n type = 0x%08x\n severity = 0x%08x\n message = %s\n",
-				type == GL_DEBUG_TYPE_ERROR
-				? "ERROR"
-				: "CALLBACK");
+		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+			{
+				const auto msgType = klib::kFormat::ToString("OpenGL %s:",
+					type == GL_DEBUG_TYPE_ERROR
+					? "ERROR"
+					: "CALLBACK");
+				auto msgFormat = msgType +
+					"\n type = 0x%08x\n severity = 0x%08x\n message = %s\n";
 
-			if (type == GL_DEBUG_TYPE_ERROR)
-			{
-				KRK_ERRR(klib::kFormat::ToString(msgFormat,
-					type,
-					severity,
-					message));
-			}
-			else
-			{
-				KRK_DBUG(klib::kFormat::ToString(msgFormat,
-					type,
-					severity,
-					message));
-			}
-		}, 
+				if (type == GL_DEBUG_TYPE_ERROR)
+				{
+					KRK_ERRR(klib::kFormat::ToString(msgFormat,
+						type,
+						severity,
+						message));
+				}
+				else
+				{
+					KRK_DBUG(klib::kFormat::ToString(msgFormat,
+						type,
+						severity,
+						message));
+				}
+			},
 			nullptr);
+
+		glEnable(GL_DEPTH_TEST);
 
 	}
 
 	void OpenGLRendererAPI::OutputRenderingArchitecture()
 	{
+		KRK_PROFILE_FUNCTION();
 		// Rendering hardware info
 		KRK_INFO("API: OpenGL");
 		KRK_INFO(klib::kFormat::ToString("Version: %s", glGetString(GL_VERSION)));
@@ -59,6 +66,8 @@ namespace krakoa::graphics
 
 	void OpenGLRendererAPI::SetClearColour(const kmaths::Vector4f& colour)
 	{
+		KRK_PROFILE_FUNCTION();
+
 		const auto& r = colour.X();
 		const auto& g = colour.Y();
 		const auto& b = colour.Z();
@@ -69,21 +78,24 @@ namespace krakoa::graphics
 
 	void OpenGLRendererAPI::Clear()
 	{
+		KRK_PROFILE_FUNCTION();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const iVertexArray& vertexArray)
 	{
+		KRK_PROFILE_FUNCTION();
 		glDrawElements(
 			GL_TRIANGLES,
 			vertexArray.GetIndexBuffer()->GetCount(),
-			GL_UNSIGNED_INT, 
+			GL_UNSIGNED_INT,
 			nullptr
 		);
 	}
 
-	void OpenGLRendererAPI::SetViewport(const float x, const float y, const float width, const float height) const noexcept
+	void OpenGLRendererAPI::SetViewport(const int x, const int y, const int width, const int height) const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		glViewport(x, y, width, height);
 	}
 

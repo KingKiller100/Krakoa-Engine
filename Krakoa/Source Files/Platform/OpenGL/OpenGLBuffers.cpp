@@ -2,6 +2,7 @@
 #include "OpenGLBuffers.hpp"
 
 #include <GLAD/glad.h>
+#include "../../Instrumentor.hpp"
 
 namespace krakoa::graphics
 {
@@ -20,17 +21,20 @@ namespace krakoa::graphics
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
+		KRK_PROFILE_FUNCTION();
 		glDeleteBuffers(1, &rendererID);
 	}
 
 	void OpenGLVertexBuffer::Bind() const
 	{
+		KRK_PROFILE_FUNCTION();
 		// bind data to vertex buffer
 		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 	}
 
 	void OpenGLVertexBuffer::Unbind() const
 	{
+		KRK_PROFILE_FUNCTION();
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
@@ -60,17 +64,20 @@ namespace krakoa::graphics
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
+		KRK_PROFILE_FUNCTION();
 		glDeleteBuffers(1, &rendererID);
 	}
 
 	void OpenGLIndexBuffer::Bind() const
 	{
+		KRK_PROFILE_FUNCTION();
 		// bind data to Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
 	}
 
 	void OpenGLIndexBuffer::Unbind() const
 	{
+		KRK_PROFILE_FUNCTION();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 

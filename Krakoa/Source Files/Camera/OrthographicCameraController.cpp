@@ -1,8 +1,10 @@
 ﻿#include "Precompile.hpp"
 #include "OrthographicCameraController.hpp"
 
-#include "../Input/InputManager.hpp"
+#include "../Instrumentor.hpp"
 #include "../Input/KeyCode.hpp"
+#include "../Input/InputManager.hpp"
+
 
 namespace krakoa
 {
@@ -18,6 +20,8 @@ namespace krakoa
 
 	void OrthographicCameraController::OnUpdate(const float deltaTime) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+
 		if (input::InputManager::IsKeyPressed(KRK_KEY_W))
 			position.Y() += camTranslationSpeed * zoomLevel * deltaTime;
 		else if (input::InputManager::IsKeyPressed(KRK_KEY_S))
@@ -63,6 +67,7 @@ namespace krakoa
 
 	void OrthographicCameraController::OnEvent(events::Event& e)
 	{
+		KRK_PROFILE_FUNCTION();
 		events::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND1(OrthographicCameraController::OnMouseScrolledEvent));
 		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(OrthographicCameraController::OnWindowResizeEvent));
@@ -70,6 +75,7 @@ namespace krakoa
 
 	bool OrthographicCameraController::OnMouseScrolledEvent(const events::MouseScrolledEvent& e)
 	{
+		KRK_PROFILE_FUNCTION();
 		zoomLevel -= e.GetY() * 0.05f;
 		zoomLevel = kmaths::Clamp(zoomLevel, 0.25f, 5.f);
 		UpdateCameraProjectionMat();
@@ -78,6 +84,7 @@ namespace krakoa
 
 	bool OrthographicCameraController::OnWindowResizeEvent(const events::WindowResizeEvent& e)
 	{
+		KRK_PROFILE_FUNCTION();
 		if (e.GetHeight() != 0.f)
 		{
 			const auto width =  CAST(float, e.GetWidth() );
@@ -92,6 +99,7 @@ namespace krakoa
 
 	void OrthographicCameraController::UpdateCameraProjectionMat() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto xVal = aspectRatio * zoomLevel;
 		camera.SetProjection(-xVal, xVal, -zoomLevel, zoomLevel);
 	}

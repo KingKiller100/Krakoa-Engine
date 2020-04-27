@@ -2,6 +2,8 @@
 #include "ShaderLibrary.hpp"
 
 #include "Rendering Resources/iShader.hpp"
+
+#include "../Instrumentor.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
@@ -15,35 +17,38 @@ namespace krakoa::graphics
 	ShaderLibrary::~ShaderLibrary()
 		= default;
 
-	USE_RESULT iShader & ShaderLibrary::Get(const std::string & name) const
+	USE_RESULT std::weak_ptr<iShader> ShaderLibrary::Get(const std::string & name) const
 	{
+		KRK_PROFILE_FUNCTION();
 		KRK_FATAL(Exists(name), klib::kFormat::ToString("Trying to retrieve shader that does not currently exist:\n%s", name.data()));
-		return *shadersUMap.at(name);
+		return shadersUMap.at(name);
 	}
 
-	krakoa::graphics::iShader& ShaderLibrary::Load(const std::string_view& filepath)
+	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string_view& filepath)
 	{
+		KRK_PROFILE_FUNCTION();
 		static auto no_name_shader_count = 0ull;
-		const auto& name = klib::kFormat::ToString("Shader %u", no_name_shader_count++);
+		const auto& name = klib::kFormat::ToString("Shader {0}", no_name_shader_count++);
 		const auto shader = iShader::Create(name, filepath);
-		Add(name, shader);
-		return *shader;
+		return Add(name, shader);
 	}
 
-	krakoa::graphics::iShader& ShaderLibrary::Load(const std::string& name, const std::string_view& filepath)
+	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string& name, const std::string_view& filepath)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto shader = iShader::Create(name, filepath);
-		Add(name, shader);
-		return *shader;
+		return Add(name, shader);
 	}
 
 	bool ShaderLibrary::Exists(const std::string& name) const
 	{
+		KRK_PROFILE_FUNCTION();
 		return shadersUMap.find(name) != shadersUMap.end();
 	}
 
 	bool ShaderLibrary::Delete(const std::string& name)
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto pathName = klib::kString::Replace(name, '/', '\\');
 		if (Exists(pathName))
 		{
@@ -53,10 +58,13 @@ namespace krakoa::graphics
 		return false;
 	}
 
-	void ShaderLibrary::Add(const std::string& name, iShader* shader)
+	std::shared_ptr<iShader> ShaderLibrary::Add(const std::string& name, iShader* shader)
 	{
+		KRK_PROFILE_FUNCTION();
 		KRK_FATAL(!Exists(name), klib::kFormat::ToString("Trying to add shader to library that already exists:\n%s", name.data()));
-		shadersUMap.insert(std::make_pair(name, shader));
+		const auto shaderS_Ptr = std::shared_ptr<iShader>(shader);
+		shadersUMap.insert(std::make_pair(name, shaderS_Ptr));
+		return shaderS_Ptr;
 	}
 
 }

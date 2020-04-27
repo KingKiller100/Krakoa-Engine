@@ -2,7 +2,7 @@
 
 #include "StringView_Test.hpp"
 
-#include "../../Utility/String/StringView.hpp"
+#include "../../Utility/String/kStringView.hpp"
 #include "../../Utility/Timer/kTimer.hpp"
 
 #ifdef TESTING_ENABLED

@@ -19,7 +19,7 @@ namespace kTest
 		virtual ~Tester();
 
 		const char* GetName() const noexcept;
-		std::string GetFailureData() const noexcept;
+		const std::string& GetFailureData() const noexcept;
 		
 		bool Run() noexcept;
 
@@ -41,8 +41,8 @@ namespace kTest
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->failureData.append(klib::kFormat::ToString("\n\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 		this->success = false; \
+		this->failureData.append(klib::kFormat::ToString("\n\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 	}\
 
 }

@@ -51,7 +51,7 @@ namespace krakoa
 #define LOG_CLEAR()                                     ::krakoa::Logger::GetClientLogger().ClearCache();
 
 
-#ifndef KRAKOA_RELEASE
+#ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
 #	define FATAL(condition, msg)                                  kAssert(condition, msg);
 #else

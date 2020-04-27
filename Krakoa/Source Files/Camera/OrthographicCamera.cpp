@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "OrthographicCamera.hpp"
 
+#include "../Instrumentor.hpp"
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 namespace krakoa
@@ -10,6 +11,7 @@ namespace krakoa
 		viewMat(kmaths::Matrix4x4f::Identity()),
 		rotationZ(0.f)
 	{
+		KRK_PROFILE_FUNCTION();
 		UpdateViewProjectionMatrix();
 	}
 
@@ -40,6 +42,7 @@ namespace krakoa
 
 	void OrthographicCamera::SetPosition(const kmaths::Vector3f& pos) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		position = pos;
 		RecalculateViewMatrix();
 	}
@@ -51,6 +54,7 @@ namespace krakoa
 
 	void OrthographicCamera::SetRotation(const float rotation) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		rotationZ = rotation;
 		RecalculateViewMatrix();
 	}
@@ -67,6 +71,7 @@ namespace krakoa
 
 	const kmaths::Matrix4x4f& OrthographicCamera::GetViewProjectionMatrix() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return vpMat;
 	}
 

@@ -49,9 +49,9 @@ namespace krakoa
 #define KRK_LOG_ERASE_PREV(numOfPrevEntries)            ::krakoa::CoreLogger::GetCoreLogger().ErasePreviousCacheEntries(numOfPrevEntries)
 #define KRK_LOG_CLEAR()                                 ::krakoa::CoreLogger::GetCoreLogger().ClearCache();
 
-#ifndef KRAKOA_RELEASE
+#ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
 #	define KRK_FATAL(condition, msg)                                  kAssert(condition, msg)
 #else
-#	define KRK_FATAL(condition, msg)                                  if ( !condition ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__)
+#	define KRK_FATAL(condition, msg)                                  if ( !(condition) ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__)
 #endif // !KRAKOA_RELEASE

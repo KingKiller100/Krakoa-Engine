@@ -246,7 +246,7 @@ namespace kmaths
 			{
 				copy[i] = (other.NumberOfDimensions() > i)
 					? dimensions[i] + static_cast<Type>(other[i])
-					: copy[i] = dimensions[i];
+					: dimensions[i];
 			}
 			return Vector(copy);
 		}
@@ -259,7 +259,7 @@ namespace kmaths
 			{
 				copy[i] = (other.NumberOfDimensions() > i)
 					? dimensions[i] - static_cast<Type>(other[i])
-					: copy[i] = dimensions[i];
+					: dimensions[i];
 			}
 			return Vector(copy);
 		}
@@ -272,7 +272,7 @@ namespace kmaths
 			{
 				copy[i] = (other.NumberOfDimensions() > i)
 					? dimensions[i] * static_cast<Type>(other[i])
-					: copy[i] = dimensions[i];
+					: dimensions[i];
 			}
 			return Vector(copy);
 		}
@@ -285,7 +285,7 @@ namespace kmaths
 			{
 				copy[i] = (other.NumberOfDimensions() > i) 
 					? dimensions[i] / static_cast<Type>(other[i])
-					: copy[i] = dimensions[i];
+					: dimensions[i];
 			}
 			return Vector(copy);
 		}
@@ -406,16 +406,4 @@ namespace kmaths
 	private:
 		T dimensions[N]{};
 	};
-
-	template<unsigned short N, typename T, typename U>
-	USE_RESULT constexpr Vector<N, T> operator*(const U&& scalar, const Vector<N, T>& v) noexcept
-	{
-		return v * scalar;
-	}
-
-	template<unsigned short N, typename T, typename U>
-	USE_RESULT constexpr Vector<N, T> operator/(const U&& scalar, const Vector<N, T>& v) noexcept
-	{
-		return v / scalar;
-	}
 }

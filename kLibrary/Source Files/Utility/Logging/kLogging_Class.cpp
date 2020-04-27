@@ -118,7 +118,7 @@ namespace klib::kLogs
 		name = newName;
 	}
 
-	constexpr void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
+	void Logging::SetMinimumLoggingLevel(const LLevel newMin) noexcept
 	{
 		minimumLoggingLevel = newMin;
 	}
@@ -183,8 +183,8 @@ namespace klib::kLogs
 		if (lvl < minimumLoggingLevel) return;
 
 		auto logLine = ToString("[%s] [%s] [%s]:  %s",
-			GetTimeText().c_str(),
-			name.c_str(),
+			GetTimeText().data(),
+			name.data(),
 			kLogs_LLevelMap.at(lvl),
 			msg.data());
 
@@ -209,8 +209,8 @@ namespace klib::kLogs
 		if (!isEnabled) return;
 
 		const auto bannerLine = ToString("[%s] [%s] [%s]: [%s]\n",
-			GetTimeText().c_str(),
-			name.c_str(),
+			GetTimeText().data(),
+			name.data(),
 			type.data(),
 			msg.data());
 

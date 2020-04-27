@@ -17,6 +17,7 @@ public:
 
 	~Hooper2Game()
 	{
+		isRunning = false;
 		Hooper2Game::Shutdown();
 	}
 
@@ -28,9 +29,7 @@ public:
 	}
 
 	void Shutdown() override
-	{
-		isRunning = false;
-	}
+	{}
 };
 
 void krakoa::CreateApplication()

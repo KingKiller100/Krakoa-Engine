@@ -1,12 +1,12 @@
 #pragma once
 
-#include <exception>
+#include <stdexcept>
 
 namespace klib::kDebug::kExceptions
 {
-	class NotImplementedException : public std::exception
+	class NotImplementedException : public std::runtime_error
 	{
-		NotImplementedException();
+	public:
 		NotImplementedException(const char* what);
 
 		~NotImplementedException() throw();

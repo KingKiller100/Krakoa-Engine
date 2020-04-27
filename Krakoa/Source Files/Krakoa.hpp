@@ -6,6 +6,7 @@
 // For client game applications
 
 // Core
+#include "Instrumentor.hpp"
 #include "Core/EngineCore.hpp"
 #include "Core/Application.hpp"
 #include "Core/Logging/Logger.hpp"
@@ -21,6 +22,7 @@
 
 // Rendering
 #include "Rendering/Renderer.hpp"
+#include "Rendering/Renderer2D.hpp"
 #include "Rendering/RenderCommand.hpp"
 
 // Textures

@@ -15,6 +15,7 @@
 #include "Utility Tests/DebugHelp_Test.hpp"
 #include "Utility Tests/FileSystem_Test.hpp"
 #include "Utility Tests/StringView_Test.hpp"
+#include "Utility Tests/UTFConverter_Test.hpp"
 #include "Utility Tests/StringManipulation_Test.hpp"
 #include "Utility Tests/FormatToString_Test.hpp"
 
@@ -63,14 +64,15 @@ namespace kTest
 
 	void TesterManager::InitializeUtilityTests()
 	{		
-		Add(new utility::CalendarTester());
-		Add(new utility::TimerTester());
-		Add(new utility::FileSystemTester());
+		Add(new utility::StringManipulationTester());
 		Add(new utility::FormatToStringTester());
+		Add(new utility::CalendarTester());
+		Add(new utility::FileSystemTester());
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
+		Add(new utility::UTFConverterTester());
 		Add(new utility::StringViewTester());
-		Add(new utility::StringManipulationTester());
+		Add(new utility::TimerTester());
 	}
 
 	void TesterManager::Add(Tester* test)
@@ -84,12 +86,18 @@ namespace kTest
 		for (const auto& test : kTests_TestsUSet)
 		{
 			const auto resultTest = test->Run() 
-				? klib::kFormat::ToString("Success: Test Name: %s\n\n", test->GetName()) // Success Case
-				: klib::kFormat::ToString("Failure: Test Name: %s\n%s", test->GetName(), test->GetFailureData().data()); // Fail Case
+				? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
+				: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData()); // Fail Case
 
 			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
 		}
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: %.3fm (Minutes)", totalRunTimeTimer.GetLifeTime<klib::kTime::Mins>());
+
+		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::kUnits::Mins>();
+		const auto mins = CAST(unsigned, finalTime);
+		const auto remainder = finalTime - mins;
+		const unsigned secs = CAST(unsigned, 60.0 * remainder);
+
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}m  {1}s", mins, secs);
 		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
 	}
 

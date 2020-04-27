@@ -1,9 +1,8 @@
 #pragma once
 
-//#include <Krakoa.hpp>
 #include <Layers/LayerBase.hpp>
 #include <Rendering/Rendering Resources/iVertexArray.hpp>
-#include <Rendering/Textures/iTexture.hpp>
+#include <Rendering/Textures/iTexture2D.hpp>
 #include <Camera/OrthographicCameraController.hpp>
 
 #include <Maths/Vectors/Vector4.hpp>
@@ -31,10 +30,10 @@ private:
 	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
 	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
 
-	std::unique_ptr<krakoa::graphics::iTexture> pWinTexture;
+	std::unique_ptr<krakoa::graphics::iTexture2D> pWinTexture;
 	// ---------------------------------------------------------
 
 	krakoa::OrthographicCameraController cameraController;
 
-	kmaths::Vector4f triangleColour;
+	kmaths::Vector4f geometryColour;
 };

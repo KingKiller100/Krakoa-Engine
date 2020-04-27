@@ -8,17 +8,14 @@ namespace kTest::utility
 {
 	StringManipulationTester::StringManipulationTester()
 		: Tester("String Manipulator Test")
-	{
-
-	}
+	{}
 
 	StringManipulationTester::~StringManipulationTester()
 		= default;
 
-
 	void StringManipulationTester::Test()
 	{
-		auto text = klib::kString::StringWriter<char>("My name is Rob");
+		const auto text = klib::kString::StringWriter<char>("My name is Rob");
 		const auto res = klib::kString::Replace(text, 'R', 'B');
 		VERIFY(res.compare("My name is Bob") == 0);
 
@@ -45,6 +42,5 @@ namespace kTest::utility
 		VERIFY(splitsWithSpace[7].compare(U"and ") == 0);
 		VERIFY(splitsWithSpace[8].compare(U"round") == 0);
 	}
-
 }
 #endif

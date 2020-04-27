@@ -3,23 +3,21 @@
 #include <exception>
 #include <string>
 
-namespace klib
+#if defined(_DEBUG) ||  defined(KLIB_TEST)
+namespace klib::kDebug
 {
-#if _DEBUG 
-	namespace kDebug
+	class AssertOnFailedConditionException final : public std::exception
 	{
-		class AssertOnFailedConditionException final : public std::exception
-		{
-		public:
-			AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* f, const unsigned l);
-			~AssertOnFailedConditionException() throw();
+	public:
+		AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* f, const unsigned l);
+		~AssertOnFailedConditionException() throw();
 
-			char const* what() const override;
+		char const* what() const override;
 
-		private:
-			std::string report;
-		};
-	}
+	private:
+		std::string report;
+	};
+}
 
 #	define kAssert(condition, msg)\
 	{\
@@ -30,4 +28,4 @@ namespace klib
 #else
 #	define kAssert(condition, msg) ((void)0);
 #endif
-}
+

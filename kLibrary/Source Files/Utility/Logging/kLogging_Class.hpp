@@ -75,7 +75,7 @@ namespace klib::kLogs
 		 * \note
 		 *		No logs less than this given level will be stored by the log system.
 		 */
-		constexpr void SetMinimumLoggingLevel(const LLevel newMinLevel) noexcept;
+		void SetMinimumLoggingLevel(const LLevel newMinLevel) noexcept;
 
 		/**
 		 * \brief

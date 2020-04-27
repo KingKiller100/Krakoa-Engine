@@ -12,7 +12,7 @@ namespace krakoa::graphics
 			rendererAPI->Initialize();
 		}
 
-		inline static void OnWindowResize(const float x, const float y, const float width, const float height) noexcept
+		inline static void OnWindowResize(const int x, const int y, const int width, const int height) noexcept
 		{
 			rendererAPI->SetViewport(x, y, width, height);
 		}

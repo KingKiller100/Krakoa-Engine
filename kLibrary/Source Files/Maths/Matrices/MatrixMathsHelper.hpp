@@ -14,10 +14,10 @@ namespace kmaths
 	};
 
 	template<typename T>
-	USE_RESULT constexpr static const TransformMatrix<T>& GetTransformIdentity() noexcept
+	USE_RESULT static constexpr const TransformMatrix<T>& GetTransformIdentity() noexcept
 	{
-		static const auto identityMat = TransformMatrix<T>::Identity();
-		return identityMat;
+		constexpr auto identity = IdentityMatrix<T, 4, 4>();
+		return IdentityMatrix<T, 4, 4>();
 	}
 
 	template<typename T>

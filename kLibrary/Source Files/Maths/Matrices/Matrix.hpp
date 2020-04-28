@@ -7,6 +7,12 @@
 
 namespace kmaths
 {
+	template<typename T, unsigned short Rows, unsigned short Columns>
+	struct Matrix;
+
+	template<typename Type, unsigned short R, unsigned short C>
+	USE_RESULT static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept;
+
 	// Row Major Matrix
 	template<typename T, unsigned short Rows, unsigned short Columns>
 	struct Matrix
@@ -21,20 +27,31 @@ namespace kmaths
 		constexpr Matrix() noexcept
 		{ }
 
-		explicit constexpr Matrix(const typename Indices::value_type vec) noexcept
+		constexpr Matrix(const Matrix& other) noexcept
+		{
+			*this = other;
+		}
+
+		constexpr Matrix(Matrix&& other) noexcept
+		{
+			*this = std::move(other);
+		}
+
+		explicit constexpr Matrix(const Indices& newIndices) noexcept
+			: elems(newIndices)
+		{}
+
+		explicit constexpr Matrix(const Vector<Columns, Type>& vec) noexcept
 		{
 			for (auto row = 0; row < Rows; ++row)
 				elems[row][row] = vec[row];
 		}
 
-		explicit constexpr Matrix(const Indices newIndices) noexcept
-			: elems(newIndices)
-		{}
-
 		explicit constexpr Matrix(Type&& initialVal) noexcept
 		{
 			for (auto row = 0u; row < Rows; ++row)
-				elems[row] = Vector<Columns, Type>(std::forward<Type&&>(initialVal));
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = std::forward<Type&&>(initialVal);
 		}
 
 		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list)
@@ -50,30 +67,8 @@ namespace kmaths
 				elems[row] = *(first_iter + row);
 		}
 
-		constexpr Matrix(const Matrix& other) noexcept
-		{
-			*this = other;
-		}
-
-		constexpr Matrix(Matrix&& other) noexcept
-		{
-			*this = std::move(other);
-		}
-
 		~Matrix()
 			= default;
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr static std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
-		{
-			Matrix<Type, R, C> identity;
-			for (auto row = 0u; row < Rows; ++row)
-				for (auto col = 0u; col < Columns; ++col)
-					identity[row][col] = (row == col)
-					? CAST(Type, 1)
-					: CAST(Type, 0);
-			return identity;
-		}
 
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
 		{
@@ -81,7 +76,7 @@ namespace kmaths
 				return Matrix();
 
 			if (IsIdentity())
-				return Identity();
+				return IdentityMatrix<Type, Rows, Columns>();
 
 			Matrix<Type, Columns, Rows> transposeMat;
 			for (auto row = 0u; row < Rows; ++row)
@@ -97,7 +92,7 @@ namespace kmaths
 				return Matrix();
 
 			if (IsIdentity())
-				return Identity();
+				return IdentityMatrix<Type, R, C>();
 
 			Matrix inverse;
 			const auto determinant = this->GetDeterminant();
@@ -274,7 +269,7 @@ namespace kmaths
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> PowerOf(unsigned power) const
 		{
 			if (power == 0)
-				return Identity();
+				return IdentityMatrix<Type, R, C>();
 
 			Matrix temp = *this;
 			for (auto i = 1u; i < power; ++i)
@@ -284,9 +279,10 @@ namespace kmaths
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
-			for (auto& vec : elems)
-				if (!vec.IsZero())
-					return false;
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					if (elems[row][col] != CAST(Type, 0))
+						return false;
 			return true;
 		}
 
@@ -324,14 +320,19 @@ namespace kmaths
 			return false;
 		}
 
-		USE_RESULT constexpr unsigned short GetRows() const noexcept
+		USE_RESULT constexpr decltype(auto) GetRows() const noexcept
 		{
 			return Rows;
 		}
 
-		USE_RESULT constexpr unsigned short GetColumns() const noexcept
+		USE_RESULT constexpr decltype(auto) GetColumns() const noexcept
 		{
 			return Columns;
+		}
+
+		USE_RESULT constexpr decltype(auto) Size() const noexcept
+		{
+			return Rows * Columns;
 		}
 
 		USE_RESULT constexpr Type* GetPointerToData() const
@@ -431,18 +432,6 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr Matrix& operator=(const Matrix& other)
-		{
-			elems = other.elems;
-			return *this;
-		}
-
-		constexpr Matrix& operator=(Matrix&& other)
-		{
-			elems = std::move(other.elems);
-			return *this;
-		}
-
 		USE_RESULT constexpr Matrix operator-() const noexcept
 		{
 			Matrix m;
@@ -459,6 +448,24 @@ namespace kmaths
 		USE_RESULT constexpr const Vector<Columns, Type>& operator[](const size_t idx) const noexcept
 		{
 			return elems[idx];
+		}
+
+		constexpr Matrix& operator=(const Matrix& other) noexcept
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = other[row][col];
+
+			return *this;
+		}
+
+		constexpr Matrix& operator=(Matrix&& other) noexcept
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = std::move(other[row][col]);
+
+			return *this;
 		}
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
@@ -478,18 +485,13 @@ namespace kmaths
 			= delete;
 
 		template<unsigned short R = Rows, unsigned short C = Columns>
-		static constexpr std::enable_if_t<R != C,
-			Matrix<Type, R, C>> Identity() noexcept
-			= delete;
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> PowerOf(unsigned power)  const noexcept
 			= delete;
 
 	private:
-		// Gauss-Jordan Elimination Method
-		constexpr Matrix RowEchalonMethod() noexcept
+		// TODO: Gauss-Jordan Elimination Method
+	/*	constexpr Matrix RowEchalonMethod() noexcept
 		{
 			auto lhs = elems;
 			auto rhs = Identity<Rows, Columns>();
@@ -548,7 +550,7 @@ namespace kmaths
 			}
 
 			return rhs;
-		}
+		}*/
 
 		USE_RESULT constexpr bool ValidColumns() const noexcept
 		{
@@ -570,6 +572,18 @@ namespace kmaths
 		}
 
 	private:
-		Indices elems;
+		Indices elems{ {} };
 	};
+
+	template<typename Type, unsigned short R, unsigned short C>
+	USE_RESULT static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
+	{
+		Matrix<Type, R, C> identity;
+		if (identity.IsZero())
+		{
+			for (auto row = 0u; row < R; ++row)
+				identity[row][row] = CAST(Type, 1);
+		}
+		return identity;
+	}
 }

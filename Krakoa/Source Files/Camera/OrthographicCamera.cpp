@@ -8,7 +8,7 @@ namespace krakoa
 {
 	OrthographicCamera::OrthographicCamera(const float left, const float right, const float bottom, const float top) noexcept
 		: projectionMat(kmaths::Ortho_ZO(kmaths::ZAxisDirection::LEFT_HAND, left, right, bottom, top, -1.f, 1.f)),
-		viewMat(kmaths::Matrix4x4f::Identity()),
+		viewMat(kmaths::GetTransformIdentity<float>()),
 		rotationZ(0.f)
 	{
 		KRK_PROFILE_FUNCTION();

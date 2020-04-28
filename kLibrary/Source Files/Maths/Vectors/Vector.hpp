@@ -5,7 +5,7 @@
 
 namespace kmaths
 {
-	template<unsigned short N, typename T>
+	template<typename T, unsigned short N>
 	struct Vector
 	{
 	public:
@@ -16,10 +16,16 @@ namespace kmaths
 		constexpr Vector() noexcept
 		{}
 
-		template<unsigned short C, typename U>
-		constexpr Vector(const Vector<C, U>& other) noexcept
+		template< typename U, unsigned short C>
+		constexpr Vector(const Vector<U, C>& other) noexcept
 		{
 			*this = other;
+		}
+
+		template< typename U, unsigned short C>
+		constexpr Vector(Vector&& other) noexcept
+		{
+			*this = std::move(other);
 		}
 
 		constexpr Vector(const std::initializer_list<T> l) noexcept
@@ -112,8 +118,8 @@ namespace kmaths
 			return mag;
 		}
 
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr T DotProduct(const Vector<C, U>& other) const noexcept
+		template<typename U, unsigned short C>
+		USE_RESULT constexpr T DotProduct(const Vector<U, C>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
 			auto dp = static_cast<Type>(0);
@@ -156,8 +162,8 @@ namespace kmaths
 		}
 
 		// Calculates distance between two 3D objects
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr T Distance(const Vector<C, U>& v) const noexcept
+		template<typename U, unsigned short C>
+		USE_RESULT constexpr T Distance(const Vector<U, C>& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
 			return static_cast<Type>(distanceVec.Magnitude());
@@ -222,7 +228,7 @@ namespace kmaths
 		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
 			&& !std::is_unsigned_v<X>
 			&& N == 3,
-			Vector> CrossProduct(const Vector<N, X>& v) const noexcept
+			Vector> CrossProduct(const Vector<X, N>& v) const noexcept
 		{
 			return Vector(
 				(dimensions[1] * v[2] - dimensions[2] * v[1]),
@@ -249,8 +255,8 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr Vector operator+(const Vector<C, U>& other) const noexcept
+		template<typename U, unsigned short C>
+		USE_RESULT constexpr Vector operator+(const Vector<U, C>& other) const noexcept
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
@@ -262,8 +268,8 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr Vector operator-(const Vector<C, U>& other) const noexcept
+		template<typename U, unsigned short C>
+		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
@@ -275,8 +281,8 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr Vector operator*(const Vector<C, U>& other) const noexcept
+		template<typename U, unsigned short C>
+		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
@@ -288,8 +294,8 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<unsigned short C, typename U>
-		USE_RESULT constexpr Vector operator/(const Vector<C, U>& other) const noexcept
+		template<typename U, unsigned short C>
+		USE_RESULT constexpr Vector operator/(const Vector<U, C>& other) const noexcept
 		{
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
@@ -319,15 +325,15 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<unsigned short C, typename U>
-		constexpr Vector& operator+=(const Vector<C, U>& other) noexcept
+		template<typename U, unsigned short C>
+		constexpr Vector& operator+=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		template<unsigned short C, typename U>
-		constexpr Vector operator-=(const Vector<C, U>& other) noexcept
+		template<typename U, unsigned short C>
+		constexpr Vector operator-=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this - other;
 			return *this;
@@ -340,8 +346,8 @@ namespace kmaths
 			return *this;
 		}
 
-		template<unsigned short C, typename U>
-		constexpr Vector operator*=(const Vector<C, U>& other) noexcept
+		template<typename U, unsigned short C>
+		constexpr Vector operator*=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this * other;
 			return *this;
@@ -354,8 +360,8 @@ namespace kmaths
 			return *this;
 		}
 
-		template<unsigned short C, typename U>
-		constexpr Vector operator/=(const Vector<C, U>& other) noexcept
+		template<typename U, unsigned short C>
+		constexpr Vector operator/=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this / other;
 			return *this;
@@ -376,8 +382,8 @@ namespace kmaths
 			return !(*this == v);
 		}
 
-		template<unsigned short C, typename U>
-		constexpr Vector& operator=(const Vector<C, U>& other) noexcept
+		template<typename U, unsigned short C>
+		constexpr Vector& operator=(const Vector<U, C>& other) noexcept
 		{
 			constexpr auto size = (N < C) ? N : C;
 
@@ -387,8 +393,8 @@ namespace kmaths
 			return *this;
 		}
 
-		template<unsigned short C, typename U>
-		constexpr Vector& operator=(Vector<C, U>&& other) noexcept
+		template<typename U, unsigned short C>
+		constexpr Vector& operator=(Vector<U, C>&& other) noexcept
 		{
 			constexpr auto size = (N < C) ? N : C;
 
@@ -425,7 +431,7 @@ namespace kmaths
 			Vector> CrossProduct(const Vector& v) const noexcept
 			= delete;
 
-
+	private:
 		T dimensions[N]{};
 	};
 }

@@ -44,7 +44,9 @@ namespace kTest::maths
 		constexpr auto longLongToInt = Convert<int>(maxLongLong);
 
 		constexpr auto charToString_View = Convert<std::string_view>("YOLO");
-		//constexpr auto mat = Matrix2x2d();
+		constexpr int container[3][2] = { {1, 3}, {5, 6}, {} };
+		const auto d = &container[0][1];
+		constexpr auto mat = kmaths::IdentityMatrix<float, 2, 2>();
 		//constexpr auto vecToMat = Convert<Matrix2x2d>(5.0);
 		return false;
 	}

@@ -5,7 +5,7 @@
 namespace kmaths
 {
 	template<typename T>
-	using Vector4 = Vector<4, T>;
+	using Vector4 = Vector<T, 4>;
 
 	using Vector4s = Vector4 <   int    >; // signed integer
 	using Vector4f = Vector4 <  float   >; // floating point

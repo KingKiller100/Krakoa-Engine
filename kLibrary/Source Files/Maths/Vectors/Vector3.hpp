@@ -5,7 +5,7 @@
 namespace kmaths
 {
 	template<typename T>
-	using Vector3 = Vector<3, T>;
+	using Vector3 = Vector<T, 3>;
 
 	using Vector3s = Vector3 <   int    >; // signed integer
 	using Vector3f = Vector3 <  float   >; // floating point

@@ -25,8 +25,8 @@ namespace kTest::maths
 
 	bool VectorsTester::VectorTest()
 	{
-		auto vec2f = Vector<2, float>(4.f);
-		auto vec2d = Vector<2, double>{ 5, 12 };
+		auto vec2f = Vector<float, 2>(4.f);
+		auto vec2d = Vector<double, 2>{ 5, 12 };
 
 		auto res1 = (vec2f + vec2d);
 		VERIFY(res1.X() == 9.0 &&  res1.Y() == 16.0);
@@ -42,8 +42,8 @@ namespace kTest::maths
 		vec2f = vec2f.Normalize();
 		VERIFY(vec2f.X() == 0.707106769f && vec2f.Y() == 0.707106769f);
 
-		constexpr auto length1 = Vector<3, double>(41, 55, 67);
-		constexpr auto length2 = Vector< 3, double>(14, 55, 76);
+		constexpr auto length1 = Vector<double, 3>(41, 55, 67);
+		constexpr auto length2 = Vector<double, 3>(14, 55, 76);
 
 		const auto angle1 = AngleBetweenVectors(length1, length2);
 		const auto angle2 = AngleBetweenVectors(length1, length2, true);
@@ -55,15 +55,15 @@ namespace kTest::maths
 
 
 		// Currently constexpr supported functions
-		constexpr auto vec2s = Vector<2, int>(5, 12);
-		constexpr auto vec2s2 = Vector<2, int>(2);
-		constexpr Vector<3, int> copy = vec2s2;
+		constexpr auto vec2s = Vector<int, 2>(5, 12);
+		constexpr auto vec2s2 = Vector<int, 2>(2);
+		constexpr Vector<int, 3> copy = vec2s2;
 		constexpr auto dp = vec2s.DotProduct(vec2s2);
 		VERIFY(dp == 34);
 
-		constexpr auto vec3s1 = Vector<3, int>(1, 2, 3);
-		constexpr auto vec3s2 = Vector<3, int>(4, 5, 6);
-		constexpr auto vec3l = Vector<3, long>(7, 8, 9);
+		constexpr auto vec3s1 = Vector<int, 3>(1, 2, 3);
+		constexpr auto vec3s2 = Vector<int, 3>(4, 5, 6);
+		constexpr auto vec3l = Vector<long, 3>(7, 8, 9);
 
 		constexpr auto mag = vec3s1.MagnitudeSQ();
 		VERIFY(mag == 14);
@@ -84,18 +84,18 @@ namespace kTest::maths
 		VERIFY(crossP.X() == -3 && crossP.Y() == 6 && crossP.Z() == -3);
 		//const auto crossPFail = vec2s.CrossProduct(vec2s); // unable to compile due to not having only 3 axes
 
-		auto vec4u = Vector<4, unsigned>();
+		auto vec4u = Vector<unsigned, 4>();
 		constexpr char chars[] = { 'H', 'E', 'L', 'P', '\0' };
-		constexpr auto vec5c = Vector<5, char>(chars);
+		constexpr auto vec5c = Vector<char, 5>(chars);
 
 		const auto w = vec4u.W();
 
 		vec4u += vec3l;
 		vec4u -= vec2d;
 
-		constexpr auto vecULL = Vector<30, unsigned long long>(100);
+		constexpr auto vecULL = Vector<unsigned long long, 30>(100);
 		constexpr bool bools[] = { true, false, false, true, false, false, true };
-		constexpr auto vecBool = Vector<7, bool>(bools);
+		constexpr auto vecBool = Vector<bool, 7>(bools);
 		constexpr auto b6 = vecBool[6];
 
 		constexpr auto lhs = Vector2s(10, 5);

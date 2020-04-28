@@ -58,9 +58,12 @@ namespace kTest::Maths
 		constexpr auto mag = vec3s1.MagnitudeSQ();
 		VERIFY(mag == 14);
 
-		const auto angle1 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 });
-		auto angle2 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 }, true);
-		
+		constexpr auto length1 = Vector<3, double>{ 41, 55, 67 };
+		constexpr auto length2 = Vector<3, double>{ 14, 55, 76 };
+
+		const auto angle1 = AngleBetweenVectors(length1, length2);
+		const auto angle2 = AngleBetweenVectors(length1, length2, true);
+
 		VERIFY(angle2 == ToDegrees(angle1));
 		VERIFY(angle1 == ToRadians(angle2));
 
@@ -68,27 +71,27 @@ namespace kTest::Maths
 		constexpr auto y = vec3s1.Y();
 		constexpr auto z = vec3s1.Z();
 		//const auto wFail = vec3s1.W(); // unable to compile this line as vector3 do not have W axis
-		const auto perp = vec2d.Perpendicular();
+		constexpr auto length2D = Vector2d{ 7, 16 };
+		constexpr auto perp = length2D.Perpendicular();
 		VERIFY(static_cast<int>(perp.X()) == -16 && static_cast<int>(perp.Y()) == 7);
 		//const auto perpFail = vec3s1.Perpendicular(); // unable to compile due to having more than only 2 axes
-		const auto crossP = vec3s2.CrossProduct(vec3l);
+		constexpr auto crossP = vec3s2.CrossProduct(vec3l);
 		VERIFY(crossP.X() == -3 && crossP.Y() == 6 && crossP.Z() == -3);
 		//const auto crossPFail = vec2s.CrossProduct(vec2s); // unable to compile due to not having only 3 axes
 
 		auto vec4u = Vector<4, unsigned>{};
-		const auto vec5c = Vector<5, char>{ 'H', 'E', 'L', 'P', '\0' };
+		constexpr auto vec5c = Vector<5, char>{ 'H', 'E', 'L', 'P', '\0' };
 
 		const auto w = vec4u.W();
 
 		vec4u += vec3l;
 		vec4u -= vec2d;
 
-		const auto vecULL = Vector<30, unsigned long long>(100);
-		constexpr auto vecBool = Vector<7, bool>({true, false, false, true, false, false, true});
-
-		const auto& b6 = vecBool[6];
-
 		// Currently constexpr supported functions
+		constexpr auto vecULL = Vector<30, unsigned long long>(100);
+
+		constexpr auto vecBool = Vector<7, bool>{true, false, false, true, false, false, true};
+		constexpr auto b6 = vecBool[6];
 
 		constexpr Vector2s lhs = { 10, 5 };
 		constexpr Vector2s rhs = { 9, 15 };

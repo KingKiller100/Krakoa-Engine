@@ -43,14 +43,14 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
 	{
-		constexpr static T convertR2D = CAST(T, 360) / constants::TAU;
+		constexpr T convertR2D = CAST(T, 360) / constants::TAU;
 		return radians * convertR2D;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
 	{
-		constexpr static T convertD2R = CAST(T, constants::TAU) / 360;
+		constexpr auto convertD2R = CAST(T, constants::TAU) / 360;
 		return degrees * convertD2R;
 	}
 
@@ -139,7 +139,7 @@ namespace kmaths
 	}
 
 	template <typename T>
-	USE_RESULT inline constexpr T modulus(T num, T base) noexcept
+	USE_RESULT constexpr T modulus(T num, T base) noexcept
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{

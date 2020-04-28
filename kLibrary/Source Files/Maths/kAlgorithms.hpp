@@ -95,8 +95,10 @@ namespace kmaths
 						pow -= power;
 				}
 
+				const auto val = value;
+
 				for (auto i = 1u; i < pow; ++i)
-					value *= value;
+					value *= val;
 			}
 		}
 

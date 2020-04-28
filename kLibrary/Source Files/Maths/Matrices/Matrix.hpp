@@ -1,9 +1,7 @@
 ﻿#pragma once
 
-#include "../Vectors/Vector.hpp"
 #include "../kAlgorithms.hpp"
 
-#include <array>
 
 namespace kmaths
 {
@@ -22,7 +20,6 @@ namespace kmaths
 		static_assert(Rows > 0 && Columns > 0, "Must have at least one row and one column to construct a matrix");
 
 		using Type = T;
-		using Indices = std::array<Vector<Columns, Type>, Rows>;
 
 		constexpr Matrix() noexcept
 		{ }
@@ -37,11 +34,14 @@ namespace kmaths
 			*this = std::move(other);
 		}
 
-		explicit constexpr Matrix(const Indices& newIndices) noexcept
-			: elems(newIndices)
-		{}
+		explicit constexpr Matrix(const Type newIndices[Rows][Columns]) noexcept
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = newIndices[row][col];
+		}
 
-		explicit constexpr Matrix(const Vector<Columns, Type>& vec) noexcept
+		explicit constexpr Matrix(const Vector<Type, Columns>& vec) noexcept
 		{
 			for (auto row = 0; row < Rows; ++row)
 				elems[row][row] = vec[row];
@@ -54,7 +54,7 @@ namespace kmaths
 					elems[row][col] = std::forward<Type&&>(initialVal);
 		}
 
-		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list)
+		constexpr Matrix(const std::initializer_list<Vector<Type, Columns>>& list)
 		{
 			const auto size = list.size();
 
@@ -64,7 +64,12 @@ namespace kmaths
 			const auto first_iter = list.begin();
 
 			for (auto row = 0u; row < Rows; ++row)
-				elems[row] = *(first_iter + row);
+				for (auto col = 0u; col < Columns; ++col)
+				{
+					const auto ptr = (first_iter + row);
+					const auto val = (*ptr)[col];
+					elems[row][col] = val;
+				}
 		}
 
 		~Matrix()
@@ -337,7 +342,8 @@ namespace kmaths
 
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			return elems[0].GetPointerToData();
+			auto& first = (Type&)elems[0][0];
+			return std::addressof(first);
 		}
 
 		// Operators
@@ -345,7 +351,8 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] + other[row];
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = elems[row][col] + other[row][col];
 			return m;
 		}
 
@@ -353,7 +360,8 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] - other[row];
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = elems[row][col] - other[row][col];
 			return m;
 		}
 
@@ -397,7 +405,8 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] * scalar;
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = elems[row][col] * scalar;
 			return m;
 		}
 
@@ -406,7 +415,8 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] / scalar;
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = elems[row][col] / scalar;
 			return m;
 		}
 
@@ -436,16 +446,17 @@ namespace kmaths
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = -elems[row];
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = -elems[row][col];
 			return m;
 		}
 
-		USE_RESULT constexpr Vector<Columns, Type>& operator[](const size_t idx) noexcept
+		USE_RESULT constexpr decltype(auto) operator[](const size_t idx) noexcept
 		{
 			return elems[idx];
 		}
 
-		USE_RESULT constexpr const Vector<Columns, Type>& operator[](const size_t idx) const noexcept
+		USE_RESULT constexpr decltype(auto) operator[](const size_t idx) const noexcept
 		{
 			return elems[idx];
 		}
@@ -473,7 +484,7 @@ namespace kmaths
 			Matrix> Mirror() const noexcept
 			= delete;
 
-		// Deleted version of funtions (under certain conditions)
+		// Deleted version of functions (under certain conditions)
 		template<unsigned short R = Rows, unsigned short C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Type> Getdeterminant() const noexcept
@@ -572,7 +583,7 @@ namespace kmaths
 		}
 
 	private:
-		Indices elems{ {} };
+		Type elems[Rows][Columns]{ {} };
 	};
 
 	template<typename Type, unsigned short R, unsigned short C>

@@ -37,7 +37,7 @@ namespace kTest::maths
 			}
 		}
 
-		auto m2 = Matrix<float, 3, 2>(2);
+		constexpr auto m2 = Matrix<float, 3, 2>(2);
 		const auto m3 = m1 - m2;
 		const auto m4 = m1 / 10;
 		//const auto m5 = m1 / m2; // Cannot compile due to division not being possible between matrices
@@ -49,13 +49,13 @@ namespace kTest::maths
 
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
-		auto m12 = Matrix<int, 5, 5>();
-
-		m12[0] = Vector<5, int>{ 1, 2, 1, 0, 2 };
-		m12[1] = Vector<5, int>{ 4, 11, 8, 0, 1 };
-		m12[2] = Vector<5, int>{ 1, 6, 1, 0, 3 };
-		m12[3] = Vector<5, int>{ 0, 0, 0, 6, 5 };
-		m12[4] = Vector<5, int>{ 3, 5, 7, 6, 4 };
+		auto m12 = Matrix<int, 5, 5>{
+			{ 1, 2, 1, 0, 2 },
+			{ 4, 11, 8, 0, 1 },
+			{ 1, 6, 1, 0, 3 },
+			{ 0, 0, 0, 6, 5 },
+			{ 3, 5, 7, 6, 4 }
+		};
 
 		const auto determinantM12 = m12.GetDeterminant();
 		VERIFY(determinantM12 == -96);
@@ -64,7 +64,7 @@ namespace kTest::maths
 			for (auto col = 0u; col < m12.GetColumns(); ++col)
 				VERIFY(transposedM9[col][row] == m12[row][col]);
 
-		constexpr auto m13 = GetTransformIdentity<float>();
+		const auto m13 = IdentityMatrix<float, 4, 4>();
 		for (auto r = 0u; r < m13.GetRows(); ++r)
 			for (auto c = 0u; c < m13.GetColumns(); ++c)
 				VERIFY(m13[r][c] == (r == c ? 1 : 0));

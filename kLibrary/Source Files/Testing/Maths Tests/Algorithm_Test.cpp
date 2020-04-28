@@ -45,8 +45,9 @@ namespace kTest::maths
 
 		constexpr auto charToString_View = Convert<std::string_view>("YOLO");
 		constexpr int container[3][2] = { {1, 3}, {5, 6}, {} };
-		const auto d = &container[0][1];
-		constexpr auto mat = kmaths::IdentityMatrix<float, 2, 2>();
+		auto& d = container[0];
+		auto& i = d[0];
+		const auto mat = kmaths::IdentityMatrix<float, 2, 2>();
 		//constexpr auto vecToMat = Convert<Matrix2x2d>(5.0);
 		return false;
 	}

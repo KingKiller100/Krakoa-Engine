@@ -1,19 +1,20 @@
-#pragma once
+﻿#pragma once
 #include "../Tester.hpp"
+
 
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	class MatricesTester : public Tester
+	class AlgorithmsTester : public Tester
 	{
 	public:
-		MatricesTester();
-		~MatricesTester() override;
+		AlgorithmsTester();
+		~AlgorithmsTester() override;
 
 	private:
 		void Test() override;
 
-		bool DynamicMatrixTest();
+		bool ConvertTest();
 	};
 }
 #endif

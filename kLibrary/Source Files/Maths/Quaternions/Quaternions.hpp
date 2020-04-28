@@ -19,7 +19,7 @@
 
 #include "../../HelperMacros.hpp"
 #include "../Vectors/Vector3.hpp"
-#include "../Matrices/Matrix4x4.hpp"
+#include "../Matrices/TransformMatrix.hpp"
 
 #include <limits>
 
@@ -181,7 +181,7 @@ namespace kmaths
 		 *		Object's current position
 		 */
 		template<typename T2, typename T3>
-		constexpr void CalculateTransformMatrix(Matrix4x4<T2>& outTransformMatrix, const Vector3<T3>& pos)
+		constexpr void CalculateTransformMatrix(TransformMatrix<T2>& outTransformMatrix, const Vector3<T3>& pos)
 		{
 			outTransformMatrix[0][0] = 1 - 2 * (j*j - k*k);
 			outTransformMatrix[0][1] = 2 * (i*j - r*k);

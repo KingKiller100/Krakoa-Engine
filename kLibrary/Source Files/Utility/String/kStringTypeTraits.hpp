@@ -20,15 +20,13 @@ namespace klib::type_trait
 	};
 
 	template<typename T>
-	struct TrueConstant : BooleanConstant<true, T>
-	{};
+	using TrueConstant = BooleanConstant<true, T>;
 
 	template<typename T>
-	struct FalseConstant : BooleanConstant<false, T>
-	{};
+	using FalseConstant = BooleanConstant<false, T>;
 
-	template<typename CharType>
-	struct Is_CharType : FalseConstant<CharType>
+	template<typename T>
+	struct Is_CharType : FalseConstant<T>
 	{};
 
 	template<>

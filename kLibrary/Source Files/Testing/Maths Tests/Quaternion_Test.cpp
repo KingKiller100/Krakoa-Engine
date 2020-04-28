@@ -4,7 +4,7 @@
 #include "../../Maths/Quaternions/Quaternions.hpp"
 
 #ifdef TESTING_ENABLED
-namespace kTest::Maths
+namespace kTest::maths
 {
 	QuaternionsTester::QuaternionsTester()
 		: Tester("Quaternions Test")
@@ -24,10 +24,10 @@ namespace kTest::Maths
 
 		auto transformation = Matrix4x4d();
 
-		transformation[0] = Vector<4, double>{1, 2, 1, 2};
-		transformation[1] = Vector<4, double>{4, 11, 8, 4};
-		transformation[2] = Vector<4, double>{1, 6, 1, 6};
-		transformation[3] = Vector<4, double>{1, 6, 1, 8};
+		transformation[0] = {1, 2, 1, 2};
+		transformation[1] = {4, 11, 8, 4};
+		transformation[2] = {1, 6, 1, 6};
+		transformation[3] = {1, 6, 1, 8};
 
 		Quaterniond orientation(1,2,3,4);
 		orientation.CalculateTransformMatrix(transformation, position);

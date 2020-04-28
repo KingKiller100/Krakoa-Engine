@@ -21,6 +21,12 @@ namespace kmaths
 		constexpr Matrix() noexcept
 		{ }
 
+		explicit constexpr Matrix(const typename Indices::value_type vec) noexcept
+		{
+			for (auto row = 0; row < Rows; ++row)
+				elems[row][row] = vec[row];
+		}
+
 		explicit constexpr Matrix(const Indices newIndices) noexcept
 			: elems(newIndices)
 		{}

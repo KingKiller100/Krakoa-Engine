@@ -16,6 +16,12 @@ namespace kmaths
 		constexpr Vector() noexcept
 		{}
 
+		template<unsigned short C, typename U>
+		constexpr Vector(const Vector<C, U>& other) noexcept
+		{
+			*this = other;
+		}
+
 		constexpr Vector(const std::initializer_list<T> l) noexcept
 		{
 			const auto first_iter = l.begin();
@@ -180,7 +186,7 @@ namespace kmaths
 		// Sets all values of the vector to zero
 		constexpr void Zero() noexcept
 		{
-			for (size_t i = 0; i < N; ++i)
+			for (auto i = 0; i < N; ++i)
 				dimensions[i] = CAST(Type, 0);
 		}
 
@@ -192,6 +198,7 @@ namespace kmaths
 			return true;
 		}
 
+		// Compilers earlier than C++20 will not work in constexpr
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
 			Type& first = (Type)dimensions[0];
@@ -204,11 +211,11 @@ namespace kmaths
 		}
 
 		template<typename U = Type>
-		USE_RESULT constexpr inline std::enable_if_t<!std::is_unsigned_v<U>
+		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
 			&& N == 2,
-			Vector> Perpendicular() const
+			Vector> Perpendicular() const noexcept
 		{
-			return Vector(-Y(), X());
+			return Vector(-dimensions[1], dimensions[0]);
 		}
 
 		template<typename X, typename U = T>
@@ -217,9 +224,11 @@ namespace kmaths
 			&& N == 3,
 			Vector> CrossProduct(const Vector<N, X>& v) const noexcept
 		{
-			return Vector((this->Y() * v.Z() - this->Z() * v.Y()),
-				(this->Z() * v.X() - this->X() * v.Z()),
-				(this->X() * v.Y() - this->Y() * v.X()));
+			return Vector(
+				(dimensions[1] * v[2] - dimensions[2] * v[1]),
+				(dimensions[2] * v[0] - dimensions[0] * v[2]),
+				(dimensions[0] * v[1] - dimensions[1] * v[0])
+			);
 		}
 
 		USE_RESULT constexpr Type& operator[](const size_t index)
@@ -352,17 +361,6 @@ namespace kmaths
 			return *this;
 		}
 
-		template<unsigned short C, typename U>
-		Vector& operator=(const Vector<C, U>& other) noexcept
-		{
-			const auto size = (N < C) ? N : C;
-
-			for (auto i = size_t(0); i < size; ++i)
-				dimensions[i] = static_cast<Type>(other[i]);
-
-			return *this;
-		}
-
 		// bool operator == returns true if both Vector values are equal
 		USE_RESULT constexpr bool operator==(const Vector& v) const
 		{
@@ -376,6 +374,28 @@ namespace kmaths
 		USE_RESULT constexpr bool operator!=(const Vector& v) const
 		{
 			return !(*this == v);
+		}
+
+		template<unsigned short C, typename U>
+		constexpr Vector& operator=(const Vector<C, U>& other) noexcept
+		{
+			constexpr auto size = (N < C) ? N : C;
+
+			for (auto i = 0; i < size; ++i)
+				dimensions[i] = static_cast<Type>(other[i]);
+
+			return *this;
+		}
+
+		template<unsigned short C, typename U>
+		constexpr Vector& operator=(Vector<C, U>&& other) noexcept
+		{
+			constexpr auto size = (N < C) ? N : C;
+
+			for (auto i = 0; i < size; ++i)
+				dimensions[i] = std::move(other[i]);
+
+			return *this;
 		}
 
 		// Deleted version of functions (under certain circumstances
@@ -405,7 +425,7 @@ namespace kmaths
 			Vector> CrossProduct(const Vector& v) const noexcept
 			= delete;
 
-	private:
+
 		T dimensions[N]{};
 	};
 }

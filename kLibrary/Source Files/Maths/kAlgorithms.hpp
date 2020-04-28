@@ -9,9 +9,22 @@
 namespace kmaths
 {
 	template<typename DestType, typename SourceType>
-	USE_RESULT constexpr DestType ToType(const SourceType&& source)
+	USE_RESULT constexpr DestType Convert(SourceType&& source)
 	{
-		return CAST(DestType, source);
+		if _CONSTEXPR_IF(std::is_arithmetic_v<DestType>)
+		{
+			constexpr auto max = std::numeric_limits<DestType>::max();
+			constexpr auto min = std::numeric_limits<DestType>::min();
+
+			if (source > max)
+				return max;
+			else if (source < min)
+				return min;
+
+			return DestType(source);
+		}
+
+		return DestType(std::forward<SourceType&&>(source));
 	}
 
 	template<typename T1, typename T2>

@@ -5,7 +5,7 @@
 #include "../../Maths/Matrices/PredefinedMatrices.hpp"
 
 #ifdef TESTING_ENABLED
-namespace kTest::Maths
+namespace kTest::maths
 {
 	using namespace kmaths;
 

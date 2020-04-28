@@ -3,7 +3,7 @@
 
 
 #ifdef TESTING_ENABLED
-namespace kTest::Maths
+namespace kTest::maths
 {
 	class VectorsTester : public Tester
 	{

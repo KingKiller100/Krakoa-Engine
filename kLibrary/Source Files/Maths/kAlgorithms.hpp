@@ -6,6 +6,14 @@
 
 #include <cmath>
 
+#ifdef max
+#	undef max
+#endif
+
+#ifdef min
+#	undef min
+#endif
+
 namespace kmaths
 {
 	template<typename DestType, typename SourceType>
@@ -30,13 +38,70 @@ namespace kmaths
 	template<typename T1, typename T2>
 	USE_RESULT constexpr T1 Max(const T1& lhs, const T2& rhs) noexcept
 	{
-		return lhs > rhs ? lhs : rhs;
+		return lhs > rhs ? lhs : (T1)rhs;
 	}
 
 	template<typename T1, typename T2>
 	USE_RESULT constexpr T1 Min(const T1& lhs, const T2& rhs) noexcept
 	{
-		return lhs < rhs ? lhs : rhs;
+		return lhs < rhs ? lhs : (T1)rhs;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr T PowerOf(T base, T power) noexcept(std::is_arithmetic_v<T>)
+	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return CAST(T, pow(base, power));
+#else
+		T value = 1;
+
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		{
+			if (power >= 1)
+			{
+				value = base;
+				for (auto i = 1u; i < power; ++i)
+					value *= base;
+			}
+			else if (power == 1)
+			{
+				return base;
+			}
+			else
+			{
+				value = 0;
+			}
+		}
+		else
+		{
+			if (int(power) == power)
+			{
+				if (power == 0)
+					return value;
+
+				if (power == 1)
+					return base;
+
+				if (power >= 1)
+					value = base;
+				else
+					value = CAST(T, 1) / base;
+
+				auto pow = power;
+
+				if (power < 0)
+				{
+					for (auto i = 0; i < 2; ++i)
+						pow -= power;
+				}
+
+				for (auto i = 1u; i < pow; ++i)
+					value *= value;
+			}
+		}
+
+		return value;
+#endif
 	}
 
 	template<typename T>
@@ -88,12 +153,6 @@ namespace kmaths
 		const T remappedProgress = remappedMin + remappedMax * actualProgress;
 
 		return remappedProgress;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
-	{
-		return CAST(T, pow(base, power));
 	}
 
 	template<typename T>
@@ -172,3 +231,5 @@ namespace kmaths
 		return rem < 0 ? rem + base : rem;
 	}
 }
+
+

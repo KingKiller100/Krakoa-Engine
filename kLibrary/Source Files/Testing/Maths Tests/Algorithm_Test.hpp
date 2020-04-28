@@ -14,7 +14,10 @@ namespace kTest::maths
 	private:
 		void Test() override;
 
-		bool ConvertTest();
+		bool ConversionTest();
+		bool MinMaxTest();
+		bool RoundingTest();
+		bool PowerOfTest();
 	};
 }
 #endif

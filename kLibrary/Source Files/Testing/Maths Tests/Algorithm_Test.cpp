@@ -27,6 +27,9 @@ namespace kTest::maths
 	void AlgorithmsTester::Test()
 	{
 		VERIFY(ConversionTest() == true);
+		VERIFY(MinMaxTest() == true);
+		VERIFY(RoundingTest() == true);
+		VERIFY(PowerOfTest() == true);
 	}
 
 	bool AlgorithmsTester::ConversionTest()
@@ -34,7 +37,6 @@ namespace kTest::maths
 		constexpr auto num = 300;
 		constexpr auto maxInt = std::numeric_limits<int>::max();
 		constexpr auto maxLongLong = std::numeric_limits<long long>::max();
-		constexpr auto longLongNum = 10ll + maxInt;
 		constexpr auto longDoubleNum = 25.672839239574873l;
 
 		// Primitives
@@ -52,11 +54,18 @@ namespace kTest::maths
 		// Non-primitives
 		constexpr auto charToString_View = Convert<std::string_view>("YOLO");
 		VERIFY(charToString_View.compare("YOLO"));
+
 		constexpr int container[3][2] = { {1, 3}, {5, 6}, {0, 5} };
 		constexpr auto cont = Convert<Matrix3x2s>(container);
-		constexpr auto vec = kmaths::Vector2f(5);
-		const auto mat = kmaths::IdentityMatrix<float, 2, 2>();
-		constexpr auto vecToMat = Convert<Matrix2x2f>(vec);
+		constexpr auto vecToMat = Convert<Matrix2x2f>(kmaths::Vector2f(5));
+		for (auto row = 0; row < vecToMat.GetRows(); ++row)
+			for (auto col = 0; col < vecToMat.GetColumns(); ++col)
+				VERIFY(vecToMat[row][col] == (
+				(row == col) 
+					? 1 
+					: 0)
+				);
+		
 		const auto doubleToVec = Convert<Vector4d>(5.0);
 		VERIFY(doubleToVec.X() == 5.0 && doubleToVec.Y() == 5.0);
 
@@ -65,6 +74,38 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::MinMaxTest()
 	{
+		constexpr auto big = 1000LL;
+		constexpr auto small = 2.55l;
+
+		constexpr auto biggest = Max(big, small);
+		VERIFY(biggest == big);
+		constexpr auto biggestDouble = Max(small, big);
+		VERIFY(biggestDouble == CAST(decltype(small), big));
+
+		constexpr auto smallest = Min(small, big);
+		VERIFY(smallest == small);
+		constexpr auto smallestLongLong = Min(big, small);
+		VERIFY(smallestLongLong == CAST(decltype(big), small));
+		
+		return success;
+	}
+
+	bool AlgorithmsTester::RoundingTest()
+	{
+		constexpr auto accuracy = 3;
+		constexpr auto value = 1.f / 64;
+
+		constexpr auto rounded = Round(value, accuracy);
+
+		return success;
+	}
+
+	bool AlgorithmsTester::PowerOfTest()
+	{
+		constexpr auto power = -3.0;
+		constexpr auto num = 10.0;
+
+		const auto value = PowerOf<double>(num, power);
 
 		return success;
 	}

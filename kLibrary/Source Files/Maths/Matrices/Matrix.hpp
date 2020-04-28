@@ -20,6 +20,7 @@ namespace kmaths
 		static_assert(Rows > 0 && Columns > 0, "Must have at least one row and one column to construct a matrix");
 
 		using Type = T;
+		using Indices = Vector<T, Columns>;
 
 		constexpr Matrix() noexcept
 		{ }
@@ -583,7 +584,9 @@ namespace kmaths
 		}
 
 	private:
-		Type elems[Rows][Columns]{ {} };
+		
+
+		Indices elems[Rows]{ {} };
 	};
 
 	template<typename Type, unsigned short R, unsigned short C>

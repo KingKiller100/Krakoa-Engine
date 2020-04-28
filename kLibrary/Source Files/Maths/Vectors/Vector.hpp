@@ -40,7 +40,8 @@ namespace kmaths
 
 		explicit constexpr Vector(const T values[N])
 		{
-			memcpy(dimensions, values, sizeof(dimensions));
+			for (auto i = 0; i < N; ++i)
+				dimensions[i] = values[i];
 		}
 
 		USE_RESULT constexpr const Type& X() const noexcept
@@ -157,14 +158,19 @@ namespace kmaths
 		}
 
 		// Returns vector times by -1 - does not reassign values (except w element)
-		constexpr void ReverseVector() noexcept
+		USE_RESULT constexpr Vector ReverseVector() const noexcept
 		{
-			for (size_t i = 0; i < N; ++i)
-				dimensions[i] *= -1;
+			T copy[N]{ 0 };
+			for (auto i = 0; i < N; ++i)
+				copy[i] = dimensions[i] * -1;
+			return Vector(copy);
 		}
 
 		USE_RESULT constexpr Vector Inverse() const noexcept
 		{
+			if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+				return *this;
+
 			T copy[N]{ 0 };
 			for (auto i = 0; i < N; ++i)
 				copy[i] = (static_cast<Type>(1) / dimensions[i]);

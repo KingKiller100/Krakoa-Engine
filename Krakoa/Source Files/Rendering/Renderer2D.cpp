@@ -251,7 +251,7 @@ namespace krakoa::graphics
 			switch (i) {
 			case 0: // bottom left
 			{
-				size.ReverseVector();
+				size = size.ReverseVector();
 			}
 			break;
 			case 1: // bottom right

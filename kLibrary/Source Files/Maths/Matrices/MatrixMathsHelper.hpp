@@ -79,8 +79,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T angle, const Vector3<T>& v) noexcept
 	{
-		const T cosA = std::cos(kmaths::DegreesToRadians(angle));
-		const T sinA = std::sin(kmaths::DegreesToRadians(angle));
+		const T cosA = std::cos(kmaths::ToRadians(angle));
+		const T sinA = std::sin(kmaths::ToRadians(angle));
 
 		Vector3<T> axis = v.Normalize();
 		Vector3<T> temp = axis * (CAST(T, 1) - cosA);

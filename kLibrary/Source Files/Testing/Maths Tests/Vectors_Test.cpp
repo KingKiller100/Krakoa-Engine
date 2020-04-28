@@ -88,6 +88,21 @@ namespace kTest::Maths
 
 		const auto& b6 = vecBool[6];
 
+		// Currently constexpr supported functions
+
+		constexpr Vector2s lhs = { 10, 5 };
+		constexpr Vector2s rhs = { 9, 15 };
+
+		constexpr auto res = lhs + rhs;
+		constexpr auto res2 = lhs - rhs;
+		constexpr auto res3 = lhs * rhs;
+		constexpr auto res4 = lhs / rhs;
+		constexpr auto res5 = lhs.ReverseVector();
+		constexpr auto res6 = lhs.Inverse();
+		constexpr auto res7 = lhs.IsZero();
+		constexpr auto res8 = lhs.Perpendicular();
+		constexpr auto res9 = lhs != rhs;
+
 		return success;
 	}
 }

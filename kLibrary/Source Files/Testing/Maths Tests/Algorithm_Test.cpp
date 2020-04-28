@@ -92,8 +92,8 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::RoundingTest()
 	{
-		constexpr auto accuracy = 5;
-		constexpr auto value = 1.f / 64;
+		constexpr auto accuracy = 4;
+		constexpr auto value = 1.0 / 64;
 
 		constexpr auto rounded = Round(value, accuracy);
 
@@ -102,13 +102,12 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::PowerOfTest()
 	{
-		constexpr auto power = -2.0;
-		constexpr auto num = 2.0;
+		constexpr auto power = 2.0;
+		constexpr auto num = 0.1;
 
-		const auto value = PowerOf<float>(num, power);
+		const auto value = PowerOf<long double>(num, power);
 
 		return success;
 	}
-
 }
 #endif

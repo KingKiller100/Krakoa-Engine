@@ -70,6 +70,7 @@ namespace kTest::maths
 
 		VERIFY(angle2 == ToDegrees(angle1));
 		VERIFY(angle1 == ToRadians(angle2));
+
 		constexpr auto x = vec3s1.X();
 		constexpr auto y = vec3s1.Y();
 		constexpr auto z = vec3s1.Z();

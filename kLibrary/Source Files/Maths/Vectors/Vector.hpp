@@ -21,7 +21,7 @@ namespace kmaths
 			const auto first_iter = l.begin();
 			const auto loops = l.size() < N ? l.size() : N;
 			for (auto i = 0; i < loops; ++i)
-				dimensions[i] =  first_iter[i];
+				dimensions[i] = first_iter[i];
 		}
 
 		explicit constexpr Vector(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
@@ -77,7 +77,7 @@ namespace kmaths
 			return dimensions[2];
 		}
 
-		
+
 		template<typename U = Type>
 		USE_RESULT constexpr std::enable_if_t<N >= 4, const U&> W() const noexcept
 		{
@@ -211,9 +211,9 @@ namespace kmaths
 			&& N == 3,
 			Vector> CrossProduct(const Vector<N, X>& v) const noexcept
 		{
-			return Vector( (this->Y() * v.Z() - this->Z() * v.Y()),
-				           (this->Z() * v.X() - this->X() * v.Z()),
-				           (this->X() * v.Y() - this->Y() * v.X()) );
+			return Vector((this->Y() * v.Z() - this->Z() * v.Y()),
+				(this->Z() * v.X() - this->X() * v.Z()),
+				(this->X() * v.Y() - this->Y() * v.X()));
 		}
 
 		USE_RESULT constexpr Type& operator[](const size_t index)
@@ -279,7 +279,7 @@ namespace kmaths
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.NumberOfDimensions() > i) 
+				copy[i] = (other.NumberOfDimensions() > i)
 					? dimensions[i] / static_cast<Type>(other[i])
 					: dimensions[i];
 			}

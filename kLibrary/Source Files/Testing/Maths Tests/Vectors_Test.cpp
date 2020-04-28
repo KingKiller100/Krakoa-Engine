@@ -26,9 +26,9 @@ namespace kTest::Maths
 	bool VectorsTester::VectorTest()
 	{
 		auto vec2f = Vector<2, float>(4.f);
-		auto vec2d = Vector<2, double>({ 5, 12 });
+		auto vec2d = Vector<2, double>{ 5, 12 };
 
-		auto res1 = vec2f + vec2d;
+		auto res1 = (vec2f + vec2d);
 		VERIFY(res1.X() == 9.0 &&  res1.Y() == 16.0);
 		res1 = vec2f - vec2d;
 		VERIFY(res1.X() == -1.0 &&  res1.Y() == -8.0);
@@ -41,35 +41,39 @@ namespace kTest::Maths
 		VERIFY(distance == 8.06225777f);
 		vec2f = vec2f.Normalize();
 		VERIFY(vec2f.X() == 0.707106769f && vec2f.Y() == 0.707106769f);
-		const auto vec2s = Vector<2, int>(2);
-		const auto dp = vec2s.DotProduct(vec2d);
+		constexpr auto vec2s = Vector<2, int>(5, 12);
+		constexpr auto vec2s2 = Vector<2, int>(2);
+		constexpr auto dp = vec2s.DotProduct(vec2s2);
 		VERIFY(dp == 34);
 
-		vec2d /= vec2f;
+		vec2d = vec2f;
 		vec2f += vec2d;
 		vec2f -= vec2d;
 		vec2f *= vec2d;
 
-		const auto vec3s1 = Vector<3, int>{ 1,2,3 };
-		const auto vec3s2 = Vector<3, int>{ 4,5,6 };
-		const auto vec3l = Vector<3, long>{ 7,8,9 };
+		constexpr auto vec3s1 = Vector<3, int>{ 1,2,3 };
+		constexpr auto vec3s2 = Vector<3, int>{ 4,5,6 };
+		constexpr auto vec3l = Vector<3, long>{ 7,8,9 };
 
-		auto angle1 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 });
+		constexpr auto mag = vec3s1.MagnitudeSQ();
+		VERIFY(mag == 14);
+
+		const auto angle1 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 });
 		auto angle2 = AngleBetweenVectors(Vector<3, double>{ 41, 55, 67 }, Vector<3, double>{ 14, 55, 76 }, true);
 		
-		VERIFY(angle2 == RadiansToDegrees(angle1));
-		VERIFY(angle1 == DegreesToRadians(angle2));
+		VERIFY(angle2 == ToDegrees(angle1));
+		VERIFY(angle1 == ToRadians(angle2));
 
-		const auto x = vec3s1.X();
-		const auto y = vec3s1.Y();
-		const auto z = vec3s1.Z();
-		//const auto wFail = vec3.W(); unable to compile this line as vector3 do not have W axis
+		constexpr auto x = vec3s1.X();
+		constexpr auto y = vec3s1.Y();
+		constexpr auto z = vec3s1.Z();
+		//const auto wFail = vec3s1.W(); // unable to compile this line as vector3 do not have W axis
 		const auto perp = vec2d.Perpendicular();
 		VERIFY(static_cast<int>(perp.X()) == -16 && static_cast<int>(perp.Y()) == 7);
-		//const auto perpFail = vec3.Perpendicular(); unable to compile due to having more than only 2 axes
+		//const auto perpFail = vec3s1.Perpendicular(); // unable to compile due to having more than only 2 axes
 		const auto crossP = vec3s2.CrossProduct(vec3l);
 		VERIFY(crossP.X() == -3 && crossP.Y() == 6 && crossP.Z() == -3);
-		//const auto crossPFail = vec2a.CrossProduct(vec2b); unable to compile due to not having only 3 axes
+		//const auto crossPFail = vec2s.CrossProduct(vec2s); // unable to compile due to not having only 3 axes
 
 		auto vec4u = Vector<4, unsigned>{};
 		const auto vec5c = Vector<5, char>{ 'H', 'E', 'L', 'P', '\0' };
@@ -80,9 +84,9 @@ namespace kTest::Maths
 		vec4u -= vec2d;
 
 		const auto vecULL = Vector<30, unsigned long long>(100);
-		const auto vecBool = Vector<7, bool>({true, false, false, true, false, false, true});
+		constexpr auto vecBool = Vector<7, bool>({true, false, false, true, false, false, true});
 
-		const auto b6 = vecBool[6];
+		const auto& b6 = vecBool[6];
 
 		return success;
 	}

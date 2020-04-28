@@ -41,6 +41,6 @@ namespace kmaths
 	USE_RESULT constexpr T AngleBetweenVectors(const Vector<N, T>& v, const Vector<N, T>& u, const bool inDegrees = false) noexcept
 	{
 		const T angle = u.DotProduct(v) / (v.Magnitude() * u.Magnitude());
-		return inDegrees ? RadiansToDegrees(acos(angle)) : acos(angle);
+		return inDegrees ? ToDegrees(acos(angle)) : acos(angle);
 	}
 }

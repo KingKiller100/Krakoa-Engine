@@ -4,8 +4,6 @@
 
 namespace kmaths
 {
-	
-
 	template<typename T>
 	using Vector2 = Vector<2, T>;
 

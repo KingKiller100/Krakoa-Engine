@@ -8,7 +8,7 @@
 
 namespace kmaths
 {
-	template<typename SourceType, typename DestType>
+	template<typename DestType, typename SourceType>
 	USE_RESULT constexpr DestType ToType(const SourceType&& source)
 	{
 		return CAST(DestType, source);
@@ -27,7 +27,7 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Round(const T value, const unsigned short decimalPoints) noexcept
+	USE_RESULT constexpr T Round(const T value, const unsigned char decimalPoints) noexcept
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 			return value;
@@ -41,14 +41,14 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T RadiansToDegrees(const T radians) noexcept
+	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
 	{
 		constexpr static T convertR2D = CAST(T, 360) / constants::TAU;
 		return radians * convertR2D;
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T DegreesToRadians(const T degrees) noexcept
+	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
 	{
 		constexpr static T convertD2R = CAST(T, constants::TAU) / 360;
 		return degrees * convertD2R;
@@ -107,8 +107,8 @@ namespace kmaths
 	{
 		t = Clamp<T>(t, tmin, tmax);
 
-		t = t - tmin;
-		t = t / (tmax - tmin);
+		t -= tmin;
+		t /= (tmax - tmin);
 
 		return lerpClampled<T>(a, b, t);
 	}

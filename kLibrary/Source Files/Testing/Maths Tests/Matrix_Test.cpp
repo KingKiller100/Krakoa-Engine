@@ -25,7 +25,7 @@ namespace kTest::maths
 	bool MatricesTester::DynamicMatrixTest()
 	{
 		constexpr auto m0 = Matrix<float, 2, 3>(1);
-		auto m1 = Matrix<float, 3, 2>(1);
+		constexpr auto m1 = Matrix<float, 3, 2>(1);
 		//m1.Identity(); Cannot compile since function is only usable for square matrix
 		//m1.Inverse();	 Cannot compile since function is only usable for square matrix
 
@@ -37,12 +37,12 @@ namespace kTest::maths
 			}
 		}
 
-		constexpr auto m2 = Matrix<float, 3, 2>(2);
+		auto m2 = Matrix<float, 3, 2>(2);
 		const auto m3 = m1 - m2;
 		const auto m4 = m1 / 10;
 		//const auto m5 = m1 / m2; // Cannot compile due to division not being possible between matrices
 		const auto m6 = m0 * m2;
-		const auto m7 = m1 += m2;
+		const auto m7 = m2 += m1;
 
 		auto m8 = Matrix<float, 3, 3>(1);
 		auto m9 = Matrix<float, 3, 10>(2);
@@ -64,7 +64,7 @@ namespace kTest::maths
 			for (auto col = 0u; col < m12.GetColumns(); ++col)
 				VERIFY(transposedM9[col][row] == m12[row][col]);
 
-		const auto m13 = IdentityMatrix<float, 4, 4>();
+		constexpr auto m13 = IdentityMatrix<float, 4, 4>();
 		for (auto r = 0u; r < m13.GetRows(); ++r)
 			for (auto c = 0u; c < m13.GetColumns(); ++c)
 				VERIFY(m13[r][c] == (r == c ? 1 : 0));

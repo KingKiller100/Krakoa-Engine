@@ -17,22 +17,19 @@ namespace kTest::maths
 	{
 		using namespace kmaths;
 
-		Vector3f position;
-		
-		for (auto i = 0u; i < position.NumberOfDimensions(); ++i)
-			position[i] = CAST(float, (i + 1) * 2);
+		constexpr Vector3f position{ 2, 4, 6 };
 
-		auto transformation = Matrix4x4d();
+		constexpr auto transformation = Matrix4x4f{
+			{1, 2, 1, 2},
+			{4, 11, 8, 4},
+			{1, 6, 1, 6},
+			{1, 6, 1, 8}
+		};
 
-		transformation[0] = {1, 2, 1, 2};
-		transformation[1] = {4, 11, 8, 4};
-		transformation[2] = {1, 6, 1, 6};
-		transformation[3] = {1, 6, 1, 8};
+		constexpr Quaternionf orientation(1, 2, 3, 4);
+		constexpr auto ans = orientation.CalculateTransformMatrix(position);
 
-		Quaterniond orientation(1,2,3,4);
-		orientation.CalculateTransformMatrix(transformation, position);
-		
-		
+
 
 	}
 }

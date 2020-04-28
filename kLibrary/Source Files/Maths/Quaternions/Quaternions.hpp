@@ -126,7 +126,7 @@ namespace kmaths
 		* \param[in] scale
 		*		Additional scale of the vector
 		*/
-		constexpr void addScaledVector(const Vector3<T>& vector, T scale) noexcept
+		constexpr void AddScaledVector(const Vector3<T>& vector, T scale) noexcept
 		{
 			Quaternion q(0,
 				vector.X() * scale,
@@ -148,7 +148,7 @@ namespace kmaths
 		* \param[i] vector 
 		*		The 3D vector to rotate by
 		*/
-		void rotateByVector(const Vector3<T>& vector)
+		void RotateByVector(const Vector3<T>& vector)
 		{
 			Quaternion q(0, vector.X(), vector.Y(), vector.Z());
 			(*this) *= q;
@@ -175,33 +175,32 @@ namespace kmaths
 		/**
 		 * \brief
 		 *		Calculates the new value for the given matrix transformation
-		 * \param[out] outTransformMatrix
-		 *		Matrix transformation
 		 * \param[in] pos
 		 *		Object's current position
 		 */
-		template<typename T2, typename T3>
-		constexpr void CalculateTransformMatrix(TransformMatrix<T2>& outTransformMatrix, const Vector3<T3>& pos)
+		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& pos) const
 		{
-			outTransformMatrix[0][0] = 1 - 2 * (j*j - k*k);
-			outTransformMatrix[0][1] = 2 * (i*j - r*k);
-			outTransformMatrix[0][2] = 2 * (i*k + r*j);
-			outTransformMatrix[0][3] = 0;
+			TransformMatrix<T> mat;
+			mat[0][0] = 1 - 2 * (j * j - k * k);
+			mat[0][1] = 2 * (i * j - r * k);
+			mat[0][2] = 2 * (i * k + r * j);
+			mat[0][3] = 0;
 
-			outTransformMatrix[1][0] = 2 * (i * j + r*k);
-			outTransformMatrix[1][1] = 1 - 2 * (i*i - k*k);
-			outTransformMatrix[1][2] = 2 * (j*k - r*i);
-			outTransformMatrix[1][3] = 0;
+			mat[1][0] = 2 * (i * j + r * k);
+			mat[1][1] = 1 - 2 * (i * i - k * k);
+			mat[1][2] = 2 * (j * k - r * i);
+			mat[1][3] = 0;
 
-			outTransformMatrix[2][0] = 2 * (i*k - r*j);
-			outTransformMatrix[2][1] = 2 * (j*k + r*i);
-			outTransformMatrix[2][2] = 1 - 2 * (i*i - j*j);
-			outTransformMatrix[2][3] = 0;
+			mat[2][0] = 2 * (i * k - r * j);
+			mat[2][1] = 2 * (j * k + r * i);
+			mat[2][2] = 1 - 2 * (i * i - j * j);
+			mat[2][3] = 0;
 
-			outTransformMatrix[3][0] = CAST(T, pos.X());
-			outTransformMatrix[3][1] = CAST(T, pos.Y());
-			outTransformMatrix[3][2] = CAST(T, pos.Z());
-			outTransformMatrix[3][3] = 1;
+			mat[3][0] = CAST(T, pos.X());
+			mat[3][1] = CAST(T, pos.Y());
+			mat[3][2] = CAST(T, pos.Z());
+			mat[3][3] = 1;
+			return mat;
 		}
 
 	public:

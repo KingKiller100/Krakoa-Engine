@@ -5,9 +5,11 @@
 #include "../../HelperMacros.hpp"
 #include "../Vectors/PredefinedVectors.hpp"
 
+#include <cstdint>
+
 namespace kmaths
 {
-	enum class ZAxisDirection : unsigned char
+	enum class ZAxisDirection : uint8_t
 	{
 		LEFT_HAND,
 		RIGHT_HAND
@@ -16,8 +18,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT static constexpr const TransformMatrix<T>& GetTransformIdentity() noexcept
 	{
-		constexpr auto identity = IdentityMatrix<T, 4, 4>();
-		return IdentityMatrix<T, 4, 4>();
+		static constexpr auto identity = IdentityMatrix<T, 4, 4>();
+		return identity;
 	}
 
 	template<typename T>
@@ -127,9 +129,9 @@ namespace kmaths
 	USE_RESULT constexpr TransformMatrix<T> Scale(const TransformMatrix<T>& m, const Vector3<T>& v) noexcept
 	{
 		const auto scale = {
-			m[0] * v[0],
-			m[1] * v[1],
-			m[2] * v[2],
+			{ m[0][0] * v[0], m[0][1] * v[0], m[0][2] * v[0], m[0][3] * v[0] },
+			{ m[1][0] * v[1], m[1][1] * v[1], m[1][2] * v[1], m[1][3] * v[1] },
+			{ m[2][0] * v[2], m[1][1] * v[2], m[2][2] * v[2], m[2][3] * v[2] },
 			m[3]
 		};
 		return scale;
@@ -138,12 +140,11 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const Vector3<T>& v) noexcept
 	{
-		const auto m = GetTransformIdentity<T>();
 		const auto scale = {
-			m[0] * v[0],
-			m[1] * v[1],
-			m[2] * v[2],
-			m[3]
+			{v[0], 0, 0, 0},
+			{0, v[1], 0, 0},
+			{0, 0, v[2], 0},
+			{0, 0, 0, CAST(T, 1) }
 		};
 		return scale;
 	}
@@ -151,12 +152,11 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
 	{
-		const auto m = GetTransformIdentity<T>();
-		const auto scale = {
-			m[0] * v[0],
-			m[1] * v[1],
-			m[2],
-			m[3]
+		const auto scale = TransformMatrix<T>{
+			{v[0], 0, 0, 0},
+			{0, v[1], 0, 0},
+			{0, 0, CAST(T, 1), 0},
+			{0, 0, 0, CAST(T, 1) }
 		};
 		return scale;
 	}

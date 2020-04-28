@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../kAlgorithms.hpp"
-
+#include "../Vectors/PredefinedVectors.hpp"
 
 namespace kmaths
 {
@@ -9,7 +9,7 @@ namespace kmaths
 	struct Matrix;
 
 	template<typename Type, unsigned short R, unsigned short C>
-	USE_RESULT static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept;
+	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept;
 
 	// Row Major Matrix
 	template<typename T, unsigned short Rows, unsigned short Columns>
@@ -587,7 +587,7 @@ namespace kmaths
 	};
 
 	template<typename Type, unsigned short R, unsigned short C>
-	USE_RESULT static constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
+	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
 	{
 		Matrix<Type, R, C> identity;
 		if (identity.IsZero())

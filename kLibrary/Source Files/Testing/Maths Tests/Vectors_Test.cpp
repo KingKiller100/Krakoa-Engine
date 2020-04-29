@@ -51,8 +51,8 @@ namespace kTest::maths
 		const auto toDegs = ToDegrees(rads);
 		const auto toRads = ToRadians(degs);
 
-		VERIFY(degs == Round(toDegs, 16));
-		VERIFY(rads == Round(toRads, 16));
+		VERIFY(Round(degs, 16) == Round(toDegs, 16));
+		VERIFY(Round(rads, 16) == Round(toRads, 16));
 
 		vec2d = vec2f;
 		vec2f += vec2d;

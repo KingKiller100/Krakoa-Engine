@@ -91,13 +91,13 @@ namespace kmaths
 			return value;
 
 		const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
-		T accuracy = PowerOf<size_t>(10, decimalPoints);
+		const auto accuracy = PowerOf<size_t>(10, decimalPoints);
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
-		accuracy = CAST(T, 1) / accuracy;
+		const auto accuracyInverse = CAST(T, 1) / accuracy;
 		const auto penultimateVal = CAST(long long, valuePlusDpsByAcc);
 		const auto significantFigures = CAST(T, penultimateVal);
-		const T roundedValue = significantFigures * accuracy;
+		const T roundedValue = significantFigures * accuracyInverse;
 		return roundedValue;
 	}
 
@@ -112,16 +112,16 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
 	{
-		constexpr T convertR2D = CAST(constants::AccuracyType, 360) / CAST(T, constants::TAU);
-		return radians * convertR2D;
+		constexpr auto convertR2D = CAST(T, 360) / CAST(T, constants::TAU);
+		return CAST(T, radians * convertR2D);
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
 	{
-		constexpr T convertR2D = CAST(constants::AccuracyType, 360) / CAST(T, constants::TAU);
+		constexpr auto convertR2D = CAST(T, 360) / CAST(T, constants::TAU);
 		constexpr auto convertD2R = CAST(constants::AccuracyType, 1) / convertR2D;
-		return CAST(T, CAST(constants::AccuracyType, degrees) * convertD2R);
+		return CAST(T, degrees * convertD2R);
 	}
 
 	template<typename T>

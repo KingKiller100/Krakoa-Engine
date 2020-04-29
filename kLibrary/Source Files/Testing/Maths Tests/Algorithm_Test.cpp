@@ -31,6 +31,7 @@ namespace kTest::maths
 		VERIFY_MULTI(SwapTest);
 		VERIFY_MULTI(ToDegreesTest);
 		VERIFY_MULTI(ToRadiansTest);
+		VERIFY_MULTI(SquareRootTest);
 
 		VERIFY_MULTI_END();
 	}
@@ -56,7 +57,7 @@ namespace kTest::maths
 
 		// Non-primitives
 		constexpr auto charToString_View = Convert<std::string_view>("YOLO");
-		VERIFY(charToString_View.compare("YOLO") == 0);
+		VERIFY(charToString_View == "YOLO");
 
 		constexpr int container[3][2] = { {1, 3}, {5, 6}, {0, 5} };
 		constexpr auto arrayToMatrix = Convert<Matrix3x2s>(container);
@@ -140,16 +141,44 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::SwapTest()
 	{
-		auto thirty = 30;
-		auto eight = 8;
+		{
+			auto thirty = 30;
+			auto eight = 8;
 
-		VERIFY(thirty == 30);
-		VERIFY(eight == 8);
+			VERIFY(thirty == 30);
+			VERIFY(eight == 8);
 
-		Swap(thirty, eight);
+			Swap(thirty, eight);
 
-		VERIFY(thirty == 8);
-		VERIFY(eight == 30);
+			VERIFY(thirty == 8);
+			VERIFY(eight == 30);
+		}
+
+		{
+			std::string_view left = "right";
+			std::string_view right = "left";
+
+			VERIFY(left == "right");
+			VERIFY(right == "left");
+
+			Swap(left, right);
+
+			VERIFY(left == "left");
+			VERIFY(right == "right");
+		}
+
+		{
+			std::unique_ptr<int> fiveHundred = std::make_unique<int>(200);
+			std::unique_ptr<int> twoHundred = std::make_unique<int>(500);
+
+			VERIFY(*fiveHundred == 200);
+			VERIFY(*twoHundred == 500);
+
+			Swap(fiveHundred, twoHundred);
+
+			VERIFY(*fiveHundred == 500);
+			VERIFY(*twoHundred == 200);
+		}
 
 		return success;
 	}
@@ -190,6 +219,14 @@ namespace kTest::maths
 
 		constexpr auto deg270To3PiOver2 = ToRadians<long double>(270);
 		VERIFY(deg270To3PiOver2 == static_cast<decltype(deg270To3PiOver2)>(M_PI_2 * 3));
+
+		return success;
+	}
+
+	bool AlgorithmsTester::SquareRootTest()
+	{
+		constexpr auto square = 100;
+		const auto root = Sqrt(square);
 
 		return success;
 	}

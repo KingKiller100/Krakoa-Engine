@@ -84,6 +84,33 @@ namespace kmaths
 #endif
 	}
 
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Root(T square, int roots) noexcept
+	{
+		if (square == 0 || square == 1)
+			return square;
+
+		const auto terminateVal = square / 2;
+		T start = 1;
+		T result = start;
+
+		while (result < terminateVal)
+		{
+			const auto val = PowerOf(result, roots);
+			if (terminateVal <= val)
+				break;
+			result++;
+		}
+
+		return result;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Sqrt(T square) noexcept
+	{
+		return Root(square, 2);
+	}
+
 	template<typename T>
 	USE_RESULT constexpr T Round(const T value, const unsigned char decimalPoints) noexcept
 	{

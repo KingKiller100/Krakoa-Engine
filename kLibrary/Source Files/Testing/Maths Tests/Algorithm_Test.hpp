@@ -21,6 +21,7 @@ namespace kTest::maths
 		bool SwapTest();
 		bool ToDegreesTest();
 		bool ToRadiansTest();
+		bool SquareRootTest();
 	};
 }
 #endif

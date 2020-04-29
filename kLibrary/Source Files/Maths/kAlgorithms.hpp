@@ -94,10 +94,10 @@ namespace kmaths
 		T start = 1;
 		T result = start;
 
-		while (result < terminateVal)
+		while (result <= terminateVal)
 		{
 			const auto val = PowerOf(result, roots);
-			if (terminateVal <= val)
+			if (square <= val)
 				break;
 			result++;
 		}

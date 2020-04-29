@@ -98,7 +98,7 @@ namespace kmaths
 		return roundedValue;
 	}
 
-	template<typename T>
+	template<typename T, class = std::enable_if_t<!std::is_rvalue_reference_v<T>>>
 	constexpr void Swap(T& lhs, T& rhs) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_move_constructible_v<T>)
 	{
 		T temp = std::move(lhs);

@@ -136,7 +136,7 @@ namespace kTest::maths
 		VERIFY(thirty == 30);
 		VERIFY(eight == 8);
 
-		Swap<int>(thirty, eight);
+		Swap(thirty, eight);
 
 		VERIFY(thirty == 8);
 		VERIFY(eight == 30);

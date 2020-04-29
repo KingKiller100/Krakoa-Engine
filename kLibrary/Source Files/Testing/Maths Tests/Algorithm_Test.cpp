@@ -225,9 +225,12 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::SquareRootTest()
 	{
-		constexpr auto square = 100;
-		const auto root = Sqrt(square);
 
+		{
+			constexpr auto square = 100;
+			const auto root = Sqrt(square);
+			VERIFY(root == 10);
+		}
 		return success;
 	}
 

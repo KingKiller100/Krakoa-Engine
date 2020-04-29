@@ -19,6 +19,8 @@ namespace kTest::maths
 		bool RoundingTest();
 		bool PowerOfTest();
 		bool SwapTest();
+		bool ToDegreesTest();
+		bool ToRadiansTest();
 	};
 }
 #endif

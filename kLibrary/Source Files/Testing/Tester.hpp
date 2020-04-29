@@ -42,8 +42,15 @@ namespace kTest
 	if ((test) == false)\
 	{\
 		this->success = false; \
-		this->failureData.append(klib::kFormat::ToString("\n\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
+		this->failureData.append(klib::kFormat::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 	}\
+
+	// Verify using multiple test functions
+#define VERIFY_MULTI_INIT() bool noFails = true;
+#define VERIFY_MULTI_END()  success = noFails;
+#define VERIFY_MULTI(func) VERIFY(func() == true)\
+if (!success) noFails = false;\
+success = true;\
 
 }
 #endif

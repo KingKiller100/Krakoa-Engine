@@ -15,7 +15,7 @@ namespace kTest::maths
 	{	}
 
 	MatricesTester::~MatricesTester()
-	{	}
+		= default;
 
 	void MatricesTester::Test()
 	{

@@ -58,10 +58,10 @@ namespace kTest
 
 	void TesterManager::InitializeMathsTests()
 	{
+		Add(new maths::AlgorithmsTester());
 		Add(new maths::VectorsTester());
 		Add(new maths::MatricesTester());
 		Add(new maths::QuaternionsTester());
-		Add(new maths::AlgorithmsTester());
 	}
 
 	void TesterManager::InitializeUtilityTests()

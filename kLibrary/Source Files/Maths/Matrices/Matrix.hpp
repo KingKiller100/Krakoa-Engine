@@ -584,7 +584,7 @@ namespace kmaths
 		}
 
 	private:
-		
+
 
 		Indices elems[Rows]{ {} };
 	};
@@ -593,11 +593,8 @@ namespace kmaths
 	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
 	{
 		Matrix<Type, R, C> identity;
-		if (identity.IsZero())
-		{
-			for (auto row = 0u; row < R; ++row)
-				identity[row][row] = CAST(Type, 1);
-		}
+		for (auto row = 0u; row < R; ++row)
+			identity[row][row] = CAST(Type, 1);
 		return identity;
 	}
 }

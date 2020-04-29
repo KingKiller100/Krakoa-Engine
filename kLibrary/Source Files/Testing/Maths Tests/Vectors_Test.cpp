@@ -45,8 +45,14 @@ namespace kTest::maths
 		constexpr auto length1 = Vector<double, 3>(41, 55, 67);
 		constexpr auto length2 = Vector<double, 3>(14, 55, 76);
 
-		const auto angle1 = AngleBetweenVectors(length1, length2);
-		const auto angle2 = AngleBetweenVectors(length1, length2, true);
+		const auto rads = AngleBetweenVectors(length1, length2);
+		const auto degs = AngleBetweenVectors(length1, length2, true);
+
+		const auto toDegs = ToDegrees(rads);
+		const auto toRads = ToRadians(degs);
+
+		VERIFY(degs == Round(toDegs, 16));
+		VERIFY(rads == Round(toRads, 16));
 
 		vec2d = vec2f;
 		vec2f += vec2d;
@@ -65,11 +71,8 @@ namespace kTest::maths
 		constexpr auto vec3s2 = Vector<int, 3>(4, 5, 6);
 		constexpr auto vec3l = Vector<long, 3>(7, 8, 9);
 
-		constexpr auto mag = vec3s1.MagnitudeSQ();
-		VERIFY(mag == 14);
-
-		VERIFY(angle2 == ToDegrees(angle1));
-		VERIFY(angle1 == ToRadians(angle2));
+		constexpr auto magSq = vec3s1.MagnitudeSQ();
+		VERIFY(magSq == 14);
 
 		constexpr auto x = vec3s1.X();
 		constexpr auto y = vec3s1.Y();

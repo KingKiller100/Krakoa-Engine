@@ -15,40 +15,24 @@ namespace kTest::maths
 
 	AlgorithmsTester::AlgorithmsTester()
 		: Tester("Algorithms Test")
-	{
-
-	}
+	{}
 
 	AlgorithmsTester::~AlgorithmsTester()
-	{
-
-	}
+		= default;
 
 	void AlgorithmsTester::Test()
 	{
-		auto noFails = true;
+		VERIFY_MULTI_INIT();
 		
-		VERIFY(ConversionTest() == true);
-		if (!success) noFails = false;
-		success = true;
-		
-		VERIFY(MinMaxTest() == true);
-		if (!success) noFails = false;
-		success = true;
-		
-		VERIFY(RoundingTest() == true);
-		if (!success) noFails = false;
-		success = true;
+		VERIFY_MULTI(ConversionTest);
+		VERIFY_MULTI(MinMaxTest);
+		VERIFY_MULTI(RoundingTest);
+		VERIFY_MULTI(PowerOfTest);
+		VERIFY_MULTI(SwapTest);
+		VERIFY_MULTI(ToDegreesTest);
+		VERIFY_MULTI(ToRadiansTest);
 
-		VERIFY(PowerOfTest() == true);
-		if (!success) noFails = false;
-		success = true;
-
-		VERIFY(SwapTest() == true);
-		if (!success) noFails = false;
-		success = true;
-
-		success = noFails;
+		VERIFY_MULTI_END();
 	}
 
 	bool AlgorithmsTester::ConversionTest()
@@ -75,7 +59,7 @@ namespace kTest::maths
 		VERIFY(charToString_View.compare("YOLO") == 0);
 
 		constexpr int container[3][2] = { {1, 3}, {5, 6}, {0, 5} };
-		constexpr auto cont = Convert<Matrix3x2s>(container);
+		constexpr auto arrayToMatrix = Convert<Matrix3x2s>(container);
 		constexpr auto vecToMat = Convert<Matrix2x2f>(kmaths::Vector2f(5));
 		for (auto row = 0; row < vecToMat.GetRows(); ++row)
 			for (auto col = 0; col < vecToMat.GetColumns(); ++col)
@@ -111,11 +95,12 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::RoundingTest()
 	{
-		constexpr auto accuracy = 3;
-		constexpr auto value = 1.0 / 32;
-		constexpr auto v = 0.030000000;
-		constexpr auto rounded = Round(value, accuracy);
-
+		constexpr auto accuracy = 5;
+		constexpr auto value = 1.0f / 128;
+		constexpr auto expectedVal = 0.008f;
+		const auto rounded = Round(value, accuracy);
+		VERIFY(rounded == expectedVal);
+		
 		return success;
 	}
 
@@ -128,10 +113,11 @@ namespace kTest::maths
 
 		return success;
 	}
+
 	bool AlgorithmsTester::SwapTest()
 	{
-		auto thirty = 30;
-		auto eight = 8;
+		constexpr auto thirty = 30;
+		constexpr auto eight = 8;
 
 		VERIFY(thirty == 30);
 		VERIFY(eight == 8);
@@ -143,5 +129,38 @@ namespace kTest::maths
 
 		return success;
 	}
+
+	bool AlgorithmsTester::ToDegreesTest()
+	{
+		constexpr auto piTo180 = ToDegrees<int>(constants::PI);
+		VERIFY(piTo180 == 180);
+		constexpr auto tauTo360 = ToDegrees<float>(constants::TAU);
+		VERIFY(tauTo360 == 360.f);
+		constexpr auto piOver2To90 = ToDegrees<double>(constants::PI_OVER_2);
+		VERIFY(piOver2To90 == 90.0);
+		constexpr auto piOver4To45 = ToDegrees<long double>(constants::PI_OVER_4);
+		VERIFY(piOver4To45 == 45.0l);
+		constexpr auto pitimes3Over2To270 = ToDegrees<long double>(constants::PI_OVER_2 * 3);
+		VERIFY(pitimes3Over2To270 == 270.0l);
+
+		return success;
+	}
+
+	bool AlgorithmsTester::ToRadiansTest()
+	{
+		constexpr auto deg180ToPi = ToRadians<int>(180);
+		VERIFY(deg180ToPi == static_cast<decltype(deg180ToPi)>(M_PI));
+		constexpr auto deg360ToTau = ToRadians<float>(360);
+		VERIFY(deg360ToTau == static_cast<decltype(deg360ToTau)>(M_PI * 2));
+		constexpr auto deg90ToPiOver2 = ToRadians<double>(90);
+		VERIFY(deg90ToPiOver2 == static_cast<decltype(deg90ToPiOver2)>(M_PI_2));
+		constexpr auto deg45ToPiOver4 = ToRadians<long double>(45);
+		VERIFY(deg45ToPiOver4 == static_cast<decltype(deg45ToPiOver4)>(M_PI_4));
+		constexpr auto deg270To3PiOver2 = ToRadians<long double>(270);
+		VERIFY(deg270To3PiOver2 == static_cast<decltype(deg270To3PiOver2)>(M_PI_2 * 3));
+
+		return success;
+	}
+
 }
 #endif

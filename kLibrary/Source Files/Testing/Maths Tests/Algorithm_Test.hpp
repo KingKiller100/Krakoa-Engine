@@ -18,6 +18,7 @@ namespace kTest::maths
 		bool MinMaxTest();
 		bool RoundingTest();
 		bool PowerOfTest();
+		bool SwapTest();
 	};
 }
 #endif

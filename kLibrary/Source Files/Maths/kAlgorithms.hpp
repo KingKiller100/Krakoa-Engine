@@ -5,6 +5,7 @@
 #include "Constants.hpp"
 
 #include <cmath>
+#include <utility>
 
 #ifdef max
 #	undef max
@@ -48,61 +49,38 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T PowerOf(T base, T power) noexcept(std::is_arithmetic_v<T>)
+	USE_RESULT constexpr T PowerOf(T base, int power) noexcept(std::is_arithmetic_v<T>)
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, pow(base, power));
 #else
-		T value = 1;
+		if (power == 0)
+			return CAST(T, 1);
+		else if (power == 1)
+			return base;
+
+		T value = base;
 
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 		{
-			if (power >= 1)
-			{
-				value = base;
-				for (auto i = 1u; i < power; ++i)
-					value *= base;
-			}
-			else if (power == 1)
-			{
-				return base;
-			}
-			else
-			{
-				value = 0;
-			}
+			if (power < 0)
+				return CAST(T, 0);
 		}
 		else
 		{
-			if (int(power) == power)
+			if (power < 0)
 			{
-				if (power == 0)
-					return value;
-
-				if (power == 1)
-					return base;
-
-				if (power >= 1)
-					value = base;
-				else
-					value = CAST(T, 1) / base;
-
-				auto pow = power;
-
-				if (power < 0)
-				{
-					for (auto i = 0; i < 2; ++i)
-						pow -= power;
-				}
-
-				const auto val = value;
-
-				for (auto i = 1u; i < pow; ++i)
-					value *= val;
+				base = CAST(T, 1) / base;
+				value = base;
+				power = -power;
 			}
 		}
 
+		for (size_t i = 1; i < power; ++i)
+			value *= base;
+
 		return value;
+
 #endif
 	}
 
@@ -118,6 +96,14 @@ namespace kmaths
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
 		const T roundedValue = CAST(T, CAST(long long, valuePlusDpsByAcc)) / accuracy;
 		return roundedValue;
+	}
+
+	template<typename T>
+	constexpr void Swap(T& lhs, T& rhs) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_move_constructible_v<T>)
+	{
+		T temp = std::move(lhs);
+		lhs = std::move(rhs);
+		rhs = std::move(temp);
 	}
 
 	template<typename T>

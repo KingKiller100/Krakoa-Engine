@@ -195,7 +195,7 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 		const auto& vertexBuffer = pData->pQuadVertexArray->GetVertexBuffers().front();
 
-		const uint32_t dataSize = (uint8_t*)pData->quadVertexBuffferPtr - (uint8_t*)pData->quadVertexBuffferBase;
+		const uint32_t dataSize = (uint32_t)((uint8_t*)pData->quadVertexBuffferPtr - (uint8_t*)pData->quadVertexBuffferBase);
 		vertexBuffer->SetData(pData->quadVertexBuffferBase, dataSize);
 
 		Flush();

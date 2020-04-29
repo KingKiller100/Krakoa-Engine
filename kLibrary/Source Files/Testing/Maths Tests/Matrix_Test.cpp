@@ -92,8 +92,16 @@ namespace kTest::maths
 				VERIFY(identity2[r][c] == (r == c ? 1.0 : 0.0));
 			}
 		}
+		
+		// Currently constexpr supported functions for matrices
 
-		const auto m15 = m14.PowerOf(2);
+		constexpr auto m15 = Matrix<float, 3, 3>{
+			{1, 2, 3},
+			{3, 4, 6},
+			{7, 8, 9},
+		};
+		constexpr auto m16 = m15.Mirror();
+		
 
 		return success;
 	}

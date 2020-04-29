@@ -156,7 +156,7 @@ namespace kmaths
 					if (row == col)
 						break;
 
-					std::swap(temp[row][col], temp[col][row]);
+					Swap(temp[row][col], temp[col][row]);
 				}
 			}
 

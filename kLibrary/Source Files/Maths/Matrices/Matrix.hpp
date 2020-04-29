@@ -245,7 +245,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(unsigned short rowToSkip, unsigned short colToSkip) const
 		{
-			const auto newSize = Rows - 1;
+			constexpr auto newSize = Rows - 1;
 			if (rowToSkip > newSize || colToSkip > newSize)
 				std::_Xout_of_range("Row/column entered is greater than the size of this matrix's row/column");
 
@@ -336,7 +336,7 @@ namespace kmaths
 			return Columns;
 		}
 
-		USE_RESULT constexpr decltype(auto) Size() const noexcept
+		USE_RESULT constexpr decltype(auto) GetSize() const noexcept
 		{
 			return Rows * Columns;
 		}

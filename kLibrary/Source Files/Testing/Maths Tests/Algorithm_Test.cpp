@@ -227,13 +227,13 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto square = 100;
-			const auto root = Sqrt(square);
+			constexpr auto root = Sqrt(square);
 			VERIFY(root == 10);
 		}
 
 		{
 			constexpr auto square = 225;
-			const auto root = Sqrt(square);
+			constexpr auto root = Sqrt(square);
 			VERIFY(root == 15);
 		}
 		return success;

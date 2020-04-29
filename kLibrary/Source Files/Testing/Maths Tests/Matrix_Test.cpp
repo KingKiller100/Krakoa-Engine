@@ -49,7 +49,7 @@ namespace kTest::maths
 
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
-		auto m12 = Matrix<int, 5, 5>{
+		constexpr auto m12 = Matrix<int, 5, 5>{
 			{ 1, 2, 1, 0, 2 },
 			{ 4, 11, 8, 0, 1 },
 			{ 1, 6, 1, 0, 3 },
@@ -57,19 +57,21 @@ namespace kTest::maths
 			{ 3, 5, 7, 6, 4 }
 		};
 
-		const auto determinantM12 = m12.GetDeterminant();
+		constexpr auto determinantM12 = m12.GetDeterminant();
 		VERIFY(determinantM12 == -96);
-		const auto transposedM9 = m12.Transpose();
+		constexpr auto transposedM9 = m12.Transpose();
 		for (auto row = 0u; row < m12.GetRows(); ++row)
 			for (auto col = 0u; col < m12.GetColumns(); ++col)
 				VERIFY(transposedM9[col][row] == m12[row][col]);
 
-		constexpr auto m13 = IdentityMatrix<float, 4, 4>();
-		for (auto r = 0u; r < m13.GetRows(); ++r)
-			for (auto c = 0u; c < m13.GetColumns(); ++c)
-				VERIFY(m13[r][c] == (r == c ? 1 : 0));
-
-		VERIFY(m13.IsIdentity());
+		{
+			constexpr auto m13 = IdentityMatrix<float, 4, 4>();
+			for (auto r = 0u; r < m13.GetRows(); ++r)
+				for (auto c = 0u; c < m13.GetColumns(); ++c)
+					VERIFY(m13[r][c] == (r == c ? 1 : 0));
+		
+			VERIFY(m13.IsIdentity());
+		}
 
 		const auto minorMatrix = m12.CreateMinorMatrix(0, 0);
 		auto m14 = Matrix<double, 3, 3>();
@@ -78,8 +80,9 @@ namespace kTest::maths
 		for (auto r = 0u; r < m14.GetRows(); ++r)
 			for (auto c = 0u; c < m14.GetColumns(); ++c)
 				m14[r][c] = (c == 0 && r == 0) ? 10.0 : ++count;
-
 		VERIFY(!m14.IsIdentity());
+
+		constexpr auto size = m14.GetSize();
 
 		const auto inverse3x3 = m14.Inverse();
 
@@ -100,8 +103,13 @@ namespace kTest::maths
 			{3, 4, 6},
 			{7, 8, 9},
 		};
-		constexpr auto m16 = m15.Mirror();
-		
+		constexpr auto mirror = m15.Mirror();
+		constexpr auto transpose = m15.Transpose();
+		constexpr auto miniMatrix = m15.CreateMinorMatrix(0, 0);
+		constexpr auto determinant = m15.GetDeterminant();
+		constexpr auto inverse = m15.Inverse();
+		constexpr auto isIdentity = m15.IsIdentity();
+		constexpr auto numberOfElems = m15.GetSize();
 
 		return success;
 	}

@@ -16,3 +16,4 @@
 #define USE_RESULT [[nodiscard]]
 #define USE_RESULT
 #define CAST(type, val) static_cast<type>(val)
+#define CAST(type, val) static_cast<type>(val)

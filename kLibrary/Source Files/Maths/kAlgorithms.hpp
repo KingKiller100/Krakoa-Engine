@@ -85,16 +85,20 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Root(T square, int roots) noexcept
+	USE_RESULT constexpr T Root(T square, int roots, unsigned char accuracy) noexcept
 	{
 		if (square == 0 || square == 1)
 			return square;
+
+		auto increment = CAST(T, 1);
+		const auto decimal = CAST(T, 0.1);
+		const auto decimalPoints = PowerOf(0.1, accuracy);
 
 		const auto terminateVal = square / 2;
 		T start = 1;
 		T result = start;
 
-		while (result <= terminateVal)
+		while (result <= terminateVal || increment > decimalPoints)
 		{
 			const auto val = PowerOf(result, roots);
 			if (square == val)
@@ -103,22 +107,24 @@ namespace kmaths
 			}
 			else if (square < val)
 			{
-				result--;
+				result -= increment;
 				if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 				{
 					break;
 				}
+				increment *= decimal;
+
 			}
-			result++;
+			result += increment;
 		}
 
 		return result;
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sqrt(T square) noexcept
+	USE_RESULT constexpr T Sqrt(T square, unsigned char accuracy = 8) noexcept
 	{
-		return Root(square, 2);
+		return Root(square, 2, accuracy);
 	}
 
 	template<typename T>

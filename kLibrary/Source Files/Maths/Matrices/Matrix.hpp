@@ -354,7 +354,7 @@ namespace kmaths
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
-					m[row][col] = elems[row][col] + other[row][col];
+					m[row][col] = CAST(Type, elems[row][col] + other[row][col]);
 			return m;
 		}
 
@@ -364,7 +364,7 @@ namespace kmaths
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
-					m.elems[row][col] = elems[row][col] - other[row][col];
+					m.elems[row][col] = CAST(Type, elems[row][col] - other[row][col]);
 			return m;
 		}
 
@@ -390,7 +390,7 @@ namespace kmaths
 				for (auto col = 0u; col < C; ++col) {
 					for (auto index = 0u; index < R; ++index)
 					{
-						m[row][col] += elems[row][index] * other[index][col];
+						m[row][col] += CAST(Type, elems[row][index] * other[index][col]);
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error

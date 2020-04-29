@@ -348,16 +348,18 @@ namespace kmaths
 		}
 
 		// Operators
-		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
+		template<typename U>
+		USE_RESULT constexpr Matrix operator+(const Matrix<U, Rows, Columns>& other) const noexcept
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
-					m.elems[row][col] = elems[row][col] + other[row][col];
+					m[row][col] = elems[row][col] + other[row][col];
 			return m;
 		}
 
-		USE_RESULT constexpr Matrix operator-(const Matrix& other) const noexcept
+		template<typename U>
+		USE_RESULT constexpr Matrix operator-(const Matrix<U, Rows, Columns>& other) const noexcept
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
@@ -366,20 +368,22 @@ namespace kmaths
 			return m;
 		}
 
-		constexpr Matrix& operator+=(const Matrix& other)
+		template<typename U>
+		constexpr Matrix& operator+=(const Matrix<U, Rows, Columns>& other)
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		constexpr Matrix& operator-=(const Matrix& other) noexcept
+		template<typename U>
+		constexpr Matrix& operator-=(const Matrix<U, Rows, Columns>& other) noexcept
 		{
 			*this = *this - other;
 			return *this;
 		}
 
-		template<unsigned short C, unsigned short R = Columns>
-		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<Type, R, C>& other) const noexcept
+		template<typename U, unsigned short C, unsigned short R = Columns>
+		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<U, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
 			for (auto row = 0u; row < Rows; ++row) {

@@ -103,6 +103,7 @@ namespace kTest::maths
 			{3, 4, 6},
 			{7, 8, 9},
 		};
+
 		constexpr auto mirror = m15.Mirror();
 		constexpr auto transpose = m15.Transpose();
 		constexpr auto miniMatrix = m15.CreateMinorMatrix(0, 0);
@@ -110,6 +111,19 @@ namespace kTest::maths
 		constexpr auto inverse = m15.Inverse();
 		constexpr auto isIdentity = m15.IsIdentity();
 		constexpr auto numberOfElems = m15.GetSize();
+		constexpr auto numberOfRows = m15.GetRows();
+		constexpr auto numberOfColumns = m15.GetColumns();
+		constexpr auto isSquare = m15.IsSquare();
+		constexpr auto isZero = m15.IsZero();
+		constexpr auto powerOfTwo = m15.PowerOf(2);
+		// constexpr auto pointer = m15.GetPointerToData(); // Not supported til c++20
+
+		constexpr auto dummyMat = Matrix<double, 3, 3>(5);
+		constexpr auto add = m15 + dummyMat;
+		constexpr auto multiple = m15 * dummyMat;
+		constexpr auto scalarDiv = m15 / 2;
+		constexpr auto subtract = m15 - dummyMat;
+		constexpr auto scalarMul = m15 * 5;
 
 		return success;
 	}

@@ -105,15 +105,19 @@ namespace kTest::maths
 		constexpr auto lhs = Vector2s(10, 5);
 		constexpr auto rhs = Vector2s(9, 15);
 
-		constexpr auto res = lhs + rhs;
-		constexpr auto res2 = lhs - rhs;
-		constexpr auto res3 = lhs * rhs;
-		constexpr auto res4 = lhs / rhs;
-		constexpr auto res5 = lhs.ReverseVector();
-		constexpr auto res6 = lhs.Inverse();
-		constexpr auto res7 = lhs.IsZero();
-		constexpr auto res8 = lhs.Perpendicular();
-		constexpr auto res9 = lhs != rhs;
+		constexpr auto add = lhs + rhs;
+		constexpr auto subtract = lhs - rhs;
+		constexpr auto multiply = lhs * rhs;
+		constexpr auto divide = lhs / rhs;
+		constexpr auto magnitudeSq = lhs.MagnitudeSQ();
+		constexpr auto magnitude = lhs.Magnitude();
+		constexpr auto normalize = lhs.Normalize();
+		constexpr auto dimensions = lhs.GetNumberOfDimensions();
+		constexpr auto reverseVector = lhs.ReverseVector();
+		constexpr auto inverse = lhs.Inverse();
+		constexpr auto isZero = lhs.IsZero();
+		constexpr auto perpendicular = lhs.Perpendicular();
+		constexpr auto noEqual = lhs != rhs;
 
 		return success;
 	}

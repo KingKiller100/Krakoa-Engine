@@ -22,6 +22,8 @@ namespace kTest::maths
 		bool ToDegreesTest();
 		bool ToRadiansTest();
 		bool SquareRootTest();
+		bool InverseSquareRootTest();
+		bool RootTest();
 		bool WhatPowerOf10Test();
 		bool LogTest();
 	};

@@ -30,7 +30,9 @@ namespace kTest::maths
 		VERIFY_MULTI(ToDegreesTest);
 		VERIFY_MULTI(ToRadiansTest);
 		VERIFY_MULTI(WhatPowerOf10Test);
+		VERIFY_MULTI(InverseSquareRootTest);
 		VERIFY_MULTI(SquareRootTest);
+		VERIFY_MULTI(RootTest);
 		VERIFY_MULTI(LogTest);
 
 		VERIFY_MULTI_END();
@@ -361,6 +363,40 @@ namespace kTest::maths
 			const auto expected = std::sqrt(square); // 6379.1890908406222
 			VERIFY(root == expected);
 		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::InverseSquareRootTest()
+	{
+		{
+			constexpr auto square = 225;
+			const auto root = InvSqrt<double>(square);
+			const auto expected = std::sqrt(square); // 0.6666666666
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto square = 200.0f;
+			const auto root = InvSqrt(square);
+			const auto expected = std::sqrtf(square); // 0.0707106814
+			VERIFY(root == expected);
+		}
+
+
+		return success;
+	}
+
+	bool AlgorithmsTester::RootTest()
+	{
+		{
+			constexpr auto exponant = 8;
+			constexpr auto power = 3;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 2;
+			VERIFY(root == expected);
+		}
+
 
 		return success;
 	}

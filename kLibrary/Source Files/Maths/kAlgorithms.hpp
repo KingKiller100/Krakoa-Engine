@@ -168,15 +168,6 @@ namespace kmaths
 		return currentPower;
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Root(T square, int roots)
-	{
-		if (roots == 2)
-			return Sqrt(square);
-
-		throw std::logic_error("Function not implemented yet");
-	}
-
 	template<typename T>
 	USE_RESULT constexpr T Round(const T value, const uint8_t decimalPoints) noexcept
 	{
@@ -347,25 +338,12 @@ namespace kmaths
 
 		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
 		{
-			T startVal = 0;
-			T current = square;
-			if (square >= one) // square is greater than one
-			{
-				do {
-					current *= zeroPointFive;
-					startVal = current * current;
-				} while (startVal > square);
-				startVal = current;
-			}
-			else // square is between zero and one
-			{
-				do {
-					current *= zeroPointOne;
-					startVal = current * current;
-				} while (startVal > square);
-				startVal = current;
-			}
-
+			T startVal = 0, current = square;
+			do {
+				current *= zeroPointFive;
+				startVal = current * current;
+			} while (startVal > square);
+			startVal = current;
 			return startVal;
 		};
 
@@ -402,11 +380,10 @@ namespace kmaths
 #endif
 	}
 
-
-
 #if defined (_MSC_VER)
 #	pragma warning(push)
 #	pragma warning(disable : 4244)
+
 	// Bakhshali Method
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Sqrt(T square) noexcept
@@ -416,6 +393,104 @@ namespace kmaths
 		else
 			return SqrtImpl<T>(square);
 	}
+
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T InvSqrt(T square) noexcept
+	{
+		constexpr auto one = CAST(T, 1);
+		return one / SqrtImpl<T>(square);
+	}
+
+#	pragma warning(pop)
+#endif
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T RootImpl(T num, int root)
+	{
+		if (root == 2)
+			return Sqrt<T>(num);
+
+		constexpr auto one = CAST(T, 1);
+		const auto oneOverRoot = one / root;
+		constexpr auto minusOne = CAST(T, -1);
+		constexpr auto zeroPointOne = CAST(T, 0.1);
+		auto maxIterations = 50;
+
+		if (num < 0)
+		{
+			if ((root & 1) == 0) // Even root
+				throw std::runtime_error("No real root");
+
+			if (num == minusOne)
+				return minusOne;
+		}
+
+		if (num == 0)
+			return 0;
+
+		if (num == one)
+			return one;
+
+		const auto chooseStartNumber = [&]() -> T
+		{
+			T startVal = 0, current = num;
+
+			do {
+				current *= oneOverRoot;
+				startVal = PowerOf<T>(current, root);
+			} while (startVal > num);
+			startVal = current;
+
+			return startVal;
+		};
+
+		T start = chooseStartNumber();
+		T result = PowerOf(start, root);
+		T prev = -1;
+		auto increment = one;
+
+		while (prev != result && maxIterations > 0)
+		{
+			maxIterations--;
+			prev = result;+
+
+			auto val = PowerOf(result, root);
+
+			while (val < num)
+			{
+				result += increment;
+				if (val > num)
+				{
+					if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+					{
+						break;
+					}
+
+				}
+				val = PowerOf(result, root);
+			}
+			increment *= zeroPointOne;
+			result -= increment;
+		}
+
+		return root;
+	}
+
+
+
+#if defined (_MSC_VER)
+#	pragma warning(push)
+#	pragma warning(disable : 4244)
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Root(T num, int root) noexcept
+	{
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+			return CAST(T, RootImpl<float>(num, root));
+		else
+			return RootImpl<T>(num, root);
+	}
+
 #	pragma warning(pop)
 #endif
 }

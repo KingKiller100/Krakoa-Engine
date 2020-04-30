@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "../../HelperMacros.hpp"
 
+#include "../kAlgorithms.hpp"
+
 #include <utility>
 
 namespace kmaths
@@ -106,7 +108,7 @@ namespace kmaths
 		USE_RESULT constexpr Type Magnitude() const noexcept
 		{
 			const auto magSQ = MagnitudeSQ();
-			const auto mag = std::sqrt(magSQ);
+			const auto mag = Sqrt(magSQ);
 			return static_cast<Type>(mag);
 		}
 
@@ -211,7 +213,7 @@ namespace kmaths
 			return std::addressof<Type>(first);
 		}
 
-		USE_RESULT constexpr inline auto NumberOfDimensions() const noexcept
+		USE_RESULT constexpr inline auto GetNumberOfDimensions() const noexcept
 		{
 			return N;
 		}
@@ -261,7 +263,7 @@ namespace kmaths
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.NumberOfDimensions() > i)
+				copy[i] = (other.GetNumberOfDimensions() > i)
 					? dimensions[i] + static_cast<Type>(other[i])
 					: dimensions[i];
 			}
@@ -274,7 +276,7 @@ namespace kmaths
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.NumberOfDimensions() > i)
+				copy[i] = (other.GetNumberOfDimensions() > i)
 					? dimensions[i] - static_cast<Type>(other[i])
 					: dimensions[i];
 			}
@@ -287,7 +289,7 @@ namespace kmaths
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.NumberOfDimensions() > i)
+				copy[i] = (other.GetNumberOfDimensions() > i)
 					? dimensions[i] * static_cast<Type>(other[i])
 					: dimensions[i];
 			}
@@ -300,7 +302,7 @@ namespace kmaths
 			T copy[N]{ 0 };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.NumberOfDimensions() > i)
+				copy[i] = (other.GetNumberOfDimensions() > i)
 					? dimensions[i] / static_cast<Type>(other[i])
 					: dimensions[i];
 			}

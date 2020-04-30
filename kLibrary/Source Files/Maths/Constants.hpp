@@ -18,7 +18,7 @@ namespace kmaths::constants
 	constexpr AccuracyType TAU                       = PI * static_cast<AccuracyType>(2);
 	constexpr AccuracyType LOG_N                     = 0.57721566490153l;
 	constexpr AccuracyType ROOT2                     = 1.41421356237310l;
-	constexpr AccuracyType SQRT1_2                   = 0.70710678118655l;
+	constexpr AccuracyType SQRT_1_OVER_2             = 0.70710678118655l;
 	constexpr AccuracyType GOLDEN_RATIO              = 1.61803398874989l;
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 }

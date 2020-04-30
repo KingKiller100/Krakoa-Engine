@@ -405,7 +405,7 @@ namespace kmaths
 #endif
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T RootImpl(T num, int root)
+	USE_RESULT constexpr T RootImpl(T num, uint8_t root)
 	{
 		if (root == 2)
 			return Sqrt<T>(num);
@@ -414,7 +414,16 @@ namespace kmaths
 		const auto oneOverRoot = one / root;
 		constexpr auto minusOne = CAST(T, -1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
-		auto maxIterations = 50;
+		constexpr auto zeroPointFive = CAST(T, 0.5);
+		constexpr auto roundingError = 14;
+		constexpr auto roundingErrorFloat = 6;
+		auto maxIterations = 0;
+
+		if _CONSTEXPR_IF(std::is_same_v<T, float>)
+			maxIterations = 7;
+		else
+			maxIterations = 16;
+
 
 		if (num < 0)
 		{
@@ -444,24 +453,46 @@ namespace kmaths
 			return startVal;
 		};
 
-		T start = one;//  chooseStartNumber();
-		T result = PowerOf(start, root);
+		T start = chooseStartNumber();
+
+		if (PowerOf(start, root) == num)
+			return start;
+
+		T result = start;
+		T prev = 0;
 		auto increment = one;
 		auto val = PowerOf(result, root);
 
-		while (val < num && maxIterations > 0)
+		while (val < num || maxIterations > 0)
 		{
-			maxIterations--;
+			prev = result;
+			if (val == num)
+			{
+				break;
+			}
+			if (val > num)
+			{
+				maxIterations--;
+				result -= increment;
+				increment *= zeroPointOne;
+				val = 0;
+			}
+
 			result += increment;
 			val = PowerOf(result, root);
-
-			if (val >= num)
-			{
-				increment *= zeroPointOne;
-			}
+			if (prev == result)
+				break;
 		}
 
-		return root;
+		if (maxIterations == 0) // Round minor error
+		{
+			if _CONSTEXPR_IF(std::is_same_v<T, float>)
+				result = Round(result, roundingErrorFloat);
+			else
+				result = Round(result, roundingError);
+		}
+
+		return result;
 	}
 
 
@@ -471,7 +502,7 @@ namespace kmaths
 #	pragma warning(disable : 4244)
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Root(T num, int root) noexcept
+	USE_RESULT constexpr T Root(T num, uint8_t root) noexcept
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 			return CAST(T, RootImpl<float>(num, root));

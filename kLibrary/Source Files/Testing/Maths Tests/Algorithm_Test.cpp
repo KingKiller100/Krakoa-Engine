@@ -398,8 +398,32 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto exponant = 8;
+			constexpr auto exponant = 27;
 			constexpr auto power = 3;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 3;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = 50.0;
+			constexpr auto power = 3;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 3.6840314986403859;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = 64.f;
+			constexpr auto power = 3;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 4;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = 64.0;
+			constexpr auto power = 6;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);

@@ -444,33 +444,21 @@ namespace kmaths
 			return startVal;
 		};
 
-		T start = chooseStartNumber();
+		T start = one;//  chooseStartNumber();
 		T result = PowerOf(start, root);
-		T prev = -1;
 		auto increment = one;
+		auto val = PowerOf(result, root);
 
-		while (prev != result && maxIterations > 0)
+		while (val < num && maxIterations > 0)
 		{
 			maxIterations--;
-			prev = result;+
+			result += increment;
+			val = PowerOf(result, root);
 
-			auto val = PowerOf(result, root);
-
-			while (val < num)
+			if (val >= num)
 			{
-				result += increment;
-				if (val > num)
-				{
-					if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-					{
-						break;
-					}
-
-				}
-				val = PowerOf(result, root);
+				increment *= zeroPointOne;
 			}
-			increment *= zeroPointOne;
-			result -= increment;
 		}
 
 		return root;

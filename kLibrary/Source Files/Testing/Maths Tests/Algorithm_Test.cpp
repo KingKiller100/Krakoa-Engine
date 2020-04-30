@@ -397,6 +397,13 @@ namespace kTest::maths
 			VERIFY(root == expected);
 		}
 
+		{
+			constexpr auto exponant = 8;
+			constexpr auto power = 3;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 2;
+			VERIFY(root == expected);
+		}
 
 		return success;
 	}

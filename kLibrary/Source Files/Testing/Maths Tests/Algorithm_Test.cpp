@@ -31,6 +31,7 @@ namespace kTest::maths
 		VERIFY_MULTI(ToRadiansTest);
 		VERIFY_MULTI(WhatPowerOf10Test);
 		VERIFY_MULTI(SquareRootTest);
+		VERIFY_MULTI(LogTest);
 
 		VERIFY_MULTI_END();
 	}
@@ -343,8 +344,19 @@ namespace kTest::maths
 		{
 			constexpr auto square = 40694053.4567;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrt(square); // 
+			const auto expected = std::sqrt(square); // 6379.1890908406222
 			VERIFY(root == expected);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::LogTest()
+	{
+		{
+			constexpr auto base = 2;
+			constexpr auto exponent = 8;
+			const auto ans = Log(base, exponent);
 		}
 
 		return success;

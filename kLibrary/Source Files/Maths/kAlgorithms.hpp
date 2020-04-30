@@ -85,6 +85,49 @@ namespace kmaths
 #endif
 	}
 
+	template<typename T>
+	USE_RESULT constexpr decltype(auto) PowerOf10(int power) noexcept(std::is_arithmetic_v<T>)
+	{
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		{
+			if (power < 0)
+				return 0;
+		}
+
+		return PowerOf<T>(10, power);
+	}
+
+	USE_RESULT constexpr double Log(int base, double exponent) noexcept
+	{
+		double value = 1;
+		int loops = 0;
+		double increment = 0.1;
+		double multiplier = base;
+		double prev = -1;
+		double ans = 0;
+
+		while (prev != value)
+		{
+			prev = value;
+			while (value < exponent)
+			{
+				value = 1;
+				loops++;
+				for (auto i = 0; i < loops; ++i)
+				{
+					value *= multiplier;
+				}
+			}
+			ans = loops;
+			loops = 0;
+			multiplier = base + increment;
+			increment *= 0.1;
+
+		}
+
+		return ans;
+	}
+
 	USE_RESULT constexpr int WhatPowerOf10(double number) noexcept
 	{
 		if (number < 1 && number > 0.1)
@@ -113,31 +156,31 @@ namespace kmaths
 			long double value = 0.1;
 			while (value > number)
 			{
-				currentPower--;
+				currentPower++;
 				value = PowerOf(0.1, currentPower);
 			}
-			++currentPower;
+			currentPower = -currentPower;
 		}
 
 		return currentPower;
 	}
 
-
+	// Heron's method (Babylonian)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Sqrt(T square) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
-		return CAST(T, pow(base, power));
+		return CAST(T, sqrt(square));
 #else
 		constexpr auto one = CAST(T, 1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = 0.5;
-		constexpr auto maxIterations = 10;
+		constexpr auto maxIterations = 20;
 
-		if (square < 0)
+		if (square <= 0)
 			return 0;
 
-		if (square == 0 || square == 1)
+		if (square == 1)
 			return square;
 
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
@@ -149,30 +192,28 @@ namespace kmaths
 		if (square == 2)
 			return CAST(T, constants::ROOT2);
 
-		const auto chooseStartValueFunc = [square]()
+		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
 		{
-			auto current = one;
-			T startVal = 0;
-			if (square > one) // square is greater than one
+			double startVal = 0;
+			double current = square;
+			if (square >= one) // square is greater than one
 			{
-				while (startVal <= square)
-				{
-					current++;
+				do {
+					current *= zeroPointFive;
 					startVal = current * current;
-				}
-				startVal = --current;
+				} while (startVal > square);
+				startVal = current;
 			}
 			else // square is between zero and one
 			{
-				while (startVal >= square)
-				{
-					current -= zeroPointOne;
+				do {
+					current *= zeroPointOne;
 					startVal = current * current;
-				}
-				startVal = current + zeroPointOne;
+				} while (startVal > square);
+				startVal = current;
 			}
 
-			return startVal;
+			return CAST(T, startVal);
 		};
 
 		T start = chooseStartValueFunc();
@@ -206,7 +247,7 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Round(const T value, const unsigned char decimalPoints) noexcept
+	USE_RESULT constexpr T Round(const T value, const uint8_t decimalPoints) noexcept
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 			return value;

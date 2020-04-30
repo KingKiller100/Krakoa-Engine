@@ -86,12 +86,6 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Root(T square, int roots) noexcept
-	{
-		throw std::logic_error("Function not implemented yet");
-	}
-
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Sqrt(T square) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
@@ -101,6 +95,9 @@ namespace kmaths
 		constexpr auto zeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = 0.5;
 		constexpr auto maxIterations = 10;
+
+		if (square < 0)
+			return 0;
 
 		if (square == 0 || square == 1)
 			return square;
@@ -159,6 +156,15 @@ namespace kmaths
 
 		return result;
 #endif
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Root(T square, int roots)
+	{
+		if (roots == 2)
+			return Sqrt(square);
+
+		throw std::logic_error("Function not implemented yet");
 	}
 
 	template<typename T>

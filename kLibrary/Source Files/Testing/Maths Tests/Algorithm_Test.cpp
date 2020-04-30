@@ -228,28 +228,28 @@ namespace kTest::maths
 		{
 			constexpr auto square = 100;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrtf(square);
+			const auto expected = std::sqrtf(square); // 10
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = 0;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrtf(square);
+			const auto expected = std::sqrtf(square); // 0
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = 1;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrtf(square);
+			const auto expected = std::sqrtf(square); // 1
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = 225;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrtf(square);
+			const auto expected = std::sqrtf(square); // 15
 			VERIFY(root == expected);
 		}
 
@@ -263,21 +263,21 @@ namespace kTest::maths
 		{
 			constexpr auto square = 4.0;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrt(square); // 
+			const auto expected = std::sqrt(square); // 2
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = .250;
-			const auto root = Sqrt(square, 1);
-			const auto expected = std::sqrt(square); // 
+			const auto root = Sqrt(square);
+			const auto expected = std::sqrt(square); // 0.5
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = 40.f;
-			const auto root = Sqrt(square, 1);
-			const auto expected = std::sqrt(square); // 
+			const auto root = Sqrt(square);
+			const auto expected = std::sqrt(square); // 6.424555
 			VERIFY(root == expected);
 		}
 

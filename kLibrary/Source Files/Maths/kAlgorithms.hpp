@@ -85,8 +85,17 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Root(T square, int roots, unsigned char accuracy) noexcept
+	USE_RESULT constexpr T Root(T square, int roots) noexcept
 	{
+		throw std::logic_error("Function not implemented yet");
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Sqrt(T square) noexcept
+	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return CAST(T, pow(base, power));
+#else
 		constexpr auto one = CAST(T, 1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = 0.5f;
@@ -104,7 +113,7 @@ namespace kmaths
 		if (square == 2)
 			return CAST(T, constants::ROOT2);
 
-		T start = one;
+		T start = square > one ? one : zeroPointOne;
 
 		T result = start;
 
@@ -114,12 +123,7 @@ namespace kmaths
 		}
 
 		return result;
-	}
-
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sqrt(T square, unsigned char accuracy = 8) noexcept
-	{
-		return Root(square, 2, accuracy);
+#endif
 	}
 
 	template<typename T>

@@ -33,8 +33,10 @@ namespace kmaths
 
 			return DestType(source);
 		}
-
-		return DestType(std::forward<SourceType&&>(source));
+		else
+		{
+			return DestType(std::forward<SourceType&&>(source));
+		}
 	}
 
 	template<typename T1, typename T2>
@@ -93,8 +95,10 @@ namespace kmaths
 			if (power < 0)
 				return 0;
 		}
-
-		return PowerOf<T>(10, power);
+		else
+		{
+			return PowerOf<T>(10, power);
+		}
 	}
 
 	USE_RESULT constexpr double Log(int base, double exponent) noexcept
@@ -122,7 +126,6 @@ namespace kmaths
 			loops = 0;
 			multiplier = base + increment;
 			increment *= 0.1;
-
 		}
 
 		return ans;
@@ -165,78 +168,6 @@ namespace kmaths
 		return currentPower;
 	}
 
-	// Heron's method (Babylonian)
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sqrt(T square) noexcept
-	{
-#if MSVC_PLATFORM_TOOLSET > 142
-		return CAST(T, sqrt(square));
-#else
-		constexpr auto one = CAST(T, 1);
-		constexpr auto zeroPointOne = CAST(T, 0.1);
-		constexpr auto zeroPointFive = 0.5;
-		constexpr auto maxIterations = 20;
-
-		if (square <= 0)
-			return 0;
-
-		if (square == 1)
-			return square;
-
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-		{
-			if (square == zeroPointFive)
-				return CAST(T, constants::SQRT_1_OVER_2);
-		}
-
-		if (square == 2)
-			return CAST(T, constants::ROOT2);
-
-		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
-		{
-			double startVal = 0;
-			double current = square;
-			if (square >= one) // square is greater than one
-			{
-				do {
-					current *= zeroPointFive;
-					startVal = current * current;
-				} while (startVal > square);
-				startVal = current;
-			}
-			else // square is between zero and one
-			{
-				do {
-					current *= zeroPointOne;
-					startVal = current * current;
-				} while (startVal > square);
-				startVal = current;
-			}
-
-			return CAST(T, startVal);
-		};
-
-		T start = chooseStartValueFunc();
-
-		if (start * start == square)
-			return start;
-
-		T result = start;
-		T prevValue = -1;
-		for (auto i = 0; i < maxIterations; ++i)
-		{
-			result = CAST(T, zeroPointFive * (result + (square / result)));
-
-			if (prevValue == result)
-				break;
-
-			prevValue = result;
-		}
-
-		return result;
-#endif
-	}
-
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Root(T square, int roots)
 	{
@@ -251,16 +182,18 @@ namespace kmaths
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 			return value;
+		else
+		{
+			const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
+			const auto accuracy = PowerOf<size_t>(10, decimalPoints);
 
-		const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
-		const auto accuracy = PowerOf<size_t>(10, decimalPoints);
-
-		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
-		const auto accuracyInverse = CAST(T, 1) / accuracy;
-		const auto penultimateVal = CAST(long long, valuePlusDpsByAcc);
-		const auto significantFigures = CAST(T, penultimateVal);
-		const T roundedValue = significantFigures * accuracyInverse;
-		return roundedValue;
+			const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
+			const auto accuracyInverse = CAST(T, 1) / accuracy;
+			const auto penultimateVal = CAST(long long, valuePlusDpsByAcc);
+			const auto significantFigures = CAST(T, penultimateVal);
+			const T roundedValue = significantFigures * accuracyInverse;
+			return roundedValue;
+		}
 	}
 
 	template<typename T, class = std::enable_if_t<!std::is_rvalue_reference_v<T>>>
@@ -375,15 +308,116 @@ namespace kmaths
 			}
 			return fmod(num, base);
 		}
-
-		T const rem = num % base;
-		if _CONSTEXPR_IF(-1 % 2 == 1)
+		else
 		{
-			return rem;
+			T const rem = num % base;
+			if _CONSTEXPR_IF(-1 % 2 == 1)
+			{
+				return rem;
+			}
+
+			return rem < 0 ? rem + base : rem;
+		}
+	}
+
+	// Bakhshali Method
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T SqrtImpl(T square) noexcept
+	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return CAST(T, sqrt(square));
+#else
+		constexpr auto one = CAST(T, 1);
+		constexpr auto minusOne = CAST(T, -1);
+		constexpr auto zeroPointOne = CAST(T, 0.1);
+		constexpr auto zeroPointFive = CAST(T, 0.5);
+		auto maxIterations = 50;
+
+		if (square <= 0)
+			return 0;
+
+		if (square == zeroPointFive)
+			return CAST(T, constants::SQRT_1_OVER_2);
+
+		if (square == one)
+			return square;
+
+		if (square == 2)
+			return CAST(T, constants::ROOT2);
+
+		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
+		{
+			T startVal = 0;
+			T current = square;
+			if (square >= one) // square is greater than one
+			{
+				do {
+					current *= zeroPointFive;
+					startVal = current * current;
+				} while (startVal > square);
+				startVal = current;
+			}
+			else // square is between zero and one
+			{
+				do {
+					current *= zeroPointOne;
+					startVal = current * current;
+				} while (startVal > square);
+				startVal = current;
+			}
+
+			return startVal;
+		};
+
+		T start = chooseStartValueFunc();
+
+		if (start * start == square)
+			return start;
+
+		T result = start;
+		T prevValue[2] = { minusOne, minusOne };
+
+		const auto checkPrevResultsMatch = [&result, &prevValue]() {
+			for (auto& prev : prevValue)
+				if (prev == result)
+					return false;
+			return true;
+		};
+
+		while (checkPrevResultsMatch() && maxIterations > 0)
+		{
+			prevValue[modulus(maxIterations, 2)] = result;
+			--maxIterations;
+
+			// Bakhshali Method
+			const auto a = (square - (result * result)) / (2 * result);
+			const auto b = result + a;
+			result = b - ((a * a) / (2 * b));
+
+			// Heron's Method
+			//result = CAST(T, zeroPointFive * (result + (square / result)));
 		}
 
-		return rem < 0 ? rem + base : rem;
+		return result;
+#endif
 	}
+
+
+
+#if defined (_MSC_VER)
+#	pragma warning(push)
+#	pragma warning(disable : 4244)
+	// Bakhshali Method
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Sqrt(T square) noexcept
+	{
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+			return CAST(T, SqrtImpl<float>(square));
+		else
+			return SqrtImpl<T>(square);
+	}
+#	pragma warning(pop)
+#endif
 }
 
 

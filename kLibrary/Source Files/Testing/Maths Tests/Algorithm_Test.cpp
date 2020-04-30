@@ -61,10 +61,10 @@ namespace kTest::maths
 		VERIFY(charToString_View == "YOLO");
 
 		constexpr int container[3][2] = { {1, 3}, {5, 6}, {0, 5} };
-		constexpr auto arrayToMatrix = Convert<Matrix3x2s>(container);
+		const auto arrayToMatrix = Convert<Matrix3x2s>(container);
 
 		{
-			constexpr auto vecToMat = Convert<Matrix2x2f>(kmaths::Vector2f(5));
+			const auto vecToMat = Convert<Matrix2x2f>(kmaths::Vector2f(5));
 
 			for (auto row = 0; row < vecToMat.GetRows(); ++row)
 				for (auto col = 0; col < vecToMat.GetColumns(); ++col)
@@ -279,6 +279,13 @@ namespace kTest::maths
 	bool AlgorithmsTester::SquareRootTest()
 	{
 		{
+			constexpr auto square = 125348;
+			const auto root = Sqrt(square);
+			const auto expected = std::sqrtf(square); // 354.045197 (as int)
+			VERIFY(root == expected);
+		}
+
+		{
 			constexpr auto square = 100;
 			const auto root = Sqrt(square);
 			const auto expected = std::sqrtf(square); // 10
@@ -330,7 +337,7 @@ namespace kTest::maths
 		{
 			constexpr auto square = .00625;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrt(square); // 0.5
+			const auto expected = std::sqrt(square); // 0.079056941504209485
 			VERIFY(root == expected);
 		}
 
@@ -348,6 +355,13 @@ namespace kTest::maths
 			VERIFY(root == expected);
 		}
 
+		{
+			constexpr auto square = constants::PI;
+			const auto root = Sqrt(square);
+			const auto expected = std::sqrt(square); // 6379.1890908406222
+			VERIFY(root == expected);
+		}
+
 		return success;
 	}
 
@@ -356,7 +370,9 @@ namespace kTest::maths
 		{
 			constexpr auto base = 2;
 			constexpr auto exponent = 8;
-			const auto ans = Log(base, exponent);
+			const auto log = Log(base, exponent);
+			const auto expected = std::log2(8); // 6379.1890908406222
+			VERIFY(log == expected);
 		}
 
 		return success;

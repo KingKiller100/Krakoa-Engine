@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <utility>
+#include <stdexcept>
 
 #ifdef max
 #	undef max
@@ -98,7 +99,7 @@ namespace kmaths
 #else
 		constexpr auto one = CAST(T, 1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
-		constexpr auto zeroPointFive = 0.5f;
+		constexpr auto zeroPointFive = 0.5;
 		constexpr auto maxIterations = 10;
 
 		if (square == 0 || square == 1)
@@ -113,13 +114,47 @@ namespace kmaths
 		if (square == 2)
 			return CAST(T, constants::ROOT2);
 
-		T start = square > one ? one : zeroPointOne;
+		const auto chooseStartValueFunc = [square]()
+		{
+			auto current = CAST(T, 1);
+			T startVal = 0;
+			if (square > one)
+			{
+				while (startVal <= square)
+				{
+					current++;
+					startVal = current * current;
+				}
+				startVal = --current;
+			}
+			else
+			{
+				while (startVal >= square)
+				{
+					current -= zeroPointOne;
+					startVal = current * current;
+				}
+				startVal = current + zeroPointOne;
+			}
+
+			return startVal;
+		};
+
+		T start = chooseStartValueFunc();
+
+		if (start * start == square)
+			return start;
 
 		T result = start;
-
+		T prevValue = -1;
 		for (auto i = 0; i < maxIterations; ++i)
 		{
-			result = zeroPointFive * (result + (square / result));
+			result = CAST(T, zeroPointFive * (result + (square / result)));
+
+			if (prevValue == result)
+				break;
+
+			prevValue = result;
 		}
 
 		return result;

@@ -275,6 +275,13 @@ namespace kTest::maths
 		}
 
 		{
+			constexpr auto square = .00625;
+			const auto root = Sqrt(square);
+			const auto expected = std::sqrt(square); // 0.5
+			VERIFY(root == expected);
+		}
+
+		{
 			constexpr auto square = 40.f;
 			const auto root = Sqrt(square);
 			const auto expected = std::sqrt(square); // 6.424555

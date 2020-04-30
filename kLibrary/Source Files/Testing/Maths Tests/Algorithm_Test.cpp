@@ -11,8 +11,6 @@
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	using namespace kmaths;
-
 	AlgorithmsTester::AlgorithmsTester()
 		: Tester("Algorithms Test")
 	{}
@@ -31,11 +29,13 @@ namespace kTest::maths
 		VERIFY_MULTI(SwapTest);
 		VERIFY_MULTI(ToDegreesTest);
 		VERIFY_MULTI(ToRadiansTest);
+		VERIFY_MULTI(WhatPowerOf10Test);
 		VERIFY_MULTI(SquareRootTest);
 
 		VERIFY_MULTI_END();
 	}
 
+	using namespace kmaths;
 	bool AlgorithmsTester::ConversionTest()
 	{
 		constexpr auto num = 300;
@@ -223,6 +223,58 @@ namespace kTest::maths
 		return success;
 	}
 
+	bool AlgorithmsTester::WhatPowerOf10Test()
+	{
+		{
+			constexpr auto number = 0.1;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == -1);
+		}
+
+		{
+			constexpr auto number = 1;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == 0);
+		}
+
+		{
+			constexpr auto number = 10;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == 1);
+		}
+		{
+			constexpr auto number = 300;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == 2);
+		}
+
+		{
+			constexpr auto number = 30;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == 1);
+		}
+
+		{
+			constexpr auto number = 300000;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == 5);
+		}
+
+		{
+			constexpr auto number = 0.09567;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == -2);
+		}
+
+		{
+			constexpr auto number = 0.00007;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == -5);
+		}
+
+		return success;
+	}
+
 	bool AlgorithmsTester::SquareRootTest()
 	{
 		{
@@ -289,7 +341,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto square = 40694053.4567f;
+			constexpr auto square = 40694053.4567;
 			const auto root = Sqrt(square);
 			const auto expected = std::sqrt(square); // 
 			VERIFY(root == expected);

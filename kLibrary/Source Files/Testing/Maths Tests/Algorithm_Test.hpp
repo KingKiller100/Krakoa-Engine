@@ -22,6 +22,7 @@ namespace kTest::maths
 		bool ToDegreesTest();
 		bool ToRadiansTest();
 		bool SquareRootTest();
+		bool WhatPowerOf10Test();
 	};
 }
 #endif

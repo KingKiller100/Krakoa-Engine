@@ -85,6 +85,44 @@ namespace kmaths
 #endif
 	}
 
+	USE_RESULT constexpr int WhatPowerOf10(double number) noexcept
+	{
+		if (number < 1 && number > 0.1)
+			return -1;
+		if (number >= 1 && number < 10)
+			return 0;
+		if (number >= 10 && number < 100)
+			return 1;
+
+		if (number < 0)
+			number = -number;
+
+		int currentPower = 1;
+		if (number > 10)
+		{
+			long long value = 1;
+			while (value < number)
+			{
+				currentPower++;
+				value = PowerOf(10, currentPower);
+			}
+			--currentPower;
+		}
+		else if (number < 1)
+		{
+			long double value = 0.1;
+			while (value > number)
+			{
+				currentPower--;
+				value = PowerOf(0.1, currentPower);
+			}
+			++currentPower;
+		}
+
+		return currentPower;
+	}
+
+
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Sqrt(T square) noexcept
 	{
@@ -113,9 +151,9 @@ namespace kmaths
 
 		const auto chooseStartValueFunc = [square]()
 		{
-			auto current = CAST(T, 1);
+			auto current = one;
 			T startVal = 0;
-			if (square > one)
+			if (square > one) // square is greater than one
 			{
 				while (startVal <= square)
 				{
@@ -124,7 +162,7 @@ namespace kmaths
 				}
 				startVal = --current;
 			}
-			else
+			else // square is between zero and one
 			{
 				while (startVal >= square)
 				{

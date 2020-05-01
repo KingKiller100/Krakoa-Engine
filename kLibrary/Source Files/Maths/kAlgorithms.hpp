@@ -4,9 +4,9 @@
 
 #include "Constants.hpp"
 
+#include "../Utility/Debug Helper/Exceptions/NotImplementedException.hpp"
+
 #include <cmath>
-#include <utility>
-#include <stdexcept>
 
 #ifdef max
 #	undef max
@@ -101,8 +101,10 @@ namespace kmaths
 		}
 	}
 
-	USE_RESULT constexpr double Log(int base, double exponent) noexcept
+	USE_RESULT constexpr double Log(int base, double exponent)
 	{
+		throw klib::kDebug::kExceptions::NotImplementedException("Log base 10 function not currently supported");
+
 		double value = 1;
 		int loops = 0;
 		double increment = 0.1;
@@ -322,7 +324,43 @@ namespace kmaths
 		constexpr auto minusOne = CAST(T, -1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = CAST(T, 0.5);
-		auto maxIterations = 50;
+		auto maxIterations = 16;
+
+		constexpr T lookUpMap[] = { 
+			CAST(T, 0),    // 0 
+			CAST(T, 1),    // 1 
+			CAST(T, 4),    // 2 
+			CAST(T, 9),	   // 3
+			CAST(T, 16),   // 4
+			CAST(T, 25),   // 5
+			CAST(T, 36),   // 6
+			CAST(T, 49),   // 7
+			CAST(T, 64),   // 8
+			CAST(T, 81),   // 9
+			CAST(T, 100),  // 10
+			CAST(T, 121),  // 11
+			CAST(T, 144),  // 12
+			CAST(T, 169),  // 13
+			CAST(T, 196),  // 14
+			CAST(T, 225),  // 15
+			CAST(T, 256),  // 16
+			CAST(T, 289),  // 17
+			CAST(T, 324),  // 18
+			CAST(T, 361),  // 19
+			CAST(T, 400),  // 20
+			CAST(T, 441),  // 21
+			CAST(T, 484),  // 22
+			CAST(T, 529),  // 23
+			CAST(T, 576),  // 24
+			CAST(T, 625),  // 25
+			CAST(T, 676),  // 26
+			CAST(T, 729),  // 27
+			CAST(T, 784),  // 28
+			CAST(T, 841),  // 29
+			CAST(T, 900),  // 30
+			CAST(T, 961),  // 31
+			CAST(T, 1024), // 32
+		};
 
 		if (square <= 0)
 			return 0;
@@ -338,6 +376,19 @@ namespace kmaths
 
 		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
 		{
+			const auto size = sizeof(lookUpMap) / sizeof(T);
+			for (auto i = 0; i < size - 1; ++i)
+			{ 
+				const auto lb = lookUpMap[i];
+				const auto ub = lookUpMap[i + 1];
+				if (lb <= square && square < ub)
+				{
+					const auto lbDiff = square - lb;
+					const auto ubDiff = ub - square;
+					return lbDiff < ubDiff ? i : i+1;
+				}
+			}
+
 			T startVal = 0, current = square;
 			do {
 				current *= zeroPointFive;
@@ -394,6 +445,7 @@ namespace kmaths
 			return SqrtImpl<T>(square);
 	}
 
+	// Newton-Raphson Method
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T InvSqrt(T square) noexcept
 	{
@@ -423,7 +475,6 @@ namespace kmaths
 			maxIterations = 7;
 		else
 			maxIterations = 16;
-
 
 		if (num < 0)
 		{
@@ -495,8 +546,6 @@ namespace kmaths
 		return result;
 	}
 
-
-
 #if defined (_MSC_VER)
 #	pragma warning(push)
 #	pragma warning(disable : 4244)
@@ -513,5 +562,3 @@ namespace kmaths
 #	pragma warning(pop)
 #endif
 }
-
-

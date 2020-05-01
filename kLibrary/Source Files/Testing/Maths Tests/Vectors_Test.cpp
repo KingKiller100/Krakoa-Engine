@@ -92,7 +92,7 @@ namespace kTest::maths
 		constexpr char chars[] = { 'H', 'E', 'L', 'P', '\0' };
 		constexpr auto vec5c = Vector<char, 5>(chars);
 
-		const auto w = vec4u.W();
+		constexpr auto w = vec5c.W();
 
 		vec4u += vec3l;
 		vec4u -= vec2d;
@@ -102,22 +102,32 @@ namespace kTest::maths
 		constexpr auto vecBool = Vector<bool, 7>(bools);
 		constexpr auto b6 = vecBool[6];
 
-		constexpr auto lhs = Vector2s(10, 5);
-		constexpr auto rhs = Vector2s(9, 15);
+		constexpr auto lhs = Vector2d(10, 5);
+		constexpr auto rhs = Vector2d(9, 15);
 
+		// Operators
 		constexpr auto add = lhs + rhs;
 		constexpr auto subtract = lhs - rhs;
 		constexpr auto multiply = lhs * rhs;
 		constexpr auto divide = lhs / rhs;
+		constexpr auto noEqual = lhs != rhs;
+
+		// Functions
 		constexpr auto magnitudeSq = lhs.MagnitudeSQ();
 		constexpr auto magnitude = lhs.Magnitude();
 		constexpr auto normalize = lhs.Normalize();
+		constexpr auto distance = lhs.Distance(rhs);
+		constexpr auto dotProduct = lhs.DotProduct(rhs);
 		constexpr auto dimensions = lhs.GetNumberOfDimensions();
 		constexpr auto reverseVector = lhs.ReverseVector();
 		constexpr auto inverse = lhs.Inverse();
 		constexpr auto isZero = lhs.IsZero();
 		constexpr auto perpendicular = lhs.Perpendicular();
-		constexpr auto noEqual = lhs != rhs;
+
+		constexpr auto lhs3d = Vector3d(10, 5, 3);
+		constexpr auto rhs3d = Vector3d(9, 15, 23);
+
+		constexpr auto crossProduct = lhs3d.CrossProduct(rhs3d);
 
 		return success;
 	}

@@ -241,23 +241,18 @@ namespace kmaths
 		return currentPower;
 	}
 
-	template<typename T>
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Round(const T value, const uint8_t decimalPoints) noexcept
 	{
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-			return value;
-		else
-		{
-			const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
-			const auto accuracy = PowerOf<size_t>(10, decimalPoints);
+		const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
+		const auto accuracy = PowerOf<size_t>(10, decimalPoints);
 
-			const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
-			const auto accuracyInverse = CAST(T, 1) / accuracy;
-			const auto penultimateVal = CAST(long long, valuePlusDpsByAcc);
-			const auto significantFigures = CAST(T, penultimateVal);
-			const T roundedValue = significantFigures * accuracyInverse;
-			return roundedValue;
-		}
+		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
+		const auto accuracyInverse = CAST(T, 1) / accuracy;
+		const auto penultimateVal = CAST(long long, valuePlusDpsByAcc);
+		const auto significantFigures = CAST(T, penultimateVal);
+		const T roundedValue = significantFigures * accuracyInverse;
+		return roundedValue;
 	}
 
 	template<typename T, class = std::enable_if_t<!std::is_rvalue_reference_v<T>>>
@@ -361,16 +356,34 @@ namespace kmaths
 		return result;
 	}
 
-	template <typename T>
+
+
+	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T FloatingPointModulus(T num, T base) noexcept
+	{
+		const auto one_over_base = CAST(T, 1) / base;
+		const auto num_over_base = num * one_over_base;
+		const auto int_n_over_b = int(num_over_base);
+
+		if (num_over_base == int_n_over_b)
+			return 0;
+
+		const auto closestMultiplier = int_n_over_b * base;
+		const auto rem = num - closestMultiplier;
+
+		const auto mod = rem < 0 ? rem + base : rem;
+		return mod;
+	}
+
+	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Modulus(T num, T base) noexcept
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
-			if (num < 0.0f)
-			{
-				return fmod(num, base) + base;
-			}
-			return fmod(num, base);
+			const auto mod = (num < 0)
+				? std::fmod(num, base) + base
+				: std::fmod(num, base);
+			return mod;
 		}
 		else
 		{
@@ -380,7 +393,8 @@ namespace kmaths
 				return rem;
 			}
 
-			return rem < 0 ? rem + base : rem;
+			const auto mod = rem < 0 ? rem + base : rem;
+			return mod;
 		}
 	}
 
@@ -531,12 +545,10 @@ namespace kmaths
 				maxIterations = 16;
 
 			T estimate = 0;
-			bool isNegative = num < 0;
+			const bool isNegative = num < 0;
 
 			if (isNegative)
-			{
 				number = -num;
-			}
 
 			if (num < 1 && num > -1)
 			{
@@ -586,15 +598,11 @@ namespace kmaths
 			return true;
 		};
 
-		bool uniqueResult = true;
-		bool valLessThanNum = true;
-		bool stillIterating = true;
-
 		auto iterations = 0;
-		const auto size = sizeof(prev) / sizeof(T);
+		const int size = sizeof(prev) / sizeof(T);
 		while (checkUniqueResult())
 		{
-			prev[Modulus<int>(iterations++, size)] = result;
+			prev[Modulus(iterations++, size)] = result;
 			const auto x_power_of_root_minus_one = PowerOf(result, root - 1);
 			const auto num_over_x_pow_r_m_o = num / x_power_of_root_minus_one;
 			const auto next_result = oneOverRoot * (num_over_x_pow_r_m_o - result);
@@ -612,7 +620,7 @@ namespace kmaths
 	USE_RESULT constexpr T Root(T num, uint8_t root) noexcept
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-			return CAST(T, RootImpl<float>(num, root));
+			return CAST(T, RootImpl<float>(CAST(float, num), root));
 		else
 			return RootImpl<T>(num, root);
 	}
@@ -637,4 +645,25 @@ namespace kmaths
 
 #	pragma warning(pop)
 #endif
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T PowerOf(T base, int8_t numerator, uint8_t denominator) noexcept
+	{
+		if (denominator == 0)
+			return 0;
+
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		{
+			const auto pow = PowerOf<float>(CAST(float, base), numerator);
+			const auto powRoot = RootImpl<float>(pow, denominator);
+			const auto result = CAST(T, powRoot);
+			return result;
+		}
+		else
+		{
+			const auto result = RootImpl<T>(PowerOf<T>(base, numerator), denominator);
+			return result;
+		}
+
+	}
 }

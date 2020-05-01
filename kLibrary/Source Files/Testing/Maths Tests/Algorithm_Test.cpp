@@ -37,6 +37,9 @@ namespace kTest::maths
 		VERIFY_MULTI(SquareRootTest);
 		VERIFY_MULTI(RootTest);
 		VERIFY_MULTI(LogTest);
+		VERIFY_MULTI(PowerOfFractionTest);
+		VERIFY_MULTI(FloatingPointModulusTest);
+		VERIFY_MULTI(ModulusTest);
 
 		VERIFY_MULTI_END();
 	}
@@ -617,10 +620,10 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto exponant = 50.0;
+			constexpr auto exponant = 50.f;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = 3.6840314986403859;
+			auto root = Root(exponant, power);
+			constexpr auto expected = 3.6840314986403859f;
 			VERIFY(root == expected);
 		}
 
@@ -661,6 +664,113 @@ namespace kTest::maths
 		//	const auto expected = std::log2(8); // 6379.1890908406222
 		//	VERIFY(log == expected);
 		//}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::PowerOfFractionTest()
+	{
+		{
+			constexpr auto numerator = 2;
+			constexpr auto denominator = 3;
+			constexpr auto base = 8;
+			const auto result = PowerOf(base, numerator, denominator);
+			constexpr auto expected = 4;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto numerator = 2;
+			constexpr auto denominator = 4;
+			constexpr auto base = 9;
+			const auto result = PowerOf(base, numerator, denominator);
+			constexpr auto expected = 3;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto numerator = 3;
+			constexpr auto denominator = 5;
+			constexpr auto base = 5.l;
+			const auto result = PowerOf(base, numerator, denominator);
+			constexpr auto expected = 2.6265278044037674l;
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::FloatingPointModulusTest()
+	{
+		{
+			constexpr auto num = 11.1;
+			constexpr auto base = 10.1;
+			const auto result = FloatingPointModulus(num, base);
+			const auto expected = std::fmod(num, base);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = 2.5;
+			constexpr auto base = 7.9;
+			const auto result = FloatingPointModulus(num, base);
+			const auto expected = std::fmod(num, base);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = 101.1l;
+			constexpr auto base = 10.0l;
+			const auto result = FloatingPointModulus(num, base);
+			const auto expected = std::fmodl(num, base);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = -10.4;
+			constexpr auto base = 10.0;
+			const auto result = FloatingPointModulus(num, base);
+			const auto expected = std::fmod(num, base);
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::ModulusTest()
+	{
+		{
+			constexpr auto num = 10;
+			constexpr auto base = 10;
+			const auto result = Modulus(num, base);
+			constexpr auto expected = num % base;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = 5;
+			constexpr auto base = 10;
+			const auto result = Modulus(num, base);
+			constexpr auto expected = num % base;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = -46;
+			constexpr auto base = 12;
+			const auto result = Modulus(num, base);
+			constexpr auto expected = num % base;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = 46.6;
+			constexpr auto base = 12.2;
+			const auto result = Modulus(num, base);
+			const auto expected = std::fmod(num, base);
+			VERIFY(result == expected);
+		}
+
 
 		return success;
 	}

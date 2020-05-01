@@ -28,6 +28,9 @@ namespace kTest::maths
 		bool RootTest();
 		bool WhatPowerOf10Test();
 		bool LogTest();
+		bool PowerOfFractionTest();
+		bool FloatingPointModulusTest();
+		bool ModulusTest();
 	};
 }
 #endif

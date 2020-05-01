@@ -24,6 +24,9 @@ namespace kTest::maths
 
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(MinMaxTest);
+		VERIFY_MULTI(BinarySearchTest);
+		VERIFY_MULTI(BinarySearchClosestTest);
+		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(PowerOfTest);
 		VERIFY_MULTI(SwapTest);
@@ -97,6 +100,94 @@ namespace kTest::maths
 		VERIFY(smallest == small);
 		constexpr auto smallestLongLong = Min(big, small);
 		VERIFY(smallestLongLong == CAST(decltype(big), small));
+
+		return success;
+	}
+
+	bool AlgorithmsTester::BinarySearchTest()
+	{
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearch(list, 4.0);
+			VERIFY(idx == 4);
+		}
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearch(list, -4.0);
+			VERIFY(idx == -1);
+		}
+
+		{
+			constexpr int list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearch(list, 14);
+			VERIFY(idx == -1);
+		}
+
+		{
+			auto list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearch(list, 6ll, 7);
+			VERIFY(idx == 6);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::BinarySearchClosestTest()
+	{
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 1.0);
+			VERIFY(idx == 1);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 3.0);
+			VERIFY(idx == 3);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 5.0);
+			VERIFY(idx == 5);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, -5.0);
+			VERIFY(idx == -1);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 4.25);
+			VERIFY(idx == 4);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 2.25);
+			VERIFY(idx == 2);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 7.0);
+			VERIFY(idx == -1);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, -1.0);
+			VERIFY(idx == -1);
+		}
+
+		{
+			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 1.5);
+			VERIFY(idx == 2);
+		}
 
 		return success;
 	}
@@ -372,9 +463,16 @@ namespace kTest::maths
 		}
 
 		{
+			constexpr auto square = 27.f;
+			const auto root = Sqrt(square);
+			const auto expected = std::sqrt(square); // 5.....
+			VERIFY(root == expected);
+		}
+
+		{
 			constexpr auto square = constants::PI;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrt(square); // 6379.1890908406222
+			const auto expected = std::sqrt(square); // 1.681792830507...
 			VERIFY(root == expected);
 		}
 
@@ -402,7 +500,6 @@ namespace kTest::maths
 			VERIFY(root == expected);
 			VERIFY(invRoot == expectedInv);
 		}
-
 
 		return success;
 	}
@@ -442,11 +539,11 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto exponant = 27.f;
+	/*		constexpr auto exponant = 27.f;
 			constexpr auto power = 2;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 5;
-			VERIFY(int(root) == expected);
+			VERIFY(int(root) == expected);*/
 		}
 
 		{
@@ -462,6 +559,14 @@ namespace kTest::maths
 			constexpr auto power = 3;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 3;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = -27;
+			constexpr auto power = 3;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = -3;
 			VERIFY(root == expected);
 		}
 
@@ -486,6 +591,14 @@ namespace kTest::maths
 			constexpr auto power = 6;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 2;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = -64.0;
+			constexpr auto power = 6;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = -2;
 			VERIFY(root == expected);
 		}
 

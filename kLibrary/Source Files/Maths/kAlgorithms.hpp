@@ -39,6 +39,70 @@ namespace kmaths
 		}
 	}
 
+	template<typename List, typename T>
+	USE_RESULT constexpr long long BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
+	{
+		if (lbIdx > ubIdx
+			|| value < list[0]
+			|| value > list[size - 1])
+			return -1;
+
+		const size_t midIdx = lbIdx + ((ubIdx - lbIdx) >> 1);
+		const auto mid = list[midIdx];
+
+		if (mid == value)
+			return midIdx;
+		else if (mid > value)
+			return BinarySearchImpl(list, value, lbIdx, midIdx - 1, size);
+		else if (mid < value)
+			return BinarySearchImpl(list, value, midIdx + 1, ubIdx, size);
+	}
+
+	template<typename T>
+	USE_RESULT constexpr long long BinarySearch(T* list, T&& value, size_t size) noexcept
+	{
+		return BinarySearchImpl(list, value, 0, size - 1, size);
+	}
+
+	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
+	USE_RESULT constexpr long long BinarySearch(const T(& list)[N], T&& value) noexcept
+	{
+		return BinarySearchImpl(list, value, 0, N - 1, N);
+	}
+
+	template<typename List, typename T>
+	USE_RESULT constexpr long long BinarySearchClosestImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
+	{
+		if (lbIdx > ubIdx
+			|| value < list[0]
+			|| value > list[size - 1])
+			return -1;
+
+		const size_t midIdx = lbIdx + ((ubIdx - lbIdx) >> 1);
+
+		const auto lowerbound = list[midIdx];
+		const auto upperbound = list[midIdx + 1];
+
+		if (lowerbound == value)
+			return midIdx;
+		else if (value < lowerbound)
+			return BinarySearchClosestImpl(list, value, lbIdx, midIdx - 1, size);
+		else if (value > upperbound)
+			return BinarySearchClosestImpl(list, value, midIdx + 1, ubIdx, size);
+
+		const auto lbDiff = value - lowerbound;
+		const auto ubDiff = upperbound - value;
+
+		return lbDiff < ubDiff ? midIdx : midIdx + 1;
+	}
+
+
+	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
+	USE_RESULT constexpr long long BinarySearchClosest(const T(& list)[N], T&& value)
+	{
+		return BinarySearchClosestImpl(list, value, 0, N - 1, N);
+	};
+
 	template<typename T1, typename T2>
 	USE_RESULT constexpr T1 Max(const T1& lhs, const T2& rhs) noexcept
 	{
@@ -326,7 +390,7 @@ namespace kmaths
 		constexpr auto zeroPointFive = CAST(T, 0.5);
 		auto maxIterations = 16;
 
-		constexpr T lookUpMap[] = { 
+		constexpr T lookUpMap[] = {
 			CAST(T, 0),    // 0 
 			CAST(T, 1),    // 1 
 			CAST(T, 4),    // 2 
@@ -376,26 +440,28 @@ namespace kmaths
 
 		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
 		{
-			const auto size = sizeof(lookUpMap) / sizeof(T);
-			for (auto i = 0; i < size - 1; ++i)
-			{ 
+		/*	for (auto i = 0; i < size - 1; ++i)
+			{
 				const auto lb = lookUpMap[i];
 				const auto ub = lookUpMap[i + 1];
 				if (lb <= square && square < ub)
 				{
 					const auto lbDiff = square - lb;
 					const auto ubDiff = ub - square;
-					return lbDiff < ubDiff ? i : i+1;
+					return lbDiff < ubDiff ? i : i + 1;
 				}
-			}
+			}*/
 
-			T startVal = 0, current = square;
-			do {
-				current *= zeroPointFive;
-				startVal = current * current;
-			} while (startVal > square);
-			startVal = current;
-			return startVal;
+			const auto size = sizeof(lookUpMap) / sizeof(T);
+			T estimate = BinarySearchClosestImpl(lookUpMap, square, 0, size - 1, size);
+			if (estimate == minusOne)
+			{
+				estimate = square;
+				do {
+					estimate *= zeroPointFive;
+				} while (estimate * estimate > square);
+			}
+			return estimate;
 		};
 
 		T start = chooseStartValueFunc();
@@ -445,7 +511,7 @@ namespace kmaths
 			return SqrtImpl<T>(square);
 	}
 
-	// Newton-Raphson Method
+
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T InvSqrt(T square) noexcept
 	{
@@ -493,15 +559,25 @@ namespace kmaths
 
 		const auto chooseStartNumber = [&]() -> T
 		{
-			T startVal = 0, current = num;
+			T startVal = 0, endVal = num, estimate = 0;
+			auto increment = num > 0 ? one : minusOne;
 
-			do {
-				current *= oneOverRoot;
-				startVal = PowerOf<T>(current, root);
-			} while (startVal > num);
-			startVal = current;
+			for (auto i = 0; i < maxIterations; ++i)
+			{
+				do {
+					endVal -= increment;
+					estimate = (startVal + endVal) * zeroPointFive;
+				} while (PowerOf<T>(estimate, root) > num);
 
-			return startVal;
+				startVal = estimate;
+				endVal += increment;
+				increment *= zeroPointOne;
+
+				if (PowerOf(startVal, root) == num)
+					break;
+			}
+
+			return estimate;
 		};
 
 		T start = chooseStartNumber();
@@ -509,9 +585,10 @@ namespace kmaths
 		if (PowerOf(start, root) == num)
 			return start;
 
+
+		auto increment = one;
 		T result = start;
 		T prev = 0;
-		auto increment = one;
 		auto val = PowerOf(result, root);
 
 		while (val < num || maxIterations > 0)

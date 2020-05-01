@@ -49,13 +49,13 @@ namespace kmaths
 
 		const size_t midIdx = lbIdx + ((ubIdx - lbIdx) >> 1);
 		const auto mid = list[midIdx];
-
-		if (mid == value)
-			return midIdx;
-		else if (mid > value)
+		
+		if (mid > value)
 			return BinarySearchImpl(list, value, lbIdx, midIdx - 1, size);
 		else if (mid < value)
 			return BinarySearchImpl(list, value, midIdx + 1, ubIdx, size);
+
+		return midIdx;
 	}
 
 	template<typename T>
@@ -65,7 +65,7 @@ namespace kmaths
 	}
 
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
-	USE_RESULT constexpr long long BinarySearch(const T(& list)[N], T&& value) noexcept
+	USE_RESULT constexpr long long BinarySearch(const T(&list)[N], T&& value) noexcept
 	{
 		return BinarySearchImpl(list, value, 0, N - 1, N);
 	}
@@ -97,8 +97,15 @@ namespace kmaths
 	}
 
 
+	template< typename T>
+	USE_RESULT constexpr long long BinarySearchClosest(const T* list, T&& value, size_t size)
+	{
+		return BinarySearchClosestImpl(list, value, 0, size - 1, size);
+	};
+
+
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
-	USE_RESULT constexpr long long BinarySearchClosest(const T(& list)[N], T&& value)
+	USE_RESULT constexpr long long BinarySearchClosest(const T(&list)[N], T&& value)
 	{
 		return BinarySearchClosestImpl(list, value, 0, N - 1, N);
 	};
@@ -438,22 +445,10 @@ namespace kmaths
 		if (square == 2)
 			return CAST(T, constants::ROOT2);
 
-		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search path to approximate root to give a start value
+		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search if given square is between 0 and lookUpMap's size squared
 		{
-		/*	for (auto i = 0; i < size - 1; ++i)
-			{
-				const auto lb = lookUpMap[i];
-				const auto ub = lookUpMap[i + 1];
-				if (lb <= square && square < ub)
-				{
-					const auto lbDiff = square - lb;
-					const auto ubDiff = ub - square;
-					return lbDiff < ubDiff ? i : i + 1;
-				}
-			}*/
-
 			const auto size = sizeof(lookUpMap) / sizeof(T);
-			T estimate = BinarySearchClosestImpl(lookUpMap, square, 0, size - 1, size);
+			T estimate = CAST(T, BinarySearchClosestImpl(lookUpMap, square, 0, size - 1, size));
 			if (estimate == minusOne)
 			{
 				estimate = square;
@@ -532,6 +527,7 @@ namespace kmaths
 		const auto oneOverRoot = one / root;
 		constexpr auto minusOne = CAST(T, -1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
+		constexpr auto minusZeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = CAST(T, 0.5);
 		constexpr auto roundingError = 14;
 		constexpr auto roundingErrorFloat = 6;
@@ -557,34 +553,52 @@ namespace kmaths
 		if (num == one)
 			return one;
 
-		const auto chooseStartNumber = [&]() -> T
+		const auto chooseStartNumber = [&](auto number) -> T
 		{
-			T startVal = 0, endVal = num, estimate = 0;
-			auto increment = num > 0 ? one : minusOne;
+			T estimate = 0;
+			bool isNegative = num < 0;
 
-			for (auto i = 0; i < maxIterations; ++i)
+			if (isNegative)
 			{
-				do {
-					endVal -= increment;
-					estimate = (startVal + endVal) * zeroPointFive;
-				} while (PowerOf<T>(estimate, root) > num);
-
-				startVal = estimate;
-				endVal += increment;
-				increment *= zeroPointOne;
-
-				if (PowerOf(startVal, root) == num)
-					break;
+				number = -num;
 			}
 
-			return estimate;
+			if (num < 1 && num > -1)
+			{
+				T startVal = 0, endVal = 1;
+				auto increment = number > 0 ? zeroPointOne : minusZeroPointOne;
+				for (auto i = 0; i < maxIterations; ++i)
+				{
+					T compareVal = 0;
+					do {
+						endVal -= increment;
+						estimate = (startVal + endVal) * zeroPointFive;
+						compareVal = PowerOf<T>(estimate, root);
+					} while (compareVal > number);
+
+					startVal = estimate;
+					endVal += increment;
+					increment *= zeroPointOne;
+
+					if (compareVal == number)
+						break;
+				}
+			}
+			else
+			{
+				estimate = number;
+				do {
+					estimate *= oneOverRoot;
+				} while (PowerOf<T>(estimate, root) > number);
+			}
+
+			return isNegative ? -estimate : estimate;
 		};
 
-		T start = chooseStartNumber();
+		const T start = chooseStartNumber(num);
 
 		if (PowerOf(start, root) == num)
 			return start;
-
 
 		auto increment = one;
 		T result = start;

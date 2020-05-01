@@ -189,6 +189,12 @@ namespace kTest::maths
 			VERIFY(idx == 2);
 		}
 
+		{
+			auto list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
+			const auto idx = BinarySearchClosest(list, 6ll, 7);
+			VERIFY(idx == 6);
+		}
+
 		return success;
 	}
 
@@ -539,11 +545,35 @@ namespace kTest::maths
 		}
 
 		{
-	/*		constexpr auto exponant = 27.f;
-			constexpr auto power = 2;
+			constexpr auto exponant = 1000.0l;
+			constexpr auto power = 14;
 			const auto root = Root(exponant, power);
-			constexpr auto expected = 5;
-			VERIFY(int(root) == expected);*/
+			constexpr auto expected = 1.6378937069540600l;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = .0625f;
+			constexpr auto power = 4;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 0.5;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponant = 69150.l;
+			constexpr auto power = 10;
+			const auto root = Root(exponant, power);
+			constexpr auto expected = 0.5;
+			VERIFY(root == expected);
+		}
+
+		{
+			auto exponant = 27.0l;
+			const auto power = 2;
+			const auto root = Root(exponant, power);
+			const auto expected = std::sqrtl(exponant);
+			VERIFY(root == expected);
 		}
 
 		{
@@ -589,18 +619,19 @@ namespace kTest::maths
 		{
 			constexpr auto exponant = 64.0;
 			constexpr auto power = 6;
-			const auto root = Root(exponant, power);
+			constexpr auto root = Root(exponant, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);
 		}
 
-		{
-			constexpr auto exponant = -64.0;
-			constexpr auto power = 6;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = -2;
-			VERIFY(root == expected);
-		}
+		// Throws error trying to find a even root of a negative number
+		//{
+		//	constexpr auto exponant = -64.0;
+		//	constexpr auto power = 6;
+		//	//const auto root = Root(exponant, power);
+		//	constexpr auto expected = -2;
+		//	VERIFY(root == expected);
+		//}
 
 		return success;
 	}

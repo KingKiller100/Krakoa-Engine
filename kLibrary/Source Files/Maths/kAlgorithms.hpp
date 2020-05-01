@@ -49,7 +49,7 @@ namespace kmaths
 
 		const size_t midIdx = lbIdx + ((ubIdx - lbIdx) >> 1);
 		const auto mid = list[midIdx];
-		
+
 		if (mid > value)
 			return BinarySearchImpl(list, value, lbIdx, midIdx - 1, size);
 		else if (mid < value)
@@ -313,31 +313,31 @@ namespace kmaths
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T lerp(T a, T b, T t) noexcept
+	USE_RESULT constexpr T Lerp(T a, T b, T t) noexcept
 	{
 		return a + t * (b - a);
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T lerpClampled(T a, T b, T t) noexcept
+	USE_RESULT constexpr T LerpClampled(T a, T b, T t) noexcept
 	{
 		t = Clamp<T>(t, 0, 1);
 		return a + t * (b - a);
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T lerpPartial(T a, T b, T t, T tmin, T tmax) noexcept
+	USE_RESULT constexpr T LerpPartial(T a, T b, T t, T tmin, T tmax) noexcept
 	{
 		t = Clamp<T>(t, tmin, tmax);
 
 		t -= tmin;
 		t /= (tmax - tmin);
 
-		return lerpClampled<T>(a, b, t);
+		return LerpClampled<T>(a, b, t);
 	}
 
 	template <typename T>
-	USE_RESULT T getAccelerationOverTime(T initialVelocity, T distance) noexcept
+	USE_RESULT T GetAccelerationOverTime(T initialVelocity, T distance) noexcept
 	{
 		const T acceleration = (0 - (initialVelocity * initialVelocity)) / (2 * distance);
 
@@ -345,24 +345,24 @@ namespace kmaths
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T getTimeTakenForAcceleration(T initialVelocity, T distance, T finalVelocity) noexcept
+	USE_RESULT constexpr T GetTimeTakenForAcceleration(T initialVelocity, T distance, T finalVelocity) noexcept
 	{
-		const T timeResult = (finalVelocity - initialVelocity) / getAccelerationOverTime(initialVelocity, distance);
+		const T timeResult = (finalVelocity - initialVelocity) / GetAccelerationOverTime(initialVelocity, distance);
 
 		return timeResult;
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T lerpWithAcceleration(T initialVelocity, T currentTime, T distance) noexcept
+	USE_RESULT constexpr T LerpWithAcceleration(T initialVelocity, T currentTime, T distance) noexcept
 	{
-		const T acceleration = getAccelerationOverTime<T>(initialVelocity, distance);
+		const T acceleration = GetAccelerationOverTime<T>(initialVelocity, distance);
 		const T result = (initialVelocity * currentTime) + ((acceleration / 2) * (currentTime * currentTime));
 		const T currentvel = initialVelocity + (acceleration * currentTime);
 		return result;
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T modulus(T num, T base) noexcept
+	USE_RESULT constexpr T Modulus(T num, T base) noexcept
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
@@ -395,7 +395,12 @@ namespace kmaths
 		constexpr auto minusOne = CAST(T, -1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = CAST(T, 0.5);
-		auto maxIterations = 16;
+		auto maxIterations = 0;
+
+		if _CONSTEXPR_IF(std::is_same_v<T, float>)
+			maxIterations = 7;
+		else
+			maxIterations = 16;
 
 		constexpr T lookUpMap[] = {
 			CAST(T, 0),    // 0 
@@ -476,7 +481,7 @@ namespace kmaths
 
 		while (checkPrevResultsMatch() && maxIterations > 0)
 		{
-			prevValue[modulus(maxIterations, 2)] = result;
+			prevValue[Modulus(maxIterations, 2)] = result;
 			--maxIterations;
 
 			// Bakhshali Method
@@ -492,51 +497,15 @@ namespace kmaths
 #endif
 	}
 
-#if defined (_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable : 4244)
-
-	// Bakhshali Method
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sqrt(T square) noexcept
-	{
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-			return CAST(T, SqrtImpl<float>(square));
-		else
-			return SqrtImpl<T>(square);
-	}
-
-
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T InvSqrt(T square) noexcept
-	{
-		constexpr auto one = CAST(T, 1);
-		return one / SqrtImpl<T>(square);
-	}
-
-#	pragma warning(pop)
-#endif
-
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T RootImpl(T num, uint8_t root)
 	{
-		if (root == 2)
-			return Sqrt<T>(num);
-
 		constexpr auto one = CAST(T, 1);
 		const auto oneOverRoot = one / root;
 		constexpr auto minusOne = CAST(T, -1);
 		constexpr auto zeroPointOne = CAST(T, 0.1);
 		constexpr auto minusZeroPointOne = CAST(T, 0.1);
 		constexpr auto zeroPointFive = CAST(T, 0.5);
-		constexpr auto roundingError = 14;
-		constexpr auto roundingErrorFloat = 6;
-		auto maxIterations = 0;
-
-		if _CONSTEXPR_IF(std::is_same_v<T, float>)
-			maxIterations = 7;
-		else
-			maxIterations = 16;
 
 		if (num < 0)
 		{
@@ -555,6 +524,12 @@ namespace kmaths
 
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
+			auto maxIterations = 0;
+			if _CONSTEXPR_IF(std::is_same_v<T, float>)
+				maxIterations = 7;
+			else
+				maxIterations = 16;
+
 			T estimate = 0;
 			bool isNegative = num < 0;
 
@@ -602,36 +577,28 @@ namespace kmaths
 
 		auto increment = one;
 		T result = start;
-		T prev = 0;
-		auto val = PowerOf(result, root);
+		T prev[2] = { minusOne, minusOne };
 
-		while (val < num || maxIterations > 0)
+		const auto checkUniqueResult = [&result, &prev]() {
+			for (auto& p : prev)
+				if (p == result)
+					return false;
+			return true;
+		};
+
+		bool uniqueResult = true;
+		bool valLessThanNum = true;
+		bool stillIterating = true;
+
+		auto iterations = 0;
+		const auto size = sizeof(prev) / sizeof(T);
+		while (checkUniqueResult())
 		{
-			prev = result;
-			if (val == num)
-			{
-				break;
-			}
-			if (val > num)
-			{
-				maxIterations--;
-				result -= increment;
-				increment *= zeroPointOne;
-				val = 0;
-			}
-
-			result += increment;
-			val = PowerOf(result, root);
-			if (prev == result)
-				break;
-		}
-
-		if (maxIterations == 0) // Round minor error
-		{
-			if _CONSTEXPR_IF(std::is_same_v<T, float>)
-				result = Round(result, roundingErrorFloat);
-			else
-				result = Round(result, roundingError);
+			prev[Modulus<int>(iterations++, size)] = result;
+			const auto x_power_of_root_minus_one = PowerOf(result, root - 1);
+			const auto num_over_x_pow_r_m_o = num / x_power_of_root_minus_one;
+			const auto next_result = oneOverRoot * (num_over_x_pow_r_m_o - result);
+			result += next_result;
 		}
 
 		return result;
@@ -648,6 +615,24 @@ namespace kmaths
 			return CAST(T, RootImpl<float>(num, root));
 		else
 			return RootImpl<T>(num, root);
+	}
+
+	// Bakhshali Method
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Sqrt(T square) noexcept
+	{
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+			return CAST(T, SqrtImpl<float>(square));
+		else
+			return SqrtImpl<T>(square);
+	}
+
+
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T InvSqrt(T square) noexcept
+	{
+		constexpr auto one = CAST(T, 1);
+		return one / RootImpl<T>(square, 2);
 	}
 
 #	pragma warning(pop)

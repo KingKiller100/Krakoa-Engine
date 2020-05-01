@@ -31,7 +31,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		currentIdx = kmaths::modulus(currentIdx, sampleTimes.size());
+		currentIdx = kmaths::Modulus(currentIdx, sampleTimes.size());
 		sampleTimes[currentIdx++] = CAST(unsigned, 1.f / deltaTime);
 	}
 

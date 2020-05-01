@@ -200,7 +200,7 @@ namespace kmaths
 			do {
 				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
 				{
-					const size_t colIdx = modulus(col, CAST(int, Columns));
+					const size_t colIdx = Modulus(col, CAST(int, Columns));
 					sum *= elems[row][colIdx];
 				}
 

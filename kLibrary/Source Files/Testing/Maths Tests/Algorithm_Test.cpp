@@ -386,16 +386,21 @@ namespace kTest::maths
 		{
 			constexpr auto square = 225;
 			const auto invRoot = InvSqrt<double>(square);
-			const auto root = 1.f / invRoot;
-			const auto expected = std::sqrt(square); // 0.6666666666
-			VERIFY(invRoot == expected);
+			const auto root = 1.0 / invRoot;
+			const auto expectedInv = 1.0 / std::sqrt(square); // 0.6666666666
+			const auto expected = std::sqrt(square); // 15
+			VERIFY(root == expected);
+			VERIFY(invRoot == expectedInv);
 		}
 
 		{
 			constexpr auto square = 200.0f;
-			const auto root = InvSqrt(square);
-			const auto expected = std::sqrtf(square); // 0.0707106814
+			const auto invRoot = InvSqrt(square);
+			const auto root = 1.f /InvSqrt(square);
+			const auto expectedInv = 1.f / std::sqrtf(square); // 0.
+			const auto expected = std::sqrtf(square); // 14.1421356
 			VERIFY(root == expected);
+			VERIFY(invRoot == expectedInv);
 		}
 
 
@@ -441,7 +446,7 @@ namespace kTest::maths
 			constexpr auto power = 2;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 5;
-			VERIFY(root == expected);
+			VERIFY(int(root) == expected);
 		}
 
 		{

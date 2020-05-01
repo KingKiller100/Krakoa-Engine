@@ -116,7 +116,7 @@ namespace kTest::maths
 		constexpr auto magnitudeSq = lhs.MagnitudeSQ();
 		constexpr auto magnitude = lhs.Magnitude();
 		constexpr auto normalize = lhs.Normalize();
-		constexpr auto distance = lhs.Distance(rhs);
+		constexpr auto dist = lhs.Distance(rhs);
 		constexpr auto dotProduct = lhs.DotProduct(rhs);
 		constexpr auto dimensions = lhs.GetNumberOfDimensions();
 		constexpr auto reverseVector = lhs.ReverseVector();

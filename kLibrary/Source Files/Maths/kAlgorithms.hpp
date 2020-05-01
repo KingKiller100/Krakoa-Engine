@@ -101,37 +101,37 @@ namespace kmaths
 		}
 	}
 
-	USE_RESULT constexpr double Log(int base, double exponent)
-	{
-		throw klib::kDebug::kExceptions::NotImplementedException("Log base 10 function not currently supported");
+	//USE_RESULT double Log(int base, double exponent)
+	//{
+	//	throw klib::kDebug::kExceptions::NotImplementedException("Log base 10 function not currently supported");
 
-		double value = 1;
-		int loops = 0;
-		double increment = 0.1;
-		double multiplier = base;
-		double prev = -1;
-		double ans = 0;
+	//	double value = 1;
+	//	int loops = 0;
+	//	double increment = 0.1;
+	//	double multiplier = base;
+	//	double prev = -1;
+	//	double ans = 0;
 
-		while (prev != value)
-		{
-			prev = value;
-			while (value < exponent)
-			{
-				value = 1;
-				loops++;
-				for (auto i = 0; i < loops; ++i)
-				{
-					value *= multiplier;
-				}
-			}
-			ans = loops;
-			loops = 0;
-			multiplier = base + increment;
-			increment *= 0.1;
-		}
+	//	while (prev != value)
+	//	{
+	//		prev = value;
+	//		while (value < exponent)
+	//		{
+	//			value = 1;
+	//			loops++;
+	//			for (auto i = 0; i < loops; ++i)
+	//			{
+	//				value *= multiplier;
+	//			}
+	//		}
+	//		ans = loops;
+	//		loops = 0;
+	//		multiplier = base + increment;
+	//		increment *= 0.1;
+	//	}
 
-		return ans;
-	}
+	//	return ans;
+	//}
 
 	USE_RESULT constexpr int WhatPowerOf10(double number) noexcept
 	{

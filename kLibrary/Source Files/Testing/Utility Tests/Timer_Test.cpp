@@ -8,10 +8,6 @@
 #include <iostream>
 #include <thread>
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#	include <Windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
@@ -42,12 +38,15 @@ namespace kTest::utility
 			nums[i] = i;
 			VERIFY(nums[i] == i && dt != 0);
 			s = klib::kFormat::ToString("Test Time %d : %fus (Microseconds)\n", i, dt);
-			OutputDebugStringA(s.data());
+			std::cout << s;
 		}
+		std::cout.flush();
 
 		const auto lifetime = testTime.GetLifeTime<klib::kTime::kUnits::Micros>();
-		std::cout << testTime.GetName() << " Total Test Time: " << lifetime / 1000000.0 << "s (Seconds)" << std::endl;
+		const auto lifetimeInSeconds = lifetime / 1000000;
+		std::cout << testTime.GetName() << " Total Test Time: " << lifetimeInSeconds << "s (Seconds)" << std::endl;
 		std::cout << testTime.GetName() << " Average Execution Time: " << lifetime / loops << "us (Microseconds)" << std::endl;
+		std::cin.get();
 	}
 }
 #endif

@@ -361,18 +361,23 @@ namespace kmaths
 	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T FloatingPointModulus(T num, T base) noexcept
 	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return std::fmod(num, base);
+#else
+		const auto isNegative = num < 0;
+
 		const auto one_over_base = CAST(T, 1) / base;
 		const auto num_over_base = num * one_over_base;
-		const auto int_n_over_b = int(num_over_base);
+		const auto int_n_over_b = CAST(int, num_over_base);
 
 		if (num_over_base == int_n_over_b)
 			return 0;
 
 		const auto closestMultiplier = int_n_over_b * base;
-		const auto rem = num - closestMultiplier;
+		const auto mod = num - closestMultiplier;
 
-		const auto mod = rem < 0 ? rem + base : rem;
 		return mod;
+#endif
 	}
 
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
@@ -381,8 +386,8 @@ namespace kmaths
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
 			const auto mod = (num < 0)
-				? std::fmod(num, base) + base
-				: std::fmod(num, base);
+				? FloatingPointModulus(num, base) + base
+				: FloatingPointModulus(num, base);
 			return mod;
 		}
 		else

@@ -29,31 +29,31 @@ namespace kmaths::constants
 	template<class T>
 	USE_RESULT static constexpr T One() noexcept
 	{
-		return CAST(T, 1);
+		return T(1);
 	}
 
 	template<class T>
 	USE_RESULT static constexpr T MinusOne() noexcept
 	{
-		return CAST(T, -1);
+		return T(-1);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT static constexpr T ZeroPointOne() noexcept
 	{
-		return CAST(T, 0.1);
+		return T(0.1);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT static constexpr T ZeroPointFive() noexcept
 	{
-		return CAST(T, 0.5);
+		return T(0.5);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT static constexpr T OnePointFive() noexcept
 	{
-		return CAST(T, 1.5);
+		return T(1.5);
 	}
 
 	template<class ReturnType, class T, class = std::enable_if_t<
@@ -61,7 +61,7 @@ namespace kmaths::constants
 		&& std::is_arithmetic_v<T>>>
 	USE_RESULT static constexpr ReturnType OneOver(T value) noexcept
 	{
-		const auto result = CAST(ReturnType, 1) / value;
+		const auto result = ReturnType(1) / value;
 		return result;
 	}
 
@@ -71,6 +71,6 @@ namespace kmaths::constants
 		&& std::is_arithmetic_v<T2>>>
 	USE_RESULT static constexpr ReturnType XOverY(T x, T2 y) noexcept
 	{
-		return CAST(ReturnType, x) / y;
+		return ReturnType(x) / y;
 	}
 }

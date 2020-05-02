@@ -9,12 +9,13 @@ namespace kmaths
 {
 	struct Fraction
 	{
+	public:
 		using Sign_Value_Type = int8_t;
-		using Numerator_Value_Type = unsigned long long;
-		using Denominator_Value_Type = unsigned long long;
+		using Numerator_Value_Type = size_t;
+		using Denominator_Value_Type = size_t;
 
-		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, Sign_Value_Type sign = 1) noexcept
-			: sign(sign % 2), numerator(numerator), denominator(denominator)
+		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const bool isNegative = true) noexcept
+			: sign(isNegative ? -1 : 1), numerator(numerator), denominator(denominator)
 		{}
 
 		~Fraction()
@@ -41,7 +42,6 @@ namespace kmaths
 		{
 			return denominator;
 		}
-
 
 	private:
 		Sign_Value_Type sign;

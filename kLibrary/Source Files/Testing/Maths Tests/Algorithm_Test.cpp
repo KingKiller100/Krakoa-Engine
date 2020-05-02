@@ -25,7 +25,7 @@ namespace kTest::maths
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(MinMaxTest);
 		VERIFY_MULTI(FloorTest);
-		VERIFY_MULTI(FractionToDecimalTest);
+		VERIFY_MULTI(DecimalToFractionTest);
 		VERIFY_MULTI(BinarySearchTest);
 		VERIFY_MULTI(BinarySearchClosestTest);
 		VERIFY_MULTI(RoundingTest);
@@ -144,11 +144,12 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::FractionToDecimalTest()
+	bool AlgorithmsTester::DecimalToFractionTest()
 	{
 		{
+			constexpr auto f = Fraction(10, 50, -1);
 			constexpr auto decimal = 0.25;
-			const auto fraction = DecimalToFraction(decimal);
+			constexpr auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 1 && fraction.GetDenominator() == 4);
 
 			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
@@ -313,7 +314,7 @@ namespace kTest::maths
 	bool AlgorithmsTester::PowerOfTest()
 	{
 		{
-			constexpr auto power = -4;
+			constexpr auto power = -4.0f;
 			constexpr auto num = 2.0f;
 			constexpr auto value = PowerOf(num, power);
 			const auto expectedVal = std::powf(2, -4);
@@ -324,7 +325,7 @@ namespace kTest::maths
 			constexpr auto power = 8;
 			constexpr auto num = 2;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = std::powf(2, 8);
+			const auto expectedVal = CAST(int, std::powf(2, 8));
 			VERIFY(value == expectedVal);
 		}
 
@@ -790,6 +791,14 @@ namespace kTest::maths
 			constexpr auto denominator = 5;
 			constexpr auto base = 5.l;
 			const auto result = PowerOf(base, numerator, denominator);
+			constexpr auto expected = 2.6265278044037674l;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = 2.5;
+			constexpr auto base = 5.0;
+			const auto result = PowerOf(base, decimal);
 			constexpr auto expected = 2.6265278044037674l;
 			VERIFY(result == expected);
 		}

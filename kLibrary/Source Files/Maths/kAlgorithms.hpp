@@ -125,7 +125,7 @@ namespace kmaths
 
 		const auto isNegative = value < 0;
 		return isNegative
-			? (value > minusOne && value < 0)
+			? (value > minusOne&& value < 0)
 			: (value < one && value > 0);
 	}
 
@@ -154,42 +154,38 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr Fraction DecimalToFraction(T x, T error = CAST(T, 1e-10)) noexcept
+	USE_RESULT constexpr decltype(auto) DecimalToFraction(T x, T error = CAST(T, 1e-10)) noexcept
 	{
 		const auto isNegative = x < 0;
-		Fraction::Sign_Value_Type sign = 1;
 
 		if (isNegative)
-		{
-			sign = -1;
 			x = -x;
-		}
 
 		const auto integer = Floor(x);
 		x -= integer;
 
 		if (x < error)
-			return Fraction(integer, 1, sign);
+			return Fraction(integer, 1, isNegative);
 		else if ((constants::One<T>() - error) < x)
-			return Fraction(integer + 1, 1, sign);
+			return Fraction(integer + 1, 1, isNegative);
 
-		Fraction::Numerator_Value_Type   lower_n = 0;
-		Fraction::Denominator_Value_Type lower_d = 1;
-
-		Fraction::Numerator_Value_Type   upper_n = 1;
-		Fraction::Denominator_Value_Type upper_d = 1;
-
-		Fraction::Numerator_Value_Type   mid_n;
-		Fraction::Denominator_Value_Type mid_d;
+		size_t lower_n = 0;
+		size_t lower_d = 1;
+		
+		size_t upper_n = 1;
+		size_t upper_d = 1;
+		
+		size_t mid_n;
+		size_t mid_d;
 
 		auto found = false;
+		size_t iter = 0;
 
-		auto iter = 0ull;
 		do {
 			mid_n = lower_n + upper_n;
 			mid_d = lower_d + upper_d;
 
-			auto tooHigh = mid_n > mid_d * (x + error);
+			auto tooHigh = mid_n > mid_d* (x + error);
 			auto tooLow = mid_n < (x - error) * mid_d;
 
 			if (tooHigh)
@@ -202,35 +198,35 @@ namespace kmaths
 				lower_n = mid_n;
 				lower_d = mid_d;
 			}
+
 			found = !(tooHigh || tooLow);
 		} while (iter++ < 1e06 && !found); // Binary search towards fraction
 
-		return Fraction(integer * mid_d + mid_n, mid_d, sign);
+		return Fraction(integer * mid_d + mid_n, mid_d, isNegative);
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T PowerOf(T base, int power) noexcept(std::is_arithmetic_v<T>)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T PowerOfImpl(T base, long long power) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, pow(base, power));
 #else
 		if (power == 0)
-			return CAST(T, 1);
+			return constants::One<T>();
 		else if (power == 1)
 			return base;
 
 		T value = base;
 
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		if (power < 0)
 		{
-			if (power < 0)
-				return CAST(T, 0);
-		}
-		else
-		{
-			if (power < 0)
+			if _CONSTEXPR_IF(std::is_arithmetic_v<T> && !std::is_floating_point_v<T>)
 			{
-				base = CAST(T, 1) / base;
+				return 0;
+			}
+			else
+			{
+				base = constants::OneOver<T>(base);
 				value = base;
 				power = -power;
 			}
@@ -240,12 +236,11 @@ namespace kmaths
 			value *= base;
 
 		return value;
-
 #endif
 	}
 
 	template<typename T>
-	USE_RESULT constexpr decltype(auto) PowerOf10(int power) noexcept(std::is_arithmetic_v<T>)
+	USE_RESULT constexpr decltype(auto) PowerOf10(long long power) noexcept(std::is_arithmetic_v<T>)
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 		{
@@ -254,7 +249,7 @@ namespace kmaths
 		}
 		else
 		{
-			return PowerOf<T>(10, power);
+			return PowerOfImpl<T>(10, power);
 		}
 	}
 
@@ -302,14 +297,14 @@ namespace kmaths
 		if (number < 0)
 			number = -number;
 
-		int currentPower = 1;
+		long long currentPower = 1;
 		if (number > 10)
 		{
 			long long value = 1;
 			while (value < number)
 			{
 				currentPower++;
-				value = PowerOf(10, currentPower);
+				value = PowerOfImpl(10, currentPower);
 			}
 			--currentPower;
 		}
@@ -319,7 +314,7 @@ namespace kmaths
 			while (value > number)
 			{
 				currentPower++;
-				value = PowerOf(0.1, currentPower);
+				value = PowerOfImpl(0.1, currentPower);
 			}
 			currentPower = -currentPower;
 		}
@@ -330,8 +325,8 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Round(const T value, const uint8_t decimalPoints) noexcept
 	{
-		const auto dpShifts = PowerOf<long double>(0.1, decimalPoints + 1) * 5;
-		const auto accuracy = PowerOf<size_t>(10, decimalPoints);
+		const auto dpShifts = PowerOfImpl<long double>(0.1, long long(decimalPoints + 1)) * 5;
+		const auto accuracy = PowerOfImpl<size_t>(10, decimalPoints);
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
 		const auto accuracyInverse = CAST(T, 1) / accuracy;
@@ -624,7 +619,7 @@ namespace kmaths
 					do {
 						endVal -= increment;
 						estimate = (startVal + endVal) * constants::ZeroPointFive<T>();
-						compareVal = PowerOf<T>(estimate, root);
+						compareVal = PowerOfImpl<T>(estimate, root);
 					} while (compareVal > number);
 
 					startVal = estimate;
@@ -640,7 +635,7 @@ namespace kmaths
 				estimate = number;
 				do {
 					estimate *= oneOverRoot;
-				} while (PowerOf<T>(estimate, root) > number);
+				} while (PowerOfImpl<T>(estimate, root) > number);
 			}
 
 			return isNegative ? -estimate : estimate;
@@ -648,7 +643,7 @@ namespace kmaths
 
 		const T start = chooseStartNumber(num);
 
-		if (PowerOf(start, root) == num)
+		if (PowerOfImpl(start, root) == num)
 			return start;
 
 		auto increment = constants::One<T>();
@@ -668,7 +663,7 @@ namespace kmaths
 		{
 			prev[Modulus(iterations++, size)] = result;
 
-			const auto x_power_of_root_minus_one = PowerOf(result, root - 1);
+			const auto x_power_of_root_minus_one = PowerOfImpl(result, root - 1);
 			const auto num_over_x_pow_r_m_o = num / x_power_of_root_minus_one;
 			const auto next_result = oneOverRoot * (num_over_x_pow_r_m_o - result);
 			result += next_result;
@@ -710,24 +705,47 @@ namespace kmaths
 #	pragma warning(pop)
 #endif
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T PowerOf(T base, int8_t numerator, uint8_t denominator) noexcept
+	template<typename T>
+	USE_RESULT constexpr T PowerOf(T base, size_t numerator, size_t denominator) noexcept
 	{
 		if (denominator == 0)
 			return 0;
 
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 		{
-			const auto pow = PowerOf<float>(CAST(float, base), numerator);
+			const auto pow = PowerOfImpl<float>(CAST(float, base), numerator);
 			const auto powRoot = RootImpl<float>(pow, denominator);
 			const auto result = CAST(T, powRoot);
 			return result;
 		}
 		else
 		{
-			const auto result = RootImpl<T>(PowerOf<T>(base, numerator), denominator);
+			const auto result = RootImpl<T>(PowerOfImpl<T>(base, numerator), denominator);
 			return result;
 		}
+	}
 
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
+	{
+		const auto fraction = DecimalToFraction<T>(power);
+		const long long numerator = fraction.GetNumerator();
+		const long long denominator = fraction.GetDenominator();
+
+		if (denominator == 0)
+			return 0;
+
+		const auto pow = PowerOfImpl<T>(base, numerator);
+		const auto powRoot = RootImpl<T>(pow, denominator);
+		const auto result = powRoot;
+		return result;
+	}
+
+	template<typename T, class = std::enable_if_t<!std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T PowerOf(T base, long long power) noexcept
+	{
+		const auto pow = PowerOfImpl<T>(base, power);
+		return pow;
 	}
 }
+

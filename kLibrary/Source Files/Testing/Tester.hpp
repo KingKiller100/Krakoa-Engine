@@ -55,7 +55,7 @@ namespace kTest
 if (!success) noFails = false;\
 success = true;\
 
-#define VERIFY_CONSTEXPR(test) this->success = klib::type_trait::Is_Constexpr_V<(test)>;
+#define VERIFY_CONSTEXPR(test) this->success = klib::type_trait::Compile_Time_Test_V<(test)>;
 
 }
 #endif

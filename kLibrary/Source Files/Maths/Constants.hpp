@@ -1,7 +1,11 @@
 #pragma once
 
+#include "../HelperMacros.hpp"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
+
+#include <xtr1common>
 
 namespace kmaths::constants
 {
@@ -21,4 +25,53 @@ namespace kmaths::constants
 	constexpr AccuracyType SQRT_1_OVER_2             = 0.70710678118655l;
 	constexpr AccuracyType GOLDEN_RATIO              = 1.61803398874989l;
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
+
+	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT static constexpr T ZeroPointOne() noexcept
+	{
+		return CAST(T, 0.1);
+	}
+
+	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT static constexpr T ZeroPointFive() noexcept
+	{
+		return CAST(T, 0.5);
+	}
+
+	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT static constexpr T One() noexcept
+	{
+		return CAST(T, 1);
+	}
+
+	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT static constexpr T MinusOne() noexcept
+	{
+		return CAST(T, -1);
+	}
+
+	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT static constexpr T OnePointFive() noexcept
+	{
+		return CAST(T, 1.5);
+	}
+
+	template<class ReturnType, class T, class = std::enable_if_t<
+		std::is_floating_point_v<ReturnType>
+		&& std::is_arithmetic_v<T>>>
+	USE_RESULT static constexpr ReturnType OneOver(T value) noexcept
+	{
+		const auto result = CAST(ReturnType, 1) / value;
+		return result;
+
+	}
+
+	template<class ReturnType, class T, class T2, class = std::enable_if_t<
+		std::is_floating_point_v<ReturnType>
+		&& std::is_arithmetic_v<T>
+		&& std::is_arithmetic_v<T2>>>
+	USE_RESULT static constexpr ReturnType XOverY(T x, T2 y) noexcept
+	{
+		return CAST(ReturnType, x) / y;
+	}
 }

@@ -659,15 +659,15 @@ namespace kTest::maths
 		{
 			constexpr auto exponant = 64.f;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
+			constexpr auto root = Root(exponant, power);
 			constexpr auto expected = 4;
-			VERIFY(root == expected);
+			VERIFY_CONSTEXPR(root == expected);
 		}
 
 		{
 			constexpr auto exponant = 64.0;
 			constexpr auto power = 6;
-			const auto root = Root(exponant, power);
+			auto root = Root(exponant, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);
 		}

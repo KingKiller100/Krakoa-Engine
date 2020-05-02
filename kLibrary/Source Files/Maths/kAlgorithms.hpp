@@ -4,8 +4,6 @@
 
 #include "Constants.hpp"
 
-#include "../Utility/Debug Helper/Exceptions/NotImplementedException.hpp"
-
 #if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
 #endif
@@ -128,9 +126,9 @@ namespace kmaths
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
 		constexpr auto maxLL = std::numeric_limits<long long>::max();
-		constexpr auto maxLD = std::numeric_limits<T>::max();
+		constexpr auto minLL = std::numeric_limits<long long>::min();
 
-		if (value > maxLL)
+		if (value > maxLL || value < minLL)
 			return value;
 
 		return CAST(T, CAST(long long, value));
@@ -424,10 +422,6 @@ namespace kmaths
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, sqrt(square));
 #else
-		constexpr auto one = CAST(T, 1);
-		constexpr auto minusOne = CAST(T, -1);
-		constexpr auto zeroPointOne = CAST(T, 0.1);
-		constexpr auto zeroPointFive = CAST(T, 0.5);
 		auto maxIterations = 0;
 
 		if _CONSTEXPR_IF(std::is_same_v<T, float>)
@@ -474,10 +468,10 @@ namespace kmaths
 		if (square <= 0)
 			return 0;
 
-		if (square == zeroPointFive)
+		if (square == constants::ZeroPointFive<T>())
 			return CAST(T, constants::SQRT_1_OVER_2);
 
-		if (square == one)
+		if (square == constants::One<T>())
 			return square;
 
 		if (square == 2)
@@ -487,11 +481,11 @@ namespace kmaths
 		{
 			const auto size = sizeof(lookUpMap) / sizeof(T);
 			T estimate = CAST(T, BinarySearchClosestImpl(lookUpMap, square, 0, size - 1, size));
-			if (estimate == minusOne)
+			if (estimate == constants::MinusOne<T>())
 			{
 				estimate = square;
 				do {
-					estimate *= zeroPointFive;
+					estimate *= constants::ZeroPointFive<T>();
 				} while (estimate * estimate > square);
 			}
 			return estimate;
@@ -503,16 +497,16 @@ namespace kmaths
 			return start;
 
 		T result = start;
-		T prevValue[2] = { minusOne, minusOne };
+		T prevValue[2] = { constants::MinusOne<T>(), constants::MinusOne<T>() };
 
-		const auto checkPrevResultsMatch = [&result, &prevValue]() {
+		const auto checkResultIsUnique = [&result, &prevValue]() {
 			for (auto& prev : prevValue)
 				if (prev == result)
 					return false;
 			return true;
 		};
 
-		while (checkPrevResultsMatch() && maxIterations > 0)
+		while (checkResultIsUnique() && maxIterations > 0)
 		{
 			prevValue[Modulus(maxIterations, 2)] = result;
 			--maxIterations;
@@ -533,27 +527,23 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T RootImpl(T num, uint8_t root)
 	{
-		constexpr auto one = CAST(T, 1);
-		const auto oneOverRoot = one / root;
-		constexpr auto minusOne = CAST(T, -1);
-		constexpr auto zeroPointOne = CAST(T, 0.1);
-		constexpr auto minusZeroPointOne = CAST(T, 0.1);
-		constexpr auto zeroPointFive = CAST(T, 0.5);
+		const auto oneOverRoot = constants::OneOver<T>(root);
+		constexpr auto minusZeroPointOne = -constants::ZeroPointOne<T>();
 
 		if (num < 0)
 		{
 			if ((root & 1) == 0) // Even root
 				throw std::runtime_error("No real root");
 
-			if (num == minusOne)
-				return minusOne;
+			if (num == constants::MinusOne<T>())
+				return constants::MinusOne<T>();
 		}
 
 		if (num == 0)
 			return 0;
 
-		if (num == one)
-			return one;
+		if (num == constants::One<T>())
+			return constants::One<T>();
 
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
@@ -572,19 +562,19 @@ namespace kmaths
 			if (num < 1 && num > -1)
 			{
 				T startVal = 0, endVal = 1;
-				auto increment = number > 0 ? zeroPointOne : minusZeroPointOne;
+				auto increment = number > 0 ? constants::ZeroPointOne<T>() : minusZeroPointOne;
 				for (auto i = 0; i < maxIterations; ++i)
 				{
 					T compareVal = 0;
 					do {
 						endVal -= increment;
-						estimate = (startVal + endVal) * zeroPointFive;
+						estimate = (startVal + endVal) * constants::ZeroPointFive<T>();
 						compareVal = PowerOf<T>(estimate, root);
 					} while (compareVal > number);
 
 					startVal = estimate;
 					endVal += increment;
-					increment *= zeroPointOne;
+					increment *= constants::ZeroPointOne<T>();
 
 					if (compareVal == number)
 						break;
@@ -606,11 +596,11 @@ namespace kmaths
 		if (PowerOf(start, root) == num)
 			return start;
 
-		auto increment = one;
+		auto increment = constants::One<T>();
 		T result = start;
-		T prev[2] = { minusOne, minusOne };
+		T prev[2] = { constants::MinusOne<T>(), constants::MinusOne<T>() };
 
-		const auto checkUniqueResult = [&result, &prev]() {
+		const auto checkResultIsUnique = [&result, &prev]() {
 			for (auto& p : prev)
 				if (p == result)
 					return false;
@@ -619,9 +609,10 @@ namespace kmaths
 
 		auto iterations = 0;
 		const int size = sizeof(prev) / sizeof(T);
-		while (checkUniqueResult())
+		while (checkResultIsUnique())
 		{
 			prev[Modulus(iterations++, size)] = result;
+
 			const auto x_power_of_root_minus_one = PowerOf(result, root - 1);
 			const auto num_over_x_pow_r_m_o = num / x_power_of_root_minus_one;
 			const auto next_result = oneOverRoot * (num_over_x_pow_r_m_o - result);
@@ -658,8 +649,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T InvSqrt(T square) noexcept
 	{
-		constexpr auto one = CAST(T, 1);
-		return one / RootImpl<T>(square, 2);
+		return constants::One<T>() / RootImpl<T>(square, 2);
 	}
 
 #	pragma warning(pop)

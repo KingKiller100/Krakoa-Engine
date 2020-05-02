@@ -25,6 +25,7 @@ namespace kTest::maths
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(MinMaxTest);
 		VERIFY_MULTI(FloorTest);
+		VERIFY_MULTI(FractionsToDecimalTest);
 		VERIFY_MULTI(BinarySearchTest);
 		VERIFY_MULTI(BinarySearchClosestTest);
 		VERIFY_MULTI(RoundingTest);
@@ -39,7 +40,7 @@ namespace kTest::maths
 		VERIFY_MULTI(RootTest);
 		VERIFY_MULTI(LogTest);
 		VERIFY_MULTI(PowerOfFractionTest);
-		VERIFY_MULTI(FloatingPointModulusTest);
+		VERIFY_MULTI(FloatingPointRemainderTest);
 		VERIFY_MULTI(ModulusTest);
 
 		VERIFY_MULTI_END();
@@ -131,6 +132,48 @@ namespace kTest::maths
 			const auto result = Floor(decimal);
 			const auto expected = std::floor(decimal);
 			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = CAST(long double, std::numeric_limits<long long>::max()) - 11111.37859854;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::FractionsToDecimalTest()
+	{
+		{
+			constexpr auto decimal = 0.25;
+			const auto fraction = DecimalToFraction(decimal);
+			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 1 && fraction.GetDenominator() == 4);
+		}
+
+		{
+			constexpr auto decimal = 0.75;
+			const auto fraction = DecimalToFraction(decimal);
+			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 3 && fraction.GetDenominator() == 4);
+		}
+
+		{
+			constexpr auto decimal = 10.75;
+			const auto fraction = DecimalToFraction(decimal);
+			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 43 && fraction.GetDenominator() == 4);
+		}
+
+		{
+			constexpr auto decimal = -5.5f;
+			const auto fraction = DecimalToFraction(decimal);
+			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+		}
+
+		{
+			constexpr auto decimal = -1.69305f;
+			const auto fraction = DecimalToFraction(decimal);
+			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
 		}
 
 		return success;
@@ -412,7 +455,7 @@ namespace kTest::maths
 		{
 			constexpr auto square = 125348;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrtf(square); // 354.045197 (as int)
+			const auto expected = Convert<int>(std::sqrtf(square)); // 354.045197 (as int)
 			VERIFY(root == expected);
 		}
 
@@ -494,9 +537,9 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto square = 40694053.4567;
+			constexpr auto square = 40694053.4567f;
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrt(square); // 6379.1890908406222
+			const auto expected = std::sqrtf(square); // 6379.1890908406222
 			VERIFY(root == expected);
 		}
 
@@ -508,9 +551,9 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto square = constants::PI;
+			constexpr auto square = Convert<float>(constants::PI);
 			const auto root = Sqrt(square);
-			const auto expected = std::sqrt(square); // 1.681792830507...
+			const auto expected = std::sqrtf(square); // 1.77245390...
 			VERIFY(root == expected);
 		}
 
@@ -676,7 +719,7 @@ namespace kTest::maths
 		//{
 		//	constexpr auto exponant = -64.0;
 		//	constexpr auto power = 6;
-		//	//const auto root = Root(exponant, power);
+		//	auto root = RootImpl(exponant, power);
 		//	constexpr auto expected = -2;
 		//	VERIFY(root == expected);
 		//}
@@ -729,12 +772,12 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::FloatingPointModulusTest()
+	bool AlgorithmsTester::FloatingPointRemainderTest()
 	{
 		{
 			constexpr auto num = 11.1;
 			constexpr auto base = 10.1;
-			const auto result = FloatingPointModulus(num, base);
+			const auto result = FloatingPointRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
@@ -742,7 +785,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 2.5f;
 			constexpr auto base = 7.9f;
-			const auto result = FloatingPointModulus(num, base);
+			const auto result = FloatingPointRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
@@ -750,7 +793,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 101.1l;
 			constexpr auto base = 10.0l;
-			const auto result = FloatingPointModulus(num, base);
+			const auto result = FloatingPointRemainder(num, base);
 			const auto expected = std::fmodl(num, base);
 			VERIFY(result == expected);
 		}
@@ -758,7 +801,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = -10.4l;
 			constexpr auto base = 10.0l;
-			const auto result = FloatingPointModulus(num, base);
+			const auto result = FloatingPointRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
@@ -766,7 +809,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 10.4l;
 			constexpr auto base = 10.0l;
-			const auto result = FloatingPointModulus(num, base);
+			const auto result = FloatingPointRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}

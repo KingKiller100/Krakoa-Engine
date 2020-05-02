@@ -159,7 +159,7 @@ namespace kmaths
 		constexpr void ToPositives() noexcept
 		{
 			for (auto& d : dimensions)
-				if (d < static_cast<Type>(0))
+				if (d < 0)
 					d = -d;
 		}
 
@@ -187,7 +187,7 @@ namespace kmaths
 
 			T copy[N]{ 0 };
 			for (auto i = 0; i < N; ++i)
-				copy[i] = (static_cast<Type>(1) / dimensions[i]);
+				copy[i] = (constants::One<T>() / dimensions[i]);
 			return Vector(copy);
 		}
 
@@ -371,6 +371,15 @@ namespace kmaths
 
 		// bool operator == returns true if both Vector values are equal
 		USE_RESULT constexpr bool operator==(const Vector& v) const
+		{
+			for (size_t i = 0; i < N; ++i)
+				if (dimensions[i] != v[i])
+					return false;
+			return true;
+		}
+
+		// bool operator == returns true if both Vector values are equal
+		USE_RESULT constexpr bool operator==(Vector&& v) const
 		{
 			for (size_t i = 0; i < N; ++i)
 				if (dimensions[i] != v[i])

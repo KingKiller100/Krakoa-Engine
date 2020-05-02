@@ -26,6 +26,18 @@ namespace kmaths::constants
 	constexpr AccuracyType GOLDEN_RATIO              = 1.61803398874989l;
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 
+	template<class T>
+	USE_RESULT static constexpr T One() noexcept
+	{
+		return CAST(T, 1);
+	}
+
+	template<class T>
+	USE_RESULT static constexpr T MinusOne() noexcept
+	{
+		return CAST(T, -1);
+	}
+
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT static constexpr T ZeroPointOne() noexcept
 	{
@@ -36,18 +48,6 @@ namespace kmaths::constants
 	USE_RESULT static constexpr T ZeroPointFive() noexcept
 	{
 		return CAST(T, 0.5);
-	}
-
-	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT static constexpr T One() noexcept
-	{
-		return CAST(T, 1);
-	}
-
-	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT static constexpr T MinusOne() noexcept
-	{
-		return CAST(T, -1);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -63,7 +63,6 @@ namespace kmaths::constants
 	{
 		const auto result = CAST(ReturnType, 1) / value;
 		return result;
-
 	}
 
 	template<class ReturnType, class T, class T2, class = std::enable_if_t<

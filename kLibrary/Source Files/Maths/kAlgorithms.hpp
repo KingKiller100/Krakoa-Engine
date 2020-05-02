@@ -3,6 +3,7 @@
 #include "../HelperMacros.hpp"
 
 #include "Constants.hpp"
+#include "Fraction.hpp"
 
 #if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
@@ -98,19 +99,35 @@ namespace kmaths
 		return lbDiff < ubDiff ? midIdx : midIdx + 1;
 	}
 
-
 	template< typename T>
 	USE_RESULT constexpr long long BinarySearchClosest(const T* list, T&& value, size_t size)
 	{
 		return BinarySearchClosestImpl(list, value, 0, size - 1, size);
 	};
 
-
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
 	USE_RESULT constexpr long long BinarySearchClosest(const T(&list)[N], T&& value)
 	{
 		return BinarySearchClosestImpl(list, value, 0, N - 1, N);
 	};
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr bool IsInteger(T value) noexcept
+	{
+		return Convert<int>(value) == value;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr bool IsDecimal(T value) noexcept
+	{
+		constexpr auto one = constants::One<T>();
+		constexpr auto minusOne = constants::MinusOne<T>();
+
+		const auto isNegative = value < 0;
+		return isNegative
+			? (value > minusOne && value < 0)
+			: (value < one && value > 0);
+	}
 
 	template<typename T1, typename T2>
 	USE_RESULT constexpr T1 Max(const T1& lhs, const T2& rhs) noexcept
@@ -136,6 +153,61 @@ namespace kmaths
 		return CAST(T, CAST(long long, value));
 	}
 
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr Fraction DecimalToFraction(T decimal, T error = CAST(T, 0.000001)) noexcept
+	{
+		const auto isNegative = decimal < 0;
+		Fraction::Sign_Value_Type sign = 1;
+
+		if (isNegative)
+		{
+			sign = -1;
+			decimal = -decimal;
+		}
+
+		const auto noDecimals = Floor(decimal);
+		const auto onlyDecimals = decimal - noDecimals;
+
+		if (onlyDecimals < error)
+			return Fraction(noDecimals, 1, sign);
+		else if ((constants::One<T>() - error) < onlyDecimals)
+			return Fraction(noDecimals + 1, 1, sign);
+
+		Fraction::Numerator_Value_Type   lower_n = 0;
+		Fraction::Denominator_Value_Type lower_d = 1;
+
+		Fraction::Numerator_Value_Type   upper_n = 1;
+		Fraction::Denominator_Value_Type upper_d = 1;
+
+		Fraction::Numerator_Value_Type   mid_n = 0;
+		Fraction::Denominator_Value_Type mid_d = 1;
+
+		auto tooHigh = mid_n > mid_d * (onlyDecimals + error);
+		auto tooLow = mid_n < (onlyDecimals - error) * mid_d;
+
+
+		while (tooHigh || tooLow) // Binary search towards fraction
+		{
+			mid_n = lower_n + upper_n;
+			mid_d = lower_d + upper_d;
+
+			tooHigh = mid_d * (onlyDecimals + error) < mid_n;
+			tooLow = mid_n < (onlyDecimals - error) * mid_d;
+
+			if (tooHigh)
+			{
+				upper_n = mid_n;
+				upper_d = mid_d;
+			}
+			else if (tooLow)
+			{
+				lower_n = mid_n;
+				lower_d = mid_d;
+			}
+		}
+
+		return Fraction(noDecimals * mid_d + mid_n, mid_d, sign);
+	}
 
 	template<typename T>
 	USE_RESULT constexpr T PowerOf(T base, int power) noexcept(std::is_arithmetic_v<T>)
@@ -271,10 +343,10 @@ namespace kmaths
 
 	template<typename T, class = std::enable_if_t<
 		!std::is_rvalue_reference_v<T>
-		&& std::is_nothrow_move_assignable_v<T> 
+		&& std::is_nothrow_move_assignable_v<T>
 		&& std::is_nothrow_move_constructible_v<T>
 		>>
-	constexpr void Swap(T& lhs, T& rhs) noexcept
+		constexpr void Swap(T& lhs, T& rhs) noexcept
 	{
 		T temp = std::move(lhs);
 		lhs = std::move(rhs);
@@ -377,14 +449,14 @@ namespace kmaths
 
 
 	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T FloatingPointModulus(T num, T base) noexcept
+	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return std::fmod(num, base);
 #else
 		const auto isNegative = num < 0;
 
-		const auto one_over_base = CAST(T, 1) / base;
+		const auto one_over_base = constants::One<T>() / base;
 		const auto num_over_base = num * one_over_base;
 		const auto int_n_over_b = CAST(int, num_over_base);
 
@@ -404,8 +476,8 @@ namespace kmaths
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
 			const auto mod = (num < 0)
-				? FloatingPointModulus(num, base) + base
-				: FloatingPointModulus(num, base);
+				? FloatingPointRemainder(num, base) + base
+				: FloatingPointRemainder(num, base);
 			return mod;
 		}
 		else
@@ -415,9 +487,11 @@ namespace kmaths
 			{
 				return rem;
 			}
-
-			const auto mod = rem < 0 ? rem + base : rem;
-			return mod;
+			else
+			{
+				const auto mod = rem < 0 ? rem + base : rem;
+				return mod;
+			}
 		}
 	}
 
@@ -436,39 +510,15 @@ namespace kmaths
 			maxIterations = 16;
 
 		constexpr T lookUpMap[] = {
-			CAST(T, 0),    // 0 
-			CAST(T, 1),    // 1 
-			CAST(T, 4),    // 2 
-			CAST(T, 9),	   // 3
-			CAST(T, 16),   // 4
-			CAST(T, 25),   // 5
-			CAST(T, 36),   // 6
-			CAST(T, 49),   // 7
-			CAST(T, 64),   // 8
-			CAST(T, 81),   // 9
-			CAST(T, 100),  // 10
-			CAST(T, 121),  // 11
-			CAST(T, 144),  // 12
-			CAST(T, 169),  // 13
-			CAST(T, 196),  // 14
-			CAST(T, 225),  // 15
-			CAST(T, 256),  // 16
-			CAST(T, 289),  // 17
-			CAST(T, 324),  // 18
-			CAST(T, 361),  // 19
-			CAST(T, 400),  // 20
-			CAST(T, 441),  // 21
-			CAST(T, 484),  // 22
-			CAST(T, 529),  // 23
-			CAST(T, 576),  // 24
-			CAST(T, 625),  // 25
-			CAST(T, 676),  // 26
-			CAST(T, 729),  // 27
-			CAST(T, 784),  // 28
-			CAST(T, 841),  // 29
-			CAST(T, 900),  // 30
-			CAST(T, 961),  // 31
-			CAST(T, 1024), // 32
+			CAST(T, 0),    CAST(T, 1),    CAST(T, 4),    CAST(T, 9),      // 0, 1, 2, 3 
+			CAST(T, 16),   CAST(T, 25),   CAST(T, 36),   CAST(T, 49),     // 4, 5, 6, 7
+			CAST(T, 64),   CAST(T, 81),   CAST(T, 100),  CAST(T, 121),    // 8, 9, 10, 11
+			CAST(T, 144),  CAST(T, 169),  CAST(T, 196),  CAST(T, 225),    // 12, 13, 14, 15
+			CAST(T, 256),  CAST(T, 289),  CAST(T, 324),  CAST(T, 361),    // 16, 17, 18, 19
+			CAST(T, 400),  CAST(T, 441),  CAST(T, 484),  CAST(T, 529),    // 20, 21, 22, 23
+			CAST(T, 576),  CAST(T, 625),  CAST(T, 676),  CAST(T, 729),    // 24, 25, 26, 27
+			CAST(T, 784),  CAST(T, 841),  CAST(T, 900),  CAST(T, 961),    // 28, 29, 30, 31
+			CAST(T, 1024), CAST(T, 1089), CAST(T, 1156), CAST(T, 1225) // 32, 33, 34, 35
 		};
 
 		if (square <= 0)
@@ -487,7 +537,7 @@ namespace kmaths
 		{
 			const auto size = sizeof(lookUpMap) / sizeof(T);
 			T estimate = CAST(T, BinarySearchClosestImpl(lookUpMap, square, 0, size - 1, size));
-			if (estimate == constants::MinusOne<T>())
+			if (!estimate || estimate == constants::MinusOne<T>())
 			{
 				estimate = square;
 				do {

@@ -17,6 +17,7 @@ namespace kTest::maths
 		bool ConversionTest();
 		bool MinMaxTest();
 		bool FloorTest();
+		bool FractionsToDecimalTest();
 		bool BinarySearchTest();
 		bool BinarySearchClosestTest();
 		bool RoundingTest();
@@ -30,7 +31,7 @@ namespace kTest::maths
 		bool WhatPowerOf10Test();
 		bool LogTest();
 		bool PowerOfFractionTest();
-		bool FloatingPointModulusTest();
+		bool FloatingPointRemainderTest();
 		bool ModulusTest();
 	};
 }

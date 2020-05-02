@@ -114,13 +114,19 @@ namespace kTest::maths
 
 		// Functions
 		constexpr auto magnitudeSq = lhs.MagnitudeSQ();
+		VERIFY_COMPILE_TIME(magnitudeSq == 125);
 		constexpr auto magnitude = lhs.Magnitude();
+		VERIFY_COMPILE_TIME(magnitude == 11.180339887498949);
 		constexpr auto normalize = lhs.Normalize();
 		constexpr auto dist = lhs.Distance(rhs);
 		constexpr auto dotProduct = lhs.DotProduct(rhs);
+		VERIFY_COMPILE_TIME(dotProduct == 165);
 		constexpr auto dimensions = lhs.GetNumberOfDimensions();
+		VERIFY_COMPILE_TIME(dimensions == 2);
 		constexpr auto reverseVector = lhs.ReverseVector();
+		VERIFY_COMPILE_TIME(reverseVector.X() == -10 && reverseVector.Y() == -5);
 		constexpr auto inverse = lhs.Inverse();
+		VERIFY_COMPILE_TIME(inverse.X() == 0.1 && inverse.Y() == 0.2);
 		constexpr auto isZero = lhs.IsZero();
 		VERIFY_COMPILE_TIME(isZero == false);
 		constexpr auto perpendicular = lhs.Perpendicular();

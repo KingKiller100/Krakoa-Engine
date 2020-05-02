@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../String/kStringTypeTraits.hpp"
+#include "../../Type Traits/String.hpp"
 
 #include <any>
 #include <array>
@@ -36,8 +36,8 @@ namespace klib
 		constexpr
 			std::enable_if_t<type_trait::Is_CharType_V<C>
 			&& std::is_pointer_v<U>
-			&& !type_trait::Is_CharType<ONLY_TYPE(U)>::Value
-			&& !type_trait::Is_StringType<ONLY_TYPE(U)>::Value
+			&& !type_trait::Is_CharType_V<ONLY_TYPE(U)>
+			&& !type_trait::Is_StringType_V<ONLY_TYPE(U)>
 			, const void*>
 			GetValue(const T obj)
 		{

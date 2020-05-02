@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../HelperMacros.hpp"
-#include "kStringTypeTraits.hpp"
+#include "../../Type Traits/String.hpp"
 #include <string>
 
 namespace klib::kString

@@ -4,7 +4,10 @@
 
 #include "../Utility/Format/kFormatToString.hpp"
 
+#include "../Type Traits/Constexpr.hpp"
+
 #include <string>
+
 
 #ifdef TESTING_ENABLED
 namespace kTest
@@ -47,10 +50,12 @@ namespace kTest
 
 	// Verify using multiple test functions
 #define VERIFY_MULTI_INIT() bool noFails = true;
-#define VERIFY_MULTI_END()  success = noFails;
+#define VERIFY_MULTI_END()  this->success = noFails;
 #define VERIFY_MULTI(func) VERIFY(func() == true)\
 if (!success) noFails = false;\
 success = true;\
+
+#define VERIFY_CONSTEXPR(test) this->success = klib::type_trait::Is_Constexpr_V<(test)>;
 
 }
 #endif

@@ -24,6 +24,7 @@ namespace kTest::maths
 
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(MinMaxTest);
+		VERIFY_MULTI(FloorTest);
 		VERIFY_MULTI(BinarySearchTest);
 		VERIFY_MULTI(BinarySearchClosestTest);
 		VERIFY_MULTI(RoundingTest);
@@ -95,7 +96,7 @@ namespace kTest::maths
 		constexpr auto small = 2.55l;
 
 		constexpr auto biggest = Max(big, small);
-		VERIFY(biggest == big);
+		VERIFY_CONSTEXPR(biggest == big);
 		constexpr auto biggestDouble = Max(small, big);
 		VERIFY(biggestDouble == CAST(decltype(small), big));
 
@@ -103,6 +104,34 @@ namespace kTest::maths
 		VERIFY(smallest == small);
 		constexpr auto smallestLongLong = Min(big, small);
 		VERIFY(smallestLongLong == CAST(decltype(big), small));
+
+		//VERIFY_CONSTEXPR(false);
+
+		return success;
+	}
+
+	bool AlgorithmsTester::FloorTest()
+	{
+		{
+			constexpr auto decimal = 100.4756;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = 50000000.48295;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = CAST(long double, std::numeric_limits<long long>::max()) + 11111.37859854;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
 
 		return success;
 	}
@@ -205,10 +234,10 @@ namespace kTest::maths
 	{
 		constexpr auto accuracy = 3;
 		constexpr auto value = 1.0f / 128;
-		const auto rounded = Round(value, accuracy);
+		constexpr auto rounded = Round(value, accuracy);
 
 		constexpr auto expectedVal = 0.008f;
-		VERIFY(rounded == expectedVal);
+		VERIFY_CONSTEXPR(rounded == expectedVal);
 
 		return success;
 	}

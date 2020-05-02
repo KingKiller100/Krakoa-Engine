@@ -6,7 +6,9 @@
 
 #include "../Utility/Debug Helper/Exceptions/NotImplementedException.hpp"
 
-#include <cmath>
+#if MSVC_PLATFORM_TOOLSET > 142
+#	include <cmath>
+#endif
 
 #ifdef max
 #	undef max
@@ -121,6 +123,19 @@ namespace kmaths
 	{
 		return lhs < rhs ? lhs : (T1)rhs;
 	}
+
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T Floor(const T value) noexcept
+	{
+		constexpr auto maxLL = std::numeric_limits<long long>::max();
+		constexpr auto maxLD = std::numeric_limits<T>::max();
+
+		if (value > maxLL)
+			return value;
+
+		return CAST(T, CAST(long long, value));
+	}
+
 
 	template<typename T>
 	USE_RESULT constexpr T PowerOf(T base, int power) noexcept(std::is_arithmetic_v<T>)
@@ -249,9 +264,8 @@ namespace kmaths
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
 		const auto accuracyInverse = CAST(T, 1) / accuracy;
-		const auto penultimateVal = CAST(long long, valuePlusDpsByAcc);
-		const auto significantFigures = CAST(T, penultimateVal);
-		const T roundedValue = significantFigures * accuracyInverse;
+		const auto significantFigures = Floor(valuePlusDpsByAcc);
+		const T roundedValue = CAST(T, significantFigures * accuracyInverse);
 		return roundedValue;
 	}
 

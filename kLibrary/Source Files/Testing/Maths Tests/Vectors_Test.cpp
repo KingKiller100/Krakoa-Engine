@@ -122,7 +122,9 @@ namespace kTest::maths
 		constexpr auto reverseVector = lhs.ReverseVector();
 		constexpr auto inverse = lhs.Inverse();
 		constexpr auto isZero = lhs.IsZero();
+		VERIFY_COMPILE_TIME(isZero == false);
 		constexpr auto perpendicular = lhs.Perpendicular();
+		VERIFY_COMPILE_TIME(perpendicular.X() == -5 && perpendicular.Y() == 10);
 
 		constexpr auto lhs3d = Vector3d(10, 5, 3);
 		constexpr auto rhs3d = Vector3d(9, 15, 23);

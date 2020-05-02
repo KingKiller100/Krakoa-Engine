@@ -49,7 +49,7 @@ namespace kTest
 	}\
 
 	// Verify result of a test if result is available at compile time
-#define VERIFY_COMPILE_TIME(test) this->success = klib::type_trait::Compile_Time_Test_V<(test)>;
+#define VERIFY_COMPILE_TIME(test) this->success = klib::type_trait::Compile_Time_Test<(test)>::value;
 
 	// Verify using multiple test functions
 #define VERIFY_MULTI_INIT() bool noFails = true;

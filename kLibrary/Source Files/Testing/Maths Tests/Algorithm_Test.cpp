@@ -25,7 +25,7 @@ namespace kTest::maths
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(MinMaxTest);
 		VERIFY_MULTI(FloorTest);
-		VERIFY_MULTI(FractionsToDecimalTest);
+		VERIFY_MULTI(FractionToDecimalTest);
 		VERIFY_MULTI(BinarySearchTest);
 		VERIFY_MULTI(BinarySearchClosestTest);
 		VERIFY_MULTI(RoundingTest);
@@ -144,36 +144,61 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::FractionsToDecimalTest()
+	bool AlgorithmsTester::FractionToDecimalTest()
 	{
 		{
 			constexpr auto decimal = 0.25;
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 1 && fraction.GetDenominator() == 4);
+
+			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr auto decimal = 0.75;
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 3 && fraction.GetDenominator() == 4);
+
+			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr auto decimal = 10.75;
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 43 && fraction.GetDenominator() == 4);
+
+			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr auto decimal = -5.5f;
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+
+			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			VERIFY(f2d == decimal);
 		}
 
 		{
-			constexpr auto decimal = -1.69305f;
+			constexpr double decimal = constants::PI;
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+
+			const auto f2d = Round(fraction.GetDecimal<decltype(decimal)>(), 3);
+			VERIFY(f2d == Round(decimal, 3));
+		}
+
+		{
+			constexpr double decimal = 14.568464;
+			constexpr auto accuracy = 1e-03;
+			const auto fraction = DecimalToFraction(decimal, accuracy);
+			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+
+			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			VERIFY(f2d == Round(decimal, 3));
 		}
 
 		return success;

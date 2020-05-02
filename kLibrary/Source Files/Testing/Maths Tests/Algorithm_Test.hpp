@@ -17,7 +17,7 @@ namespace kTest::maths
 		bool ConversionTest();
 		bool MinMaxTest();
 		bool FloorTest();
-		bool FractionsToDecimalTest();
+		bool FractionToDecimalTest();
 		bool BinarySearchTest();
 		bool BinarySearchClosestTest();
 		bool RoundingTest();

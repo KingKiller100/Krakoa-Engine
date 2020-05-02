@@ -23,7 +23,8 @@ namespace kmaths
 		template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		USE_RESULT constexpr T GetDecimal() const noexcept
 		{
-			return CAST(T, integer) + (CAST(T, numerator) / denominator);
+			const auto signedVal = CAST(T, sign) * numerator;
+			return signedVal / denominator;
 		}
 
 		USE_RESULT constexpr Sign_Value_Type GetSign() const noexcept

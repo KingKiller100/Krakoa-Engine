@@ -154,24 +154,24 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr Fraction DecimalToFraction(T decimal, T error = CAST(T, 0.000001)) noexcept
+	USE_RESULT constexpr Fraction DecimalToFraction(T x, T error = CAST(T, 1e-10)) noexcept
 	{
-		const auto isNegative = decimal < 0;
+		const auto isNegative = x < 0;
 		Fraction::Sign_Value_Type sign = 1;
 
 		if (isNegative)
 		{
 			sign = -1;
-			decimal = -decimal;
+			x = -x;
 		}
 
-		const auto noDecimals = Floor(decimal);
-		const auto onlyDecimals = decimal - noDecimals;
+		const auto integer = Floor(x);
+		x -= integer;
 
-		if (onlyDecimals < error)
-			return Fraction(noDecimals, 1, sign);
-		else if ((constants::One<T>() - error) < onlyDecimals)
-			return Fraction(noDecimals + 1, 1, sign);
+		if (x < error)
+			return Fraction(integer, 1, sign);
+		else if ((constants::One<T>() - error) < x)
+			return Fraction(integer + 1, 1, sign);
 
 		Fraction::Numerator_Value_Type   lower_n = 0;
 		Fraction::Denominator_Value_Type lower_d = 1;
@@ -179,20 +179,18 @@ namespace kmaths
 		Fraction::Numerator_Value_Type   upper_n = 1;
 		Fraction::Denominator_Value_Type upper_d = 1;
 
-		Fraction::Numerator_Value_Type   mid_n = 0;
-		Fraction::Denominator_Value_Type mid_d = 1;
+		Fraction::Numerator_Value_Type   mid_n;
+		Fraction::Denominator_Value_Type mid_d;
 
-		auto tooHigh = mid_n > mid_d * (onlyDecimals + error);
-		auto tooLow = mid_n < (onlyDecimals - error) * mid_d;
+		auto found = false;
 
-
-		while (tooHigh || tooLow) // Binary search towards fraction
-		{
+		auto iter = 0ull;
+		do {
 			mid_n = lower_n + upper_n;
 			mid_d = lower_d + upper_d;
 
-			tooHigh = mid_d * (onlyDecimals + error) < mid_n;
-			tooLow = mid_n < (onlyDecimals - error) * mid_d;
+			auto tooHigh = mid_n > mid_d * (x + error);
+			auto tooLow = mid_n < (x - error) * mid_d;
 
 			if (tooHigh)
 			{
@@ -204,9 +202,10 @@ namespace kmaths
 				lower_n = mid_n;
 				lower_d = mid_d;
 			}
-		}
+			found = !(tooHigh || tooLow);
+		} while (iter++ < 1e06 && !found); // Binary search towards fraction
 
-		return Fraction(noDecimals * mid_d + mid_n, mid_d, sign);
+		return Fraction(integer * mid_d + mid_n, mid_d, sign);
 	}
 
 	template<typename T>

@@ -7,6 +7,8 @@
 #if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
 #endif
+#include <cstdint>
+#include <xtr1common>
 
 #ifdef max
 #	undef max
@@ -267,8 +269,12 @@ namespace kmaths
 		return roundedValue;
 	}
 
-	template<typename T, class = std::enable_if_t<!std::is_rvalue_reference_v<T>>>
-	constexpr void Swap(T& lhs, T& rhs) noexcept(std::is_nothrow_move_assignable_v<T>&& std::is_nothrow_move_constructible_v<T>)
+	template<typename T, class = std::enable_if_t<
+		!std::is_rvalue_reference_v<T>
+		&& std::is_nothrow_move_assignable_v<T> 
+		&& std::is_nothrow_move_constructible_v<T>
+		>>
+	constexpr void Swap(T& lhs, T& rhs) noexcept
 	{
 		T temp = std::move(lhs);
 		lhs = std::move(rhs);

@@ -48,6 +48,9 @@ namespace kTest
 		this->failureData.append(klib::kFormat::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 	}\
 
+	// Verify result of a test if result is available at compile time
+#define VERIFY_COMPILE_TIME(test) this->success = klib::type_trait::Compile_Time_Test_V<(test)>;
+
 	// Verify using multiple test functions
 #define VERIFY_MULTI_INIT() bool noFails = true;
 #define VERIFY_MULTI_END()  this->success = noFails;
@@ -55,7 +58,6 @@ namespace kTest
 if (!success) noFails = false;\
 success = true;\
 
-#define VERIFY_CONSTEXPR(test) this->success = klib::type_trait::Compile_Time_Test_V<(test)>;
 
 }
 #endif

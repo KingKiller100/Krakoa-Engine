@@ -96,7 +96,7 @@ namespace kTest::maths
 		constexpr auto small = 2.55l;
 
 		constexpr auto biggest = Max(big, small);
-		VERIFY_CONSTEXPR(biggest == big);
+		VERIFY_COMPILE_TIME(biggest == big);
 		constexpr auto biggestDouble = Max(small, big);
 		VERIFY(biggestDouble == CAST(decltype(small), big));
 
@@ -237,7 +237,7 @@ namespace kTest::maths
 		constexpr auto rounded = Round(value, accuracy);
 
 		constexpr auto expectedVal = 0.008f;
-		VERIFY_CONSTEXPR(rounded == expectedVal);
+		VERIFY_COMPILE_TIME(rounded == expectedVal);
 
 		return success;
 	}
@@ -635,9 +635,9 @@ namespace kTest::maths
 		{
 			constexpr auto exponant = -64;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
+			constexpr auto root = Root(exponant, power);
 			constexpr auto expected = -4;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -661,7 +661,7 @@ namespace kTest::maths
 			constexpr auto power = 3;
 			constexpr auto root = Root(exponant, power);
 			constexpr auto expected = 4;
-			VERIFY_CONSTEXPR(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{

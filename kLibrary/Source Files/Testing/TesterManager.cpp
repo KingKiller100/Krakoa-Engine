@@ -84,7 +84,7 @@ namespace kTest
 	{
 		if (success)
 		{
-			Add(new speed::SpeedTestManager());
+			Add(&speed::SpeedTestManager::Get());
 			RunAll();
 		}
 	}

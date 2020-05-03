@@ -16,6 +16,7 @@ namespace kTest::speed::maths
 		void Test() override;
 
 		void PowerOfTest();
+		void SqrtTest();
 	};
 }
 #endif

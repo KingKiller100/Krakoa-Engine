@@ -13,8 +13,9 @@ namespace kTest::speed
 
 	class SpeedTestManager : public Tester
 	{
+		struct Token {};
 	public:
-		SpeedTestManager();
+		SpeedTestManager(const Token&);
 		~SpeedTestManager();
 
 		void Add(SpeedTestBase* test);
@@ -41,3 +42,4 @@ namespace kTest::speed
 	};
 }
 #endif
+

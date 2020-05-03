@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Type Traits/String.hpp"
+#include "../../Utility/String/kUTFStringConverter.hpp"
 
 #include <any>
 #include <array>
@@ -165,13 +166,9 @@ namespace klib
 			}
 			else
 			{
-				std::string str;
-				for (const auto& c : format)
-					str += (char)c;
+				auto str = kString::Convert<char>(format);
 				str = MakeStringFromData<char>(str.data(), arg1, argN...);
-				std::basic_string<CharType> text;
-				for (const auto& c : str)
-					text += (CharType)c;
+				const auto text = kString::Convert<CharType>(str);
 
 				return text;
 			}

@@ -5,10 +5,6 @@
 
 #include "../../Utility/Format/kFormatToString.hpp"
 
-#include "../../Maths/kAlgorithms.hpp"
-
-#include <map>
-
 #ifdef TESTING_ENABLED
 namespace kTest::speed
 {
@@ -31,7 +27,7 @@ namespace kTest::speed
 			SpeedTestManager::Get().CollectResult(output);
 		}
 
-		GetFastestTime();
+		Output();
 	}
 
 	void SpeedTestBase::AddSubTest(const std::string& subTestName) noexcept
@@ -42,11 +38,13 @@ namespace kTest::speed
 		results[subTestName][""] = AverageTime{ 0, 0 };
 	}
 
-	void SpeedTestBase::GetFastestTime() noexcept
+	void SpeedTestBase::Output() noexcept
 	{
 		for (auto& data : results)
 		{
-			const auto& subTest = data.first;
+			data.second.erase("");
+
+			const auto& subTestName = data.first;
 			auto& internalData = data.second;
 
 			for (const auto& res : profilerResults)
@@ -63,31 +61,31 @@ namespace kTest::speed
 				timePair.count++;
 			}
 
-			auto winTime = std::numeric_limits<long long>::max();
-			std::string_view winner;
+			auto minTime = std::numeric_limits<long double>::max();
+			std::string winner;
 
 			for (const auto& values : internalData)
 			{
 				const auto totalTime = values.second.time;
 				const auto count = values.second.count;
-				const auto avg = totalTime / count;
+				const long double avg = CAST(long double, totalTime) / count;
 
-				const auto minTime = kmaths::Min(winTime, avg);
+				const auto currentlowest = avg < minTime ? avg : minTime;
 
-				if (minTime < winTime)
+				if (currentlowest < minTime)
 				{
 					winner = values.first;
-					winTime = minTime;
+					minTime = currentlowest;
 				}
 			}
 
-			SendResult(subTest, winner);
+			SendResult(subTestName, winner);
 		}
 	}
 
 	void SpeedTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result) noexcept
 	{
-		const auto output = klib::kFormat::ToString("{0}: \"{1}\" is the winner!\n", subTestName, result);
+		const auto output = klib::kFormat::ToString("{0}: \"{1}\" is the faster!\n", subTestName, result);
 		SpeedTestManager::Get().CollectResult(output);
 	}
 

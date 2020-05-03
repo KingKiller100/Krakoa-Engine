@@ -5,7 +5,6 @@
 
 #include "Maths/Algorithms_SpeedTest.hpp"
 
-#include "../../Utility/Format/kFormatToString.hpp"
 // File System to output test results
 #include "../../Utility/File System/kFileSystem.hpp"
 
@@ -15,7 +14,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::speed
 {
-	SpeedTestManager::SpeedTestManager()
+	SpeedTestManager::SpeedTestManager(const Token&)
 		: Tester("Speed Run Tests")
 	{}
 
@@ -106,7 +105,9 @@ namespace kTest::speed
 
 	SpeedTestManager& SpeedTestManager::Get()
 	{
-		static SpeedTestManager instance;
+		static Token t;
+		static SpeedTestManager instance(t);
+
 		return instance;
 	}
 }

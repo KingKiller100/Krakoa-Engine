@@ -33,7 +33,7 @@ namespace kTest::speed
 		void AddSubTest(const std::string& subTest) noexcept;
 
 	private:
-		void GetFastestTime() noexcept;
+		void Output() noexcept;
 		void SendResult(const std::string_view& subTestName, const std::string_view& result) noexcept;
 
 	protected:

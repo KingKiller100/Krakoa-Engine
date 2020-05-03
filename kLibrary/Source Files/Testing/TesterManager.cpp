@@ -29,16 +29,11 @@
 // Times the length of the test
 #include "../Utility/Timer/kTimer.hpp"
 
-
-#include <unordered_set>
-
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	std::unordered_set< std::unique_ptr<Tester> > kTests_TestsUSet;
-	std::string kTest_TestResultFilePath;
-	
 	TesterManager::TesterManager()
+		: success(true)
 	{	}
 
 	TesterManager::~TesterManager()
@@ -52,16 +47,16 @@ namespace kTest
 	void TesterManager::Initialize()
 	{
 		using namespace klib;
-		kTest_TestResultFilePath = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
-		const auto isMade = kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
+		path = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
+		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
 		
-		if (!kFileSystem::CheckFileExists(kTest_TestResultFilePath))
+		if (!kFileSystem::CheckDirectoryExists(path))
 		{
 			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
 		}
 
-		kTest_TestResultFilePath += "Results.txt";
-		klib::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
+		path += "Results.txt";
+		klib::kFileSystem::RemoveFile(path.c_str());
 	}
 
 	void TesterManager::InitializeMathsTests()
@@ -74,38 +69,47 @@ namespace kTest
 
 	void TesterManager::InitializeUtilityTests()
 	{		
+		Add(new utility::UTFConverterTester());
 		Add(new utility::StringManipulationTester());
 		Add(new utility::FormatToStringTester());
 		Add(new utility::CalendarTester());
 		Add(new utility::FileSystemTester());
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
-		Add(new utility::UTFConverterTester());
 		Add(new utility::StringViewTester());
 		Add(new utility::TimerTester());
 	}
 
-	void TesterManager::InitializeSpeedTests()
+	void TesterManager::RunSpeedTests()
 	{
-		Add(new speed::SpeedTestManager());
+		if (success)
+		{
+			Add(new speed::SpeedTestManager());
+			RunAll();
+		}
 	}
 
 	void TesterManager::Add(Tester* test)
 	{
-		kTests_TestsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
+		testsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
 	}
 
 	void TesterManager::RunAll()
 	{
 		klib::kTime::HighAccuracyTimer totalRunTimeTimer("Total Test Run Time");
 
-		for (const auto& test : kTests_TestsUSet)
+		for (const auto& test : testsUSet)
 		{
-			const auto resultTest = test->Run() 
+			const auto result = test->Run();
+
+			if (!result)
+				success = false;
+
+			const auto resultTest = result
 				? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
 				: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData()); // Fail Case
 
-			klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), resultTest.c_str());
+			klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
 		}
 
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::kUnits::Mins>();
@@ -114,12 +118,12 @@ namespace kTest
 		const unsigned secs = CAST(unsigned, 60.0 * remainder);
 
 		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}m  {1}s", mins, secs);
-		klib::kFileSystem::OutputToFile(kTest_TestResultFilePath.c_str(), finalTimeStr.c_str());
+		klib::kFileSystem::OutputToFile(path.c_str(), finalTimeStr.c_str());
 	}
 
 	void TesterManager::ClearAllTests()
 	{
-		kTests_TestsUSet.clear();
+		testsUSet.clear();
 	}
 	
 	TesterManager& TesterManager::Get()

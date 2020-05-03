@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Timer/kTimer.hpp"
+#include <string>
 #include <thread>
 
 namespace klib::kProfiler

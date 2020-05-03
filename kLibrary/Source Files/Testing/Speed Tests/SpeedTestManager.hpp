@@ -18,6 +18,8 @@ namespace kTest::speed
 		~SpeedTestManager();
 
 		void Add(SpeedTestBase* test);
+		void ClearAll();
+		
 		void CollectResult(const std::string_view& result);
 		
 		static SpeedTestManager& Get();

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
+#include <string>
+#include <unordered_set>
+#include <memory>
 
 #ifdef TESTING_ENABLED
 namespace kTest
@@ -17,12 +20,18 @@ namespace kTest
 		void Shutdown();
 		void InitializeMathsTests();
 		void InitializeUtilityTests();
-		void InitializeSpeedTests();
+		void RunSpeedTests();
 		void Add(Tester* test);
 		void RunAll();
 		void ClearAllTests();
 
 		static TesterManager& Get();
+
+	private:
+		std::string path;
+		std::unordered_set< std::unique_ptr<Tester> > testsUSet;
+
+		bool success;
 	};
 }
 

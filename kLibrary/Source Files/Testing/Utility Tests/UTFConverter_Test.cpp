@@ -15,11 +15,16 @@ namespace kTest::utility
 
 	void UTFConverterTester::Test()
 	{
-		std::string_view test = "test";
-		const auto value = klib::kString::UTF8ConvertToUTF16(test);
+		constexpr auto str16 = u"I'm a char32 ptr";
+		const auto str32 = klib::kString::Convert<char32_t>(str16);
+		const std::string_view test = "test";
+		const auto value = klib::kString::Convert<char16_t>(test);
 		VERIFY(value == u"test");
 		auto buf32 = klib::kString::Convert<char32_t>(test);
 		VERIFY(buf32 == U"test");
+		const auto str = std::string(test);
+		auto buf16str = klib::kString::Convert<char16_t>(str);
+		VERIFY(buf16str == u"test");
 	}
 }
 #endif

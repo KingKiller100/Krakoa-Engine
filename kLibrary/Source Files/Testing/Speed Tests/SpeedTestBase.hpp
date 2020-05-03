@@ -4,12 +4,19 @@
 
 #include "../../Utility/Profiler/kProfiler.hpp"
 
+#include <map>
 #include <string>
 #include <vector>
 
 #ifdef TESTING_ENABLED
 namespace kTest::speed
 {
+	struct AverageTime
+	{
+		long long time = 0;
+		int count = 0;
+	};
+
 	class SpeedTestBase
 	{
 	public:
@@ -17,16 +24,22 @@ namespace kTest::speed
 		~SpeedTestBase();
 
 		void Run() noexcept;
-		void SendResult(const std::string_view& result) noexcept;
 
 		const std::string& GetName() const;
 
 	protected:
 		virtual void Test() = 0;
 
+		void AddSubTest(const std::string& subTest) noexcept;
+
+	private:
+		void GetFastestTime() noexcept;
+		void SendResult(const std::string_view& subTestName, const std::string_view& result) noexcept;
+
 	protected:
 		std::string name;
 		std::vector<klib::kProfiler::ProfilerResult> profilerResults;
+		std::map<const std::string, std::map<std::string, AverageTime>> results;
 	};
 }
 

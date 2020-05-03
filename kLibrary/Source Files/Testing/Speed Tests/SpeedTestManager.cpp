@@ -28,7 +28,7 @@ namespace kTest::speed
 		directory = kFileSystem::GetExeDirectory<char>() + "Speed Results\\";
 		const auto isMade = kFileSystem::CreateNewDirectory(directory.c_str());
 
-		if (!kFileSystem::CheckDirectoyExists(directory))
+		if (!kFileSystem::CheckDirectoryExists(directory))
 		{
 			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
 		}
@@ -52,10 +52,7 @@ namespace kTest::speed
 
 	void SpeedTestManager::ShutDown()
 	{
-		for (auto& test : tests)
-		{
-			delete test;
-		}
+		ClearAll();
 	}
 
 	void SpeedTestManager::Run()
@@ -72,6 +69,15 @@ namespace kTest::speed
 		tests.insert(test);
 	}
 
+	void SpeedTestManager::ClearAll()
+	{
+		for (auto& test : tests)
+		{
+			delete test;
+		}
+		tests.clear();
+	}
+
 	void SpeedTestManager::CollectResult(const std::string_view& result)
 	{
 		results.append(result);
@@ -85,7 +91,7 @@ namespace kTest::speed
 	void SpeedTestManager::OutputResult(const std::string& name)
 	{
 		using namespace klib;
-		const auto filename = kFileSystem::AppendFileExtension(name + "_SpeedTest", "txt");
+		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
 		const auto fullPath = directory + filename;
 		kFileSystem::OutputToFile(fullPath, results);
 		results.clear();

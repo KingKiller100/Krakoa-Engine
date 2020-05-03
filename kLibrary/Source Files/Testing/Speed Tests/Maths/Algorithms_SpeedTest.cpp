@@ -25,6 +25,8 @@ namespace kTest::speed::maths
 
 	void AlgorithmsSpeedTest::PowerOfTest()
 	{
+		AddSubTest("kmaths::PowerOf vs std::pow");
+
 		constexpr long long set[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		constexpr auto size = SizeOfArray(set);
 
@@ -34,10 +36,11 @@ namespace kTest::speed::maths
 		auto power = 0;
 		for (auto i = 0; i < 100; ++i)
 		{
+			power++;
 			{
 				PROFILE_SCOPE("kmaths::PowerOf");
 				if (!(i % 4))
-					power++;
+					power;
 
 				const auto myResult = PowerOf(set[Modulus<size_t>(i, size)], power);
 			}
@@ -45,31 +48,11 @@ namespace kTest::speed::maths
 			{
 				PROFILE_SCOPE("std::pow");
 				if (!(i % 4))
-					power++;
+					power;
 
 				const auto stdResult = std::pow(set[Modulus<size_t>(i, size)], power);
 			}
 		}
-
-		long double myAvg = 0;
-		long double stdAvg = 0;
-
-		for (const auto& result : profilerResults)
-		{
-			if (result.name == myTestName)
-				myAvg += (result.end - result.start);
-			else
-				stdAvg += (result.end - result.start);
-		}
-
-		const auto halfTotalResults = (profilerResults.size() * 0.5l);
-		myAvg /= halfTotalResults;
-		stdAvg /= halfTotalResults;
-
-		const auto winner = Min(myAvg, stdAvg) == myAvg ? myTestName : stdTestName;
-
-		SendResult(winner);
-
 	}
 }
 #endif

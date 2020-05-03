@@ -17,7 +17,6 @@ namespace tests
 		testMan.Initialize();
 		testMan.InitializeMathsTests();
 		testMan.InitializeUtilityTests();
-		testMan.InitializeSpeedTests();
 	}
 
 	void TestDriver::ShutDown()
@@ -31,6 +30,7 @@ namespace tests
 	void TestDriver::RunTests()
 	{
 		testMan.RunAll();
+		testMan.RunSpeedTests();
 	}
 	void TestDriver::ClearAll()
 	{

@@ -3,6 +3,7 @@
 #include "../../HelperMacros.hpp"
 
 #include "../String/kStringManipulation.hpp"
+#include "../String/kUTFStringConverter.hpp"
 
 #include <direct.h>
 #include <corecrt_wdirect.h>
@@ -246,16 +247,24 @@ namespace klib::kFileSystem
 	 */
 
 	template<class CharType = char>
-	constexpr bool CheckDirectoyExists(const kString::StringReader<CharType>& directoryPath) noexcept
+	constexpr bool CheckDirectoryExists(const kString::StringReader<CharType>& directoryPath) noexcept
 	{
-		struct stat info;
+		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+		{
+			struct stat info;
+			const auto statResult = stat(directoryPath.data(), &info);
+			
+			if (statResult != 0)
+				return false;
 
-		if (stat(directoryPath.data(), &info) != 0)
-			return true;
-		if (info.st_mode & S_IFDIR)
-			return true;
-
-		return false;
+			const auto result = (info.st_mode & S_IFDIR);
+			return result != 0;
+		}
+		else
+		{
+			const auto temp = kString::Convert<char>(directoryPath);
+			return CheckDirectoryExists<char>(temp.data());
+		}
 	}
 
 	/**

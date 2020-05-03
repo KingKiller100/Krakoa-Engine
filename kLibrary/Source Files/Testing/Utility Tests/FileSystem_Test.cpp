@@ -34,8 +34,24 @@ namespace kTest::utility
 		const auto bad = CheckFileExists((exeDir + "NULL").c_str());
 		VERIFY(bad == false);
 
-		const auto singleCreated = CreateNewDirectory((exeDir + "Create Directory Test\\").c_str());
+		const auto firstSubDir = (exeDir + "Create Directory Test\\");
+
+		const auto singleCreated = CreateNewDirectory(firstSubDir.c_str());
 		VERIFY(singleCreated == true);
+
+		const auto checkDirExist = CheckDirectoryExists(firstSubDir);
+		VERIFY(checkDirExist == true);
+
+		const auto checkDirNotExist = CheckDirectoryExists(exeDir + "None-Existing-Directory\\");
+		VERIFY(checkDirNotExist == false);
+
+		const auto wExeDir = klib::kString::Convert<wchar_t>(exeDir);
+
+		const auto wCheckDirExist = CheckDirectoryExists<wchar_t>(wExeDir);
+		VERIFY(wCheckDirExist == true);
+
+		const auto wCheckDirNotExist = CheckDirectoryExists<wchar_t>(wExeDir + L"None-Existing-Directory\\");
+		VERIFY(wCheckDirNotExist == false);
 
 		const auto multipleCreated = CreateNewDirectories((exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
 		VERIFY(multipleCreated == true)

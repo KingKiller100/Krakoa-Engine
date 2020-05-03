@@ -42,6 +42,13 @@ namespace kmaths
 		}
 	}
 
+	template<typename T, size_t Size>
+	USE_RESULT constexpr size_t SizeOfArray(const T(&array)[Size]) noexcept
+	{
+		const auto size = Size;
+		return size;
+	}
+
 	template<typename List, typename T>
 	USE_RESULT constexpr long long BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 	{
@@ -155,7 +162,7 @@ namespace kmaths
 		const auto integer = CAST(T, CAST(ConversionType, value));
 
 		return integer > value ? integer - 1 : integer;
-			
+
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -514,13 +521,6 @@ namespace kmaths
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, sqrt(square));
 #else
-		auto maxIterations = 0;
-
-		if _CONSTEXPR_IF(std::is_same_v<T, float>)
-			maxIterations = 7;
-		else
-			maxIterations = 16;
-
 		constexpr T lookUpMap[] = {
 			CAST(T, 0),    CAST(T, 1),    CAST(T, 4),    CAST(T, 9),      // 0, 1, 2, 3 
 			CAST(T, 16),   CAST(T, 25),   CAST(T, 36),   CAST(T, 49),     // 4, 5, 6, 7
@@ -532,6 +532,14 @@ namespace kmaths
 			CAST(T, 784),  CAST(T, 841),  CAST(T, 900),  CAST(T, 961),    // 28, 29, 30, 31
 			CAST(T, 1024), CAST(T, 1089), CAST(T, 1156), CAST(T, 1225) // 32, 33, 34, 35
 		};
+		constexpr auto lookUpMapSize = SizeOfArray(lookUpMap);
+
+		auto maxIterations = 0;
+
+		if _CONSTEXPR_IF(std::is_same_v<T, float>)
+			maxIterations = 7;
+		else
+			maxIterations = 16;
 
 		if (square <= 0)
 			return 0;
@@ -547,8 +555,7 @@ namespace kmaths
 
 		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search if given square is between 0 and lookUpMap's size squared
 		{
-			const auto size = sizeof(lookUpMap) / sizeof(T);
-			T estimate = CAST(T, BinarySearchClosestImpl(lookUpMap, square, 0, size - 1, size));
+			T estimate = CAST(T, BinarySearchClosestImpl(lookUpMap, square, 0, lookUpMapSize - 1, lookUpMapSize));
 			if (!estimate || estimate == constants::MinusOne<T>())
 			{
 				estimate = square;

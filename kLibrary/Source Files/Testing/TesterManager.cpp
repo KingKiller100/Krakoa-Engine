@@ -20,13 +20,15 @@
 #include "Utility Tests/StringManipulation_Test.hpp"
 #include "Utility Tests/FormatToString_Test.hpp"
 
+// Speed Testing
+#include "Speed Tests/SpeedTestManager.hpp"
+
 // File System to output test results
 #include "../Utility/File System/kFileSystem.hpp"
 
 // Times the length of the test
 #include "../Utility/Timer/kTimer.hpp"
 
-#include "../Speed Testing/SpeedTestManager.hpp"
 
 #include <unordered_set>
 
@@ -81,6 +83,11 @@ namespace kTest
 		Add(new utility::UTFConverterTester());
 		Add(new utility::StringViewTester());
 		Add(new utility::TimerTester());
+	}
+
+	void TesterManager::InitializeSpeedTests()
+	{
+		Add(new speed::SpeedTestManager());
 	}
 
 	void TesterManager::Add(Tester* test)

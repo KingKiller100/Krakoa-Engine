@@ -8,7 +8,6 @@
 
 #include <string>
 
-
 #ifdef TESTING_ENABLED
 namespace kTest
 {
@@ -23,24 +22,24 @@ namespace kTest
 
 		const char* GetName() const noexcept;
 		const std::string& GetFailureData() const noexcept;
-		
+
 		bool Run() noexcept;
 
 		// Deleted Funcs
 		Tester(const Tester& other) = delete;
 		Tester& operator=(const Tester& other) = delete;
-		
+
 	private:
 		virtual void Test() = 0;
-		
+
 	protected:
 		bool success;
-		
+
 		std::string name;
 		std::string failureData;
 	};
-	
-	 // If results are wrong, change name to failed test function signature and line, else continues to next line
+
+	// If results are wrong, change name to failed test function signature and line, else continues to next line
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\

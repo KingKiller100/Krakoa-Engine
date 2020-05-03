@@ -669,7 +669,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto square = Convert<float>(constants::PI);
+			constexpr auto square = CAST(float, constants::PI);
 			const auto root = Sqrt(square);
 			const auto expected = std::sqrtf(square); // 1.77245390...
 			VERIFY(root == expected);

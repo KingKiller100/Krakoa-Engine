@@ -10,6 +10,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #	include <Windows.h>
@@ -232,6 +234,28 @@ namespace klib::kFileSystem
 			fclose(file);
 
 		return result == 0;
+	}
+
+	/**
+	 * \brief
+	 *		Checks (from folder holding the executable file in current directory) if a directory exists
+	 * \param directoryPath
+	 *		folder (or full directory)
+	 * \return
+	 *		TRUE if it exists or FALSE if it does not exist
+	 */
+
+	template<class CharType = char>
+	constexpr bool CheckDirectoyExists(const kString::StringReader<CharType>& directoryPath) noexcept
+	{
+		struct stat info;
+
+		if (stat(directoryPath.data(), &info) != 0)
+			return true;
+		if (info.st_mode & S_IFDIR)
+			return true;
+
+		return false;
 	}
 
 	/**

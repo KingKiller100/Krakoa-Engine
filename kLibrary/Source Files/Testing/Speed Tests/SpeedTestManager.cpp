@@ -28,7 +28,7 @@ namespace kTest::speed
 		directory = kFileSystem::GetExeDirectory<char>() + "Speed Results\\";
 		const auto isMade = kFileSystem::CreateNewDirectory(directory.c_str());
 
-		if (!kFileSystem::CheckFileExists(directory))
+		if (!kFileSystem::CheckDirectoyExists(directory))
 		{
 			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
 		}

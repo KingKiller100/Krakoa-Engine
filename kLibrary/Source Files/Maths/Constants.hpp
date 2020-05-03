@@ -27,31 +27,31 @@ namespace kmaths::constants
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 
 	template<class T>
-	USE_RESULT static constexpr T One() noexcept
+	USE_RESULT constexpr T One() noexcept
 	{
 		return T(1);
 	}
 
 	template<class T>
-	USE_RESULT static constexpr T MinusOne() noexcept
+	USE_RESULT constexpr T MinusOne() noexcept
 	{
 		return T(-1);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT static constexpr T ZeroPointOne() noexcept
+	USE_RESULT constexpr T ZeroPointOne() noexcept
 	{
 		return T(0.1);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT static constexpr T ZeroPointFive() noexcept
+	USE_RESULT constexpr T ZeroPointFive() noexcept
 	{
 		return T(0.5);
 	}
 
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT static constexpr T OnePointFive() noexcept
+	USE_RESULT constexpr T OnePointFive() noexcept
 	{
 		return T(1.5);
 	}
@@ -59,7 +59,7 @@ namespace kmaths::constants
 	template<class ReturnType, class T, class = std::enable_if_t<
 		std::is_floating_point_v<ReturnType>
 		&& std::is_arithmetic_v<T>>>
-	USE_RESULT static constexpr ReturnType OneOver(T value) noexcept
+	USE_RESULT constexpr ReturnType OneOver(T value) noexcept
 	{
 		const auto result = ReturnType(1) / value;
 		return result;
@@ -69,7 +69,7 @@ namespace kmaths::constants
 		std::is_floating_point_v<ReturnType>
 		&& std::is_arithmetic_v<T>
 		&& std::is_arithmetic_v<T2>>>
-	USE_RESULT static constexpr ReturnType XOverY(T x, T2 y) noexcept
+	USE_RESULT constexpr ReturnType XOverY(T x, T2 y) noexcept
 	{
 		return ReturnType(x) / y;
 	}

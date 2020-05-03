@@ -106,8 +106,6 @@ namespace kTest::maths
 		constexpr auto smallestLongLong = Min(big, small);
 		VERIFY(smallestLongLong == CAST(decltype(big), small));
 
-		//VERIFY_CONSTEXPR(false);
-
 		return success;
 	}
 
@@ -115,13 +113,34 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto decimal = 100.4756;
-			const auto result = Floor(decimal);
+			constexpr auto result = Floor(decimal);
 			const auto expected = std::floor(decimal);
 			VERIFY(result == expected);
 		}
 
 		{
 			constexpr auto decimal = 50000000.48295;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = -0.48295;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = -1.48295;
+			const auto result = Floor(decimal);
+			const auto expected = std::floor(decimal);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = 1.48295;
 			const auto result = Floor(decimal);
 			const auto expected = std::floor(decimal);
 			VERIFY(result == expected);
@@ -147,12 +166,13 @@ namespace kTest::maths
 	bool AlgorithmsTester::DecimalToFractionTest()
 	{
 		{
-			constexpr auto f = Fraction(10, 50, -1);
+			constexpr Fraction o = { 213, 109, false };
+			constexpr auto ans = o.GetNumber<float>();
 			constexpr auto decimal = 0.25;
-			constexpr auto fraction = DecimalToFraction(decimal);
+			const auto fraction = DecimalToFraction<double>(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 1 && fraction.GetDenominator() == 4);
 
-			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			const auto f2d = fraction.GetNumber<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
@@ -161,7 +181,7 @@ namespace kTest::maths
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 3 && fraction.GetDenominator() == 4);
 
-			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			const auto f2d = fraction.GetNumber<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
@@ -170,7 +190,7 @@ namespace kTest::maths
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 43 && fraction.GetDenominator() == 4);
 
-			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			const auto f2d = fraction.GetNumber<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
@@ -179,7 +199,7 @@ namespace kTest::maths
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
 
-			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			const auto f2d = fraction.GetNumber<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
@@ -188,7 +208,7 @@ namespace kTest::maths
 			const auto fraction = DecimalToFraction(decimal);
 			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
 
-			const auto f2d = Round(fraction.GetDecimal<decltype(decimal)>(), 3);
+			const auto f2d = Round(fraction.GetNumber<decltype(decimal)>(), 3);
 			VERIFY(f2d == Round(decimal, 3));
 		}
 
@@ -198,7 +218,7 @@ namespace kTest::maths
 			const auto fraction = DecimalToFraction(decimal, accuracy);
 			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
 
-			const auto f2d = fraction.GetDecimal<decltype(decimal)>();
+			const auto f2d = fraction.GetNumber<decltype(decimal)>();
 			VERIFY(f2d == Round(decimal, 3));
 		}
 
@@ -316,8 +336,16 @@ namespace kTest::maths
 		{
 			constexpr auto power = -4.0f;
 			constexpr auto num = 2.0f;
-			constexpr auto value = PowerOf(num, power);
+			const auto value = PowerOf(num, power);
 			const auto expectedVal = std::powf(2, -4);
+			VERIFY(value == expectedVal);
+		}
+
+		{
+			constexpr auto power = 8.0;
+			constexpr auto num = 2.0;
+			const auto value = PowerOf(num, power);
+			const auto expectedVal = CAST(int, std::powf(2, 8));
 			VERIFY(value == expectedVal);
 		}
 

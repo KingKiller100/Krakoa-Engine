@@ -14,23 +14,18 @@ namespace kmaths
 		using Numerator_Value_Type = size_t;
 		using Denominator_Value_Type = size_t;
 
-		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const bool isNegative = true) noexcept
-			: sign(isNegative ? -1 : 1), numerator(numerator), denominator(denominator)
+		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const bool isNegative = false) noexcept
+			: numerator(numerator), denominator(denominator), sign(isNegative ? -1 : 1)
 		{}
 
-		~Fraction()
+		~Fraction() noexcept
 			= default;
 
-		template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-		USE_RESULT constexpr T GetDecimal() const noexcept
+		template<typename T>
+		USE_RESULT constexpr T GetNumber() const noexcept
 		{
 			const auto signedVal = CAST(T, sign) * numerator;
 			return signedVal / denominator;
-		}
-
-		USE_RESULT constexpr Sign_Value_Type GetSign() const noexcept
-		{
-			return sign;
 		}
 
 		USE_RESULT constexpr Numerator_Value_Type GetNumerator() const noexcept
@@ -43,12 +38,17 @@ namespace kmaths
 			return denominator;
 		}
 
+		USE_RESULT constexpr Sign_Value_Type GetSign() const noexcept
+		{
+			return sign;
+		}
+
 	private:
-		Sign_Value_Type sign;
 		Numerator_Value_Type numerator;
 		Denominator_Value_Type denominator;
+		
+		Sign_Value_Type sign;
 	};
-
 }
 
 

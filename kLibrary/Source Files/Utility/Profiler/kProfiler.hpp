@@ -19,9 +19,9 @@ namespace klib::kProfiler
 		using Func = ProfilerFunc;
 
 	public:
-		Profiler(const char* name, Func&& func)
+		Profiler(const char* name, Func&& cb)
 			: result({ name, 0, 0, 0 }), isRunning(true),
-			timerFunc(std::forward<Func&&>(func)), 
+			callback(std::forward<Func&&>(cb)), 
 			timer("Profiler")
 		{}
 
@@ -39,7 +39,7 @@ namespace klib::kProfiler
 			result.start = timer.GetStartTime<kTime::kUnits::Millis>();
 			result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-			timerFunc(result);
+			callback(result);
 
 			isRunning = false;
 		}
@@ -47,7 +47,7 @@ namespace klib::kProfiler
 	private:
 		ProfilerResult result;
 		bool isRunning;
-		Func timerFunc;
+		Func callback;
 
 		kTime::Timer<int64_t> timer;
 	};

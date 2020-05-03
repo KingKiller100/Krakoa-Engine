@@ -43,11 +43,9 @@ namespace klib::kFileSystem
 	 *		The data to fill the file with.
 	 */
 	template<class CharType = char>
-	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringReader<CharType>& content)
+	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
-		static FileWriter<CharType> outFile;
-
-		outFile.open(fullFilePath.data(), std::ios::out | std::ios::app);
+		FileWriter<CharType> outFile(fullFilePath.data(), mode);
 
 		if (outFile.is_open())
 		{

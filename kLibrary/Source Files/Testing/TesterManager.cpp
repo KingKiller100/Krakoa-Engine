@@ -26,6 +26,8 @@
 // Times the length of the test
 #include "../Utility/Timer/kTimer.hpp"
 
+#include "../Speed Testing/SpeedTestManager.hpp"
+
 #include <unordered_set>
 
 #ifdef TESTING_ENABLED
@@ -47,9 +49,15 @@ namespace kTest
 
 	void TesterManager::Initialize()
 	{
-		kTest_TestResultFilePath = klib::kFileSystem::GetExeDirectory<char>() + "Test Results\\";
-		const auto isMade = klib::kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
+		using namespace klib;
+		kTest_TestResultFilePath = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
+		const auto isMade = kFileSystem::CreateNewDirectory(kTest_TestResultFilePath.c_str());
 		
+		if (!kFileSystem::CheckFileExists(kTest_TestResultFilePath))
+		{
+			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
+		}
+
 		kTest_TestResultFilePath += "Results.txt";
 		klib::kFileSystem::RemoveFile(kTest_TestResultFilePath.c_str());
 	}
@@ -83,6 +91,7 @@ namespace kTest
 	void TesterManager::RunAll()
 	{
 		klib::kTime::HighAccuracyTimer totalRunTimeTimer("Total Test Run Time");
+
 		for (const auto& test : kTests_TestsUSet)
 		{
 			const auto resultTest = test->Run() 

@@ -61,7 +61,7 @@ namespace kmaths::constants
 		&& std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr ReturnType OneOver(T value) noexcept
 	{
-		const auto result = ReturnType(1) / value;
+		const auto result = One<ReturnType>() / value;
 		return result;
 	}
 

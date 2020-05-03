@@ -56,19 +56,19 @@ namespace kTest::maths
 
 		// Primitives
 		constexpr auto intToDouble = Convert<double>(num);
-		VERIFY(intToDouble == 300.0);
+		VERIFY_COMPILE_TIME(intToDouble == 300.0);
 		constexpr auto longDoubleToFloat = Convert<float>(longDoubleNum);
-		VERIFY(longDoubleToFloat == CAST(float, longDoubleNum));
+		VERIFY_COMPILE_TIME(longDoubleToFloat == CAST(float, longDoubleNum));
 		constexpr auto longDoubleToInt = Convert<int>(longDoubleNum);
-		VERIFY(longDoubleToInt == CAST(int, longDoubleNum));
+		VERIFY_COMPILE_TIME(longDoubleToInt == CAST(int, longDoubleNum));
 		constexpr auto intToLongLong = Convert<long long>(maxInt);
-		VERIFY(intToLongLong == maxInt);
+		VERIFY_COMPILE_TIME(intToLongLong == maxInt);
 		constexpr auto longLongToInt = Convert<int>(maxLongLong);
-		VERIFY(longLongToInt == maxInt);
+		VERIFY_COMPILE_TIME(longLongToInt == maxInt);
 
 		// Non-primitives
 		constexpr auto charToString_View = Convert<std::string_view>("YOLO");
-		VERIFY(charToString_View == "YOLO");
+		VERIFY_COMPILE_TIME(charToString_View == "YOLO");
 
 		constexpr int container[3][2] = { {1, 3}, {5, 6}, {0, 5} };
 		const auto arrayToMatrix = Convert<Matrix3x2s>(container);
@@ -85,8 +85,11 @@ namespace kTest::maths
 					);
 		}
 
-		const auto doubleToVec = Convert<Vector4d>(5.0);
-		VERIFY(doubleToVec.X() == 5.0 && doubleToVec.Y() == 5.0);
+		constexpr auto doubleToVec = Convert<Vector4d>(5.0);
+		VERIFY_COMPILE_TIME(doubleToVec.X() == 5.0);
+		VERIFY_COMPILE_TIME(doubleToVec.Y() == 5.0);
+		VERIFY_COMPILE_TIME(doubleToVec.Z() == 5.0);
+		VERIFY_COMPILE_TIME(doubleToVec.W() == 5.0);
 
 		return success;
 	}
@@ -99,12 +102,12 @@ namespace kTest::maths
 		constexpr auto biggest = Max(big, small);
 		VERIFY_COMPILE_TIME(biggest == big);
 		constexpr auto biggestDouble = Max(small, big);
-		VERIFY(biggestDouble == CAST(decltype(small), big));
+		VERIFY_COMPILE_TIME(biggestDouble == CAST(decltype(small), big));
 
 		constexpr auto smallest = Min(small, big);
-		VERIFY(smallest == small);
+		VERIFY_COMPILE_TIME(smallest == small);
 		constexpr auto smallestLongLong = Min(big, small);
-		VERIFY(smallestLongLong == CAST(decltype(big), small));
+		VERIFY_COMPILE_TIME(smallestLongLong == CAST(decltype(big), small));
 
 		return success;
 	}
@@ -230,18 +233,18 @@ namespace kTest::maths
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearch(list, 4.0);
-			VERIFY(idx == 4);
+			VERIFY_COMPILE_TIME(idx == 4);
 		}
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearch(list, -4.0);
-			VERIFY(idx == -1);
+			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
 			constexpr int list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearch(list, 14);
-			VERIFY(idx == -1);
+			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
@@ -259,55 +262,55 @@ namespace kTest::maths
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 1.0);
-			VERIFY(idx == 1);
+			VERIFY_COMPILE_TIME(idx == 1);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 3.0);
-			VERIFY(idx == 3);
+			VERIFY_COMPILE_TIME(idx == 3);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 5.0);
-			VERIFY(idx == 5);
+			VERIFY_COMPILE_TIME(idx == 5);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, -5.0);
-			VERIFY(idx == -1);
+			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 4.25);
-			VERIFY(idx == 4);
+			VERIFY_COMPILE_TIME(idx == 4);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 2.25);
-			VERIFY(idx == 2);
+			VERIFY_COMPILE_TIME(idx == 2);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 7.0);
-			VERIFY(idx == -1);
+			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, -1.0);
-			VERIFY(idx == -1);
+			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 1.5);
-			VERIFY(idx == 2);
+			VERIFY_COMPILE_TIME(idx == 2);
 		}
 
 		{
@@ -345,15 +348,39 @@ namespace kTest::maths
 			constexpr auto power = 8.0;
 			constexpr auto num = 2.0;
 			const auto value = PowerOf(num, power);
-			const auto expectedVal = CAST(int, std::powf(2, 8));
+			const auto expectedVal = std::powf(2, 8);
 			VERIFY(value == expectedVal);
 		}
 
 		{
-			constexpr auto power = 8;
-			constexpr auto num = 2;
+			constexpr auto power = 5;
+			constexpr auto num = 4;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = CAST(int, std::powf(2, 8));
+			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			VERIFY(value == expectedVal);
+		}
+
+		{
+			constexpr auto power = 2;
+			constexpr auto num = 17;
+			constexpr auto value = PowerOf(num, power);
+			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			VERIFY(value == expectedVal);
+		}
+
+		{
+			constexpr auto power = 12;
+			constexpr auto num = 7ll;
+			constexpr auto value = PowerOf(num, power);
+			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			VERIFY(value == expectedVal);
+		}
+
+		{
+			constexpr auto power = 4.0;
+			constexpr auto num = 9.0;
+			constexpr auto value = PowerOf(num, power);
+			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
 			VERIFY(value == expectedVal);
 		}
 
@@ -415,19 +442,19 @@ namespace kTest::maths
 	bool AlgorithmsTester::ToDegreesTest()
 	{
 		constexpr auto piTo180 = ToDegrees(int(constants::PI));
-		VERIFY(piTo180 == 180);
+		VERIFY_COMPILE_TIME(piTo180 == 180);
 
 		constexpr auto tauTo360 = ToDegrees<float>(float(constants::TAU));
-		VERIFY(tauTo360 == 360.f);
+		VERIFY_COMPILE_TIME(tauTo360 == 360.f);
 
 		constexpr auto piOver2To90 = ToDegrees<double>(constants::PI_OVER_2);
-		VERIFY(piOver2To90 == 90.0);
+		VERIFY_COMPILE_TIME(piOver2To90 == 90.0);
 
 		constexpr auto piOver4To45 = ToDegrees<long double>(constants::PI_OVER_4);
-		VERIFY(piOver4To45 == 45.0l);
+		VERIFY_COMPILE_TIME(piOver4To45 == 45.0l);
 
 		constexpr auto pitimes3Over2To270 = ToDegrees<constants::AccuracyType>(constants::PI_OVER_2 * 3);
-		VERIFY(pitimes3Over2To270 == 270.0l);
+		VERIFY_COMPILE_TIME(pitimes3Over2To270 == 270.0l);
 
 		return success;
 	}
@@ -435,19 +462,19 @@ namespace kTest::maths
 	bool AlgorithmsTester::ToRadiansTest()
 	{
 		constexpr auto deg180ToPi = ToRadians<int>(180);
-		VERIFY(deg180ToPi == static_cast<decltype(deg180ToPi)>(M_PI));
+		VERIFY_COMPILE_TIME(deg180ToPi == static_cast<decltype(deg180ToPi)>(M_PI));
 
 		constexpr auto deg360ToTau = ToRadians<float>(360);
-		VERIFY(deg360ToTau == static_cast<decltype(deg360ToTau)>(M_PI * 2));
+		VERIFY_COMPILE_TIME(deg360ToTau == static_cast<decltype(deg360ToTau)>(M_PI * 2));
 
 		constexpr auto deg90ToPiOver2 = ToRadians<double>(90);
-		VERIFY(deg90ToPiOver2 == static_cast<decltype(deg90ToPiOver2)>(M_PI_2));
+		VERIFY_COMPILE_TIME(deg90ToPiOver2 == static_cast<decltype(deg90ToPiOver2)>(M_PI_2));
 
 		constexpr auto deg45ToPiOver4 = ToRadians<long double>(45);
-		VERIFY(deg45ToPiOver4 == static_cast<decltype(deg45ToPiOver4)>(M_PI_4));
+		VERIFY_COMPILE_TIME(deg45ToPiOver4 == static_cast<decltype(deg45ToPiOver4)>(M_PI_4));
 
 		constexpr auto deg270To3PiOver2 = ToRadians<long double>(270);
-		VERIFY(deg270To3PiOver2 == static_cast<decltype(deg270To3PiOver2)>(M_PI_2 * 3));
+		VERIFY_COMPILE_TIME(deg270To3PiOver2 == static_cast<decltype(deg270To3PiOver2)>(M_PI_2 * 3));
 
 		return success;
 	}
@@ -457,48 +484,48 @@ namespace kTest::maths
 		{
 			constexpr auto number = 0.1;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == -1);
+			VERIFY_COMPILE_TIME(powerOf10 == -1);
 		}
 
 		{
 			constexpr auto number = 1;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == 0);
+			VERIFY_COMPILE_TIME(powerOf10 == 0);
 		}
 
 		{
 			constexpr auto number = 10;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == 1);
+			VERIFY_COMPILE_TIME(powerOf10 == 1);
 		}
 		{
 			constexpr auto number = 300;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == 2);
+			VERIFY_COMPILE_TIME(powerOf10 == 2);
 		}
 
 		{
 			constexpr auto number = 30;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == 1);
+			VERIFY_COMPILE_TIME(powerOf10 == 1);
 		}
 
 		{
 			constexpr auto number = 300000;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == 5);
+			VERIFY_COMPILE_TIME(powerOf10 == 5);
 		}
 
 		{
 			constexpr auto number = 0.09567;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == -2);
+			VERIFY_COMPILE_TIME(powerOf10 == -2);
 		}
 
 		{
 			constexpr auto number = 0.00007;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY(powerOf10 == -5);
+			VERIFY_COMPILE_TIME(powerOf10 == -5);
 		}
 
 		return success;
@@ -509,7 +536,7 @@ namespace kTest::maths
 		{
 			constexpr auto square = 125348;
 			const auto root = Sqrt(square);
-			const auto expected = Convert<int>(std::sqrtf(square)); // 354.045197 (as int)
+			const auto expected = CAST(int, std::sqrtf(square)); // 354.045197 (as int)
 			VERIFY(root == expected);
 		}
 
@@ -646,7 +673,7 @@ namespace kTest::maths
 			constexpr auto power = 7;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = -1;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -654,7 +681,7 @@ namespace kTest::maths
 			constexpr auto power = 14;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 0;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -662,7 +689,7 @@ namespace kTest::maths
 			constexpr auto power = 14;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 1;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -670,36 +697,36 @@ namespace kTest::maths
 			constexpr auto power = 4;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 1;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
 			constexpr auto exponant = 1000.0l;
 			constexpr auto power = 14;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = 1.6378937069540600l;
-			VERIFY(root == expected);
+			constexpr auto root = Root(exponant, power);
+			constexpr auto expected = 1.6378937069540642l;
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
 			constexpr auto exponant = .0625f;
 			constexpr auto power = 4;
-			const auto root = Root(exponant, power);
+			constexpr auto root = Root(exponant, power);
 			constexpr auto expected = 0.5;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
 			constexpr auto exponant = 69150.l;
 			constexpr auto power = 10;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = 0.5;
-			VERIFY(root == expected);
+			constexpr auto root = Root(exponant, power);
+			constexpr auto expected = 3.0477491473803897l;
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
-			auto exponant = 27.0l;
-			const auto power = 2;
+			constexpr auto exponant = 27.0l;
+			constexpr auto power = 2;
 			const auto root = Root(exponant, power);
 			const auto expected = std::sqrtl(exponant);
 			VERIFY(root == expected);
@@ -710,7 +737,7 @@ namespace kTest::maths
 			constexpr auto power = 3;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 2;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -718,7 +745,7 @@ namespace kTest::maths
 			constexpr auto power = 3;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 3;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -726,7 +753,7 @@ namespace kTest::maths
 			constexpr auto power = 3;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = -3;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -740,17 +767,17 @@ namespace kTest::maths
 		{
 			constexpr auto exponant = -200.l;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = -5;
+			auto root = Root(exponant, power);
+			constexpr auto expected = -5.8480354764257321l;
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto exponant = 50.f;
 			constexpr auto power = 3;
-			auto root = Root(exponant, power);
+			const auto root = Root(exponant, power);
 			constexpr auto expected = 3.6840314986403859f;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		{
@@ -764,9 +791,9 @@ namespace kTest::maths
 		{
 			constexpr auto exponant = 64.0;
 			constexpr auto power = 6;
-			auto root = Root(exponant, power);
+			const auto root = Root(exponant, power);
 			constexpr auto expected = 2;
-			VERIFY(root == expected);
+			VERIFY_COMPILE_TIME(root == expected);
 		}
 
 		// Throws error trying to find a even root of a negative number
@@ -802,7 +829,7 @@ namespace kTest::maths
 			constexpr auto base = 8;
 			const auto result = PowerOf(base, numerator, denominator);
 			constexpr auto expected = 4;
-			VERIFY(result == expected);
+			VERIFY_COMPILE_TIME(result == expected);
 		}
 
 		{
@@ -811,7 +838,7 @@ namespace kTest::maths
 			constexpr auto base = 9;
 			const auto result = PowerOf(base, numerator, denominator);
 			constexpr auto expected = 3;
-			VERIFY(result == expected);
+			VERIFY_COMPILE_TIME(result == expected);
 		}
 
 		{
@@ -820,7 +847,7 @@ namespace kTest::maths
 			constexpr auto base = 5.l;
 			const auto result = PowerOf(base, numerator, denominator);
 			constexpr auto expected = 2.6265278044037674l;
-			VERIFY(result == expected);
+			VERIFY_COMPILE_TIME(result == expected);
 		}
 
 		{
@@ -886,7 +913,7 @@ namespace kTest::maths
 			constexpr auto base = 10;
 			const auto result = Modulus(num, base);
 			constexpr auto expected = num % base;
-			VERIFY(result == expected);
+			VERIFY_COMPILE_TIME(result == expected);
 		}
 
 		{
@@ -894,15 +921,15 @@ namespace kTest::maths
 			constexpr auto base = 10;
 			const auto result = Modulus(num, base);
 			constexpr auto expected = num % base;
-			VERIFY(result == expected);
+			VERIFY_COMPILE_TIME(result == expected);
 		}
 
 		{
 			constexpr auto num = -46;
 			constexpr auto base = 12;
 			const auto result = Modulus(num, base);
-			constexpr auto expected = num % base;
-			VERIFY(result == expected);
+			constexpr auto expected = num % base + base;
+			VERIFY_COMPILE_TIME(result == expected);
 		}
 
 		{
@@ -912,7 +939,6 @@ namespace kTest::maths
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
-
 
 		return success;
 	}

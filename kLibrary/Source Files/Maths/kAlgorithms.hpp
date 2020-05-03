@@ -152,13 +152,17 @@ namespace kmaths
 		if (value > maxLL || value < minLL)
 			return value;
 
-		return CAST(T, CAST(ConversionType, value));
+		const auto integer = CAST(T, CAST(ConversionType, value));
+
+		return integer > value ? integer - 1 : integer;
+			
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr Fraction DecimalToFraction(T x, const T error = CAST(T, 1e-10)) noexcept
+	USE_RESULT constexpr Fraction DecimalToFraction(T x, const size_t dpAccuracy = 10) noexcept
 	{
 		constexpr size_t maxIterations = 10000;
+		const auto error = PowerOfImpl(constants::ZeroPointOne<T>(), dpAccuracy);
 
 		const auto isNegative = x < 0;
 
@@ -169,8 +173,8 @@ namespace kmaths
 		x -= integer;
 
 		const auto oneMinusError = constants::One<T>() - error;
-
 		const auto realInteger = Convert<Fraction::Numerator_Value_Type>(integer);
+
 		if (x < error)
 			return { realInteger, 1, isNegative };
 		else if (oneMinusError < x)
@@ -192,8 +196,8 @@ namespace kmaths
 			mid_n = lower_n + upper_n;
 			mid_d = lower_d + upper_d;
 
-			auto tooHigh = mid_n > mid_d* (x + error);
-			auto tooLow = mid_n < (x - error) * mid_d;
+			const auto tooHigh = mid_n > mid_d* (x + error);
+			const auto tooLow = mid_n < (x - error) * mid_d;
 
 			if (tooHigh)
 			{
@@ -239,7 +243,7 @@ namespace kmaths
 			}
 		}
 
-		for (long long i = 1; i < power; ++i)
+		while (--power > 0)
 			value *= base;
 
 		return value;
@@ -330,16 +334,20 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T Round(const T value, const uint8_t decimalPoints) noexcept
+	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
 	{
-		const auto dpShifts = PowerOfImpl<long double>(0.1, long long(decimalPoints + 1)) * 5;
+		const auto isNegative = value < 0;
+		if (isNegative)
+			value = -value;
+
+		const auto dpShifts = PowerOfImpl<long double>(constants::ZeroPointOne<T>(), long long(decimalPoints + 1)) * 5;
 		const auto accuracy = PowerOfImpl<size_t>(10, decimalPoints);
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
 		const auto accuracyInverse = CAST(T, 1) / accuracy;
 		const auto significantFigures = Floor(valuePlusDpsByAcc);
 		const T roundedValue = CAST(T, significantFigures * accuracyInverse);
-		return roundedValue;
+		return isNegative ? -roundedValue : roundedValue;
 	}
 
 	template<typename T, class = std::enable_if_t<
@@ -452,22 +460,25 @@ namespace kmaths
 	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
 	{
+		const auto isNegative = num < 0;
+
 #if MSVC_PLATFORM_TOOLSET > 142
 		return std::fmod(num, base);
 #else
-		const auto isNegative = num < 0;
+		const auto b = CAST(long double, base);
+		const auto n = CAST(long double, num);
 
-		const auto one_over_base = constants::One<T>() / base;
-		const auto num_over_base = num * one_over_base;
+		const auto one_over_base = constants::OneOver<long double>(b);
+		const auto num_over_base = n * one_over_base;
 		const auto int_n_over_b = CAST(int, num_over_base);
 
 		if (num_over_base == int_n_over_b)
 			return 0;
 
-		const auto closestMultiplier = int_n_over_b * base;
-		const auto mod = num - closestMultiplier;
+		const auto closestMultiplier = int_n_over_b * b;
+		const auto rem = n - closestMultiplier;
 
-		return mod;
+		return CAST(T, rem);
 #endif
 	}
 
@@ -599,8 +610,8 @@ namespace kmaths
 		if (num == 0)
 			return 0;
 
-		if (num == constants::One<T>())
-			return constants::One<T>();
+		if (num == constants::One<T>() || root == constants::One<T>())
+			return num;
 
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
@@ -736,13 +747,14 @@ namespace kmaths
 	USE_RESULT constexpr T PowerOf(T base, T decimalPower) noexcept
 	{
 		const auto fraction = DecimalToFraction(decimalPower);
+		const auto sign = fraction.GetSign();
 		const auto numerator = fraction.GetNumerator();
 		const auto denominator = fraction.GetDenominator();
 
 		if (denominator == 0)
 			return 0;
 
-		const auto pow = PowerOfImpl<T>(base, numerator);
+		const auto pow = PowerOfImpl<T>(base, numerator * sign);
 		const auto powRoot = RootImpl<T>(pow, denominator);
 		const auto result = powRoot;
 		return result;

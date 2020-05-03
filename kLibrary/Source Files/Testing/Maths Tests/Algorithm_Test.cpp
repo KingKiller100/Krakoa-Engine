@@ -28,9 +28,9 @@ namespace kTest::maths
 		VERIFY_MULTI(DecimalToFractionTest);
 		VERIFY_MULTI(BinarySearchTest);
 		VERIFY_MULTI(BinarySearchClosestTest);
-		VERIFY_MULTI(RoundingTest);
-		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(PowerOfTest);
+		VERIFY_MULTI(RoundingTest);
+		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(SwapTest);
 		VERIFY_MULTI(ToDegreesTest);
 		VERIFY_MULTI(ToRadiansTest);
@@ -209,7 +209,7 @@ namespace kTest::maths
 		{
 			constexpr double decimal = constants::PI;
 			const auto fraction = DecimalToFraction(decimal);
-			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 312689 && fraction.GetDenominator() == 99532);
 
 			const auto f2d = Round(fraction.GetNumber<decltype(decimal)>(), 3);
 			VERIFY(f2d == Round(decimal, 3));
@@ -217,12 +217,11 @@ namespace kTest::maths
 
 		{
 			constexpr double decimal = 14.568464;
-			constexpr auto accuracy = 1e-03;
-			const auto fraction = DecimalToFraction(decimal, accuracy);
-			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+			const auto fraction = DecimalToFraction(decimal);
+			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 910529 && fraction.GetDenominator() == 62500);
 
 			const auto f2d = fraction.GetNumber<decltype(decimal)>();
-			VERIFY(f2d == Round(decimal, 3));
+			VERIFY(f2d == decimal);
 		}
 
 		return success;
@@ -324,12 +323,50 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::RoundingTest()
 	{
-		constexpr auto accuracy = 3;
-		constexpr auto value = 1.0f / 128;
-		constexpr auto rounded = Round(value, accuracy);
+		{
+			constexpr auto accuracy = 3;
+			constexpr auto value = 1.0f / 128;
+			constexpr auto rounded = Round(value, accuracy);
 
-		constexpr auto expectedVal = 0.008f;
-		VERIFY_COMPILE_TIME(rounded == expectedVal);
+			constexpr auto expectedVal = 0.008f;
+			VERIFY(rounded == expectedVal);
+		}
+
+		{
+			constexpr auto accuracy = 0;
+			constexpr auto value = 128.5;
+			constexpr auto rounded = Round(value, accuracy);
+
+			constexpr auto expectedVal = 129.0;
+			VERIFY(rounded == expectedVal);
+		}
+
+		{
+			constexpr auto accuracy = 0;
+			constexpr auto value = -128.49;
+			constexpr auto rounded = Round(value, accuracy);
+
+			constexpr auto expectedVal = -128.0;
+			VERIFY_COMPILE_TIME(rounded == expectedVal);
+		}
+
+		{
+			constexpr auto accuracy = 1;
+			constexpr auto value = 128.49;
+			constexpr auto rounded = Round(value, accuracy);
+
+			constexpr auto expectedVal = 128.5;
+			VERIFY(rounded == expectedVal);
+		}
+
+		{
+			constexpr auto accuracy = 4;
+			constexpr auto value = 128.4939;
+			constexpr auto rounded = Round(value, accuracy);
+
+			const auto expectedVal = 128.4939;
+			VERIFY(rounded == expectedVal);
+		}
 
 		return success;
 	}
@@ -356,7 +393,7 @@ namespace kTest::maths
 			constexpr auto power = 5;
 			constexpr auto num = 4;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			const auto expectedVal = CAST(decltype(value), std::powf(num, power));
 			VERIFY(value == expectedVal);
 		}
 
@@ -364,7 +401,7 @@ namespace kTest::maths
 			constexpr auto power = 2;
 			constexpr auto num = 17;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			const auto expectedVal = CAST(decltype(value), std::powf(num, power));
 			VERIFY(value == expectedVal);
 		}
 
@@ -372,7 +409,7 @@ namespace kTest::maths
 			constexpr auto power = 12;
 			constexpr auto num = 7ll;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			const auto expectedVal = CAST(decltype(value), std::pow(num, power));
 			VERIFY(value == expectedVal);
 		}
 
@@ -380,7 +417,7 @@ namespace kTest::maths
 			constexpr auto power = 4.0;
 			constexpr auto num = 9.0;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = Convert<decltype(value)>(std::powf(num, power));
+			const auto expectedVal = CAST(decltype(value), std::pow(num, power));
 			VERIFY(value == expectedVal);
 		}
 
@@ -388,7 +425,7 @@ namespace kTest::maths
 			constexpr auto power = 8;
 			constexpr auto num = 25ll;
 			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal = std::powf(25, 8);
+			const auto expectedVal = CAST(decltype(value), std::pow(num, power));
 			VERIFY(value == expectedVal);
 		}
 
@@ -791,9 +828,9 @@ namespace kTest::maths
 		{
 			constexpr auto exponant = 64.0;
 			constexpr auto power = 6;
-			const auto root = Root(exponant, power);
+			auto root = Root(exponant, power);
 			constexpr auto expected = 2;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		// Throws error trying to find a even root of a negative number
@@ -854,7 +891,7 @@ namespace kTest::maths
 			constexpr auto decimal = 2.5;
 			constexpr auto base = 5.0;
 			const auto result = PowerOf(base, decimal);
-			constexpr auto expected = 2.6265278044037674l;
+			constexpr auto expected = 55.901699437494742l;
 			VERIFY(result == expected);
 		}
 
@@ -936,7 +973,7 @@ namespace kTest::maths
 			constexpr auto num = 46.6f;
 			constexpr auto base = 12.2f;
 			const auto result = Modulus(num, base);
-			const auto expected = std::fmod(num, base);
+			const auto expected = std::fmodf(num, base);
 			VERIFY(result == expected);
 		}
 

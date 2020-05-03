@@ -31,8 +31,6 @@
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	TesterManager* TesterManager::pInstance = nullptr;
-
 	std::unordered_set< std::unique_ptr<Tester> > kTests_TestsUSet;
 	std::string kTest_TestResultFilePath;
 	
@@ -110,9 +108,8 @@ namespace kTest
 	
 	TesterManager& TesterManager::Get()
 	{
-		if (!pInstance)
-			pInstance = new TesterManager();
-		return *pInstance;
+		static TesterManager pInstance;
+		return pInstance;
 	}
 }
 #endif // TESTING_ENABLED

@@ -18,7 +18,7 @@ namespace krakoa
 	{
 	public:
 
-		static Instrumentor& Instance()
+		static Instrumentor& Get()
 		{
 			static Instrumentor instance;
 			return instance;
@@ -96,9 +96,9 @@ namespace krakoa
 }
 
 #ifdef KRAKOA_PROFILE
-#define KRK_PROFILE_SESSION_BEGIN(name, filepath) krakoa::Instrumentor::Instance().BeginSession(name, filepath)
-#define KRK_PROFILE_SESSION_END() krakoa::Instrumentor::Instance().EndSession()
-#define KRK_PROFILE_SCOPE(name) klib::kProfiler::Profiler timer##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& result) { krakoa::Instrumentor::Instance().WriteProfile(result); })
+#define KRK_PROFILE_SESSION_BEGIN(name, filepath) krakoa::Instrumentor::Get().BeginSession(name, filepath)
+#define KRK_PROFILE_SESSION_END() krakoa::Instrumentor::Get().EndSession()
+#define KRK_PROFILE_SCOPE(name) klib::kProfiler::Profiler timer##__LINE__(name, [&](const klib::kProfiler::ProfilerResult& result) { krakoa::Instrumentor::Get().WriteProfile(result); })
 #define KRK_PROFILE_FUNCTION()  KRK_PROFILE_SCOPE(__FUNCSIG__)
 #else
 #define KRK_PROFILE_SESSION_BEGIN(name, filepath) 

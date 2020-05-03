@@ -22,9 +22,6 @@ namespace kTest
 		void ClearAllTests();
 
 		static TesterManager& Get();
-
-	private:
-		static TesterManager* pInstance;
 	};
 }
 

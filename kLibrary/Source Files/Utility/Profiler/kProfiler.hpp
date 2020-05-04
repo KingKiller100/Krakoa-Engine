@@ -20,8 +20,8 @@ namespace klib::kProfiler
 		using Func = ProfilerFunc;
 
 	public:
-		Profiler(const char* name, Func&& cb)
-			: result({ name, 0, 0, 0 }), isRunning(true),
+		Profiler(const std::string_view& name, Func&& cb)
+			: result({ name.data(), 0, 0, 0 }), isRunning(true),
 			callback(std::forward<Func&&>(cb)), 
 			timer("Profiler")
 		{}

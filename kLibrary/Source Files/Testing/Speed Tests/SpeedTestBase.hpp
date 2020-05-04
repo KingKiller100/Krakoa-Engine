@@ -5,6 +5,7 @@
 #include "../../Utility/Profiler/kProfiler.hpp"
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -30,11 +31,12 @@ namespace kTest::speed
 	protected:
 		virtual void Test() = 0;
 
-		void AddSubTest(const std::string& subTest) noexcept;
+		void SetUpParticipants(const std::set<std::string_view>& participants) noexcept;
 
 	private:
 		void Output() noexcept;
-		void SendResult(const std::string_view& subTestName, const std::string_view& result) noexcept;
+		void AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept;
+		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference) noexcept;
 
 	protected:
 		std::string name;
@@ -43,7 +45,7 @@ namespace kTest::speed
 	};
 }
 
-#define PROFILE_SCOPE(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler(profilee, [&](const klib::kProfiler::ProfilerResult& res)\
+#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler(profilee, [&](const klib::kProfiler::ProfilerResult& res)\
 		{\
 			profilerResults.push_back(res);\
 		});\

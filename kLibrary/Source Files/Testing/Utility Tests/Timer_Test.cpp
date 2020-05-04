@@ -26,7 +26,7 @@ namespace kTest::utility
 		int nums[maxCount];
 
 		const auto processorCount = std::thread::hardware_concurrency();
-		const size_t size = 10000 * processorCount;
+		const size_t size = 5000 * processorCount;
 
 		const auto loops = kmaths::Min(size, maxCount);
 
@@ -46,7 +46,7 @@ namespace kTest::utility
 		const auto lifetimeInSeconds = lifetime / 1000000;
 		std::cout << testTime.GetName() << " Total Test Time: " << lifetimeInSeconds << "s (Seconds)" << std::endl;
 		std::cout << testTime.GetName() << " Average Execution Time: " << lifetime / loops << "us (Microseconds)" << std::endl;
-		std::cin.get();
+		//std::cin.get();
 	}
 }
 #endif

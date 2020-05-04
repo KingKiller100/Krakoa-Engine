@@ -17,6 +17,7 @@ namespace kTest::speed::maths
 
 		void PowerOfTest();
 		void SqrtTest();
+		void FloorTest();
 	};
 }
 #endif

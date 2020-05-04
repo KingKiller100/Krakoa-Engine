@@ -303,43 +303,6 @@ namespace kmaths
 	//	return ans;
 	//}
 
-	USE_RESULT constexpr long long WhatPowerOf10(double number) noexcept
-	{
-		if (number < 1 && number > 0.1)
-			return -1;
-		if (number >= 1 && number < 10)
-			return 0;
-		if (number >= 10 && number < 100)
-			return 1;
-
-		if (number < 0)
-			number = -number;
-
-		long long currentPower = 1;
-		if (number > 10)
-		{
-			long long value = 1;
-			while (value < number)
-			{
-				currentPower++;
-				value = PowerOfImpl(10, currentPower);
-			}
-			--currentPower;
-		}
-		else if (number < 1)
-		{
-			long double value = 0.1;
-			while (value > number)
-			{
-				currentPower++;
-				value = PowerOfImpl(0.1, currentPower);
-			}
-			currentPower = -currentPower;
-		}
-
-		return currentPower;
-	}
-
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
 	{
@@ -730,26 +693,6 @@ namespace kmaths
 #	pragma warning(pop)
 #endif
 
-	template<typename T>
-	USE_RESULT constexpr T PowerOf(T base, size_t numerator, size_t denominator) noexcept
-	{
-		if (denominator == 0)
-			return 0;
-
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-		{
-			const auto pow = PowerOfImpl<float>(CAST(float, base), numerator);
-			const auto powRoot = RootImpl<float>(pow, denominator);
-			const auto result = CAST(T, powRoot);
-			return result;
-		}
-		else
-		{
-			const auto result = RootImpl<T>(PowerOfImpl<T>(base, numerator), denominator);
-			return result;
-		}
-	}
-
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T PowerOf(T base, T decimalPower) noexcept
 	{
@@ -763,8 +706,19 @@ namespace kmaths
 
 		const auto pow = PowerOfImpl<T>(base, numerator * sign);
 		const auto powRoot = RootImpl<T>(pow, denominator);
-		const auto result = powRoot;
-		return result;
+		return powRoot;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T PowerOf(T base, size_t numerator, size_t denominator, bool isNegative = false) noexcept
+	{
+		if (denominator == 0)
+			return 0;
+
+		const int8_t sign = isNegative ? -1 : 1;
+		const auto pow = PowerOfImpl<T>(base, numerator * sign);
+		const auto powRoot = RootImpl<T>(pow, denominator);
+		return powRoot;
 	}
 
 	template<typename T, class = std::enable_if_t<!std::is_floating_point_v<T>>>
@@ -772,6 +726,64 @@ namespace kmaths
 	{
 		const auto pow = PowerOfImpl<T>(base, power);
 		return pow;
+	}
+
+	USE_RESULT constexpr long double WhatPowerOf10(long double number) noexcept
+	{
+		if (number == 1.0)
+			return 0;
+		if (number == 10)
+			return 1;
+
+		const auto isNegative = number < 0;
+
+		long long currentPower = 1;
+		long double minorIncrement = 1;
+
+		do {
+			const auto currentResult = PowerOf(10, );
+
+			const auto tooHigh = PowerOf(10, realInteger * mid_d + mid_n, mid_d, isNegative ? -1 : 1);
+			const auto tooLow = mid_n < (x - error) * mid_d;
+
+			if (tooHigh)
+			{
+				upper_n = mid_n;
+				upper_d = mid_d;
+			}
+			else if (tooLow)
+			{
+				lower_n = mid_n;
+				lower_d = mid_d;
+			}
+
+			found = !(tooHigh || tooLow);
+		} while (iter++ < maxIterations && !found); // Binary search towards fraction
+
+
+
+		if (number > 10)
+		{
+			long long value = 1;
+			while (value < number)
+			{
+				currentPower++;
+				value = PowerOfImpl(10, currentPower);
+			}
+			--currentPower;
+		}
+		else if (number < 1)
+		{
+			long double value = 0.1;
+			while (value > number)
+			{
+				currentPower++;
+				value = PowerOfImpl(0.1, currentPower);
+			}
+			currentPower = -currentPower;
+		}
+
+		return currentPower;
 	}
 }
 

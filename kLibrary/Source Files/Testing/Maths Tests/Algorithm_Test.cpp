@@ -23,23 +23,26 @@ namespace kTest::maths
 		VERIFY_MULTI_INIT();
 
 		VERIFY_MULTI(ConversionTest);
-		VERIFY_MULTI(MinMaxTest);
-		VERIFY_MULTI(FloorTest);
-		VERIFY_MULTI(DecimalToFractionTest);
-		VERIFY_MULTI(BinarySearchTest);
-		VERIFY_MULTI(BinarySearchClosestTest);
-		VERIFY_MULTI(PowerOfTest);
-		VERIFY_MULTI(RoundingTest);
-		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(SwapTest);
 		VERIFY_MULTI(ToDegreesTest);
 		VERIFY_MULTI(ToRadiansTest);
+		VERIFY_MULTI(MinMaxTest);
+		VERIFY_MULTI(FloorTest);
+		VERIFY_MULTI(BinarySearchTest);
+		VERIFY_MULTI(BinarySearchClosestTest);
+
+		VERIFY_MULTI(PowerOfTest);
+		VERIFY_MULTI(PowerOfFractionTest);
+		VERIFY_MULTI(DecimalToFractionTest);
+
 		VERIFY_MULTI(WhatPowerOf10Test);
-		VERIFY_MULTI(InverseSquareRootTest);
+		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(SquareRootTest);
 		VERIFY_MULTI(RootTest);
+
+		VERIFY_MULTI(InverseSquareRootTest);
 		VERIFY_MULTI(LogTest);
-		VERIFY_MULTI(PowerOfFractionTest);
+
 		VERIFY_MULTI(FloatingPointRemainderTest);
 		VERIFY_MULTI(ModulusTest);
 

@@ -30,12 +30,33 @@ namespace kTest::speed
 		Output();
 	}
 
-	void SpeedTestBase::AddSubTest(const std::string& subTestName) noexcept
+	void SpeedTestBase::SetUpParticipants(const std::set<std::string_view>& participants) noexcept
 	{
-		if (results.find(subTestName) != results.end())
+		std::string subTestName = (*participants.begin()).data();
+
+
+		auto iter = participants.cbegin();
+		++iter;
+		for (; iter != participants.cend(); ++iter)
+		{
+			const auto name = *iter;
+			subTestName.append(" vs ");
+			subTestName.append(name.data());
+		}
+
+		iter = participants.cbegin();
+		for (; iter != participants.cend(); ++iter)
+			AddSubTest(subTestName, *iter);
+	}
+
+	void SpeedTestBase::AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept
+	{
+		const auto& subTest = results[subTestName];
+
+		if (subTest.find(subTestName) != subTest.end())
 			return;
 
-		results[subTestName][""] = AverageTime{ 0, 0 };
+		results[subTestName][participant.data()] = AverageTime{ 0, 0 };
 	}
 
 	void SpeedTestBase::Output() noexcept
@@ -49,19 +70,17 @@ namespace kTest::speed
 
 			for (const auto& res : profilerResults)
 			{
-				const auto speed = res.end - res.start;
-
 				if (internalData.find(res.name) == internalData.end())
-				{
-					internalData[res.name] = { 0, 0 };
-				}
+					continue;
 
+				const auto speed = res.end - res.start;
 				auto& timePair = internalData[res.name];
 				timePair.time += speed;
 				timePair.count++;
 			}
 
 			auto minTime = std::numeric_limits<long double>::max();
+			auto maxTime = std::numeric_limits<long double>::min();
 			std::string winner;
 
 			for (const auto& values : internalData)
@@ -77,15 +96,21 @@ namespace kTest::speed
 					winner = values.first;
 					minTime = currentlowest;
 				}
+
+				maxTime = avg > maxTime ? avg : maxTime;
 			}
 
-			SendResult(subTestName, winner);
+			const auto difference = maxTime - minTime;
+			const auto percentage = (CAST(long double, difference) / minTime) * 100;
+			const auto percentagef = CAST(float, percentage);
+
+			SendResult(subTestName, winner, percentagef);
 		}
 	}
 
-	void SpeedTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result) noexcept
+	void SpeedTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference) noexcept
 	{
-		const auto output = klib::kFormat::ToString("{0}: \"{1}\" is the faster!\n", subTestName, result);
+		const auto output = klib::kFormat::ToString("%s: \"%s\" is the faster by %.3f%%\n", subTestName.data(), result.data(), percentageDifference);
 		SpeedTestManager::Get().CollectResult(output);
 	}
 

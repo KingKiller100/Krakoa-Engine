@@ -32,7 +32,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	TesterManager::TesterManager()
+	TesterManager::TesterManager(Token&)
 		: success(true)
 	{	}
 
@@ -84,8 +84,7 @@ namespace kTest
 	{
 		if (success)
 		{
-			Add(&speed::SpeedTestManager::Get());
-			RunAll();
+			Run(&speed::SpeedTestManager::Get());
 		}
 	}
 
@@ -94,23 +93,29 @@ namespace kTest
 		testsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
 	}
 
+	void TesterManager::Run(Tester* test)
+	{
+		const auto result = test->Run();
+
+		if (!result)
+			success = false;
+
+		const auto resultTest = result
+			? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
+			: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData()); // Fail Case
+
+		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
+	}
+
 	void TesterManager::RunAll()
 	{
 		klib::kTime::HighAccuracyTimer totalRunTimeTimer("Total Test Run Time");
 
 		for (const auto& test : testsUSet)
 		{
-			const auto result = test->Run();
-
-			if (!result)
-				success = false;
-
-			const auto resultTest = result
-				? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
-				: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData()); // Fail Case
-
-			klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
+			Run(test.get());
 		}
+		RunSpeedTests();
 
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::kUnits::Mins>();
 		const auto mins = CAST(unsigned, finalTime);
@@ -128,8 +133,9 @@ namespace kTest
 	
 	TesterManager& TesterManager::Get()
 	{
-		static TesterManager pInstance;
-		return pInstance;
+		static Token t;
+		static TesterManager instance(t);
+		return instance;
 	}
 }
 #endif // TESTING_ENABLED

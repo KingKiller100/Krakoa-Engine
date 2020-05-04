@@ -9,9 +9,6 @@ namespace tests
 {
 	auto& testMan = kTest::TesterManager::Get();
 
-	TestDriver::TestDriver()
-	{	}
-
 	void TestDriver::Initialize()
 	{
 		testMan.Initialize();
@@ -27,11 +24,12 @@ namespace tests
 	{
 		testMan.Add(static_cast<kTest::Tester*>(test));
 	}
+
 	void TestDriver::RunTests()
 	{
 		testMan.RunAll();
-		testMan.RunSpeedTests();
 	}
+
 	void TestDriver::ClearAll()
 	{
 		testMan.ClearAllTests();

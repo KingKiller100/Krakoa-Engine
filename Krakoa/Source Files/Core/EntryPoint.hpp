@@ -39,10 +39,9 @@ int main(int argc, char** argv)
 #	include <Core/TestDriver.hpp>
 bool RunTestsOnkLibrary()
 {
-	auto testDriver = tests::TestDriver();
-	testDriver.Initialize();
-	testDriver.RunTests();
-	testDriver.ShutDown();
+	tests::TestDriver::Initialize();
+	tests::TestDriver::RunTests();
+	tests::TestDriver::ShutDown();
 	return true;
 };
 #else

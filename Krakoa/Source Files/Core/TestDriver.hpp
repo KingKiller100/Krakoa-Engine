@@ -8,12 +8,11 @@ namespace tests
 	class KRAKOA_API TestDriver
 	{
 	public:
-		TestDriver();
-		void Initialize();
-		void ShutDown();
-		void AddTest(void* test);
-		void RunTests();
-		void ClearAll();
+		static void Initialize();
+		static void ShutDown();
+		static void AddTest(void* test);
+		static void RunTests();
+		static void ClearAll();
 	};
 }
 #endif

@@ -12,8 +12,9 @@ namespace kTest
 	
 	class TesterManager
 	{
+		struct Token {};
 	public:
-		TesterManager();
+		TesterManager(Token&);
 		~TesterManager();
 
 		void Initialize();
@@ -22,6 +23,7 @@ namespace kTest
 		void InitializeUtilityTests();
 		void RunSpeedTests();
 		void Add(Tester* test);
+		void Run(Tester* test);
 		void RunAll();
 		void ClearAllTests();
 

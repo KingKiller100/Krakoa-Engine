@@ -17,13 +17,47 @@ namespace kTest::utility
 	void FileSystemTester::Test()
 	{
 		using namespace klib::kFileSystem;
-		
+
 		const auto exeDir = GetExeDirectory<char>();
+		const auto w_exeDir = GetExeDirectory<wchar_t>();
+		const auto exeDir16 = GetExeDirectory<char16_t>();
+		const auto exeDir32 = GetExeDirectory<char32_t>();
+#if __cpp_char8_t
+		const auto exeDir8 = GetExeDirectory<char8_t>();
+#endif
+
+		const auto compareExeC_W = SwitchStringFormat<wchar_t>(exeDir);
+		VERIFY(compareExeC_W == w_exeDir);
+		const auto compareExeC_16 = SwitchStringFormat<char16_t>(exeDir);
+		VERIFY(compareExeC_16 == exeDir16);
+		const auto compareExeC_32 = SwitchStringFormat<char32_t>(exeDir);
+		VERIFY(compareExeC_32 == exeDir32);
+
+#if __cpp_char8_t
+		const auto compareExeC_8 = SwitchStringFormat<char8_t>(exeDir);
+		VERIFY(compareExeC_8 == exeDir8);
+#endif
+
 
 		const auto cwd = GetCurrentWorkingDirectory<char>();
 		const auto w_cwd = GetCurrentWorkingDirectory<wchar_t>();
 		const auto cwd16 = GetCurrentWorkingDirectory<char16_t>();
 		const auto cwd32 = GetCurrentWorkingDirectory<char32_t>();
+#if __cpp_char8_t
+		const auto cwd8 = GetCurrentWorkingDirectory<char8_t>();
+#endif
+
+		const auto compareCwdC_W = SwitchStringFormat<wchar_t>(cwd);
+		VERIFY(compareCwdC_W == w_cwd);
+		const auto compareCwdC_16 = SwitchStringFormat<char16_t>(cwd);
+		VERIFY(compareCwdC_16 == cwd16);
+		const auto compareCwdC_32 = SwitchStringFormat<char32_t>(cwd);
+		VERIFY(compareCwdC_32 == cwd32);
+
+#if __cpp_char8_t
+		const auto compareCwdC_8 = SwitchStringFormat<char8_t>(cwd);
+		VERIFY(compareCwdC_8 == cwd8);
+#endif
 
 		auto content = std::string();
 		OutputToFile((exeDir + "FS_File_Test").c_str(), content.c_str());
@@ -54,7 +88,7 @@ namespace kTest::utility
 		VERIFY(wCheckDirNotExist == false);
 
 		const auto multipleCreated = CreateNewDirectories((exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
-		VERIFY(multipleCreated == true)
+		VERIFY(multipleCreated == true);
 
 		const auto isDirDeleted = DeleteDirectory((exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
 		VERIFY(isDirDeleted == true);

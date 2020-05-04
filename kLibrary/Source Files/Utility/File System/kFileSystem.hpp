@@ -382,7 +382,7 @@ namespace klib::kFileSystem
 			}
 
 			exeFullPath = kString::StringWriter<Char>(exeBuffer, exeBuffer + length);
-			exeFullPath.erase(exeFullPath.find_last_of("\\") + 1);
+			exeFullPath.erase(exeFullPath.find_last_of(Char('\\')) + 1);
 
 			delete[] exeBuffer;
 		}

@@ -27,13 +27,13 @@ namespace kmaths
 			if _CONSTEXPR_IF(std::is_signed_v<T>)
 			{
 				const T num = CAST(T, numerator);
-				const T signedNum = CAST(T, isNegative ? -num : num);
-				return  signedNum / denominator;
+				const T signedNum = isNegative ? -num : num;
+				return  signedNum / CAST(T, denominator);
 			}
 			else
 			{
 				const T num = CAST(T, isNegative ? 0 : numerator);
-				return  num / denominator;
+				return  num / CAST(T, denominator);
 			}
 		}
 

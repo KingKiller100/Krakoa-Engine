@@ -124,11 +124,13 @@ namespace kTest::performance
 	{
 		using namespace klib;
 
-		const auto output = klib::kFormat::ToString("%s: \n\t\"%s\" is the faster by %.3f%%\n\tFastest Run: \"%s\" Time: %d (microseconds)\n", 
+		const auto fastestName = fastestParticipant.first;
+
+		const auto output = klib::kFormat::ToString("%s: \n\t\"%s\" is the fastest by %.3f%%\n\tFastest Instance: \"%s\" Time: %dus (microseconds)\n\n", 
 			subTestName.data(),
 			result.data(), 
 			percentageDifference,
-			fastestParticipant.first.data(), 
+			fastestName.data(), 
 			fastestParticipant.second);
 
 		PerformanceTestManager::Get().CollectResult(output);

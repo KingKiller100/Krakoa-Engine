@@ -39,7 +39,7 @@ project "Krakoa"
     kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
 	staticruntime "on"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -139,7 +139,7 @@ project "Hooper2"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
     staticruntime "On"
 
     targetdir ("bin/Game/%{prj.name}")

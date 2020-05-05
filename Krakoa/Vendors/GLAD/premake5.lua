@@ -1,7 +1,8 @@
 project "GLAD"
 	kind "StaticLib"
 	language "C"
-    characterset ("MBCS")
+    characterset ("default")
+    -- characterset ("MBCS")
 	staticruntime "on"
 
 	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")

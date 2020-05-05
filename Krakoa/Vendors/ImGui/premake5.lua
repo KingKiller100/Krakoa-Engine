@@ -2,7 +2,8 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
+    -- characterset ("MBCS")
 	staticruntime "on"
 
 	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")

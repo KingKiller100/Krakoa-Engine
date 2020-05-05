@@ -68,7 +68,6 @@ namespace klib::kFileSystem
 				const auto failMsg = kString::StringWriter<CharType>(L"Cannot create/open file ") + fullFilePath.data();
 				OutputDebugStringW(failMsg.c_str());
 			}
-
 		}
 #endif // DEBUG
 	}
@@ -166,7 +165,7 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : fullFilePath)
 				temp += CAST(char, c);
 			return RemoveFile<char>(temp);

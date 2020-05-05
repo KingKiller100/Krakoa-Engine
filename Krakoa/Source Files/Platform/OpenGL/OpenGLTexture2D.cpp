@@ -115,4 +115,14 @@ namespace krakoa::graphics
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	bool OpenGLTexture2D::operator==(const iTexture & other) const noexcept
+	{
+		return rendererID == other.GetAssetID();
+	}
+
+	uint32_t OpenGLTexture2D::GetAssetID() const noexcept
+	{
+		return rendererID;
+	}
+
 }

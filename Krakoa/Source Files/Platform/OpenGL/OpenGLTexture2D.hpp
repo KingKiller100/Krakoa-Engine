@@ -20,6 +20,12 @@ namespace krakoa::graphics
 
 		void SetData(const void* data, const uint32_t size) override;
 
+
+		bool operator ==(const iTexture& other) const noexcept override;
+
+
+		uint32_t GetAssetID() const noexcept override;
+
 	private:
 		std::string path;
 		kmaths::Vector2u dimensions;

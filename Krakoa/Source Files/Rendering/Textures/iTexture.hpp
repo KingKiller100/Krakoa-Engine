@@ -18,5 +18,9 @@ namespace krakoa::graphics
 		virtual void Unbind() const = 0;
 
 		virtual void SetData(const void* data, const uint32_t size) = 0;
+
+		virtual uint32_t GetAssetID() const noexcept = 0;
+
+		virtual bool operator==(const iTexture& other) const noexcept = 0;
 	};
 }

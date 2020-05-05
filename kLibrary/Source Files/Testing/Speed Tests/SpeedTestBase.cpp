@@ -30,10 +30,9 @@ namespace kTest::speed
 		Output();
 	}
 
-	void SpeedTestBase::SetUpParticipants(const std::set<std::string_view>& participants) noexcept
+	void SpeedTestBase::SetUpParticipants(const std::vector<std::string_view>& participants) noexcept
 	{
-		std::string subTestName = (*participants.begin()).data();
-
+		std::string subTestName = participants.front().data();
 
 		auto iter = participants.cbegin();
 		++iter;

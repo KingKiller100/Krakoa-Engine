@@ -14,6 +14,7 @@
 #ifdef max
 #	undef max
 #endif
+#include <stdexcept>
 
 #ifdef min
 #	undef min
@@ -223,7 +224,7 @@ namespace kmaths
 		return { realInteger * mid_d + mid_n, mid_d, isNegative };
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	template<typename T>
 	USE_RESULT constexpr T PowerOfImpl(T base, long long power) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
@@ -258,17 +259,15 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr decltype(auto) PowerOf10(long long power) noexcept(std::is_arithmetic_v<T>)
+	USE_RESULT constexpr T PowerOf10(T power) noexcept(std::is_arithmetic_v<T>)
 	{
+		constexpr auto ten = CAST(T, 10);
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 		{
 			if (power < 0)
 				return 0;
 		}
-		else
-		{
-			return PowerOfImpl<T>(10, power);
-		}
+		return PowerOfImpl<T>(ten, power);
 	}
 
 	//USE_RESULT double Log(int base, double exponent)
@@ -562,7 +561,7 @@ namespace kmaths
 #endif
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T RootImpl(T num, size_t root)
 	{
 		const auto oneOverRoot = constants::OneOver<T>(root);
@@ -582,6 +581,9 @@ namespace kmaths
 
 		if (num == constants::One<T>() || root == constants::One<T>())
 			return num;
+
+		if (root == 2)
+			return SqrtImpl<T>(num);
 
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
@@ -634,7 +636,6 @@ namespace kmaths
 		if (PowerOfImpl(start, root) == num)
 			return start;
 
-		auto increment = constants::One<T>();
 		T result = start;
 		T prev[2] = { constants::MinusOne<T>(), constants::MinusOne<T>() };
 
@@ -694,9 +695,9 @@ namespace kmaths
 #endif
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T PowerOf(T base, T decimalPower) noexcept
+	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
 	{
-		const auto fraction = DecimalToFraction(decimalPower);
+		const auto fraction = DecimalToFraction(power);
 		const auto sign = fraction.GetSign();
 		const auto numerator = fraction.GetNumerator();
 		const auto denominator = fraction.GetDenominator();
@@ -709,16 +710,26 @@ namespace kmaths
 		return powRoot;
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T PowerOf(T base, size_t numerator, size_t denominator, bool isNegative = false) noexcept
 	{
 		if (denominator == 0)
 			return 0;
 
 		const int8_t sign = isNegative ? -1 : 1;
-		const auto pow = PowerOfImpl<T>(base, numerator * sign);
-		const auto powRoot = RootImpl<T>(pow, denominator);
-		return powRoot;
+
+		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		{
+			const auto pow = PowerOfImpl<float>(base, numerator * sign);
+			const auto powRoot = RootImpl<float>(pow, denominator);
+			return CAST(T, powRoot);
+		}
+		else
+		{
+			const auto pow = PowerOfImpl<T>(base, numerator * sign);
+			const auto powRoot = RootImpl<T>(pow, denominator);
+			return powRoot;
+		}
 	}
 
 	template<typename T, class = std::enable_if_t<!std::is_floating_point_v<T>>>
@@ -728,62 +739,53 @@ namespace kmaths
 		return pow;
 	}
 
-	USE_RESULT constexpr long double WhatPowerOf10(long double number) noexcept
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T WhatPowerOf10(const T number) noexcept
 	{
-		if (number == 1.0)
+		constexpr auto maxIter = unsigned short(1e3);
+		unsigned short currentIter = 0;
+
+		if (number < 1 && number > constants::ZeroPointOne<T>())
+			return -1;
+		if (number >= 1 && number < 10)
 			return 0;
-		if (number == 10)
+		if (number >= 10 && number < 100)
 			return 1;
 
-		const auto isNegative = number < 0;
+		if (number < 0)
+			return std::numeric_limits<T>::max();
 
-		long long currentPower = 1;
-		long double minorIncrement = 1;
+		long long currentPower = 0;
+		long long minorIncrement = 1;
+		const T base = number >= constants::One<T>() ? CAST(T, 10) : constants::ZeroPointOne<T>();
 
-		do {
-			const auto currentResult = PowerOf(10, );
+		bool found = false;
 
-			const auto tooHigh = PowerOf(10, realInteger * mid_d + mid_n, mid_d, isNegative ? -1 : 1);
-			const auto tooLow = mid_n < (x - error) * mid_d;
-
-			if (tooHigh)
-			{
-				upper_n = mid_n;
-				upper_d = mid_d;
-			}
-			else if (tooLow)
-			{
-				lower_n = mid_n;
-				lower_d = mid_d;
-			}
-
-			found = !(tooHigh || tooLow);
-		} while (iter++ < maxIterations && !found); // Binary search towards fraction
-
-
-
-		if (number > 10)
+		if (number >= constants::One<T>())
 		{
-			long long value = 1;
-			while (value < number)
+			while (PowerOfImpl(base, currentPower) < number)
 			{
-				currentPower++;
-				value = PowerOfImpl(10, currentPower);
-			}
+				currentPower += minorIncrement;
+			};
 			--currentPower;
 		}
-		else if (number < 1)
+		else
 		{
-			long double value = 0.1;
-			while (value > number)
+			while (PowerOfImpl(base, currentPower) > number)
 			{
-				currentPower++;
-				value = PowerOfImpl(0.1, currentPower);
-			}
+				currentPower += minorIncrement;
+			};
 			currentPower = -currentPower;
 		}
 
-		return currentPower;
+		return CAST(T, currentPower);
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Square(T x) noexcept
+	{
+		constexpr auto two = CAST(T, 2);
+		return PowerOf<T>(x, two);
 	}
 }
 

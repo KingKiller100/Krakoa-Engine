@@ -22,6 +22,7 @@ namespace kTest::maths
 	{
 		VERIFY_MULTI_INIT();
 
+		VERIFY_MULTI(ConstantsTest);
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(SwapTest);
 		VERIFY_MULTI(ToDegreesTest);
@@ -50,6 +51,40 @@ namespace kTest::maths
 	}
 
 	using namespace kmaths;
+
+	bool AlgorithmsTester::ConstantsTest()
+	{
+		{
+			constexpr auto vec = constants::One<Vector3d>();
+			VERIFY_COMPILE_TIME(vec.X() == 1.0 && vec.Y() == 1.0 && vec.Z() == 1.0);
+		}
+
+		{
+			constexpr auto x = constants::One<float>();
+			constexpr auto answer = std::is_same_v<ONLY_TYPE(decltype(x)), float>;
+			VERIFY_COMPILE_TIME(answer);
+		}
+
+		{
+			constexpr auto vec = constants::One(Vector2f());
+			VERIFY_COMPILE_TIME(vec.X() == 1.0 && vec.Y() == 1.0);
+		}
+
+		{
+			constexpr auto vec = constants::OneOver<Vector2f>(8);
+			VERIFY(vec.X() == 0.125f && vec.Y() == 0.125f);
+		}
+
+		{
+			constexpr auto mat = constants::XOverY<Matrix3x3s>(10, 5);
+			for (auto row = 0u; row < mat.GetRows(); ++row)
+				for (auto col = 0u; col < mat.GetColumns(); ++col)
+					VERIFY(mat[row][col] == 2);
+		}
+
+		return success;
+	}
+
 	bool AlgorithmsTester::ConversionTest()
 	{
 		constexpr auto num = 300;
@@ -419,7 +454,7 @@ namespace kTest::maths
 		{
 			constexpr auto power = 4.0;
 			constexpr auto num = 9.0;
-			constexpr auto value = PowerOf(num, power);
+			const auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::pow(num, power));
 			VERIFY(value == expectedVal);
 		}
@@ -524,48 +559,48 @@ namespace kTest::maths
 		{
 			constexpr auto number = 0.1;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == -1);
+			VERIFY(powerOf10 == -1);
 		}
 
 		{
-			constexpr auto number = 1;
+			constexpr auto number = 1.f;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == 0);
+			VERIFY(powerOf10 == 0);
 		}
 
 		{
-			constexpr auto number = 10;
+			constexpr auto number = 10.f;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == 1);
+			VERIFY(powerOf10 == 1);
 		}
 		{
-			constexpr auto number = 300;
+			constexpr auto number = 300.0;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == 2);
-		}
-
-		{
-			constexpr auto number = 30;
-			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == 1);
+			VERIFY(powerOf10 == 2);
 		}
 
 		{
-			constexpr auto number = 300000;
+			constexpr auto number = 30.f;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == 5);
+			VERIFY(powerOf10 == 1);
+		}
+
+		{
+			constexpr auto number = 300000.f;
+			const auto powerOf10 = WhatPowerOf10(number);
+			VERIFY(powerOf10 == 5);
 		}
 
 		{
 			constexpr auto number = 0.09567;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == -2);
+			VERIFY(powerOf10 == -2);
 		}
 
 		{
 			constexpr auto number = 0.00007;
 			const auto powerOf10 = WhatPowerOf10(number);
-			VERIFY_COMPILE_TIME(powerOf10 == -5);
+			VERIFY(powerOf10 == -5);
 		}
 
 		return success;
@@ -817,7 +852,7 @@ namespace kTest::maths
 			constexpr auto power = 3;
 			const auto root = Root(exponant, power);
 			constexpr auto expected = 3.6840314986403859f;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		{
@@ -866,28 +901,28 @@ namespace kTest::maths
 		{
 			constexpr auto numerator = 2;
 			constexpr auto denominator = 3;
-			constexpr auto base = 8;
-			const auto result = PowerOf(base, numerator, denominator);
+			constexpr auto base = 8.0;
+			auto result = PowerOf(base, numerator, denominator);
 			constexpr auto expected = 4;
-			VERIFY_COMPILE_TIME(result == expected);
+			VERIFY(result == expected);
 		}
 
 		{
 			constexpr auto numerator = 2;
 			constexpr auto denominator = 4;
-			constexpr auto base = 9;
-			const auto result = PowerOf(base, numerator, denominator);
+			constexpr auto base = 9.f;
+			auto result = PowerOf(base, numerator, denominator);
 			constexpr auto expected = 3;
-			VERIFY_COMPILE_TIME(result == expected);
+			VERIFY(result == expected);
 		}
 
 		{
 			constexpr auto numerator = 3;
 			constexpr auto denominator = 5;
 			constexpr auto base = 5.l;
-			const auto result = PowerOf(base, numerator, denominator);
+			auto result = PowerOf(base, numerator, denominator);
 			constexpr auto expected = 2.6265278044037674l;
-			VERIFY_COMPILE_TIME(result == expected);
+			VERIFY(result == expected);
 		}
 
 		{

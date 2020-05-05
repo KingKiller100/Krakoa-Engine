@@ -33,44 +33,69 @@ namespace kmaths::constants
 	}
 
 	template<class T>
+	USE_RESULT constexpr T One(T&&) noexcept
+	{
+		return One<T>();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T MinusOne() noexcept
 	{
 		return T(-1);
 	}
 
-	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	template<class T>
+	USE_RESULT constexpr T MinusOne(T&&) noexcept
+	{
+		return MinusOne<T>();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T ZeroPointOne() noexcept
 	{
 		return T(0.1);
 	}
 
-	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	template<class T>
+	USE_RESULT constexpr T ZeroPointOne(T&&) noexcept
+	{
+		return ZeroPointOne<T>();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T ZeroPointFive() noexcept
 	{
 		return T(0.5);
 	}
 
-	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	template<class T>
+	USE_RESULT constexpr T ZeroPointFive(T&&) noexcept
+	{
+		return ZeroPointFive<T>();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T OnePointFive() noexcept
 	{
 		return T(1.5);
 	}
 
-	template<class ReturnType, class T, class = std::enable_if_t<
-		std::is_floating_point_v<ReturnType>
-		&& std::is_arithmetic_v<T>>>
+	template<class T>
+	USE_RESULT constexpr T OnePointFive(T&&) noexcept
+	{
+		return OnePointFive<T>();
+	}
+
+	template<class ReturnType, class T>
 	USE_RESULT constexpr ReturnType OneOver(T value) noexcept
 	{
 		const auto result = One<ReturnType>() / value;
 		return result;
 	}
 
-	template<class ReturnType, class T, class T2, class = std::enable_if_t<
-		std::is_floating_point_v<ReturnType>
-		&& std::is_arithmetic_v<T>
-		&& std::is_arithmetic_v<T2>>>
-	USE_RESULT constexpr ReturnType XOverY(T x, T2 y) noexcept
+	template<class ReturnType, class T, class T2>
+	USE_RESULT constexpr ReturnType XOverY(T&& x, T2&& y) noexcept
 	{
-		return ReturnType(x) / y;
+		return ReturnType(std::forward<T&&>(x)) / y;
 	}
 }

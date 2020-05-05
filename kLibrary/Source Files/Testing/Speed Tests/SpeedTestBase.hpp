@@ -5,7 +5,6 @@
 #include "../../Utility/Profiler/kProfiler.hpp"
 
 #include <map>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -31,7 +30,7 @@ namespace kTest::speed
 	protected:
 		virtual void Test() = 0;
 
-		void SetUpParticipants(const std::set<std::string_view>& participants) noexcept;
+		void SetUpParticipants(const std::vector<std::string_view>& participants) noexcept;
 
 	private:
 		void Output() noexcept;

@@ -16,8 +16,10 @@ namespace kTest::speed::maths
 		void Test() override;
 
 		void PowerOfTest();
+		void Square();
 		void SqrtTest();
 		void FloorTest();
+		void FloatingPointRemainderTest();
 	};
 }
 #endif

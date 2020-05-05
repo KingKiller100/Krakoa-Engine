@@ -21,13 +21,14 @@ namespace kTest::speed::maths
 		PowerOfTest();
 		SqrtTest();
 		FloorTest();
+		FloatingPointRemainderTest();
 	}
 	
 	constexpr auto maxIter = int(2e4);
 
 	void AlgorithmsSpeedTest::PowerOfTest()
 	{
-		const std::set<std::string_view> participants = { "kmaths::PowerOf", "std::pow" };
+		const std::vector<std::string_view> participants = { "kmaths::PowerOf", "std::pow" };
 		SetUpParticipants(participants);
 
 		constexpr double set[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -37,7 +38,6 @@ namespace kTest::speed::maths
 		auto power = 0.0;
 		for (auto i = 0; i < maxIter; ++i)
 		{
-			auto participant_iter = participants.cbegin();
 			const auto idx = kmaths::Modulus<int>(i, size);
 			const auto number = set[idx];
 
@@ -45,14 +45,12 @@ namespace kTest::speed::maths
 				power += 1;
 
 			{
-				START_TEST(*participant_iter);
+				START_TEST(participants[0]);
 				const auto value = kmaths::PowerOf(number, power);
 			}
 
-			++participant_iter;
-
 			{
-				START_TEST(*participant_iter);
+				START_TEST(participants[1]);
 				const auto value = std::pow(number, power);
 			}
 		}
@@ -60,60 +58,79 @@ namespace kTest::speed::maths
 
 	void AlgorithmsSpeedTest::SqrtTest()
 	{
-		const std::set<std::string_view> participants = { "kmaths::Sqrt", "std::sqrt" };
+		const std::vector<std::string_view> participants = { "kmaths::Sqrt", "std::sqrt", "kmaths::Root" };
 		SetUpParticipants(participants);
 
 		constexpr double set[] = { 0, 1e0, 2e1, 3e2, 4e3, 5e4, 6e5, 7e6, 8e7, 9e8 };
 		constexpr auto size = kmaths::SizeOfArray(set);
 
-		auto power = 0.0;
 		for (auto i = 0; i < maxIter; ++i)
 		{
-			auto participant_iter = participants.cbegin();
 			const auto idx = kmaths::Modulus<int>(i, size);
 			const auto number = set[idx];
-			
-			power++;
 
 			{
-				START_TEST(*participant_iter);
+				START_TEST(participants[0]);
 				const auto value = kmaths::Sqrt(number);
 			}
 
-			++participant_iter;
+			{
+				START_TEST(participants[1]);
+				const auto value = std::sqrt(number);
+			}
 
 			{
-				START_TEST(*participant_iter);
-				const auto value = std::sqrt(number);
+				START_TEST(participants[2]);
+				const auto value = kmaths::Root(number, 2);
 			}
 		}
 	}
 
 	void AlgorithmsSpeedTest::FloorTest()
 	{
-		const std::set<std::string_view> participants = { "kmaths::Floor", "std::floor" };
+		const std::vector<std::string_view> participants = { "kmaths::Floor", "std::floor" };
 		SetUpParticipants(participants);
 
 		constexpr float set[] = { 0.2443f, 1.234543f, 2.7687f, 3.2342324f, 4.324543f, 5.5f, 6.354f, 7.234244554f, 8.4365f, 9.45434f };
 		constexpr auto size = kmaths::SizeOfArray(set);
 
-		auto power = 0;
 		for (auto i = 0; i < maxIter; ++i)
 		{
-			auto participant_iter = participants.cbegin();
 			const auto idx = kmaths::Modulus<int>(i, size);
 			const auto number = set[idx];
 
 			{
-				START_TEST(*participant_iter);
+				START_TEST(participants[0]);
 				const auto value = kmaths::Floor(number);
 			}
 
-			++participant_iter;
+			{
+				START_TEST(participants[1]);
+				const auto value = std::floor(number);
+			}
+		}
+	}
+	void AlgorithmsSpeedTest::FloatingPointRemainderTest()
+	{
+		const std::vector<std::string_view> participants = { "kmaths::FloatingPointRemainder", "std::fmod" };
+		SetUpParticipants(participants);
+
+		constexpr float set[] = { 0.2443f, 1.234543f, 2.7687f, 3.2342324f, 4.324543f, 5.5f, 6.354f, 7.234244554f, 8.4365f, 9.45434f };
+		constexpr auto size = kmaths::SizeOfArray(set);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			const auto idx = kmaths::Modulus<int>(i, size);
+			const auto base = set[idx];
 
 			{
-				START_TEST(*participant_iter);
-				const auto value = std::floor(number);
+				START_TEST(participants[0]);
+				const auto value = kmaths::FloatingPointRemainder(CAST(float, i), base);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::fmod(CAST(float, i), base);
 			}
 		}
 	}

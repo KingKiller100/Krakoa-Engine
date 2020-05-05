@@ -14,6 +14,7 @@ namespace kTest::maths
 	private:
 		void Test() override;
 
+		bool ConstantsTest();
 		bool ConversionTest();
 		bool MinMaxTest();
 		bool FloorTest();

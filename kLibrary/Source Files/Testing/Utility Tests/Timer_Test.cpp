@@ -38,14 +38,13 @@ namespace kTest::utility
 			nums[i] = i;
 			VERIFY(nums[i] == i && dt != 0);
 			s = klib::kFormat::ToString("Test Time %d : %fus (Microseconds)\n", i, dt);
-			std::cout << s;
 		}
-		std::cout.flush();
 
 		const auto lifetime = testTime.GetLifeTime<klib::kTime::kUnits::Micros>();
 		const auto lifetimeInSeconds = lifetime / 1000000;
 		std::cout << testTime.GetName() << " Total Test Time: " << lifetimeInSeconds << "s (Seconds)" << std::endl;
 		std::cout << testTime.GetName() << " Average Execution Time: " << lifetime / loops << "us (Microseconds)" << std::endl;
+
 		//std::cin.get();
 	}
 }

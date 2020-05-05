@@ -9,13 +9,14 @@
 #include "../../Utility/File System/kFileSystem.hpp"
 
 #include <filesystem>
+#include <iostream>
 
 
 #ifdef TESTING_ENABLED
 namespace kTest::performance
 {
 	PerformanceTestManager::PerformanceTestManager(const Token&)
-		: Tester("Speed Run Tests")
+		: Tester("Performance Tests")
 	{}
 
 	PerformanceTestManager::~PerformanceTestManager()
@@ -54,13 +55,19 @@ namespace kTest::performance
 		ClearAll();
 	}
 
-	void PerformanceTestManager::Run()
+	void PerformanceTestManager::RunAll()
 	{
 		for (auto& test : tests)
 		{
-			test->Run();
+			RunTest(test);
 			OutputResult(test->GetName());
 		}
+	}
+
+	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
+	{
+		std::cout << "\tNow Testing: " << test->GetName() << "\n";
+		test->Run();
 	}
 
 	void PerformanceTestManager::Add(PerformanceTestBase* test)
@@ -99,7 +106,7 @@ namespace kTest::performance
 	void PerformanceTestManager::Test()
 	{
 		Initialize();
-		Run();
+		RunAll();
 		ShutDown();
 	}
 

@@ -16,9 +16,11 @@ namespace kTest::maths
 
 		bool ConstantsTest();
 		bool ConversionTest();
+		bool SignTest();
+		bool AbsTest();
 		bool MinMaxTest();
 		bool FloorTest();
-		bool DecimalToFractionTest();
+		bool RealToFractionTest();
 		bool BinarySearchTest();
 		bool BinarySearchClosestTest();
 		bool RoundingTest();

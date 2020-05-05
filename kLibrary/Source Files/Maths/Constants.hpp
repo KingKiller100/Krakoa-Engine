@@ -27,6 +27,12 @@ namespace kmaths::constants
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 
 	template<class T>
+	USE_RESULT constexpr T Infinity() noexcept
+	{
+		return std::numeric_limits<T>::infinity();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T One() noexcept
 	{
 		return T(1);
@@ -89,8 +95,7 @@ namespace kmaths::constants
 	template<class ReturnType, class T>
 	USE_RESULT constexpr ReturnType OneOver(T value) noexcept
 	{
-		const auto result = One<ReturnType>() / value;
-		return result;
+		return One<ReturnType>() / value;
 	}
 
 	template<class ReturnType, class T, class T2>

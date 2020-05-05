@@ -26,7 +26,7 @@ namespace kTest::performance::maths
 		SignTest();
 		AbsTest();
 	}
-	
+
 	constexpr auto maxIter = int(2e4);
 
 	void AlgorithmsSpeedTest::PowerOfTest()
@@ -35,7 +35,7 @@ namespace kTest::performance::maths
 		SetUpParticipants(participants);
 
 		constexpr double set[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		constexpr auto size = kmaths::SizeOfArray(set);
+		constexpr auto size = kmaths::SizeOfCArray(set);
 		constexpr int valueBeforeIteration = 1000;
 
 		auto power = 0.0;
@@ -84,7 +84,7 @@ namespace kTest::performance::maths
 		SetUpParticipants(participants);
 
 		constexpr double set[] = { 0, 1e0, 2e1, 3e2, 4e3, 5e4, 6e5, 7e6, 8e7, 9e8 };
-		constexpr auto size = kmaths::SizeOfArray(set);
+		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -114,7 +114,7 @@ namespace kTest::performance::maths
 		SetUpParticipants(participants);
 
 		constexpr float set[] = { 0.2443f, 1.234543f, 2.7687f, 3.2342324f, 4.324543f, 5.5f, 6.354f, 7.234244554f, 8.4365f, 9.45434f };
-		constexpr auto size = kmaths::SizeOfArray(set);
+		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -138,7 +138,7 @@ namespace kTest::performance::maths
 		SetUpParticipants(participants);
 
 		constexpr float set[] = { 0.2443f, 1.234543f, 2.7687f, 3.2342324f, 4.324543f, 5.5f, 6.354f, 7.234244554f, 8.4365f, 9.45434f };
-		constexpr auto size = kmaths::SizeOfArray(set);
+		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -159,11 +159,11 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::SignTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Sign", "std::copysign", "std::signbit" };
+		const std::vector<std::string_view> participants = { "kmaths::Sign", "std::copysign" };
 		SetUpParticipants(participants);
 
 		constexpr float set[] = { -1, 0, 1 };
-		constexpr auto size = kmaths::SizeOfArray(set);
+		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -179,11 +179,6 @@ namespace kTest::performance::maths
 				START_TEST(participants[1]);
 				const auto value = std::copysign(num, num);
 			}
-
-			{
-				START_TEST(participants[2]);
-				const auto value = std::signbit(num);
-			}
 		}
 	}
 
@@ -193,7 +188,7 @@ namespace kTest::performance::maths
 		SetUpParticipants(participants);
 
 		constexpr long double set[] = { -71, -1, 0, 1, 349 };
-		constexpr auto size = kmaths::SizeOfArray(set);
+		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{

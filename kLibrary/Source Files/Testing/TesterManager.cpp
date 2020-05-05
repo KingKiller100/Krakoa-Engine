@@ -6,6 +6,7 @@
 // Maths Tests
 #include "Maths Tests/Matrix_Test.hpp"
 #include "Maths Tests/Vectors_Test.hpp"
+#include "Maths Tests/Fraction_Test.hpp"
 #include "Maths Tests/Algorithm_Test.hpp"
 #include "Maths Tests/Quaternion_Test.hpp"
 
@@ -29,6 +30,8 @@
 // Times the length of the test
 #include "../Utility/Timer/kTimer.hpp"
 
+#include <iostream>
+
 #ifdef TESTING_ENABLED
 namespace kTest
 {
@@ -49,7 +52,7 @@ namespace kTest
 		using namespace klib;
 		path = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
 		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
-		
+
 		if (!kFileSystem::CheckDirectoryExists(path))
 		{
 			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
@@ -61,6 +64,7 @@ namespace kTest
 
 	void TesterManager::InitializeMathsTests()
 	{
+		Add(new maths::FractionTester());
 		Add(new maths::AlgorithmsTester());
 		Add(new maths::VectorsTester());
 		Add(new maths::MatricesTester());
@@ -68,7 +72,7 @@ namespace kTest
 	}
 
 	void TesterManager::InitializeUtilityTests()
-	{		
+	{
 		Add(new utility::UTFConverterTester());
 		Add(new utility::StringManipulationTester());
 		Add(new utility::FormatToStringTester());
@@ -80,10 +84,11 @@ namespace kTest
 		Add(new utility::TimerTester());
 	}
 
-	void TesterManager::RunSpeedTests()
+	void TesterManager::RunPerformanceTests()
 	{
 		if (success)
 		{
+			std::cout << std::endl;
 			Run(&performance::PerformanceTestManager::Get());
 		}
 	}
@@ -95,6 +100,8 @@ namespace kTest
 
 	void TesterManager::Run(Tester* test)
 	{
+		std::cout << "Now running test:" << test->GetName() << "\n";
+
 		const auto result = test->Run();
 
 		if (!result)
@@ -115,7 +122,7 @@ namespace kTest
 		{
 			Run(test.get());
 		}
-		RunSpeedTests();
+		RunPerformanceTests();
 
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::kUnits::Mins>();
 		const auto mins = CAST(unsigned, finalTime);
@@ -124,13 +131,18 @@ namespace kTest
 
 		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}m  {1}s", mins, secs);
 		klib::kFileSystem::OutputToFile(path.c_str(), finalTimeStr.c_str());
+
+		std::cout << "\n" << finalTimeStr << "\n";
+
+		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
+		std::cin.get();
 	}
 
 	void TesterManager::ClearAllTests()
 	{
 		testsUSet.clear();
 	}
-	
+
 	TesterManager& TesterManager::Get()
 	{
 		static Token t;

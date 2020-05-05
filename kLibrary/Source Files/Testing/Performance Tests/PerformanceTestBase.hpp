@@ -36,7 +36,7 @@ namespace kTest::performance
 	private:
 		void Output() noexcept;
 		void AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept;
-		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference) noexcept;
+		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const std::pair<std::string, long long>& fastestParticipant) noexcept;
 
 	protected:
 		std::string name;

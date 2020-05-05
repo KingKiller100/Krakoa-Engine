@@ -28,7 +28,8 @@ namespace kTest::performance
 	private:
 		void Initialize();
 		void ShutDown();
-		void Run();
+		void RunAll();
+		void RunTest(PerformanceTestBase* test);
 
 		void InitializeMaths();
 

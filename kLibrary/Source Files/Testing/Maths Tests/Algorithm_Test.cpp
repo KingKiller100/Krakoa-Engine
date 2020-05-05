@@ -24,6 +24,8 @@ namespace kTest::maths
 
 		VERIFY_MULTI(ConstantsTest);
 		VERIFY_MULTI(ConversionTest);
+		VERIFY_MULTI(SignTest);
+		VERIFY_MULTI(AbsTest);
 		VERIFY_MULTI(SwapTest);
 		VERIFY_MULTI(ToDegreesTest);
 		VERIFY_MULTI(ToRadiansTest);
@@ -34,7 +36,7 @@ namespace kTest::maths
 
 		VERIFY_MULTI(PowerOfTest);
 		VERIFY_MULTI(PowerOfFractionTest);
-		VERIFY_MULTI(DecimalToFractionTest);
+		VERIFY_MULTI(RealToFractionTest);
 
 		VERIFY_MULTI(WhatPowerOf10Test);
 		VERIFY_MULTI(RoundingTest);
@@ -123,7 +125,7 @@ namespace kTest::maths
 					);
 		}
 
-		const auto doubleToVec = Convert<Vector4d>(12);
+		const auto doubleToVec = Convert<Vector4d>(5);
 		VERIFY(doubleToVec.X() == 5.0);
 		VERIFY(doubleToVec.Y() == 5.0);
 		VERIFY(doubleToVec.Z() == 5.0);
@@ -204,7 +206,7 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::DecimalToFractionTest()
+	bool AlgorithmsTester::RealToFractionTest()
 	{
 		{
 			constexpr auto decimal = 0.25;
@@ -218,7 +220,7 @@ namespace kTest::maths
 		{
 			constexpr auto decimal = 0.75;
 			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == 1 && fraction.numerator == 3 && fraction.denominator == 4);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 3 && fraction.denominator == 4);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
@@ -227,7 +229,7 @@ namespace kTest::maths
 		{
 			constexpr auto decimal = 10.75;
 			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == 1 && fraction.numerator == 43 && fraction.denominator == 4);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 43 && fraction.denominator == 4);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
@@ -236,7 +238,7 @@ namespace kTest::maths
 		{
 			constexpr auto decimal = -5.5f;
 			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == -1 && fraction.numerator == 11 && fraction.denominator == 2);
+			VERIFY(fraction.isNegative == true && fraction.numerator == 11 && fraction.denominator == 2);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
@@ -245,16 +247,37 @@ namespace kTest::maths
 		{
 			constexpr double decimal = constants::PI;
 			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == 1 && fraction.numerator == 312689 && fraction.denominator == 99532);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 312689 && fraction.denominator == 99532);
 
 			const auto f2d = Round(fraction.GetReal<decltype(decimal)>(), 3);
 			VERIFY(f2d == Round(decimal, 3));
 		}
 
 		{
+			constexpr double decimal = 10u;
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 312689 && fraction.denominator == 99532);
+
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
+			VERIFY(f2d == decimal);
+		}
+
+		{
+			constexpr Fraction fraction = { 10, 2, false };
+			const auto f2d = fraction.GetReal<unsigned>();
+			VERIFY_COMPILE_TIME(f2d == 5);
+		}
+
+		{
+			constexpr Fraction fraction = { 10, 2, true };
+			const auto f2d = fraction.GetReal<unsigned>();
+			VERIFY_COMPILE_TIME(f2d == 0);
+		}
+
+		{
 			constexpr double decimal = 14.568464;
 			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == 1 && fraction.numerator == 910529 && fraction.denominator == 62500);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 910529 && fraction.denominator == 62500);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
@@ -1011,6 +1034,76 @@ namespace kTest::maths
 			const auto result = Modulus(num, base);
 			const auto expected = std::fmodf(num, base);
 			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::SignTest()
+	{
+		{
+			constexpr auto num = -1;
+			const auto result = Sign(num);
+			VERIFY_COMPILE_TIME(result == -1);
+		}
+
+		{
+			constexpr auto num = 1;
+			const auto result = Sign(num);
+			VERIFY_COMPILE_TIME(result == 1);
+		}
+
+		{
+			constexpr auto num = 0;
+			const auto result = Sign(num);
+			VERIFY_COMPILE_TIME(result == 0);
+		}
+
+		{
+			constexpr auto num = 440.5;
+			const auto result = Sign(num);
+			VERIFY_COMPILE_TIME(result == 1);
+		}
+
+		{
+			constexpr auto num = -440.2334;
+			const auto result = Sign(num);
+			VERIFY_COMPILE_TIME(result == -1);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::AbsTest()
+	{
+		{
+			constexpr auto num = -1;
+			const auto result = Abs(num);
+			VERIFY_COMPILE_TIME(result == 1);
+		}
+
+		{
+			constexpr auto num = -1000;
+			const auto result = Abs(num);
+			VERIFY_COMPILE_TIME(result == 1000);
+		}
+
+		{
+			constexpr auto num = 0;
+			const auto result = Abs(num);
+			VERIFY_COMPILE_TIME(result == 0);
+		}
+
+		{
+			constexpr auto num = 1.5;
+			const auto result = Abs(num);
+			VERIFY_COMPILE_TIME(result == 1.5);
+		}
+
+		{
+			constexpr auto num = -10.5f;
+			const auto result = Abs(num);
+			VERIFY_COMPILE_TIME(result == 10.5);
 		}
 
 		return success;

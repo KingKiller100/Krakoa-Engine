@@ -26,8 +26,9 @@ namespace kmaths
 		{
 			if _CONSTEXPR_IF(std::is_signed_v<T>)
 			{
-				const T num = CAST(T, isNegative ? -numerator : numerator);
-				return  num / denominator;
+				const T num = CAST(T, numerator);
+				const T signedNum = CAST(T, isNegative ? -num : num);
+				return  signedNum / denominator;
 			}
 			else
 			{

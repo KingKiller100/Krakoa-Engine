@@ -44,10 +44,9 @@ namespace kmaths
 	}
 
 	template<typename T, size_t Size>
-	USE_RESULT constexpr size_t SizeOfArray(const T(&array)[Size]) noexcept
+	USE_RESULT constexpr size_t SizeOfCArray(const T(&array)[Size]) noexcept
 	{
-		const auto size = Size;
-		return size;
+		return Size;
 	}
 
 	template<typename List, typename T>
@@ -133,7 +132,7 @@ namespace kmaths
 
 		const auto isNegative = value < 0;
 		return isNegative
-			? (value > minusOne&& value < 0)
+			? (value > minusOne && value < 0)
 			: (value < one && value > 0);
 	}
 
@@ -190,46 +189,6 @@ namespace kmaths
 			return x;
 		else
 			return -x;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr Fraction RealToFractionAccurate(T x, const size_t dpAccuracy = 10) noexcept
-	{
-		constexpr auto maxIterations = int(1e4);
-		int iter = 0;
-
-		const auto error = PowerOfImpl(constants::ZeroPointOne<T>(), dpAccuracy);
-		const auto isNegative = x < 0;
-		const auto sign = Sign(x);
-
-		const auto x0 = x;
-
-		if (isNegative)
-			x = -x;
-
-		size_t a(0);
-		size_t b(1);
-		size_t c(1);
-		size_t d(0);
-
-		size_t integer;
-
-		Fraction::Numerator_Value_Type num;
-		Fraction::Denominator_Value_Type den;
-
-		do {
-			integer = Floor(x);
-			num = a + integer * c;
-			den = b + integer * d;
-			a = c;
-			b = d;
-			c = num;
-			d = den;
-			x = constants::OneOver<T>(x - integer);
-			if (error > ((num / den) - x0)) { return { num, den, isNegative }; }
-		} while (iter++ < maxIterations);
-
-		return { 0, 1, isNegative };
 	}
 
 	template<typename T>
@@ -376,11 +335,11 @@ namespace kmaths
 		if (isNegative)
 			value = -value;
 
-		const auto dpShifts = PowerOfImpl<long double>(constants::ZeroPointOne<T>(), long long(decimalPoints + 1)) * 5;
+		const auto dpShifts = PowerOfImpl<long double>(constants::ZeroPointOne<T>(), (decimalPoints + 1)) * 5;
 		const auto accuracy = PowerOfImpl<size_t>(10, decimalPoints);
 
 		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
-		const auto accuracyInverse = CAST(T, 1) / accuracy;
+		const auto accuracyInverse = constants::OneOver<T>(accuracy);
 		const auto significantFigures = Floor(valuePlusDpsByAcc);
 		const T roundedValue = CAST(T, significantFigures * accuracyInverse);
 		return isNegative ? -roundedValue : roundedValue;
@@ -561,7 +520,7 @@ namespace kmaths
 			CAST(T, 784),  CAST(T, 841),  CAST(T, 900),  CAST(T, 961),    // 28, 29, 30, 31
 			CAST(T, 1024), CAST(T, 1089), CAST(T, 1156), CAST(T, 1225) // 32, 33, 34, 35
 		};
-		constexpr auto lookUpMapSize = SizeOfArray(lookUpMap);
+		constexpr auto lookUpMapSize = SizeOfCArray(lookUpMap);
 
 		auto maxIterations = 0;
 

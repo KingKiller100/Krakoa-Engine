@@ -2,7 +2,7 @@
 
 #include "../HelperMacros.hpp"
 #include <string>
-#include <unordered_set>
+#include <set>
 #include <memory>
 
 #ifdef TESTING_ENABLED
@@ -21,7 +21,7 @@ namespace kTest
 		void Shutdown();
 		void InitializeMathsTests();
 		void InitializeUtilityTests();
-		void RunSpeedTests();
+		void RunPerformanceTests();
 		void Add(Tester* test);
 		void Run(Tester* test);
 		void RunAll();
@@ -31,7 +31,7 @@ namespace kTest
 
 	private:
 		std::string path;
-		std::unordered_set< std::unique_ptr<Tester> > testsUSet;
+		std::set< std::unique_ptr<Tester> > testsUSet;
 
 		bool success;
 	};

@@ -6,7 +6,7 @@
 #include "../../Utility/Format/kFormatToString.hpp"
 
 #ifdef TESTING_ENABLED
-namespace kTest::speed
+namespace kTest::performance
 {
 	PerformanceTestBase::PerformanceTestBase(const char* name) noexcept
 		: name(name)

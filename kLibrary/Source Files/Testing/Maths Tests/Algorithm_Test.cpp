@@ -112,7 +112,7 @@ namespace kTest::maths
 		const auto arrayToMatrix = Convert<Matrix3x2s>(container);
 
 		{
-			const auto vecToMat = Convert<Matrix2x2f>(kmaths::Vector2f(5));
+			const auto vecToMat = Convert<Matrix2x2f>(Vector2f(5));
 
 			for (auto row = 0; row < vecToMat.GetRows(); ++row)
 				for (auto col = 0; col < vecToMat.GetColumns(); ++col)
@@ -123,11 +123,11 @@ namespace kTest::maths
 					);
 		}
 
-		constexpr auto doubleToVec = Convert<Vector4d>(5.0);
-		VERIFY_COMPILE_TIME(doubleToVec.X() == 5.0);
-		VERIFY_COMPILE_TIME(doubleToVec.Y() == 5.0);
-		VERIFY_COMPILE_TIME(doubleToVec.Z() == 5.0);
-		VERIFY_COMPILE_TIME(doubleToVec.W() == 5.0);
+		const auto doubleToVec = Convert<Vector4d>(12);
+		VERIFY(doubleToVec.X() == 5.0);
+		VERIFY(doubleToVec.Y() == 5.0);
+		VERIFY(doubleToVec.Z() == 5.0);
+		VERIFY(doubleToVec.W() == 5.0);
 
 		return success;
 	}
@@ -207,58 +207,56 @@ namespace kTest::maths
 	bool AlgorithmsTester::DecimalToFractionTest()
 	{
 		{
-			constexpr Fraction o = { 213, 109, false };
-			constexpr auto ans = o.GetNumber<float>();
 			constexpr auto decimal = 0.25;
-			const auto fraction = DecimalToFraction<double>(decimal);
-			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 1 && fraction.GetDenominator() == 4);
+			const auto fraction = RealToFraction<double>(decimal);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 1 && fraction.denominator == 4);
 
-			const auto f2d = fraction.GetNumber<decltype(decimal)>();
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr auto decimal = 0.75;
-			const auto fraction = DecimalToFraction(decimal);
-			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 3 && fraction.GetDenominator() == 4);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == 1 && fraction.numerator == 3 && fraction.denominator == 4);
 
-			const auto f2d = fraction.GetNumber<decltype(decimal)>();
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr auto decimal = 10.75;
-			const auto fraction = DecimalToFraction(decimal);
-			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 43 && fraction.GetDenominator() == 4);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == 1 && fraction.numerator == 43 && fraction.denominator == 4);
 
-			const auto f2d = fraction.GetNumber<decltype(decimal)>();
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr auto decimal = -5.5f;
-			const auto fraction = DecimalToFraction(decimal);
-			VERIFY(fraction.GetSign() == -1 && fraction.GetNumerator() == 11 && fraction.GetDenominator() == 2);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == -1 && fraction.numerator == 11 && fraction.denominator == 2);
 
-			const auto f2d = fraction.GetNumber<decltype(decimal)>();
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
 		{
 			constexpr double decimal = constants::PI;
-			const auto fraction = DecimalToFraction(decimal);
-			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 312689 && fraction.GetDenominator() == 99532);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == 1 && fraction.numerator == 312689 && fraction.denominator == 99532);
 
-			const auto f2d = Round(fraction.GetNumber<decltype(decimal)>(), 3);
+			const auto f2d = Round(fraction.GetReal<decltype(decimal)>(), 3);
 			VERIFY(f2d == Round(decimal, 3));
 		}
 
 		{
 			constexpr double decimal = 14.568464;
-			const auto fraction = DecimalToFraction(decimal);
-			VERIFY(fraction.GetSign() == 1 && fraction.GetNumerator() == 910529 && fraction.GetDenominator() == 62500);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == 1 && fraction.numerator == 910529 && fraction.denominator == 62500);
 
-			const auto f2d = fraction.GetNumber<decltype(decimal)>();
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 

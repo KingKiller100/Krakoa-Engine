@@ -84,7 +84,7 @@ namespace kTest
 	{
 		if (success)
 		{
-			Run(&speed::PerformanceTestManager::Get());
+			Run(&performance::PerformanceTestManager::Get());
 		}
 	}
 

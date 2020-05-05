@@ -12,7 +12,7 @@
 
 
 #ifdef TESTING_ENABLED
-namespace kTest::speed
+namespace kTest::performance
 {
 	PerformanceTestManager::PerformanceTestManager(const Token&)
 		: Tester("Speed Run Tests")

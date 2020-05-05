@@ -4,7 +4,7 @@
 
 
 #ifdef TESTING_ENABLED
-namespace kTest::speed::maths
+namespace kTest::performance::maths
 {
 	class AlgorithmsSpeedTest : public PerformanceTestBase
 	{
@@ -16,7 +16,9 @@ namespace kTest::speed::maths
 		void Test() override;
 
 		void PowerOfTest();
-		void Square();
+		void SquareTest();
+		void SignTest();
+		void AbsTest();
 		void SqrtTest();
 		void FloorTest();
 		void FloatingPointRemainderTest();

@@ -149,6 +149,24 @@ namespace kmaths
 		return lhs < rhs ? lhs : (T1)rhs;
 	}
 
+	// Sign///////////////////////////////////////////////////////////////////
+	template<typename T>
+	USE_RESULT constexpr int8_t Sign_Impl(const T& x, std::false_type) noexcept
+	{
+		return (T(0) < x);
+	}
+	template<typename T>
+	USE_RESULT constexpr int8_t Sign_Impl(const T& x, std::true_type) noexcept
+	{
+		return (T(0) < x) - (x < T(0));
+	}
+	template<typename T>
+	USE_RESULT constexpr int8_t Sign(const T& x) noexcept
+	{
+		return Sign_Impl(x, std::is_signed<T>());
+	}
+	//////////////////////////////////////////////////////////////////////////
+
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
@@ -163,13 +181,61 @@ namespace kmaths
 		const auto integer = CAST(T, CAST(ConversionType, value));
 
 		return integer > value ? integer - 1 : integer;
-
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr Fraction DecimalToFraction(T x, const size_t dpAccuracy = 10) noexcept
+	template<typename T>
+	USE_RESULT constexpr T Abs(const T x) noexcept
 	{
-		constexpr size_t maxIterations = 10000;
+		if (x >= 0)
+			return x;
+		else
+			return -x;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr Fraction RealToFractionAccurate(T x, const size_t dpAccuracy = 10) noexcept
+	{
+		constexpr auto maxIterations = int(1e4);
+		int iter = 0;
+
+		const auto error = PowerOfImpl(constants::ZeroPointOne<T>(), dpAccuracy);
+		const auto isNegative = x < 0;
+		const auto sign = Sign(x);
+
+		const auto x0 = x;
+
+		if (isNegative)
+			x = -x;
+
+		size_t a(0);
+		size_t b(1);
+		size_t c(1);
+		size_t d(0);
+
+		size_t integer;
+
+		Fraction::Numerator_Value_Type num;
+		Fraction::Denominator_Value_Type den;
+
+		do {
+			integer = Floor(x);
+			num = a + integer * c;
+			den = b + integer * d;
+			a = c;
+			b = d;
+			c = num;
+			d = den;
+			x = constants::OneOver<T>(x - integer);
+			if (error > ((num / den) - x0)) { return { num, den, isNegative }; }
+		} while (iter++ < maxIterations);
+
+		return { 0, 1, isNegative };
+	}
+
+	template<typename T>
+	USE_RESULT constexpr Fraction RealToFraction(T x, const size_t dpAccuracy = 10) noexcept
+	{
+		constexpr auto maxIterations = int(1e6);
 		const auto error = PowerOfImpl(constants::ZeroPointOne<T>(), dpAccuracy);
 
 		const auto isNegative = x < 0;
@@ -197,8 +263,7 @@ namespace kmaths
 		size_t mid_n;
 		size_t mid_d;
 
-		auto found = false;
-		size_t iter = 0;
+		int iter = 0;
 
 		do {
 			mid_n = lower_n + upper_n;
@@ -217,11 +282,13 @@ namespace kmaths
 				lower_n = mid_n;
 				lower_d = mid_d;
 			}
+			else
+			{
+				return { realInteger * mid_d + mid_n, mid_d, isNegative };
+			}
+		} while (iter++ < maxIterations); // Binary search towards fraction
 
-			found = !(tooHigh || tooLow);
-		} while (iter++ < maxIterations && !found); // Binary search towards fraction
-
-		return { realInteger * mid_d + mid_n, mid_d, isNegative };
+		return { 0, 1, isNegative };
 	}
 
 	template<typename T>
@@ -694,15 +761,14 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
 	{
-		const auto fraction = DecimalToFraction(power);
-		const auto sign = fraction.GetSign();
-		const auto numerator = fraction.GetNumerator();
-		const auto denominator = fraction.GetDenominator();
+		const auto fraction = RealToFraction(power);
+		const auto numerator = fraction.numerator;
+		const auto denominator = fraction.denominator;
 
 		if (denominator == 0)
 			return 0;
 
-		const auto pow = PowerOfImpl<T>(base, numerator * sign);
+		const auto pow = fraction.isNegative ? constants::OneOver<T>(PowerOfImpl<T>(base, numerator)) : PowerOfImpl<T>(base, numerator);
 		const auto powRoot = RootImpl<T>(pow, denominator);
 		return powRoot;
 	}

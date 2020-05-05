@@ -10,44 +10,36 @@ namespace kmaths
 	struct Fraction
 	{
 	public:
-		using Sign_Value_Type = int8_t;
+		using Sign_Value_Type = bool;
 		using Numerator_Value_Type = size_t;
 		using Denominator_Value_Type = size_t;
 
 		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const bool isNegative = false) noexcept
-			: numerator(numerator), denominator(denominator), sign(isNegative ? -1 : 1)
+			: numerator(numerator), denominator(denominator), isNegative(isNegative)
 		{}
 
 		~Fraction() noexcept
 			= default;
 
 		template<typename T>
-		USE_RESULT constexpr T GetNumber() const noexcept
+		USE_RESULT constexpr T GetReal() const noexcept
 		{
-			const auto signedVal = CAST(T, sign) * numerator;
-			return signedVal / denominator;
+			if _CONSTEXPR_IF(std::is_signed_v<T>)
+			{
+				const T num = CAST(T, isNegative ? -numerator : numerator);
+				return  num / denominator;
+			}
+			else
+			{
+				const T num = CAST(T, isNegative ? 0 : numerator);
+				return  num / denominator;
+			}
 		}
 
-		USE_RESULT constexpr Numerator_Value_Type GetNumerator() const noexcept
-		{
-			return numerator;
-		}
-
-		USE_RESULT constexpr Denominator_Value_Type GetDenominator() const noexcept
-		{
-			return denominator;
-		}
-
-		USE_RESULT constexpr Sign_Value_Type GetSign() const noexcept
-		{
-			return sign;
-		}
-
-	private:
 		Numerator_Value_Type numerator;
 		Denominator_Value_Type denominator;
-		
-		Sign_Value_Type sign;
+
+		Sign_Value_Type isNegative;
 	};
 }
 

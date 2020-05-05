@@ -7,7 +7,7 @@
 
 
 #ifdef TESTING_ENABLED
-namespace kTest::speed
+namespace kTest::performance
 {
 	class PerformanceTestBase;
 

@@ -7,7 +7,7 @@
 
 
 #ifdef TESTING_ENABLED
-namespace kTest::speed::maths
+namespace kTest::performance::maths
 {
 	AlgorithmsSpeedTest::AlgorithmsSpeedTest()
 		: PerformanceTestBase("Algorithms Speed Test")
@@ -19,9 +19,12 @@ namespace kTest::speed::maths
 	void AlgorithmsSpeedTest::Test()
 	{
 		PowerOfTest();
+		SquareTest();
 		SqrtTest();
 		FloorTest();
 		FloatingPointRemainderTest();
+		SignTest();
+		AbsTest();
 	}
 	
 	constexpr auto maxIter = int(2e4);
@@ -52,6 +55,25 @@ namespace kTest::speed::maths
 			{
 				START_TEST(participants[1]);
 				const auto value = std::pow(number, power);
+			}
+		}
+	}
+
+	void AlgorithmsSpeedTest::SquareTest()
+	{
+		const std::vector<std::string_view> participants = { "kmaths::Sqaure", "std::pow" };
+		SetUpParticipants(participants);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::Square(i);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::pow(i, 2);
 			}
 		}
 	}
@@ -134,5 +156,61 @@ namespace kTest::speed::maths
 			}
 		}
 	}
+
+	void AlgorithmsSpeedTest::SignTest()
+	{
+		const std::vector<std::string_view> participants = { "kmaths::Sign", "std::copysign", "std::signbit" };
+		SetUpParticipants(participants);
+
+		constexpr float set[] = { -1, 0, 1 };
+		constexpr auto size = kmaths::SizeOfArray(set);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			const auto idx = kmaths::Modulus<int>(i, size);
+			const auto num = set[idx];
+
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::Sign(num);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::copysign(num, num);
+			}
+
+			{
+				START_TEST(participants[2]);
+				const auto value = std::signbit(num);
+			}
+		}
+	}
+
+	void AlgorithmsSpeedTest::AbsTest()
+	{
+		const std::vector<std::string_view> participants = { "kmaths::Abs", "std::fabsl" };
+		SetUpParticipants(participants);
+
+		constexpr long double set[] = { -71, -1, 0, 1, 349 };
+		constexpr auto size = kmaths::SizeOfArray(set);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			const auto idx = kmaths::Modulus<int>(i, size);
+			const auto num = set[idx];
+
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::Abs(num);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::fabsl(num);
+			}
+		}
+	}
+
 }
 #endif

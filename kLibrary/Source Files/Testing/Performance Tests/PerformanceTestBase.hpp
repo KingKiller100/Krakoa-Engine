@@ -9,7 +9,7 @@
 #include <vector>
 
 #ifdef TESTING_ENABLED
-namespace kTest::speed
+namespace kTest::performance
 {
 	struct AverageTime
 	{

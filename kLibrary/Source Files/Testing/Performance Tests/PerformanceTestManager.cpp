@@ -99,6 +99,7 @@ namespace kTest::performance
 		using namespace klib;
 		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
 		const auto fullPath = directory + filename;
+
 		kFileSystem::OutputToFile(fullPath, results);
 		results.clear();
 	}

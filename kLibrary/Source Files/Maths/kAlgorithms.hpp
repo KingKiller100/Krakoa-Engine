@@ -296,38 +296,6 @@ namespace kmaths
 		return PowerOfImpl<T>(ten, power);
 	}
 
-	//USE_RESULT double Log(int base, double exponent)
-	//{
-	//	throw klib::kDebug::kExceptions::NotImplementedException("Log base 10 function not currently supported");
-
-	//	double value = 1;
-	//	int loops = 0;
-	//	double increment = 0.1;
-	//	double multiplier = base;
-	//	double prev = -1;
-	//	double ans = 0;
-
-	//	while (prev != value)
-	//	{
-	//		prev = value;
-	//		while (value < exponent)
-	//		{
-	//			value = 1;
-	//			loops++;
-	//			for (auto i = 0; i < loops; ++i)
-	//			{
-	//				value *= multiplier;
-	//			}
-	//		}
-	//		ans = loops;
-	//		loops = 0;
-	//		multiplier = base + increment;
-	//		increment *= 0.1;
-	//	}
-
-	//	return ans;
-	//}
-
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
 	{
@@ -762,7 +730,7 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T WhatPowerOf10(const T number) noexcept
+	USE_RESULT constexpr T Log(const T number) noexcept
 	{
 		constexpr auto maxIter = unsigned short(1e3);
 		unsigned short currentIter = 0;

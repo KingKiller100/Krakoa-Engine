@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Timer/kTimer.hpp"
+
+#include <functional>
 #include <string>
 #include <thread>
 
@@ -13,7 +15,7 @@ namespace klib::kProfiler
 		uint32_t threadID;
 	};
 
-	template<typename ProfilerFunc>
+	template<typename TimeUnits = kTime::kUnits::Millis, typename ProfilerFunc = std::function<void(const klib::kProfiler::ProfilerResult&)>>
 	class Profiler
 	{
 	private:
@@ -22,7 +24,7 @@ namespace klib::kProfiler
 	public:
 		Profiler(const std::string_view& name, Func&& cb)
 			: result({ name.data(), 0, 0, 0 }), isRunning(true),
-			callback(std::forward<Func&&>(cb)), 
+			callback(std::forward<Func&&>(cb)),
 			timer("Profiler")
 		{}
 
@@ -35,9 +37,8 @@ namespace klib::kProfiler
 	private:
 		void Stop()
 		{
-			const auto endTimepoint = timer.Now<kTime::kUnits::Millis>();
-			result.end = endTimepoint;
-			result.start = timer.GetStartTime<kTime::kUnits::Millis>();
+			result.end = timer.Now<TimeUnits>();
+			result.start = timer.GetStartTime<TimeUnits>();
 			result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
 
 			callback(result);

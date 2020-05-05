@@ -38,7 +38,7 @@ namespace kTest::maths
 		VERIFY_MULTI(PowerOfFractionTest);
 		VERIFY_MULTI(RealToFractionTest);
 
-		VERIFY_MULTI(WhatPowerOf10Test);
+		VERIFY_MULTI(LogarithmBase10Test);
 		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(SquareRootTest);
 		VERIFY_MULTI(RootTest);
@@ -575,52 +575,52 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::WhatPowerOf10Test()
+	bool AlgorithmsTester::LogarithmBase10Test()
 	{
 		{
 			constexpr auto number = 0.1;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == -1);
 		}
 
 		{
 			constexpr auto number = 1.f;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == 0);
 		}
 
 		{
 			constexpr auto number = 10.f;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == 1);
 		}
 		{
 			constexpr auto number = 300.0;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == 2);
 		}
 
 		{
 			constexpr auto number = 30.f;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == 1);
 		}
 
 		{
 			constexpr auto number = 300000.f;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == 5);
 		}
 
 		{
 			constexpr auto number = 0.09567;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == -2);
 		}
 
 		{
 			constexpr auto number = 0.00007;
-			const auto powerOf10 = WhatPowerOf10(number);
+			const auto powerOf10 = Log(number);
 			VERIFY(powerOf10 == -5);
 		}
 

@@ -46,7 +46,7 @@ namespace klib::kFileSystem
 	 *		The data to fill the file with.
 	 */
 	template<class CharType = char>
-	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
+	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringWriter<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
 		FileWriter<CharType> outFile(fullFilePath.data(), mode);
 
@@ -58,8 +58,17 @@ namespace klib::kFileSystem
 #ifdef _DEBUG
 		else
 		{
-			const auto failMsg = kString::StringWriter<CharType>("Cannot create/open file ") + fullFilePath.data();
-			OutputDebugStringA(failMsg.c_str());
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			{
+				const auto failMsg = kString::StringWriter<CharType>("Cannot create/open file ") + fullFilePath.data();
+				OutputDebugStringA(failMsg.c_str());
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+			{
+				const auto failMsg = kString::StringWriter<CharType>(L"Cannot create/open file ") + fullFilePath.data();
+				OutputDebugStringW(failMsg.c_str());
+			}
+
 		}
 #endif // DEBUG
 	}
@@ -85,10 +94,10 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : directory)
-				temp += CAST(char, c);
-			return CreateNewDirectory<char>(temp);
+				temp += CAST(wchar_t, c);
+			return CreateNewDirectory<wchar_t>(temp);
 		}
 
 		return false;
@@ -253,7 +262,7 @@ namespace klib::kFileSystem
 		{
 			struct stat info;
 			const auto statResult = stat(directoryPath.data(), &info);
-			
+
 			if (statResult != 0)
 				return false;
 

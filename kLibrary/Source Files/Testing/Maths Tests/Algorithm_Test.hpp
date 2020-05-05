@@ -31,7 +31,7 @@ namespace kTest::maths
 		bool SquareRootTest();
 		bool InverseSquareRootTest();
 		bool RootTest();
-		bool WhatPowerOf10Test();
+		bool LogarithmBase10Test();
 		bool LogTest();
 		bool PowerOfFractionTest();
 		bool FloatingPointRemainderTest();

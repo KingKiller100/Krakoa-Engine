@@ -122,12 +122,15 @@ namespace kTest::performance
 
 	void PerformanceTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const std::pair<std::string, long long>& fastestParticipant) noexcept
 	{
-		const auto output = klib::kFormat::ToString("%s: \n\t\"%s\" is the faster by %.3f%%\n\tFastest Run: %s Time: %d", 
+		using namespace klib;
+
+		const auto output = klib::kFormat::ToString("%s: \n\t\"%s\" is the faster by %.3f%%\n\tFastest Run: \"%s\" Time: %d (microseconds)\n", 
 			subTestName.data(),
 			result.data(), 
 			percentageDifference,
 			fastestParticipant.first.data(), 
 			fastestParticipant.second);
+
 		PerformanceTestManager::Get().CollectResult(output);
 	}
 

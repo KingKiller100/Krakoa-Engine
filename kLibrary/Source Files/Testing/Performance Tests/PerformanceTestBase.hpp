@@ -45,9 +45,11 @@ namespace kTest::performance
 	};
 }
 
-#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler(profilee, [&](const klib::kProfiler::ProfilerResult& res)\
+#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult& res)\
 		{\
 			profilerResults.push_back(res);\
-		});\
+		}\
+
+#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<klib::kTime::kUnits::Micros> (profilee, REPORT_BACK_FUNC);
 
 #endif

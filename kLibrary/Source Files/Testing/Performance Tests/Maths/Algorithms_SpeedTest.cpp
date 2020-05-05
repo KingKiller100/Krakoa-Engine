@@ -4,6 +4,8 @@
 #include "../../../Maths/kAlgorithms.hpp"
 
 #include <cmath>
+#include <memory>
+#include <functional>
 
 
 #ifdef TESTING_ENABLED

@@ -10,7 +10,7 @@
 namespace kTest::speed::maths
 {
 	AlgorithmsSpeedTest::AlgorithmsSpeedTest()
-		: SpeedTestBase("Algorithms Speed Test")
+		: PerformanceTestBase("Algorithms Speed Test")
 	{}
 
 	AlgorithmsSpeedTest::~AlgorithmsSpeedTest()

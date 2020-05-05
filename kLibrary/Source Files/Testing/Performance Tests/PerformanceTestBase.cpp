@@ -1,21 +1,21 @@
 ﻿#include "pch.hpp"
-#include "SpeedTestBase.hpp"
+#include "PerformanceTestBase.hpp"
 
-#include "SpeedTestManager.hpp"
+#include "PerformanceTestManager.hpp"
 
 #include "../../Utility/Format/kFormatToString.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::speed
 {
-	SpeedTestBase::SpeedTestBase(const char* name) noexcept
+	PerformanceTestBase::PerformanceTestBase(const char* name) noexcept
 		: name(name)
 	{}
 
-	SpeedTestBase::~SpeedTestBase()
+	PerformanceTestBase::~PerformanceTestBase()
 		= default;
 
-	void SpeedTestBase::Run() noexcept
+	void PerformanceTestBase::Run() noexcept
 	{
 		try
 		{
@@ -24,13 +24,18 @@ namespace kTest::speed
 		catch (...)
 		{
 			const auto output = klib::kFormat::ToString("{0} seems to have crashed!\n", name);
-			SpeedTestManager::Get().CollectResult(output);
+			PerformanceTestManager::Get().CollectResult(output);
 		}
 
 		Output();
 	}
 
-	void SpeedTestBase::SetUpParticipants(const std::vector<std::string_view>& participants) noexcept
+	void PerformanceTestBase::Add(PerformanceTestBase* test)
+	{
+		PerformanceTestManager::Get().Add(test);
+	}
+
+	void PerformanceTestBase::SetUpParticipants(const std::vector<std::string_view>& participants) noexcept
 	{
 		std::string subTestName = participants.front().data();
 
@@ -48,7 +53,7 @@ namespace kTest::speed
 			AddSubTest(subTestName, *iter);
 	}
 
-	void SpeedTestBase::AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept
+	void PerformanceTestBase::AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept
 	{
 		const auto& subTest = results[subTestName];
 
@@ -58,7 +63,7 @@ namespace kTest::speed
 		results[subTestName][participant.data()] = AverageTime{ 0, 0 };
 	}
 
-	void SpeedTestBase::Output() noexcept
+	void PerformanceTestBase::Output() noexcept
 	{
 		for (auto& data : results)
 		{
@@ -107,13 +112,13 @@ namespace kTest::speed
 		}
 	}
 
-	void SpeedTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference) noexcept
+	void PerformanceTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference) noexcept
 	{
 		const auto output = klib::kFormat::ToString("%s: \"%s\" is the faster by %.3f%%\n", subTestName.data(), result.data(), percentageDifference);
-		SpeedTestManager::Get().CollectResult(output);
+		PerformanceTestManager::Get().CollectResult(output);
 	}
 
-	const std::string& SpeedTestBase::GetName() const
+	const std::string& PerformanceTestBase::GetName() const
 	{
 		return name;
 	}

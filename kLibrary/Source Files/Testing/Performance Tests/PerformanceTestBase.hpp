@@ -17,11 +17,11 @@ namespace kTest::speed
 		int count = 0;
 	};
 
-	class SpeedTestBase
+	class PerformanceTestBase
 	{
 	public:
-		SpeedTestBase(const char* name) noexcept;
-		~SpeedTestBase();
+		PerformanceTestBase(const char* name) noexcept;
+		~PerformanceTestBase();
 
 		void Run() noexcept;
 
@@ -30,6 +30,7 @@ namespace kTest::speed
 	protected:
 		virtual void Test() = 0;
 
+		void Add(PerformanceTestBase* test);
 		void SetUpParticipants(const std::vector<std::string_view>& participants) noexcept;
 
 	private:

@@ -71,7 +71,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto vec = constants::OneOver<Vector2f>(8);
+			const auto vec = constants::OneOver<Vector2f>(8);
 			VERIFY(vec.X() == 0.125f && vec.Y() == 0.125f);
 		}
 

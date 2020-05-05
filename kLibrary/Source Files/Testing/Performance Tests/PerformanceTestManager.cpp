@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
-#include "SpeedTestManager.hpp"
+#include "PerformanceTestManager.hpp"
 
-#include "SpeedTestBase.hpp"
+#include "PerformanceTestBase.hpp"
 
 #include "Maths/Algorithms_SpeedTest.hpp"
 
@@ -14,14 +14,14 @@
 #ifdef TESTING_ENABLED
 namespace kTest::speed
 {
-	SpeedTestManager::SpeedTestManager(const Token&)
+	PerformanceTestManager::PerformanceTestManager(const Token&)
 		: Tester("Speed Run Tests")
 	{}
 
-	SpeedTestManager::~SpeedTestManager()
+	PerformanceTestManager::~PerformanceTestManager()
 		= default;
 
-	void SpeedTestManager::Initialize()
+	void PerformanceTestManager::Initialize()
 	{
 		using namespace klib;
 		directory = kFileSystem::GetExeDirectory<char>() + "Speed Results\\";
@@ -49,12 +49,12 @@ namespace kTest::speed
 		InitializeMaths();
 	}
 
-	void SpeedTestManager::ShutDown()
+	void PerformanceTestManager::ShutDown()
 	{
 		ClearAll();
 	}
 
-	void SpeedTestManager::Run()
+	void PerformanceTestManager::Run()
 	{
 		for (auto& test : tests)
 		{
@@ -63,12 +63,12 @@ namespace kTest::speed
 		}
 	}
 
-	void SpeedTestManager::Add(SpeedTestBase* test)
+	void PerformanceTestManager::Add(PerformanceTestBase* test)
 	{
 		tests.insert(test);
 	}
 
-	void SpeedTestManager::ClearAll()
+	void PerformanceTestManager::ClearAll()
 	{
 		for (auto& test : tests)
 		{
@@ -77,17 +77,17 @@ namespace kTest::speed
 		tests.clear();
 	}
 
-	void SpeedTestManager::CollectResult(const std::string_view& result)
+	void PerformanceTestManager::CollectResult(const std::string_view& result)
 	{
 		results.append(result);
 	}
 
-	void SpeedTestManager::InitializeMaths()
+	void PerformanceTestManager::InitializeMaths()
 	{
 		Add(new maths::AlgorithmsSpeedTest());
 	}
 
-	void SpeedTestManager::OutputResult(const std::string& name)
+	void PerformanceTestManager::OutputResult(const std::string& name)
 	{
 		using namespace klib;
 		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
@@ -96,17 +96,17 @@ namespace kTest::speed
 		results.clear();
 	}
 
-	void SpeedTestManager::Test()
+	void PerformanceTestManager::Test()
 	{
 		Initialize();
 		Run();
 		ShutDown();
 	}
 
-	SpeedTestManager& SpeedTestManager::Get()
+	PerformanceTestManager& PerformanceTestManager::Get()
 	{
 		static Token t;
-		static SpeedTestManager instance(t);
+		static PerformanceTestManager instance(t);
 
 		return instance;
 	}

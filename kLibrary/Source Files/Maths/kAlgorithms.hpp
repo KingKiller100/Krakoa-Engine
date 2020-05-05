@@ -582,9 +582,6 @@ namespace kmaths
 		if (num == constants::One<T>() || root == constants::One<T>())
 			return num;
 
-		if (root == 2)
-			return SqrtImpl<T>(num);
-
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
 			auto maxIterations = 0;

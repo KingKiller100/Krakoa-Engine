@@ -21,7 +21,7 @@
 #include "Utility Tests/FormatToString_Test.hpp"
 
 // Speed Testing
-#include "Speed Tests/SpeedTestManager.hpp"
+#include "Performance Tests/PerformanceTestManager.hpp"
 
 // File System to output test results
 #include "../Utility/File System/kFileSystem.hpp"
@@ -84,7 +84,7 @@ namespace kTest
 	{
 		if (success)
 		{
-			Run(&speed::SpeedTestManager::Get());
+			Run(&speed::PerformanceTestManager::Get());
 		}
 	}
 

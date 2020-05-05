@@ -9,21 +9,21 @@
 #ifdef TESTING_ENABLED
 namespace kTest::speed
 {
-	class SpeedTestBase;
+	class PerformanceTestBase;
 
-	class SpeedTestManager : public Tester
+	class PerformanceTestManager : public Tester
 	{
 		struct Token {};
 	public:
-		SpeedTestManager(const Token&);
-		~SpeedTestManager();
+		PerformanceTestManager(const Token&);
+		~PerformanceTestManager();
 
-		void Add(SpeedTestBase* test);
+		void Add(PerformanceTestBase* test);
 		void ClearAll();
 		
 		void CollectResult(const std::string_view& result);
 		
-		static SpeedTestManager& Get();
+		static PerformanceTestManager& Get();
 	
 	private:
 		void Initialize();
@@ -36,7 +36,7 @@ namespace kTest::speed
 		void OutputResult(const std::string& name);
 
 	private:
-		std::unordered_set<SpeedTestBase*> tests;
+		std::unordered_set<PerformanceTestBase*> tests;
 		std::string results;
 		std::string directory;
 	};

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../SpeedTestBase.hpp"
+#include "../PerformanceTestBase.hpp"
 
 
 #ifdef TESTING_ENABLED
 namespace kTest::speed::maths
 {
-	class AlgorithmsSpeedTest : public SpeedTestBase
+	class AlgorithmsSpeedTest : public PerformanceTestBase
 	{
 	public:
 		AlgorithmsSpeedTest();

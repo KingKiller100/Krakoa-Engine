@@ -124,7 +124,7 @@ namespace kTest
 		}
 		RunPerformanceTests();
 
-		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::kUnits::Mins>();
+		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Mins>();
 		const auto mins = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - mins;
 		const unsigned secs = CAST(unsigned, 60.0 * remainder);

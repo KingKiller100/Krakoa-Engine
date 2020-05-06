@@ -213,6 +213,18 @@ namespace krakoa::graphics
 		glUniform1i(location, val);
 	}
 
+	void OpenGLShader::SetIntArray(const std::string_view& name, const int* vals, const uint32_t count)
+	{
+		UploadIntArray(name, vals, count);
+	}
+
+	void OpenGLShader::UploadIntArray(const std::string_view& name, const int* vals, const uint32_t count)
+	{
+		KRK_PROFILE_FUNCTION();
+		const auto location = GetUniformLocation(name);
+		glUniform1iv(location, count, vals );
+	}
+
 	void OpenGLShader::SetFloat(const std::string_view& name, const float val)
 	{
 		UploadUniformFloat(name, val);

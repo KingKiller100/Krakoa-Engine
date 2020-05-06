@@ -26,7 +26,7 @@ private:
 	void SendRendererCommands() noexcept;
 
 private:
-	std::unique_ptr<krakoa::graphics::iTexture2D> pWinTexture;
+	std::shared_ptr<krakoa::graphics::iTexture2D> pWinTexture;
 
 	krakoa::OrthographicCameraController cameraController;
 

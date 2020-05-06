@@ -17,6 +17,7 @@ namespace krakoa::graphics
 		void Unbind() const override;
 
 		void SetInt(const std::string_view& name, const int val) override;
+		void SetIntArray(const std::string_view& name, const int* vals, const uint32_t count) override;
 		void SetFloat(const std::string_view& name, const float val) override;
 		void SetVec2(const std::string_view& name, const kmaths::Vector2f& v) override;
 		void SetVec3(const std::string_view& name, const kmaths::Vector3f& v) override;
@@ -34,6 +35,7 @@ namespace krakoa::graphics
 		void BuildShader(const std::unordered_map<uint32_t, std::string>& sources);
 
 		void UploadUniformInt(const std::string_view& name, const int val);
+		void UploadIntArray(const std::string_view& name, const int* vals, const uint32_t count);
 		void UploadUniformFloat(const std::string_view& name, const float val);
 		void UploadUniformVec2(const std::string_view& name, const kmaths::Vector2f& v);
 		void UploadUniformVec3(const std::string_view& name, const kmaths::Vector3f& v);

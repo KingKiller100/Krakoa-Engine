@@ -43,7 +43,7 @@ namespace krakoa::time
 	{
 		KRK_PROFILE_FUNCTION();
 		constexpr auto thousandth = 1.f / 1000;
-		return timer.GetLifeTime<klib::kTime::kUnits::Millis>() * thousandth;
+		return timer.GetLifeTime<klib::kTime::units::Millis>() * thousandth;
 	}
 
 	float TimeStep::CalculateDeltaTime() const noexcept
@@ -51,8 +51,8 @@ namespace krakoa::time
 		KRK_PROFILE_FUNCTION();
 		constexpr auto thousandth = 1.f / 1000;
 		if (!isTimeIncrementFixed)
-			return timer.GetDeltaTime<klib::kTime::kUnits::Millis>() * thousandth;
+			return timer.GetDeltaTime<klib::kTime::units::Millis>() * thousandth;
 		else
-			return kmaths::Min(timer.GetDeltaTime<klib::kTime::kUnits::Millis>() * thousandth, targetIncrement);
+			return kmaths::Min(timer.GetDeltaTime<klib::kTime::units::Millis>() * thousandth, targetIncrement);
 	}
 }

@@ -17,7 +17,7 @@ Renderer2DLayer::Renderer2DLayer() noexcept
 void Renderer2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
-	pWinTexture = std::unique_ptr<krakoa::graphics::iTexture2D>(
+	pWinTexture = std::shared_ptr<krakoa::graphics::iTexture2D>(
 		krakoa::graphics::iTexture2D::Create("Assets/Win.png")
 		);
 }
@@ -76,7 +76,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 			for (auto x = 0; x < 5; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector2f{ x * 2.f, y * 2.0f };
-				//krakoa::graphics::Renderer2D::DrawQuad(*pWinTexture, miniSquarePos, kmaths::Vector2f(0.2f));
+				krakoa::graphics::Renderer2D::DrawQuad(pWinTexture, miniSquarePos, kmaths::Vector2f(0.2f));
 			}
 		}
 	}

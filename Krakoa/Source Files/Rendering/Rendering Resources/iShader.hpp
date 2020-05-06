@@ -22,6 +22,7 @@ namespace krakoa::graphics
 		virtual void Unbind() const = 0;
 
 		virtual void SetInt(const std::string_view& name, const int val) = 0;
+		virtual void SetIntArray(const std::string_view& name, const int* vals, const uint32_t count) = 0;
 		virtual void SetFloat(const std::string_view& name, const float val) = 0;
 		virtual void SetVec2(const std::string_view& name, const kmaths::Vector2f& v) = 0;
 		virtual void SetVec3(const std::string_view& name, const kmaths::Vector3f& v) = 0;

@@ -360,23 +360,6 @@ namespace krakoa::graphics
 		}
 
 		pData->IncrementQuadIndexCount();
-
-		/*KRK_FATAL(!pData->pmainShader.expired(), "Texture shader has been destroyed");
-
-		auto mainShader = pData->pmainShader.lock();
-		auto& quadVA = *pData->pQuadVertexArray;
-
-		mainShader->SetVec4("u_Colour", tintColour);
-
-		const auto transform = kmaths::Translate(position)
-			* kmaths::Scale2D(scale);
-		mainShader->SetMat4x4("u_TransformMat", transform);
-
-		texture.Bind();
-		quadVA.Bind();
-		RenderCommand::DrawIndexed(quadVA);
-
-		texture.Unbind();*/
 	}
 
 	void Renderer2D::DrawRotatedTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)

@@ -9,6 +9,20 @@
 
 namespace kmaths
 {
+	template<typename T, unsigned short Rows, unsigned short Columns>
+	USE_RESULT Matrix<T, Rows, Columns> To_Matrix(const T(&arr)[(Rows * Columns)]) noexcept(std::is_copy_assignable_v<T> && std::is_copy_constructible_v<T>)
+	{
+		constexpr auto size = Rows * Columns;
+
+		Matrix<T, Rows, Columns> m;
+
+		auto ptr = m.GetPointerToData();
+		for (auto i = 0; i < size; ++i)
+			ptr[i] = arr[i];
+		return m;
+	}
+
+
 	enum class ZAxisDirection : uint8_t
 	{
 		LEFT_HAND,
@@ -79,12 +93,12 @@ namespace kmaths
 
 	// Rotate transform in degrees
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T angle, const Vector3<T>& v) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T degrees, const Vector3<T>& axes) noexcept
 	{
-		const T cosA = std::cos(kmaths::ToRadians(angle));
-		const T sinA = std::sin(kmaths::ToRadians(angle));
+		const T cosA = std::cos(kmaths::ToRadians(degrees));
+		const T sinA = std::sin(kmaths::ToRadians(degrees));
 
-		Vector3<T> axis = v.Normalize();
+		Vector3<T> axis = axes.Normalize();
 		Vector3<T> temp = axis * (CAST(T, 1) - cosA);
 
 		TransformMatrix<T> rotate;
@@ -111,17 +125,17 @@ namespace kmaths
 
 	// Rotate transform in degrees
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate(T angle, const Vector3<T>& v) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate(T degrees, const Vector3<T>& axes) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), angle, v);
+		const auto rotate = Rotate(GetTransformIdentity<T>(), degrees, axes);
 		return rotate;
 	}
 
 	// Rotate transform in degrees
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T angle) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T degrees) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), angle, { CAST(T, 0), CAST(T, 0), CAST(T, 1) });
+		const auto rotate = Rotate(GetTransformIdentity<T>(), degrees, { CAST(T, 0), CAST(T, 0), constants::One<T>() });
 		return rotate;
 	}
 
@@ -140,11 +154,12 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const Vector3<T>& v) noexcept
 	{
+		constexpr auto one = constants::One<T>();
 		const auto scale = {
 			{v[0], 0, 0, 0},
 			{0, v[1], 0, 0},
 			{0, 0, v[2], 0},
-			{0, 0, 0, CAST(T, 1) }
+			{0, 0, 0, one }
 		};
 		return scale;
 	}
@@ -152,11 +167,12 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
 	{
+		constexpr auto one = constants::One<T>();
 		const auto scale = TransformMatrix<T>{
 			{v[0], 0, 0, 0},
 			{0, v[1], 0, 0},
-			{0, 0, CAST(T, 1), 0},
-			{0, 0, 0, CAST(T, 1) }
+			{0, 0, one, 0 },
+			{0, 0, 0, one }
 		};
 		return scale;
 	}

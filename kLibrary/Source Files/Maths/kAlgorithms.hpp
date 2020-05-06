@@ -336,7 +336,7 @@ namespace kmaths
 	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
 	{
 		constexpr auto convertR2D = CAST(T, 360) / CAST(T, constants::TAU);
-		constexpr auto convertD2R = CAST(constants::AccuracyType, 1) / convertR2D;
+		constexpr auto convertD2R = constants::One<constants::AccuracyType>() / convertR2D;
 		return CAST(T, degrees * convertD2R);
 	}
 

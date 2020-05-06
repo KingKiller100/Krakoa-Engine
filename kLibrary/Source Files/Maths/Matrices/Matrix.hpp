@@ -405,7 +405,7 @@ namespace kmaths
 			return m;
 		}
 
-		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
+		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
@@ -413,6 +413,22 @@ namespace kmaths
 				for (auto col = 0u; col < Columns; ++col)
 					m.elems[row][col] = elems[row][col] * scalar;
 			return m;
+		}
+
+		template<typename U>
+		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
+		{
+			Matrix<T, Columns, 1> m;
+			Vector<Type, Rows> result;
+
+			for (auto col = 0; col < Columns; ++col)
+				m[col][0] = v[col];
+			
+			const auto mResult = *this * m;
+			for (auto row = 0; row < Rows; ++row)
+				result[row] = mResult[row][0];
+
+			return result;
 		}
 
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
@@ -425,13 +441,19 @@ namespace kmaths
 			return m;
 		}
 
+		template<typename U>
+		USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
+		{
+			const auto inverse = Inverse();
+			return inverse * v;
+		}
+
 		template<unsigned short C, unsigned short R = Columns>
 		constexpr Matrix<Type, Rows, C> operator*=(const Matrix<Type, R, C>& other) noexcept
 		{
 			*this = *this * other;
 			return *this;
 		}
-
 
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		constexpr Matrix& operator*=(const U obj)

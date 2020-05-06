@@ -95,14 +95,35 @@ namespace kTest::maths
 				VERIFY(identity2[r][c] == (r == c ? 1.0 : 0.0));
 			}
 		}
+
+		const Vector<float, 3> vec{ 10, 10, 10 };
+		const auto newVec = m0 * vec;
+		VERIFY(newVec.X() == 30.f);
+		VERIFY(newVec.Y() == 30.f);
+
+		const auto newVec2 = m14 / vec;
+		VERIFY(newVec2.X() == 0.f);
+		VERIFY(newVec2.Y() == -10.f);
+		VERIFY(newVec2.Z() == 10.f);
 		
 		// Currently constexpr supported functions for matrices
 
+		constexpr Vector<float, 3> v{ 10, 10, 10 };
 		constexpr auto m15 = Matrix<float, 3, 3>{
 			{1, 2, 3},
 			{3, 4, 6},
 			{7, 8, 9},
 		};
+
+		constexpr auto m2v = m15 * v;
+		VERIFY_COMPILE_TIME(m2v.X() == 60.f);
+		VERIFY_COMPILE_TIME(m2v.Y() == 130.f);
+		VERIFY_COMPILE_TIME(m2v.Z() == 240.f);
+
+		constexpr auto m2v2 = m15 / v;
+		VERIFY_COMPILE_TIME(m2v2.X() == -10.f);
+		VERIFY_COMPILE_TIME(m2v2.Y() == 10.f);
+		VERIFY_COMPILE_TIME(m2v2.Z() == 0.f);
 
 		constexpr auto mirror = m15.Mirror();
 		constexpr auto transpose = m15.Transpose();
@@ -118,7 +139,7 @@ namespace kTest::maths
 		constexpr auto powerOfTwo = m15.PowerOf(2);
 		// constexpr auto pointer = m15.GetPointerToData(); // Not supported til c++20
 
-		constexpr auto dummyMat = Matrix<double, 3, 3>(5);
+		constexpr auto dummyMat = Matrix<double, 3, 3>(1.0/128);
 		constexpr auto add = m15 + dummyMat;
 		constexpr auto multiple = m15 * dummyMat;
 		constexpr auto scalarDiv = m15 / 2;

@@ -4,6 +4,7 @@
 
 #include "../kAlgorithms.hpp"
 
+#include "Vector.hpp"
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
@@ -12,6 +13,15 @@
 
 namespace kmaths
 {
+	template<typename T, unsigned short N>
+	USE_RESULT Vector<T, N> To_Vector(const T* ptr) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		Vector<T, N> v;
+		for (auto i = 0; i < N; ++i)
+			v[i] = ptr[i];
+		return v;
+	}
+
 	template<typename T>
 	USE_RESULT constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{

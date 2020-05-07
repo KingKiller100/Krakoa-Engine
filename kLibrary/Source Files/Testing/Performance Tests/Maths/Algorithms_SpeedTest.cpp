@@ -63,7 +63,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::SquareTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Sqaure", "std::pow" };
+		const std::vector<std::string_view> participants = { "kmaths::Square", "std::pow" };
 		SetUpParticipants(participants);
 
 		for (auto i = 0; i < maxIter; ++i)
@@ -186,7 +186,11 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::AbsTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Abs", "std::fabsl" };
+		const std::vector<std::string_view> participants = { 
+			"kmaths::Abs<long double>", "std::fabsl", 
+			"kmaths::Abs<double>", "std::fabs", 
+			"kmaths::Abs<float>", "std::fabsf", 
+		};
 		SetUpParticipants(participants);
 
 		constexpr long double set[] = { -71, -1, 0, 1, 349 };
@@ -199,12 +203,32 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[0]);
-				const auto value = kmaths::Abs(num);
+				const auto value = kmaths::Abs<long double>(num);
 			}
 
 			{
 				START_TEST(participants[1]);
 				const auto value = std::fabsl(num);
+			}
+
+			{
+				START_TEST(participants[2]);
+				const auto value = kmaths::Abs<double>(num);
+			}
+
+			{
+				START_TEST(participants[3]);
+				const auto value = std::fabs(num);
+			}
+
+			{
+				START_TEST(participants[4]);
+				const auto value = kmaths::Abs<float>(num);
+			}
+
+			{
+				START_TEST(participants[5]);
+				const auto value = std::fabsf(num);
 			}
 		}
 	}

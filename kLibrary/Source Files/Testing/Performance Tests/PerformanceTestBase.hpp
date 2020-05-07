@@ -17,6 +17,12 @@ namespace kTest::performance
 		int count = 0;
 	};
 
+	struct Accolade
+	{
+		std::string name;
+		long long time;
+	};
+
 	class PerformanceTestBase
 	{
 	public:
@@ -36,7 +42,7 @@ namespace kTest::performance
 	private:
 		void Output() noexcept;
 		void AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept;
-		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const std::pair<std::string, long long>& fastestParticipant) noexcept;
+		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) noexcept;
 
 	protected:
 		std::string name;

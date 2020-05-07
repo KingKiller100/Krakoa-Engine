@@ -385,6 +385,7 @@ namespace krakoa::graphics
 		{
 			auto size = scale / 2;
 			kmaths::Vector2f texCoord;
+
 			switch (i) {
 			case 0: // bottom left
 			{
@@ -412,12 +413,14 @@ namespace krakoa::graphics
 				break;
 			}
 
-			auto transform = kmaths::Translate(position + size)
+			const auto vertexPosition = position + size;
+
+			auto transform = kmaths::Translate(vertexPosition)
 				* kmaths::Rotate2D(degreesOfRotation)
 				* kmaths::Scale2D(scale);
 			const auto worldPosition = transform * pData->quadVertexPosition[i];
 
-			bufferPtr->position = position + size;
+			bufferPtr->position = vertexPosition;
 			bufferPtr->colour = colour;
 			bufferPtr->texCoord = texCoord;
 			bufferPtr->texIdx = texIdx;

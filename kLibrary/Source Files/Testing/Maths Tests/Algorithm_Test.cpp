@@ -488,6 +488,14 @@ namespace kTest::maths
 			VERIFY(value == expectedVal);
 		}
 
+		{
+			constexpr auto power = -6.0;
+			constexpr auto num = 10.0;
+			constexpr auto value = PowerOf(num, power);
+			const auto expectedVal =  std::pow(num, power);
+			VERIFY(value == expectedVal);
+		}
+
 		return success;
 	}
 

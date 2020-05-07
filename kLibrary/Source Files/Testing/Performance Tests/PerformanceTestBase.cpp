@@ -5,6 +5,8 @@
 
 #include "../../Utility/Format/kFormatToString.hpp"
 
+#include <iostream>
+
 #ifdef TESTING_ENABLED
 namespace kTest::performance
 {
@@ -51,6 +53,9 @@ namespace kTest::performance
 		iter = participants.cbegin();
 		for (; iter != participants.cend(); ++iter)
 			AddSubTest(subTestName, *iter);
+
+		std::cout << "\n\t\tRunning sub-test: \"" << subTestName << "\"";
+
 	}
 
 	void PerformanceTestBase::AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept
@@ -65,6 +70,8 @@ namespace kTest::performance
 
 	void PerformanceTestBase::Output() noexcept
 	{
+		std::cout << "\nCalculating Results..." << "\n";
+
 		for (auto& data : results)
 		{
 			data.second.erase("");
@@ -72,7 +79,8 @@ namespace kTest::performance
 			const auto& subTestName = data.first;
 			auto& internalData = data.second;
 
-			std::pair<std::string, long long> fastestParticipant = { name, std::numeric_limits<long long>::max() };
+			Accolade fastest = { name, std::numeric_limits<long long>::max() };
+			Accolade slowest = { name, std::numeric_limits<long long>::min() };
 
 			for (const auto& res : profilerResults)
 			{
@@ -84,10 +92,16 @@ namespace kTest::performance
 				timePair.time += speed;
 				timePair.count++;
 
-				if (speed < fastestParticipant.second)
+				if (speed < fastest.time)
 				{
-					fastestParticipant.first = res.name;
-					fastestParticipant.second = speed;
+					fastest.name = res.name;
+					fastest.time = speed;
+				}
+
+				if (speed > slowest.time)
+				{
+					slowest.name = res.name;
+					slowest.time = speed;
 				}
 			}
 
@@ -116,22 +130,30 @@ namespace kTest::performance
 			const auto percentage = (CAST(long double, difference) / minTime) * 100;
 			const auto percentagef = CAST(float, percentage);
 
-			SendResult(subTestName, winner, percentagef, fastestParticipant);
+			SendResult(subTestName, winner, percentagef, fastest, slowest);
 		}
 	}
 
-	void PerformanceTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const std::pair<std::string, long long>& fastestParticipant) noexcept
+	void PerformanceTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) noexcept
 	{
 		using namespace klib;
 
-		const auto fastestName = fastestParticipant.first;
+		const auto fastestName = fastest.name;
+		const auto slowestName = slowest.name;
 
-		const auto output = klib::kFormat::ToString("%s: \n\t\"%s\" is the fastest by %.3f%%\n\tFastest Instance: \"%s\" Time: %dus (microseconds)\n\n", 
+		const auto output = klib::kFormat::ToString(R"(%s: 
+	\"%s\" is the fastest by %.3f%%
+	Fastest Instance: \"%s\" Time: %dus (microseconds)
+	Slowest Instance: \"%s\" Time: %dus (microseconds)
+
+)", 
 			subTestName.data(),
 			result.data(), 
 			percentageDifference,
 			fastestName.data(), 
-			fastestParticipant.second);
+			fastest.time,
+			slowestName.data(),
+			slowest.time);
 
 		PerformanceTestManager::Get().CollectResult(output);
 	}

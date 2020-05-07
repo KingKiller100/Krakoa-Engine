@@ -89,7 +89,9 @@ namespace kTest
 		if (success)
 		{
 			std::cout << std::endl;
-			Run(&performance::PerformanceTestManager::Get());
+			auto& test = performance::PerformanceTestManager::Get();
+			std::cout << "Now Testing: " << test.GetName() << " ";
+			test.Run();
 		}
 	}
 
@@ -100,16 +102,21 @@ namespace kTest
 
 	void TesterManager::Run(Tester* test)
 	{
-		std::cout << "Now running test:" << test->GetName() << "\n";
+		klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+
+		std::cout << "Now running: " << test->GetName() << "";
 
 		const auto result = test->Run();
+
+		const auto runtimeStr = klib::kFormat::ToString("| Runtime: %.fus (Microseconds)", runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
+		std::cout << " " << runtimeStr << "\n";
 
 		if (!result)
 			success = false;
 
 		const auto resultTest = result
-			? klib::kFormat::ToString("Success: Test Name: {0}\n\n", test->GetName()) // Success Case
-			: klib::kFormat::ToString("Failure: Test Name: {0}\n{1}", test->GetName(), test->GetFailureData()); // Fail Case
+			? klib::kFormat::ToString("Success: Test Name: {0} {1}\n\n", test->GetName(), runtimeStr) // Success Case
+			: klib::kFormat::ToString("Failure: Test Name: {0} (1}\n{2}", test->GetName(), runtimeStr, test->GetFailureData()); // Fail Case
 
 		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
 	}
@@ -122,14 +129,14 @@ namespace kTest
 		{
 			Run(test.get());
 		}
-		RunPerformanceTests();
 
-		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Mins>();
-		const auto mins = CAST(unsigned, finalTime);
-		const auto remainder = finalTime - mins;
-		const unsigned secs = CAST(unsigned, 60.0 * remainder);
+		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Secs>();
+		const auto secs = CAST(unsigned, finalTime);
+		const auto remainder = finalTime - secs;
+		const unsigned millisecs = CAST(unsigned, 1000.0 * remainder);
 
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}m  {1}s", mins, secs);
+
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}s  {1}ms", secs, millisecs);
 		klib::kFileSystem::OutputToFile(path.c_str(), finalTimeStr.c_str());
 
 		std::cout << "\n" << finalTimeStr << "\n";

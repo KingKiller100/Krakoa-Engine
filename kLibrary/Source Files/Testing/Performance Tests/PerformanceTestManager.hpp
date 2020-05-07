@@ -39,7 +39,7 @@ namespace kTest::performance
 	private:
 		std::unordered_set<PerformanceTestBase*> tests;
 		std::string results;
-		std::string directory;
+		std::string path;
 	};
 }
 #endif

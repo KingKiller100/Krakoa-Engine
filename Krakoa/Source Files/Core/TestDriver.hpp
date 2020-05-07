@@ -11,7 +11,8 @@ namespace tests
 		static void Initialize();
 		static void ShutDown();
 		static void AddTest(void* test);
-		static void RunTests();
+		static void RunAll();
+		static void RunPerformanceTests();
 		static void ClearAll();
 	};
 }

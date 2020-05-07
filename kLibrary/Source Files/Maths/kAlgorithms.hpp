@@ -271,9 +271,11 @@ namespace kmaths
 		else if (power == 1)
 			return base;
 
+		const auto isNegative = power < 0;
+
 		T value = base;
 
-		if (power < 0)
+		if (isNegative)
 		{
 			if _CONSTEXPR_IF(std::is_arithmetic_v<T> && !std::is_floating_point_v<T>)
 			{
@@ -281,16 +283,14 @@ namespace kmaths
 			}
 			else
 			{
-				base = constants::OneOver<T>(base);
-				value = base;
-				power = -power;
+				power = (~power + 1);
 			}
 		}
 
 		while (--power > 0)
-			value *= base;
+			value = value * base;
 
-		return value;
+		return isNegative ? constants::OneOver<T>(value) : value;
 #endif
 	}
 
@@ -784,8 +784,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Square(T x) noexcept
 	{
-		constexpr auto two = CAST(T, 2);
-		return PowerOf<T>(x, two);
+		return x * x;
 	}
 }
 

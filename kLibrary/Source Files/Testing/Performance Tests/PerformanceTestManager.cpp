@@ -25,15 +25,15 @@ namespace kTest::performance
 	void PerformanceTestManager::Initialize()
 	{
 		using namespace klib;
-		directory = kFileSystem::GetExeDirectory<char>() + "Speed Results\\";
-		const auto isMade = kFileSystem::CreateNewDirectory(directory.c_str());
+		path = kFileSystem::GetExeDirectory<char>() + "Speed Results\\";
+		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
 
-		if (!kFileSystem::CheckDirectoryExists(directory))
+		if (!kFileSystem::CheckDirectoryExists(path))
 		{
-			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
+			throw std::runtime_error("Test Results path could not be created/found. Please check why!");
 		}
 
-		std::filesystem::path startPoint(directory);
+		std::filesystem::path startPoint(path);
 		for (auto iter = std::filesystem::directory_iterator(startPoint);
 			iter != std::filesystem::directory_iterator();
 			++iter)
@@ -59,15 +59,25 @@ namespace kTest::performance
 	{
 		for (auto& test : tests)
 		{
+			std::cout << "\n";
 			RunTest(test);
 			OutputResult(test->GetName());
 		}
+
+		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
+		std::cin.get();
 	}
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
 	{
-		std::cout << "\tNow Testing: " << test->GetName() << "\n";
+		klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+
+		std::cout << "\tNow Testing: " << test->GetName() << " ";
+
 		test->Run();
+
+		std::cout << "| Runtime: " << runTimeTimer.GetLifeTime<klib::kTime::units::Millis>() << "ms (Milliseconds)\n";
+
 	}
 
 	void PerformanceTestManager::Add(PerformanceTestBase* test)
@@ -98,7 +108,7 @@ namespace kTest::performance
 	{
 		using namespace klib;
 		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
-		const auto fullPath = directory + filename;
+		const auto fullPath = path + filename;
 
 		kFileSystem::OutputToFile(fullPath, results);
 		results.clear();

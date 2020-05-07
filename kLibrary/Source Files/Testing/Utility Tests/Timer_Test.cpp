@@ -5,7 +5,6 @@
 #include "../../Utility/Timer/kTimer.hpp"
 #include "../../Utility/Format/kFormatToString.hpp"
 
-#include <iostream>
 #include <thread>
 
 #ifdef TESTING_ENABLED
@@ -42,10 +41,6 @@ namespace kTest::utility
 
 		const auto lifetime = testTime.GetLifeTime<klib::kTime::units::Micros>();
 		const auto lifetimeInSeconds = lifetime / 1000000;
-		std::cout << testTime.GetName() << " Total Test Time: " << lifetimeInSeconds << "s (Seconds)" << std::endl;
-		std::cout << testTime.GetName() << " Average Execution Time: " << lifetime / loops << "us (Microseconds)" << std::endl;
-
-		//std::cin.get();
 	}
 }
 #endif

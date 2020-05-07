@@ -11,7 +11,7 @@ namespace kTest::maths
 	using namespace kmaths;
 
 	MatricesTester::MatricesTester()
-		: Tester("Matrix Test Dynamic/2x2/3x3/4x4")
+		: Tester("Matrix MxN Test")
 	{	}
 
 	MatricesTester::~MatricesTester()

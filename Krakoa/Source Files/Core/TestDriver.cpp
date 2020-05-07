@@ -25,9 +25,15 @@ namespace tests
 		testMan.Add(static_cast<kTest::Tester*>(test));
 	}
 
-	void TestDriver::RunTests()
+	void TestDriver::RunAll()
 	{
 		testMan.RunAll();
+		RunPerformanceTests();
+	}
+
+	void TestDriver::RunPerformanceTests()
+	{
+		testMan.RunPerformanceTests();
 	}
 
 	void TestDriver::ClearAll()

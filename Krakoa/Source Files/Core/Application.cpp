@@ -104,8 +104,6 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		timeStep.Update();
-
 		const auto deltaTime = timeStep.GetDeltaTime();
 
 		RendererClear();

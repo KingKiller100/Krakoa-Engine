@@ -3,6 +3,8 @@
 
 #include "Logging/CoreLogger.hpp"
 
+#include "../Instrumentor.hpp"
+
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
@@ -10,8 +12,6 @@
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/Renderer2D.hpp"
 #include "../Rendering/ShaderLibrary.hpp"
-
-#include "../Instrumentor.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
 
@@ -104,11 +104,11 @@ namespace krakoa
 
 	void Application::Run()
 	{
-		KRK_PROFILE_FUNCTION();
-	
 		timeStep.Update();
 
 		const auto deltaTime = timeStep.GetDeltaTime();
+
+		RendererClear();
 
 		if (!isMinimized)
 		{
@@ -120,6 +120,19 @@ namespace krakoa
 		pImGuiLayer->EndDraw();
 
 		pWindow->OnUpdate();
+	}
+
+	void Application::RendererClear() noexcept
+	{
+		KRK_PROFILE_FUNCTION();
+
+#ifdef _DEBUG
+		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+#else
+		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
+#endif // DEBUG
+
+		krakoa::graphics::Renderer::Clear();
 	}
 
 	bool Application::IsRunning() const

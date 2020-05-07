@@ -179,16 +179,26 @@ namespace kmaths
 
 		const auto integer = CAST(T, CAST(ConversionType, value));
 
-		return integer > value ? integer - 1 : integer;
+		return integer > value ? integer - CAST(T, 1) : integer;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T Abs(const T x) noexcept
 	{
-		if (x >= 0)
+		if _CONSTEXPR_IF(std::is_unsigned_v<T>)
 			return x;
 		else
-			return -x;
+		{
+			if (x >= 0)
+				return x;
+			else
+			{
+				if _CONSTEXPR_IF(std::is_integral_v<T>)
+					return (~x + constants::One<T>());
+				else
+					return -x;
+			}
+		}
 	}
 
 	template<typename T>

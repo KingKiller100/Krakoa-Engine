@@ -31,7 +31,7 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 {
 	KRK_PROFILE_FUNCTION();
 	cameraController.OnUpdate(deltaTime);
-	//SendRendererCommands();
+	SendRendererCommands();
 }
 
 void Renderer2DLayer::OnRender()
@@ -54,18 +54,6 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 
 	{
-		KRK_PROFILE_SCOPE("Renderer colour clearing");
-
-#ifdef _DEBUG
-		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
-#else
-		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
-#endif // DEBUG
-
-		krakoa::graphics::Renderer::Clear();
-	}
-
-	{
 		KRK_PROFILE_SCOPE("Renderer coloured triangle");
 		//krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
 	}
@@ -83,10 +71,10 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		//krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
-		//krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f( 0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
-		//krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f( 0.f,  0.5f, -0.75f), { 0.2f, 0.2f });
-		//krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f( 0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f( 0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f( 0.f,  0.5f, -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f( 0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 		//krakoa::graphics::Renderer2D::DrawRotatedQuad(geometryColour, kmaths::Vector3f(-2.f, -.5f, 0.5f), 45.f, kmaths::Vector3f(0.25f));
 	}
 

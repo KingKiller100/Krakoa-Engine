@@ -11,10 +11,8 @@ namespace klib::type_trait
 	{}; 
 
 	template<>
-	struct Compile_Time_Test<true> // Has class member value
-	{
-		static constexpr bool value = true;
-	};
+	struct Compile_Time_Test<true> : std::true_type // Has class member value
+	{};
 	
 	template<bool Test>
 	constexpr bool Compile_Time_Test_V = Compile_Time_Test<Test>::value;

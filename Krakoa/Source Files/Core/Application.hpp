@@ -45,6 +45,8 @@ namespace krakoa
 		bool OnWindowClosed(events::WindowClosedEvent& e);
 		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
 
+		static void RendererClear() noexcept;
+
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;

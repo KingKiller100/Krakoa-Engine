@@ -60,7 +60,7 @@ namespace krakoa::graphics
 		std::array<std::shared_ptr<iTexture2D>, QuadBatchRendererLimits::MaxTextureSlots> textureSlots;
 		uint32_t textureSlotIdx = 1; // White texture index = 0
 
-		const kmaths::Matrix4x4f quadVertexPosition = {
+		const kmaths::Vector4f quadVertexPosition[4] = {
 			{-0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f,  0.5f, 0.f, 1.0f },
@@ -379,7 +379,7 @@ namespace krakoa::graphics
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float degreesOfRotation, const kmaths::Vector4f& colour, const float texIdx)
 	{
 		auto& bufferPtr = pData->quadVertexBufferPtr;
-		const auto loops = pData->quadVertexPosition.GetRows();
+		const auto loops = kmaths::SizeOfCArray(pData->quadVertexPosition);
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
@@ -417,7 +417,7 @@ namespace krakoa::graphics
 				* kmaths::Scale2D(scale);
 			const auto worldPosition = transform * pData->quadVertexPosition[i];
 
-			bufferPtr->position = worldPosition;
+			bufferPtr->position = position + size;
 			bufferPtr->colour = colour;
 			bufferPtr->texCoord = texCoord;
 			bufferPtr->texIdx = texIdx;

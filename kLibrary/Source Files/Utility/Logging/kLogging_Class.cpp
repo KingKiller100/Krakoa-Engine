@@ -157,7 +157,7 @@ namespace klib::kLogs
 
 	void Logging::SuspendFileLogging()
 	{
-		const auto pauseLog = "\n***********************************************************************\n";
+		const auto pauseLog = "\n************************************************************************\n";
 		AddToLogBuffer(pauseLog);
 		OutputToSubSystems(pauseLog, LLevel::NORM);
 		CloseLogFile();
@@ -222,9 +222,9 @@ namespace klib::kLogs
 	{
 		const auto endLogLine
 			= R"(
-***********************************************************************
+************************************************************************
                           Logging Concluded                            
-***********************************************************************
+************************************************************************
 )";
 		AddToLogBuffer(endLogLine);
 		CloseLogFile();

@@ -31,7 +31,7 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 {
 	KRK_PROFILE_FUNCTION();
 	cameraController.OnUpdate(deltaTime);
-	SendRendererCommands();
+	//SendRendererCommands();
 }
 
 void Renderer2DLayer::OnRender()
@@ -72,21 +72,21 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
-		for (auto y = 0; y < 5; ++y) {
+		/*for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector2f{ x * .5f, y * .5f };
 				krakoa::graphics::Renderer2D::DrawQuad(pWinTexture, miniSquarePos, kmaths::Vector2f(0.25f));
 			}
-		}
+		}*/
 	}
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f( 0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f( 0.f,  0.5f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f( 0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
+		//krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
+		//krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f( 0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
+		//krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f( 0.f,  0.5f, -0.75f), { 0.2f, 0.2f });
+		//krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f( 0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 		//krakoa::graphics::Renderer2D::DrawRotatedQuad(geometryColour, kmaths::Vector3f(-2.f, -.5f, 0.5f), 45.f, kmaths::Vector3f(0.25f));
 	}
 

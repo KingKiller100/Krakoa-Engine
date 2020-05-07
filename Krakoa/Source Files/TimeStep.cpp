@@ -8,13 +8,15 @@ namespace krakoa::time
 {
 	klib::kTime::HighAccuracyTimerf timer("Time Step Timer");
 
-	TimeStep::TimeStep()
+	constexpr auto thousandth = 1.f / 1000;
+
+	TimeStep::TimeStep() noexcept
 		: lifeTime(0.f), deltaTime(0.f),
 		targetIncrement(0.f),
 		isTimeIncrementFixed(false)
 	{}
 
-	TimeStep::TimeStep(const float targetTimeIncrement)
+	TimeStep::TimeStep(const float targetTimeIncrement) noexcept
 		: lifeTime(0.f), deltaTime(0.f),
 		targetIncrement(1.f / targetTimeIncrement),
 		isTimeIncrementFixed(true)
@@ -23,7 +25,7 @@ namespace krakoa::time
 	float TimeStep::GetLifeTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		return lifeTime;
+		return CalculateLifeTime();
 	}
 
 	float TimeStep::GetDeltaTime() const noexcept
@@ -36,20 +38,17 @@ namespace krakoa::time
 	{
 		KRK_PROFILE_FUNCTION();
 		deltaTime = CalculateDeltaTime();
-		lifeTime = CalculateLifeTime();
 	}
 
 	float TimeStep::CalculateLifeTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		constexpr auto thousandth = 1.f / 1000;
 		return timer.GetLifeTime<klib::kTime::units::Millis>() * thousandth;
 	}
 
 	float TimeStep::CalculateDeltaTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		constexpr auto thousandth = 1.f / 1000;
 		if (!isTimeIncrementFixed)
 			return timer.GetDeltaTime<klib::kTime::units::Millis>() * thousandth;
 		else

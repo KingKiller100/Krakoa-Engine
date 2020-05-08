@@ -1,18 +1,19 @@
 ﻿#pragma once
 
+#include "../Length_Type.hpp"
 #include "../kAlgorithms.hpp"
 #include "../Vectors/PredefinedVectors.hpp"
 
 namespace kmaths
 {
-	template<typename T, unsigned short Rows, unsigned short Columns>
+	template<typename T, Length_Type Rows, Length_Type Columns>
 	struct Matrix;
 
-	template<typename Type, unsigned short R, unsigned short C>
+	template<typename Type, Length_Type R, Length_Type C>
 	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept;
 
 	// Row Major Matrix
-	template<typename T, unsigned short Rows, unsigned short Columns>
+	template<typename T, Length_Type Rows, Length_Type Columns>
 	struct Matrix
 	{
 	public:
@@ -20,7 +21,11 @@ namespace kmaths
 		static_assert(Rows > 0 && Columns > 0, "Must have at least one row and one column to construct a matrix");
 
 		using Type = T;
-		using Indices = Vector<T, Columns>;
+		using Column_Type = Vector<T, Rows>;
+		using Row_Type = Vector<T, Columns>;
+		inline static constexpr Length_Type Length = (Rows * Columns);
+		inline static constexpr size_t Bytes = Length * sizeof(T);
+
 
 		constexpr Matrix() noexcept
 		{ }
@@ -91,7 +96,7 @@ namespace kmaths
 			return transposeMat;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const
 		{
 			if (IsZero() || !ValidColumns())
@@ -145,7 +150,7 @@ namespace kmaths
 		}
 
 		// Draws a mirror line down a square matrix through the identical row-column indices and swaps values
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Mirror() const noexcept
 		{
 			Matrix temp = *this;
@@ -163,7 +168,7 @@ namespace kmaths
 			return temp;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
@@ -181,7 +186,7 @@ namespace kmaths
 		}
 
 		// Rule of Sarrus Impl
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
@@ -221,7 +226,7 @@ namespace kmaths
 			return determinant;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() const
 		{
 			if (IsZero() || !ValidColumns())
@@ -243,7 +248,7 @@ namespace kmaths
 			return determinant;
 		}
 
-		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(unsigned short rowToSkip, unsigned short colToSkip) const
+		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(Length_Type rowToSkip, Length_Type colToSkip) const
 		{
 			constexpr auto newSize = Rows - 1;
 			if (rowToSkip > newSize || colToSkip > newSize)
@@ -271,7 +276,7 @@ namespace kmaths
 			return minorMatrix;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> PowerOf(unsigned power) const
 		{
 			if (power == 0)
@@ -297,8 +302,8 @@ namespace kmaths
 			return Rows == Columns;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C, unsigned short> Rank() const noexcept
+		template<Length_Type R = Rows, Length_Type C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Length_Type> Rank() const noexcept
 		{
 			if (IsIdentity())
 				return Rows;
@@ -309,7 +314,7 @@ namespace kmaths
 			return 0;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, bool> IsIdentity() const noexcept
 		{
 			for (auto row = 0; row < Rows; ++row)
@@ -319,7 +324,7 @@ namespace kmaths
 			return true;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			bool> IsIdentity() const noexcept
 		{
@@ -382,7 +387,7 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, unsigned short C, unsigned short R = Columns>
+		template<typename U, Length_Type C, Length_Type R = Columns>
 		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<U, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
@@ -390,15 +395,24 @@ namespace kmaths
 				for (auto col = 0u; col < C; ++col) {
 					for (auto index = 0u; index < R; ++index)
 					{
-						m[row][col] += CAST(Type, elems[row][index] * other[index][col]);
+						const Type left = elems[row][index];
+						const Type right = CAST(Type, other[index][col]);
+						const Type res = left * right;
+						m[row][col] += res;
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 					{
-						if _CONSTEXPR_IF(std::is_same_v<Type, double>)
+						constexpr auto epsilon = std::numeric_limits<Type>::epsilon() * 10;
+						auto& num = m[row][col];
+
+						if (num != 0 && (epsilon >= num && num >= -epsilon))
+							num = 0;
+
+						/*if _CONSTEXPR_IF(std::is_same_v<Type, double>)
 							m[row][col] = Round(m[row][col], 9);
 						else
-							m[row][col] = Round(m[row][col], 5);
+							m[row][col] = Round(m[row][col], 5);*/
 					}
 				}
 			}
@@ -418,15 +432,22 @@ namespace kmaths
 		template<typename U>
 		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
 		{
-			Matrix<T, Columns, 1> m;
-			Vector<Type, Rows> result;
+			Column_Type result;
 
-			for (auto col = 0; col < Columns; ++col)
-				m[col][0] = v[col];
-			
-			const auto mResult = *this * m;
-			for (auto row = 0; row < Rows; ++row)
-				result[row] = mResult[row][0];
+			for (auto row = 0; row < Rows; ++row) {
+				for (auto index = 0u; index < Rows; ++index) {
+					result[row] += elems[row][index] * v[index];
+				}
+
+				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+				{
+					constexpr auto epsilon = std::numeric_limits<Type>::epsilon() * 10;
+					auto& num = result[row];
+
+					if (epsilon >= num && num >= -epsilon)
+						num = 0;
+				}
+			}
 
 			return result;
 		}
@@ -444,11 +465,10 @@ namespace kmaths
 		template<typename U>
 		USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
 		{
-			const auto inverse = Inverse();
-			return inverse * v;
+			return Inverse() * v;
 		}
 
-		template<unsigned short C, unsigned short R = Columns>
+		template<Length_Type C, Length_Type R = Columns>
 		constexpr Matrix<Type, Rows, C> operator*=(const Matrix<Type, R, C>& other) noexcept
 		{
 			*this = *this * other;
@@ -506,23 +526,23 @@ namespace kmaths
 			return *this;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Mirror() const noexcept
 			= delete;
 
 		// Deleted version of functions (under certain conditions)
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Type> Getdeterminant() const noexcept
 			= delete;
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Inverse() const noexcept
 			= delete;
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> PowerOf(unsigned power)  const noexcept
 			= delete;
@@ -612,10 +632,10 @@ namespace kmaths
 	private:
 
 
-		Indices elems[Rows]{ {} };
+		Row_Type elems[Rows]{ {} };
 	};
 
-	template<typename Type, unsigned short R, unsigned short C>
+	template<typename Type, Length_Type R, Length_Type C>
 	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
 	{
 		Matrix<Type, R, C> identity;

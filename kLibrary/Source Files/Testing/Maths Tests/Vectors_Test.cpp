@@ -121,7 +121,7 @@ namespace kTest::maths
 		constexpr auto dist = lhs.Distance(rhs);
 		constexpr auto dotProduct = lhs.DotProduct(rhs);
 		VERIFY_COMPILE_TIME(dotProduct == 165);
-		constexpr auto dimensions = lhs.GetNumberOfDimensions();
+		constexpr auto dimensions = lhs.GetLength();
 		VERIFY_COMPILE_TIME(dimensions == 2);
 		constexpr auto reverseVector = lhs.ReverseVector();
 		VERIFY_COMPILE_TIME(reverseVector.X() == -10 && reverseVector.Y() == -5);

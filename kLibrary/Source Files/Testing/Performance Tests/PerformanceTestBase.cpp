@@ -142,9 +142,9 @@ namespace kTest::performance
 		const auto slowestName = slowest.name;
 
 		const auto output = klib::kFormat::ToString(R"(%s: 
-	\"%s\" is the fastest by %.3f%%
-	Fastest Instance: \"%s\" Time: %dus (microseconds)
-	Slowest Instance: \"%s\" Time: %dus (microseconds)
+	%s is the fastest on average by %.3f%%
+	Fastest Instance: %s Time: %dus (microseconds)
+	Slowest Instance: %s Time: %dus (microseconds)
 
 )", 
 			subTestName.data(),

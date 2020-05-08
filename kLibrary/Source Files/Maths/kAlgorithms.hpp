@@ -2,6 +2,7 @@
 
 #include "../HelperMacros.hpp"
 
+#include "Length_Type.hpp"
 #include "Constants.hpp"
 #include "Fraction.hpp"
 
@@ -50,7 +51,7 @@ namespace kmaths
 	}
 
 	template<typename List, typename T>
-	USE_RESULT constexpr long long BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
+	USE_RESULT constexpr Big_Int_Type BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 	{
 		if (lbIdx > ubIdx
 			|| value < list[0]
@@ -69,19 +70,19 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr long long BinarySearch(T* list, T&& value, size_t size) noexcept
+	USE_RESULT constexpr Big_Int_Type BinarySearch(T* list, T&& value, size_t size) noexcept
 	{
 		return BinarySearchImpl(list, value, 0, size - 1, size);
 	}
 
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
-	USE_RESULT constexpr long long BinarySearch(const T(&list)[N], T&& value) noexcept
+	USE_RESULT constexpr Big_Int_Type BinarySearch(const T(&list)[N], T&& value) noexcept
 	{
 		return BinarySearchImpl(list, value, 0, N - 1, N);
 	}
 
 	template<typename List, typename T>
-	USE_RESULT constexpr long long BinarySearchClosestImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
+	USE_RESULT constexpr Big_Int_Type BinarySearchClosestImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 	{
 		if (lbIdx > ubIdx
 			|| value < list[0]
@@ -107,13 +108,13 @@ namespace kmaths
 	}
 
 	template< typename T>
-	USE_RESULT constexpr long long BinarySearchClosest(const T* list, T&& value, size_t size)
+	USE_RESULT constexpr Big_Int_Type BinarySearchClosest(const T* list, T&& value, size_t size)
 	{
 		return BinarySearchClosestImpl(list, value, 0, size - 1, size);
 	};
 
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
-	USE_RESULT constexpr long long BinarySearchClosest(const T(&list)[N], T&& value)
+	USE_RESULT constexpr Big_Int_Type BinarySearchClosest(const T(&list)[N], T&& value)
 	{
 		return BinarySearchClosestImpl(list, value, 0, N - 1, N);
 	};
@@ -125,15 +126,39 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
+	{
+		unsigned int count = 1;
+		bool stop = CAST(T, 10) > x && x > CAST(T, -10);
+
+		while (!stop)
+		{
+			x /= CAST(T, 10);
+			count++;
+			stop = CAST(T, 10) > x && x > CAST(T, -10);
+		}
+
+		return count;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Exponential(T n, float x) noexcept
+	{
+		auto sum = constants::One<T>(); // initialize sum of series  
+
+		for (int i = n - 1; i > 0; --i)
+			sum = 1 + x * sum / i;
+
+		return sum;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr bool IsDecimal(T value) noexcept
 	{
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = constants::MinusOne<T>();
 
-		const auto isNegative = value < 0;
-		return isNegative
-			? (value > minusOne && value < 0)
-			: (value < one && value > 0);
+		return (value > minusOne && value < one);
 	}
 
 	template<typename T1, typename T2>
@@ -169,15 +194,13 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
-		using ConversionType = long long;
-
-		constexpr auto maxLL = std::numeric_limits<ConversionType>::max();
-		constexpr auto minLL = std::numeric_limits<ConversionType>::min();
+		constexpr auto maxLL = std::numeric_limits<Big_Int_Type>::max();
+		constexpr auto minLL = std::numeric_limits<Big_Int_Type>::min();
 
 		if (value > maxLL || value < minLL)
 			return value;
 
-		const auto integer = CAST(T, CAST(ConversionType, value));
+		const auto integer = CAST(T, CAST(Big_Int_Type, value));
 
 		return integer > value ? integer - CAST(T, 1) : integer;
 	}
@@ -260,37 +283,62 @@ namespace kmaths
 		return { 0, 1, isNegative };
 	}
 
+
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T HandleFloatingPointError(T x) noexcept
+	{
+		if (x == 0)
+			return 0;
+
+		const auto x0 = x;
+
+		constexpr auto epsilon = std::numeric_limits<T>::epsilon() * 10;
+
+		const auto isNegative = x < 0;
+
+		const auto integer = Floor<T>(x);
+		const auto isDecimals = IsDecimal<T>(x);
+
+		if (!isDecimals)
+		{
+			x = isNegative
+				? x + integer
+				: x - integer;
+		}
+
+		if (x != 0 && (epsilon >= x && x >= -epsilon))
+			return x0 - x;
+		else if (integer != x0)
+		{
+			if (std::is_same_v<T, float>)
+				return Round(x0, 5);
+			else
+				return Round(x0, 9);
+		}
+		else
+			return x0;
+	}
+
 	template<typename T>
-	USE_RESULT constexpr T PowerOfImpl(T base, long long power) noexcept
+	USE_RESULT constexpr T PowerOfImpl(T base, Big_Int_Type power) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, pow(base, power));
 #else
+		T temp = Convert<T>(0);
 		if (power == 0)
 			return constants::One<T>();
-		else if (power == 1)
-			return base;
+		temp = PowerOfImpl(base, power / 2);
 
-		const auto isNegative = power < 0;
-
-		T value = base;
-
-		if (isNegative)
+		if (power % 2 == 0)
+			return temp * temp;
+		else
 		{
-			if _CONSTEXPR_IF(std::is_arithmetic_v<T> && !std::is_floating_point_v<T>)
-			{
-				return 0;
-			}
-			else
-			{
-				power = (~power + 1);
-			}
+			if (power > 0)
+				return base * temp * temp;
 		}
 
-		while (--power > 0)
-			value = value * base;
-
-		return isNegative ? constants::OneOver<T>(value) : value;
+		return (temp * temp) / base;
 #endif
 	}
 
@@ -733,7 +781,7 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<!std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T PowerOf(T base, long long power) noexcept
+	USE_RESULT constexpr T PowerOf(T base, Big_Int_Type power) noexcept
 	{
 		const auto pow = PowerOfImpl<T>(base, power);
 		return pow;
@@ -755,8 +803,8 @@ namespace kmaths
 		if (number < 0)
 			return std::numeric_limits<T>::max();
 
-		long long currentPower = 0;
-		long long minorIncrement = 1;
+		Big_Int_Type currentPower = 0;
+		Big_Int_Type minorIncrement = 1;
 		const T base = number >= constants::One<T>() ? CAST(T, 10) : constants::ZeroPointOne<T>();
 
 		bool found = false;

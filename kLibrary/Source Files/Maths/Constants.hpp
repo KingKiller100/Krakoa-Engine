@@ -57,6 +57,18 @@ namespace kmaths::constants
 	}
 
 	template<class T>
+	USE_RESULT constexpr T Two() noexcept
+	{
+		return T(2);
+	}
+
+	template<class T>
+	USE_RESULT constexpr T Two(T&&) noexcept
+	{
+		return Two<T>();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T ZeroPointOne() noexcept
 	{
 		return T(0.1);

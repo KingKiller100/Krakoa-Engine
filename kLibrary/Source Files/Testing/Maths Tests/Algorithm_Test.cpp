@@ -24,6 +24,7 @@ namespace kTest::maths
 
 		VERIFY_MULTI(ConstantsTest);
 		VERIFY_MULTI(ConversionTest);
+		VERIFY_MULTI(CountDigitsTest);
 		VERIFY_MULTI(SignTest);
 		VERIFY_MULTI(AbsTest);
 		VERIFY_MULTI(SwapTest);
@@ -78,7 +79,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto mat = constants::XOverY<Matrix3x3s>(10, 5);
+			const auto mat = constants::XOverY<Matrix3x3s>(10, 5);
 			for (auto row = 0u; row < mat.GetRows(); ++row)
 				for (auto col = 0u; col < mat.GetColumns(); ++col)
 					VERIFY(mat[row][col] == 2);
@@ -130,6 +131,77 @@ namespace kTest::maths
 		VERIFY(doubleToVec.Y() == 5.0);
 		VERIFY(doubleToVec.Z() == 5.0);
 		VERIFY(doubleToVec.W() == 5.0);
+
+		return success;
+	}
+
+	bool AlgorithmsTester::CountDigitsTest()
+	{
+		{
+			constexpr auto num = 1;
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 1);
+		}
+
+		{
+			constexpr auto num = 10;
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 2);
+		}
+
+		{
+			constexpr auto num = 100;
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 3);
+		}
+
+		{
+			constexpr auto num = -100;
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 3);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<int>::max();
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 10);
+		}
+
+		{
+			constexpr auto num = 10.4906;
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 2);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<long long>::max();
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 19);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<float>::max();
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 39);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<float>::min();
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 1);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<double>::max();
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 309);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<double>::min();
+			constexpr auto digits = CountIntegerDigits(num);
+			VERIFY_COMPILE_TIME(digits == 1);
+		}
 
 		return success;
 	}
@@ -959,6 +1031,14 @@ namespace kTest::maths
 			constexpr auto base = 5.0;
 			const auto result = PowerOf(base, decimal);
 			constexpr auto expected = 55.901699437494742l;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto decimal = 2;
+			constexpr auto base = Vector2f(5);
+			const auto result = PowerOf(base, decimal);
+			constexpr auto expected = Vector2f(25);
 			VERIFY(result == expected);
 		}
 

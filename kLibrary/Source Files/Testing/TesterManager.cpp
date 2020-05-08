@@ -116,7 +116,7 @@ namespace kTest
 
 		const auto resultTest = result
 			? klib::kFormat::ToString("Success: Test Name: {0} {1}\n\n", test->GetName(), runtimeStr) // Success Case
-			: klib::kFormat::ToString("Failure: Test Name: {0} (1}\n{2}", test->GetName(), runtimeStr, test->GetFailureData()); // Fail Case
+			: klib::kFormat::ToString("Failure: Test Name: {0} {1}\n{2}", test->GetName(), runtimeStr, test->GetFailureData()); // Fail Case
 
 		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
 	}

@@ -223,12 +223,12 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[4]);
-				const auto value = kmaths::Abs<float>(num);
+				const auto value = kmaths::Abs<float>(CAST(float, num));
 			}
 
 			{
 				START_TEST(participants[5]);
-				const auto value = std::fabsf(num);
+				const auto value = std::fabsf(CAST(float, num));
 			}
 		}
 	}

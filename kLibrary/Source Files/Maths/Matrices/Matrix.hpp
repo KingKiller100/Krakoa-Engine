@@ -110,7 +110,7 @@ namespace kmaths
 
 			if _CONSTEXPR_IF(Rows == 2)
 			{
-				std::array<Vector<2, Type>, 2> copy;
+				Vector<2, Type> copy[2];
 				if (determinant != 0.f)
 				{
 					copy[0][0] = elems[1][1] / CAST(Type, determinant);
@@ -118,7 +118,7 @@ namespace kmaths
 					copy[1][0] = -elems[1][0] / CAST(Type, determinant);
 					copy[1][1] = elems[0][0] / CAST(Type, determinant);
 				}
-				inverse = Matrix(copy);
+				inverse = { copy[0], copy[1] };
 			}
 			else if _CONSTEXPR_IF(Rows > 2)
 			{
@@ -143,7 +143,10 @@ namespace kmaths
 			}
 			else
 			{
-				return Matrix(CAST(Type, 1) / lhs[0][0]);
+				if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+					return Matrix(constants::OneOver<Type>(elems[0][0]));
+				else
+					return Matrix();
 			}
 
 			return inverse;
@@ -398,17 +401,14 @@ namespace kmaths
 						const Type left = elems[row][index];
 						const Type right = CAST(Type, other[index][col]);
 						const Type res = left * right;
+
 						m[row][col] += res;
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+						m[row][col] = HandleFloatingPointError<Type>(m[row][col]);
+
 					{
-						constexpr auto epsilon = std::numeric_limits<Type>::epsilon() * 10;
-						auto& num = m[row][col];
-
-						if (num != 0 && (epsilon >= num && num >= -epsilon))
-							num = 0;
-
 						/*if _CONSTEXPR_IF(std::is_same_v<Type, double>)
 							m[row][col] = Round(m[row][col], 9);
 						else
@@ -435,18 +435,14 @@ namespace kmaths
 			Column_Type result;
 
 			for (auto row = 0; row < Rows; ++row) {
-				for (auto index = 0u; index < Rows; ++index) {
-					result[row] += elems[row][index] * v[index];
+				for (auto col = 0u; col < Columns; ++col) {
+					const auto left = elems[row][col];
+					const auto right = v[col];
+					result[row] += left * right;
 				}
 
 				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-				{
-					constexpr auto epsilon = std::numeric_limits<Type>::epsilon() * 10;
-					auto& num = result[row];
-
-					if (epsilon >= num && num >= -epsilon)
-						num = 0;
-				}
+					result[row] = HandleFloatingPointError<Type>(result[row]);
 			}
 
 			return result;
@@ -609,6 +605,7 @@ namespace kmaths
 
 			return rhs;
 		}*/
+
 
 		USE_RESULT constexpr bool ValidColumns() const noexcept
 		{

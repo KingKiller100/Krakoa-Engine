@@ -8,7 +8,6 @@
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	using namespace kmaths;
 
 	MatricesTester::MatricesTester()
 		: Tester("Matrix MxN Test")
@@ -22,6 +21,7 @@ namespace kTest::maths
 		VERIFY(DynamicMatrixTest() == true);
 	}
 
+	using namespace kmaths;
 	bool MatricesTester::DynamicMatrixTest()
 	{
 		constexpr auto m0 = Matrix<float, 2, 3>(1);
@@ -65,7 +65,7 @@ namespace kTest::maths
 				VERIFY(transposedM9[col][row] == m12[row][col]);
 
 		{
-			constexpr auto m13 = IdentityMatrix<float, 4, 4>();
+			constexpr auto m13 = IdentityMatrix<double, 4, 4>();
 			for (auto r = 0u; r < m13.GetRows(); ++r)
 				for (auto c = 0u; c < m13.GetColumns(); ++c)
 					VERIFY(m13[r][c] == (r == c ? 1 : 0));
@@ -74,12 +74,12 @@ namespace kTest::maths
 		}
 
 		const auto minorMatrix = m12.CreateMinorMatrix(0, 0);
-		auto m14 = Matrix<double, 3, 3>();
+		auto m14 = Matrix<float, 3, 3>();
 
 		auto count = 0;
 		for (auto r = 0u; r < m14.GetRows(); ++r)
 			for (auto c = 0u; c < m14.GetColumns(); ++c)
-				m14[r][c] = (c == 0 && r == 0) ? 10.0 : ++count;
+				m14[r][c] = (c == 0 && r == 0) ? 10.0f : ++count;
 		VERIFY(!m14.IsIdentity());
 
 		constexpr auto size = m14.GetSize();
@@ -105,7 +105,9 @@ namespace kTest::maths
 		VERIFY(newVec2.X() == 0.f);
 		VERIFY(newVec2.Y() == -10.f);
 		VERIFY(newVec2.Z() == 10.f);
-		
+
+
+
 		// Currently constexpr supported functions for matrices
 
 		constexpr Vector<float, 3> v{ 10, 10, 10 };
@@ -116,14 +118,14 @@ namespace kTest::maths
 		};
 
 		constexpr auto m2v = m15 * v;
-		VERIFY_COMPILE_TIME(m2v.X() == 60.f);
-		VERIFY_COMPILE_TIME(m2v.Y() == 130.f);
-		VERIFY_COMPILE_TIME(m2v.Z() == 240.f);
+		VERIFY(m2v.X() == 60.f);
+		VERIFY(m2v.Y() == 130.f);
+		VERIFY(m2v.Z() == 240.f);
 
 		constexpr auto m2v2 = m15 / v;
-		VERIFY_COMPILE_TIME(m2v2.X() == -10.f);
-		VERIFY_COMPILE_TIME(m2v2.Y() == 10.f);
-		VERIFY_COMPILE_TIME(m2v2.Z() == 0.f);
+		VERIFY(m2v2.X() == -10.f);
+		VERIFY(m2v2.Y() == 10.f);
+		VERIFY(m2v2.Z() == 0.f);
 
 		constexpr auto mirror = m15.Mirror();
 		constexpr auto transpose = m15.Transpose();

@@ -16,6 +16,7 @@ namespace kTest::maths
 
 		bool ConstantsTest();
 		bool ConversionTest();
+		bool CountDigitsTest();
 		bool SignTest();
 		bool AbsTest();
 		bool MinMaxTest();

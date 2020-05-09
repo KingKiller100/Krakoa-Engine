@@ -743,7 +743,7 @@ namespace kmaths
 #endif
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T PowerOf(T base, T power, const bool simplified = false) noexcept
+	USE_RESULT constexpr T PowerOf(T base, T power, const bool simplified = true) noexcept
 	{
 		const auto fraction = RealToFraction(power, 7, simplified);
 		const auto numerator = fraction.numerator;

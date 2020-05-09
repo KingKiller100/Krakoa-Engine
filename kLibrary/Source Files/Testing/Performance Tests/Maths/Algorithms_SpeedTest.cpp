@@ -20,7 +20,8 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::Test()
 	{
-		PowerOfTest();
+		PowerOfFractionsTest();
+		PowerOfIntegersTest();
 		SquareTest();
 		SqrtTest();
 		FloorTest();
@@ -31,9 +32,9 @@ namespace kTest::performance::maths
 
 	constexpr auto maxIter = int(2e4);
 
-	void AlgorithmsSpeedTest::PowerOfTest()
+	void AlgorithmsSpeedTest::PowerOfFractionsTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::PowerOf", "std::pow" };
+		const std::vector<std::string_view> participants = { "kmaths::PowerOf<double>", "std::pow<double>" };
 		SetUpParticipants(participants);
 
 		constexpr double set[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -47,7 +48,37 @@ namespace kTest::performance::maths
 			const auto number = set[idx];
 
 			if (!(i % valueBeforeIteration))
-				power += 1;
+				power += 1.35;
+
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::PowerOf(number, power);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::pow(number, power);
+			}
+		}
+	}
+
+	void AlgorithmsSpeedTest::PowerOfIntegersTest()
+	{
+		const std::vector<std::string_view> participants = { "kmaths::PowerOf<int>", "std::pow<int>" };
+		SetUpParticipants(participants);
+
+		constexpr int set[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		constexpr auto size = kmaths::SizeOfCArray(set);
+		constexpr int valueBeforeIteration = 1000;
+
+		kmaths::Big_Int_Type power = 0;
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			const auto idx = kmaths::Modulus<int>(i, size);
+			const auto number = set[idx];
+
+			if (!(i % valueBeforeIteration))
+				power++;
 
 			{
 				START_TEST(participants[0]);

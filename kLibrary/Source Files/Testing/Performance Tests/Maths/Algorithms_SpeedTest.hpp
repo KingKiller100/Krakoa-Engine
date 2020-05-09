@@ -15,7 +15,8 @@ namespace kTest::performance::maths
 	private:
 		void Test() override;
 
-		void PowerOfTest();
+		void PowerOfFractionsTest();
+		void PowerOfIntegersTest();
 		void SquareTest();
 		void SignTest();
 		void AbsTest();

@@ -225,7 +225,7 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr Fraction RealToFraction(T x, const size_t dpAccuracy = 10) noexcept
+	USE_RESULT constexpr Fraction RealToFraction(T x, const size_t dpAccuracy = 10, const bool simplified = true) noexcept
 	{
 		constexpr auto maxIterations = int(1e6);
 		const auto error = PowerOfImpl(constants::ZeroPointOne<T>(), dpAccuracy);
@@ -280,7 +280,7 @@ namespace kmaths
 			}
 		} while (iter++ < maxIterations); // Binary search towards fraction
 
-		return { 0, 1, isNegative };
+		return { 0, 1, isNegative, simplified };
 	}
 
 

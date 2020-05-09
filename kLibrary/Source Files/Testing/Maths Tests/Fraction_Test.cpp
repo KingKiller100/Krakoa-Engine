@@ -30,22 +30,6 @@ namespace kTest::maths
 		VERIFY_MULTI_END();
 	}
 
-	double FractionTester::RoundTo4(double x)
-	{
-		const auto isNegative = x < 0;
-		if (isNegative)
-			x = -x;
-
-		const auto accuracy = 1e3;
-		const auto dpShifts = 1e-4 * 5;
-
-		const auto valuePlusDpsByAcc = (x + dpShifts) * accuracy;
-		const auto accuracyInverse = 1.0 / accuracy;
-		const auto significantFigures = int(valuePlusDpsByAcc);
-		const auto roundedValue = significantFigures * accuracyInverse;
-		return isNegative ? -roundedValue : roundedValue;
-	}
-
 	bool FractionTester::AddTest()
 	{
 		{
@@ -56,16 +40,24 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.numerator == 10);
 			VERIFY_COMPILE_TIME(res.denominator == 1);
 			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		{
 			constexpr Fraction f1 = { 0, 1, false };
 			constexpr Fraction f2 = { 10, 5, true };
-			auto res = f1 + f2;
+			constexpr auto res = f1 + f2;
 
-			VERIFY(res.numerator == 2);
-			VERIFY(res.denominator == 1);
-			VERIFY(res.isNegative == false);
+			VERIFY_COMPILE_TIME(res.numerator == 2);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		{
@@ -76,6 +68,10 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.numerator == 1);
 			VERIFY_COMPILE_TIME(res.denominator == 2);
 			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		{
@@ -86,6 +82,10 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.numerator == 11);
 			VERIFY_COMPILE_TIME(res.denominator == 6);
 			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		{
@@ -96,6 +96,24 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.numerator == 10);
 			VERIFY_COMPILE_TIME(res.denominator == 3);
 			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 120, 45, true };
+			constexpr Fraction f2 = { 180, 270, false };
+			constexpr auto res = f1 + f2;
+
+			VERIFY(res.numerator == 2);
+			VERIFY(res.denominator == 1);
+			VERIFY(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		return success;
@@ -103,6 +121,90 @@ namespace kTest::maths
 
 	bool FractionTester::SubractTest()
 	{
+		{
+			constexpr Fraction f1 = { 0, 1, false };
+			constexpr Fraction f2 = { 10, 1, false };
+			constexpr auto res = f1 - f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 10);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 0, 1, false };
+			constexpr Fraction f2 = { 10, 5, true };
+			constexpr auto res = f1 - f2;
+
+			VERIFY(res.numerator == 2);
+			VERIFY(res.denominator == 1);
+			VERIFY(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 0, 1, false };
+			constexpr Fraction f2 = { 10, 20, false };
+			constexpr auto res = f1 - f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 1);
+			VERIFY_COMPILE_TIME(res.denominator == 2);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 12, 9, false };
+			constexpr Fraction f2 = { 10, 20, false };
+			constexpr auto res = f1 - f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 5);
+			VERIFY_COMPILE_TIME(res.denominator == 6);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 120, 45, false };
+			constexpr Fraction f2 = { 180, 270, false };
+			constexpr auto res = f1 - f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 2);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 120, 45, true };
+			constexpr Fraction f2 = { 180, 270, false };
+			constexpr auto res = f1 - f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 10);
+			VERIFY_COMPILE_TIME(res.denominator == 3);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
 		return success;
 	}
 
@@ -189,5 +291,21 @@ namespace kTest::maths
 		return success;
 	}
 
+
+	double FractionTester::RoundTo4(double x)
+	{
+		const auto isNegative = x < 0;
+		if (isNegative)
+			x = -x;
+
+		const auto accuracy = 1e3;
+		const auto dpShifts = 1e-4 * 5;
+
+		const auto valuePlusDpsByAcc = (x + dpShifts) * accuracy;
+		const auto accuracyInverse = 1.0 / accuracy;
+		const auto significantFigures = int(valuePlusDpsByAcc);
+		const auto roundedValue = significantFigures * accuracyInverse;
+		return isNegative ? -roundedValue : roundedValue;
+	}
 }
 #endif

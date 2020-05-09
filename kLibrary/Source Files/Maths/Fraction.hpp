@@ -15,10 +15,11 @@ namespace kmaths
 		using Numerator_Value_Type = size_t;
 		using Denominator_Value_Type = size_t;
 
-		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const Sign_Value_Type isNegative = false) noexcept
-			: numerator(numerator), denominator(denominator), isNegative(isNegative)
+		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const Sign_Value_Type isNegative = false, const bool simplified = true) noexcept
+			: numerator(numerator), denominator(denominator), isNegative(isNegative), alwaysSimplify(simplified)
 		{
-			Simplify();
+			if (alwaysSimplify)
+				Simplify();
 		}
 
 		~Fraction() noexcept
@@ -48,37 +49,6 @@ namespace kmaths
 			denominator = CAST(Numerator_Value_Type, oneOverLCF * denominator);
 		}
 
-		// Operators
-		USE_RESULT constexpr Fraction operator+(const Fraction& other) const noexcept
-		{
-			const auto den = denominator * other.denominator;
-
-			const auto num = numerator * other.denominator;
-			const auto oNum = other.numerator * denominator;
-
-			const auto sameSign = (!isNegative && !other.isNegative)
-				|| (isNegative && other.isNegative);
-
-			if (sameSign)
-			{
-				const auto n_Add_oN = num + oNum;
-				Fraction f(n_Add_oN, den, isNegative);
-				f.Simplify();
-				return f;
-			}
-			else
-			{
-				const auto big = num > oNum ? num : oNum;
-				const auto small = num < oNum ? num : oNum;
-				const auto newSign = big == num ? isNegative : other.isNegative;
-				const auto n = big - small;
-				Fraction f(n, den, newSign);
-				f.Simplify();
-				return f;
-			}
-		}
-
-	private:
 		USE_RESULT constexpr float LargestCommonFactor() const noexcept
 		{
 			float largestFactor = 1;
@@ -101,11 +71,153 @@ namespace kmaths
 			return largestFactor;
 		}
 
+
+		// Operators
+
+		// x Operators
+		// With Fractions
+		USE_RESULT constexpr Fraction operator+(const Fraction& other) const noexcept
+		{
+			const auto den = denominator * other.denominator;
+
+			const auto num = numerator * other.denominator;
+			const auto oNum = other.numerator * denominator;
+
+			const auto sameSign = (!isNegative && !other.isNegative)
+				|| (isNegative && other.isNegative);
+
+			Fraction f;
+			if (sameSign)
+			{
+				const auto n_Add_oN = num + oNum;
+				f = Fraction(n_Add_oN, den, isNegative, alwaysSimplify);
+			}
+			else
+			{
+				const auto big = num > oNum ? num : oNum;
+				const auto small = num < oNum ? num : oNum;
+				const auto sign = big == num ? isNegative : other.isNegative;
+				const auto n = big - small;
+				f = Fraction(n, den, sign, alwaysSimplify);
+			}
+
+			return f;
+		}
+
+		USE_RESULT constexpr Fraction operator-(const Fraction& other) const noexcept
+		{
+			const auto f = Fraction(other.numerator, other.denominator, !other.isNegative);
+			return (*this + f);
+		}
+
+		USE_RESULT constexpr Fraction operator*(const Fraction& other) const noexcept
+		{
+			const auto num = numerator * other.numerator;
+			const auto den = denominator * other.denominator;
+			const auto sign = isNegative ^ other.isNegative;
+
+			return Fraction(num, den, sign, alwaysSimplify);
+		}
+
+		USE_RESULT constexpr Fraction operator/(const Fraction& other) const noexcept
+		{
+			const auto f = Fraction(other.denominator, other.numerator, other.isNegative);
+
+			return (*this * f);
+		}
+
+		// With Real
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		USE_RESULT constexpr Fraction operator+(const T real) const noexcept
+		{
+			const auto f = Fraction(real, 1, real < 0);
+			return (*this + f);
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		USE_RESULT constexpr Fraction operator-(const T real) const noexcept
+		{
+			const auto f = Fraction(real, 1, real < 0);
+			return (*this - f);
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		USE_RESULT constexpr Fraction operator*(const T real) const noexcept
+		{
+			const auto num = numerator * real;
+			const auto sign = isNegative ^ (real < 0);
+
+			return Fraction(num, denominator, sign, alwaysSimplify);
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		USE_RESULT constexpr Fraction operator/(const T real) const noexcept
+		{
+			const auto den = denominator * real;
+			const auto sign = isNegative ^ (real < 0);
+
+			return Fraction(numerator, den, sign, alwaysSimplify);
+		}
+
+		// x= Operators With Fractions
+		constexpr Fraction& operator+=(const Fraction& other) noexcept
+		{
+			*this = *this + other;
+			return *this;
+		}
+
+		constexpr Fraction& operator-=(const Fraction& other) noexcept
+		{
+			*this = *this - other;
+			return *this;
+		}
+
+		constexpr Fraction& operator*=(const Fraction& other) noexcept
+		{
+			*this = *this * other;
+			return *this;
+		}
+
+		constexpr Fraction& operator/=(const Fraction& other) noexcept
+		{
+			*this = *this / other;
+			return *this;
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		constexpr Fraction& operator+=(const T real) noexcept
+		{
+			*this = *this + real;
+			return *this;
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		constexpr Fraction& operator-=(const T real) noexcept
+		{
+			*this = *this - real;
+			return *this;
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		constexpr Fraction& operator*=(const T real) noexcept
+		{
+			*this = *this * real;
+			return *this;
+		}
+
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		constexpr Fraction& operator/=(const T real) noexcept
+		{
+			*this = *this / real;
+			return *this;
+		}
+
 	public:
 		Numerator_Value_Type numerator;
 		Denominator_Value_Type denominator;
 
 		Sign_Value_Type isNegative;
+		bool alwaysSimplify;
 	};
 }
 

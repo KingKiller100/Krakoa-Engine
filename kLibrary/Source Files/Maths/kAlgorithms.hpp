@@ -175,7 +175,7 @@ namespace kmaths
 
 	// Sign///////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT constexpr int8_t Sign_Impl(const T& x, std::false_type) noexcept
+	USE_RESULT constexpr uint8_t Sign_Impl(const T& x, std::false_type) noexcept
 	{
 		return (T(0) < x);
 	}
@@ -185,7 +185,7 @@ namespace kmaths
 		return (T(0) < x) - (x < T(0));
 	}
 	template<typename T>
-	USE_RESULT constexpr int8_t Sign(const T& x) noexcept
+	USE_RESULT constexpr decltype(auto) Sign(const T& x) noexcept
 	{
 		return Sign_Impl(x, std::is_signed<T>());
 	}
@@ -217,7 +217,7 @@ namespace kmaths
 			else
 			{
 				if _CONSTEXPR_IF(std::is_integral_v<T>)
-					return (~x + constants::One<T>());
+					return (~x + CAST(T, 1));
 				else
 					return -x;
 			}
@@ -233,8 +233,6 @@ namespace kmaths
 
 		const auto isNegative = x < 0;
 		if (isNegative) x = -x;
-		if (Floor(x) == x) // if no decimals, just make x the numerator 
-			return { Fraction::Numerator_Value_Type(x), 1, isNegative, false };
 
 		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_DP_Precision<T>));
 
@@ -723,15 +721,12 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
 	{
-		const auto fraction = RealToFraction(power);
-		const auto numerator = fraction.numerator;
-		const auto denominator = fraction.denominator;
+		const auto fraction = RealToFraction<T>(power);
 
-		if (denominator == 0)
-			return 0;
-
-		const auto pow = fraction.isNegative ? constants::OneOver<T>(PowerOfImpl<T>(base, numerator)) : PowerOfImpl<T>(base, numerator);
-		const auto powRoot = RootImpl<T>(pow, denominator);
+		const auto pow = fraction.isNegative 
+			? constants::OneOver<T>(PowerOfImpl<T>(base, fraction.numerator)) 
+			: PowerOfImpl<T>(base, fraction.numerator);
+		const auto powRoot = RootImpl<T>(pow, fraction.denominator);
 		return powRoot;
 	}
 

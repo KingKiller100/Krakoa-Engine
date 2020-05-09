@@ -1167,7 +1167,7 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto num = -1;
-			const auto result = Abs(num);
+			constexpr auto result = Abs(num);
 			VERIFY_COMPILE_TIME(result == 1);
 		}
 
@@ -1181,6 +1181,12 @@ namespace kTest::maths
 			constexpr auto num = 0;
 			const auto result = Abs(num);
 			VERIFY_COMPILE_TIME(result == 0);
+		}
+
+		{
+			constexpr auto num = 1;
+			const auto result = Abs(num);
+			VERIFY_COMPILE_TIME(result == 1);
 		}
 
 		{

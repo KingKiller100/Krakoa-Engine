@@ -10,7 +10,7 @@
 namespace kmaths
 {
 	template<typename T, unsigned short Rows, unsigned short Columns>
-	USE_RESULT Matrix<T, Rows, Columns> To_Matrix(const T(&arr)[(Rows * Columns)]) noexcept(std::is_copy_assignable_v<T> && std::is_copy_constructible_v<T>)
+	USE_RESULT Matrix<T, Rows, Columns> To_Matrix(const T(&arr)[(Rows * Columns)]) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
 	{
 		constexpr auto size = Rows * Columns;
 
@@ -95,8 +95,10 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T degrees, const Vector3<T>& axes) noexcept
 	{
-		const T cosA = std::cos(kmaths::ToRadians(degrees));
-		const T sinA = std::sin(kmaths::ToRadians(degrees));
+		const auto a = kmaths::ToRadians(degrees);
+
+		const T cosA = std::cos(a);
+		const T sinA = std::sin(a);
 
 		Vector3<T> axis = axes.Normalize();
 		Vector3<T> temp = axis * (CAST(T, 1) - cosA);
@@ -142,38 +144,35 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const TransformMatrix<T>& m, const Vector3<T>& v) noexcept
 	{
-		const auto scale = {
+		return TransformMatrix<T>{
 			{ m[0][0] * v[0], m[0][1] * v[0], m[0][2] * v[0], m[0][3] * v[0] },
 			{ m[1][0] * v[1], m[1][1] * v[1], m[1][2] * v[1], m[1][3] * v[1] },
 			{ m[2][0] * v[2], m[1][1] * v[2], m[2][2] * v[2], m[2][3] * v[2] },
-			m[3]
+				m[3]
 		};
-		return scale;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const Vector3<T>& v) noexcept
 	{
 		constexpr auto one = constants::One<T>();
-		const auto scale = {
+		return TransformMatrix<T>{
 			{v[0], 0, 0, 0},
-			{0, v[1], 0, 0},
-			{0, 0, v[2], 0},
-			{0, 0, 0, one }
+			{ 0, v[1], 0, 0 },
+			{ 0, 0, v[2], 0 },
+			{ 0, 0, 0, one }
 		};
-		return scale;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
 	{
 		constexpr auto one = constants::One<T>();
-		const auto scale = TransformMatrix<T>{
+		return TransformMatrix<T>{
 			{v[0], 0, 0, 0},
-			{0, v[1], 0, 0},
-			{0, 0, one, 0 },
-			{0, 0, 0, one }
+			{ 0, v[1], 0, 0 },
+			{ 0, 0, one, 0 },
+			{ 0, 0, 0, one }
 		};
-		return scale;
 	}
 }

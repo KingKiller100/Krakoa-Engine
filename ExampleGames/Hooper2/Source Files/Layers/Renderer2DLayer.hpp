@@ -31,4 +31,5 @@ private:
 	krakoa::OrthographicCameraController cameraController;
 
 	kmaths::Vector4f geometryColour;
+	kmaths::Vector3f rotPos;
 };

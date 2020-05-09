@@ -186,16 +186,12 @@ namespace krakoa::graphics
 
 		if (!pData->pMainShader.expired())
 		{
-
 			auto mainShader = pData->pMainShader.lock();
 			mainShader->Bind();
 			mainShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
 		}
 
-		pData->quadVertexBufferPtr = pData->quadVertexBuffferBase;
-		pData->quadIndexCount = 0;
-
-		pData->textureSlotIdx = 1;
+		Restart();
 	}
 
 	void Renderer2D::EndScene()
@@ -255,7 +251,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		QueryLimitsMet();
-		AddNewQuad(position, scale, 0.f, colour);
+		AddNewQuad(position, scale, colour);
 	}
 
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/)
@@ -266,8 +262,6 @@ namespace krakoa::graphics
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
-
-		constexpr auto degrees = 0.f;
 
 		QueryLimitsMet();
 
@@ -290,7 +284,7 @@ namespace krakoa::graphics
 			pData->textureSlotIdx++;
 		}
 
-		AddNewQuad(position, scale, degrees, tintColour, texIdx);
+		AddNewQuad(position, scale, tintColour, texIdx);
 	}
 
 	void Renderer2D::DrawRotatedTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
@@ -333,7 +327,7 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
-		AddNewQuad(position, scale, degreesOfRotation, colour);
+		AddNewQuad(position, scale, colour, 0.f, degreesOfRotation);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/)
@@ -366,61 +360,67 @@ namespace krakoa::graphics
 			pData->textureSlotIdx++;
 		}
 
-		AddNewQuad(position, scale, degreesOfRotation, tintColour, texIdx);
+		AddNewQuad(position, scale, tintColour, texIdx, degreesOfRotation);
 	}
 
 	void Renderer2D::QueryLimitsMet() noexcept
 	{
 		if (pData->textureSlotIdx == QuadBatchRendererLimits::MaxTextureSlots
 			|| pData->quadIndexCount >= QuadBatchRendererLimits::MaxIndices)
+		{
 			Flush();
+			Restart();
+		}
 	}
 
-	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float degreesOfRotation, const kmaths::Vector4f& colour, const float texIdx)
+	void Renderer2D::Restart() noexcept
+	{
+		pData->quadVertexBufferPtr = pData->quadVertexBuffferBase;
+		pData->quadIndexCount = 0;
+
+		pData->textureSlotIdx = 1;
+	}
+
+	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour, const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/)
 	{
 		auto& bufferPtr = pData->quadVertexBufferPtr;
 		const auto loops = kmaths::SizeOfCArray(pData->quadVertexPosition);
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
-			auto size = scale / 2;
 			kmaths::Vector2f texCoord;
 
 			switch (i) {
 			case 0: // bottom left
-			{
-				size = size.ReverseVector();
-			}
-			break;
+				break;
 			case 1: // bottom right
-			{
-				size.Y() = -size.Y();
 				texCoord.X() = 1.f;
-			}
-			break;
+				break;
 			case 2: // top right
-			{
 				texCoord = { 1.f, 1.f };
-			}
-			break;
+				break;
 			case 3: // top left
-			{
-				size.X() = -size.X();
 				texCoord.Y() = 1.f;
-			}
-			break;
+				break;
 			default:
 				break;
 			}
 
-			const auto vertexPosition = position + size;
+			kmaths::Vector4f worldPosition;
 
-			auto transform = kmaths::Translate(vertexPosition)
-				* kmaths::Rotate2D(degreesOfRotation)
-				* kmaths::Scale2D(scale);
-			const auto worldPosition = transform * pData->quadVertexPosition[i];
+			if (degreesOfRotation == 0)
+			{
+				worldPosition = (position + (pData->quadVertexPosition[i] * scale));
+			}
+			else
+			{
+				const auto transform = kmaths::Translate(kmaths::GetTransformIdentity<float>(), position);
+				//* kmaths::Rotate(kmaths::GetTransformIdentity<float>(), degreesOfRotation, { 0.f, 0.f, 1.f });
+				//* kmaths::Scale<float>(kmaths::GetTransformIdentity<float>(), scale);
+				worldPosition = transform * pData->quadVertexPosition[i];
+			}
 
-			bufferPtr->position = vertexPosition;
+			bufferPtr->position = worldPosition;
 			bufferPtr->colour = colour;
 			bufferPtr->texCoord = texCoord;
 			bufferPtr->texIdx = texIdx;

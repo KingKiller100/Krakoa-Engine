@@ -29,9 +29,17 @@ void Renderer2DLayer::OnDetach()
 
 void Renderer2DLayer::OnUpdate(float deltaTime)
 {
+	constexpr float moveSpeed = 1.f;
+
 	KRK_PROFILE_FUNCTION();
 	cameraController.OnUpdate(deltaTime);
 	SendRendererCommands();
+
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
+		rotPos.X() += moveSpeed * deltaTime;
+
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
+		rotPos.X() -= moveSpeed * deltaTime;
 }
 
 void Renderer2DLayer::OnRender()
@@ -75,7 +83,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f( 0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f( 0.f,  0.5f, -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f( 0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
-		//krakoa::graphics::Renderer2D::DrawRotatedQuad(geometryColour, kmaths::Vector3f(-2.f, -.5f, 0.5f), 45.f, kmaths::Vector3f(0.25f));
+		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, rotPos, 45.f, kmaths::Vector3f(0.25f));
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();

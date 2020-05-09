@@ -224,7 +224,7 @@ namespace kTest::performance::maths
 		};
 		SetUpParticipants(participants);
 
-		constexpr long double set[] = { -71, -1, 0, 1, 349 };
+		constexpr long double set[] = { -103.856, -71, -1, 0, 1, 349, 1035.456 };
 		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
@@ -250,6 +250,7 @@ namespace kTest::performance::maths
 			{
 				START_TEST(participants[3]);
 				const auto value = std::fabs(num);
+		
 			}
 
 			{

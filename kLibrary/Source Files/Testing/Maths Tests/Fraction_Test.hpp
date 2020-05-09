@@ -16,6 +16,8 @@ namespace kTest::maths
 
 		double RoundTo4(double x);
 		
+		bool AddTest();
+		bool SubractTest();
 		bool RationalTest();
 		bool IrrationalTest();
 

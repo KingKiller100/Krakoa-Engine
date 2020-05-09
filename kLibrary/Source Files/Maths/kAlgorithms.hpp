@@ -129,13 +129,13 @@ namespace kmaths
 	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
 	{
 		unsigned int count = 1;
-		bool stop = CAST(T, 10) > x && x > CAST(T, -10);
+		bool stop = CAST(T, 10) > x&& x > CAST(T, -10);
 
 		while (!stop)
 		{
 			x /= CAST(T, 10);
 			count++;
-			stop = CAST(T, 10) > x && x > CAST(T, -10);
+			stop = CAST(T, 10) > x&& x > CAST(T, -10);
 		}
 
 		return count;
@@ -158,7 +158,7 @@ namespace kmaths
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = constants::MinusOne<T>();
 
-		return (value > minusOne && value < one);
+		return (value > minusOne&& value < one);
 	}
 
 	template<typename T1, typename T2>
@@ -325,20 +325,19 @@ namespace kmaths
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, pow(base, power));
 #else
-		T temp = Convert<T>(0);
+		T temp = T();
+
 		if (power == 0)
 			return constants::One<T>();
+
 		temp = PowerOfImpl(base, power / 2);
 
 		if (power % 2 == 0)
 			return temp * temp;
+		else if (power > 0)
+			return base * temp * temp;
 		else
-		{
-			if (power > 0)
-				return base * temp * temp;
-		}
-
-		return (temp * temp) / base;
+			return (temp * temp) / base;
 #endif
 	}
 

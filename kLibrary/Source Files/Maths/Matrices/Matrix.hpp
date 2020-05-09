@@ -398,22 +398,14 @@ namespace kmaths
 				for (auto col = 0u; col < C; ++col) {
 					for (auto index = 0u; index < R; ++index)
 					{
-						const Type left = elems[row][index];
-						const Type right = CAST(Type, other[index][col]);
-						const Type res = left * right;
-
-						m[row][col] += res;
+						// const Type left = elems[row][index];
+						// const Type right = CAST(Type, other[index][col]);
+						// const Type res = left * right;
+						m[row][col] += (elems[row][index] * CAST(Type, other[index][col]));
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 						m[row][col] = HandleFloatingPointError<Type>(m[row][col]);
-
-					{
-						/*if _CONSTEXPR_IF(std::is_same_v<Type, double>)
-							m[row][col] = Round(m[row][col], 9);
-						else
-							m[row][col] = Round(m[row][col], 5);*/
-					}
 				}
 			}
 			return m;
@@ -436,9 +428,10 @@ namespace kmaths
 
 			for (auto row = 0; row < Rows; ++row) {
 				for (auto col = 0u; col < Columns; ++col) {
-					const auto left = elems[row][col];
-					const auto right = v[col];
-					result[row] += left * right;
+					//const auto left = elems[row][col];
+					//const auto right = v[col];
+					// const Type res = left * right;
+					result[row] += (elems[row][col] * v[col]);
 				}
 
 				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error

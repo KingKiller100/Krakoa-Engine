@@ -11,17 +11,23 @@ namespace kTest::maths
 
 	FractionTester::FractionTester()
 		: Tester("Fraction Test")
-	{
-
-	}
+	{}
 
 	FractionTester::~FractionTester()
 		= default;
 
+	using namespace kmaths;
+
 	void FractionTester::Test()
 	{
-		VERIFY(RationalTest() == true);
-		VERIFY(IrrationalTest() == true);
+		VERIFY_MULTI_INIT();
+
+		VERIFY_MULTI(AddTest);
+		VERIFY_MULTI(SubractTest);
+		VERIFY_MULTI(RationalTest);
+		VERIFY_MULTI(IrrationalTest);
+
+		VERIFY_MULTI_END();
 	}
 
 	double FractionTester::RoundTo4(double x)
@@ -40,7 +46,66 @@ namespace kTest::maths
 		return isNegative ? -roundedValue : roundedValue;
 	}
 
-	using namespace kmaths;
+	bool FractionTester::AddTest()
+	{
+		{
+			constexpr Fraction f1 = { 0, 1, false };
+			constexpr Fraction f2 = { 10, 1, false };
+			constexpr auto res = f1 + f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 10);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+		}
+
+		{
+			constexpr Fraction f1 = { 0, 1, false };
+			constexpr Fraction f2 = { 10, 5, true };
+			auto res = f1 + f2;
+
+			VERIFY(res.numerator == 2);
+			VERIFY(res.denominator == 1);
+			VERIFY(res.isNegative == false);
+		}
+
+		{
+			constexpr Fraction f1 = { 0, 1, false };
+			constexpr Fraction f2 = { 10, 20, false };
+			constexpr auto res = f1 + f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 1);
+			VERIFY_COMPILE_TIME(res.denominator == 2);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+		}
+
+		{
+			constexpr Fraction f1 = { 12, 9, false };
+			constexpr Fraction f2 = { 10, 20, false };
+			constexpr auto res = f1 + f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 11);
+			VERIFY_COMPILE_TIME(res.denominator == 6);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+		}
+
+		{
+			constexpr Fraction f1 = { 120, 45, false };
+			constexpr Fraction f2 = { 180, 270, false };
+			constexpr auto res = f1 + f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 10);
+			VERIFY_COMPILE_TIME(res.denominator == 3);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+		}
+
+		return success;
+	}
+
+	bool FractionTester::SubractTest()
+	{
+		return success;
+	}
+
 
 	bool FractionTester::RationalTest()
 	{
@@ -67,8 +132,8 @@ namespace kTest::maths
 		{
 			constexpr Fraction f = { 1000, 250, true };
 			VERIFY_COMPILE_TIME(f.isNegative == true);
-			VERIFY_COMPILE_TIME(f.numerator == 1000);
-			VERIFY_COMPILE_TIME(f.denominator == 250);
+			VERIFY_COMPILE_TIME(f.numerator == 4);
+			VERIFY_COMPILE_TIME(f.denominator == 1);
 
 			constexpr auto f2r = f.GetReal<float>();
 			VERIFY_COMPILE_TIME(f2r == -4);
@@ -77,18 +142,18 @@ namespace kTest::maths
 		{
 			constexpr Fraction f = { 1000, 250, true };
 			VERIFY_COMPILE_TIME(f.isNegative == true);
-			VERIFY_COMPILE_TIME(f.numerator == 1000);
-			VERIFY_COMPILE_TIME(f.denominator == 250);
+			VERIFY_COMPILE_TIME(f.numerator == 4);
+			VERIFY_COMPILE_TIME(f.denominator == 1);
 
 			constexpr auto f2r = f.GetReal<unsigned>();
-			VERIFY_COMPILE_TIME(f2r == 0);
+			VERIFY(f2r == 0);
 		}
 
 		{
 			constexpr Fraction f = { 625, 1250, true };
 			VERIFY_COMPILE_TIME(f.isNegative == true);
-			VERIFY_COMPILE_TIME(f.numerator == 625);
-			VERIFY_COMPILE_TIME(f.denominator == 1250);
+			VERIFY_COMPILE_TIME(f.numerator == 1);
+			VERIFY_COMPILE_TIME(f.denominator == 2);
 
 			constexpr auto f2r = f.GetReal<double>();
 			VERIFY_COMPILE_TIME(f2r == -0.5);

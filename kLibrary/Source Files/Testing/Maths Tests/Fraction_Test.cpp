@@ -24,6 +24,8 @@ namespace kTest::maths
 
 		VERIFY_MULTI(AddTest);
 		VERIFY_MULTI(SubractTest);
+		VERIFY_MULTI(MultiplyTest);
+		VERIFY_MULTI(DivideTest);
 		VERIFY_MULTI(RationalTest);
 		VERIFY_MULTI(IrrationalTest);
 
@@ -34,7 +36,7 @@ namespace kTest::maths
 	{
 		{
 			constexpr Fraction f1 = { 0, 1, false };
-			constexpr Fraction f2 = { 10, 1, false };
+			constexpr Fraction f2 = 10;
 			constexpr auto res = f1 + f2;
 
 			VERIFY_COMPILE_TIME(res.numerator == 10);
@@ -42,21 +44,21 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.isNegative == false);
 
 			constexpr auto f2r = res.GetReal<float>();
-			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		{
 			constexpr Fraction f1 = { 0, 1, false };
-			constexpr Fraction f2 = { 10, 5, true };
+			constexpr auto f2 = -2;
 			constexpr auto res = f1 + f2;
 
-			VERIFY_COMPILE_TIME(res.numerator == 2);
-			VERIFY_COMPILE_TIME(res.denominator == 1);
-			VERIFY_COMPILE_TIME(res.isNegative == true);
+			VERIFY(res.numerator == 2);
+			VERIFY(res.denominator == 1);
+			VERIFY(res.isNegative == true);
 
 			constexpr auto f2r = res.GetReal<float>();
-			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
@@ -70,7 +72,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.isNegative == false);
 
 			constexpr auto f2r = res.GetReal<float>();
-			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
@@ -84,7 +86,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.isNegative == false);
 
 			constexpr auto f2r = res.GetReal<float>();
-			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
@@ -98,7 +100,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(res.isNegative == false);
 
 			constexpr auto f2r = res.GetReal<float>();
-			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
@@ -112,7 +114,7 @@ namespace kTest::maths
 			VERIFY(res.isNegative == true);
 
 			constexpr auto f2r = res.GetReal<float>();
-			constexpr auto expected = CAST(decltype(f2r), res.numerator) / res.denominator * (res.isNegative ? -1 : 1);
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
@@ -205,6 +207,21 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
+		return success;
+	}
+
+	bool FractionTester::MultiplyTest()
+	{
+		return success;
+	}
+
+	bool FractionTester::DivideTest()
+	{
+		return success;
+	}
+
+	bool FractionTester::NonSimplifiedTest()
+	{
 		return success;
 	}
 

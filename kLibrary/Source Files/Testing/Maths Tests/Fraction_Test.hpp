@@ -18,6 +18,9 @@ namespace kTest::maths
 		
 		bool AddTest();
 		bool SubractTest();
+		bool MultiplyTest();
+		bool DivideTest();
+		bool NonSimplifiedTest();
 		bool RationalTest();
 		bool IrrationalTest();
 

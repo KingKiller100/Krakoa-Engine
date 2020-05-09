@@ -106,7 +106,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Fraction operator-(const Fraction& other) const noexcept
 		{
-			const auto f = Fraction(other.numerator, other.denominator, !other.isNegative);
+			const auto f = Fraction(other.numerator, other.denominator, !other.isNegative, alwaysSimplify);
 			return (*this + f);
 		}
 
@@ -121,8 +121,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Fraction operator/(const Fraction& other) const noexcept
 		{
-			const auto f = Fraction(other.denominator, other.numerator, other.isNegative);
-
+			const auto f = Fraction(other.denominator, other.numerator, other.isNegative, alwaysSimplify);
 			return (*this * f);
 		}
 
@@ -130,22 +129,25 @@ namespace kmaths
 		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
 		USE_RESULT constexpr Fraction operator+(const T real) const noexcept
 		{
-			const auto f = Fraction(real, 1, real < 0);
+			const auto isRealNegative = real < 0;
+			const auto f = Fraction(isRealNegative ? -real : real, 1, isRealNegative, alwaysSimplify);
 			return (*this + f);
 		}
 
 		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
 		USE_RESULT constexpr Fraction operator-(const T real) const noexcept
 		{
-			const auto f = Fraction(real, 1, real < 0);
+			const auto isRealNegative = real < 0;
+			const auto f = Fraction(isRealNegative ? -real : real, 1, isRealNegative, alwaysSimplify);
 			return (*this - f);
 		}
 
 		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
 		USE_RESULT constexpr Fraction operator*(const T real) const noexcept
 		{
-			const auto num = numerator * real;
-			const auto sign = isNegative ^ (real < 0);
+			const auto isRealNegative = real < 0;
+			const auto num = numerator * (isRealNegative ? -real : real);
+			const auto sign = isNegative ^ isRealNegative;
 
 			return Fraction(num, denominator, sign, alwaysSimplify);
 		}
@@ -153,8 +155,9 @@ namespace kmaths
 		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
 		USE_RESULT constexpr Fraction operator/(const T real) const noexcept
 		{
-			const auto den = denominator * real;
-			const auto sign = isNegative ^ (real < 0);
+			const auto isRealNegative = real < 0;
+			const auto den = denominator * (isRealNegative ? -real : real);
+			const auto sign = isNegative ^ isRealNegative;
 
 			return Fraction(numerator, den, sign, alwaysSimplify);
 		}

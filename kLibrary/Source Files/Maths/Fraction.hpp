@@ -47,6 +47,9 @@ namespace kmaths
 			const auto oneOverLCF = 1.f / lcf;
 			numerator = CAST(Numerator_Value_Type, oneOverLCF * numerator);
 			denominator = CAST(Numerator_Value_Type, oneOverLCF * denominator);
+
+			if (numerator == denominator)
+				numerator = denominator = 1;
 		}
 
 		USE_RESULT constexpr float LargestCommonFactor() const noexcept

@@ -26,6 +26,7 @@ namespace kTest::maths
 		VERIFY_MULTI(SubractTest);
 		VERIFY_MULTI(MultiplyTest);
 		VERIFY_MULTI(DivideTest);
+		VERIFY_MULTI(NonSimplifiedTest);
 		VERIFY_MULTI(RationalTest);
 		VERIFY_MULTI(IrrationalTest);
 
@@ -212,16 +213,198 @@ namespace kTest::maths
 
 	bool FractionTester::MultiplyTest()
 	{
+		{
+			constexpr Fraction f1 = { 120, 45, true };
+			constexpr Fraction f2 = { 4, 3, false };
+			constexpr auto res = f1 * f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 32);
+			VERIFY_COMPILE_TIME(res.denominator == 9);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 120, 45 };
+			constexpr Fraction f2 = 4;
+			constexpr auto res = f1 * f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 32);
+			VERIFY_COMPILE_TIME(res.denominator == 3);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 12, 49 };
+			constexpr Fraction f2 = { 49, 12 };
+			constexpr auto res = f1 * f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 1);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 9, 4 };
+			constexpr Fraction f2 = { 16, 12 };
+			constexpr auto res = f1 * f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 3);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 9, 4 };
+			constexpr Fraction f2 = 16;
+			constexpr auto res = f1 * f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 36);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) * (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
 		return success;
 	}
 
 	bool FractionTester::DivideTest()
 	{
+		{
+			constexpr Fraction f1 = { 120, 45, true };
+			constexpr Fraction f2 = { 4, 3, false };
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 2);
+			VERIFY_COMPILE_TIME(res.denominator == 1);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 120, 45 };
+			constexpr Fraction f2 = 4;
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 2);
+			VERIFY_COMPILE_TIME(res.denominator == 3);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 12, 49 };
+			constexpr Fraction f2 = { 49, 12, true };
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 144);
+			VERIFY_COMPILE_TIME(res.denominator == 2401);
+			VERIFY_COMPILE_TIME(res.isNegative == true);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 9, 4 };
+			constexpr Fraction f2 = { 16, 12 };
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 27);
+			VERIFY_COMPILE_TIME(res.denominator == 16);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
+		{
+			constexpr Fraction f1 = { 9, 4 };
+			constexpr Fraction f2 = 16;
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 9);
+			VERIFY_COMPILE_TIME(res.denominator == 64);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
 		return success;
 	}
 
 	bool FractionTester::NonSimplifiedTest()
 	{
+		{
+			constexpr Fraction f1 = { 9, 4, false, false };
+			constexpr Fraction f2 = 16;
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 9);
+			VERIFY_COMPILE_TIME(res.denominator == 64);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+		
+		{
+			constexpr Fraction f1 = { 8, 4, false, false };
+			constexpr Fraction f2 = 16;
+			constexpr auto res = f1 / f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 8);
+			VERIFY_COMPILE_TIME(res.denominator == 64);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+		
+		{
+			constexpr Fraction f1 = { 8, 4, false, false };
+			constexpr Fraction f2 = { 18, 7, false };
+			constexpr auto res = f1 * f2;
+
+			VERIFY_COMPILE_TIME(res.numerator == 144);
+			VERIFY_COMPILE_TIME(res.denominator == 28);
+			VERIFY_COMPILE_TIME(res.isNegative == false);
+
+			constexpr auto f2r = res.GetReal<float>();
+			constexpr auto expected = (CAST(decltype(f2r), res.numerator) / res.denominator) / (res.isNegative ? -1 : 1);
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+
 		return success;
 	}
 

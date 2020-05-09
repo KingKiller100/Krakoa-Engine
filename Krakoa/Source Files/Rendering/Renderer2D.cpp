@@ -414,9 +414,9 @@ namespace krakoa::graphics
 			}
 			else
 			{
-				const auto transform = kmaths::Translate(kmaths::GetTransformIdentity<float>(), position);
-				//* kmaths::Rotate(kmaths::GetTransformIdentity<float>(), degreesOfRotation, { 0.f, 0.f, 1.f });
-				//* kmaths::Scale<float>(kmaths::GetTransformIdentity<float>(), scale);
+				const auto transform = //kmaths::Translate(kmaths::GetTransformIdentity<float>(), position);
+				 kmaths::Rotate2D(degreesOfRotation)
+				* kmaths::Scale<float>(kmaths::GetTransformIdentity<float>(), scale);
 				worldPosition = transform * pData->quadVertexPosition[i];
 			}
 

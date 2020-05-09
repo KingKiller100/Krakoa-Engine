@@ -26,6 +26,7 @@ namespace kTest::maths
 		VERIFY_MULTI(SubractTest);
 		VERIFY_MULTI(MultiplyTest);
 		VERIFY_MULTI(DivideTest);
+		VERIFY_MULTI(GetRealTest);
 		VERIFY_MULTI(NonSimplifiedTest);
 		VERIFY_MULTI(RationalTest);
 		VERIFY_MULTI(IrrationalTest);
@@ -482,10 +483,65 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f.numerator == 333);
 			VERIFY_COMPILE_TIME(f.denominator == 106);
 
-			const auto f2r = RoundTo4(f.GetReal<double>());
+			constexpr auto f2r = f.GetReal<double>();
+			const auto f2rRounded = RoundTo4(f2r);
 			const auto pi = M_PI;
 			const auto piRounded = RoundTo4(pi);
-			VERIFY(f2r == RoundTo4(pi));
+			VERIFY(f2rRounded == piRounded);
+		}
+
+		{
+			constexpr Fraction f = { 517656, 190435, false, false };
+			VERIFY_COMPILE_TIME(f.isNegative == false);
+			VERIFY_COMPILE_TIME(f.numerator == 517656);
+			VERIFY_COMPILE_TIME(f.denominator == 190435);
+
+			constexpr auto f2r = f.GetReal<double>();
+			const auto f2rRounded = RoundTo4(f2r);
+			const auto e = M_E;
+			const auto eRounded = RoundTo4(e);
+			VERIFY(f2rRounded == eRounded);
+		}
+
+		return success;
+	}
+
+	bool FractionTester::GetRealTest()
+	{
+		{
+			constexpr auto f = Fraction{ 20, 4 };
+			constexpr auto f2r = f.GetReal<float>();
+
+			constexpr int8_t sign = f.GetSign();
+			constexpr auto expected = (CAST(decltype(f2r), f.numerator) * sign) / f.denominator;
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+		
+		{
+			constexpr auto f = Fraction{ 5, 19 };
+			constexpr auto f2r = f.GetReal<float>();
+
+			constexpr int8_t sign = f.GetSign();
+			constexpr auto expected = (CAST(decltype(f2r), f.numerator) * sign) / f.denominator;
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+		
+		{
+			constexpr auto f = Fraction{ 9, 81, true };
+			constexpr auto f2r = f.GetReal<float>();
+
+			constexpr int8_t sign = f.GetSign();
+			constexpr auto expected = (CAST(decltype(f2r), f.numerator) * sign) / f.denominator;
+			VERIFY_COMPILE_TIME(f2r == expected);
+		}
+		
+		{
+			constexpr auto f = Fraction{ 25, 81, true };
+			constexpr auto f2r = f.GetReal<double>();
+
+			constexpr int8_t sign = f.GetSign();
+			constexpr auto expected = (CAST(decltype(f2r), f.numerator) * sign) / f.denominator;
+			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
 		return success;

@@ -290,7 +290,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto decimal = 0.75;
+			constexpr auto decimal = 10.25;
 			const auto fraction = RealToFraction(decimal);
 			VERIFY(fraction.isNegative == false && fraction.numerator == 3 && fraction.denominator == 4);
 
@@ -300,11 +300,11 @@ namespace kTest::maths
 
 		{
 			constexpr auto decimal = 10.75;
-			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == false && fraction.numerator == 43 && fraction.denominator == 4);
+			constexpr auto fraction = RealToFraction(decimal);
+			VERIFY_COMPILE_TIME(fraction.isNegative == false && fraction.numerator == 43 && fraction.denominator == 4);
 
-			const auto f2d = fraction.GetReal<decltype(decimal)>();
-			VERIFY(f2d == decimal);
+			constexpr auto f2d = fraction.GetReal<decltype(decimal)>();
+			VERIFY_COMPILE_TIME(f2d == decimal);
 		}
 
 		{
@@ -318,17 +318,17 @@ namespace kTest::maths
 
 		{
 			constexpr double decimal = constants::PI;
-			const auto fraction = RealToFraction(decimal);
+			constexpr auto fraction = RealToFraction(decimal);
 			VERIFY(fraction.isNegative == false && fraction.numerator == 312689 && fraction.denominator == 99532);
 
-			const auto f2d = Round(fraction.GetReal<decltype(decimal)>(), 3);
+			constexpr auto f2d = Round(fraction.GetReal<decltype(decimal)>(), 3);
 			VERIFY(f2d == Round(decimal, 3));
 		}
 
 		{
-			constexpr double decimal = 10u;
-			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == false && fraction.numerator == 312689 && fraction.denominator == 99532);
+			constexpr double decimal = -160;
+			constexpr auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 10 && fraction.denominator == 1);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
@@ -348,10 +348,10 @@ namespace kTest::maths
 
 		{
 			constexpr double decimal = 14.568464;
-			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == false && fraction.numerator == 910529 && fraction.denominator == 62500);
+			constexpr auto fraction = RealToFraction(decimal);
+			VERIFY_COMPILE_TIME(fraction.isNegative == false && fraction.numerator == 910529 && fraction.denominator == 62500);
 
-			const auto f2d = fraction.GetReal<decltype(decimal)>();
+			constexpr auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
@@ -365,6 +365,7 @@ namespace kTest::maths
 			const auto idx = BinarySearch(list, 4.0);
 			VERIFY_COMPILE_TIME(idx == 4);
 		}
+
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearch(list, -4.0);
@@ -563,9 +564,9 @@ namespace kTest::maths
 		{
 			constexpr auto power = -6.0;
 			constexpr auto num = 10.0;
-			constexpr auto value = PowerOf(num, power);
-			const auto expectedVal =  std::pow(num, power);
-			VERIFY(value == expectedVal);
+			//constexpr auto value = PowerOf(num, power);
+			//const auto expectedVal =  std::pow(num, power);
+			//VERIFY(value == expectedVal);
 		}
 
 		return success;

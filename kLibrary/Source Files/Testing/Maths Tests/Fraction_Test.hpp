@@ -23,6 +23,7 @@ namespace kTest::maths
 		bool NonSimplifiedTest();
 		bool RationalTest();
 		bool IrrationalTest();
+		bool GetRealTest();
 
 	};
 }

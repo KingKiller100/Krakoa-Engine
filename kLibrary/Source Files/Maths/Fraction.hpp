@@ -41,6 +41,12 @@ namespace kmaths
 			}
 		}
 
+		USE_RESULT constexpr int8_t GetSign() const noexcept
+		{
+			return isNegative ? -1 : 1;
+		}
+
+
 		constexpr void Simplify() noexcept
 		{
 			const auto lcf = LargestCommonFactor();

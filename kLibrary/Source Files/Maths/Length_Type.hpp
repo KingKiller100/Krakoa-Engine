@@ -11,4 +11,7 @@ namespace kmaths
 #else
 	using Big_Int_Type = long long;
 #endif
+
+	template<typename T>
+	constexpr auto Max_DP_Precision = std::numeric_limits<T>::max_digits10;
 }

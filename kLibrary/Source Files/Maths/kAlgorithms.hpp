@@ -194,10 +194,10 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
-		constexpr auto maxLL = std::numeric_limits<Big_Int_Type>::max();
-		constexpr auto minLL = std::numeric_limits<Big_Int_Type>::min();
+		constexpr auto maxVal = std::numeric_limits<Big_Int_Type>::max();
+		constexpr auto minVal = std::numeric_limits<Big_Int_Type>::min();
 
-		if (value > maxLL || value < minLL)
+		if (value > maxVal || value < minVal)
 			return value;
 
 		const auto integer = CAST(T, CAST(Big_Int_Type, value));
@@ -224,63 +224,41 @@ namespace kmaths
 		}
 	}
 
-	template<typename T>
-	USE_RESULT constexpr Fraction RealToFraction(T x, const size_t dpAccuracy = 10, const bool simplified = true) noexcept
+	// Continued Fractions Without Tears, Ian Richards 1981
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr Fraction RealToFraction(T x, const uint8_t dpAccuracy = 10) noexcept
 	{
-		constexpr auto maxIterations = int(1e6);
-		const auto error = PowerOfImpl(constants::ZeroPointOne<T>(), dpAccuracy);
+		constexpr auto maxIterations = Big_Int_Type(1e6);
+		Big_Int_Type iter = 0;
 
 		const auto isNegative = x < 0;
+		if (isNegative) x = -x;
+		if (Floor(x) == x) // if no decimals, just make x the numerator 
+			return { Fraction::Numerator_Value_Type(x), 1, isNegative, false };
 
-		if (isNegative)
-			x = -x;
+		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_DP_Precision<T>));
 
-		const auto integer = Floor<T>(x);
-		x -= integer;
-
-		const auto oneMinusError = constants::One<T>() - error;
-		const auto realInteger = Convert<Fraction::Numerator_Value_Type>(integer);
-
-		if (x < error)
-			return { realInteger, 1, isNegative };
-		else if (oneMinusError < x)
-			return { realInteger + 1, 1, isNegative };
-
-		size_t lower_n = 0;
-		size_t lower_d = 1;
-
-		size_t upper_n = 1;
-		size_t upper_d = 1;
-
-		size_t mid_n;
-		size_t mid_d;
-
-		int iter = 0;
+		const T x0 = x;
+		size_t a(0);
+		size_t b(1);
+		size_t c(1);
+		size_t d(0);
+		size_t integer(0);
 
 		do {
-			mid_n = lower_n + upper_n;
-			mid_d = lower_d + upper_d;
+			integer = CAST(size_t, x);
+			const Fraction::Numerator_Value_Type num = a + integer * c;
+			const Fraction::Denominator_Value_Type den = b + integer * d;
+			a = c;
+			b = d;
+			c = num;
+			d = den;
+			x = constants::One<T>() / (x - integer);
+			const auto diff = Abs<T>(x0 - (CAST(T, num) / den));
+			if (error > diff) { return { num, den, isNegative, false }; }
+		} while (iter++ < maxIterations);
 
-			const auto tooHigh = mid_n > mid_d* (x + error);
-			const auto tooLow = mid_n < (x - error) * mid_d;
-
-			if (tooHigh)
-			{
-				upper_n = mid_n;
-				upper_d = mid_d;
-			}
-			else if (tooLow)
-			{
-				lower_n = mid_n;
-				lower_d = mid_d;
-			}
-			else
-			{
-				return { realInteger * mid_d + mid_n, mid_d, isNegative };
-			}
-		} while (iter++ < maxIterations); // Binary search towards fraction
-
-		return { 0, 1, isNegative, simplified };
+		return { 0, 1, isNegative, false };
 	}
 
 
@@ -743,9 +721,9 @@ namespace kmaths
 #endif
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T PowerOf(T base, T power, const bool simplified = true) noexcept
+	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
 	{
-		const auto fraction = RealToFraction(power, 7, simplified);
+		const auto fraction = RealToFraction(power);
 		const auto numerator = fraction.numerator;
 		const auto denominator = fraction.denominator;
 

@@ -79,8 +79,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Translate(const TransformMatrix<T>& m, const Vector3<T>& v)
 	{
-		auto translate = m;
-		translate[3] = { v[0], v[1], v[2], m[3][3] };
+		TransformMatrix<T> translate = m;
+		translate[3] = (m[0] * v[0]) + (m[1] * v[1]) + (m[2] * v[2]) + m[3];
 		return translate;
 	}
 

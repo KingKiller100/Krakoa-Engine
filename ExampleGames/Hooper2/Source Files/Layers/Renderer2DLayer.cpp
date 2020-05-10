@@ -83,7 +83,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f( 0.5f, 0.f,  -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f( 0.f,  0.5f, -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f( 0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, rotPos, 45.f, kmaths::Vector3f(0.25f));
+		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, rotPos, 90.f, kmaths::Vector3f(0.25f));
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();

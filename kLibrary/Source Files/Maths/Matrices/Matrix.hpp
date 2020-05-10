@@ -435,7 +435,7 @@ namespace kmaths
 #ifdef KLIB_DEBUG
 					const auto left = elems[row][col];
 					const auto right = v[col];
-					 const Type res = left * right;
+					const Type res = left * right;
 					result[row] += res;
 #else
 					result[row] += (elems[row][col] * v[col]);

@@ -387,6 +387,13 @@ namespace krakoa::graphics
 		auto& bufferPtr = pData->quadVertexBufferPtr;
 		const auto loops = pData->quadVertexPosition.GetRows();
 
+		auto q2 = kmaths::Quaternionf().EulerToQuaternions(0, 0, degreesOfRotation);
+		const auto transform = q2.CalculateTransformMatrix(position); // kmaths::Translate(position)
+			//* kmaths::Rotate2D(degreesOfRotation)
+			//* kmaths::Scale2D(scale);
+
+		const auto vertexMat = pData->quadVertexPosition * transform;
+
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
 			kmaths::Vector2f texCoord;
@@ -415,14 +422,7 @@ namespace krakoa::graphics
 			}
 			else
 			{
-				auto q = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
-				const auto transform = q.CalculateTransformMatrix(position); // kmaths::Translate(position)
-				
-					//* kmaths::Rotate2D(degreesOfRotation)
-					//* kmaths::Scale2D(scale);
-
-				const auto res = (scale * pData->quadVertexPosition) * transform;
-				worldPosition = res[i];
+				worldPosition = vertexMat[i] ;
 			}
 
 			bufferPtr->position = worldPosition;

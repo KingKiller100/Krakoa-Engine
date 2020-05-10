@@ -26,6 +26,18 @@ namespace kmaths::constants
 	constexpr AccuracyType GOLDEN_RATIO              = 1.61803398874989l;
 	constexpr AccuracyType INVERSE_GOLDEN_RATIO      = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 
+	template<typename T>
+	USE_RESULT constexpr T RadiansToDegrees() noexcept
+	{
+		return (CAST(T, 360.l) / CAST(T, TAU));
+	}	
+
+	template<typename T>
+	USE_RESULT constexpr T DegreesToRadians() noexcept
+	{
+		return (CAST(T, TAU) / CAST(T, 360.l));
+	}
+
 	template<class T>
 	USE_RESULT constexpr T Infinity() noexcept
 	{

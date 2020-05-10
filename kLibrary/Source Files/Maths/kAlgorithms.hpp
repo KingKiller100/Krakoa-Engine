@@ -159,7 +159,8 @@ namespace kmaths
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = constants::MinusOne<T>();
 
-		return (value > minusOne&& value < one);
+		return ((value > minusOne) 
+			&& (value < one));
 	}
 
 	template<typename T1, typename T2>
@@ -255,7 +256,7 @@ namespace kmaths
 			b = d;
 			c = num;
 			d = den;
-			x = constants::One<T>() / (x - CAST(T, integer));
+			x = constants::OneOver<T>(x - CAST(T, integer));
 			const auto diff = Abs<T>(x0 - (CAST(T, num) / den));
 			if (error > diff) { return { num, den, isNegative, false }; }
 		} while (iter++ < maxIterations);
@@ -365,15 +366,14 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
 	{
-		constexpr auto convertR2D = CAST(T, 360) / CAST(T, constants::TAU);
+		constexpr auto convertR2D = constants::RadiansToDegrees<T>();
 		return CAST(T, radians * convertR2D);
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
 	{
-		constexpr auto convertR2D = CAST(T, 360) / CAST(T, constants::TAU);
-		constexpr auto convertD2R = constants::One<constants::AccuracyType>() / convertR2D;
+		constexpr auto convertD2R = constants::DegreesToRadians<constants::AccuracyType>();
 		return CAST(T, degrees * convertD2R);
 	}
 
@@ -766,10 +766,13 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Log(const T number) noexcept
 	{
+		constexpr auto one = constants::One<T>();
+		constexpr auto zeroPointOne = constants::ZeroPointOne<T>();
+
 		constexpr auto maxIter = unsigned short(1e3);
 		unsigned short currentIter = 0;
 
-		if (number < 1 && number > constants::ZeroPointOne<T>())
+		if (number < 1 && number > zeroPointOne)
 			return -1;
 		if (number >= 1 && number < 10)
 			return 0;
@@ -781,11 +784,11 @@ namespace kmaths
 
 		Big_Int_Type currentPower = 0;
 		Big_Int_Type minorIncrement = 1;
-		const T base = number >= constants::One<T>() ? CAST(T, 10) : constants::ZeroPointOne<T>();
+		const T base = number >= one ? CAST(T, 10) : zeroPointOne;
 
 		bool found = false;
 
-		if (number >= constants::One<T>())
+		if (number >= one)
 		{
 			while (PowerOfImpl(base, currentPower) < number)
 			{

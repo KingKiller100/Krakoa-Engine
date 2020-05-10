@@ -18,6 +18,8 @@
 */
 
 #include "../../HelperMacros.hpp"
+
+#include "../Constants.hpp"
 #include "../Vectors/Vector3.hpp"
 #include "../Matrices/TransformMatrix.hpp"
 
@@ -67,7 +69,7 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		explicit constexpr Quaternion(const T r, const T i, const T j, const T k) noexcept
+		constexpr Quaternion(const T r, const T i, const T j, const T k) noexcept
 			: r(r), i(i), j(j), k(k)
 		{}
 
@@ -77,17 +79,19 @@ namespace kmaths
 		*/
 		constexpr void Normalize() noexcept
 		{
+			constexpr auto one = constants::One<T>();
+
 			const T magSQ = r * r + i * i + j * j + k * k;
 
 			// Check for zero length quaternion, and use the no-rotation
 			// quaternion in that case.
 			if (magSQ < std::numeric_limits<T>::epsilon())
 			{
-				r = 1;
+				r = one;
 				return;
 			}
 
-			const T d = CAST(T, 1) / sqrt(magSQ);
+			const T d = one / Sqrt<T>(magSQ);
 
 			r *= d;
 			i *= d;
@@ -128,15 +132,18 @@ namespace kmaths
 		*/
 		constexpr void AddScaledVector(const Vector3<T>& vector, const Vector3<T>& scale) noexcept
 		{
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			const auto scaledVector = vector * scale;
+
 			Quaternion q(0,
-				vector.X() * scale.X(),
-				vector.Y() * scale.Y(),
-				vector.Z() * scale.Z());
+				scaledVector[0],
+				scaledVector[1],
+				scaledVector[2]);
 			q *= *this;
-			r += q.r * CAST(T, 0.5);
-			i += q.i * CAST(T, 0.5);
-			j += q.j * CAST(T, 0.5);
-			k += q.k * CAST(T, 0.5);
+			r += q.r * zeroPointFive;
+			i += q.i * zeroPointFive;
+			j += q.j * zeroPointFive;
+			k += q.k * zeroPointFive;
 		}
 
 		/**
@@ -157,12 +164,14 @@ namespace kmaths
 		// Converts Euler angles to quaternion angles
 		USE_RESULT constexpr Quaternion EulerToQuaternions(const T pitch, const T roll, const T yaw) noexcept
 		{
-			const T cYaw = cos(yaw   * CAST(T, 0.5));
-			const T sYaw = sin(yaw   * CAST(T, 0.5));
-			const T cRoll = cos(roll  * CAST(T, 0.5));
-			const T sRoll = sin(roll  * CAST(T, 0.5));
-			const T cPitch = cos(pitch * CAST(T, 0.5));
-			const T sPitch = sin(pitch * CAST(T, 0.5));
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+
+			const T cYaw = cos(yaw   * zeroPointFive);
+			const T sYaw = sin(yaw   * zeroPointFive);
+			const T cRoll = cos(roll  * zeroPointFive);
+			const T sRoll = sin(roll  * zeroPointFive);
+			const T cPitch = cos(pitch * zeroPointFive);
+			const T sPitch = sin(pitch * zeroPointFive);
 
 			Quaternion q;
 			q.r = cYaw * cRoll * cPitch + sYaw * sRoll * sPitch;
@@ -178,28 +187,31 @@ namespace kmaths
 		 * \param[in] pos
 		 *		Object's current position
 		 */
-		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& pos) const
+		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& pos) const noexcept
 		{
+			constexpr auto one = constants::One<T>();
+			constexpr auto two = CAST(T, 2);
+
 			TransformMatrix<T> mat;
-			mat[0][0] = 1 - 2 * (j * j - k * k);
-			mat[0][1] = 2 * (i * j - r * k);
-			mat[0][2] = 2 * (i * k + r * j);
+			mat[0][0] = one - two * (j * j - k * k);
+			mat[0][1] = two * (i * j - r * k);
+			mat[0][2] = two * (i * k + r * j);
 			mat[0][3] = 0;
 
-			mat[1][0] = 2 * (i * j + r * k);
-			mat[1][1] = 1 - 2 * (i * i - k * k);
-			mat[1][2] = 2 * (j * k - r * i);
+			mat[1][0] = two * (i * j + r * k);
+			mat[1][1] = one - two * (i * i - k * k);
+			mat[1][2] = two * (j * k - r * i);
 			mat[1][3] = 0;
 
-			mat[2][0] = 2 * (i * k - r * j);
-			mat[2][1] = 2 * (j * k + r * i);
-			mat[2][2] = 1 - 2 * (i * i - j * j);
+			mat[2][0] = two * (i * k - r * j);
+			mat[2][1] = two * (j * k + r * i);
+			mat[2][2] = one - two * (i * i - j * j);
 			mat[2][3] = 0;
 
-			mat[3][0] = CAST(T, pos.X());
-			mat[3][1] = CAST(T, pos.Y());
-			mat[3][2] = CAST(T, pos.Z());
-			mat[3][3] = 1;
+			mat[3][0] = pos[0];
+			mat[3][1] = pos[1];
+			mat[3][2] = pos[2];
+			mat[3][3] = one;
 			return mat;
 		}
 
@@ -210,44 +222,7 @@ namespace kmaths
 		T k;	// Third complex component of the quaternion.
 	};
 
+
 	using Quaternionf = Quaternion<float>;
 	using Quaterniond = Quaternion<double>;
-
-	/**
-	* Inline function that creates a transform matrix from a
-	* position and orientation.
-	*/
-	//static inline void CalculateTransformMatrix(XMMATRIX &transformMatrix,
-	//	const Vector3f &position,
-	//	const Quaternion &orientation)
-	//{
-	//	transformMatrix.r[0] = XMVectorSetX(transformMatrix.r[0], 1 - 2 * orientation.j*orientation.j -
-	//		2 * orientation.k*orientation.k);
-	//	transformMatrix.r[0] = XMVectorSetY(transformMatrix.r[0], 2 * orientation.i*orientation.j -
-	//		2 * orientation.r*orientation.k);
-	//	transformMatrix.r[0] = XMVectorSetZ(transformMatrix.r[0], 2 * orientation.i*orientation.k +
-	//		2 * orientation.r*orientation.j);
-	//	transformMatrix.r[0] = XMVectorSetW(transformMatrix.r[0], 0.0f);
-
-	//	transformMatrix.r[1] = XMVectorSetX(transformMatrix.r[1], 2 * orientation.i*orientation.j +
-	//		2 * orientation.r*orientation.k);
-	//	transformMatrix.r[1] = XMVectorSetY(transformMatrix.r[1], 1 - 2 * orientation.i*orientation.i -
-	//		2 * orientation.k*orientation.k);
-	//	transformMatrix.r[1] = XMVectorSetZ(transformMatrix.r[1], 2 * orientation.j*orientation.k -
-	//		2 * orientation.r*orientation.i);
-	//	transformMatrix.r[1] = XMVectorSetW(transformMatrix.r[1], 0.0f);
-
-	//	transformMatrix.r[2] = XMVectorSetX(transformMatrix.r[2], 2 * orientation.i*orientation.k -
-	//		2 * orientation.r*orientation.j);
-	//	transformMatrix.r[2] = XMVectorSetY(transformMatrix.r[2], 2 * orientation.j*orientation.k +
-	//		2 * orientation.r*orientation.i);
-	//	transformMatrix.r[2] = XMVectorSetZ(transformMatrix.r[2], 1 - 2 * orientation.i*orientation.i -
-	//		2 * orientation.j*orientation.j);
-	//	transformMatrix.r[2] = XMVectorSetW(transformMatrix.r[2], 0.0f);
-
-	//	transformMatrix.r[3] = XMVectorSetX(transformMatrix.r[3], position.x);
-	//	transformMatrix.r[3] = XMVectorSetY(transformMatrix.r[3], position.y);
-	//	transformMatrix.r[3] = XMVectorSetZ(transformMatrix.r[3], position.z);
-	//	transformMatrix.r[3] = XMVectorSetW(transformMatrix.r[3], 1.0f);
-	//}
 }

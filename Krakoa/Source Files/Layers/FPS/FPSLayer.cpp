@@ -42,7 +42,7 @@ namespace krakoa
 		ImGui::Begin("Frames Per Seconds (FPS)");
 
 		const auto fps = CalculateAverageFPS();
-		ImGui::Text("Average FPS: %.2f fps", fps + 1);
+		ImGui::Text("Average FPS: %.2f fps", fps);
 
 		ImGui::End();
 	}

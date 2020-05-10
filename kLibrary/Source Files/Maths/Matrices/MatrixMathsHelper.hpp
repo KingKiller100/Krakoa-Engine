@@ -145,9 +145,9 @@ namespace kmaths
 	USE_RESULT constexpr TransformMatrix<T> Scale(const TransformMatrix<T>& m, const Vector3<T>& v) noexcept
 	{
 		return TransformMatrix<T>{
-			{ m[0][0] * v[0], m[0][1] * v[0], m[0][2] * v[0], m[0][3] * v[0] },
-			{ m[1][0] * v[1], m[1][1] * v[1], m[1][2] * v[1], m[1][3] * v[1] },
-			{ m[2][0] * v[2], m[1][1] * v[2], m[2][2] * v[2], m[2][3] * v[2] },
+				(m[0] * v[0]),
+				(m[1] * v[1]),
+				(m[2] * v[2]),
 				m[3]
 		};
 	}
@@ -155,24 +155,14 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const Vector3<T>& v) noexcept
 	{
-		constexpr auto one = constants::One<T>();
-		return TransformMatrix<T>{
-			{v[0], 0, 0, 0},
-			{ 0, v[1], 0, 0 },
-			{ 0, 0, v[2], 0 },
-			{ 0, 0, 0, one }
-		};
+		const auto scale = Scale<T>(GetTransformIdentity<T>(), v);
+		return scale;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
 	{
-		constexpr auto one = constants::One<T>();
-		return TransformMatrix<T>{
-			{v[0], 0, 0, 0},
-			{ 0, v[1], 0, 0 },
-			{ 0, 0, one, 0 },
-			{ 0, 0, 0, one }
-		};
+		const auto scale = Scale<T>(GetTransformIdentity<T>(), v);
+		return scale;
 	}
 }

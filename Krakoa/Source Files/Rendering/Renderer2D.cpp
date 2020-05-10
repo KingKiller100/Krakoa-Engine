@@ -15,6 +15,7 @@
 
 #include <Maths/Matrices/PredefinedMatrices.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
+#include <Maths/Quaternions/Quaternions.hpp>
 
 #include <array>
 
@@ -60,7 +61,7 @@ namespace krakoa::graphics
 		std::array<std::shared_ptr<iTexture2D>, QuadBatchRendererLimits::MaxTextureSlots> textureSlots;
 		uint32_t textureSlotIdx = 1; // White texture index = 0
 
-		const kmaths::Vector4f quadVertexPosition[4] = {
+		const kmaths::Matrix4x4f quadVertexPosition = {
 			{-0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f,  0.5f, 0.f, 1.0f },
@@ -384,7 +385,7 @@ namespace krakoa::graphics
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour, const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/)
 	{
 		auto& bufferPtr = pData->quadVertexBufferPtr;
-		const auto loops = kmaths::SizeOfCArray(pData->quadVertexPosition);
+		const auto loops = pData->quadVertexPosition.GetRows();
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
@@ -414,10 +415,14 @@ namespace krakoa::graphics
 			}
 			else
 			{
-				const auto transform = kmaths::Translate(position + pData->quadVertexPosition[i] * scale);
-					/*kmaths::Rotate(degreesOfRotation, { 0, 0, 1 })
-					* kmaths::Scale2D(scale);*/
-				worldPosition = transform[3];
+				auto q = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
+				const auto transform = q.CalculateTransformMatrix(position); // kmaths::Translate(position)
+				
+					//* kmaths::Rotate2D(degreesOfRotation)
+					//* kmaths::Scale2D(scale);
+
+				const auto res = (scale * pData->quadVertexPosition) * transform;
+				worldPosition = res[i];
 			}
 
 			bufferPtr->position = worldPosition;

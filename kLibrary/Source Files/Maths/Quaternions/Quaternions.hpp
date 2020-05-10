@@ -126,12 +126,12 @@ namespace kmaths
 		* \param[in] scale
 		*		Additional scale of the vector
 		*/
-		constexpr void AddScaledVector(const Vector3<T>& vector, T scale) noexcept
+		constexpr void AddScaledVector(const Vector3<T>& vector, const Vector3<T>& scale) noexcept
 		{
 			Quaternion q(0,
-				vector.X() * scale,
-				vector.Y() * scale,
-				vector.Z() * scale);
+				vector.X() * scale.X(),
+				vector.Y() * scale.Y(),
+				vector.Z() * scale.Z());
 			q *= *this;
 			r += q.r * CAST(T, 0.5);
 			i += q.i * CAST(T, 0.5);

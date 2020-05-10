@@ -313,7 +313,7 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<typename U>
+		template<typename U, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Vector operator*(const U scalar) const noexcept
 		{
 			T copy[N]{ 0 };
@@ -322,7 +322,7 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<typename U>
+		template<typename U, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Vector operator/(const U scalar) const noexcept
 		{
 			T copy[N]{ 0 };

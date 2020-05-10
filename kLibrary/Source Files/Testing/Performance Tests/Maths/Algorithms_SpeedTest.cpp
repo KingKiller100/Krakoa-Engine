@@ -62,7 +62,10 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::PowerOfIntegersTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::PowerOf<int>", "std::pow<int>" };
+		const std::vector<std::string_view> participants = {
+			"kmaths::PowerOf<int>", "std::pow<int>",
+			"kmaths::PowerOf<short>", "std::pow<short>"
+		};
 		SetUpParticipants(participants);
 
 		constexpr int set[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -86,6 +89,16 @@ namespace kTest::performance::maths
 			{
 				START_TEST(participants[1]);
 				const auto value = std::pow(number, power);
+			}
+
+			{
+				START_TEST(participants[2]);
+				const auto value = kmaths::PowerOf<short>(number, power);
+			}
+
+			{
+				START_TEST(participants[3]);
+				const auto value = std::pow<short>(number, power);
 			}
 		}
 	}

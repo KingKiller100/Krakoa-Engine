@@ -810,5 +810,11 @@ namespace kmaths
 	{
 		return x * x;
 	}
+
+	template<typename T>
+	USE_RESULT constexpr T Cube(T x) noexcept
+	{
+		return x * x * x;
+	}
 }
 

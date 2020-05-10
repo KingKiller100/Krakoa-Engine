@@ -414,10 +414,10 @@ namespace krakoa::graphics
 			}
 			else
 			{
-				const auto transform = kmaths::Translate(position)
-					* kmaths::Rotate2D(degreesOfRotation)
-					* kmaths::Scale2D(scale);
-				worldPosition = pData->quadVertexPosition[i] * transform;
+				const auto transform = kmaths::Translate(position + pData->quadVertexPosition[i] * scale);
+					/*kmaths::Rotate(degreesOfRotation, { 0, 0, 1 })
+					* kmaths::Scale2D(scale);*/
+				worldPosition = transform[3];
 			}
 
 			bufferPtr->position = worldPosition;

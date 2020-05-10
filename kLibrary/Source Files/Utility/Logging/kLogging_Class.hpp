@@ -24,7 +24,7 @@ namespace klib::kLogs
 	public:
 		using LogQueue = std::deque<std::string>;
 
-		enum LConsoleColour : unsigned short
+		enum class LConsoleColour : unsigned short
 		{
 			NAVY_BLUE = 1,
 			DARK_GREEN,

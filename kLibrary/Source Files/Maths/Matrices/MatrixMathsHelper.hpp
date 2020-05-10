@@ -162,7 +162,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
 	{
-		const auto scale = Scale<T>(GetTransformIdentity<T>(), v);
+		const auto scale = Scale<T>(GetTransformIdentity<T>(), { v[0], v[1], CAST(T, 1) });
 		return scale;
 	}
 }

@@ -269,11 +269,12 @@ namespace klib::kLogs
 		}
 
 		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
+		SetConsoleTextAttribute(hConsole, (WORD)kLogs_ConsoleColourMap.at(lvl));
 
 		printf_s("%s", log.data());
 
-		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
+		constexpr auto whiteText = CAST(WORD, LConsoleColour::WHITE);
+		SetConsoleTextAttribute(hConsole, whiteText);
 	}
 
 	void Logging::OutputLogToFile(const std::string_view& line)

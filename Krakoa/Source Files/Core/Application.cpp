@@ -5,6 +5,7 @@
 
 #include "../Instrumentor.hpp"
 
+#include "../Input/KeyCode.hpp"
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
@@ -49,7 +50,7 @@ namespace krakoa
 
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
-		pImGuiLayer->ToggleVisibility();
+		//pImGuiLayer->ToggleVisibility();
 		PushOverlay(pImGuiLayer);
 
 		PushOverlay(new FPSLayer());
@@ -107,6 +108,9 @@ namespace krakoa
 		const auto deltaTime = timeStep.GetDeltaTime();
 
 		RendererClear();
+
+		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
+			pImGuiLayer->ToggleVisibility();
 
 		if (!isMinimized)
 		{

@@ -173,7 +173,7 @@ namespace klib
 				return text;
 			}
 
-			const auto formattedText = std::basic_string<CharType>(buffer, buffer + (length - 1));
+			const auto formattedText = std::basic_string<CharType>(buffer, buffer + (CAST(ptrdiff_t, length) - 1));
 			delete[] buffer;
 			return formattedText;
 		}

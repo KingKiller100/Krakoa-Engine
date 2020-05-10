@@ -2,20 +2,21 @@
 
 #include "../HelperMacros.hpp"
 
-#include "Length_Type.hpp"
-#include "Constants.hpp"
 #include "Fraction.hpp"
+#include "Constants.hpp"
+#include "Length_Type.hpp"
 
 #if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
 #endif
+
 #include <cstdint>
-#include <xtr1common>
+#include <type_traits>
 
 #ifdef max
 #	undef max
 #endif
-#include <stdexcept>
+//#include <stdexcept>
 
 #ifdef min
 #	undef min
@@ -175,17 +176,17 @@ namespace kmaths
 
 	// Sign///////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT constexpr uint8_t Sign_Impl(const T& x, std::false_type) noexcept
+	USE_RESULT constexpr uint8_t Sign_Impl(const T x, std::false_type) noexcept
 	{
 		return (T(0) < x);
 	}
 	template<typename T>
-	USE_RESULT constexpr int8_t Sign_Impl(const T& x, std::true_type) noexcept
+	USE_RESULT constexpr int8_t Sign_Impl(const T x, std::true_type) noexcept
 	{
 		return (T(0) < x) - (x < T(0));
 	}
 	template<typename T>
-	USE_RESULT constexpr decltype(auto) Sign(const T& x) noexcept
+	USE_RESULT constexpr decltype(auto) Sign(const T x) noexcept
 	{
 		return Sign_Impl(x, std::is_signed<T>());
 	}
@@ -234,6 +235,9 @@ namespace kmaths
 		const auto isNegative = x < 0;
 		if (isNegative) x = -x;
 
+		if (Big_Int_Type(x) == x)
+			return { Fraction::Numerator_Value_Type(x), 1, isNegative, false };
+
 		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_DP_Precision<T>));
 
 		const T x0 = x;
@@ -251,7 +255,7 @@ namespace kmaths
 			b = d;
 			c = num;
 			d = den;
-			x = constants::One<T>() / (x - integer);
+			x = constants::One<T>() / (x - CAST(T, integer));
 			const auto diff = Abs<T>(x0 - (CAST(T, num) / den));
 			if (error > diff) { return { num, den, isNegative, false }; }
 		} while (iter++ < maxIterations);
@@ -801,7 +805,7 @@ namespace kmaths
 		return CAST(T, currentPower);
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	template<typename T>
 	USE_RESULT constexpr T Square(T x) noexcept
 	{
 		return x * x;

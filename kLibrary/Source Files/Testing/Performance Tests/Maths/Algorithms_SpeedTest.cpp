@@ -4,8 +4,6 @@
 #include "../../../Maths/kAlgorithms.hpp"
 
 #include <cmath>
-#include <memory>
-#include <functional>
 
 
 #ifdef TESTING_ENABLED
@@ -94,8 +92,10 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::SquareTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Square", "std::pow" };
+		const std::vector<std::string_view> participants = { "kmaths::Square", "kmaths::PowerOfImpl", "std::pow" };
 		SetUpParticipants(participants);
+
+		constexpr kmaths::Big_Int_Type power = 2;
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -106,7 +106,12 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[1]);
-				const auto value = std::pow(i, 2);
+				const auto value = kmaths::PowerOfImpl(i, power);
+			}
+
+			{
+				START_TEST(participants[2]);
+				const auto value = std::pow(i, power);
 			}
 		}
 	}
@@ -195,7 +200,7 @@ namespace kTest::performance::maths
 		const std::vector<std::string_view> participants = { "kmaths::Sign", "std::copysign" };
 		SetUpParticipants(participants);
 
-		constexpr float set[] = { -1, 0, 1 };
+		constexpr float set[] = { -600, -1, -0.25, 0, 0.25, 1, 600 };
 		constexpr auto size = kmaths::SizeOfCArray(set);
 
 		for (auto i = 0; i < maxIter; ++i)
@@ -221,6 +226,7 @@ namespace kTest::performance::maths
 			"kmaths::Abs<long double>", "std::fabsl", 
 			"kmaths::Abs<double>", "std::fabs", 
 			"kmaths::Abs<float>", "std::fabsf", 
+			"kmaths::Abs<kmaths::Big_Int_Type>", "std::fabsf<kmaths::Big_Int_Type>", 
 		};
 		SetUpParticipants(participants);
 
@@ -249,8 +255,7 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[3]);
-				const auto value = std::fabs(num);
-		
+				const auto value = std::fabs(num);		
 			}
 
 			{
@@ -261,6 +266,16 @@ namespace kTest::performance::maths
 			{
 				START_TEST(participants[5]);
 				const auto value = std::fabsf(CAST(float, num));
+			}
+
+			{
+				START_TEST(participants[6]);
+				const auto value = kmaths::Abs<kmaths::Big_Int_Type>(CAST(kmaths::Big_Int_Type, num));
+			}
+
+			{
+				START_TEST(participants[7]);
+				const auto value = std::fabs<kmaths::Big_Int_Type>(CAST(kmaths::Big_Int_Type, num));
 			}
 		}
 	}

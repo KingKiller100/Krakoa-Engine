@@ -2,9 +2,8 @@
 
 #include "../HelperMacros.hpp"
 
-#include "Length_Type.hpp"
-
 #include <cstdint>
+#include <type_traits>
 
 namespace kmaths
 {
@@ -46,7 +45,6 @@ namespace kmaths
 			return isNegative ? -1 : 1;
 		}
 
-
 		constexpr void Simplify() noexcept
 		{
 			const auto lcf = LargestCommonFactor();
@@ -70,8 +68,8 @@ namespace kmaths
 				const auto numFactor = double(numerator) * multiplier;
 				const auto denFactor = double(denominator) * multiplier;
 
-				if (Big_Int_Type(numFactor) == numFactor
-					&& Big_Int_Type(denFactor) == denFactor)
+				if (size_t(numFactor) == numFactor
+					&& size_t(denFactor) == denFactor)
 				{
 					largestFactor = float(i);
 				}

@@ -96,36 +96,37 @@ namespace kTest::maths
 			}
 		}
 
-		const Vector<float, 3> vec{ 10, 10, 10 };
-		const auto newVec = m0 * vec;
-		VERIFY(newVec.X() == 30.f);
-		VERIFY(newVec.Y() == 30.f);
+		const Matrix<float, 3, 1> colVec{ {10}, {10}, {10} };
+		const auto newVec = m0 * colVec;
+		VERIFY(newVec[0][0] == 30.f);
+		VERIFY(newVec[1][0] == 30.f);
 
-		const auto newVec2 = m14 / vec;
-		VERIFY(newVec2.X() == 0.f);
-		VERIFY(newVec2.Y() == -10.f);
-		VERIFY(newVec2.Z() == 10.f);
+		const auto newVec2 = inverse3x3 * colVec;
+		VERIFY(newVec2[0][0] == 0.f);
+		VERIFY(newVec2[1][0] == -10.f);
+		VERIFY(newVec2[2][0] == 10.f);
 
 
 
 		// Currently constexpr supported functions for matrices
 
-		constexpr Vector<float, 3> v{ 10, 10, 10 };
-		constexpr auto m15 = Matrix<float, 3, 3>{
+		constexpr auto v = Vector<double, 3>( 10.0, 10.0, 10.0 );
+		constexpr auto m15 = Matrix<double, 3, 3>{
 			{1, 2, 3},
 			{3, 4, 6},
 			{7, 8, 9},
 		};
 
-		constexpr auto m2v = m15 * v;
-		VERIFY(m2v.X() == 60.f);
-		VERIFY(m2v.Y() == 130.f);
-		VERIFY(m2v.Z() == 240.f);
+		const auto m2v = v * m15;
+		VERIFY(m2v.X() == 110.f);
+		VERIFY(m2v.Y() == 140.f);
+		VERIFY(m2v.Z() == 180.f);
 
-		constexpr auto m2v2 = m15 / v;
-		VERIFY(m2v2.X() == -10.f);
-		VERIFY(m2v2.Y() == 10.f);
-		VERIFY(m2v2.Z() == 0.f);
+		const auto m2v2 = v / m15;
+		constexpr auto accuracy = 8;
+		VERIFY(Round<double>(m2v2.X(), accuracy) == -Round(5.0/3, accuracy));
+		VERIFY(m2v2.Y() == 0);
+		VERIFY(Round<double>(m2v2.Z(), accuracy) == Round(5.0/3, accuracy));
 
 		constexpr auto mirror = m15.Mirror();
 		constexpr auto transpose = m15.Transpose();

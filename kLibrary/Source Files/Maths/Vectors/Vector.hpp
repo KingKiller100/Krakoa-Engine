@@ -4,10 +4,11 @@
 #include "../Length_Type.hpp"
 #include "../kAlgorithms.hpp"
 
-#include <utility>
-
 namespace kmaths
 {
+	template<typename T, Length_Type Rows, Length_Type Columns>
+	struct Matrix;
+
 	template<typename T, Length_Type N>
 	struct Vector
 	{
@@ -444,6 +445,12 @@ namespace kmaths
 			|| N != 3,
 			Vector> CrossProduct(const Vector& v) const noexcept
 			= delete;
+		
+		template<typename Type, Length_Type C>
+		friend constexpr Vector<Type, C> operator*(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
+
+		template<typename Type, Length_Type C>
+		friend constexpr Vector<Type, C> operator/(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
 
 	private:
 		T dimensions[N]{};

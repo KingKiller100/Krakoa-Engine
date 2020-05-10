@@ -417,7 +417,7 @@ namespace krakoa::graphics
 				const auto transform = kmaths::Translate(position)
 					* kmaths::Rotate2D(degreesOfRotation)
 					* kmaths::Scale2D(scale);
-				worldPosition = transform * pData->quadVertexPosition[i];
+				worldPosition = pData->quadVertexPosition[i] * transform;
 			}
 
 			bufferPtr->position = worldPosition;

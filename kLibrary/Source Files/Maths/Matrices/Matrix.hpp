@@ -425,44 +425,54 @@ namespace kmaths
 			return m;
 		}
 
-		template<typename U>
-		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
-		{
-			Column_Type result;
+// For Column Major Matrix -Vector operations /////////////////////////////////////////////////////////////////
+//		template<typename U>
+//		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
+//		{
+//			Column_Type result;
+//
+//			for (auto row = 0; row < Rows; ++row) {
+//				for (auto col = 0u; col < Columns; ++col) {
+//#ifdef KLIB_DEBUG
+//					const auto left = elems[row][col];
+//					const auto right = v[col];
+//					const Type res = left * right;
+//					result[row] += res;
+//#else
+//					result[row] += (elems[row][col] * v[col]);
+//#endif
+//				}
+//
+//				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+//					result[row] = HandleFloatingPointError<Type>(result[row]);
+//			}
+//
+//			return result;
+//		}
 
-			for (auto row = 0; row < Rows; ++row) {
-				for (auto col = 0u; col < Columns; ++col) {
-#ifdef KLIB_DEBUG
-					const auto left = elems[row][col];
-					const auto right = v[col];
-					const Type res = left * right;
-					result[row] += res;
-#else
-					result[row] += (elems[row][col] * v[col]);
-#endif
-				}
-
-				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-					result[row] = HandleFloatingPointError<Type>(result[row]);
-			}
-
-			return result;
-		}
+		//template<typename U>
+		//USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
+		//{
+		//	return Inverse() * v;
+		//}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
-			Matrix m;
-			for (auto row = 0u; row < Rows; ++row)
-				for (auto col = 0u; col < Columns; ++col)
-					m.elems[row][col] = elems[row][col] / scalar;
-			return m;
-		}
-
-		template<typename U>
-		USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
-		{
-			return Inverse() * v;
+			if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+			{
+				const auto multipler = constants::OneOver<Type>(scalar);
+				return *this * multipler;
+			}
+			else
+			{
+				Matrix m;
+				for (auto row = 0u; row < Rows; ++row)
+					for (auto col = 0u; col < Columns; ++col)
+						m.elems[row][col] = elems[row][col] / scalar;
+				return m;
+			}
 		}
 
 		template<Length_Type C, Length_Type R = Columns>
@@ -640,5 +650,35 @@ namespace kmaths
 		for (auto row = 0u; row < R; ++row)
 			identity[row][row] = CAST(Type, 1);
 		return identity;
+	}
+
+	template<typename Type, Length_Type R, Length_Type C>
+	USE_RESULT constexpr Vector<Type, C> operator*(const Vector<Type, R>& v, const Matrix<Type, R, C>& m) noexcept
+	{
+		Vector<Type, C> result;
+
+		for (auto col = 0u; col < C; ++col) {
+			for (auto row = 0; row < R; ++row) {
+#ifdef _DEBUG
+				const auto left = v[col];
+				const auto right = m[row][col];
+				const Type res = left * right;
+				result[col] += res;
+#else
+				result[col] += (v[col] * elems[row][col]);
+#endif
+			}
+
+			//if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+			//	result[col] = HandleFloatingPointError<Type>(result[col]);
+		}
+
+		return result;
+	}
+
+	template<typename Type, Length_Type R, Length_Type C>
+	USE_RESULT constexpr Vector<Type, C> operator/(const Vector<Type, R>& v, const Matrix<Type, R, C>& m) noexcept
+	{
+		return operator*(v, m.Inverse());
 	}
 }

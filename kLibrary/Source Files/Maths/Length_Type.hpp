@@ -6,10 +6,10 @@ namespace kmaths
 {
 	using Length_Type = unsigned short;
 
-#ifdef WIN_32
-	using Big_Int_Type = int;
-#else
+#ifdef _WIN64
 	using Big_Int_Type = long long;
+#else
+	using Big_Int_Type = int;
 #endif
 
 	template<typename T>

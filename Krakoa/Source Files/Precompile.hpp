@@ -9,6 +9,7 @@
 #include <string>
 #include <sstream>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #if _MSVC_LANG >= 201400L

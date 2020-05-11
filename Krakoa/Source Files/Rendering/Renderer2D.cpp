@@ -417,11 +417,8 @@ namespace krakoa::graphics
 			}
 			else
 			{
-				auto q2 = kmaths::Quaternionf().EulerToQuaternions(0, 0, degreesOfRotation);
-				const auto transform = q2.CalculateTransformMatrix(pData->quadVertexPosition[i]);
-				const auto vertexMat = kmaths::Vector4f(position[0], position[1], position[2], 1.f) * transform;
-				const auto scaledVertex = pData->quadVertexPosition[i] * scale;
-				worldPosition = qpq_ * scaledVertex;
+				const auto scaledVertex = (pData->quadVertexPosition[i] * scale);
+				worldPosition = position + (qpq_ * scaledVertex);
 			}
 
 			bufferPtr->position = worldPosition;

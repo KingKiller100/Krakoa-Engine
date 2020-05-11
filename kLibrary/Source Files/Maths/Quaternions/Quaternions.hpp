@@ -300,14 +300,16 @@ namespace kmaths
 		USE_RESULT constexpr Quaternion operator *(const Quaternion& other) const noexcept
 		{
 			Quaternion q;
-			q.w = w * other.w - v[0] * other.v[0] -
+			q.w = (w * other.w) + v.DotProduct(other.v);
+			q.v = (v * other.w) + (other.v * w) + v.CrossProduct(other.v);
+			/*q.w = w * other.w - v[0] * other.v[0] -
 				v[1] * other.v[1] - v[2] * other.v[2];
 			q.v[0] = w * other.v[0] + v[0] * other.w +
 				v[1] * other.v[2] - v[2] * other.v[1];
 			q.v[1] = w * other.v[1] + v[1] * other.w +
 				v[2] * other.v[0] - v[0] * other.v[2];
 			q.v[2] = w * other.v[2] + v[2] * other.w +
-				v[0] * other.v[1] - v[1] * other.v[0];
+				v[0] * other.v[1] - v[1] * other.v[0];*/
 			return q;
 		}
 

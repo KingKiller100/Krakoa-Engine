@@ -63,24 +63,36 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		explicit constexpr Quaternion(const T r = CAST(T, 1), const T i = CAST(T, 0), const T j = CAST(T, 0), const T k = CAST(T, 0)) noexcept
-			: r(ToRadians<T>(r)), i(i), j(j), k(k)
+		explicit constexpr Quaternion(const T degrees = 0, const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0)) noexcept
 		{
-			if (MagnitudeSQ() != constants::One<T>())
-				Normalize();
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			const auto rads = ToRadians(degrees);
+			const auto halfRads = rads * zeroPointFive;
+			const auto sinRads = sin(halfRads);
+
+
+			w = cos(halfRads);
+			v = Vector3<T>(x * sinRads, y * sinRads, z * sinRads);
 		}
 
-		explicit constexpr Quaternion(const Vector<T, 3>& v, T degrees) noexcept
-			: r(ToRadians<T>(degrees)), i(v[0]), j(v[1]), k(v[2])
+		// Vector must be normalized
+		explicit constexpr Quaternion(const T degrees, Vector<T, 3> n) noexcept
 		{
-			if (MagnitudeSQ() != constants::One<T>())
-				Normalize();
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			const auto rads = ToRadians(degrees);
+			const auto halfRads = rads * zeroPointFive;
+
+			if (n.MagnitudeSQ() != 1)
+				n = n.Normalize();
+
+			w = cos(halfRads);
+			v = n * sin(halfRads);
 		}
 
 
 		USE_RESULT constexpr T MagnitudeSQ() const noexcept
 		{
-			return (r * r) + (i * i) + (j * j) + (k * k);
+			return (w * w) + v.MagnitudeSQ();
 		}
 
 		/**
@@ -95,22 +107,28 @@ namespace kmaths
 			// quaternion in that case.
 			if (magSQ <= std::numeric_limits<T>::epsilon())
 			{
-				r = constants::One<T>();
+				w = constants::One<T>();
 				return;
 			}
 
 			const T d = constants::OneOver<T>(Sqrt<T>(magSQ));
 
-			r *= d;
-			i *= d;
-			j *= d;
-			k *= d;
+			w *= d;
+			v *= d;
+		}
+
+		USE_RESULT constexpr Quaternion Inverted() const noexcept
+		{
+			Quaternion q;
+			q.w = w;
+			q.v = -v;
+			return q;
 		}
 
 		USE_RESULT constexpr T DotProduct(const Quaternion& other) const noexcept
 		{
-			const auto dotAxes = (i * other.i) + (j * other.j) + (k * other.k);
-			const auto dotRotation = r * other.r;
+			const auto dotAxes = v.DotProduct(other.v);
+			const auto dotRotation = w * other.w;
 			return (dotAxes + dotRotation);
 		}
 
@@ -136,10 +154,8 @@ namespace kmaths
 				scaledVector[1],
 				scaledVector[2]);
 			q *= *this;
-			r += q.r * zeroPointFive;
-			i += q.i * zeroPointFive;
-			j += q.j * zeroPointFive;
-			k += q.k * zeroPointFive;
+			w += q.w * zeroPointFive;
+			v += (q.v * zeroPointFive);
 		}
 
 		/**
@@ -151,7 +167,7 @@ namespace kmaths
 		* \param[i] vector
 		*		The 3D vector to rotate by
 		*/
-		void RotateByVector(const Vector3<T>& vector)
+		constexpr void RotateByVector(const Vector3<T>& vector)
 		{
 			Quaternion q(0, vector.X(), vector.Y(), vector.Z());
 			(*this) *= q;
@@ -170,10 +186,10 @@ namespace kmaths
 			const T sPitch = sin(pitch * zeroPointFive);
 
 			Quaternion q;
-			q.r = cYaw * cRoll * cPitch + sYaw * sRoll * sPitch;
-			q.i = cYaw * sRoll * cPitch - sYaw * cRoll * sPitch;
-			q.j = cYaw * cRoll * sPitch + sYaw * sRoll * cPitch;
-			q.k = sYaw * cRoll * cPitch - cYaw * sRoll * sPitch;
+			q.w = cYaw * cRoll * cPitch + sYaw * sRoll * sPitch;
+			q.v[0] = cYaw * sRoll * cPitch - sYaw * cRoll * sPitch;
+			q.v[1] = cYaw * cRoll * sPitch + sYaw * sRoll * cPitch;
+			q.v[2] = sYaw * cRoll * cPitch - cYaw * sRoll * sPitch;
 
 			return q;
 		}
@@ -183,21 +199,19 @@ namespace kmaths
 			return EulerToQuaternions(axis[0], axis[1], axis[2]);
 		}
 
-		USE_RESULT constexpr void Rotate(const T degrees, const Vector<Type, 3>& v) noexcept
+		USE_RESULT constexpr void Rotate(const T degrees, const Vector<Type, 3>& n) noexcept
 		{
 			const auto halfA = ToRadians(degrees) * constants::ZeroPointFive<T>();
 			const auto c = cos(halfA);
 			const auto s = sin(halfA);
 
-			Vector3<T> norm = v;
+			Vector3<T> norm = n;
 
-			if (v.MagnitudeSQ() != 1)
-				norm = v.Normalize();
+			if (n.MagnitudeSQ() != 1)
+				norm = n.Normalize();
 
-			r = c;
-			i = norm[0] * s;
-			j = norm[1] * s;
-			k = norm[2] * s;
+			w = c;
+			v = norm * s;
 		}
 
 		/**
@@ -206,30 +220,34 @@ namespace kmaths
 		 * \param[in] pos
 		 *		Object's current position
 		 */
-		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& pos) const noexcept
+		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& position) const noexcept
 		{
 			constexpr auto one = constants::One<T>();
 			constexpr auto two = CAST(T, 2);
 
+			const auto i = v[0];
+			const auto j = v[1];
+			const auto k = v[2];
+
 			TransformMatrix<T> mat;
 			mat[0][0] = one - two * (j * j - k * k);
-			mat[0][1] = two * (i * j - r * k);
-			mat[0][2] = two * (i * k + r * j);
+			mat[0][1] = two * (i * j - w * k);
+			mat[0][2] = two * (i * k + w * j);
 			mat[0][3] = 0;
 
-			mat[1][0] = two * (i * j + r * k);
+			mat[1][0] = two * (i * j + w * k);
 			mat[1][1] = one - two * (i * i - k * k);
-			mat[1][2] = two * (j * k - r * i);
+			mat[1][2] = two * (j * k - w * i);
 			mat[1][3] = 0;
 
-			mat[2][0] = two * (i * k - r * j);
-			mat[2][1] = two * (j * k + r * i);
+			mat[2][0] = two * (i * k - w * j);
+			mat[2][1] = two * (j * k + w * i);
 			mat[2][2] = one - two * (i * i - j * j);
 			mat[2][3] = 0;
 
-			mat[3][0] = pos[0];
-			mat[3][1] = pos[1];
-			mat[3][2] = pos[2];
+			mat[3][0] = position[0];
+			mat[3][1] = position[1];
+			mat[3][2] = position[2];
 			mat[3][3] = one;
 			return mat;
 		}
@@ -242,21 +260,34 @@ namespace kmaths
 		USE_RESULT constexpr Quaternion operator+(const Quaternion& other) const noexcept
 		{
 			Quaternion q;
-			q.r = r + other.r;
-			q.i = i + other.i;
-			q.j = j + other.j;
-			q.k = k + other.k;
+			q.w = w + other.w;
+			q.v = v + other.v;
 			return q;
 		}
 
 		USE_RESULT constexpr Quaternion operator-(const Quaternion& other) const noexcept
 		{
 			Quaternion q;
-			q.r = r - other.r;
-			q.i = i - other.i;
-			q.j = j - other.j;
-			q.k = k - other.k;
+			q.w = w - other.w;
+			q.v = v - other.v;
 			return q;
+		}
+
+		USE_RESULT constexpr Vector<T, 3> operator *(const Vector<T, 3>& vec) const noexcept
+		{
+			// Quaternion q;
+			// q.w = 0;
+			// q.v = vec;
+
+			// Could do it this way:
+
+			// const Quaternion& q = (*this);
+			// return (q * p * q.Inverted()).v;
+
+
+			constexpr auto two = CAST(T, 2);
+			const auto crossProduct = v.CrossProduct(vec);
+			return vec + (crossProduct * (two * w)) + v.CrossProduct(crossProduct) * two;
 		}
 
 		/**
@@ -269,14 +300,14 @@ namespace kmaths
 		USE_RESULT constexpr Quaternion operator *(const Quaternion& other) const noexcept
 		{
 			Quaternion q;
-			q.r = r * other.r - i * other.i -
-				j * other.j - k * other.k;
-			q.i = r * other.i + i * other.r +
-				j * other.k - k * other.j;
-			q.j = r * other.j + j * other.r +
-				k * other.i - i * other.k;
-			q.k = r * other.k + k * other.r +
-				i * other.j - j * other.i;
+			q.w = w * other.w - v[0] * other.v[0] -
+				v[1] * other.v[1] - v[2] * other.v[2];
+			q.v[0] = w * other.v[0] + v[0] * other.w +
+				v[1] * other.v[2] - v[2] * other.v[1];
+			q.v[1] = w * other.v[1] + v[1] * other.w +
+				v[2] * other.v[0] - v[0] * other.v[2];
+			q.v[2] = w * other.v[2] + v[2] * other.w +
+				v[0] * other.v[1] - v[1] * other.v[0];
 			return q;
 		}
 
@@ -301,24 +332,13 @@ namespace kmaths
 		*/
 		constexpr Quaternion& operator *=(const Quaternion& other) noexcept
 		{
-			r = r * other.r - i * other.i -
-				j * other.j - k * other.k;
-			i = r * other.i + i * other.r +
-				j * other.k - k * other.j;
-			j = r * other.j + j * other.r +
-				k * other.i - i * other.k;
-			k = r * other.k + k * other.r +
-				i * other.j - j * other.i;
-
+			*this = *this * other;
 			return *this;
-
 		}
 
 	public:
-		T r;	// Holds the real component of the quaternion.
-		T i;	// First complex component of the quaternion.
-		T j;	// Second complex component of the quaternion.
-		T k;	// Third complex component of the quaternion.
+		T w;	// Holds the real component of the quaternion.
+		Vector<T, 3> v;	// Holds 3 component vector of complex components of the quaternion.
 	};
 
 

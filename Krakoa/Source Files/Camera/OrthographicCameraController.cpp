@@ -13,7 +13,9 @@ namespace krakoa
 		: aspectRatio(aspectRatio), zoomLevel(1.f), isRotationAllowed(isRotationAllowed),
 		camera(-(aspectRatio * zoomLevel), aspectRatio * zoomLevel, -zoomLevel, zoomLevel),
 		rotationZ(0.f), camRotationSpeed(1.f), camTranslationSpeed(1.f)
-	{}
+	{
+		KRK_PROFILE_FUNCTION();
+	}
 
 	OrthographicCameraController::~OrthographicCameraController()
 		= default;
@@ -47,21 +49,25 @@ namespace krakoa
 
 	krakoa::OrthographicCamera& OrthographicCameraController::GetCamera() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return camera;
 	}
 
 	const krakoa::OrthographicCamera& OrthographicCameraController::GetCamera() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return camera;
 	}
 
 	void OrthographicCameraController::SetRotationSpeed(const float rotSpeed) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		camRotationSpeed = rotSpeed;
 	}
 
 	void OrthographicCameraController::SetTranslationSpeed(const float transSpeed) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		camTranslationSpeed = transSpeed;
 	}
 

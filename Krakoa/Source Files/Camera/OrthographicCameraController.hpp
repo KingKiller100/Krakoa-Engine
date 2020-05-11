@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "../Events System/ApplicationEvent.hpp"
-#include "../Events System/MouseEvent.hpp"
 #include "OrthographicCamera.hpp"
+#include "../Events System/MouseEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
 
 #include <Maths/Vectors/Vector3.hpp>
 

@@ -42,10 +42,10 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 		position.X() -= moveSpeed * deltaTime;
 
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-		rotation += moveSpeed * deltaTime;
+		rotation += 5 * moveSpeed * deltaTime;
 
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-		rotation -= moveSpeed * deltaTime;
+		rotation -= 5 * moveSpeed * deltaTime;
 }
 
 void Renderer2DLayer::OnRender()
@@ -56,7 +56,7 @@ void Renderer2DLayer::OnRender()
 	ImGui::End();
 }
 
-void Renderer2DLayer::OnEvent(krakoa::events::Event & e)
+void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
 {
 	KRK_PROFILE_FUNCTION();
 	cameraController.OnEvent(e);
@@ -91,7 +91,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 
 		constexpr auto rotScale = kmaths::Vector2f(0.25f);
-		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, 90.f, rotScale);
+		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale);
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();

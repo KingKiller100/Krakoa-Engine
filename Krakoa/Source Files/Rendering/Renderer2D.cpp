@@ -166,7 +166,7 @@ namespace krakoa::graphics
 		}
 
 		auto& shaderLib = ShaderLibrary::Reference();
-		auto mainShader = shaderLib.Load("MainShader", "../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
+		auto mainShader = shaderLib.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
 		if (!mainShader.expired())
 		{
 			auto mainShaderS_Ptr = mainShader.lock();
@@ -387,6 +387,8 @@ namespace krakoa::graphics
 		auto& bufferPtr = pData->quadVertexBufferPtr;
 		const auto loops = pData->quadVertexPosition.GetRows();
 
+		const auto qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
+
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
 			kmaths::Vector2f texCoord;
@@ -415,11 +417,11 @@ namespace krakoa::graphics
 			}
 			else
 			{
-
 				auto q2 = kmaths::Quaternionf().EulerToQuaternions(0, 0, degreesOfRotation);
 				const auto transform = q2.CalculateTransformMatrix(pData->quadVertexPosition[i]);
 				const auto vertexMat = kmaths::Vector4f(position[0], position[1], position[2], 1.f) * transform;
-				worldPosition =  vertexMat * scale;
+				const auto scaledVertex = pData->quadVertexPosition[i] * scale;
+				worldPosition = qpq_ * scaledVertex;
 			}
 
 			bufferPtr->position = worldPosition;

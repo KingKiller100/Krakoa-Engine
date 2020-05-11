@@ -113,7 +113,7 @@ namespace kmaths
 		{
 			const auto magSQ = MagnitudeSQ();
 			const auto mag = Sqrt(magSQ);
-			return static_cast<Type>(mag);
+			return mag;
 		}
 
 		USE_RESULT constexpr Type MagnitudeSQ() const noexcept
@@ -136,13 +136,16 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector Normalize() const noexcept
 		{
-			auto mag = Magnitude();
-			if (mag == static_cast<Type>(0))
+			constexpr auto epsilon = std::numeric_limits<Type>::epsilon();
+
+			const auto magSQ = MagnitudeSQ();
+
+			if (magSQ <= epsilon)
 				return Vector();
-			else if (mag == static_cast<T>(1))
+			else if (magSQ == static_cast<Type>(1))
 				return *this;
 
-			mag = static_cast<Type>(1) / mag;
+			const auto mag = constants::OneOver<Type>(Sqrt<T>(magSQ));
 
 			T temp[N]{ 0 };
 			for (auto i = 0; i < N; ++i)

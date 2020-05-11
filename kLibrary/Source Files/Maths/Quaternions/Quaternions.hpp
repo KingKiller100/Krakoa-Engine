@@ -34,14 +34,8 @@ namespace kmaths
 		static_assert(std::is_floating_point_v<T>, "Must be instantiated with a floating point type");
 
 		using Type = T;
-
-		/**
-		* The default constructor creates a quaternion representing
-		* a zero rotation.
-		*/
-		constexpr Quaternion() noexcept
-			: r(1), i(0), j(0), k(0)
-		{}
+		inline static constexpr Length_Type Length = 4;
+		inline static constexpr size_t Bytes = Length * sizeof(T);
 
 		/**
 		* \brief
@@ -69,9 +63,25 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		constexpr Quaternion(const T r, const T i, const T j, const T k) noexcept
-			: r(r), i(i), j(j), k(k)
-		{}
+		explicit constexpr Quaternion(const T r = CAST(T, 1), const T i = CAST(T, 0), const T j = CAST(T, 0), const T k = CAST(T, 0)) noexcept
+			: r(ToRadians<T>(r)), i(i), j(j), k(k)
+		{
+			if (MagnitudeSQ() != constants::One<T>())
+				Normalize();
+		}
+
+		explicit constexpr Quaternion(const Vector<T, 3>& v, T degrees) noexcept
+			: r(ToRadians<T>(degrees)), i(v[0]), j(v[1]), k(v[2])
+		{
+			if (MagnitudeSQ() != constants::One<T>())
+				Normalize();
+		}
+
+
+		USE_RESULT constexpr T MagnitudeSQ() const noexcept
+		{
+			return (r * r) + (i * i) + (j * j) + (k * k);
+		}
 
 		/**
 		* normalizes the quaternion to unit length, making it a valid
@@ -79,19 +89,17 @@ namespace kmaths
 		*/
 		constexpr void Normalize() noexcept
 		{
-			constexpr auto one = constants::One<T>();
-
-			const T magSQ = r * r + i * i + j * j + k * k;
+			const T magSQ = MagnitudeSQ();
 
 			// Check for zero length quaternion, and use the no-rotation
 			// quaternion in that case.
-			if (magSQ < std::numeric_limits<T>::epsilon())
+			if (magSQ <= std::numeric_limits<T>::epsilon())
 			{
-				r = one;
+				r = constants::One<T>();
 				return;
 			}
 
-			const T d = one / Sqrt<T>(magSQ);
+			const T d = constants::OneOver<T>(Sqrt<T>(magSQ));
 
 			r *= d;
 			i *= d;
@@ -99,23 +107,11 @@ namespace kmaths
 			k *= d;
 		}
 
-		/**
-		* \brief
-		*		Multiplies the quaternion by the given quaternion.
-		*
-		* \param[in] multiplier
-		*		The quaternion by which to multiply.
-		*/
-		constexpr void operator *=(const Quaternion &multiplier) noexcept
+		USE_RESULT constexpr T DotProduct(const Quaternion& other) const noexcept
 		{
-			r = r * multiplier.r - i * multiplier.i -
-				j * multiplier.j - k * multiplier.k;
-			i = r * multiplier.i + i * multiplier.r +
-				j * multiplier.k - k * multiplier.j;
-			j = r * multiplier.j + j * multiplier.r +
-				k * multiplier.i - i * multiplier.k;
-			k = r * multiplier.k + k * multiplier.r +
-				i * multiplier.j - j * multiplier.i;
+			const auto dotAxes = (i * other.i) + (j * other.j) + (k * other.k);
+			const auto dotRotation = r * other.r;
+			return (dotAxes + dotRotation);
 		}
 
 		/**
@@ -124,7 +120,7 @@ namespace kmaths
 		*		This is used to update the orientation quaternion by a rotation
 		*		and time.
 		*
-		* \param[i] vector 
+		* \param[i] vector
 		*		The 3D scaled vector to add.
 		*
 		* \param[in] scale
@@ -152,7 +148,7 @@ namespace kmaths
 		*		This is used to update the orientation quaternion by a rotation
 		*		and time.
 		*
-		* \param[i] vector 
+		* \param[i] vector
 		*		The 3D vector to rotate by
 		*/
 		void RotateByVector(const Vector3<T>& vector)
@@ -162,14 +158,14 @@ namespace kmaths
 		}
 
 		// Converts Euler angles to quaternion angles
-		USE_RESULT constexpr Quaternion EulerToQuaternions(const T pitch, const T roll, const T yaw) noexcept
+		USE_RESULT static constexpr Quaternion EulerToQuaternions(const T pitch, const T roll, const T yaw) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 
-			const T cYaw = cos(yaw   * zeroPointFive);
-			const T sYaw = sin(yaw   * zeroPointFive);
-			const T cRoll = cos(roll  * zeroPointFive);
-			const T sRoll = sin(roll  * zeroPointFive);
+			const T cYaw = cos(yaw * zeroPointFive);
+			const T sYaw = sin(yaw * zeroPointFive);
+			const T cRoll = cos(roll * zeroPointFive);
+			const T sRoll = sin(roll * zeroPointFive);
 			const T cPitch = cos(pitch * zeroPointFive);
 			const T sPitch = sin(pitch * zeroPointFive);
 
@@ -181,6 +177,29 @@ namespace kmaths
 
 			return q;
 		}
+
+		USE_RESULT static constexpr Quaternion EulerToQuaternions(const Vector<T, 3>& axis) noexcept
+		{
+			return EulerToQuaternions(axis[0], axis[1], axis[2]);
+		}
+
+		USE_RESULT constexpr void Rotate(const T degrees, const Vector<Type, 3>& v) noexcept
+		{
+			const auto halfA = ToRadians(degrees) * constants::ZeroPointFive<T>();
+			const auto c = cos(halfA);
+			const auto s = sin(halfA);
+
+			Vector3<T> norm = v;
+
+			if (v.MagnitudeSQ() != 1)
+				norm = v.Normalize();
+
+			r = c;
+			i = norm[0] * s;
+			j = norm[1] * s;
+			k = norm[2] * s;
+		}
+
 		/**
 		 * \brief
 		 *		Calculates the new value for the given matrix transformation
@@ -213,6 +232,86 @@ namespace kmaths
 			mat[3][2] = pos[2];
 			mat[3][3] = one;
 			return mat;
+		}
+
+
+
+
+		// Operators
+
+		USE_RESULT constexpr Quaternion operator+(const Quaternion& other) const noexcept
+		{
+			Quaternion q;
+			q.r = r + other.r;
+			q.i = i + other.i;
+			q.j = j + other.j;
+			q.k = k + other.k;
+			return q;
+		}
+
+		USE_RESULT constexpr Quaternion operator-(const Quaternion& other) const noexcept
+		{
+			Quaternion q;
+			q.r = r - other.r;
+			q.i = i - other.i;
+			q.j = j - other.j;
+			q.k = k - other.k;
+			return q;
+		}
+
+		/**
+		* \brief
+		*		Multiplies the quaternion by the given quaternion.
+		*
+		* \param[in] other
+		*		The quaternion by which to multiply.
+		*/
+		USE_RESULT constexpr Quaternion operator *(const Quaternion& other) const noexcept
+		{
+			Quaternion q;
+			q.r = r * other.r - i * other.i -
+				j * other.j - k * other.k;
+			q.i = r * other.i + i * other.r +
+				j * other.k - k * other.j;
+			q.j = r * other.j + j * other.r +
+				k * other.i - i * other.k;
+			q.k = r * other.k + k * other.r +
+				i * other.j - j * other.i;
+			return q;
+		}
+
+		constexpr Quaternion& operator +=(const Quaternion& other) noexcept
+		{
+			*this = *this + other;
+			return *this;
+		}
+
+		constexpr Quaternion& operator -=(const Quaternion& other) noexcept
+		{
+			*this = *this - other;
+			return *this;
+		}
+
+		/**
+		* \brief
+		*		Multiplies the quaternion by the given quaternion.
+		*
+		* \param[in] other
+		*		The quaternion by which to multiply.
+		*/
+		constexpr Quaternion& operator *=(const Quaternion& other) noexcept
+		{
+			r = r * other.r - i * other.i -
+				j * other.j - k * other.k;
+			i = r * other.i + i * other.r +
+				j * other.k - k * other.j;
+			j = r * other.j + j * other.r +
+				k * other.i - i * other.k;
+			k = r * other.k + k * other.r +
+				i * other.j - j * other.i;
+
+			return *this;
+
 		}
 
 	public:

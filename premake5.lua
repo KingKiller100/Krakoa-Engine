@@ -142,7 +142,7 @@ project "Hooper2"
     characterset ("default")
     staticruntime "On"
 
-    targetdir ("bin/Game/%{prj.name}")
+    targetdir ("bin/".. OutputDir .. "/Game/%{prj.name}")
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
     
     files
@@ -181,6 +181,8 @@ project "Hooper2"
         runtime "Debug"
 
     filter "configurations:Test"
+        targetdir ("bin/" .. OutputDir ..  "/Component Tests")
+        targetname ("Test")
         defines 
         {
             "KRAKOA_TEST",

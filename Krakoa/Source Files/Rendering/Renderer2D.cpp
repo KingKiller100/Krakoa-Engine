@@ -29,13 +29,16 @@ namespace krakoa::graphics
 		float texIdx;
 	};
 
-	struct QuadBatchRendererLimits
+	namespace QuadBatchRendererLimits
 	{
-		static const uint32_t MaxQuads = 10000;
-		static const uint32_t MaxVertices = MaxQuads * 4;
-		static const uint32_t MaxIndices = MaxQuads * 6;
+		static constexpr uint8_t verticesPerQuad = 4;
+		static constexpr uint8_t indicesPerQuad = 6;
 
-		static const uint32_t MaxTextureSlots = 32;
+		static constexpr uint32_t MaxQuads = 10000;
+		static constexpr uint32_t MaxVertices = MaxQuads * 4;
+		static constexpr uint32_t MaxIndices = MaxQuads * 6;
+
+		static constexpr uint32_t MaxTextureSlots = 32;
 	};
 
 	struct Primatives2DData
@@ -92,6 +95,9 @@ namespace krakoa::graphics
 
 			triangleVB->SetLayout({
 				{ krakoa::graphics::ShaderDataType::FLOAT3, "a_Position" },
+				{ krakoa::graphics::ShaderDataType::FLOAT4, "a_Colour" },
+				{ krakoa::graphics::ShaderDataType::FLOAT2, "a_TexCoord" },
+				{ krakoa::graphics::ShaderDataType::FLOAT,  "a_TexIndex" },
 				});
 
 			pData->pTriangleVertexArray->AddVertexBuffer(triangleVB);
@@ -387,7 +393,10 @@ namespace krakoa::graphics
 		auto& bufferPtr = pData->quadVertexBufferPtr;
 		const auto loops = pData->quadVertexPosition.GetRows();
 
-		const auto qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
+		kmaths::Quaternionf qpq_;
+		
+		if (degreesOfRotation != 0)
+			qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{

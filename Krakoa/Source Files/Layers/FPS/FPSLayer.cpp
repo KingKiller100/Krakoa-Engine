@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "FPSLayer.hpp"
 
+#include "../../Instrumentor.hpp"
+
 #include <imgui.h>
 
 #include <Maths/kAlgorithms.hpp>
@@ -47,10 +49,7 @@ namespace krakoa
 		ImGui::End();
 	}
 
-	void FPSLayer::OnEvent(events::Event& e)
-	{}
-
-	float FPSLayer::CalculateAverageFPS() const noexcept
+	USE_RESULT float FPSLayer::CalculateAverageFPS() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 

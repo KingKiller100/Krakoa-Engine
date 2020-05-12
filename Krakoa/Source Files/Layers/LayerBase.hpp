@@ -11,11 +11,11 @@ namespace krakoa
 		LayerBase(const char* name);
 		virtual ~LayerBase();
 
-		virtual void OnAttach() = 0;
-		virtual void OnDetach() = 0;
-		virtual void OnUpdate(float deltaTime) = 0;
-		virtual void OnRender() = 0;
-		virtual void OnEvent(events::Event& e) = 0;
+		virtual void OnAttach() {};
+		virtual void OnDetach() {};
+		virtual void OnUpdate(float deltaTime) {};
+		virtual void OnRender() {};
+		virtual void OnEvent(events::Event& e) {};
 
 		constexpr const char* GetName() const;
 

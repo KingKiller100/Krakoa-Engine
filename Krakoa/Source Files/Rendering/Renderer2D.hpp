@@ -10,8 +10,6 @@ namespace krakoa::graphics
 {
 	class Renderer2D
 	{
-	public:
-
 		// Statistics
 		struct Statistics
 		{
@@ -60,7 +58,7 @@ namespace krakoa::graphics
 		static void DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const kmaths::Vector4f& tintColour = kmaths::Vector4f(1.f), const float tilingFactor = 1.f);
 		static void DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const kmaths::Vector4f& tintColour = kmaths::Vector4f(1.f), const float tilingFactor = 1.f);
 
-		static Statistics GetStats();
+		static const Renderer2D::Statistics& GetStats();
 		
 	private:
 		static void RestartBatch() noexcept;

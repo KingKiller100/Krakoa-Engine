@@ -9,12 +9,13 @@
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
+#include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
 #include "../Rendering/Renderer.hpp"
-#include "../Rendering/Renderer2D.hpp"
 #include "../Rendering/ShaderLibrary.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
+
 
 namespace krakoa
 {
@@ -54,6 +55,7 @@ namespace krakoa
 		PushOverlay(pImGuiLayer);
 
 		PushOverlay(new FPSLayer());
+		PushOverlay(new Renderer2DStatistics());
 
 		// Initialize InputManager
 		input::InputManager::Initialize();

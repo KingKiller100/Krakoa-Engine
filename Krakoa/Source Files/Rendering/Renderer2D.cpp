@@ -36,7 +36,7 @@ namespace krakoa::graphics
 			static constexpr uint8_t indicesPerQuad = 6;
 			static constexpr uint8_t verticesPerQuad = 4;
 
-			static constexpr uint32_t maxQuads = 10000;
+			static constexpr uint32_t maxQuads = 2;
 			static constexpr uint32_t maxVertices = maxQuads * verticesPerQuad;
 			static constexpr uint32_t maxIndices = maxQuads * indicesPerQuad;
 		}
@@ -412,7 +412,7 @@ namespace krakoa::graphics
 		AddNewQuad(position, scale, tintColour, texIdx, degreesOfRotation, tilingFactor);
 	}
 
-	Renderer2D::Statistics Renderer2D::GetStats()
+	const Renderer2D::Statistics& Renderer2D::GetStats()
 	{
 		return stats;
 	}

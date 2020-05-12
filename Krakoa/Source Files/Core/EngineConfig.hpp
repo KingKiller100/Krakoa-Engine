@@ -34,6 +34,6 @@
 #define ANY_CAST(dest, source) std::any_cast<dest>(source)
 
 #ifndef KRAKOA_PROFILE
-#	define ENABLE_STATISTICS 1
+#	define ENABLE_STATISTICS KRK_TRUE
 #endif
 

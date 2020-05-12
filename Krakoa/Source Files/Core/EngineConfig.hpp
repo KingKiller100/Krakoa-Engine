@@ -32,3 +32,8 @@
 #define KRK_BIND2(func) std::bind(&func, this, PL_HOLDER(1), PL_HOLDER(2))
 
 #define ANY_CAST(dest, source) std::any_cast<dest>(source)
+
+#ifndef KRAKOA_PROFILE
+#	define ENABLE_STATISTICS 1
+#endif
+

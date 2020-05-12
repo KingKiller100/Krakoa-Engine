@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EngineCore.hpp"
+#include "EngineConfig.hpp"
 
 // Time Step
 #include "../TimeStep.hpp"

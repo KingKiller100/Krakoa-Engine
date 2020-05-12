@@ -7,7 +7,7 @@
 
 // Core
 #include "Instrumentor.hpp"
-#include "Core/EngineCore.hpp"
+#include "Core/EngineConfig.hpp"
 #include "Core/Application.hpp"
 #include "Core/Logging/Logger.hpp"
 

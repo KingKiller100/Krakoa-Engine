@@ -32,6 +32,7 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	constexpr float moveSpeed = 5.f;
 
 	KRK_PROFILE_FUNCTION();
+	
 	cameraController.OnUpdate(deltaTime);
 	SendRendererCommands();
 
@@ -48,9 +49,22 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 void Renderer2DLayer::OnRender()
 {
 	KRK_PROFILE_FUNCTION();
+
 	ImGui::Begin("Geometry Colour Settings");
 	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
 	ImGui::End();
+
+#if ENABLE_STATISTICS
+
+	const auto stats = krakoa::graphics::Renderer2D::GetStats();
+	ImGui::Begin("Renderer2D Statistics");
+	ImGui::Text("Draw Calls: %zu", stats.drawCallsCount);
+	ImGui::Text("Quad Count: %zu", stats.quadCount);
+	ImGui::Text("Vertices Count: %zu", stats.TotalQuadVertexCount());
+	ImGui::Text("Indices Count: %zu", stats.TotalQuadIndexCount());
+	ImGui::End();
+
+#endif
 }
 
 void Renderer2DLayer::OnEvent(krakoa::events::Event& e)

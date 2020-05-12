@@ -52,6 +52,7 @@ namespace krakoa::graphics
 	void OpenGLVertexArray::Unbind() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
+		
 		glBindVertexArray(0);
 	}
 
@@ -72,11 +73,11 @@ namespace krakoa::graphics
 
 			glEnableVertexAttribArray(idx);
 			glVertexAttribPointer(idx,
-				graphics::GetComponentCount(layout.type),
+				GetComponentCount(layout.type),
 				ShaderDataTypeToRenderAPIBaseType(layout.type),
 				layout.normalized ? GL_TRUE : GL_FALSE,
 				bufferLayout.GetStride(),
-				(const void *)layout.offset);
+				(const void*)layout.offset);
 		}
 
 		vertexBuffers.emplace_back(std::shared_ptr<iVertexBuffer>(vertexBuffer));

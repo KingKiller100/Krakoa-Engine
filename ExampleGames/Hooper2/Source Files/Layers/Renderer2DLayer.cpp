@@ -41,11 +41,8 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
 		position.X() -= moveSpeed * deltaTime;
 
-	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-		rotation += 5 * moveSpeed * deltaTime;
 
-	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-		rotation -= 5 * moveSpeed * deltaTime;
+	rotation -= 5 * moveSpeed * deltaTime;
 }
 
 void Renderer2DLayer::OnRender()
@@ -74,7 +71,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
-		/*for (auto y = 0; y < 5; ++y) {
+	/*	for (auto y = 0; y < 5; ++y) {
 			for (auto x = 0; x < 5; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector2f{ x * .5f, y * .5f };
@@ -91,7 +88,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 
 		constexpr auto rotScale = kmaths::Vector2f(0.25f);
-		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale);
+		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale, geometryColour, 3.f);
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();

@@ -9,6 +9,9 @@
 #include "Rendering Resources/iShader.hpp"
 #include "Rendering Resources/iVertexArray.hpp"
 
+#include "Primatives 2D/VertexData.hpp"
+#include "Primatives 2D/BatchRendererData.hpp"
+
 #include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
 
@@ -20,72 +23,51 @@
 
 namespace krakoa::graphics
 {
-	struct QuadVertex
-	{
-		kmaths::Vector3f position;
-		kmaths::Vector4f colour;
-		kmaths::Vector2f texCoord;
-		float texIdx;
-		float tilingFactor;
-	};
-
-	namespace batch::limits
-	{
-		namespace quad
-		{
-			static constexpr uint8_t indicesPerQuad = 6;
-			static constexpr uint8_t verticesPerQuad = 4;
-
-			static constexpr uint32_t maxQuads = 10000;
-			static constexpr uint32_t maxVertices = maxQuads * verticesPerQuad;
-			static constexpr uint32_t maxIndices = maxQuads * indicesPerQuad;
-		}
-
-		namespace triangle
-		{
-			static constexpr uint8_t indicesPerQuad = 3;
-			static constexpr uint8_t verticesPerQuad = 3;
-
-			static constexpr uint32_t maxQuads = 10000;
-			static constexpr uint32_t maxVertices = maxQuads * verticesPerQuad;
-			static constexpr uint32_t maxIndices = maxQuads * indicesPerQuad;
-		}
-
-		namespace texture
-		{
-			static constexpr uint32_t maxSlots = 32;
-		}
-	};
-
-
 	struct Primatives2DData
 	{
 	public:
 		constexpr void IncrementQuadIndexCount() noexcept
 		{
-			quadIndexCount += quadIndexIncrement;
+			quadIndexCount += batch::limits::quad::indicesPerQuad;
+		}
+
+
+		constexpr void IncrementTriangleIndexCount() noexcept
+		{
+			triangleIndexCount += batch::limits::triangle::indicesPerQuad;
 		}
 
 	public:
+		std::weak_ptr<iShader> pMainShader;
+
+
 		std::unique_ptr<iVertexArray> pQuadVertexArray;
 		std::unique_ptr<iVertexArray> pTriangleVertexArray;
 
-		std::weak_ptr<iShader> pMainShader;
 
 		uint32_t quadIndexCount = 0;
-		const uint32_t quadIndexIncrement = 6;
+		uint8_t triangleIndexCount = 0;
 
-		QuadVertex* quadVertexBufferBase = nullptr;
-		QuadVertex* quadVertexBufferPtr = nullptr;
+		VertexData* quadVertexBufferBase = nullptr;
+		VertexData* quadVertexBufferPtr = nullptr;
+
+		VertexData* triangleVertexBufferBase = nullptr;
+		VertexData* triangleVertexBufferPtr = nullptr;
 
 		std::array<std::shared_ptr<iTexture2D>, batch::limits::texture::maxSlots> textureSlots;
 		uint32_t textureSlotIdx = 1; // White texture index = 0
 
-		const kmaths::Matrix4x4f quadVertexPosition = {
+		const kmaths::Matrix4x4f quadVertices = {
 			{-0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f,  0.5f, 0.f, 1.0f },
 			{-0.5f,  0.5f, 0.f, 1.0f }
+		};
+
+		const kmaths::Matrix3x4f triangleVertices = {
+			{ -0.5f, -0.5f, 0.f, 1.0f },
+			{  0.5f, -0.5f, 0.f, 1.0f },
+			{  0.0f,  0.5f, 0.f, 1.0f }
 		};
 	};
 
@@ -135,7 +117,7 @@ namespace krakoa::graphics
 			// Vertex buffer
 			{
 				iVertexBuffer* quadVB = iVertexBuffer::Create(batch::limits::quad::maxVertices
-					* sizeof(QuadVertex)
+					* sizeof(VertexData)
 				);
 
 				quadVB->SetLayout({
@@ -149,7 +131,7 @@ namespace krakoa::graphics
 				pData->pQuadVertexArray->AddVertexBuffer(quadVB);
 			}
 
-			pData->quadVertexBufferBase = new QuadVertex[batch::limits::quad::maxVertices];
+			pData->quadVertexBufferBase = new VertexData[batch::limits::quad::maxVertices];
 
 
 			// Index buffer
@@ -158,7 +140,7 @@ namespace krakoa::graphics
 
 				constexpr auto maxIndices = batch::limits::quad::maxIndices;
 				uint32_t offset = 0;
-				for (size_t i = 0; i < maxIndices; i += pData->quadIndexIncrement)
+				for (size_t i = 0; i < maxIndices; i += batch::limits::quad::indicesPerQuad)
 				{
 					quadIndices[i + 0] = offset + 0;
 					quadIndices[i + 1] = offset + 1;
@@ -438,7 +420,7 @@ namespace krakoa::graphics
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour, const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
 	{
 		auto& bufferPtr = pData->quadVertexBufferPtr;
-		const auto loops = pData->quadVertexPosition.GetRows();
+		const auto loops = pData->quadVertices.GetRows();
 
 		kmaths::Quaternionf qpq_;
 
@@ -469,11 +451,11 @@ namespace krakoa::graphics
 
 			if (degreesOfRotation == 0)
 			{
-				worldPosition = (position + (pData->quadVertexPosition[i] * scale));
+				worldPosition = (position + (pData->quadVertices[i] * scale));
 			}
 			else
 			{
-				const auto scaledVertex = (pData->quadVertexPosition[i] * scale);
+				const auto scaledVertex = (pData->quadVertices[i] * scale);
 				worldPosition = position + (qpq_ * scaledVertex);
 			}
 

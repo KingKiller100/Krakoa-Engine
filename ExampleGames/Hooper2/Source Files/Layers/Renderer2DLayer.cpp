@@ -6,9 +6,10 @@
 
 Renderer2DLayer::Renderer2DLayer() noexcept
 	: LayerBase("Renderer"),
-	cameraController((float)krakoa::Application::Reference().GetWindow().GetWidth() / // Aspect ratio from window size
+	cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) / // Aspect ratio from window size
 		krakoa::Application::Reference().GetWindow().GetHeight(),
-		true) // Aspect ratio from window size
+		true), // Aspect ratio from window size
+	position({ 0.f, 0.f, -.25f })
 {
 	cameraController.SetRotationSpeed(180.f);
 	cameraController.SetTranslationSpeed(5.f);
@@ -32,7 +33,7 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	constexpr float moveSpeed = 5.f;
 
 	KRK_PROFILE_FUNCTION();
-	
+
 	cameraController.OnUpdate(deltaTime);
 	SendRendererCommands();
 
@@ -71,15 +72,16 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		//krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
 	}
 
+	krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 0, 1 }, kmaths::Vector3f(0, 0), kmaths::Vector2f(20.f));
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
-	/*	for (auto y = 0; y < 5; ++y) {
-			for (auto x = 0; x < 5; ++x)
+		for (auto y = 0; y < 5; ++y) {
+			for (auto x = -1000.f; x < 1000.f; x += 1.5f)
 			{
-				const auto miniSquarePos = kmaths::Vector2f{ x * .5f, y * .5f };
-				krakoa::graphics::Renderer2D::DrawQuad(pWinTexture, miniSquarePos, kmaths::Vector2f(0.25f));
+				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
+				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
 			}
-		}*/
+		}
 	}
 
 	{

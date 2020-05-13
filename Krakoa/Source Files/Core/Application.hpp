@@ -30,7 +30,7 @@ namespace krakoa
 		virtual ~Application();
 
 		virtual void Initialize();
-		void Run();
+		void Run() const;
 		USE_RESULT bool IsRunning() const;
 		virtual void Shutdown() = 0;
 

@@ -23,7 +23,7 @@ namespace krakoa
 
 	Application::Application(Token&)
 		: isRunning(true),
-		timeStep(),
+		timeStep(120),
 		isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -105,11 +105,11 @@ namespace krakoa
 		layerStack.PushOverlay(overlay);
 	}
 
-	void Application::Run()
+	void Application::Run() const
 	{
-		const auto deltaTime = timeStep.GetDeltaTime();
-
 		RendererClear();
+
+		const auto deltaTime = timeStep.GetDeltaTime();
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
 			pImGuiLayer->ToggleVisibility();

@@ -30,9 +30,9 @@ void Renderer2DLayer::OnDetach()
 
 void Renderer2DLayer::OnUpdate(float deltaTime)
 {
-	constexpr float moveSpeed = 2.f;
-
 	KRK_PROFILE_FUNCTION();
+
+	constexpr float moveSpeed = 2.f;
 
 	cameraController.OnUpdate(deltaTime);
 	SendRendererCommands();
@@ -53,21 +53,6 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	rotation -= 5 * moveSpeed * deltaTime;
 }
 
-void Renderer2DLayer::OnRender()
-{
-	KRK_PROFILE_FUNCTION();
-
-	ImGui::Begin("Geometry Colour Settings");
-	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
-	ImGui::End();
-}
-
-void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
-{
-	KRK_PROFILE_FUNCTION();
-	cameraController.OnEvent(e);
-}
-
 void Renderer2DLayer::SendRendererCommands() noexcept
 {
 	KRK_PROFILE_FUNCTION();
@@ -82,7 +67,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
 		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -1000.f; x < 1000.f; ++x) // drawing 1000 quads to stress test batch renderer
+			for (auto x = -5.f; x < 5.f; ++x) // drawing 1000 quads to stress test batch renderer
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
 				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
@@ -102,4 +87,44 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();
+}
+
+void Renderer2DLayer::OnRender()
+{
+	KRK_PROFILE_FUNCTION();
+
+	ImGui::Begin("Geometry Colour Settings");
+	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
+	ImGui::End();
+
+	ZoomControlsDisplay();
+}
+
+void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
+{
+	KRK_PROFILE_FUNCTION();
+	cameraController.OnEvent(e);
+}
+
+void Renderer2DLayer::ZoomControlsDisplay() noexcept
+{
+	constexpr kmaths::Vector2f in = { 0.f, 1.f };
+	constexpr kmaths::Vector2f out = { 0.f, -1.f };
+
+	ImGui::Begin("Zoom Controls");
+
+	if (ImGui::ArrowButton("Zoom In", ImGuiDir_Up))
+	{
+		auto zoomInEvent = krakoa::events::MouseScrolledEvent(in);
+		cameraController.OnEvent(zoomInEvent);
+	}
+	else if (ImGui::ArrowButton("Zoom Out", ImGuiDir_Down))
+	{
+		auto zoomOutEvent = krakoa::events::MouseScrolledEvent(out);
+
+		ImGui::NewLine();
+		cameraController.OnEvent(zoomOutEvent);
+	}
+
+	ImGui::End();
 }

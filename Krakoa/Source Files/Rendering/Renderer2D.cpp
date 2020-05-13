@@ -216,8 +216,8 @@ namespace krakoa::graphics
 		for (uint32_t i = 0; i < lastIdx; ++i)
 			pData->textureSlots[i]->Bind(i);
 		
-		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
 		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
+		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
 
 #if ENABLE_STATISTICS
 		stats.drawCallsCount++;

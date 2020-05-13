@@ -105,6 +105,18 @@ namespace krakoa
 		layerStack.PushOverlay(overlay);
 	}
 
+	void Application::PopLayer(LayerBase* layer)
+	{
+		KRK_PROFILE_FUNCTION();
+		layerStack.PopLayer(layer);
+	}
+
+	void Application::PopOverlay(LayerBase* overlay)
+	{
+		KRK_PROFILE_FUNCTION();
+		layerStack.PopOverlay(overlay);
+	}
+
 	void Application::Run() const
 	{
 		RendererClear();

@@ -91,14 +91,15 @@ namespace krakoa
 	bool OrthographicCameraController::OnWindowResizeEvent(const events::WindowResizeEvent& e)
 	{
 		KRK_PROFILE_FUNCTION();
-		if (e.GetHeight() != 0.f)
+		if (e.GetHeight() == 0)
+			aspectRatio = 0;
+		else
 		{
 			const auto width =  CAST(float, e.GetWidth() );
 			const auto height = CAST(float, e.GetHeight());
 			aspectRatio = width / height;
 		}
-		else
-			aspectRatio = 0;
+		
 		UpdateCameraProjectionMat();
 		return false;
 	}

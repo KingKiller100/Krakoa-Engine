@@ -39,6 +39,8 @@ namespace krakoa
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);
+		void PopLayer(LayerBase* layer);
+		void PopOverlay(LayerBase* overlay);
 
 	private:
 		void OnEvent(events::Event& e);

@@ -21,12 +21,23 @@ namespace krakoa
 		
 #if ENABLE_STATISTICS
 		const auto& stats = krakoa::graphics::Renderer2D::GetStats();
-		constexpr auto size = sizeof stats;
+
+		//constexpr auto size = sizeof(stats);
+		
 		ImGui::Begin("Renderer2D Statistics");
+		
 		ImGui::Text("Draw Calls: %zu", stats.drawCallsCount);
+
+		ImGui::NewLine();
 		ImGui::Text("Quad Count: %zu", stats.quadCount);
-		ImGui::Text("Vertices Count: %zu", stats.TotalQuadVertexCount());
-		ImGui::Text("Indices Count: %zu", stats.TotalQuadIndexCount());
+		ImGui::Text("Quad Vertices Count: %zu", stats.TotalQuadVertexCount());
+		ImGui::Text("Quad Indices Count: %zu", stats.TotalQuadIndexCount());
+
+		ImGui::NewLine();
+		ImGui::Text("Triangle Count: %zu", stats.triangleCount);
+		ImGui::Text("Triangle Vertices Count: %zu", stats.TotalTriangleVertexCount());
+		ImGui::Text("Triangle Indices Count: %zu", stats.TotalTriangleIndexCount());
+		
 		ImGui::End();
 #endif //ENABLE_STATISTICS
 	}

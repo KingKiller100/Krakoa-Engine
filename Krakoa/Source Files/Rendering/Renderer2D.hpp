@@ -1,8 +1,10 @@
 ﻿#pragma once
 
 #include "Textures/iTexture2D.hpp"
+#include "Primitives 2D/BatchRendererData.hpp"
 
 #include <Maths/Vectors/PredefinedVectors.hpp>
+
 
 namespace krakoa { class OrthographicCamera; }
 
@@ -14,16 +16,28 @@ namespace krakoa::graphics
 		struct Statistics
 		{
 			size_t drawCallsCount = 0;
+			
 			size_t quadCount = 0;
+			size_t triangleCount = 0;
 
 			size_t TotalQuadVertexCount() const noexcept
 			{
-				return quadCount * 4;
+				return quadCount * batch::limits::quad::vertices;
 			}
 
 			size_t TotalQuadIndexCount() const noexcept
 			{
-				return quadCount * 6;
+				return quadCount * batch::limits::quad::indices;
+			}
+
+			size_t TotalTriangleVertexCount() const noexcept
+			{
+				return triangleCount * batch::limits::triangle::vertices;
+			}
+
+			size_t TotalTriangleIndexCount() const noexcept
+			{
+				return triangleCount * batch::limits::triangle::indices;
 			}
 
 		};
@@ -64,5 +78,6 @@ namespace krakoa::graphics
 		static void RestartBatch() noexcept;
 		static void QueryLimitsMet() noexcept;
 		static void AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour = kmaths::Vector4f(1.f), const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
+		static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour = kmaths::Vector4f(1.f), const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
 	};
 }

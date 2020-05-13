@@ -12,7 +12,6 @@
 #include "Primitives 2D/VertexData.hpp"
 #include "Primitives 2D/GeometryData.hpp"
 #include "Primitives 2D/Primitives2D.hpp"
-#include "Primitives 2D/BatchRendererData.hpp"
 
 #include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
@@ -188,6 +187,7 @@ namespace krakoa::graphics
 
 #if ENABLE_STATISTICS
 		stats.quadCount = 0;
+		stats.triangleCount = 0;
 		stats.drawCallsCount = 0;
 #endif
 	}
@@ -196,13 +196,16 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto& vertexBuffer = pData->quad.pVertexArray->GetVertexBuffers().front();
-		const auto& basePtr = pData->quad.pVertexBufferBase;
+		pData->quad.PrepareForRendering();
+		pData->triangle.PrepareForRendering();
+		/*const auto& quadVertexBuffer = quad.pVertexArray->GetVertexBuffers().front();
+		const auto& quadBasePtr = quad.pVertexBufferBase;
 
-		const auto dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(pData->quad.pVertexBuffer)
-			- reinterpret_cast<uint8_t*>(basePtr));
+		const auto dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(quad.pVertexBuffer)
+			- reinterpret_cast<uint8_t*>(quadBasePtr));
 
-		vertexBuffer->SetData(basePtr, dataSize);
+		quadVertexBuffer->SetData(quadBasePtr, dataSize);*/
+
 
 		Flush();
 	}
@@ -212,6 +215,8 @@ namespace krakoa::graphics
 		const auto lastIdx = pData->textureSlotIdx;
 		for (uint32_t i = 0; i < lastIdx; ++i)
 			pData->textureSlots[i]->Bind(i);
+		
+		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
 		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
 
 #if ENABLE_STATISTICS
@@ -398,7 +403,8 @@ namespace krakoa::graphics
 		pData->textureSlotIdx = 1;
 	}
 
-	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour, const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
+	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
+		const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
 	{
 		auto& quad = pData->quad;
 
@@ -449,7 +455,7 @@ namespace krakoa::graphics
 			bufferPtr->tilingFactor = tilingFactor;
 		}
 
-		pData->IncrementQuadIndexCount();
+		quad.IncrementIndexCount();
 
 #if ENABLE_STATISTICS
 		stats.quadCount++;
@@ -457,4 +463,59 @@ namespace krakoa::graphics
 
 	}
 
+	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
+		const float texIdx, const float degreesOfRotation, const float tilingFactor)
+	{
+		auto& triangle = pData->triangle;
+
+		auto& bufferPtr = triangle.pVertexBuffer;
+		const auto loops = triangle.vertices.GetRows();
+
+		kmaths::Quaternionf qpq_;
+
+		if (degreesOfRotation != 0)
+			qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
+
+		for (auto i = 0; i < loops; ++bufferPtr, ++i)
+		{
+			kmaths::Vector2f texCoord;
+
+			switch (i) {
+			case 0: // bottom left
+				break;
+			case 1: // bottom right
+				texCoord.X() = 1.f;
+				break;
+			case 2: // top right
+				texCoord = { 0.5f, 1.f };
+				break;
+			default:
+				break;
+			}
+
+			kmaths::Vector4f worldPosition;
+
+			if (degreesOfRotation == 0)
+			{
+				worldPosition = (position + (triangle.vertices[i] * scale));
+			}
+			else
+			{
+				const auto scaledVertex = (triangle.vertices[i] * scale);
+				worldPosition = position + (qpq_ * scaledVertex);
+			}
+
+			bufferPtr->position = worldPosition;
+			bufferPtr->colour = colour;
+			bufferPtr->texCoord = texCoord;
+			bufferPtr->texIdx = texIdx;
+			bufferPtr->tilingFactor = tilingFactor;
+		}
+
+		triangle.IncrementIndexCount();
+
+#if ENABLE_STATISTICS
+		stats.triangleCount++;
+#endif
+	}
 }

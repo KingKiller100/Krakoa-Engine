@@ -22,6 +22,19 @@ namespace krakoa::graphics
 			indexCount = 0;
 			pVertexBuffer = pVertexBufferBase;
 		}
+
+		virtual void PrepareForRendering() noexcept
+		{
+			const auto& vertexBuffer = pVertexArray->GetVertexBuffers().front();
+			const auto& basePtr = pVertexBufferBase;
+
+			const auto dataSize = static_cast<uint32_t>(
+				reinterpret_cast<uint8_t*>(pVertexBuffer)
+				- reinterpret_cast<uint8_t*>(basePtr)
+			);
+
+			vertexBuffer->SetData(basePtr, dataSize);
+		}
 		
 		virtual void IncrementIndexCount() noexcept = 0;
 
@@ -60,7 +73,7 @@ namespace krakoa::graphics
 		}
 
 	public:
-		const kmaths::Matrix3x4f triangleVertices = {
+		const kmaths::Matrix3x4f vertices = {
 			{ -0.5f, -0.5f, 0.f, 1.0f },
 			{  0.5f, -0.5f, 0.f, 1.0f },
 			{  0.0f,  0.5f, 0.f, 1.0f }

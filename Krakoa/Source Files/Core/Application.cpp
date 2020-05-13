@@ -23,7 +23,7 @@ namespace krakoa
 
 	Application::Application(Token&)
 		: isRunning(true),
-		timeStep(120),
+		timeStep(/*120*/),
 		isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();

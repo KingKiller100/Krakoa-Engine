@@ -30,7 +30,7 @@ void Renderer2DLayer::OnDetach()
 
 void Renderer2DLayer::OnUpdate(float deltaTime)
 {
-	constexpr float moveSpeed = 5.f;
+	constexpr float moveSpeed = 2.f;
 
 	KRK_PROFILE_FUNCTION();
 
@@ -76,7 +76,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
 		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -1000.f; x < 1000.f; x += 1.5f)
+			for (auto x = -1000.f; x < 1000.f; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
 				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));

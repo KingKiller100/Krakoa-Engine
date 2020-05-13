@@ -71,6 +71,6 @@ project "kLibrary"
         {
             "Source Files/**/*Test*"
         }
-        optimize "Debug"
+        optimize "Speed"
         runtime "Release"
         

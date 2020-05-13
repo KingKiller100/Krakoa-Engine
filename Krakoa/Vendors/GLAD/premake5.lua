@@ -33,7 +33,7 @@ project "GLAD"
 	
 	filter "configurations:Profile"
 		runtime "Release"
-		optimize "Debug"
+		optimize "Speed"
 		symbols "on"
 
 	filter "configurations:Release"

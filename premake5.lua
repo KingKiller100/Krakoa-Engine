@@ -125,7 +125,7 @@ project "Krakoa"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
-        optimize "Debug"
+        optimize "Speed"
         removefiles
         {
             "%{prj.name}/Source Files/**/test*"
@@ -198,7 +198,7 @@ project "Hooper2"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
-        optimize "Debug"
+        optimize "Speed"
         runtime "Release"
 
 group ""

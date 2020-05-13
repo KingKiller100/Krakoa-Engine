@@ -48,10 +48,10 @@ project "ImGui"
 
 	filter "configurations:Profile"
 		runtime "Release"
-        optimize "Debug"
+        optimize "Speed"
 		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
-		optimize "on"
+		optimize "Full"
 

@@ -43,6 +43,12 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
 		position.X() -= moveSpeed * deltaTime;
 
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
+		position.Y() += moveSpeed * deltaTime;
+
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
+		position.Y() -= moveSpeed * deltaTime;
+
 
 	rotation -= 5 * moveSpeed * deltaTime;
 }
@@ -76,7 +82,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
 		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -1000.f; x < 1000.f; ++x)
+			for (auto x = -1000.f; x < 1000.f; ++x) // drawing 1000 quads to stress test batch renderer
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
 				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));

@@ -315,7 +315,7 @@ namespace klib::kFileSystem
 	 *		Current working directory as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT constexpr kString::StringWriter<CharType>& GetCurrentWorkingDirectory()
+	USE_RESULT kString::StringWriter<CharType>& GetCurrentWorkingDirectory()
 	{
 		using Char = ONLY_TYPE(CharType);
 
@@ -339,7 +339,7 @@ namespace klib::kFileSystem
 			}
 			else
 			{
-				const auto dummyBuffer = GetCurrentWorkingDirectory<char>();
+				const auto dummyBuffer = GetCurrentWorkingDirectory<wchar_t>();
 				for (auto& c : dummyBuffer)
 					cwdFullPath += c;
 				return cwdFullPath;
@@ -361,7 +361,7 @@ namespace klib::kFileSystem
 	 *		Current working directory as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT constexpr kString::StringWriter<CharType>& GetExeDirectory()
+	USE_RESULT kString::StringWriter<CharType>& GetExeDirectory()
 	{
 		using Char = ONLY_TYPE(CharType);
 
@@ -369,10 +369,10 @@ namespace klib::kFileSystem
 
 		if (exeFullPath.empty())
 		{
-			DWORD length = 0;
-			const auto bufferSize = 1024;
+			constexpr DWORD bufferSize = 1024 * 5;
 			Char* exeBuffer = new Char[bufferSize]{};
 
+			DWORD length;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);
@@ -383,7 +383,7 @@ namespace klib::kFileSystem
 			}
 			else
 			{
-				const auto dummyBuffer = GetExeDirectory<char>();
+				const auto dummyBuffer = GetExeDirectory<wchar_t>();
 				for (auto& c : dummyBuffer)
 					exeFullPath += c;
 				return exeFullPath;

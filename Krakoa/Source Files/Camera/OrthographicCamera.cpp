@@ -22,23 +22,23 @@ namespace krakoa
 		UpdateViewProjectionMatrix();
 	}
 
-	constexpr void OrthographicCamera::RecalculateViewMatrix() noexcept
+	void OrthographicCamera::RecalculateViewMatrix() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto transformMat = kmaths::Translate(position) *
-		kmaths::Rotate(rotationZ, { 0, 0, 1 }); // Z axis rotation
+		kmaths::Rotate2D(rotationZ); // Z axis rotation
 		viewMat = transformMat.Inverse();
 		UpdateViewProjectionMatrix();
 	}
 
-	constexpr void OrthographicCamera::UpdateViewProjectionMatrix() noexcept
+	void OrthographicCamera::UpdateViewProjectionMatrix() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		//vpMat = projectionMat * viewMat;
 		vpMat = viewMat * projectionMat;
 	}
 
-	constexpr const kmaths::Vector3f& OrthographicCamera::GetPosition() const noexcept
+	const kmaths::Vector3f& OrthographicCamera::GetPosition() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		return position;
@@ -51,7 +51,7 @@ namespace krakoa
 		RecalculateViewMatrix();
 	}
 
-	constexpr float OrthographicCamera::GetRotation() const noexcept
+	float OrthographicCamera::GetRotation() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		return rotationZ;
@@ -64,13 +64,13 @@ namespace krakoa
 		RecalculateViewMatrix();
 	}
 
-	constexpr const kmaths::Matrix4x4f& OrthographicCamera::GetProjectionMatrix() const noexcept
+	const kmaths::Matrix4x4f& OrthographicCamera::GetProjectionMatrix() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		return projectionMat;
 	}
 
-	constexpr const kmaths::Matrix4x4f& OrthographicCamera::GetViewMatrix() const noexcept
+	const kmaths::Matrix4x4f& OrthographicCamera::GetViewMatrix() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		return viewMat;

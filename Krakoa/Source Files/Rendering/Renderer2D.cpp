@@ -9,8 +9,10 @@
 #include "Rendering Resources/iShader.hpp"
 #include "Rendering Resources/iVertexArray.hpp"
 
-#include "Primatives 2D/VertexData.hpp"
-#include "Primatives 2D/BatchRendererData.hpp"
+#include "Primitives 2D/VertexData.hpp"
+#include "Primitives 2D/GeometryData.hpp"
+#include "Primitives 2D/Primitives2D.hpp"
+#include "Primitives 2D/BatchRendererData.hpp"
 
 #include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
@@ -23,102 +25,73 @@
 
 namespace krakoa::graphics
 {
-	struct Primatives2DData
-	{
-	public:
-		constexpr void IncrementQuadIndexCount() noexcept
-		{
-			quadIndexCount += batch::limits::quad::indicesPerQuad;
-		}
-
-
-		constexpr void IncrementTriangleIndexCount() noexcept
-		{
-			triangleIndexCount += batch::limits::triangle::indicesPerQuad;
-		}
-
-	public:
-		std::weak_ptr<iShader> pMainShader;
-
-
-		std::unique_ptr<iVertexArray> pQuadVertexArray;
-		std::unique_ptr<iVertexArray> pTriangleVertexArray;
-
-
-		uint32_t quadIndexCount = 0;
-		uint8_t triangleIndexCount = 0;
-
-		VertexData* quadVertexBufferBase = nullptr;
-		VertexData* quadVertexBufferPtr = nullptr;
-
-		VertexData* triangleVertexBufferBase = nullptr;
-		VertexData* triangleVertexBufferPtr = nullptr;
-
-		std::array<std::shared_ptr<iTexture2D>, batch::limits::texture::maxSlots> textureSlots;
-		uint32_t textureSlotIdx = 1; // White texture index = 0
-
-		const kmaths::Matrix4x4f quadVertices = {
-			{-0.5f, -0.5f, 0.f, 1.0f },
-			{ 0.5f, -0.5f, 0.f, 1.0f },
-			{ 0.5f,  0.5f, 0.f, 1.0f },
-			{-0.5f,  0.5f, 0.f, 1.0f }
-		};
-
-		const kmaths::Matrix3x4f triangleVertices = {
-			{ -0.5f, -0.5f, 0.f, 1.0f },
-			{  0.5f, -0.5f, 0.f, 1.0f },
-			{  0.0f,  0.5f, 0.f, 1.0f }
-		};
-	};
-
-
-	Primatives2DData* pData = new Primatives2DData();
+	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
 
 	void Renderer2D::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
 
+		constexpr auto sizeOfVertexData = sizeof(VertexData);
+
 		// Triangle creation code
 		{
-			pData->pTriangleVertexArray = std::unique_ptr<iVertexArray>(iVertexArray::Create());
-
-			// Vertices points
-			kmaths::Matrix3x3f vertices = {
-				{ -0.5f, -0.5f, 0.f },
-				{ 0.5f, -0.5f, 0.f },
-				{ 0.0f, 0.5f, 0.0f }
-			};
+			auto& triangle = pData->triangle;
+			triangle.pVertexArray.reset(iVertexArray::Create());
+			auto& vertexArray = *triangle.pVertexArray;
 
 			// Vertex buffer
-			auto triangleVB = iVertexBuffer::Create(vertices.GetPointerToData(), sizeof(vertices));
+			{
+				auto triangleVB = iVertexBuffer::Create(batch::limits::triangle::maxVertices
+					* sizeOfVertexData);
 
-			triangleVB->SetLayout({
-				{ ShaderDataType::FLOAT3, "a_Position" },
-				{ ShaderDataType::FLOAT4, "a_Colour" },
-				{ ShaderDataType::FLOAT2, "a_TexCoord" },
-				{ ShaderDataType::FLOAT,  "a_TexIndex" },
-				{ ShaderDataType::FLOAT,  "a_TilingFactor" },
-				});
+				triangleVB->SetLayout({
+					{ ShaderDataType::FLOAT3, "a_Position" },
+					{ ShaderDataType::FLOAT4, "a_Colour" },
+					{ ShaderDataType::FLOAT2, "a_TexCoord" },
+					{ ShaderDataType::FLOAT,  "a_TexIndex" },
+					{ ShaderDataType::FLOAT,  "a_TilingFactor" },
+					});
 
-			pData->pTriangleVertexArray->AddVertexBuffer(triangleVB);
+				vertexArray.AddVertexBuffer(triangleVB);
+			}
+
+			triangle.pVertexBufferBase = new VertexData[batch::limits::triangle::maxVertices];
 
 			// Index buffer
-			uint32_t indices[] = { 0, 1, 2 };
-			pData->pTriangleVertexArray->SetIndexBuffer(iIndexBuffer::Create(
-				indices,
-				sizeof(indices) / sizeof(uint32_t))
-			);
+			{
+				constexpr auto maxIndices = batch::limits::triangle::maxIndices;
+				constexpr auto verticesPerTriangle = batch::limits::triangle::vertices;
+
+				const std::unique_ptr<uint32_t[]> triangleIndices(new uint32_t[maxIndices]);
+
+				uint32_t offset = 0;
+				for (size_t i = 0; i < maxIndices; i += batch::limits::triangle::indices)
+				{
+					triangleIndices[i + 0] = offset + 0;
+					triangleIndices[i + 1] = offset + 1;
+					triangleIndices[i + 2] = offset + 2;
+
+					offset += verticesPerTriangle;
+				}
+
+				triangle.pVertexArray->SetIndexBuffer(iIndexBuffer::Create(
+					triangleIndices.get(),
+					maxIndices)
+				);
+			}
 		}
 
 		// Quad creation code
 		{
-			pData->pQuadVertexArray.reset(iVertexArray::Create());
+			auto& quad = pData->quad;
+
+			pData->quad.pVertexArray.reset(iVertexArray::Create());
+			auto& vertexArray = *pData->quad.pVertexArray;
 
 			// Vertex buffer
 			{
 				iVertexBuffer* quadVB = iVertexBuffer::Create(batch::limits::quad::maxVertices
-					* sizeof(VertexData)
-				);
+					* sizeOfVertexData);
 
 				quadVB->SetLayout({
 					{ ShaderDataType::FLOAT3, "a_Position" },
@@ -128,19 +101,20 @@ namespace krakoa::graphics
 					{ ShaderDataType::FLOAT,  "a_TilingFactor" },
 					});
 
-				pData->pQuadVertexArray->AddVertexBuffer(quadVB);
+				vertexArray.AddVertexBuffer(quadVB);
 			}
 
-			pData->quadVertexBufferBase = new VertexData[batch::limits::quad::maxVertices];
-
+			quad.pVertexBufferBase = new VertexData[batch::limits::quad::maxVertices];
 
 			// Index buffer
 			{
-				const  std::unique_ptr<uint32_t[]> quadIndices(new uint32_t[batch::limits::quad::maxIndices]);
-
 				constexpr auto maxIndices = batch::limits::quad::maxIndices;
+				constexpr auto verticesPerQuad = batch::limits::quad::vertices;
+
+				const std::unique_ptr<uint32_t[]> quadIndices(new uint32_t[batch::limits::quad::maxIndices]);
+
 				uint32_t offset = 0;
-				for (size_t i = 0; i < maxIndices; i += batch::limits::quad::indicesPerQuad)
+				for (size_t i = 0; i < maxIndices; i += batch::limits::quad::indices)
 				{
 					quadIndices[i + 0] = offset + 0;
 					quadIndices[i + 1] = offset + 1;
@@ -150,37 +124,42 @@ namespace krakoa::graphics
 					quadIndices[i + 4] = offset + 3;
 					quadIndices[i + 5] = offset + 0;
 
-					offset += 4;
+					offset += verticesPerQuad;
 				}
 
-				pData->pQuadVertexArray->SetIndexBuffer(iIndexBuffer::Create(
+				quad.pVertexArray->SetIndexBuffer(iIndexBuffer::Create(
 					quadIndices.get(),
 					maxIndices)
 				);
 			}
 		}
 
-		const auto pWhiteTexture = iTexture2D::Create(1u, 1u);
-		const uint32_t whiteTexture = 0xffffffff;
-		pWhiteTexture->SetData(&whiteTexture, sizeof(whiteTexture));
-		pData->textureSlots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
-
-
-		int32_t samplers[batch::limits::texture::maxSlots];
-		for (auto i = 0; i < batch::limits::texture::maxSlots; ++i)
+		// Create white texture
 		{
-			samplers[i] = i;
+			constexpr uint32_t whiteTexture = 0xffffffff;
+			const auto pWhiteTexture = iTexture2D::Create(1u, 1u);
+			pWhiteTexture->SetData(&whiteTexture, sizeof(whiteTexture));
+			pData->textureSlots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
 		}
 
-		auto& shaderLib = ShaderLibrary::Reference();
-		const auto mainShader = shaderLib.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
-		if (!mainShader.expired())
+		// Creating and setting texture sampler
 		{
-			auto main_shader_s_ptr = mainShader.lock();
-			main_shader_s_ptr->Bind();
-			main_shader_s_ptr->SetIntArray("u_Textures", samplers, batch::limits::texture::maxSlots);
+			int32_t samplers[batch::limits::texture::maxSlots];
+			for (auto i = 0; i < batch::limits::texture::maxSlots; ++i)
+			{
+				samplers[i] = i;
+			}
+
+			auto& shaderLib = ShaderLibrary::Reference();
+			const auto mainShader = shaderLib.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
+			if (!mainShader.expired())
+			{
+				auto main_shader_s_ptr = mainShader.lock();
+				main_shader_s_ptr->Bind();
+				main_shader_s_ptr->SetIntArray("u_Textures", samplers, batch::limits::texture::maxSlots);
+			}
+			pData->pMainShader = mainShader;
 		}
-		pData->pMainShader = mainShader;
 	}
 
 	void Renderer2D::ShutDown()
@@ -217,11 +196,13 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto& vertexBuffer = pData->pQuadVertexArray->GetVertexBuffers().front();
+		const auto& vertexBuffer = pData->quad.pVertexArray->GetVertexBuffers().front();
+		const auto& basePtr = pData->quad.pVertexBufferBase;
 
-		const auto dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(pData->quadVertexBufferPtr)
-			- reinterpret_cast<uint8_t*>(pData->quadVertexBufferBase));
-		vertexBuffer->SetData(pData->quadVertexBufferBase, dataSize);
+		const auto dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(pData->quad.pVertexBuffer)
+			- reinterpret_cast<uint8_t*>(basePtr));
+
+		vertexBuffer->SetData(basePtr, dataSize);
 
 		Flush();
 	}
@@ -231,7 +212,7 @@ namespace krakoa::graphics
 		const auto lastIdx = pData->textureSlotIdx;
 		for (uint32_t i = 0; i < lastIdx; ++i)
 			pData->textureSlots[i]->Bind(i);
-		RenderCommand::DrawIndexed(*pData->pQuadVertexArray, pData->quadIndexCount);
+		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
 
 #if ENABLE_STATISTICS
 		stats.drawCallsCount++;
@@ -260,7 +241,7 @@ namespace krakoa::graphics
 			* Scale2D(scale);
 		mainShader->SetMat4x4("u_TransformMat", transform);
 
-		auto& triangleVA = *pData->pTriangleVertexArray;
+		auto& triangleVA = *pData->triangle.pVertexArray;
 		triangleVA.Bind();
 		RenderCommand::DrawIndexed(triangleVA);
 
@@ -338,7 +319,7 @@ namespace krakoa::graphics
 			* Scale2D(scale);
 		mainShader->SetMat4x4("u_TransformMat", transform);
 
-		auto& triangleVA = *pData->pTriangleVertexArray;
+		auto& triangleVA = *pData->triangle.pVertexArray;
 		triangleVA.Bind();
 		RenderCommand::DrawIndexed(triangleVA);
 
@@ -402,7 +383,7 @@ namespace krakoa::graphics
 	void Renderer2D::QueryLimitsMet() noexcept
 	{
 		if (pData->textureSlotIdx == batch::limits::texture::maxSlots
-			|| pData->quadIndexCount >= batch::limits::quad::maxIndices)
+			|| pData->quad.indexCount >= batch::limits::quad::maxIndices)
 		{
 			EndScene();
 			RestartBatch();
@@ -411,16 +392,18 @@ namespace krakoa::graphics
 
 	void Renderer2D::RestartBatch() noexcept
 	{
-		pData->quadVertexBufferPtr = pData->quadVertexBufferBase;
-		pData->quadIndexCount = 0;
+		pData->quad.Reset();
+		pData->triangle.Reset();
 
 		pData->textureSlotIdx = 1;
 	}
 
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour, const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
 	{
-		auto& bufferPtr = pData->quadVertexBufferPtr;
-		const auto loops = pData->quadVertices.GetRows();
+		auto& quad = pData->quad;
+
+		auto& bufferPtr = quad.pVertexBuffer;
+		const auto loops = quad.vertices.GetRows();
 
 		kmaths::Quaternionf qpq_;
 
@@ -451,11 +434,11 @@ namespace krakoa::graphics
 
 			if (degreesOfRotation == 0)
 			{
-				worldPosition = (position + (pData->quadVertices[i] * scale));
+				worldPosition = (position + (quad.vertices[i] * scale));
 			}
 			else
 			{
-				const auto scaledVertex = (pData->quadVertices[i] * scale);
+				const auto scaledVertex = (quad.vertices[i] * scale);
 				worldPosition = position + (qpq_ * scaledVertex);
 			}
 

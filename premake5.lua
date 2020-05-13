@@ -59,7 +59,8 @@ project "Krakoa"
 
     includedirs
     {
-        "%{IncludeDir.KLIB}",
+        -- "%{IncludeDir.KLIB}",
+        "kLibrary/Source Files/",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGUI}",

@@ -49,7 +49,6 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
 		position.Y() -= moveSpeed * deltaTime;
 
-
 	rotation -= 5 * moveSpeed * deltaTime;
 }
 
@@ -60,31 +59,31 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured triangle");
-		//krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
+		krakoa::graphics::Renderer2D::DrawTriangle({1, 1, 1, 1}, kmaths::Vector3f(0.f, 0.f), { 2.f, 2.f });
 	}
 
-	krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 0, 1 }, kmaths::Vector3f(0, 0), kmaths::Vector2f(20.f));
+	//krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 0, 1 }, kmaths::Vector3f(0, 0), kmaths::Vector2f(20.f));
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
-		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -5.f; x < 5.f; ++x) // drawing 1000 quads to stress test batch renderer
-			{
-				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
-				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
-			}
-		}
+		//for (auto y = 0; y < 5; ++y) {
+		//	for (auto x = -5.f; x < 5.f; ++x) // drawing 1000 quads to stress test batch renderer
+		//	{
+		//		const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
+		//		krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
+		//	}
+		//}
 	}
 
-	{
-		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
+	//{
+	//	KRK_PROFILE_SCOPE("Renderer coloured quad");
+	//	krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
+	//	krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
+	//	krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
+	//	krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 
-		constexpr auto rotScale = kmaths::Vector2f(0.25f);
-		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale, geometryColour, 3.f);
-	}
+	//	constexpr auto rotScale = kmaths::Vector2f(0.25f);
+	//	krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale, geometryColour, 3.f);
+	//}
 
 	krakoa::graphics::Renderer2D::EndScene();
 }
@@ -97,16 +96,10 @@ void Renderer2DLayer::OnRender()
 	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
 	ImGui::End();
 
-	ZoomControlsDisplay();
+	RenderZoomControls();
 }
 
-void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
-{
-	KRK_PROFILE_FUNCTION();
-	cameraController.OnEvent(e);
-}
-
-void Renderer2DLayer::ZoomControlsDisplay() noexcept
+void Renderer2DLayer::RenderZoomControls() noexcept
 {
 	constexpr kmaths::Vector2f in = { 0.f, 1.f };
 	constexpr kmaths::Vector2f out = { 0.f, -1.f };
@@ -121,10 +114,14 @@ void Renderer2DLayer::ZoomControlsDisplay() noexcept
 	else if (ImGui::ArrowButton("Zoom Out", ImGuiDir_Down))
 	{
 		auto zoomOutEvent = krakoa::events::MouseScrolledEvent(out);
-
-		ImGui::NewLine();
 		cameraController.OnEvent(zoomOutEvent);
 	}
 
 	ImGui::End();
+}
+
+void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
+{
+	KRK_PROFILE_FUNCTION();
+	cameraController.OnEvent(e);
 }

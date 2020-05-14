@@ -24,7 +24,7 @@ public:
 
 private:
 	void SendRendererCommands() noexcept;
-	void ZoomControlsDisplay() noexcept;
+	void RenderZoomControls() noexcept;
 
 private:
 	std::shared_ptr<krakoa::graphics::iTexture2D> pWinTexture;

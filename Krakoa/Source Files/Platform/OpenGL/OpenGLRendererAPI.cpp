@@ -68,10 +68,10 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto& r = colour.X();
-		const auto& g = colour.Y();
-		const auto& b = colour.Z();
-		const auto& a = colour.W();
+		const auto r = colour.X();
+		const auto g = colour.Y();
+		const auto b = colour.Z();
+		const auto a = colour.W();
 
 		glClearColor(r, g, b, a);
 	}

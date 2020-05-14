@@ -39,7 +39,6 @@ namespace krakoa::graphics
 			{
 				return triangleCount * batch::limits::triangle::indices;
 			}
-
 		};
 		
 		inline static Statistics stats;
@@ -77,6 +76,7 @@ namespace krakoa::graphics
 	private:
 		static void RestartBatch() noexcept;
 		static void QueryLimitsMet() noexcept;
+		static float UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept;
 		static void AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour = kmaths::Vector4f(1.f), const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
 		static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour = kmaths::Vector4f(1.f), const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
 	};

@@ -196,16 +196,8 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		pData->quad.PrepareForRendering();
+		//pData->quad.PrepareForRendering();
 		pData->triangle.PrepareForRendering();
-		/*const auto& quadVertexBuffer = quad.pVertexArray->GetVertexBuffers().front();
-		const auto& quadBasePtr = quad.pVertexBufferBase;
-
-		const auto dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(quad.pVertexBuffer)
-			- reinterpret_cast<uint8_t*>(quadBasePtr));
-
-		quadVertexBuffer->SetData(quadBasePtr, dataSize);*/
-
 
 		Flush();
 	}
@@ -216,7 +208,7 @@ namespace krakoa::graphics
 		for (uint32_t i = 0; i < lastIdx; ++i)
 			pData->textureSlots[i]->Bind(i);
 		
-		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
+		//RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
 		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
 
 #if ENABLE_STATISTICS
@@ -233,24 +225,8 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_FATAL(!pData->pMainShader.expired(), "Texture shader has been destroyed");
-
-		const auto& whiteTexture = *pData->textureSlots.front();
-
-		auto mainShader = pData->pMainShader.lock();
-
-		mainShader->SetVec4("u_Colour", colour);
-		whiteTexture.Bind();
-
-		const auto transform = Translate(position)
-			* Scale2D(scale);
-		mainShader->SetMat4x4("u_TransformMat", transform);
-
-		auto& triangleVA = *pData->triangle.pVertexArray;
-		triangleVA.Bind();
-		RenderCommand::DrawIndexed(triangleVA);
-
-		whiteTexture.Unbind();
+		QueryLimitsMet();
+		AddNewTriangle(position, scale, colour);
 	}
 
 	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
@@ -277,26 +253,7 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
-
-		float texIdx = 0.f;
-
-		for (uint32_t i = 1u; i < pData->textureSlotIdx; ++i)
-		{
-			if (*pData->textureSlots[i] == *texture)
-			{
-				texIdx = CAST(float, i);
-				break;
-			}
-		}
-
-		if (texIdx == 0)
-		{
-			const auto lastIdx = pData->textureSlotIdx;
-			texIdx = CAST(float, lastIdx);
-			pData->textureSlots[lastIdx] = texture;
-			pData->textureSlotIdx++;
-		}
-
+		const float texIdx = UpdateTextureList(texture);
 		constexpr auto degrees = 0.f;
 		AddNewQuad(position, scale, tintColour, texIdx, degrees, tilingFactor);
 	}
@@ -310,25 +267,8 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_FATAL(!pData->pMainShader.expired(), "Texture shader has been destroyed");
-
-		const auto& whiteTexture = *pData->textureSlots.front();
-
-		auto mainShader = pData->pMainShader.lock();
-
-		mainShader->SetVec4("u_Colour", colour);
-		whiteTexture.Bind();
-
-		const auto transform = Translate(position)
-			* kmaths::Rotate2D(degreesOfRotation)
-			* Scale2D(scale);
-		mainShader->SetMat4x4("u_TransformMat", transform);
-
-		auto& triangleVA = *pData->triangle.pVertexArray;
-		triangleVA.Bind();
-		RenderCommand::DrawIndexed(triangleVA);
-
-		whiteTexture.Unbind();
+		QueryLimitsMet();
+		AddNewTriangle(position, scale, colour);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
@@ -357,9 +297,37 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
+		const float texIdx = UpdateTextureList(texture);
+		AddNewQuad(position, scale, tintColour, texIdx, degreesOfRotation, tilingFactor);
+	}
 
+	const Renderer2D::Statistics& Renderer2D::GetStats()
+	{
+		return stats;
+	}
+
+	void Renderer2D::QueryLimitsMet() noexcept
+	{
+		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
+		
+		if (pData->textureSlotIdx == batch::limits::texture::maxSlots
+			|| totalIndices >= batch::limits::maxObjects
+			|| pData->quad.indexCount >= batch::limits::quad::maxIndices
+			|| pData->triangle.indexCount >= batch::limits::triangle::maxIndices
+			)
+		{
+			EndScene();
+			RestartBatch();
+		}
+	}
+
+	float Renderer2D::UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept
+	{
 		float texIdx = 0.f;
 
+		if (texture == nullptr)
+			return texIdx;
+		
 		for (uint32_t i = 1u; i < pData->textureSlotIdx; ++i)
 		{
 			if (*pData->textureSlots[i] == *texture)
@@ -377,22 +345,7 @@ namespace krakoa::graphics
 			pData->textureSlotIdx++;
 		}
 
-		AddNewQuad(position, scale, tintColour, texIdx, degreesOfRotation, tilingFactor);
-	}
-
-	const Renderer2D::Statistics& Renderer2D::GetStats()
-	{
-		return stats;
-	}
-
-	void Renderer2D::QueryLimitsMet() noexcept
-	{
-		if (pData->textureSlotIdx == batch::limits::texture::maxSlots
-			|| pData->quad.indexCount >= batch::limits::quad::maxIndices)
-		{
-			EndScene();
-			RestartBatch();
-		}
+		return texIdx;
 	}
 
 	void Renderer2D::RestartBatch() noexcept

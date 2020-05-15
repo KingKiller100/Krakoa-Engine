@@ -1,21 +1,4 @@
 #pragma once
-/**
-* Holds a three degree of freedom orientation.
-*
-* Quaternions have
-* several mathematical properties that make them useful for
-* representing orientations, but require four items of data to
-* hold the three degrees of freedom. These four items of data can
-* be viewed as the coefficients of a complex number with three
-* imaginary parts. The mathematics of the quaternion is then
-* defined and is roughly correspondent to the math of 3D
-* rotations. A quaternion is only a valid rotation if it is
-* normalized: i.e. it has a length of 1.
-*
-* \note Angular velocity and acceleration can be correctly
-* represented as vectors. Quaternions are only needed for
-* orientation.
-*/
 
 #include "../../HelperMacros.hpp"
 
@@ -27,6 +10,23 @@
 
 namespace kmaths
 {
+	/**
+	* Holds a three degree of freedom orientation.
+	*
+	* Quaternions have
+	* several mathematical properties that make them useful for
+	* representing orientations, but require four items of data to
+	* hold the three degrees of freedom. These four items of data can
+	* be viewed as the coefficients of a complex number with three
+	* imaginary parts. The mathematics of the quaternion is then
+	* defined and is roughly correspondent to the math of 3D
+	* rotations. A quaternion is only a valid rotation if it is
+	* normalized: i.e. it has a length of 1.
+	*
+	* \note Angular velocity and acceleration can be correctly
+	* represented as vectors. Quaternions are only needed for
+	* orientation.
+	*/
 	template<typename T>
 	struct Quaternion
 	{

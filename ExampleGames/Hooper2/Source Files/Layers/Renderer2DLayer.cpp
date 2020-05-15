@@ -61,20 +61,20 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured triangle");
-		krakoa::graphics::Renderer2D::DrawTriangle(pWinTexture, kmaths::Vector3f(0.f, 0.f));
+		krakoa::graphics::Renderer2D::DrawTriangle({ 1, 1, 1, 1 }, kmaths::Vector3f(0.f, 0.f));
 	}
 
 	//krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 0, 1 }, kmaths::Vector3f(0, 0), kmaths::Vector2f(20.f));
-	{
-		KRK_PROFILE_SCOPE("Textured quad");
-		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -50.f; x < 50.f; ++x) // drawing 1000 quads to stress test batch renderer
-			{
-				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
-				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
-			}
-		}
-	}
+	//{
+	//	KRK_PROFILE_SCOPE("Textured quad");
+	//	for (auto y = 0; y < 5; ++y) {
+	//		for (auto x = -50.f; x < 50.f; ++x) // drawing 1000 quads to stress test batch renderer
+	//		{
+	//			const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
+	//			krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
+	//		}
+	//	}
+	//}
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");

@@ -832,7 +832,7 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_unsigned_v<T>>>
-	USE_RESULT constexpr T Factorial(T n) noexcept
+	USE_RESULT constexpr T Factorial_Integral(T n) noexcept
 	{
 		if (n == 0 || n == 1)
 			return 1;
@@ -882,9 +882,18 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T Factorial(T n) noexcept
+	USE_RESULT constexpr T Factorial_Floating_Point(T n) noexcept
 	{
 		return Gamma(n + 1);
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Factorial(T n)
+	{
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+			return Factorial_Floating_Point<T>(n);
+		else
+			return Factorial_Integral<T>(n);
 	}
 }
 

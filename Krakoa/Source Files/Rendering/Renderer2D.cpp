@@ -208,6 +208,7 @@ namespace krakoa::graphics
 
 	void Renderer2D::FlushQuads()
 	{
+		pData->quad.pVertexArray->Bind();
 		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
 #if ENABLE_STATISTICS
 		stats.quadDrawCallsCount++;
@@ -216,6 +217,7 @@ namespace krakoa::graphics
 
 	void Renderer2D::FlushTriangles()
 	{
+		pData->triangle.pVertexArray->Bind();
 		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
 #if ENABLE_STATISTICS
 		stats.triangleDrawCallsCount++;
@@ -456,8 +458,8 @@ namespace krakoa::graphics
 	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
 		const float texIdx, const float degreesOfRotation, const float tilingFactor)
 	{
-		constexpr auto qp = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
-		constexpr auto q_ = kmaths::Quaternionf(1, 0, 0, 0);
+		//constexpr auto qp = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
+		//constexpr auto q_ = kmaths::Quaternionf(1, 0, 0, 0);
 		
 		auto& triangle = pData->triangle;
 
@@ -467,7 +469,7 @@ namespace krakoa::graphics
 		kmaths::Quaternionf qpq_;
 
 		if (degreesOfRotation != 0)
-			qpq_ = qp  * q_;
+			qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{

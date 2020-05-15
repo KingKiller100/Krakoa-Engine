@@ -138,7 +138,7 @@ namespace krakoa::graphics
 			constexpr uint32_t whiteTexture = 0xffffffff;
 			const auto pWhiteTexture = iTexture2D::Create(1u, 1u);
 			pWhiteTexture->SetData(&whiteTexture, sizeof(whiteTexture));
-			pData->textureSlots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
+			pData->textures.slots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
 		}
 
 		// Creating and setting texture sampler
@@ -196,9 +196,7 @@ namespace krakoa::graphics
 
 	void Renderer2D::Flush()
 	{
-		const auto lastIdx = pData->textureSlotIdx;
-		for (uint32_t i = 0; i < lastIdx; ++i)
-			pData->textureSlots[i]->Bind(i);
+		pData->textures.BindTextures();
 
 		FlushQuads();
 		FlushTriangles();
@@ -335,7 +333,7 @@ namespace krakoa::graphics
 	{
 		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
 
-		if (pData->textureSlotIdx == batch::limits::texture::maxSlots)
+		if (pData->textures.slotIdx == batch::limits::texture::maxSlots)
 		{
 			EndScene();
 			RestartBatch();
@@ -363,13 +361,14 @@ namespace krakoa::graphics
 	float Renderer2D::UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept
 	{
 		float texIdx = 0.f;
+		auto& textures = pData->textures;
 
 		if (texture == nullptr)
 			return texIdx;
 		
-		for (uint32_t i = 1u; i < pData->textureSlotIdx; ++i)
+		for (uint32_t i = 1u; i < textures.slotIdx; ++i)
 		{
-			if (*pData->textureSlots[i] == *texture)
+			if (*textures.slots[i] == *texture)
 			{
 				texIdx = CAST(float, i);
 				break;
@@ -378,10 +377,10 @@ namespace krakoa::graphics
 
 		if (texIdx == 0)
 		{
-			const auto lastIdx = pData->textureSlotIdx;
+			const auto lastIdx = textures.slotIdx;
 			texIdx = CAST(float, lastIdx);
-			pData->textureSlots[lastIdx] = texture;
-			pData->textureSlotIdx++;
+			textures.slots[lastIdx] = texture;
+			textures.slotIdx++;
 		}
 
 		return texIdx;
@@ -392,7 +391,7 @@ namespace krakoa::graphics
 		pData->quad.Reset();
 		pData->triangle.Reset();
 
-		pData->textureSlotIdx = 1;
+		pData->textures.Reset(1);
 	}
 
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,

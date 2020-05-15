@@ -4,8 +4,7 @@
 #include "../Rendering Resources/iShader.hpp"
 
 #include "../Textures/iTexture2D.hpp"
-
-#include <array>
+#include "../Textures/TextureData2D.hpp"
 
 namespace krakoa::graphics::_2D
 {
@@ -20,9 +19,7 @@ namespace krakoa::graphics::_2D
 
 		QuadData quad;
 		TriangleData triangle;
-
-		std::array<std::shared_ptr<iTexture2D>, batch::limits::texture::maxSlots> textureSlots;
-		uint32_t textureSlotIdx = 1; // White texture index = 0
+		TextureData2D textures;
 	};
 }
 

@@ -188,22 +188,44 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		pData->quad.PrepareForRendering();
-		pData->triangle.PrepareForRendering();
+		auto& quad = pData->quad;
+		auto& triangle = pData->triangle;
 
-		Flush();
+		quad.PrepareForRendering();
+		triangle.PrepareForRendering();
+
+		pData->textures.BindTextures();
+
+
+		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
+
+		if (totalIndices >= batch::limits::maxIndices)
+		{
+			FlushAll();
+		}
+		else
+		{
+			if (quad.pVertexBuffer != quad.pVertexBufferBase)
+				FlushQuads();
+
+			if (triangle.pVertexBuffer != triangle.pVertexBufferBase)
+				FlushTriangles();
+		}
 	}
 
-	void Renderer2D::Flush()
+	void Renderer2D::RestartBatch() noexcept
+	{
+		pData->quad.Reset();
+		pData->triangle.Reset();
+		pData->textures.Reset(1);
+	}
+
+	void Renderer2D::FlushAll()
 	{
 		pData->textures.BindTextures();
 
 		FlushQuads();
 		FlushTriangles();
-
-#if ENABLE_STATISTICS
-		stats.drawCallsCount++;
-#endif
 	}
 
 	void Renderer2D::FlushQuads()
@@ -267,7 +289,7 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
-	                          const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+		const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
 	{
 		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), scale, tintColour, tilingFactor);
 	}
@@ -340,8 +362,8 @@ namespace krakoa::graphics
 			EndScene();
 			RestartBatch();
 		}
-		
-		if (totalIndices >= batch::limits::maxObjects)
+
+		if (totalIndices >= batch::limits::maxIndices)
 		{
 			EndScene();
 			RestartBatch();
@@ -352,7 +374,7 @@ namespace krakoa::graphics
 			EndScene();
 			RestartBatch();
 		}
-		
+
 		if (pData->triangle.indexCount >= batch::limits::triangle::maxIndices)
 		{
 			EndScene();
@@ -367,7 +389,7 @@ namespace krakoa::graphics
 
 		if (texture == nullptr)
 			return texIdx;
-		
+
 		for (uint32_t i = 1u; i < textures.slotIdx; ++i)
 		{
 			if (*textures.slots[i] == *texture)
@@ -388,13 +410,6 @@ namespace krakoa::graphics
 		return texIdx;
 	}
 
-	void Renderer2D::RestartBatch() noexcept
-	{
-		pData->quad.Reset();
-		pData->triangle.Reset();
-		pData->textures.Reset(1);
-	}
-
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
 		const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
 	{
@@ -402,6 +417,7 @@ namespace krakoa::graphics
 
 		auto& bufferPtr = quad.pVertexBuffer;
 		const auto loops = quad.vertices.GetRows();
+		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
 
 		kmaths::Quaternionf qpq_;
 
@@ -432,11 +448,11 @@ namespace krakoa::graphics
 
 			if (degreesOfRotation == 0)
 			{
-				worldPosition = (position + (quad.vertices[i] * scale));
+				worldPosition = (position + (quad.vertices[i] * scale3D));
 			}
 			else
 			{
-				const auto scaledVertex = (quad.vertices[i] * scale);
+				const auto scaledVertex = (quad.vertices[i] * scale3D);
 				worldPosition = position + (qpq_ * scaledVertex);
 			}
 
@@ -460,12 +476,13 @@ namespace krakoa::graphics
 	{
 		//constexpr auto qp = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
 		//constexpr auto q_ = kmaths::Quaternionf(1, 0, 0, 0);
-		
+
 		auto& triangle = pData->triangle;
 
 		auto& bufferPtr = triangle.pVertexBuffer;
 		const auto loops = triangle.vertices.GetRows();
-
+		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
+		
 		kmaths::Quaternionf qpq_;
 
 		if (degreesOfRotation != 0)
@@ -492,11 +509,11 @@ namespace krakoa::graphics
 
 			if (degreesOfRotation == 0)
 			{
-				worldPosition = (position + (triangle.vertices[i] * scale));
+				worldPosition = (position + (triangle.vertices[i] * scale3D));
 			}
 			else
 			{
-				const auto scaledVertex = (triangle.vertices[i] * scale);
+				const auto scaledVertex = (triangle.vertices[i] * scale3D);
 				worldPosition = position + (qpq_ * scaledVertex);
 			}
 

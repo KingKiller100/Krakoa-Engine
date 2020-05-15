@@ -20,7 +20,7 @@ namespace kmaths
 		inline static constexpr size_t Bytes = Length * sizeof(T);
 
 		constexpr Vector() noexcept
-		{}
+			= default;
 
 		template< typename U, Length_Type C>
 		constexpr Vector(const Vector<U, C>& other) noexcept
@@ -34,10 +34,10 @@ namespace kmaths
 			*this = std::move(other);
 		}
 
-		constexpr Vector(const std::initializer_list<T> l) noexcept
+		constexpr Vector(const std::initializer_list<T> values) noexcept
 		{
-			const auto first_iter = l.begin();
-			const auto loops = l.size() < N ? l.size() : N;
+			const auto first_iter = values.begin();
+			const auto loops = values.size() < N ? values.size() : N;
 			for (auto i = 0; i < loops; ++i)
 				dimensions[i] = first_iter[i];
 		}
@@ -448,7 +448,7 @@ namespace kmaths
 			|| N != 3,
 			Vector> CrossProduct(const Vector& v) const noexcept
 			= delete;
-		
+
 		template<typename Type, Length_Type C>
 		friend constexpr Vector<Type, C> operator*(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
 

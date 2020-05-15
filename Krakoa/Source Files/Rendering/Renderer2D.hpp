@@ -15,7 +15,6 @@ namespace krakoa::graphics
 		// Statistics
 		struct Statistics
 		{
-			size_t drawCallsCount = 0;
 			size_t quadDrawCallsCount = 0;
 			size_t triangleDrawCallsCount = 0;
 			
@@ -24,12 +23,16 @@ namespace krakoa::graphics
 
 			void Reset() noexcept
 			{
-				drawCallsCount = 0;
 				quadDrawCallsCount = 0;
 				triangleDrawCallsCount = 0;
 
 				quadCount = 0;
 				triangleCount = 0;
+			}
+
+			size_t DrawCallsCount() const
+			{
+				return quadDrawCallsCount + triangleDrawCallsCount;
 			}
 			
 			size_t TotalQuadVertexCount() const noexcept
@@ -62,7 +65,7 @@ namespace krakoa::graphics
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
 
-		static void Flush();
+		static void FlushAll();
 		static void FlushQuads();
 		static void FlushTriangles();
 

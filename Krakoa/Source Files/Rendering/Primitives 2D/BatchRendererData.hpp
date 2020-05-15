@@ -32,5 +32,8 @@ namespace krakoa::graphics
 		{
 			static constexpr uint32_t maxSlots = 32;
 		}
-	};
+
+		static constexpr uint32_t maxIndices = quad::maxIndices + triangle::maxIndices;
+		static constexpr uint32_t maxVertices = quad::maxVertices + triangle::maxVertices;
+	}
 }

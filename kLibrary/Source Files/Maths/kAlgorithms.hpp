@@ -142,15 +142,26 @@ namespace kmaths
 		return count;
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Exponential(T n, float x) noexcept
+	// Approximation for the mathematical constant 'e^x' using the first n terms of the taylor series
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T ExponentialImpl(T x, size_t n = 10) noexcept
 	{
-		auto sum = constants::One<T>(); // initialize sum of series  
+		constexpr auto one = constants::One<T>();
+		auto sum = one; // initialize sum of series  
 
-		for (int i = n - 1; i > 0; --i)
-			sum = 1 + x * sum / i;
+		for (auto i = (n - one); i > 0; --i)
+			sum = one + x * sum / i;
 
 		return sum;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Exponential(T x, size_t n = 10) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_integral_v<T>)
+			return CAST(T, ExponentialImpl<float>(x, n));
+		else
+			return ExponentialImpl<T>(x, n);
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
@@ -159,7 +170,7 @@ namespace kmaths
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = constants::MinusOne<T>();
 
-		return ((value > minusOne) 
+		return ((value > minusOne)
 			&& (value < one));
 	}
 
@@ -727,8 +738,8 @@ namespace kmaths
 	{
 		const auto fraction = RealToFraction<T>(power);
 
-		const auto pow = fraction.isNegative 
-			? constants::OneOver<T>(PowerOfImpl<T>(base, fraction.numerator)) 
+		const auto pow = fraction.isNegative
+			? constants::OneOver<T>(PowerOfImpl<T>(base, fraction.numerator))
 			: PowerOfImpl<T>(base, fraction.numerator);
 		const auto powRoot = RootImpl<T>(pow, fraction.denominator);
 		return powRoot;
@@ -818,6 +829,62 @@ namespace kmaths
 	USE_RESULT constexpr T Cube(T x) noexcept
 	{
 		return x * x * x;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_unsigned_v<T>>>
+	USE_RESULT constexpr T Factorial(T n) noexcept
+	{
+		if (n == 0 || n == 1)
+			return 1;
+
+		T result = n;
+
+		while (n-- > 1)
+			result *= n;
+
+		return result;
+	}
+
+	// Lanczos' formula
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Gamma(T z) noexcept
+	{
+		constexpr T one = constants::One(z);
+		constexpr auto zeroPoint5 = constants::ZeroPointFive(z);
+		constexpr auto pi = constants::PI;
+
+		// accurate to about 15 decimal places
+		//some magic constants 
+		auto g = 7; // g represents the precision desired, p is the values of p[i] to plug into Lanczos' formula
+		double p[] = {
+			0.99999999999980993,
+			676.5203681218851,
+			-1259.1392167224028,
+			771.32342877765313,
+			-176.61502916214059,
+			12.507343278686905,
+			-0.13857109526572012,
+			9.9843695780195716e-6,
+			1.5056327351493116e-7 };
+
+		if (z >= 0.5)
+		{
+			--z;
+			auto x = p[0];
+			for (auto i = 1; i < (g + 2); i++) {
+				x += p[i] / (z + i);
+			}
+			const auto t = z + g + zeroPoint5;
+			return Sqrt(2 * pi) * PowerOf(t, (z + zeroPoint5)) * Exponential(-t) * x;
+		}
+
+		return pi / sin(z * pi) / Gamma(one - z);
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T Factorial(T n) noexcept
+	{
+		return Gamma(n + 1);
 	}
 }
 

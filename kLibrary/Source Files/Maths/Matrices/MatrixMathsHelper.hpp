@@ -165,4 +165,30 @@ namespace kmaths
 		const auto scale = Scale<T>(GetTransformIdentity<T>(), { v[0], v[1], CAST(T, 1) });
 		return scale;
 	}
+
+	/**
+	 * \brief
+	 *		Returns transform matrix made from Translation * Rotation * Scale 
+	 * \tparam T 
+	 * \param position 
+	 * \param degrees 
+	 * \param axes 
+	 * \param scale 
+	 * \return 
+	 */
+	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> TRS(const Vector3<T>& position, const T degrees, const Vector3<T>& axes, const Vector3<T>& scale) noexcept
+	{
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(degrees, axes) * Scale<T>(scale);;
+		return transform;
+	}
+
+	// Translation * Rotation * Scale in 2D
+	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> TRS2D(const Vector3<T>& position, const T degrees, const Vector2<T>& scale) noexcept
+	{
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(degrees) * Scale2D<T>(scale);;
+		return transform;
+	}
+	
 }

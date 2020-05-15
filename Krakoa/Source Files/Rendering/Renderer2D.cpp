@@ -40,7 +40,7 @@ namespace krakoa::graphics
 
 			// Vertex buffer
 			{
-				auto triangleVB = iVertexBuffer::Create(batch::limits::triangle::maxVertices
+				auto* triangleVB = iVertexBuffer::Create(batch::limits::triangle::maxVertices
 					* sizeOfVertexData);
 
 				triangleVB->SetLayout({
@@ -456,6 +456,9 @@ namespace krakoa::graphics
 	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
 		const float texIdx, const float degreesOfRotation, const float tilingFactor)
 	{
+		constexpr auto qp = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
+		constexpr auto q_ = kmaths::Quaternionf(1, 0, 0, 0);
+		
 		auto& triangle = pData->triangle;
 
 		auto& bufferPtr = triangle.pVertexBuffer;
@@ -464,7 +467,7 @@ namespace krakoa::graphics
 		kmaths::Quaternionf qpq_;
 
 		if (degreesOfRotation != 0)
-			qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
+			qpq_ = qp  * q_;
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{

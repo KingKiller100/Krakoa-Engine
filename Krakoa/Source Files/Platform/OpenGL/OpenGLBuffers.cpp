@@ -56,7 +56,7 @@ namespace krakoa::graphics
 		bufferLayout = layout;
 	}
 
-	const krakoa::graphics::BufferLayout& OpenGLVertexBuffer::GetLayout() const
+	const BufferLayout& OpenGLVertexBuffer::GetLayout() const
 	{
 		return bufferLayout;
 	}
@@ -76,7 +76,7 @@ namespace krakoa::graphics
 	{
 		// Create buffer
 		glGenBuffers(1, &rendererID);
-		Bind();
+		OpenGLIndexBuffer::Bind();
 		// send GPU buffer data
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}

@@ -31,6 +31,7 @@ namespace krakoa
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 
 		KRK_INIT_LOGS();
+		KRK_SET_LOG_MIN(LOG_LVL_DBUG);
 		KRK_FATAL(!instance, "Instance of the application already exists!");
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 

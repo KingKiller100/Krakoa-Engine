@@ -11,18 +11,18 @@ namespace krakoa::graphics
 	GLenum ShaderDataTypeToRenderAPIBaseType(graphics::ShaderDataType type)
 	{
 		switch (type) {
-			case krakoa::graphics::ShaderDataType::INT:	      return GL_INT;
-			case krakoa::graphics::ShaderDataType::INT2:      return GL_INT;
-			case krakoa::graphics::ShaderDataType::INT3:      return GL_INT;
-			case krakoa::graphics::ShaderDataType::INT4:      return GL_INT;
-			case krakoa::graphics::ShaderDataType::FLOAT:     return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::FLOAT2:    return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::FLOAT3:    return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::FLOAT4:    return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::MAT2:      return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::MAT3:      return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::MAT4:      return GL_FLOAT;
-			case krakoa::graphics::ShaderDataType::BOOL:      return GL_BOOL;
+			case ShaderDataType::INT:       return GL_INT;
+			case ShaderDataType::INT2:      return GL_INT;
+			case ShaderDataType::INT3:      return GL_INT;
+			case ShaderDataType::INT4:      return GL_INT;
+			case ShaderDataType::FLOAT:     return GL_FLOAT;
+			case ShaderDataType::FLOAT2:    return GL_FLOAT;
+			case ShaderDataType::FLOAT3:    return GL_FLOAT;
+			case ShaderDataType::FLOAT4:    return GL_FLOAT;
+			case ShaderDataType::MAT2:      return GL_FLOAT;
+			case ShaderDataType::MAT3:      return GL_FLOAT;
+			case ShaderDataType::MAT4:      return GL_FLOAT;
+			case ShaderDataType::BOOL:      return GL_BOOL;
 			default:
 			{
 				KRK_FATAL(false, "Unknown ShaderDataType");
@@ -93,12 +93,12 @@ namespace krakoa::graphics
 		pIndexBuffer.reset(indexBuffer);
 	}
 
-	const std::vector<std::shared_ptr<krakoa::graphics::iVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const noexcept
+	const std::vector<std::shared_ptr<iVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const noexcept
 	{
 		return vertexBuffers;
 	}
 
-	const std::unique_ptr<krakoa::graphics::iIndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const noexcept
+	const std::unique_ptr<iIndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const noexcept
 	{
 		return pIndexBuffer;
 	}

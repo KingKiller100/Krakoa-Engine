@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "OpenGLRendererAPI.hpp"
 
+#include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
@@ -8,7 +9,6 @@
 #include <imgui.h>
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
-#include "../../Instrumentor.hpp"
 
 namespace krakoa::graphics
 {
@@ -20,6 +20,7 @@ namespace krakoa::graphics
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_DEPTH_TEST);
 
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
@@ -47,8 +48,6 @@ namespace krakoa::graphics
 			}
 		},
 			nullptr);
-
-		glEnable(GL_DEPTH_TEST);
 
 	}
 

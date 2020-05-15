@@ -390,7 +390,6 @@ namespace krakoa::graphics
 	{
 		pData->quad.Reset();
 		pData->triangle.Reset();
-
 		pData->textures.Reset(1);
 	}
 

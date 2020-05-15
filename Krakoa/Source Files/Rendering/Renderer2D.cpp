@@ -178,17 +178,9 @@ namespace krakoa::graphics
 		}
 
 		RestartBatch();
-		ResetStats();
-	}
-
-	void Renderer2D::ResetStats() noexcept
-	{
-		KRK_PROFILE_FUNCTION();
 
 #if ENABLE_STATISTICS
-		stats.quadCount = 0;
-		stats.triangleCount = 0;
-		stats.drawCallsCount = 0;
+		stats.Reset();
 #endif
 	}
 
@@ -207,12 +199,28 @@ namespace krakoa::graphics
 		const auto lastIdx = pData->textureSlotIdx;
 		for (uint32_t i = 0; i < lastIdx; ++i)
 			pData->textureSlots[i]->Bind(i);
-		
-		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
-		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
+
+		FlushQuads();
+		FlushTriangles();
 
 #if ENABLE_STATISTICS
-		stats.drawCallsCount+=2;
+		stats.drawCallsCount++;
+#endif
+	}
+
+	void Renderer2D::FlushQuads()
+	{
+		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
+#if ENABLE_STATISTICS
+		stats.quadDrawCallsCount++;
+#endif
+	}
+
+	void Renderer2D::FlushTriangles()
+	{
+		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
+#if ENABLE_STATISTICS
+		stats.triangleDrawCallsCount++;
 #endif
 	}
 
@@ -241,8 +249,25 @@ namespace krakoa::graphics
 		AddNewQuad(position, scale, colour);
 	}
 
+	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position,
+		const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour, const float tilingFactor)
+	{
+		KRK_PROFILE_FUNCTION();
+		DrawTriangle(texture, kmaths::Vector3f(position), scale, tintColour, tilingFactor);
+	}
+
+	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position,
+		const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour, const float tilingFactor)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		QueryLimitsMet();
+		const auto texIdx = UpdateTextureList(texture);
+		AddNewTriangle(position, scale, tintColour, texIdx);
+	}
+
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
-		const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+	                          const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
 	{
 		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), scale, tintColour, tilingFactor);
 	}
@@ -309,12 +334,26 @@ namespace krakoa::graphics
 	void Renderer2D::QueryLimitsMet() noexcept
 	{
 		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
+
+		if (pData->textureSlotIdx == batch::limits::texture::maxSlots)
+		{
+			EndScene();
+			RestartBatch();
+		}
 		
-		if (pData->textureSlotIdx == batch::limits::texture::maxSlots
-			|| totalIndices >= batch::limits::maxObjects
-			|| pData->quad.indexCount >= batch::limits::quad::maxIndices
-			|| pData->triangle.indexCount >= batch::limits::triangle::maxIndices
-			)
+		if (totalIndices >= batch::limits::maxObjects)
+		{
+			EndScene();
+			RestartBatch();
+		}
+
+		if (pData->quad.indexCount >= batch::limits::quad::maxIndices)
+		{
+			EndScene();
+			RestartBatch();
+		}
+		
+		if (pData->triangle.indexCount >= batch::limits::triangle::maxIndices)
 		{
 			EndScene();
 			RestartBatch();

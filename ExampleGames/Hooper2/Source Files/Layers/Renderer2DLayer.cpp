@@ -55,23 +55,25 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 void Renderer2DLayer::SendRendererCommands() noexcept
 {
 	KRK_PROFILE_FUNCTION();
+	constexpr auto rotScale = kmaths::Vector2f(0.25f);
+
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured triangle");
-		krakoa::graphics::Renderer2D::DrawTriangle({1, 1, 1, 1}, kmaths::Vector3f(0.f, 0.f));
+		krakoa::graphics::Renderer2D::DrawTriangle(pWinTexture, kmaths::Vector3f(0.f, 0.f));
 	}
 
 	//krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 0, 1 }, kmaths::Vector3f(0, 0), kmaths::Vector2f(20.f));
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
-		//for (auto y = 0; y < 5; ++y) {
-		//	for (auto x = -5.f; x < 5.f; ++x) // drawing 1000 quads to stress test batch renderer
-		//	{
-		//		const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
-		//		krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
-		//	}
-		//}
+		for (auto y = 0; y < 5; ++y) {
+			for (auto x = -50.f; x < 50.f; ++x) // drawing 1000 quads to stress test batch renderer
+			{
+				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
+				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.55f }, miniSquarePos, kmaths::Vector2f(0.25f));
+			}
+		}
 	}
 
 	{
@@ -81,7 +83,6 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 
-		constexpr auto rotScale = kmaths::Vector2f(0.25f);
 		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale, geometryColour, 3.f);
 	}
 

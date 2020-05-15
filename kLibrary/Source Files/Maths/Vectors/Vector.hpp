@@ -401,7 +401,7 @@ namespace kmaths
 		}
 
 		template<typename U, Length_Type C>
-		constexpr Vector& operator=(const Vector<U, C>& other) noexcept
+		constexpr Vector& operator=(const Vector<U, C>& other) noexcept // Copy
 		{
 			constexpr auto size = (N < C) ? N : C;
 
@@ -412,7 +412,7 @@ namespace kmaths
 		}
 
 		template<typename U, Length_Type C>
-		constexpr Vector& operator=(Vector<U, C>&& other) noexcept
+		constexpr Vector& operator=(Vector<U, C>&& other) noexcept // Move
 		{
 			constexpr auto size = (N < C) ? N : C;
 

@@ -16,10 +16,22 @@ namespace krakoa::graphics
 		struct Statistics
 		{
 			size_t drawCallsCount = 0;
+			size_t quadDrawCallsCount = 0;
+			size_t triangleDrawCallsCount = 0;
 			
 			size_t quadCount = 0;
 			size_t triangleCount = 0;
 
+			void Reset() noexcept
+			{
+				drawCallsCount = 0;
+				quadDrawCallsCount = 0;
+				triangleDrawCallsCount = 0;
+
+				quadCount = 0;
+				triangleCount = 0;
+			}
+			
 			size_t TotalQuadVertexCount() const noexcept
 			{
 				return quadCount * batch::limits::quad::vertices;
@@ -42,7 +54,6 @@ namespace krakoa::graphics
 		};
 		
 		inline static Statistics stats;
-		static void ResetStats() noexcept;
 		
 	public:
 		static void Initialize();
@@ -52,6 +63,8 @@ namespace krakoa::graphics
 		static void EndScene();
 
 		static void Flush();
+		static void FlushQuads();
+		static void FlushTriangles();
 
 		static void DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 		static void DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
@@ -59,6 +72,9 @@ namespace krakoa::graphics
 		static void DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 		static void DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 
+		static void DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const kmaths::Vector4f& tintColour = kmaths::Vector4f(1.f), const float tilingFactor = 1.f);
+		static void DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const kmaths::Vector4f& tintColour = kmaths::Vector4f(1.f), const float tilingFactor = 1.f);
+		
 		static void DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const kmaths::Vector4f& tintColour = kmaths::Vector4f(1.f), const float tilingFactor = 1.f);
 		static void DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const kmaths::Vector4f& tintColour = kmaths::Vector4f(1.f), const float tilingFactor = 1.f);
 
@@ -77,6 +93,7 @@ namespace krakoa::graphics
 		static void RestartBatch() noexcept;
 		static void QueryLimitsMet() noexcept;
 		static float UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept;
+		
 		static void AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour = kmaths::Vector4f(1.f), const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
 		static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour = kmaths::Vector4f(1.f), const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
 	};

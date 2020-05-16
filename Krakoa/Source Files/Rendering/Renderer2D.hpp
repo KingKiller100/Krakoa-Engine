@@ -81,17 +81,17 @@ namespace krakoa::graphics
 		static void DrawQuad(const Colour colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 		static void DrawQuad(const Colour colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 
-		static void DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = Colour::White, const float tilingFactor = 1.f);
-		static void DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = Colour::White, const float tilingFactor = 1.f);
+		static void DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+		static void DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = colours::White, const float tilingFactor = 1.f);
 
-		static void DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = Colour::White, const float tilingFactor = 1.f);
-		static void DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = Colour::White, const float tilingFactor = 1.f);
+		static void DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+		static void DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = colours::White, const float tilingFactor = 1.f);
 
 		static void DrawRotatedTriangle(const Colour colour, const kmaths::Vector2f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 		static void DrawRotatedTriangle(const Colour colour, const kmaths::Vector3f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 
-		static void DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = Colour::White, const float tilingFactor = 1.f);
-		static void DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = Colour::White, const float tilingFactor = 1.f);
+		static void DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+		static void DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const Colour tintColour = colours::White, const float tilingFactor = 1.f);
 
 		static void DrawRotatedQuad(const Colour colour, const kmaths::Vector2f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
 		static void DrawRotatedQuad(const Colour colour, const kmaths::Vector3f& position, const float degreesOfRotation = 0.f, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f));
@@ -106,7 +106,7 @@ namespace krakoa::graphics
 		static void QueryLimitsMet() noexcept;
 		static float UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept;
 
-		static void AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour = Colour::White, const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
-		static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour = Colour::White, const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
+		static void AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour = colours::White, const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
+		static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour = colours::White, const float texIdx = 0.f, const float degreesOfRotation = 0.f, const float tilingFactor = 1.f);
 	};
 }

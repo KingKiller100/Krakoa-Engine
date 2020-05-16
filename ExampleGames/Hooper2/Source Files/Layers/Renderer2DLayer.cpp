@@ -64,7 +64,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 		for (auto y = 0; y < 5; ++y)
 			for (auto x = -755.f; x < 750.f; ++x)
-				if (kmaths::Modulus<float>(x, y))
+				if (kmaths::Modulus<float>(x, (float)y))
 					krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(0.5f, 0.f, -.95f), { 0.25f, 0.25f });
 				else
 					krakoa::graphics::Renderer2D::DrawTriangle(pWinTexture, kmaths::Vector3f(-0.5f, 0.f, -.95f), { 0.25f, 0.25f });
@@ -82,13 +82,13 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 			}
 		}
 	}
-	constexpr auto r = krakoa::graphics::colours::Red;
+	
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
 		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Red, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Green, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Blue, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 
 		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale, geometryColour, 3.f);
 	}

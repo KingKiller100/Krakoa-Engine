@@ -3,36 +3,33 @@
 
 namespace  krakoa::graphics
 {
-	Colour::Colour() noexcept
-		: red(0), green(0), blue(0), alpha(255)
+	constexpr  Colour::Colour() noexcept
+		: red(MinColourValue), green(MinColourValue), blue(MinColourValue), alpha(MaxColourValue)
 	{}
 
-	Colour::Colour(float r, float g, float b, float a) noexcept
-		: red(kmaths::Clamp<float>(r, MinColourValue, MaxColourValue)),
-		green(kmaths::Clamp<float>(g, MinColourValue, MaxColourValue)),
-		blue(kmaths::Clamp<float>(b, MinColourValue, MaxColourValue)),
-		alpha(kmaths::Clamp<float>(a, MinColourValue, MaxColourValue))
+	constexpr Colour::Colour(float r, float g, float b, float a) noexcept
+		: red(CAST(uint8_t, kmaths::Clamp<float>(r, MinColourValue, MaxColourValue))),
+		green(CAST(uint8_t, kmaths::Clamp<float>(g, MinColourValue, MaxColourValue))),
+		blue(CAST(uint8_t, kmaths::Clamp<float>(b, MinColourValue, MaxColourValue))),
+		alpha(CAST(uint8_t, kmaths::Clamp<float>(a, MinColourValue, MaxColourValue)))
 	{}
 
-	Colour::Colour(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a) noexcept
+	constexpr Colour::Colour(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a) noexcept
 		: red(r), green(g), blue(b), alpha(a)
 	{}
 
-	Colour::Colour(const kmaths::Vector4f& colourSet) noexcept
-		: red(kmaths::Clamp<float>(colourSet[0], MinColourValue, MaxColourValue)),
-		green(kmaths::Clamp<float>(colourSet[1], MinColourValue, MaxColourValue)),
-		blue(kmaths::Clamp<float>(colourSet[2], MinColourValue, MaxColourValue)),
-		alpha(kmaths::Clamp<float>(colourSet[3], MinColourValue, MaxColourValue))
+	constexpr Colour::Colour(const kmaths::Vector4f& colourSet) noexcept
+		: red(CAST(uint8_t, kmaths::Clamp<float>(colourSet[0], MinColourValue, MaxColourValue))),
+		green(CAST(uint8_t, kmaths::Clamp<float>(colourSet[1], MinColourValue, MaxColourValue))),
+		blue(CAST(uint8_t, kmaths::Clamp<float>(colourSet[2], MinColourValue, MaxColourValue))),
+		alpha(CAST(uint8_t, kmaths::Clamp<float>(colourSet[3], MinColourValue, MaxColourValue)))
 	{}
 
-	Colour::Colour(const kmaths::Vector4<uint8_t>& colourSet) noexcept
+	constexpr Colour::Colour(const kmaths::Vector4<uint8_t>& colourSet) noexcept
 		: red(colourSet[0]), green(colourSet[1]),
 		blue(colourSet[2]), alpha(colourSet[3])
 	{}
-
-	Colour::~Colour() noexcept
-		= default;
-
+	
 	void Colour::SetHSL(HSL hsl) noexcept
 	{
 		const auto flHue6 = hsl.hue / 60.f;
@@ -82,7 +79,7 @@ namespace  krakoa::graphics
 		*this = Colour(flR1 + flM, flG1 + flM, flB1 + flM);
 	}
 
-	Colour::HSL Colour::GetHSL(float hue, float saturation, float lightness) const noexcept
+	constexpr Colour::HSL Colour::GetHSL(float hue, float saturation, float lightness) const noexcept
 	{
 		const float r = CAST(float, red) / MaxColourValue;
 		const float g = CAST(float, green) / MaxColourValue;
@@ -117,13 +114,13 @@ namespace  krakoa::graphics
 		const auto g = green * multiplier;
 		const auto b = blue * multiplier;
 		const auto a = alpha * multiplier;
-		
+		constexpr auto h = colours::Red;
 		return kmaths::Vector4f{ r, g, b, a };
 	}
 
 	constexpr Colour Colour::Inverse() const noexcept
 	{
-		return { MaxColourValue - red, MaxColourValue - green, MaxColourValue - blue, alpha };
+		return Colour( CAST(uint8_t, MaxColourValue - red), CAST(uint8_t, MaxColourValue - green), CAST(uint8_t, MaxColourValue  - blue), alpha );
 	}
 
 	constexpr Colour Colour::operator+(const Colour& c) const noexcept

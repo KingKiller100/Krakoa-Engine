@@ -22,13 +22,6 @@
 
 #include <array>
 
-
-
-#include "../Events System/ApplicationEvent.hpp"
-#include "../Events System/ApplicationEvent.hpp"
-#include "../Events System/ApplicationEvent.hpp"
-#include "../Events System/ApplicationEvent.hpp"
-
 namespace krakoa::graphics
 {
 	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
@@ -253,12 +246,12 @@ namespace krakoa::graphics
 #endif
 	}
 
-	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawTriangle(const Colour colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		DrawTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), scale);
 	}
 
-	void Renderer2D::DrawTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector3f(1.f)*/)
+	void Renderer2D::DrawTriangle(const Colour colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector3f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -266,12 +259,12 @@ namespace krakoa::graphics
 		AddNewTriangle(position, scale, colour);
 	}
 
-	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawQuad(const Colour colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		DrawQuad(colour, kmaths::Vector3f(position.X(), position.Y()), scale);
 	}
 
-	void Renderer2D::DrawQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawQuad(const Colour colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
 		QueryLimitsMet();
@@ -279,14 +272,14 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position,
-		const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour, const float tilingFactor)
+		const kmaths::Vector2f& scale, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 		DrawTriangle(texture, kmaths::Vector3f(position), scale, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position,
-		const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour, const float tilingFactor)
+		const kmaths::Vector2f& scale, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -296,13 +289,13 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
-		const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+		const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
 	{
 		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), scale, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
-		const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+		const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -312,12 +305,12 @@ namespace krakoa::graphics
 		AddNewQuad(position, scale, tintColour, texIdx, degrees, tilingFactor);
 	}
 
-	void Renderer2D::DrawRotatedTriangle(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawRotatedTriangle(const Colour colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		DrawRotatedTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, scale);
 	}
 
-	void Renderer2D::DrawRotatedTriangle(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawRotatedTriangle(const Colour colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -326,14 +319,14 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position,
-		const float degreesOfRotation, const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour,
+		const float degreesOfRotation, const kmaths::Vector2f& scale, const Colour tintColour,
 		const float tilingFactor)
 	{
 		DrawRotatedTriangle(texture, kmaths::Vector3f(position), degreesOfRotation, scale, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position,
-		const float degreesOfRotation, const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour,
+		const float degreesOfRotation, const kmaths::Vector2f& scale, const Colour tintColour,
 		const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -343,12 +336,12 @@ namespace krakoa::graphics
 		AddNewTriangle(position, scale, tintColour, texIdx, degreesOfRotation, degreesOfRotation);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawRotatedQuad(const Colour colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		DrawRotatedQuad(colour, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, scale);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const kmaths::Vector4f& colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawRotatedQuad(const Colour colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -358,13 +351,13 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/,
-		const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+		const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
 	{
 		DrawRotatedQuad(texture, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, scale, tintColour);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/,
-		const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const kmaths::Vector4f& tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+		const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -435,7 +428,7 @@ namespace krakoa::graphics
 		return texIdx;
 	}
 
-	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
+	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour,
 		const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
 	{
 		auto& quad = pData->quad;
@@ -482,7 +475,7 @@ namespace krakoa::graphics
 			}
 
 			bufferPtr->position = worldPosition;
-			bufferPtr->colour = colour;
+			bufferPtr->colour = colour.GetRGBA();
 			bufferPtr->texCoord = texCoord;
 			bufferPtr->texIdx = texIdx;
 			bufferPtr->tilingFactor = tilingFactor;
@@ -543,7 +536,7 @@ namespace krakoa::graphics
 			}
 
 			bufferPtr->position = worldPosition;
-			bufferPtr->colour = colour.GetColour();
+			bufferPtr->colour = colour.GetRGBA();
 			bufferPtr->texCoord = texCoord;
 			bufferPtr->texIdx = texIdx;
 			bufferPtr->tilingFactor = tilingFactor;

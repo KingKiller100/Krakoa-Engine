@@ -3,15 +3,6 @@
 
 namespace  krakoa::graphics
 {
-	const Colour Colour::Red(MaxColourValue, 0, 0);
-	const Colour Colour::Green(0, MaxColourValue, 0);
-	const Colour Colour::Blue(0, 0, MaxColourValue);
-	const Colour Colour::Magenta(MaxColourValue, 0, MaxColourValue);
-	const Colour Colour::Cyan(0, MaxColourValue, MaxColourValue);
-	const Colour Colour::Yellow(MaxColourValue, MaxColourValue, 0);
-	const Colour Colour::White(MaxColourValue, MaxColourValue, MaxColourValue);
-	const Colour Colour::Black(MinColourValue, MinColourValue, MinColourValue);
-
 	Colour::Colour() noexcept
 		: red(0), green(0), blue(0), alpha(255)
 	{}
@@ -148,7 +139,7 @@ namespace  krakoa::graphics
 		const auto g = kmaths::Clamp<uint8_t>((green - c.green), MinColourValue, MaxColourValue);
 		const auto b = kmaths::Clamp<uint8_t>((blue - c.blue), MinColourValue, MaxColourValue);
 		const auto a = kmaths::Clamp<uint8_t>((alpha - c.alpha), MinColourValue, MaxColourValue);
-
+		
 		return { r, g, b, a };
 	}
 

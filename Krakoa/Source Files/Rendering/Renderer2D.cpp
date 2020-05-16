@@ -22,6 +22,13 @@
 
 #include <array>
 
+
+
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+
 namespace krakoa::graphics
 {
 	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
@@ -489,8 +496,8 @@ namespace krakoa::graphics
 
 	}
 
-	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const kmaths::Vector4f& colour,
-		const float texIdx, const float degreesOfRotation, const float tilingFactor)
+	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour,
+	                                const float texIdx, const float degreesOfRotation, const float tilingFactor)
 	{
 		//constexpr auto qp = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
 		//constexpr auto q_ = kmaths::Quaternionf(1, 0, 0, 0);
@@ -536,14 +543,14 @@ namespace krakoa::graphics
 			}
 
 			bufferPtr->position = worldPosition;
-			bufferPtr->colour = colour;
+			bufferPtr->colour = colour.GetColour();
 			bufferPtr->texCoord = texCoord;
 			bufferPtr->texIdx = texIdx;
 			bufferPtr->tilingFactor = tilingFactor;
 		}
 
 		triangle.IncrementIndexCount();
-
+		
 #if ENABLE_STATISTICS
 		stats.triangleCount++;
 #endif

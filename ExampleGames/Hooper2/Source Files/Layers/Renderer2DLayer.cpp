@@ -82,11 +82,11 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 			}
 		}
 	}
-
+	constexpr auto r = krakoa::graphics::colours::Red;
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
 		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad({ 1, 0, 0, 1 }, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Red, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 1, 0, 1 }, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
 		krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 1, 1 }, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
 

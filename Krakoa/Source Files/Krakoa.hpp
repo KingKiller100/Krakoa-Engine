@@ -20,6 +20,9 @@
 #include "Camera/OrthographicCamera.hpp"
 #include "Camera/OrthographicCameraController.hpp"
 
+// Colours
+#include "Rendering/Colour.hpp"
+
 // Rendering
 #include "Rendering/Renderer.hpp"
 #include "Rendering/Renderer2D.hpp"

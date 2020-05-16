@@ -30,6 +30,9 @@ namespace  krakoa::graphics
 		blue(colourSet[2]), alpha(colourSet[3])
 	{}
 
+	Colour::~Colour() noexcept
+		= default;
+
 	void Colour::SetHSL(HSL hsl) noexcept
 	{
 		const auto flHue6 = hsl.hue / 60.f;

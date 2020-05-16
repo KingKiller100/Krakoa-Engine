@@ -30,6 +30,8 @@ namespace krakoa::graphics
 		constexpr Colour(const kmaths::Vector4f& colourSet) noexcept;
 		constexpr Colour(const kmaths::Vector4<uint8_t>& colourSet) noexcept;
 
+		~Colour() noexcept;
+		
 		constexpr void SetHSL(HSL hsl) noexcept;
 		USE_RESULT constexpr HSL GetHSL(float hue, float saturation, float lightness) const noexcept;
 

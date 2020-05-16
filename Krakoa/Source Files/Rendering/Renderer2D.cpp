@@ -285,7 +285,7 @@ namespace krakoa::graphics
 
 		QueryLimitsMet();
 		const auto texIdx = UpdateTextureList(texture);
-		AddNewTriangle(position, scale, tintColour, texIdx);
+		AddNewTriangle(position, scale, tintColour, texIdx, 0, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
@@ -316,6 +316,24 @@ namespace krakoa::graphics
 
 		QueryLimitsMet();
 		AddNewTriangle(position, scale, colour);
+	}
+
+	void Renderer2D::DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position,
+		const float degreesOfRotation, const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour,
+		const float tilingFactor)
+	{
+		DrawRotatedTriangle(texture, kmaths::Vector3f(position), degreesOfRotation, scale, tintColour, tilingFactor);
+	}
+
+	void Renderer2D::DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position,
+		const float degreesOfRotation, const kmaths::Vector2f& scale, const kmaths::Vector4f& tintColour,
+		const float tilingFactor)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		QueryLimitsMet();
+		const auto texIdx = UpdateTextureList(texture);
+		AddNewTriangle(position, scale, tintColour, texIdx, degreesOfRotation, degreesOfRotation);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const kmaths::Vector4f& colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)

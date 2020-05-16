@@ -75,7 +75,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	{
 		KRK_PROFILE_SCOPE("Textured quad");
 		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -250.f; x < 250.f; ++x)
+			for (auto x = -750.f; x < 750.f; ++x)
 			{
 				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
 				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.25f }, miniSquarePos, kmaths::Vector2f(0.25f));

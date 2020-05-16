@@ -66,7 +66,7 @@ namespace kTest::maths
 	bool AlgorithmsTester::SineTest()
 	{
 		{
-			constexpr auto x = constants::PI_OVER_4;
+			constexpr auto x = 0;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
 			VERIFY(result == expected);
@@ -80,7 +80,35 @@ namespace kTest::maths
 		}
 		
 		{
-			constexpr auto x = constants::PI_OVER_4;
+			constexpr auto x = constants::PI_OVER_2;
+			constexpr auto result = Sine(x);
+			const auto expected = std::sin(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto result = Sine(x);
+			const auto expected = std::sin(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = constants::PI;
+			constexpr auto result = Sine(x);
+			const auto expected = std::sin(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto result = Sine(x);
+			const auto expected = std::sin(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = constants::TAU;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
 			VERIFY(result == expected);
@@ -93,7 +121,49 @@ namespace kTest::maths
 	bool AlgorithmsTester::CosineTest()
 	{
 		{
-			constexpr auto x = 0.0;
+			constexpr auto x = 0;
+			constexpr auto result = Cosine(x);
+			const auto expected = std::cos(x);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto x = constants::PI_OVER_4;
+			constexpr auto result = Cosine(x);
+			const auto expected = std::cos(x);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto x = constants::PI_OVER_2;
+			constexpr auto result = Cosine(x);
+			const auto expected = std::cos(x);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto result = Cosine(x);
+			const auto expected = std::cos(x);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto x = constants::PI;
+			constexpr auto result = Cosine(x);
+			const auto expected = std::cos(x);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto result = Cosine(x);
+			const auto expected = std::cos(x);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto x = constants::TAU;
 			constexpr auto result = Cosine(x);
 			const auto expected = std::cos(x);
 			VERIFY(result == expected);

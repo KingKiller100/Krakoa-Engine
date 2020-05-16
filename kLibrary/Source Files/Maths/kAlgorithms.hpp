@@ -913,9 +913,9 @@ namespace kmaths
 		constexpr auto one = constants::One<constants::AccuracyType>();
 		constexpr auto two = one + one;
 		const auto square = CAST(constants::AccuracyType, -x * x);
-		
-		constants::AccuracyType t = CAST(constants::AccuracyType, x);
-		constants::AccuracyType sine = t;
+
+		auto t = CAST(constants::AccuracyType, x);
+		auto sine = t;
 		for (size_t a = 1; a < n; ++a)
 		{
 			const constants::AccuracyType xn = square / ((two * a + one) * (two * a));
@@ -932,7 +932,7 @@ namespace kmaths
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 			return SineImpl(x, n);
 		else
-			CAST(T, SineImpl<float>(x, n));
+			return CAST(T, SineImpl<float>(x, n));
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
@@ -945,7 +945,7 @@ namespace kmaths
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 			return SineImpl(x, n);
 		else
-			CAST(T, SineImpl<float>(x, n));
+			return CAST(T, SineImpl<float>(x, n));
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)

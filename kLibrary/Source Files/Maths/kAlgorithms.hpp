@@ -841,13 +841,15 @@ namespace kmaths
 		return x * x * x;
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_unsigned_v<T>>>
-	USE_RESULT constexpr T Factorial_Integral(T n) noexcept
+	template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+	USE_RESULT constexpr size_t Factorial_Integral(T n) noexcept
 	{
+		if (IsNegative(n)) return 0;
+		
 		if (n == 0 || n == 1)
 			return 1;
 
-		T result = n;
+		size_t result = CAST(size_t, n);
 
 		while (n-- > 1)
 			result *= n;
@@ -859,8 +861,8 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Gamma(T z) noexcept
 	{
-		constexpr T one = constants::One(z);
-		constexpr auto zeroPoint5 = constants::ZeroPointFive(z);
+		constexpr T one = constants::One<T>();
+		constexpr auto zeroPoint5 = constants::ZeroPointFive<T>();
 		constexpr auto pi = constants::PI;
 
 		// accurate to about 15 decimal places

@@ -22,6 +22,9 @@ namespace kTest::maths
 	{
 		VERIFY_MULTI_INIT();
 
+		VERIFY_MULTI(SineTest);
+
+
 		VERIFY_MULTI(ConstantsTest);
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(CountDigitsTest);
@@ -43,6 +46,7 @@ namespace kTest::maths
 		VERIFY_MULTI(PowerOfFractionTest);
 		VERIFY_MULTI(RealToFractionTest);
 
+		VERIFY_MULTI(FactorialTest);
 		VERIFY_MULTI(LogarithmBase10Test);
 		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(SquareRootTest);
@@ -56,8 +60,53 @@ namespace kTest::maths
 
 		VERIFY_MULTI_END();
 	}
-
 	using namespace kmaths;
+
+	bool AlgorithmsTester::SineTest()
+	{
+		constexpr auto sineFunc = [](double x)
+		{
+			double x2 = x * x;
+			double x4 = x2 * x2;
+
+			// Calculate the terms
+			// As long as abs(x) < sqrt(6), which is 2.45, all terms will be positive.
+			// Values outside this range should be reduced to [-pi/2, pi/2] anyway for accuracy.
+			// Some care has to be given to the factorials.
+			// They can be pre-calculated by the compiler,
+			// but the value for the higher ones will exceed the storage capacity of int.
+			// so force the compiler to use unsigned long longs (if available) or doubles.
+			double t1 = x * (1.0 - x2 / (2 * 3));
+			double x5 = x * x4;
+			double t2 = x5 * (1.0 - x2 / (6 * 7)) / (5.0 * 4 * 3 * 2);
+			double x9 = x5 * x4;
+			double t3 = x9 * (1.0 - x2 / (10 * 11)) / (9.0 * 8 * 7 * 6 * 5 * 4 * 3 * 2);
+			double x13 = x9 * x4;
+			double t4 = x13 * (1.0 - x2 / (14 * 15)) / (13.0 * 12 * 11 * 10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2);
+			// add some more if your accuracy requires them.
+			// But remember that x is smaller than 2, and the factorial grows very fast
+			// so I doubt that 2^17 / 17! will add anything.
+			// Even t4 might already be too small to matter when compared with t1.
+
+			// Sum backwards
+			double result = t4;
+			result += t3;
+			result += t2;
+			result += t1;
+
+			return Round(result, 10);
+		};
+
+		{
+			constexpr auto x = constants::PI_OVER_2;
+			const auto result = sineFunc(x);
+			const auto expected = std::sin(x);
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
 
 	bool AlgorithmsTester::ConstantsTest()
 	{
@@ -74,7 +123,7 @@ namespace kTest::maths
 
 		{
 			constexpr auto vec = constants::One(Vector2f());
-			VERIFY_COMPILE_TIME(vec.X() == 1.0 && vec.Y() == 1.0);
+			VERIFY(vec.X() == 1.0 && vec.Y() == 1.0);
 		}
 
 		{
@@ -150,43 +199,43 @@ namespace kTest::maths
 		{
 			constexpr auto num = 10;
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 2);
+			VERIFY(digits == 2);
 		}
 
 		{
 			constexpr auto num = 100;
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 3);
+			VERIFY(digits == 3);
 		}
 
 		{
 			constexpr auto num = -100;
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 3);
+			VERIFY(digits == 3);
 		}
 
 		{
 			constexpr auto num = std::numeric_limits<int>::max();
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 10);
+			VERIFY(digits == 10);
 		}
 
 		{
 			constexpr auto num = 10.4906;
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 2);
+			VERIFY(digits == 2);
 		}
 
 		{
 			constexpr auto num = std::numeric_limits<long long>::max();
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 19);
+			VERIFY(digits == 19);
 		}
 
 		{
 			constexpr auto num = std::numeric_limits<float>::max();
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 39);
+			VERIFY(digits == 39);
 		}
 
 		{
@@ -198,7 +247,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = std::numeric_limits<double>::max();
 			constexpr auto digits = CountIntegerDigits(num);
-			VERIFY_COMPILE_TIME(digits == 309);
+			VERIFY(digits == 309);
 		}
 
 		{
@@ -239,7 +288,7 @@ namespace kTest::maths
 		return success;
 	}
 
-	
+
 	bool AlgorithmsTester::MinMaxTest()
 	{
 		constexpr auto big = 1000LL;
@@ -650,6 +699,32 @@ namespace kTest::maths
 		return success;
 	}
 
+	bool AlgorithmsTester::FactorialTest()
+	{
+		{
+			constexpr auto z = 5;
+			constexpr auto result = Factorial(z);
+			constexpr auto expected = 5 * 4 * 3 * 2 * 1;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto z = 10;
+			constexpr auto result = Factorial(z);
+			constexpr auto expected = 10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2 * 1;
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto z = 1.5;
+			const auto result = Factorial(z);
+			constexpr auto expected = 8;;
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
 	bool AlgorithmsTester::ClampTest()
 	{
 		{
@@ -745,7 +820,7 @@ namespace kTest::maths
 				? -std::clamp(v, minimum, maximum)
 				: std::clamp(v, minimum, maximum);
 		};
-		
+
 		{
 			constexpr auto value = 15;
 			constexpr decltype(value) upper = 20;

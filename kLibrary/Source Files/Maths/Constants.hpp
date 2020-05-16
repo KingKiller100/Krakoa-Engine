@@ -53,7 +53,7 @@ namespace kmaths::constants
 	template<class T>
 	USE_RESULT constexpr T One(T&&) noexcept
 	{
-		return One<T>();
+		return One<ONLY_TYPE(T)>();
 	}
 
 	template<class T>

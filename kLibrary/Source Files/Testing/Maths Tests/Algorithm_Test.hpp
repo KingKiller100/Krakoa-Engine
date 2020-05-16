@@ -14,6 +14,7 @@ namespace kTest::maths
 	private:
 		void Test() override;
 
+		bool SineTest();
 		bool ConstantsTest();
 		bool ConversionTest();
 		bool CountDigitsTest();
@@ -28,6 +29,7 @@ namespace kTest::maths
 		bool RoundingTest();
 		bool PowerOfTest();
 		bool SwapTest();
+		bool FactorialTest();
 		bool ClampTest();
 		bool AbsClampTest();
 		bool ToDegreesTest();

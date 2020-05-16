@@ -25,6 +25,7 @@ namespace kTest::maths
 		VERIFY_MULTI(ConstantsTest);
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(CountDigitsTest);
+		VERIFY_MULTI(IsNegativeTest);
 		VERIFY_MULTI(SignTest);
 		VERIFY_MULTI(AbsTest);
 		VERIFY_MULTI(SwapTest);
@@ -35,6 +36,9 @@ namespace kTest::maths
 		VERIFY_MULTI(BinarySearchTest);
 		VERIFY_MULTI(BinarySearchClosestTest);
 
+
+		VERIFY_MULTI(ClampTest);
+		VERIFY_MULTI(AbsClampTest);
 		VERIFY_MULTI(PowerOfTest);
 		VERIFY_MULTI(PowerOfFractionTest);
 		VERIFY_MULTI(RealToFractionTest);
@@ -206,6 +210,36 @@ namespace kTest::maths
 		return success;
 	}
 
+	bool AlgorithmsTester::IsNegativeTest()
+	{
+		{
+			constexpr auto value = -15;
+			constexpr auto result = IsNegative(value);
+			VERIFY_COMPILE_TIME(result == true)
+		}
+
+		{
+			constexpr auto value = 15.5;
+			constexpr auto result = IsNegative(value);
+			VERIFY_COMPILE_TIME(result == false)
+		}
+
+		{
+			constexpr auto value = 0.5;
+			constexpr auto result = IsNegative(value);
+			VERIFY_COMPILE_TIME(result == false)
+		}
+
+		{
+			constexpr auto value = -0.25;
+			constexpr auto result = IsNegative(value);
+			VERIFY_COMPILE_TIME(result == true)
+		}
+
+		return success;
+	}
+
+	
 	bool AlgorithmsTester::MinMaxTest()
 	{
 		constexpr auto big = 1000LL;
@@ -616,6 +650,186 @@ namespace kTest::maths
 		return success;
 	}
 
+	bool AlgorithmsTester::ClampTest()
+	{
+		{
+			constexpr auto value = 15;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = 20;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = 10;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = 1;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = 21;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = -1;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = -10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = -12;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = -10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = -9.0;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = -10;
+			constexpr auto result = Clamp(value, lower, upper);
+			constexpr auto expected = std::clamp(value, lower, upper);
+			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		{
+			constexpr auto value = Vector2f(4, 3); // MagSq = 25
+			constexpr decltype(value) upper = Vector2f(2, 4); // MagSQ = 20
+			constexpr decltype(value) lower = Vector2f(-2); // MagSQ = 8
+			const auto result = Clamp(value, lower, upper); // Compares MagSQ values
+			const auto expected = std::clamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+
+		return success;
+	}
+
+	bool AlgorithmsTester::AbsClampTest()
+	{
+		constexpr auto stdAbsClamp = [](const auto& v, const auto& minimum, const auto& maximum)
+		{
+			return IsNegative(v)
+				? -std::clamp(v, minimum, maximum)
+				: std::clamp(v, minimum, maximum);
+		};
+		
+		{
+			constexpr auto value = 15;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = -20;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = 10;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = 1;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = 21;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = 10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = -1;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = -10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = -12;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = -10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = -9.0;
+			constexpr decltype(value) upper = 20;
+			constexpr decltype(value) lower = -10;
+			constexpr auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto value = Vector2f(4, 3); // MagSq = 25
+			constexpr decltype(value) upper = Vector2f(2, 4); // MagSQ = 20
+			constexpr decltype(value) lower = Vector2f(-2); // MagSQ = 8
+			const auto result = AbsClamp(value, lower, upper);
+			const auto expected = stdAbsClamp(value, lower, upper);
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
 	bool AlgorithmsTester::ToDegreesTest()
 	{
 		constexpr auto piTo180 = ToDegrees(int(constants::PI));
@@ -846,138 +1060,138 @@ namespace kTest::maths
 	bool AlgorithmsTester::RootTest()
 	{
 		{
-			constexpr auto exponant = -1;
+			constexpr auto exponent = -1;
 			constexpr auto power = 7;
-			const auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = -1;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = 0;
-			constexpr auto power = 14;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = 0;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = 1;
-			constexpr auto power = 14;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = 1;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = 8;
-			constexpr auto power = 4;
-			const auto root = Root(exponant, power);
-			constexpr auto expected = 1;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = 1000.0l;
-			constexpr auto power = 14;
-			constexpr auto root = Root(exponant, power);
-			constexpr auto expected = 1.6378937069540642l;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = .0625f;
-			constexpr auto power = 4;
-			constexpr auto root = Root(exponant, power);
-			constexpr auto expected = 0.5;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = 69150.l;
-			constexpr auto power = 10;
-			constexpr auto root = Root(exponant, power);
-			constexpr auto expected = 3.0477491473803897l;
-			VERIFY_COMPILE_TIME(root == expected);
-		}
-
-		{
-			constexpr auto exponant = 27.0l;
-			constexpr auto power = 2;
-			const auto root = Root(exponant, power);
-			const auto expected = std::sqrtl(exponant);
 			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = 8;
+			constexpr auto exponent = 0;
+			constexpr auto power = 14;
+			const auto root = Root(exponent, power);
+			constexpr auto expected = 0;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = 1;
+			constexpr auto power = 14;
+			const auto root = Root(exponent, power);
+			constexpr auto expected = 1;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = 8;
+			constexpr auto power = 4;
+			const auto root = Root(exponent, power);
+			constexpr auto expected = 1;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = 1000.0l;
+			constexpr auto power = 14;
+			const auto root = Root(exponent, power);
+			constexpr auto expected = 1.6378937069540642l;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = .0625f;
+			constexpr auto power = 4;
+			const auto root = Root(exponent, power);
+			constexpr auto expected = 0.5;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = 69150.l;
+			constexpr auto power = 10;
+			const auto root = Root(exponent, power);
+			constexpr auto expected = 3.0477491473803897l;
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = 27.0l;
+			constexpr auto power = 2;
+			const auto root = Root(exponent, power);
+			const auto expected = std::sqrtl(exponent);
+			VERIFY(root == expected);
+		}
+
+		{
+			constexpr auto exponent = 8;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = 2;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = 27;
+			constexpr auto exponent = 27;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = 3;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = -27;
+			constexpr auto exponent = -27;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = -3;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = -64;
+			constexpr auto exponent = -64;
 			constexpr auto power = 3;
-			constexpr auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = -4;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = -200.l;
+			constexpr auto exponent = -200.l;
 			constexpr auto power = 3;
-			auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = -5.8480354764257321l;
 			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = 50.f;
+			constexpr auto exponent = 50.f;
 			constexpr auto power = 3;
-			const auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = 3.6840314986403859f;
 			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = 64.f;
+			constexpr auto exponent = 64.f;
 			constexpr auto power = 3;
-			constexpr auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = 4;
-			VERIFY_COMPILE_TIME(root == expected);
+			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponant = 64.0;
+			constexpr auto exponent = 64.0;
 			constexpr auto power = 6;
-			auto root = Root(exponant, power);
+			const auto root = Root(exponent, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);
 		}
 
 		// Throws error trying to find a even root of a negative number
 		//{
-		//	constexpr auto exponant = -64.0;
+		//	constexpr auto exponent = -64.0;
 		//	constexpr auto power = 6;
-		//	auto root = RootImpl(exponant, power);
+		//	auto root = RootImpl(exponent, power);
 		//	constexpr auto expected = -2;
 		//	VERIFY(root == expected);
 		//}
@@ -1192,13 +1406,13 @@ namespace kTest::maths
 		{
 			constexpr auto num = 1.5;
 			const auto result = Abs(num);
-			VERIFY_COMPILE_TIME(result == 1.5);
+			VERIFY(result == 1.5);
 		}
 
 		{
 			constexpr auto num = -10.5f;
 			const auto result = Abs(num);
-			VERIFY_COMPILE_TIME(result == 10.5);
+			VERIFY(result == 10.5);
 		}
 
 		return success;

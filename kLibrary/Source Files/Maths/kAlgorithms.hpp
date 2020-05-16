@@ -16,7 +16,7 @@
 #ifdef max
 #	undef max
 #endif
-//#include <stdexcept>
+
 
 #ifdef min
 #	undef min
@@ -92,18 +92,18 @@ namespace kmaths
 
 		const size_t midIdx = lbIdx + ((ubIdx - lbIdx) >> 1);
 
-		const auto lowerbound = list[midIdx];
-		const auto upperbound = list[midIdx + 1];
+		const auto lowerBound = list[midIdx];
+		const auto upperBound = list[midIdx + 1];
 
-		if (lowerbound == value)
+		if (lowerBound == value)
 			return midIdx;
-		else if (value < lowerbound)
+		else if (value < lowerBound)
 			return BinarySearchClosestImpl(list, value, lbIdx, midIdx - 1, size);
-		else if (value > upperbound)
+		else if (value > upperBound)
 			return BinarySearchClosestImpl(list, value, midIdx + 1, ubIdx, size);
 
-		const auto lbDiff = value - lowerbound;
-		const auto ubDiff = upperbound - value;
+		const auto lbDiff = value - lowerBound;
+		const auto ubDiff = upperBound - value;
 
 		return lbDiff < ubDiff ? midIdx : midIdx + 1;
 	}
@@ -126,6 +126,8 @@ namespace kmaths
 		return Convert<int>(value) == value;
 	}
 
+
+	
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
 	{
@@ -177,13 +179,13 @@ namespace kmaths
 	template<typename T1, typename T2>
 	USE_RESULT constexpr T1 Max(const T1& lhs, const T2& rhs) noexcept
 	{
-		return lhs > rhs ? lhs : (T1)rhs;
+		return lhs > rhs ? lhs : CAST(T1, rhs);
 	}
 
 	template<typename T1, typename T2>
 	USE_RESULT constexpr T1 Min(const T1& lhs, const T2& rhs) noexcept
 	{
-		return lhs < rhs ? lhs : (T1)rhs;
+		return lhs < rhs ? lhs : CAST(T1, rhs);
 	}
 
 	// Sign///////////////////////////////////////////////////////////////////
@@ -197,13 +199,19 @@ namespace kmaths
 	{
 		return (T(0) < x) - (x < T(0));
 	}
-	template<typename T>
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr decltype(auto) Sign(const T x) noexcept
 	{
 		return Sign_Impl(x, std::is_signed<T>());
 	}
 	//////////////////////////////////////////////////////////////////////////
 
+	template<typename T>
+	USE_RESULT constexpr bool IsNegative(T x) noexcept
+	{
+		return x < 0;
+	}
+	
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
@@ -389,8 +397,10 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Clamp(const T value, const T min, const T max) noexcept
+	USE_RESULT constexpr T Clamp(const T value, const T min, const T max) 
 	{
+		if (max <= min) throw std::exception();
+
 		return (Min(max, Max(value, min)));
 	}
 
@@ -780,8 +790,8 @@ namespace kmaths
 		constexpr auto one = constants::One<T>();
 		constexpr auto zeroPointOne = constants::ZeroPointOne<T>();
 
-		constexpr auto maxIter = unsigned short(1e3);
-		unsigned short currentIter = 0;
+		constexpr auto maxIter = CAST(unsigned short, 1e3);
+		[[maybe_unused]] unsigned short currentIter = 0;
 
 		if (number < 1 && number > zeroPointOne)
 			return -1;

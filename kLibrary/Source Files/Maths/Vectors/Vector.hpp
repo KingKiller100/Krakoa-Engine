@@ -220,9 +220,9 @@ namespace kmaths
 			return std::addressof<Type>(first);
 		}
 
-		USE_RESULT constexpr inline auto GetLength() const noexcept
+		USE_RESULT static constexpr inline auto GetLength() noexcept
 		{
-			return N;
+			return Length;
 		}
 
 		template<typename U = Type>
@@ -376,6 +376,31 @@ namespace kmaths
 			return *this;
 		}
 
+		template<typename U, Length_Type C>
+		USE_RESULT constexpr bool operator<(const Vector<U, C>& other) const noexcept
+		{
+			return MagnitudeSQ() < other.MagnitudeSQ();
+		}
+
+		template<typename U, Length_Type C>
+		USE_RESULT constexpr bool operator>(const Vector<U, C>& other) const noexcept
+		{
+			return MagnitudeSQ() > other.MagnitudeSQ();
+		}
+
+		template<typename U, Length_Type C>
+		USE_RESULT constexpr bool operator<=(const Vector<U, C>& other) const noexcept
+		{
+			return MagnitudeSQ() <= other.MagnitudeSQ();
+		}
+
+		template<typename U, Length_Type C>
+		USE_RESULT constexpr bool operator>=(const Vector<U, C>& other) const noexcept
+		{
+			return MagnitudeSQ() >= other.MagnitudeSQ();
+		}
+		
+
 		// bool operator == returns true if both Vector values are equal
 		USE_RESULT constexpr bool operator==(const Vector& v) const
 		{
@@ -458,4 +483,53 @@ namespace kmaths
 	private:
 		T dimensions[N]{};
 	};
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator>(const Vector<T, C>& lhs, const U& rhs) noexcept
+	{
+		return lhs.Magnitude() > rhs;
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator>=(const Vector<T, C>& lhs, const U& rhs) noexcept
+	{
+		return lhs.Magnitude() >= rhs;
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator<(const Vector<T, C>& lhs, const U& rhs) noexcept
+	{
+		return lhs.Magnitude() < rhs;
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator<=(const Vector<T, C>& lhs, const U& rhs) noexcept
+	{
+		return lhs.Magnitude() <= rhs;
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator>(const U& rhs, const Vector<T, C>& lhs) noexcept
+	{
+		return rhs > lhs.Magnitude();
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator<(const U& rhs, const Vector<T, C>& lhs) noexcept
+	{
+		return rhs < lhs.Magnitude();
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator>=(const U& rhs, const Vector<T, C>& lhs) noexcept
+	{
+		return rhs >= lhs.Magnitude();
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator<=(const U& rhs, const Vector<T, C>& lhs) noexcept
+	{
+		return rhs <= lhs.Magnitude();
+	}
+	
 }

@@ -9,7 +9,7 @@
 
 namespace krakoa::graphics
 {
-	class Colour
+	class Colour final
 	{
 		struct HSL
 		{

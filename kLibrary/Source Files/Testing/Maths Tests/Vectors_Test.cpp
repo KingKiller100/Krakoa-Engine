@@ -59,7 +59,11 @@ namespace kTest::maths
 		vec2f -= vec2d;
 		vec2f *= vec2d;
 
-
+		const bool greaterThan = vec2d > 14;
+		VERIFY(greaterThan == false);
+		const bool lessThan = vec2d < 14;
+		VERIFY(lessThan == true);
+		
 		// Currently constexpr supported functions
 		constexpr auto vec2s = Vector<int, 2>(5, 12);
 		constexpr auto vec2s2 = Vector<int, 2>(2);
@@ -137,6 +141,10 @@ namespace kTest::maths
 
 		constexpr auto crossProduct = lhs3d.CrossProduct(rhs3d);
 
+		constexpr auto compareVal = 15;
+		constexpr bool greater = (lhs3d >= compareVal);
+		constexpr bool less = rhs3d <= 14;
+		
 		return success;
 	}
 }

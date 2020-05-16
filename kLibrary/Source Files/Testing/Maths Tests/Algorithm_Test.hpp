@@ -5,7 +5,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	class AlgorithmsTester : public Tester
+	class AlgorithmsTester final : public Tester
 	{
 	public:
 		AlgorithmsTester();
@@ -19,6 +19,7 @@ namespace kTest::maths
 		bool CountDigitsTest();
 		bool SignTest();
 		bool AbsTest();
+		bool IsNegativeTest();
 		bool MinMaxTest();
 		bool FloorTest();
 		bool RealToFractionTest();
@@ -27,6 +28,8 @@ namespace kTest::maths
 		bool RoundingTest();
 		bool PowerOfTest();
 		bool SwapTest();
+		bool ClampTest();
+		bool AbsClampTest();
 		bool ToDegreesTest();
 		bool ToRadiansTest();
 		bool SquareRootTest();

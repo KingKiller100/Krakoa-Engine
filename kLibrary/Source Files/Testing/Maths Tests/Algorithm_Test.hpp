@@ -15,6 +15,8 @@ namespace kTest::maths
 		void Test() override;
 
 		bool SineTest();
+		bool CosineTest();
+		bool TanTest();
 		bool ConstantsTest();
 		bool ConversionTest();
 		bool CountDigitsTest();

@@ -125,8 +125,6 @@ namespace kmaths
 	{
 		return Convert<int>(value) == value;
 	}
-
-
 	
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
@@ -907,5 +905,59 @@ namespace kmaths
 		else
 			return Factorial_Integral<T>(n);
 	}
+
+	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
+	{
+		constexpr auto one = constants::One<constants::AccuracyType>();
+		constexpr auto two = one + one;
+		const auto square = CAST(constants::AccuracyType, -x * x);
+		
+		constants::AccuracyType t = CAST(constants::AccuracyType, x);
+		constants::AccuracyType sine = t;
+		for (size_t a = 1; a < n; ++a)
+		{
+			const constants::AccuracyType xn = square / ((two * a + one) * (two * a));
+			t *= xn;
+			sine += t;
+		}
+		return CAST(T, sine);
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Sine(T x, const size_t n = 20) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+			return SineImpl(x, n);
+		else
+			CAST(T, SineImpl<float>(x, n));
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Cosine(T x, const size_t n = 20) noexcept
+	{
+		constexpr auto pi_over_2 = constants::PI_OVER_2;
+		x += pi_over_2;
+		
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+			return SineImpl(x, n);
+		else
+			CAST(T, SineImpl<float>(x, n));
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Tan(T x, const size_t n = 20) noexcept
+	{
+		const auto sine = Sine(x, n);
+		const auto cosine = Cosine(x, n);
+
+		return (sine / cosine);
+	}
+
+	
 }
 

@@ -1179,48 +1179,48 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto number = 0.1;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == -1);
 		}
 
 		{
 			constexpr auto number = 1.f;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == 0);
 		}
 
 		{
 			constexpr auto number = 10.f;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == 1);
 		}
 		{
 			constexpr auto number = 300.0;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == 2);
 		}
 
 		{
 			constexpr auto number = 30.f;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == 1);
 		}
 
 		{
 			constexpr auto number = 300000.f;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == 5);
 		}
 
 		{
 			constexpr auto number = 0.09567;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == -2);
 		}
 
 		{
 			constexpr auto number = 0.00007;
-			const auto powerOf10 = Log(number);
+			const auto powerOf10 = Log10(number);
 			VERIFY(powerOf10 == -5);
 		}
 

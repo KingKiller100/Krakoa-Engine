@@ -24,6 +24,12 @@
 
 namespace kmaths
 {
+	template<typename T>
+	USE_RESULT constexpr T LogGamma(T);
+}
+
+namespace kmaths
+{
 	template<typename DestType, typename SourceType>
 	USE_RESULT constexpr DestType Convert(SourceType&& source)
 	{
@@ -230,7 +236,7 @@ namespace kmaths
 			}
 		}
 	}
-	
+
 	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
@@ -824,49 +830,54 @@ namespace kmaths
 
 	// Natural Logarithm ////////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT constexpr T NaturalLogarithm(const T x) noexcept
+	USE_RESULT constexpr T NaturalLogarithm(const T x) 
 	{
 		using constants::AccuracyType;
 
 		constexpr auto one = constants::One<T>();
 		constexpr auto maxIter = uint16_t(1e3);
-		
+
 		AccuracyType log_result = 1.l;
 		const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
 		uint32_t denominator = 3;
 		uint16_t iter = 2;
-		
-		while (iter++ <= maxIter)
-		{
-			log_result += PowerOfImpl<AccuracyType>(y, i) / denominator;
+
+		do {
+			log_result += PowerOfImpl<AccuracyType>(y, iter) / denominator;
 			denominator += 2;
-		}
-		
+		} while (iter++ <= maxIter);
+
 		const auto result = 2 * y * log_result;
 		return CAST(T, result);
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T AnyLog(T num, T base) noexcept
+	USE_RESULT constexpr T AnyLog(T num, T base) 
 	{
 		return NaturalLogarithm(num) / NaturalLogarithm(base);
 	}
-	
+
 	template<typename T>
-	USE_RESULT constexpr T Log10(const T x) noexcept
+	USE_RESULT constexpr T Log10(const T x) 
 	{
 		return AnyLog(x, CAST(T, 10));
 	}
+
+	template<typename T>
+	USE_RESULT constexpr T Log2(const T x) 
+	{
+		return AnyLog(x, CAST(T, 2));
+	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
+
 
 	// Approximation for the mathematical constant 'e^x' using the first n terms of the taylor series
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T ExponentialImpl(T x) noexcept
 	{
 		constexpr T e = CAST(T, constants::E);
-		
+
 		return PowerOf<T>(e, x);
 	}
 
@@ -902,16 +913,12 @@ namespace kmaths
 		return 1;
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T LogGamma(T) noexcept;
 
-	
-	// Lanczos' formula
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Gamma(T z) noexcept
+	USE_RESULT constexpr T Gamma(T z) 
 	{
 		if (IsNegative(z)) return 0;
-		
+
 		constexpr double pi = constants::PI;
 		constexpr double tau = constants::TAU;
 		constexpr double gamma = constants::GAMMA;
@@ -974,7 +981,7 @@ namespace kmaths
 			double den = 1.0;
 			int i;
 
-			double zn = y - 1;
+			const double zn = y - 1;
 			for (i = 0; i < 8; i++)
 			{
 				num = (num + p[i]) * zn;
@@ -1014,14 +1021,14 @@ namespace kmaths
 	}
 
 
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T LogGamma(T z) noexcept
+	template<typename T>
+	USE_RESULT constexpr T LogGamma(T z)
 	{
 		constexpr auto halfLogTwoPi = constants::LOG2PI_OVER_2; // 0.91893853320467274178032973640562;
-		
+
 		if (z < 12.0)
 		{
-			return log(fabs(Gamma(z)));
+			return NaturalLogarithm(Abs(Gamma(z)));
 		}
 
 		// Abramowitz and Stegun 6.1.41
@@ -1040,7 +1047,8 @@ namespace kmaths
 			1.0 / 156.0,
 			-3617.0 / 122400.0
 		};
-		double zn = 1.0 / (z * z);
+		
+		const double zn = 1.0 / (z * z);
 		double sum = c[7];
 		for (int i = 6; i >= 0; i--)
 		{
@@ -1049,8 +1057,10 @@ namespace kmaths
 		}
 		double series = sum / z;
 
-		const double logGamma = (z - 0.5) * log(z) - z + halfLogTwoPi + series;
-		return logGamma;
+		const double logGamma = (z - 0.5)
+			* NaturalLogarithm(z) - z
+			+ halfLogTwoPi + series;
+		return CAST(T, logGamma);
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>

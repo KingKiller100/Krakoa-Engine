@@ -186,6 +186,16 @@ namespace kmaths
 		return lhs < rhs ? lhs : CAST(T1, rhs);
 	}
 
+	template<typename T>
+	USE_RESULT constexpr T Fibonacci(const T n) noexcept
+	{
+		if (n <= 1)
+			return n;
+
+		return (Fibonacci(n - 1) + Fibonacci(n - 2));
+	}
+	
+
 	// Sign///////////////////////////////////////////////////////////////////
 	template<typename T>
 	USE_RESULT constexpr uint8_t Sign_Impl(const T x, std::false_type) noexcept

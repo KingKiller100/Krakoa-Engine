@@ -64,7 +64,7 @@ namespace kmaths
 
 		if (mid > value)
 			return BinarySearchImpl(list, value, lbIdx, midIdx - 1, size);
-		else if (mid < value)
+		if (mid < value)
 			return BinarySearchImpl(list, value, midIdx + 1, ubIdx, size);
 
 		return midIdx;
@@ -125,7 +125,7 @@ namespace kmaths
 	{
 		return Convert<int>(value) == value;
 	}
-	
+
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
 	{
@@ -194,7 +194,7 @@ namespace kmaths
 
 		return (Fibonacci(n - 1) + Fibonacci(n - 2));
 	}
-	
+
 
 	// Sign///////////////////////////////////////////////////////////////////
 	template<typename T>
@@ -219,7 +219,7 @@ namespace kmaths
 	{
 		return x < 0;
 	}
-	
+
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
@@ -405,7 +405,7 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Clamp(const T value, const T min, const T max) 
+	USE_RESULT constexpr T Clamp(const T value, const T min, const T max)
 	{
 		if (max <= min) throw std::exception();
 
@@ -853,11 +853,11 @@ namespace kmaths
 	USE_RESULT constexpr T Factorial_Integral(T n) noexcept
 	{
 		if (IsNegative(n)) return 0;
-		
-		if (n == 0)
-			return 1;
 
-		return n * Factorial_Integral(n - 1);
+		if (n > 1)
+			return (n * Factorial_Integral(n - 1));
+
+		return 1;
 	}
 
 	// Lanczos' formula
@@ -946,7 +946,7 @@ namespace kmaths
 	{
 		constexpr auto pi_over_2 = CAST(T, constants::PI_OVER_2);
 		x += pi_over_2;
-		
+
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 			return SineImpl<T>(x, n);
 		else
@@ -963,6 +963,6 @@ namespace kmaths
 		return (sine / cosine);
 	}
 
-	
+
 }
 

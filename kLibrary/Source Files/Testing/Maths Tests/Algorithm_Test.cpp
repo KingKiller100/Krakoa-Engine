@@ -898,9 +898,9 @@ namespace kTest::maths
 		}
 		
 		{
-			constexpr auto x = 2.5;
+			constexpr auto x = 2.5f;
 			const auto result = Gamma(x);
-			const auto expected = std::tgamma(x);
+			const auto expected = std::tgammaf(x);
 			VERIFY(result == expected);
 		}
 		
@@ -919,7 +919,31 @@ namespace kTest::maths
 		}
 		
 		{
-			constexpr auto x = 0.1725;
+			constexpr auto x = 0.0625;
+			constexpr auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+
+			const auto resultRounded = Round(result, 13);
+			const auto expectedRounded = Round(expected, 13);
+			VERIFY(resultRounded == expectedRounded);
+		}
+		
+		{
+			constexpr auto x = 5;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 12ll;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 13;
 			const auto result = Gamma(x);
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);

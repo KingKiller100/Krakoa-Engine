@@ -830,7 +830,7 @@ namespace kmaths
 
 	// Natural Logarithm ////////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	USE_RESULT constexpr T NaturalLogarithm(const T x) 
+	USE_RESULT constexpr T NaturalLogarithm(const T x)
 	{
 		using constants::AccuracyType;
 
@@ -852,19 +852,19 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T AnyLog(T num, T base) 
+	USE_RESULT constexpr T AnyLog(T num, T base)
 	{
 		return NaturalLogarithm(num) / NaturalLogarithm(base);
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Log10(const T x) 
+	USE_RESULT constexpr T Log10(const T x)
 	{
 		return AnyLog(x, CAST(T, 10));
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Log2(const T x) 
+	USE_RESULT constexpr T Log2(const T x)
 	{
 		return AnyLog(x, CAST(T, 2));
 	}
@@ -915,17 +915,14 @@ namespace kmaths
 
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Gamma(T z) 
+	USE_RESULT constexpr T Gamma(T z)
 	{
 		if (IsNegative(z)) return 0;
 
-		constexpr double pi = constants::PI;
-		constexpr double tau = constants::TAU;
 		constexpr double gamma = constants::GAMMA;
-		constexpr auto epsilon = std::numeric_limits<double>::epsilon();
 
 		if (z < 0.001)
-			return constants::OneOver<T>(z * (1.0 + gamma * z));
+			return CAST(T, constants::OneOver<double>(z * (1.0 + gamma * z)));
 
 		///////////////////////////////////////////////////////////////////////////
 		// Second interval: [0.001, 12)
@@ -936,7 +933,7 @@ namespace kmaths
 			// reduction identities to reduce other arguments to this interval.
 
 			double y = z;
-			int n = 0;
+			Big_Int_Type n = 0;
 			const bool arg_was_less_than_one = (y < 1.0);
 
 			// Add or subtract integers as necessary to bring y into (1,2)
@@ -947,7 +944,7 @@ namespace kmaths
 			}
 			else
 			{
-				n = static_cast<int> (Floor(y)) - 1;  // will use n later
+				n = CAST(Big_Int_Type, (Floor(y))) - 1;  // will use n later
 				y -= n;
 			}
 
@@ -979,7 +976,7 @@ namespace kmaths
 
 			double num = 0.0;
 			double den = 1.0;
-			int i;
+			int8_t i = 0;
 
 			const double zn = y - 1;
 			for (i = 0; i < 8; i++)
@@ -1013,17 +1010,18 @@ namespace kmaths
 		if (z > 171.624)
 		{
 			// Correct answer too large to display. Force +infinity.
-			constexpr double temp = DBL_MAX;
-			return temp * 2.0;
+			constexpr T inf = std::numeric_limits<T>::infinity();
+			return inf;
 		}
 
-		return Exponential(LogGamma(z));
+		return CAST(T, Exponential(LogGamma(z)));
 	}
 
 
 	template<typename T>
 	USE_RESULT constexpr T LogGamma(T z)
 	{
+
 		constexpr auto halfLogTwoPi = constants::LOG2PI_OVER_2; // 0.91893853320467274178032973640562;
 
 		if (z < 12.0)
@@ -1047,7 +1045,7 @@ namespace kmaths
 			1.0 / 156.0,
 			-3617.0 / 122400.0
 		};
-		
+
 		const double zn = 1.0 / (z * z);
 		double sum = c[7];
 		for (int i = 6; i >= 0; i--)

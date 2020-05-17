@@ -3,14 +3,14 @@
 #include "../HelperMacros.hpp"
 
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <corecrt_math_defines.h>
 
-#include <xtr1common>
 
 namespace kmaths::constants
 {
 	using AccuracyType = long double;
 
+	constexpr AccuracyType GAMMA                     = 0.57721566490153l; // Euler's gamma constant
 	constexpr AccuracyType E                         = 2.71828182845905l;
 	constexpr AccuracyType LOG_N                     = 0.57721566490153l;
 	constexpr AccuracyType LOG2E                     = 1.44269504088896l;

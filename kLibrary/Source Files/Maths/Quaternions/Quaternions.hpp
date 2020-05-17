@@ -68,10 +68,10 @@ namespace kmaths
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 			const auto rads = ToRadians(degrees);
 			const auto halfRads = rads * zeroPointFive;
-			const auto sinRads = sin(halfRads);
+			const auto sinRads = Sine(halfRads);
 
 
-			w = cos(halfRads);
+			w = Cosine(halfRads);
 			v = Vector3<T>(x * sinRads, y * sinRads, z * sinRads);
 		}
 
@@ -85,8 +85,8 @@ namespace kmaths
 			if (n.MagnitudeSQ() != 1)
 				n = n.Normalize();
 
-			w = cos(halfRads);
-			v = n * sin(halfRads);
+			w = Cosine(halfRads);
+			v = n * Sine(halfRads);
 		}
 
 

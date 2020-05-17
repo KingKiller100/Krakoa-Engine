@@ -1,10 +1,10 @@
 ﻿#pragma once
+
 #include "GeometryData.hpp"
 
+#include "../Textures/TextureData2D.hpp"
 #include "../Rendering Resources/iShader.hpp"
 
-#include "../Textures/iTexture2D.hpp"
-#include "../Textures/TextureData2D.hpp"
 
 namespace krakoa::graphics::_2D
 {

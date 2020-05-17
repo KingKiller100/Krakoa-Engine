@@ -144,7 +144,7 @@ namespace kmaths
 
 	// Approximation for the mathematical constant 'e^x' using the first n terms of the taylor series
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T ExponentialImpl(T x, size_t n = 10) noexcept
+	USE_RESULT constexpr T ExponentialImpl(T x, size_t n = 50) noexcept
 	{
 		constexpr auto one = constants::One<T>();
 		auto sum = one; // initialize sum of series  
@@ -251,6 +251,58 @@ namespace kmaths
 					return -x;
 			}
 		}
+	}
+
+	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
+	{
+		constexpr auto one = constants::One<constants::AccuracyType>();
+		constexpr auto two = one + one;
+		const auto square = CAST(constants::AccuracyType, -x * x);
+
+		auto t = CAST(constants::AccuracyType, x);
+		auto sine = t;
+		for (size_t a = 1; a < n; ++a)
+		{
+			const constants::AccuracyType xn = square / ((two * a + one) * (two * a));
+			t *= xn;
+			sine += t;
+		}
+		return CAST(T, sine);
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Sine(T x, const size_t n = 50) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+			return SineImpl<T>(x, n);
+		else
+			return CAST(T, SineImpl<float>(CAST(float, x), n));
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Cosine(T x, const size_t n = 50) noexcept
+	{
+		constexpr auto pi_over_2 = CAST(T, constants::PI_OVER_2);
+		x += pi_over_2;
+
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+			return SineImpl<T>(x, n);
+		else
+			return CAST(T, SineImpl<float>(CAST(float, x), n));
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Tan(T x, const size_t n = 20) noexcept
+	{
+		const auto sine = Sine(x, n);
+		const auto cosine = Cosine(x, n);
+
+		return (sine / cosine);
 	}
 
 	// Continued Fractions Without Tears, Ian Richards 1981
@@ -864,13 +916,19 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Gamma(T z) noexcept
 	{
-		constexpr T one = constants::One<T>();
-		constexpr auto zeroPoint5 = constants::ZeroPointFive<T>();
-		constexpr auto pi = constants::PI;
+		constexpr double pi = constants::PI;
+		constexpr auto epsilon = std::numeric_limits<double>::epsilon();
+
+		constexpr auto handleEpsilon = [epsilon](double value)
+		{
+			if (value <= epsilon)
+				return 0.0;
+			return value;
+		};
 
 		// accurate to about 15 decimal places
 		//some magic constants 
-		auto g = 7; // g represents the precision desired, p is the values of p[i] to plug into Lanczos' formula
+		const auto g = 7; // g represents the precision desired, p is the values of p[i] to plug into Lanczos' formula
 		double p[] = {
 			0.99999999999980993,
 			676.5203681218851,
@@ -882,18 +940,24 @@ namespace kmaths
 			9.9843695780195716e-6,
 			1.5056327351493116e-7 };
 
-		if (z >= 0.5)
+		constexpr auto coefficientsSize = SizeOfCArray(p);
+
+		double result = 0;
+
+		if (z < 0.5)
+			result = pi / Sine(z * pi) * Gamma(1.0 - z);
+		else
 		{
-			--z;
+			z -= 1.0;
 			auto x = p[0];
 			for (auto i = 1; i < (g + 2); i++) {
-				x += p[i] / (z + i);
+				x += p[i] / (z + i + 1.0);
 			}
-			const auto t = z + g + zeroPoint5;
-			return Sqrt(2 * pi) * PowerOf(t, (z + zeroPoint5)) * Exponential(-t) * x;
+			const auto t = z + coefficientsSize - 0.5;
+			result = Sqrt((double)constants::TAU) * PowerOf(t, (z + 0.5)) * Exponential(-t) * x;
 		}
 
-		return pi / sin(z * pi) / Gamma(one - z);
+		return CAST(T, handleEpsilon(result));
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -909,58 +973,6 @@ namespace kmaths
 			return Factorial_Floating_Point<T>(n);
 		else
 			return Factorial_Integral<T>(n);
-	}
-
-	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
-	{
-		constexpr auto one = constants::One<constants::AccuracyType>();
-		constexpr auto two = one + one;
-		const auto square = CAST(constants::AccuracyType, -x * x);
-
-		auto t = CAST(constants::AccuracyType, x);
-		auto sine = t;
-		for (size_t a = 1; a < n; ++a)
-		{
-			const constants::AccuracyType xn = square / ((two * a + one) * (two * a));
-			t *= xn;
-			sine += t;
-		}
-		return CAST(T, sine);
-	}
-
-	// Uses Taylor series to iterate through to get the better approximation of sine(x)
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sine(T x, const size_t n = 50) noexcept
-	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return SineImpl<T>(x, n);
-		else
-			return CAST(T, SineImpl<float>(CAST(float, x), n));
-	}
-
-	// Uses Taylor series to iterate through to get the better approximation of sine(x)
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Cosine(T x, const size_t n = 50) noexcept
-	{
-		constexpr auto pi_over_2 = CAST(T, constants::PI_OVER_2);
-		x += pi_over_2;
-
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return SineImpl<T>(x, n);
-		else
-			return CAST(T, SineImpl<float>(CAST(float, x), n));
-	}
-
-	// Uses Taylor series to iterate through to get the better approximation of sine(x)
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Tan(T x, const size_t n = 20) noexcept
-	{
-		const auto sine = Sine(x, n);
-		const auto cosine = Cosine(x, n);
-
-		return (sine / cosine);
 	}
 
 

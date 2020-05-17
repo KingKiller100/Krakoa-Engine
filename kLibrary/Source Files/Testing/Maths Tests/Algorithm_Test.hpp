@@ -31,6 +31,7 @@ namespace kTest::maths
 		bool RoundingTest();
 		bool PowerOfTest();
 		bool SwapTest();
+		bool GammaTest();
 		bool FactorialTest();
 		bool ClampTest();
 		bool AbsClampTest();

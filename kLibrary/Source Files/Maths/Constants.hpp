@@ -11,6 +11,7 @@ namespace kmaths::constants
 	using AccuracyType = long double;
 
 	constexpr AccuracyType GAMMA                     = 0.57721566490153l; // Euler's gamma constant
+	constexpr AccuracyType LOG2PI_OVER_2             = 0.91893853320467l;
 	constexpr AccuracyType E                         = 2.71828182845905l;
 	constexpr AccuracyType LOG_N                     = 0.57721566490153l;
 	constexpr AccuracyType LOG2E                     = 1.44269504088896l;
@@ -18,8 +19,8 @@ namespace kmaths::constants
 	constexpr AccuracyType LN2                       = 0.69314718055995l;
 	constexpr AccuracyType LN10                      = 2.30258509299405l;
 	constexpr AccuracyType PI                        = static_cast<AccuracyType>(M_PI);
-	constexpr AccuracyType PI_OVER_2                 = PI / static_cast<AccuracyType>(2);//1.57079632679490l;
-	constexpr AccuracyType PI_OVER_4                 = PI / static_cast<AccuracyType>(4); //0.78539816339745l;
+	constexpr AccuracyType PI_OVER_2                 = PI * static_cast<AccuracyType>(0.5);//1.57079632679490l;
+	constexpr AccuracyType PI_OVER_4                 = PI * static_cast<AccuracyType>(0.25); //0.78539816339745l;
 	constexpr AccuracyType TAU                       = PI * static_cast<AccuracyType>(2);
 	constexpr AccuracyType ROOT2                     = 1.41421356237310l;
 	constexpr AccuracyType SQRT_1_OVER_2             = 0.70710678118655l;

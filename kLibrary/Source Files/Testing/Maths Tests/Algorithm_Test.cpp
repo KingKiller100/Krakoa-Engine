@@ -47,6 +47,7 @@ namespace kTest::maths
 		VERIFY_MULTI(PowerOfFractionTest);
 		VERIFY_MULTI(RealToFractionTest);
 
+		VERIFY_MULTI(GammaTest);
 		VERIFY_MULTI(FactorialTest);
 		VERIFY_MULTI(LogarithmBase10Test);
 		VERIFY_MULTI(RoundingTest);
@@ -215,7 +216,7 @@ namespace kTest::maths
 			const auto result = Cosine(x, 500);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 14);
+			const auto resultRounded = Round(result, 14);
 			const auto expectedRounded = Round(expected, 14);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -297,7 +298,7 @@ namespace kTest::maths
 			const auto result = Tan(x, 500);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 14);
+			const auto resultRounded = Round(result, 14);
 			const auto expectedRounded = Round(expected, 14);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -887,6 +888,47 @@ namespace kTest::maths
 		return success;
 	}
 
+	bool AlgorithmsTester::GammaTest()
+	{
+		{
+			constexpr auto x = 1.5;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 2.5;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 0.5;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 0.25;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 0.1725;
+			const auto result = Gamma(x);
+			const auto expected = std::tgamma(x);
+			VERIFY(result == expected);
+		}
+
+		
+		return success;
+	}
+
 	bool AlgorithmsTester::FactorialTest()
 	{
 		{
@@ -1445,7 +1487,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 64.0;
 			constexpr auto power = 6;
-			const auto root = Root(exponent, power);
+			 auto root = Root(exponent, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);
 		}

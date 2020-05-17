@@ -230,7 +230,7 @@ namespace kmaths
 			}
 		}
 	}
-
+	
 	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
@@ -822,50 +822,44 @@ namespace kmaths
 		return pow;
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T Log(const T number) noexcept
+	// Natural Logarithm ////////////////////////////////////////////////////////////////////////////
+	template<typename T>
+	USE_RESULT constexpr T NaturalLogarithm(const T x) noexcept
 	{
+		using constants::AccuracyType;
+
 		constexpr auto one = constants::One<T>();
-		constexpr auto zeroPointOne = constants::ZeroPointOne<T>();
-
-		constexpr auto maxIter = CAST(unsigned short, 1e3);
-		[[maybe_unused]] unsigned short currentIter = 0;
-
-		if (number < 1 && number > zeroPointOne)
-			return -1;
-		if (number >= 1 && number < 10)
-			return 0;
-		if (number >= 10 && number < 100)
-			return 1;
-
-		if (number < 0)
-			return std::numeric_limits<T>::max();
-
-		Big_Int_Type currentPower = 0;
-		Big_Int_Type minorIncrement = 1;
-		const T base = number >= one ? CAST(T, 10) : zeroPointOne;
-
-		bool found = false;
-
-		if (number >= one)
+		constexpr auto maxIter = uint16_t(1e3);
+		
+		AccuracyType log_result = 1.l;
+		const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
+		uint32_t denominator = 3;
+		uint16_t iter = 2;
+		
+		while (iter++ <= maxIter)
 		{
-			while (PowerOfImpl(base, currentPower) < number)
-			{
-				currentPower += minorIncrement;
-			};
-			--currentPower;
+			log_result += PowerOfImpl<AccuracyType>(y, i) / denominator;
+			denominator += 2;
 		}
-		else
-		{
-			while (PowerOfImpl(base, currentPower) > number)
-			{
-				currentPower += minorIncrement;
-			};
-			currentPower = -currentPower;
-		}
-
-		return CAST(T, currentPower);
+		
+		const auto result = 2 * y * log_result;
+		return CAST(T, result);
 	}
+
+	template<typename T>
+	USE_RESULT constexpr T AnyLog(T num, T base) noexcept
+	{
+		return NaturalLogarithm(num) / NaturalLogarithm(base);
+	}
+	
+	template<typename T>
+	USE_RESULT constexpr T Log10(const T x) noexcept
+	{
+		return AnyLog(x, CAST(T, 10));
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 
 	// Approximation for the mathematical constant 'e^x' using the first n terms of the taylor series
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -908,47 +902,155 @@ namespace kmaths
 		return 1;
 	}
 
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T LogGamma(T) noexcept;
+
+	
 	// Lanczos' formula
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Gamma(T z) noexcept
 	{
+		if (IsNegative(z)) return 0;
+		
 		constexpr double pi = constants::PI;
 		constexpr double tau = constants::TAU;
+		constexpr double gamma = constants::GAMMA;
 		constexpr auto epsilon = std::numeric_limits<double>::epsilon();
 
-		constexpr auto handleEpsilon = [epsilon](double value)
+		if (z < 0.001)
+			return constants::OneOver<T>(z * (1.0 + gamma * z));
+
+		///////////////////////////////////////////////////////////////////////////
+		// Second interval: [0.001, 12)
+
+		if (z < 12.0)
 		{
-			if (value <= epsilon)
-				return 0.0;
-			return value;
-		};
+			// The algorithm directly approximates gamma over (1,2) and uses
+			// reduction identities to reduce other arguments to this interval.
 
-		// accurate to about 15 decimal places
-		//some magic constants 
-		const auto g = 7; // g represents the precision desired, p is the values of p[i] to plug into Lanczos' formula
-		double p[] = {
-			0.99999999999980993, 676.5203681218851, -1259.1392167224028, 
-			771.32342877765313, -176.61502916214059, 12.507343278686905,
-			-0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7 };
+			double y = z;
+			int n = 0;
+			const bool arg_was_less_than_one = (y < 1.0);
 
-		constexpr auto coefficientsSize = SizeOfCArray(p);
-
-		double result = 0;
-
-		if (z < 0.5)
-			result = pi / Sine(z * pi) * Gamma(1.0 - z);
-		else
-		{
-			z -= 1.0;
-			auto x = p[0];
-			for (auto i = 1; i < coefficientsSize; i++) {
-				x += p[i] / (z + i );
+			// Add or subtract integers as necessary to bring y into (1,2)
+			// Will correct for this below
+			if (arg_was_less_than_one)
+			{
+				y += 1.0;
 			}
-			const auto t = z + coefficientsSize - 0.5;
-			result = Sqrt(tau) * PowerOf(t, (z + 0.5)) * Exponential(-t) * x;
+			else
+			{
+				n = static_cast<int> (Floor(y)) - 1;  // will use n later
+				y -= n;
+			}
+
+			// numerator coefficients for approximation over the interval (1,2)
+			constexpr double p[] =
+			{
+				-1.71618513886549492533811E+0,
+				 2.47656508055759199108314E+1,
+				-3.79804256470945635097577E+2,
+				 6.29331155312818442661052E+2,
+				 8.66966202790413211295064E+2,
+				-3.14512729688483675254357E+4,
+				-3.61444134186911729807069E+4,
+				 6.64561438202405440627855E+4
+			};
+
+			// denominator coefficients for approximation over the interval (1,2)
+			constexpr double q[] =
+			{
+				-3.08402300119738975254353E+1,
+				 3.15350626979604161529144E+2,
+				-1.01515636749021914166146E+3,
+				-3.10777167157231109440444E+3,
+				 2.25381184209801510330112E+4,
+				 4.75584627752788110767815E+3,
+				-1.34659959864969306392456E+5,
+				-1.15132259675553483497211E+5
+			};
+
+			double num = 0.0;
+			double den = 1.0;
+			int i;
+
+			double zn = y - 1;
+			for (i = 0; i < 8; i++)
+			{
+				num = (num + p[i]) * zn;
+				den = den * zn + q[i];
+			}
+			double result = num / den + 1.0;
+
+			// Apply correction if argument was not initially in (1,2)
+			if (arg_was_less_than_one)
+			{
+				// Use identity gamma(z) = gamma(z+1)/z
+				// The variable "result" now holds gamma of the original y + 1
+				// Thus we use y-1 to get back the orginal y.
+				result /= (y - 1.0);
+			}
+			else
+			{
+				// Use the identity gamma(z+n) = z*(z+1)* ... *(z+n-1)*gamma(z)
+				for (i = 0; i < n; i++)
+					result *= y++;
+			}
+
+			return CAST(T, result);
 		}
 
-		return CAST(T, handleEpsilon(result));
+		///////////////////////////////////////////////////////////////////////////
+		// Third interval: [12, infinity)
+
+		if (z > 171.624)
+		{
+			// Correct answer too large to display. Force +infinity.
+			constexpr double temp = DBL_MAX;
+			return temp * 2.0;
+		}
+
+		return Exponential(LogGamma(z));
+	}
+
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T LogGamma(T z) noexcept
+	{
+		constexpr auto halfLogTwoPi = constants::LOG2PI_OVER_2; // 0.91893853320467274178032973640562;
+		
+		if (z < 12.0)
+		{
+			return log(fabs(Gamma(z)));
+		}
+
+		// Abramowitz and Stegun 6.1.41
+		// Asymptotic series should be good to at least 11 or 12 figures
+		// For error analysis, see Whittiker and Watson
+		// A Course in Modern Analysis (1927), page 252
+
+		constexpr double c[] =
+		{
+			 1.0 / 12.0,
+			-1.0 / 360.0,
+			 1.0 / 1260.0,
+			-1.0 / 1680.0,
+			 1.0 / 1188.0,
+			-691.0 / 360360.0,
+			1.0 / 156.0,
+			-3617.0 / 122400.0
+		};
+		double zn = 1.0 / (z * z);
+		double sum = c[7];
+		for (int i = 6; i >= 0; i--)
+		{
+			sum *= zn;
+			sum += c[i];
+		}
+		double series = sum / z;
+
+		const double logGamma = (z - 0.5) * log(z) - z + halfLogTwoPi + series;
+		return logGamma;
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>

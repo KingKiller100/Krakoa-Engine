@@ -76,42 +76,66 @@ namespace kTest::maths
 			constexpr auto x = constants::PI_OVER_4;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+			
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 		{
 			constexpr auto x = constants::PI_OVER_2;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 		{
 			constexpr auto x = constants::PI;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 		{
 			constexpr auto x = constants::TAU;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 
@@ -121,52 +145,80 @@ namespace kTest::maths
 	bool AlgorithmsTester::CosineTest()
 	{
 		{
-			constexpr auto x = 0;
+			constexpr auto x = 0.0;
 			constexpr auto result = Cosine(x);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto x = constants::PI_OVER_4;
 			constexpr auto result = Cosine(x);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto x = constants::PI_OVER_2;
-			constexpr auto result = Cosine(x);
+			constexpr auto result = Cosine(x, 5000);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
-			constexpr auto result = Cosine(x);
+			constexpr auto result = Cosine(x, 500);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto x = constants::PI;
 			constexpr auto result = Cosine(x);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+			
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
 			constexpr auto result = Cosine(x);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto x = constants::TAU;
-			constexpr auto result = Cosine(x);
+			const auto result = Cosine(x, 500);
 			const auto expected = std::cos(x);
-			VERIFY(result == expected);
+
+			constexpr auto resultRounded = Round(result, 14);
+			const auto expectedRounded = Round(expected, 14);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		
 		return success;
@@ -174,6 +226,84 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::TanTest()
 	{
+		{
+			constexpr auto x = 0.0;
+			constexpr auto result = Tan(x);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+
+		{
+			constexpr auto x = constants::PI_OVER_4;
+			constexpr auto result = Tan(x);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+
+		{
+			constexpr auto x = constants::PI_OVER_2;
+			constexpr auto result = Tan(x, 5000);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+
+		{
+			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto result = Tan(x, 500);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+
+		{
+			constexpr auto x = constants::PI;
+			constexpr auto result = Tan(x);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+
+		{
+			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto result = Tan(x);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+
+		{
+			constexpr auto x = constants::TAU;
+			const auto result = Tan(x, 500);
+			const auto expected = std::tan(x);
+
+			constexpr auto resultRounded = Round(result, 14);
+			const auto expectedRounded = Round(expected, 14);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+		
+		
 		return success;
 	}
 
@@ -445,7 +575,7 @@ namespace kTest::maths
 		{
 			constexpr auto decimal = 10.25;
 			const auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == false && fraction.numerator == 3 && fraction.denominator == 4);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 41 && fraction.denominator == 4);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
@@ -481,22 +611,10 @@ namespace kTest::maths
 		{
 			constexpr double decimal = -160;
 			constexpr auto fraction = RealToFraction(decimal);
-			VERIFY(fraction.isNegative == false && fraction.numerator == 10 && fraction.denominator == 1);
+			VERIFY(fraction.isNegative == true && fraction.numerator == 160 && fraction.denominator == 1);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
-		}
-
-		{
-			constexpr Fraction fraction = { 10, 2, false };
-			const auto f2d = fraction.GetReal<unsigned>();
-			VERIFY_COMPILE_TIME(f2d == 5);
-		}
-
-		{
-			constexpr Fraction fraction = { 10, 2, true };
-			const auto f2d = fraction.GetReal<unsigned>();
-			VERIFY_COMPILE_TIME(f2d == 0);
 		}
 
 		{

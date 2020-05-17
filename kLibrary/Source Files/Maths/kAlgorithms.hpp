@@ -840,19 +840,14 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
-	USE_RESULT constexpr size_t Factorial_Integral(T n) noexcept
+	USE_RESULT constexpr T Factorial_Integral(T n) noexcept
 	{
 		if (IsNegative(n)) return 0;
 		
-		if (n == 0 || n == 1)
+		if (n == 0)
 			return 1;
 
-		size_t result = CAST(size_t, n);
-
-		while (n-- > 1)
-			result *= n;
-
-		return result;
+		return n * Factorial_Integral(n - 1);
 	}
 
 	// Lanczos' formula
@@ -927,25 +922,25 @@ namespace kmaths
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sine(T x, const size_t n = 20) noexcept
+	USE_RESULT constexpr T Sine(T x, const size_t n = 50) noexcept
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return SineImpl(x, n);
+			return SineImpl<T>(x, n);
 		else
-			return CAST(T, SineImpl<float>(x, n));
+			return CAST(T, SineImpl<float>(CAST(float, x), n));
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Cosine(T x, const size_t n = 20) noexcept
+	USE_RESULT constexpr T Cosine(T x, const size_t n = 50) noexcept
 	{
-		constexpr auto pi_over_2 = constants::PI_OVER_2;
+		constexpr auto pi_over_2 = CAST(T, constants::PI_OVER_2);
 		x += pi_over_2;
 		
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return SineImpl(x, n);
+			return SineImpl<T>(x, n);
 		else
-			return CAST(T, SineImpl<float>(x, n));
+			return CAST(T, SineImpl<float>(CAST(float, x), n));
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)

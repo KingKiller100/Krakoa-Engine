@@ -142,28 +142,6 @@ namespace kmaths
 		return count;
 	}
 
-	// Approximation for the mathematical constant 'e^x' using the first n terms of the taylor series
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T ExponentialImpl(T x, size_t n = 50) noexcept
-	{
-		constexpr auto one = constants::One<T>();
-		auto sum = one; // initialize sum of series  
-
-		for (auto i = (n - one); i > 0; --i)
-			sum = one + x * sum / i;
-
-		return sum;
-	}
-
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Exponential(T x, size_t n = 10) noexcept
-	{
-		if _CONSTEXPR_IF(std::is_integral_v<T>)
-			return CAST(T, ExponentialImpl<float>(x, n));
-		else
-			return ExponentialImpl<T>(x, n);
-	}
-
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr bool IsDecimal(T value) noexcept
 	{
@@ -889,6 +867,24 @@ namespace kmaths
 		return CAST(T, currentPower);
 	}
 
+	// Approximation for the mathematical constant 'e^x' using the first n terms of the taylor series
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T ExponentialImpl(T x) noexcept
+	{
+		constexpr T e = CAST(T, constants::E);
+		
+		return PowerOf<T>(e, x);
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Exponential(T x) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_integral_v<T>)
+			return CAST(T, ExponentialImpl<float>(CAST(float, x)));
+		else
+			return ExponentialImpl<T>(x);
+	}
+
 	template<typename T>
 	USE_RESULT constexpr T Square(T x) noexcept
 	{
@@ -917,6 +913,7 @@ namespace kmaths
 	USE_RESULT constexpr T Gamma(T z) noexcept
 	{
 		constexpr double pi = constants::PI;
+		constexpr double tau = constants::TAU;
 		constexpr auto epsilon = std::numeric_limits<double>::epsilon();
 
 		constexpr auto handleEpsilon = [epsilon](double value)
@@ -930,15 +927,9 @@ namespace kmaths
 		//some magic constants 
 		const auto g = 7; // g represents the precision desired, p is the values of p[i] to plug into Lanczos' formula
 		double p[] = {
-			0.99999999999980993,
-			676.5203681218851,
-			-1259.1392167224028,
-			771.32342877765313,
-			-176.61502916214059,
-			12.507343278686905,
-			-0.13857109526572012,
-			9.9843695780195716e-6,
-			1.5056327351493116e-7 };
+			0.99999999999980993, 676.5203681218851, -1259.1392167224028, 
+			771.32342877765313, -176.61502916214059, 12.507343278686905,
+			-0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7 };
 
 		constexpr auto coefficientsSize = SizeOfCArray(p);
 
@@ -950,11 +941,11 @@ namespace kmaths
 		{
 			z -= 1.0;
 			auto x = p[0];
-			for (auto i = 1; i < (g + 2); i++) {
-				x += p[i] / (z + i + 1.0);
+			for (auto i = 1; i < coefficientsSize; i++) {
+				x += p[i] / (z + i );
 			}
 			const auto t = z + coefficientsSize - 0.5;
-			result = Sqrt((double)constants::TAU) * PowerOf(t, (z + 0.5)) * Exponential(-t) * x;
+			result = Sqrt(tau) * PowerOf(t, (z + 0.5)) * Exponential(-t) * x;
 		}
 
 		return CAST(T, handleEpsilon(result));

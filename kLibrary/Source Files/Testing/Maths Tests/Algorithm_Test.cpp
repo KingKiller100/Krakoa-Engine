@@ -906,7 +906,7 @@ namespace kTest::maths
 		{
 			constexpr auto z = 1.5;
 			const auto result = Factorial(z);
-			constexpr auto expected = 8;;
+			const auto expected = std::tgamma(z + 1);
 			VERIFY(result == expected);
 		}
 
@@ -1252,14 +1252,14 @@ namespace kTest::maths
 
 		{
 			constexpr auto square = .250;
-			const auto root = Sqrt(square);
+			 auto root = Sqrt(square);
 			const auto expected = std::sqrt(square); // 0.5
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = .00625;
-			const auto root = Sqrt(square);
+			 auto root = Sqrt(square);
 			const auto expected = std::sqrt(square); // 0.079056941504209485
 			VERIFY(root == expected);
 		}

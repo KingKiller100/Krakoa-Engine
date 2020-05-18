@@ -96,7 +96,7 @@ namespace kTest::maths
 		}
 		
 		{
-			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto x = 3 * constants::PI_OVER_4;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -201,7 +201,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto x = 3 * constants::PI_OVER_4;
 			constexpr auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
@@ -249,18 +249,20 @@ namespace kTest::maths
 			VERIFY(resultRounded == expectedRounded);
 		}
 
-		{
-			constexpr auto x = constants::PI_OVER_2;
-			const auto result = Tan(x, 5000);
-			const auto expected = std::tan(x);
+		// Tan(pi / 2) == N/A
+		//{
+		//	constexpr auto x = constants::PI_OVER_2;
+		//	const auto result = Tan(x);
+		//	const auto expected = std::tan(x);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+		//	const auto resultRounded = Round(result, 15);
+		//	const auto expectedRounded = Round(expected, 15);
 
-			VERIFY(resultRounded == expectedRounded);
-		}
+		//	VERIFY(resultRounded == expectedRounded);
+		//}
 
-		{
+		// Tan(3*pi / 2) == N/A
+	/*	{
 			constexpr auto x = 3 * constants::PI_OVER_2;
 			const auto result = Tan(x, 500);
 			const auto expected = std::tan(x);
@@ -269,7 +271,7 @@ namespace kTest::maths
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
-		}
+		}*/
 
 		{
 			constexpr auto x = constants::PI;
@@ -283,12 +285,12 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_2;
+			constexpr auto x = 3 * constants::PI_OVER_4;
 			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+			const auto resultRounded = Round(result, 14);
+			const auto expectedRounded = Round(expected, 14);
 
 			VERIFY(resultRounded == expectedRounded);
 		}

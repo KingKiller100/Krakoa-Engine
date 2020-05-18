@@ -571,7 +571,8 @@ namespace kmaths
 		const auto sine = Sine(x, n);
 		const auto cosine = Cosine(x, n);
 
-		if (cosine <= epsilon)
+		if (cosine <= epsilon
+			&& (-epsilon) <= cosine)
 			throw std::exception();
 		
 		return (sine / cosine);
@@ -840,7 +841,7 @@ namespace kmaths
 		using constants::AccuracyType;
 
 		constexpr auto one = constants::One<T>();
-		constexpr auto maxIter = uint16_t(1e3);
+		constexpr auto maxIter = uint16_t(2e3);
 
 		AccuracyType log_result = 1.l;
 		const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);

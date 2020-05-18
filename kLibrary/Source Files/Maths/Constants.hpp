@@ -46,6 +46,12 @@ namespace kmaths::constants
 	}
 
 	template<class T>
+	USE_RESULT constexpr T Epsilon() noexcept
+	{
+		return std::numeric_limits<T>::epsilon();
+	}
+
+	template<class T>
 	USE_RESULT constexpr T One() noexcept
 	{
 		return T(1);

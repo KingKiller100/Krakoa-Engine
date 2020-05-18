@@ -129,7 +129,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr bool IsInteger(T value) noexcept
 	{
-		return Convert<int>(value) == value;
+		return CAST(Big_Int_Type, value) == value;
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
@@ -258,7 +258,7 @@ namespace kmaths
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sine(T x, const size_t n = 50) noexcept
+	USE_RESULT constexpr T Sine(T x, const size_t n = 250) noexcept
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 			return SineImpl<T>(x, n);
@@ -268,7 +268,7 @@ namespace kmaths
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Cosine(T x, const size_t n = 50) noexcept
+	USE_RESULT constexpr T Cosine(T x, const size_t n = 250) noexcept
 	{
 		constexpr auto pi_over_2 = CAST(T, constants::PI_OVER_2);
 		x += pi_over_2;
@@ -277,16 +277,6 @@ namespace kmaths
 			return SineImpl<T>(x, n);
 		else
 			return CAST(T, SineImpl<float>(CAST(float, x), n));
-	}
-
-	// Uses Taylor series to iterate through to get the better approximation of sine(x)
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Tan(T x, const size_t n = 20) noexcept
-	{
-		const auto sine = Sine(x, n);
-		const auto cosine = Cosine(x, n);
-
-		return (sine / cosine);
 	}
 
 	// Continued Fractions Without Tears, Ian Richards 1981
@@ -572,6 +562,21 @@ namespace kmaths
 		}
 	}
 
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Tan(T x, const size_t n = 250)
+	{
+		constexpr auto epsilon = constants::Epsilon<T>() * 10;
+		
+		const auto sine = Sine(x, n);
+		const auto cosine = Cosine(x, n);
+
+		if (cosine <= epsilon)
+			throw std::exception();
+		
+		return (sine / cosine);
+	}
+
 	// Bakhshali Method
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T SqrtImpl(T square) noexcept
@@ -845,7 +850,7 @@ namespace kmaths
 		do {
 			log_result += PowerOfImpl<AccuracyType>(y, iter) / denominator;
 			denominator += 2;
-		} while (iter++ <= maxIter);
+		} while ((iter += 2) <= maxIter);
 
 		const auto result = 2 * y * log_result;
 		return CAST(T, result);
@@ -1014,7 +1019,7 @@ namespace kmaths
 			return inf;
 		}
 
-		return CAST(T, Exponential(LogGamma(z)));
+		return CAST(T, std::tgamma(z));
 	}
 
 

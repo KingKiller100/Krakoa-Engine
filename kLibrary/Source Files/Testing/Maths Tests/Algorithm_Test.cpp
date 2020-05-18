@@ -229,10 +229,10 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto x = 0.0;
-			constexpr auto result = Tan(x);
+			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -240,10 +240,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI_OVER_4;
-			constexpr auto result = Tan(x);
+			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -251,10 +251,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI_OVER_2;
-			constexpr auto result = Tan(x, 5000);
+			const auto result = Tan(x, 5000);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -262,10 +262,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
-			constexpr auto result = Tan(x, 500);
+			const auto result = Tan(x, 500);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -273,10 +273,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI;
-			constexpr auto result = Tan(x);
+			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -284,10 +284,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
-			constexpr auto result = Tan(x);
+			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -936,7 +936,7 @@ namespace kTest::maths
 		}
 		
 		{
-			constexpr auto x = 12ll;
+			constexpr auto x = 12.0;
 			const auto result = Gamma(x);
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);
@@ -945,7 +945,7 @@ namespace kTest::maths
 		{
 			constexpr auto x = 13;
 			const auto result = Gamma(x);
-			const auto expected = std::tgamma(x);
+			const auto expected = CAST(decltype(result), std::tgamma(x));
 			VERIFY(result == expected);
 		}
 
@@ -1203,49 +1203,89 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto number = 0.1;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == -1);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto number = 1.f;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == 0);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto number = 10.f;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == 1);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 		{
 			constexpr auto number = 300.0;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == 2);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto number = 30.f;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == 1);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto number = 300000.f;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == 5);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto number = 0.09567;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == -2);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		{
 			constexpr auto number = 0.00007;
-			const auto powerOf10 = Log10(number);
-			VERIFY(powerOf10 == -5);
+			const auto result = Log10(number);
+			const auto expected = std::log10(number);
+
+			const auto resultRounded = Round(result, 15);
+			const auto expectedRounded = Round(expected, 15);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		return success;

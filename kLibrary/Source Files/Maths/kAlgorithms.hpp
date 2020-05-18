@@ -1026,7 +1026,7 @@ namespace kmaths
 		if (z > 171.624)
 		{
 			// Correct answer too large to display. Force +infinity.
-			constexpr T inf = std::numeric_limits<T>::infinity();
+			constexpr T inf = constants::Infinity<T>();
 			return inf;
 		}
 

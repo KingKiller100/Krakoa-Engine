@@ -1,5 +1,7 @@
 #pragma once
 
+#define NOMINMAX
+
 #include "../HelperMacros.hpp"
 
 #include "Fraction.hpp"
@@ -13,14 +15,6 @@
 #include <cstdint>
 #include <type_traits>
 
-#ifdef max
-#	undef max
-#endif
-
-
-#ifdef min
-#	undef min
-#endif
 
 namespace kmaths
 {
@@ -390,7 +384,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
 	{
-		const auto isNegative = value < 0;
+		const auto isNegative = IsNegative(value);
 		if (isNegative)
 			value = -value;
 
@@ -506,7 +500,7 @@ namespace kmaths
 	{
 		const T acceleration = GetAccelerationOverTime<T>(initialVelocity, distance);
 		const T result = (initialVelocity * currentTime) + ((acceleration / 2) * (currentTime * currentTime));
-		const T currentvel = initialVelocity + (acceleration * currentTime);
+		const T currentVel = initialVelocity + (acceleration * currentTime);
 		return result;
 	}
 
@@ -567,14 +561,14 @@ namespace kmaths
 	USE_RESULT constexpr T Tan(T x, const size_t n = 250)
 	{
 		constexpr auto epsilon = constants::Epsilon<T>() * 10;
-		
+
 		const auto sine = Sine(x, n);
 		const auto cosine = Cosine(x, n);
 
 		if (cosine <= epsilon
 			&& (-epsilon) <= cosine)
 			throw std::exception();
-		
+
 		return (sine / cosine);
 	}
 
@@ -672,7 +666,7 @@ namespace kmaths
 		if (num < 0)
 		{
 			if ((root & 1) == 0) // Even root
-				throw std::runtime_error("No real root");
+				throw std::exception("No real root");
 
 			if (num == constants::MinusOne<T>())
 				return constants::MinusOne<T>();
@@ -840,21 +834,63 @@ namespace kmaths
 	{
 		using constants::AccuracyType;
 
+		constexpr auto e = constants::E;
 		constexpr auto one = constants::One<T>();
-		constexpr auto maxIter = uint16_t(1.6384e4);
+		constexpr auto maxIter = uint16_t(2.048e3);
 
-		AccuracyType log_result = 1.l;
-		const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
-		uint32_t denominator = 3;
-		uint16_t iter = 2;
+		if (x < 100)
+		{
+			AccuracyType log_result = 1.l;
+			const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
+			uint32_t denominator = 3;
+			uint16_t iter = 2;
+
+			do {
+				log_result += PowerOfImpl<AccuracyType>(y, iter) / denominator;
+				denominator += 2;
+			} while ((iter += 2) <= maxIter);
+
+			const auto result = 2.l * y * log_result;
+			return CAST(T, result);
+		}
+
+		constexpr AccuracyType error = 1e-10;
+		const AccuracyType lb = x - error; // Lower Bound
+		const AccuracyType ub = x + error; // Upper Bound
+
+		constexpr auto isInBounds = [](AccuracyType val, AccuracyType lb, AccuracyType ub)
+		{
+			return (val <= ub) && (val >= lb);
+		};
+
+		AccuracyType power = one;
+		AccuracyType currentResult = 0;
+		AccuracyType minorIncrement = one;
+		uint16_t iter = 0;
+
+		for (; currentResult < x; power += minorIncrement) // finds upperBound
+		{
+			power += minorIncrement;
+			currentResult = PowerOf(e, power);
+		}
+
+		auto lower = Fraction(Big_Int_Type(power) - 1);
+		auto upper = Fraction(CAST(Big_Int_Type, power));
+
 
 		do {
-			log_result += PowerOfImpl<AccuracyType>(y, iter) / denominator;
-			denominator += 2;
-		} while ((iter += 2) <= maxIter);
+			const Fraction middle = (lower + upper) / 2;
 
-		const auto result = 2.l * y * log_result;
-		return CAST(T, result);
+			currentResult = PowerOf(e, middle.numerator, middle.denominator);
+
+			if (currentResult > x)
+				upper = middle;
+			else if (currentResult < x)
+				lower = middle;
+
+		} while (iter++ < maxIter && !isInBounds(currentResult, lb, ub));
+
+		return power;
 	}
 
 	template<typename T>

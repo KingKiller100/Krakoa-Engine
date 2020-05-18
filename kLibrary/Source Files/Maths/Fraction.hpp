@@ -14,8 +14,13 @@ namespace kmaths
 		using Numerator_Value_Type = size_t;
 		using Denominator_Value_Type = size_t;
 
-		constexpr Fraction(const Numerator_Value_Type numerator = 0, const Denominator_Value_Type denominator = 1, const Sign_Value_Type isNegative = false, const bool simplified = true) noexcept
-			: numerator(numerator), denominator(denominator), isNegative(isNegative), alwaysSimplify(simplified)
+		constexpr Fraction() noexcept
+			:numerator(0), denominator(1), isNegative(false), alwaysSimplify(true)
+		{}
+		
+		template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>
+		constexpr Fraction(const T numerator = 0, const Denominator_Value_Type denominator = 1, const Sign_Value_Type isNegative = false, const bool simplified = true) noexcept
+			: numerator(CAST(Numerator_Value_Type, numerator)), denominator(denominator), isNegative(isNegative), alwaysSimplify(simplified)
 		{
 			if (alwaysSimplify)
 				Simplify();

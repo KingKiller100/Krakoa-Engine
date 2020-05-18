@@ -1433,7 +1433,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = -1;
 			constexpr auto power = 7;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = -1;
 			VERIFY(root == expected);
 		}
@@ -1441,7 +1441,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 0;
 			constexpr auto power = 14;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 0;
 			VERIFY(root == expected);
 		}
@@ -1449,7 +1449,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 1;
 			constexpr auto power = 14;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 1;
 			VERIFY(root == expected);
 		}
@@ -1457,7 +1457,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 8;
 			constexpr auto power = 4;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 1;
 			VERIFY(root == expected);
 		}
@@ -1465,7 +1465,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 1000.0l;
 			constexpr auto power = 14;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 1.6378937069540642l;
 			VERIFY(root == expected);
 		}
@@ -1473,15 +1473,15 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = .0625f;
 			constexpr auto power = 4;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 0.5;
 			VERIFY(root == expected);
 		}
 
 		{
-			constexpr auto exponent = 69150.l;
-			constexpr auto power = 10;
-			const auto root = Root(exponent, power);
+			const auto exponent = 69150.l;
+			const auto power = 10;
+			 auto root = Root(exponent, power);
 			constexpr auto expected = 3.0477491473803897l;
 			VERIFY(root == expected);
 		}
@@ -1489,7 +1489,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 27.0l;
 			constexpr auto power = 2;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			const auto expected = std::sqrtl(exponent);
 			VERIFY(root == expected);
 		}
@@ -1497,7 +1497,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 8;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);
 		}
@@ -1505,7 +1505,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 27;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 3;
 			VERIFY(root == expected);
 		}
@@ -1513,7 +1513,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = -27;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = -3;
 			VERIFY(root == expected);
 		}
@@ -1521,7 +1521,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = -64;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = -4;
 			VERIFY(root == expected);
 		}
@@ -1529,7 +1529,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = -200.l;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = -5.8480354764257321l;
 			VERIFY(root == expected);
 		}
@@ -1537,7 +1537,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 50.f;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 3.6840314986403859f;
 			VERIFY(root == expected);
 		}
@@ -1545,7 +1545,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 64.f;
 			constexpr auto power = 3;
-			const auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 4;
 			VERIFY(root == expected);
 		}

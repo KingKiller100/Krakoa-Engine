@@ -2,6 +2,8 @@
 
 #include "../HelperMacros.hpp"
 
+#include <limits>
+
 namespace kmaths
 {
 	using Length_Type = unsigned short;

@@ -23,6 +23,9 @@ namespace kTest::performance::maths
 		void SqrtTest();
 		void FloorTest();
 		void FloatingPointRemainderTest();
+		void SineTest();
+		void CosineTest();
+		void TanTest();
 	};
 }
 #endif

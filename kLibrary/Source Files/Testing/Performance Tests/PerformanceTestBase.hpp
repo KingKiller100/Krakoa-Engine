@@ -27,7 +27,7 @@ namespace kTest::performance
 	{
 	public:
 		PerformanceTestBase(const char* name) noexcept;
-		~PerformanceTestBase();
+		virtual ~PerformanceTestBase();
 
 		void Run() noexcept;
 

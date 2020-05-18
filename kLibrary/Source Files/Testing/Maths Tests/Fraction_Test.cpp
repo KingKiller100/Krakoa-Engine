@@ -37,7 +37,7 @@ namespace kTest::maths
 	bool FractionTester::AddTest()
 	{
 		{
-			constexpr Fraction f1 = Fraction{ 0, 1, false };
+			constexpr Fraction f1 = { 0, 1, false };
 			constexpr Fraction f2 = 10;
 			constexpr auto res = f1 + f2;
 

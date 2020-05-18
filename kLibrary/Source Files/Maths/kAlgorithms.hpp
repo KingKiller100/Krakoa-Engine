@@ -1,6 +1,5 @@
 #pragma once
 
-#define NOMINMAX
 
 #include "../HelperMacros.hpp"
 
@@ -14,6 +13,15 @@
 
 #include <cstdint>
 #include <type_traits>
+
+#ifdef max
+#	undef max
+#endif
+
+
+#ifdef min
+#	undef min
+#endif
 
 
 namespace kmaths
@@ -283,7 +291,7 @@ namespace kmaths
 		const auto isNegative = x < 0;
 		if (isNegative) x = -x;
 
-		if (Big_Int_Type(x) == x)
+		if (Fraction::Numerator_Value_Type(x) == x)
 			return { Fraction::Numerator_Value_Type(x), 1, isNegative, false };
 
 		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_DP_Precision<T>));
@@ -838,7 +846,7 @@ namespace kmaths
 		constexpr auto one = constants::One<T>();
 		constexpr auto maxIter = uint16_t(2.048e3);
 
-		if (x < 100)
+		if (0.01 < x && x < 100)
 		{
 			AccuracyType log_result = 1.l;
 			const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
@@ -854,43 +862,7 @@ namespace kmaths
 			return CAST(T, result);
 		}
 
-		constexpr AccuracyType error = 1e-10;
-		const AccuracyType lb = x - error; // Lower Bound
-		const AccuracyType ub = x + error; // Upper Bound
-
-		constexpr auto isInBounds = [](AccuracyType val, AccuracyType lb, AccuracyType ub)
-		{
-			return (val <= ub) && (val >= lb);
-		};
-
-		AccuracyType power = one;
-		AccuracyType currentResult = 0;
-		AccuracyType minorIncrement = one;
-		uint16_t iter = 0;
-
-		for (; currentResult < x; power += minorIncrement) // finds upperBound
-		{
-			power += minorIncrement;
-			currentResult = PowerOf(e, power);
-		}
-
-		auto lower = Fraction(Big_Int_Type(power) - 1);
-		auto upper = Fraction(CAST(Big_Int_Type, power));
-
-
-		do {
-			const Fraction middle = (lower + upper) / 2;
-
-			currentResult = PowerOf(e, middle.numerator, middle.denominator);
-
-			if (currentResult > x)
-				upper = middle;
-			else if (currentResult < x)
-				lower = middle;
-
-		} while (iter++ < maxIter && !isInBounds(currentResult, lb, ub));
-
-		return power;
+		return std::log(x);
 	}
 
 	template<typename T>

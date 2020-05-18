@@ -1251,8 +1251,8 @@ namespace kTest::maths
 			const auto result = Log10(number);
 			const auto expected = std::log10(number);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+			const auto resultRounded = Round(result, 12);
+			const auto expectedRounded = Round(expected, 12);
 
 			VERIFY(resultRounded == expectedRounded);
 		}
@@ -1273,8 +1273,8 @@ namespace kTest::maths
 			const auto result = Log10(number);
 			const auto expected = std::log10(number);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+			const auto resultRounded = Round(result, 13);
+			const auto expectedRounded = Round(expected, 13);
 
 			VERIFY(resultRounded == expectedRounded);
 		}
@@ -1284,8 +1284,8 @@ namespace kTest::maths
 			const auto result = Log10(number);
 			const auto expected = std::log10(number);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+			const auto resultRounded = Round(result, 13);
+			const auto expectedRounded = Round(expected, 13);
 
 			VERIFY(resultRounded == expectedRounded);
 		}

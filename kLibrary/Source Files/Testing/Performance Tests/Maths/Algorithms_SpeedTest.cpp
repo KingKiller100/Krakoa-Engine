@@ -26,6 +26,9 @@ namespace kTest::performance::maths
 		FloatingPointRemainderTest();
 		SignTest();
 		AbsTest();
+		SineTest();
+		CosineTest();
+		TanTest();
 	}
 
 	constexpr auto maxIter = int(2e4);
@@ -208,6 +211,70 @@ namespace kTest::performance::maths
 		}
 	}
 
+	void AlgorithmsSpeedTest::SineTest()
+	{
+		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4;
+
+		const std::vector<std::string_view> participants = { "kmaths::Sine", "std::sin" };
+		SetUpParticipants(participants);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::Sine(pi_over_4 * i);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::sin(pi_over_4 * i);
+			}
+		}
+	}
+
+	void AlgorithmsSpeedTest::CosineTest()
+	{
+		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4;
+
+		const std::vector<std::string_view> participants = { "kmaths::Cosine", "std::cos" };
+		SetUpParticipants(participants);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::Cosine(pi_over_4 * i);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::cos(pi_over_4 * i);
+			}
+		}
+	}
+
+	void AlgorithmsSpeedTest::TanTest()
+	{
+		constexpr auto pi = kmaths::constants::PI;
+
+		const std::vector<std::string_view> participants = { "kmaths::Tan", "std::tan" };
+		SetUpParticipants(participants);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto value = kmaths::Tan(pi * i);
+			}
+
+			{
+				START_TEST(participants[1]);
+				const auto value = std::tan(pi * i);
+			}
+		}
+	}
+
 	void AlgorithmsSpeedTest::SignTest()
 	{
 		const std::vector<std::string_view> participants = { "kmaths::Sign", "std::copysign" };
@@ -235,11 +302,11 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::AbsTest()
 	{
-		const std::vector<std::string_view> participants = { 
-			"kmaths::Abs<long double>", "std::fabsl", 
-			"kmaths::Abs<double>", "std::fabs", 
-			"kmaths::Abs<float>", "std::fabsf", 
-			"kmaths::Abs<kmaths::Big_Int_Type>", "std::fabsf<kmaths::Big_Int_Type>", 
+		const std::vector<std::string_view> participants = {
+			"kmaths::Abs<long double>", "std::fabsl",
+			"kmaths::Abs<double>", "std::fabs",
+			"kmaths::Abs<float>", "std::fabsf",
+			"kmaths::Abs<kmaths::Big_Int_Type>", "std::fabsf<kmaths::Big_Int_Type>",
 		};
 		SetUpParticipants(participants);
 
@@ -268,7 +335,7 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[3]);
-				const auto value = std::fabs(num);		
+				const auto value = std::fabs(num);
 			}
 
 			{

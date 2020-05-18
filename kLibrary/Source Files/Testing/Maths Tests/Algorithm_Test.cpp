@@ -1258,7 +1258,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto number = 300000.f;
+			constexpr auto number = 100000.f;
 			const auto result = Log10(number);
 			const auto expected = std::log10(number);
 

@@ -841,7 +841,7 @@ namespace kmaths
 		using constants::AccuracyType;
 
 		constexpr auto one = constants::One<T>();
-		constexpr auto maxIter = uint16_t(2e3);
+		constexpr auto maxIter = uint16_t(1.6384e4);
 
 		AccuracyType log_result = 1.l;
 		const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
@@ -853,12 +853,12 @@ namespace kmaths
 			denominator += 2;
 		} while ((iter += 2) <= maxIter);
 
-		const auto result = 2 * y * log_result;
+		const auto result = 2.l * y * log_result;
 		return CAST(T, result);
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T AnyLog(T num, T base)
+	USE_RESULT constexpr T Logarithm(T num, T base)
 	{
 		return NaturalLogarithm(num) / NaturalLogarithm(base);
 	}
@@ -866,13 +866,15 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T Log10(const T x)
 	{
-		return AnyLog(x, CAST(T, 10));
+		constexpr auto ln10 = NaturalLogarithm<constants::AccuracyType>(10);
+		return CAST(T, NaturalLogarithm<constants::AccuracyType>(x) / ln10);
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T Log2(const T x)
 	{
-		return AnyLog(x, CAST(T, 2));
+		constexpr auto ln2 = constants::LN2;
+		return Logarithm(x, ln2);
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 

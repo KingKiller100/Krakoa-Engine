@@ -25,7 +25,6 @@ namespace kTest::maths
 		VERIFY_MULTI(SineTest);
 		VERIFY_MULTI(CosineTest);
 		VERIFY_MULTI(TanTest);
-
 		VERIFY_MULTI(ConstantsTest);
 		VERIFY_MULTI(ConversionTest);
 		VERIFY_MULTI(CountDigitsTest);
@@ -72,7 +71,7 @@ namespace kTest::maths
 			const auto expected = std::sin(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = constants::PI_OVER_4;
 			constexpr auto result = Sine(x);
@@ -80,13 +79,13 @@ namespace kTest::maths
 
 			constexpr auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
-			
+
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = constants::PI_OVER_2;
-			constexpr auto result = Sine(x);
+			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
 			constexpr auto resultRounded = Round(result, 15);
@@ -94,7 +93,7 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = 3 * constants::PI_OVER_4;
 			constexpr auto result = Sine(x);
@@ -105,9 +104,9 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
-			constexpr auto x = constants::PI;
+			constexpr auto x = M_PI;
 			constexpr auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -116,7 +115,7 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
 			constexpr auto result = Sine(x);
@@ -127,7 +126,7 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = constants::TAU;
 			constexpr auto result = Sine(x);
@@ -138,7 +137,7 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 
 		return success;
 	}
@@ -196,7 +195,7 @@ namespace kTest::maths
 
 			constexpr auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
-			
+
 			VERIFY(resultRounded == expectedRounded);
 		}
 
@@ -221,7 +220,7 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		return success;
 	}
 
@@ -249,29 +248,47 @@ namespace kTest::maths
 			VERIFY(resultRounded == expectedRounded);
 		}
 
-		// Tan(pi / 2) == N/A
-		//{
-		//	constexpr auto x = constants::PI_OVER_2;
-		//	const auto result = Tan(x);
-		//	const auto expected = std::tan(x);
+		// Tan(pi / 2) == Div/0
+		{
+			try
+			{
+				constexpr auto x = constants::PI_OVER_2;
+				const auto result = Tan(x);
+				const auto expected = std::tan(x);
 
-		//	const auto resultRounded = Round(result, 15);
-		//	const auto expectedRounded = Round(expected, 15);
+				const auto resultRounded = Round(result, 15);
+				const auto expectedRounded = Round(expected, 15);
 
-		//	VERIFY(resultRounded == expectedRounded);
-		//}
+				VERIFY(resultRounded == expectedRounded);
+			}
+			catch (const klib::kDebug::errors::DivByZero & e)
+			{
+				constexpr auto msg = "ERROR: Division by zero has occured!";
+				const auto result = std::strcmp(e.what(), msg) == 0;
+				VERIFY(result == true);
+			}
+		}
 
-		// Tan(3*pi / 2) == N/A
-	/*	{
-			constexpr auto x = 3 * constants::PI_OVER_2;
-			const auto result = Tan(x, 500);
-			const auto expected = std::tan(x);
+		// Tan(3*pi / 2) == Div/0
+		{
+			try
+			{
+				constexpr auto x = 3 * constants::PI_OVER_2;
+				const auto result = Tan(x, 500);
+				const auto expected = std::tan(x);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+				const auto resultRounded = Round(result, 15);
+				const auto expectedRounded = Round(expected, 15);
 
-			VERIFY(resultRounded == expectedRounded);
-		}*/
+				VERIFY(resultRounded == expectedRounded);
+			}
+			catch (const klib::kDebug::errors::DivByZero & e)
+			{
+				constexpr auto msg = "ERROR: Division by zero has occured!";
+				const auto result = std::strcmp(e.what(), msg) == 0;
+				VERIFY(result == true);
+			}
+		}
 
 		{
 			constexpr auto x = constants::PI;
@@ -305,8 +322,8 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
-		
+
+
 		return success;
 	}
 
@@ -898,28 +915,28 @@ namespace kTest::maths
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 2.5f;
 			const auto result = Gamma(x);
 			const auto expected = std::tgammaf(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 0.5;
 			const auto result = Gamma(x);
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 0.25;
 			const auto result = Gamma(x);
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 0.0625;
 			constexpr auto result = Gamma(x);
@@ -929,21 +946,21 @@ namespace kTest::maths
 			const auto expectedRounded = Round(expected, 13);
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = 5;
 			const auto result = Gamma(x);
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 12.0;
 			const auto result = Gamma(x);
 			const auto expected = std::tgamma(x);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 13;
 			const auto result = Gamma(x);
@@ -951,7 +968,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		
+
 		return success;
 	}
 
@@ -1053,6 +1070,26 @@ namespace kTest::maths
 			constexpr auto result = Clamp(value, lower, upper);
 			constexpr auto expected = std::clamp(value, lower, upper);
 			VERIFY_COMPILE_TIME(result == expected);
+		}
+
+		// Max is less than min so error occurs
+		{
+			try
+			{
+
+				constexpr auto value = -9.0;
+				constexpr decltype(value) upper = -20;
+				constexpr decltype(value) lower = -1;
+				const auto result = Clamp(value, lower, upper);
+				const auto expected = std::clamp(value, lower, upper);
+				VERIFY(result == expected);
+			}
+			catch (const klib::kDebug::errors::BreaksMathsLogic & e)
+			{
+				constexpr auto msg = "Max value cannot be less than or equal to min value";
+				const auto result = std::strcmp(e.what(), msg) == 0;
+				VERIFY(result == true);
+			}
 		}
 
 		{
@@ -1360,14 +1397,14 @@ namespace kTest::maths
 
 		{
 			constexpr auto square = .250;
-			 auto root = Sqrt(square);
+			auto root = Sqrt(square);
 			const auto expected = std::sqrt(square); // 0.5
 			VERIFY(root == expected);
 		}
 
 		{
 			constexpr auto square = .00625;
-			 auto root = Sqrt(square);
+			auto root = Sqrt(square);
 			const auto expected = std::sqrt(square); // 0.079056941504209485
 			VERIFY(root == expected);
 		}
@@ -1481,7 +1518,7 @@ namespace kTest::maths
 		{
 			const auto exponent = 69150.l;
 			const auto power = 10;
-			 auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 3.0477491473803897l;
 			VERIFY(root == expected);
 		}
@@ -1553,7 +1590,7 @@ namespace kTest::maths
 		{
 			constexpr auto exponent = 64.0;
 			constexpr auto power = 6;
-			 auto root = Root(exponent, power);
+			auto root = Root(exponent, power);
 			constexpr auto expected = 2;
 			VERIFY(root == expected);
 		}

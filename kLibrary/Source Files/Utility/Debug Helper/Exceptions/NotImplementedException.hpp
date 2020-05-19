@@ -2,14 +2,14 @@
 
 #include <stdexcept>
 
-namespace klib::kDebug::kExceptions
+namespace klib::kDebug::errors
 {
-	class NotImplementedException : public std::runtime_error
+	class NotImplementedException final : public std::runtime_error
 	{
 	public:
 		NotImplementedException(const char* what);
 
-		~NotImplementedException() throw();
+		~NotImplementedException() noexcept;
 
 		char const* what() const override;
 	};

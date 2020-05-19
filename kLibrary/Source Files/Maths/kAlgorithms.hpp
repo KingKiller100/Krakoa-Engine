@@ -7,12 +7,15 @@
 #include "Constants.hpp"
 #include "Length_Type.hpp"
 
+#include "../Utility/Debug Helper/Exceptions/MathsExceptions.hpp"
+
 #if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
 #endif
 
 #include <cstdint>
 #include <type_traits>
+
 
 #ifdef max
 #	undef max
@@ -32,6 +35,12 @@ namespace kmaths
 
 namespace kmaths
 {
+	template<typename T>
+	USE_RESULT constexpr bool IsNegative(T x) noexcept
+	{
+		return x < 0;
+	}
+
 	template<typename DestType, typename SourceType>
 	USE_RESULT constexpr DestType Convert(SourceType&& source)
 	{
@@ -201,9 +210,15 @@ namespace kmaths
 	//////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	USE_RESULT constexpr bool IsNegative(T x) noexcept
+	USE_RESULT constexpr T Square(T x) noexcept
 	{
-		return x < 0;
+		return x * x;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr T Cube(T x) noexcept
+	{
+		return x * x * x;
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -218,6 +233,36 @@ namespace kmaths
 		const auto integer = CAST(T, CAST(Big_Int_Type, value));
 
 		return integer > value ? integer - CAST(T, 1) : integer;
+	}
+
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T HandleEpsilon(T value, const constants::AccuracyType magnitude = 1.l) noexcept
+	{
+		const auto epsilon = CAST(T, constants::Epsilon<T>() * magnitude);
+		constexpr auto getResultFunc = [](T val, T eps, T def) // value, epsilon, default value
+		{
+			return (val <= eps) ? def : val;
+		};
+
+		const auto isNeg = IsNegative(value);
+
+		if (isNeg) value = Abs(value);
+
+		if (IsDecimal(value))
+		{
+			return isNeg
+				? -getResultFunc(value, epsilon, T())
+				: getResultFunc(value, epsilon, T());
+		}
+		else
+		{
+			const auto integer = Floor(value);
+			value -= integer; // Value is now a decimal
+
+			return isNeg
+				? (-getResultFunc(value, epsilon, integer))
+				: getResultFunc(value, epsilon, integer);
+		}
 	}
 
 	template<typename T>
@@ -262,23 +307,43 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Sine(T x, const size_t n = 250) noexcept
 	{
+		constexpr constants::AccuracyType epsilon_magnitude = 2;
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return SineImpl<T>(x, n);
+			return HandleEpsilon(SineImpl<T>(x, n), epsilon_magnitude);
 		else
-			return CAST(T, SineImpl<float>(CAST(float, x), n));
+			return CAST(T, HandleEpsilon<float>(SineImpl<float>(CAST(float, x), n), epsilon_magnitude));
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Cosine(T x, const size_t n = 250) noexcept
 	{
-		constexpr auto pi_over_2 = CAST(T, constants::PI_OVER_2);
-		x += pi_over_2;
+		constexpr constants::AccuracyType epsilon_magnitude = 2;
+
 
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return SineImpl<T>(x, n);
+		{
+			const auto xf = x + CAST(T, constants::PI_OVER_2);
+			return HandleEpsilon(SineImpl<T>(xf, n), epsilon_magnitude);
+		}
 		else
-			return CAST(T, SineImpl<float>(CAST(float, x), n));
+		{
+			const auto xf = CAST(float, x) + CAST(float, constants::PI_OVER_2);
+			return CAST(T, HandleEpsilon<float>(SineImpl<float>(xf, n), epsilon_magnitude));
+		}
+	}
+
+	// Uses Taylor series to iterate through to get the better approximation of sine(x)
+	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Tan(T x, const size_t n = 250)
+	{
+		const auto sine = Sine(x, n);
+		const auto cosine = Cosine(x, n);
+
+		if (cosine == 0)
+			throw klib::kDebug::errors::DivByZero();
+
+		return (sine / cosine);
 	}
 
 	// Continued Fractions Without Tears, Ian Richards 1981
@@ -361,20 +426,27 @@ namespace kmaths
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, pow(base, power));
 #else
-		T temp = T();
 
 		if (power == 0)
 			return constants::One<T>();
+		if (power == 1)
+			return base;
+		if (power == 2)
+			return Square(base);
+		if (power == 3)
+			return Cube(base);
 
-		temp = PowerOfImpl(base, power / 2);
+		T temp = T();
+
+		temp = PowerOfImpl(base, power >> 1);
 
 		if (power % 2 == 0)
 			return temp * temp;
-		else if (power > 0)
-			return base * temp * temp;
-		else
+		else if (IsNegative(power))
 			return (temp * temp) / base;
-#endif
+		else
+			return base * temp * temp;
+#endif // MSVC_PLATFORM_TOOLSET > 142
 	}
 
 	template<typename T>
@@ -435,7 +507,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T Clamp(const T value, const T min, const T max)
 	{
-		if (max <= min) throw std::exception();
+		if (max <= min)
+			throw klib::kDebug::errors::BreaksMathsLogic("Max value cannot be less than or equal to min value");
 
 		return (Min(max, Max(value, min)));
 	}
@@ -564,25 +637,9 @@ namespace kmaths
 		}
 	}
 
-	// Uses Taylor series to iterate through to get the better approximation of sine(x)
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Tan(T x, const size_t n = 250)
-	{
-		constexpr auto epsilon = constants::Epsilon<T>() * 10;
-
-		const auto sine = Sine(x, n);
-		const auto cosine = Cosine(x, n);
-
-		if (cosine <= epsilon
-			&& (-epsilon) <= cosine)
-			throw std::exception();
-
-		return (sine / cosine);
-	}
-
 	// Bakhshali Method
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T SqrtImpl(T square) noexcept
+	USE_RESULT constexpr T SqrtImpl(T square)
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, sqrt(square));
@@ -607,14 +664,11 @@ namespace kmaths
 		else
 			maxIterations = 16;
 
-		if (square <= 0)
-			return 0;
+		if (IsNegative(square))
+			throw klib::kDebug::errors::NoRealRoot(square);
 
 		if (square == constants::ZeroPointFive<T>())
 			return CAST(T, constants::SQRT_1_OVER_2);
-
-		if (square == constants::One<T>())
-			return square;
 
 		if (square == 2)
 			return CAST(T, constants::ROOT2);
@@ -668,26 +722,32 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T RootImpl(T num, size_t root)
 	{
-		const auto oneOverRoot = constants::OneOver<T>(root);
-		constexpr auto minusZeroPointOne = -constants::ZeroPointOne<T>();
+		constexpr auto one = constants::One<T>();
+		constexpr auto minusOne = -one;
+		constexpr auto zeroPointOne = constants::ZeroPointOne<T>();
+		constexpr auto minusZeroPointOne = -zeroPointOne;
 
-		if (num < 0)
+		const auto oneOverRoot = constants::OneOver<T>(root);
+
+		if (IsNegative(num))
 		{
 			if ((root & 1) == 0) // Even root
-				throw std::exception("No real root");
+				throw klib::kDebug::errors::NoRealRoot(num);
 
-			if (num == constants::MinusOne<T>())
-				return constants::MinusOne<T>();
+			if (num == minusOne)
+				return minusOne;
 		}
 
 		if (num == 0)
 			return 0;
 
-		if (num == constants::One<T>() || root == constants::One<T>())
+		if (num == one || root == one)
 			return num;
 
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
+			constexpr auto ZeroPointFive = constants::ZeroPointFive<T>();
+
 			auto maxIterations = 0;
 			if _CONSTEXPR_IF(std::is_same_v<T, float>)
 				maxIterations = 7;
@@ -703,19 +763,19 @@ namespace kmaths
 			if (num < 1 && num > -1)
 			{
 				T startVal = 0, endVal = 1;
-				auto increment = number > 0 ? constants::ZeroPointOne<T>() : minusZeroPointOne;
+				auto increment = number > 0 ? zeroPointOne : minusZeroPointOne;
 				for (auto i = 0; i < maxIterations; ++i)
 				{
 					T compareVal = 0;
 					do {
 						endVal -= increment;
-						estimate = (startVal + endVal) * constants::ZeroPointFive<T>();
+						estimate = (startVal + endVal) * ZeroPointFive;
 						compareVal = PowerOfImpl<T>(estimate, root);
 					} while (compareVal > number);
 
 					startVal = estimate;
 					endVal += increment;
-					increment *= constants::ZeroPointOne<T>();
+					increment *= zeroPointOne;
 
 					if (compareVal == number)
 						break;
@@ -738,18 +798,18 @@ namespace kmaths
 			return start;
 
 		T result = start;
-		T prev[2] = { constants::MinusOne<T>(), constants::MinusOne<T>() };
+		T prev[2] = { minusOne, minusOne };
 
-		const auto checkResultIsUnique = [&result, &prev]() {
+		constexpr auto checkResultIsUniqueFunc = [](auto result, auto (&prev)[2]) {
 			for (auto& p : prev)
 				if (p == result)
 					return false;
 			return true;
 		};
 
-		auto iterations = 0;
-		const int size = sizeof(prev) / sizeof(T);
-		while (checkResultIsUnique())
+		size_t iterations = 0;
+		const auto size = SizeOfCArray(prev);
+		while (checkResultIsUniqueFunc(result, prev))
 		{
 			prev[Modulus(iterations++, size)] = result;
 
@@ -762,9 +822,9 @@ namespace kmaths
 		return result;
 	}
 
-#if defined (_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable : 4244)
+//#if defined (_MSC_VER)
+//#	pragma warning(push)
+//#	pragma warning(disable : 4244)
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Root(T num, uint8_t root) noexcept
@@ -780,7 +840,7 @@ namespace kmaths
 	USE_RESULT constexpr T Sqrt(T square) noexcept
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-			return CAST(T, SqrtImpl<float>(square));
+			return CAST(T, SqrtImpl<float>(CAST(float, square)));
 		else
 			return SqrtImpl<T>(square);
 	}
@@ -789,11 +849,11 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T InvSqrt(T square) noexcept
 	{
-		return constants::One<T>() / RootImpl<T>(square, 2);
+		return constants::OneOver<T>(RootImpl<T>(square, 2));
 	}
 
-#	pragma warning(pop)
-#endif
+//#	pragma warning(pop)
+//#endif
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
@@ -904,18 +964,6 @@ namespace kmaths
 			return CAST(T, ExponentialImpl<float>(CAST(float, x)));
 		else
 			return ExponentialImpl<T>(x);
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T Square(T x) noexcept
-	{
-		return x * x;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T Cube(T x) noexcept
-	{
-		return x * x * x;
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>

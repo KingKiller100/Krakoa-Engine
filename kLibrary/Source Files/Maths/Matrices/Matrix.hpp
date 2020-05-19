@@ -409,7 +409,7 @@ namespace kmaths
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-						m[row][col] = HandleFloatingPointError<Type>(m[row][col]);
+						m[row][col] = HandleEpsilon<Type>(m[row][col], 10);
 				}
 			}
 			return m;
@@ -670,7 +670,8 @@ namespace kmaths
 			}
 
 			//if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-			//	result[col] = HandleFloatingPointError<Type>(result[col]);
+			//	result[col] = HandleEpsilon<Type>(result[col], 10);
+			
 		}
 
 		return result;

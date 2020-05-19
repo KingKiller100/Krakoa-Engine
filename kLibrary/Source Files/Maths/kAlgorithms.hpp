@@ -235,9 +235,31 @@ namespace kmaths
 		return integer > value ? integer - CAST(T, 1) : integer;
 	}
 
+	template<typename T>
+	USE_RESULT constexpr T Abs(const T x) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_unsigned_v<T>)
+			return x;
+		else
+		{
+			if (x >= 0)
+				return x;
+			else
+			{
+				if _CONSTEXPR_IF(std::is_integral_v<T>)
+					return (~x + CAST(T, 1));
+				else
+					return -x;
+			}
+		}
+	}
+
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T HandleEpsilon(T value, const constants::AccuracyType magnitude = 1.l) noexcept
 	{
+		if (value == 0)
+			return 0;
+
 		const auto epsilon = CAST(T, constants::Epsilon<T>() * magnitude);
 		constexpr auto getResultFunc = [](T val, T eps, T def) // value, epsilon, default value
 		{
@@ -262,25 +284,6 @@ namespace kmaths
 			return isNeg
 				? (-getResultFunc(value, epsilon, integer))
 				: getResultFunc(value, epsilon, integer);
-		}
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T Abs(const T x) noexcept
-	{
-		if _CONSTEXPR_IF(std::is_unsigned_v<T>)
-			return x;
-		else
-		{
-			if (x >= 0)
-				return x;
-			else
-			{
-				if _CONSTEXPR_IF(std::is_integral_v<T>)
-					return (~x + CAST(T, 1));
-				else
-					return -x;
-			}
 		}
 	}
 
@@ -394,21 +397,18 @@ namespace kmaths
 		const auto x0 = x;
 
 		constexpr auto epsilon = std::numeric_limits<T>::epsilon() * 10;
-
-		const auto isNegative = x < 0;
-
+		
 		const auto integer = Floor<T>(x);
-		const auto isDecimals = IsDecimal<T>(x);
 
-		if (!isDecimals)
+		if (!IsDecimal<T>(x))
 		{
-			x = isNegative
+			x = IsNegative(x)
 				? x + integer
 				: x - integer;
 		}
 
 		if (x != 0 && (epsilon >= x && x >= -epsilon))
-			return x0 - x;
+			return (x0 - x);
 		else if (integer != x0)
 		{
 			if (std::is_same_v<T, float>)

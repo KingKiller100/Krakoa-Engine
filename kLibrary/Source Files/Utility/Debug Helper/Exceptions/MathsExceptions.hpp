@@ -11,10 +11,9 @@ namespace klib::kDebug::errors
 	class DivByZero final : public std::logic_error
 	{
 	public:
-		USE_RESULT explicit DivByZero();
-		USE_RESULT explicit DivByZero(const std::string& _Message);
-
-		USE_RESULT explicit DivByZero(const char* const _Message);
+		explicit DivByZero();
+		explicit DivByZero(const char* const _Message);
+		explicit DivByZero(const std::string& _Message);
 
 		~DivByZero() noexcept override = default;
 	};
@@ -22,17 +21,13 @@ namespace klib::kDebug::errors
 	class NoRealRoot final : public std::logic_error
 	{
 	public:
-		USE_RESULT explicit NoRealRoot(const long double value);
+		explicit NoRealRoot(const float value);		
+		explicit NoRealRoot(const double value);
+		explicit NoRealRoot(const long double value);
+		explicit NoRealRoot(const kmaths::Big_Int_Type value);
 
-		USE_RESULT explicit NoRealRoot(const double value);
-		
-		USE_RESULT explicit NoRealRoot(const float value);
-		
-		USE_RESULT explicit NoRealRoot(const kmaths::Big_Int_Type value);
-
-		USE_RESULT explicit NoRealRoot(const std::string& _Message);
-
-		USE_RESULT explicit NoRealRoot(const char* const _Message);
+		explicit NoRealRoot(const char* const _Message);
+		explicit NoRealRoot(const std::string& _Message);
 
 		~NoRealRoot() noexcept override;
 	};
@@ -40,8 +35,9 @@ namespace klib::kDebug::errors
 	class BreaksMathsLogic final : public std::logic_error
 	{
 	public:
-		USE_RESULT explicit BreaksMathsLogic(const std::string& _Message);
-		USE_RESULT explicit BreaksMathsLogic(const char* const _Message);
+		explicit BreaksMathsLogic(const char* const _Message);
+		explicit BreaksMathsLogic(const std::string& _Message);
+
 		~BreaksMathsLogic() noexcept override;
 	};
 

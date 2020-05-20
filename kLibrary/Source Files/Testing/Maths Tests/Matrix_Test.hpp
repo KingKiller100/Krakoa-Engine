@@ -4,7 +4,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	class MatricesTester : public Tester
+	class MatricesTester final : public Tester
 	{
 	public:
 		MatricesTester();
@@ -14,6 +14,11 @@ namespace kTest::maths
 		void Test() override;
 
 		bool DynamicMatrixTest();
+		bool AddTest();
+		bool SubtractTest();
+		bool DivideTest();
+		bool MultiplyTest();
+		bool ConstexprTest();
 	};
 }
 #endif

@@ -409,7 +409,7 @@ namespace kmaths
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-						m[row][col] = HandleEpsilon<Type>(m[row][col], 2);
+						m[row][col] = HandleFloatingPointError<Type>(m[row][col]);
 				}
 			}
 			return m;

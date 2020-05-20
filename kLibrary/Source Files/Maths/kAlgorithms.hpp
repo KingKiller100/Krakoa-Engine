@@ -287,6 +287,20 @@ namespace kmaths
 		}
 	}
 
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T GetDecimals(T x) noexcept
+	{
+		if (IsDecimal(x))
+			return x;
+
+		const auto isNeg = IsNegative(x);
+		if (isNeg) x = Abs(x);
+		x -= Floor(x);
+
+		return isNeg ? -x : x;
+	}
+	
+
 	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
@@ -402,19 +416,17 @@ namespace kmaths
 
 		if (!IsDecimal<T>(x))
 		{
-			x = IsNegative(x)
-				? x + integer
-				: x - integer;
+			x = GetDecimals(x);
 		}
 
 		if (x != 0 && (epsilon >= x && x >= -epsilon))
 			return (x0 - x);
-		else if (integer != x0)
+		else if (!IsInteger(x0))
 		{
 			if (std::is_same_v<T, float>)
 				return Round(x0, 5);
 			else
-				return Round(x0, 9);
+				return Round(x0, 14);
 		}
 		else
 			return x0;

@@ -16,8 +16,10 @@
 #endif
 
 #if _MSVC_LANG > 201402L
+#	define UNUSED [[maybe_unused]]
 #	define USE_RESULT [[nodiscard]]
 #else
+#	define UNUSED 
 #	define USE_RESULT 
 #	if MSVC_PLATFORM_TOOLSET < 110
 #		define noexcept throw ()

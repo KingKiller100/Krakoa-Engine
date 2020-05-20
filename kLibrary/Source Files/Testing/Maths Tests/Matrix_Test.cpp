@@ -20,6 +20,10 @@ namespace kTest::maths
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(DynamicMatrixTest);
+		VERIFY_MULTI(AddTest);
+		VERIFY_MULTI(SubtractTest);
+		VERIFY_MULTI(DivideTest);
+		VERIFY_MULTI(MultiplyTest);
 		VERIFY_MULTI(ConstexprTest);
 		VERIFY_MULTI_END();
 	}
@@ -148,9 +152,8 @@ namespace kTest::maths
 
 	bool MatricesTester::DivideTest()
 	{
-		constexpr auto m1 = Matrix<float, 3, 2>(10.f);
-
 		{
+			constexpr auto m1 = Matrix<float, 3, 2>(10.f);
 			constexpr auto result = m1 / 2.f;
 
 			for (auto row = 0u; row < result.GetRows(); ++row)
@@ -159,6 +162,7 @@ namespace kTest::maths
 		}
 
 		{
+			constexpr auto m1 = Matrix<float, 3, 3>(10.f);
 			const auto result = Vector3f(1) / m1;
 
 			VERIFY(result.X() == 0.1f);
@@ -171,6 +175,32 @@ namespace kTest::maths
 
 	bool MatricesTester::MultiplyTest()
 	{
+		{
+			constexpr auto m1 = Matrix<float, 3, 2>(10.f);
+			constexpr auto result = m1 * 2.f;
+
+			for (auto row = 0u; row < result.GetRows(); ++row)
+				for (auto col = 0u; col < result.GetColumns(); ++col)
+					VERIFY(result[row][col] == 20.f);
+		}
+
+		{
+			constexpr auto m1 = Matrix<float, 2, 3>(10.f);
+			constexpr auto result = Matrix<float, 3, 3>(5) * m1;
+
+			for (auto row = 0u; row < result.GetRows(); ++row)
+				for (auto col = 0u; col < result.GetColumns(); ++col)
+					VERIFY(result[row][col] == 150.f);
+		}
+
+		{
+			constexpr auto m1 = Matrix<float, 3, 3>(10.f);
+			const auto result = Vector3f(2.f) * m1;
+
+			VERIFY(result.X() == 20.f);
+			VERIFY(result.Y() == 20.f);
+		}
+		
 		return success;
 	}
 

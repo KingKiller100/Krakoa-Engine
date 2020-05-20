@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../Primitives 2D/BatchRendererData.hpp"
 #include "../Textures/iTexture2D.hpp"
+#include "../Primitives 2D/BatchRendererData.hpp"
 
 #include <array>
 #include <cstdint>

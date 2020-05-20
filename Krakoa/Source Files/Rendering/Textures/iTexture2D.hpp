@@ -2,9 +2,6 @@
 
 #include "iTexture.hpp"
 
-#include <memory>
-#include <string>
-
 namespace krakoa::graphics
 {
 	class iTexture2D : public iTexture

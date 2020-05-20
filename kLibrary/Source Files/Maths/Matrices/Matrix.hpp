@@ -419,60 +419,61 @@ namespace kmaths
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
-			for (auto row = 0u; row < Rows; ++row)
-				for (auto col = 0u; col < Columns; ++col)
+			for (auto row = 0u; row < Rows; ++row) 
+				for (auto col = 0u; col < Columns; ++col) 
 					m.elems[row][col] = elems[row][col] * scalar;
+			
 			return m;
 		}
 
-// For Column Major Matrix -Vector operations /////////////////////////////////////////////////////////////////
-//		template<typename U>
-//		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
-//		{
-//			Column_Type result;
-//
-//			for (auto row = 0; row < Rows; ++row) {
-//				for (auto col = 0u; col < Columns; ++col) {
-//#ifdef KLIB_DEBUG
-//					const auto left = elems[row][col];
-//					const auto right = v[col];
-//					const Type res = left * right;
-//					result[row] += res;
-//#else
-//					result[row] += (elems[row][col] * v[col]);
-//#endif
-//				}
-//
-//				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-//					result[row] = HandleFloatingPointError<Type>(result[row]);
-//			}
-//
-//			return result;
-//		}
+		// For Column Major Matrix -Vector operations /////////////////////////////////////////////////////////////////
+		//		template<typename U>
+		//		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
+		//		{
+		//			Column_Type result;
+		//
+		//			for (auto row = 0; row < Rows; ++row) {
+		//				for (auto col = 0u; col < Columns; ++col) {
+		//#ifdef KLIB_DEBUG
+		//					const auto left = elems[row][col];
+		//					const auto right = v[col];
+		//					const Type res = left * right;
+		//					result[row] += res;
+		//#else
+		//					result[row] += (elems[row][col] * v[col]);
+		//#endif
+		//				}
+		//
+		//				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+		//					result[row] = HandleFloatingPointError<Type>(result[row]);
+		//			}
+		//
+		//			return result;
+		//		}
 
-		//template<typename U>
-		//USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
-		//{
-		//	return Inverse() * v;
-		//}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				//template<typename U>
+				//USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
+				//{
+				//	return Inverse() * v;
+				//}
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
-			if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
-			{
-				const auto multipler = constants::OneOver<Type>(scalar);
-				return *this * multipler;
-			}
-			else
-			{
+			//if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+			//{
+			//	const auto multipler = constants::OneOver<Type>(scalar);
+			//	return *this * multipler;
+			//}
+			//else
+			//{
 				Matrix m;
 				for (auto row = 0u; row < Rows; ++row)
 					for (auto col = 0u; col < Columns; ++col)
 						m.elems[row][col] = elems[row][col] / scalar;
 				return m;
-			}
+			//}
 		}
 
 		template<Length_Type C, Length_Type R = Columns>
@@ -505,14 +506,28 @@ namespace kmaths
 			return m;
 		}
 
-		USE_RESULT constexpr decltype(auto) operator[](const size_t idx) noexcept
+		USE_RESULT constexpr decltype(auto) operator[](const size_t index) noexcept
 		{
-			return elems[idx];
+			if (index >= Rows) std::_Xout_of_range("Index must be between 0 and size of matrix's rows - 1!");
+			return elems[index];
 		}
 
-		USE_RESULT constexpr decltype(auto) operator[](const size_t idx) const noexcept
+		USE_RESULT constexpr decltype(auto) operator[](const size_t index) const noexcept
 		{
-			return elems[idx];
+			if (index >= Rows) std::_Xout_of_range("Index must be between 0 and size of matrix's rows - 1!");
+			return elems[index];
+		}
+
+		USE_RESULT constexpr decltype(auto) At(const size_t rows, const size_t columns) const noexcept
+		{
+			if (rows >= Rows || columns >= Columns) std::_Xout_of_range("Index must be within matrix's boundaries!");
+			return (elems[rows])[columns];
+		}
+
+		USE_RESULT constexpr decltype(auto) At(const size_t rows, const size_t columns) noexcept
+		{
+			if (rows >= Rows || columns >= Columns) std::_Xout_of_range("Index must be within matrix's boundaries!");
+			return (elems[rows])[columns];
 		}
 
 		constexpr Matrix& operator=(const Matrix& other) noexcept
@@ -669,9 +684,8 @@ namespace kmaths
 #endif
 			}
 
-			//if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-			//	result[col] = HandleEpsilon<Type>(result[col], 10);
-			
+			if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+				result[col] = HandleFloatingPointError<Type>(result[col]);
 		}
 
 		return result;

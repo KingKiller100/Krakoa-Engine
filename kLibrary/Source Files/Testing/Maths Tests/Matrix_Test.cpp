@@ -1,6 +1,9 @@
 #include "pch.hpp"
 #include "Matrix_Test.hpp"
 
+#include <random>
+
+
 #include "../../Maths/Vectors/PredefinedVectors.hpp"
 #include "../../Maths/Matrices/MatrixMathsHelper.hpp"
 #include "../../Maths/Matrices/PredefinedMatrices.hpp"
@@ -56,7 +59,7 @@ namespace kTest::maths
 
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
-		constexpr auto m12 = Matrix<int, 5, 5>{
+		const auto m12 = Matrix<int, 5, 5>{
 			{ 1,  2, 1, 0, 2 },
 			{ 4, 11, 8, 0, 1 },
 			{ 1,  6, 1, 0, 3 },
@@ -120,7 +123,7 @@ namespace kTest::maths
 	{
 		constexpr auto m1 = Matrix<float, 3, 2>(1.f);
 		constexpr auto m2 = Matrix<float, 3, 2>(2.f);
-		constexpr auto result = m1 + m2;
+		const auto result = m1 + m2;
 
 		for (auto row = 0u; row < result.GetRows(); ++row) {
 			for (auto col = 0u; col < result.GetColumns(); ++col)
@@ -132,12 +135,12 @@ namespace kTest::maths
 
 		return success;
 	}
-
+	
 	bool MatricesTester::SubtractTest()
 	{
 		constexpr auto m1 = Matrix<float, 3, 2>(1.f);
 		constexpr auto m2 = Matrix<float, 3, 2>(2.f);
-		constexpr auto result = m1 - m2;
+		const auto result = m1 - m2;
 
 		for (auto row = 0u; row < result.GetRows(); ++row) {
 			for (auto col = 0u; col < result.GetColumns(); ++col)
@@ -146,7 +149,6 @@ namespace kTest::maths
 			}
 		}
 
-
 		return success;
 	}
 
@@ -154,7 +156,7 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto m1 = Matrix<float, 3, 2>(10.f);
-			constexpr auto result = m1 / 2.f;
+			const auto result = m1 / 2.f;
 
 			for (auto row = 0u; row < result.GetRows(); ++row)
 				for (auto col = 0u; col < result.GetColumns(); ++col)
@@ -162,11 +164,20 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto m1 = Matrix<float, 3, 3>(10.f);
+			const auto m1 = Matrix<float, 3, 3>{
+				{3, 6, 1},
+				{2, 5, 8},
+				{9, 4, 7},
+			};
 			const auto result = Vector3f(1) / m1;
+			const auto x = Round(result.X(), 3);
+			const auto y = Round(result.Y(), 3);
+			const auto z = Round(result.Z(), 3);
 
-			VERIFY(result.X() == 0.1f);
-			VERIFY(result.Y() == 0.1f);
+			
+			VERIFY(x == 0.075f);
+			VERIFY(y == 0.05f);
+			VERIFY(z == 0.075f);
 		}
 
 
@@ -177,7 +188,7 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto m1 = Matrix<float, 3, 2>(10.f);
-			constexpr auto result = m1 * 2.f;
+			const auto result = m1 * 2.f;
 
 			for (auto row = 0u; row < result.GetRows(); ++row)
 				for (auto col = 0u; col < result.GetColumns(); ++col)
@@ -186,19 +197,20 @@ namespace kTest::maths
 
 		{
 			constexpr auto m1 = Matrix<float, 2, 3>(10.f);
-			constexpr auto result = Matrix<float, 3, 3>(5) * m1;
+			const auto result = Matrix<float, 3, 3>(5) * m1;
 
 			for (auto row = 0u; row < result.GetRows(); ++row)
 				for (auto col = 0u; col < result.GetColumns(); ++col)
-					VERIFY(result[row][col] == 150.f);
+					VERIFY(result[row][col] == 100.f);
 		}
 
 		{
 			constexpr auto m1 = Matrix<float, 3, 3>(10.f);
 			const auto result = Vector3f(2.f) * m1;
 
-			VERIFY(result.X() == 20.f);
-			VERIFY(result.Y() == 20.f);
+			VERIFY(result.X() == 60.f);
+			VERIFY(result.Y() == 60.f);
+			VERIFY(result.Z() == 60.f);
 		}
 		
 		return success;

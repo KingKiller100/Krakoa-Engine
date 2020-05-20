@@ -41,16 +41,17 @@ namespace kmaths
 		* \brief
 		*		The explicit constructor creates a quaternion with the given components.
 		*
-		* \param[in] r
-		*		The real component of the rigid body's orientation quaternion.
+		* \param degrees
+		*		Degrees to rotate
 		*
-		* \param i
+		*
+		* \param x
 		*		The first complex component of the rigid body's orientation quaternion.
 		*
-		* \param[in] j
+		* \param[in] y
 		*		The second complex component of the rigid body's orientation quaternion.
 		*
-		* \param[in] k
+		* \param[in] z
 		*		The third complex component of the rigid body's orientation quaternion.
 		*
 		* \note
@@ -63,15 +64,16 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		explicit constexpr Quaternion(const T degrees = 0, const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0)) noexcept
+		explicit constexpr Quaternion(const T degrees = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0)) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			
 			const auto rads = ToRadians(degrees);
 			const auto halfRads = rads * zeroPointFive;
-			const auto sinRads = Sine(halfRads);
-
 
 			w = Cosine(halfRads);
+
+			const auto sinRads = Sine(halfRads);
 			v = Vector3<T>(x * sinRads, y * sinRads, z * sinRads);
 		}
 
@@ -339,8 +341,8 @@ namespace kmaths
 		}
 
 	public:
-		T w;	// Holds the real component of the quaternion.
-		Vector<T, 3> v;	// Holds 3 component vector of complex components of the quaternion.
+		T w = constants::One<T>();	// Holds the real component of the quaternion.
+		Vector<T, 3> v{};	// Holds 3 component vector of complex components of the quaternion.
 	};
 
 

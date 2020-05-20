@@ -2,6 +2,7 @@
 
 #include <imgui/imgui.h>
 
+#include <Rendering/Textures/iTexture2D.hpp>
 #include <Krakoa.hpp>
 
 Renderer2DLayer::Renderer2DLayer() noexcept
@@ -18,9 +19,14 @@ Renderer2DLayer::Renderer2DLayer() noexcept
 void Renderer2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
-	pWinTexture = std::shared_ptr<krakoa::graphics::iTexture2D>(
-		krakoa::graphics::iTexture2D::Create("Assets/Win.png")
-		);
+	pWinTexture.reset(krakoa::graphics::iTexture2D::Create("Assets/Win.png"));
+	pSubTexture.reset(
+		krakoa::graphics::SubTexture2D::Create(
+				pWinTexture,
+			{0, 0},
+		kmaths::Vector2f(pWinTexture->GetDimensions())
+		)
+	);
 }
 
 void Renderer2DLayer::OnDetach()
@@ -59,38 +65,38 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
 
-	{
+	/*{
 		KRK_PROFILE_SCOPE("Renderer coloured triangle");
 
 		for (auto y = 0; y < 5; ++y)
 			for (auto x = -755.f; x < 750.f; ++x)
 				if (kmaths::Modulus<float>(x, (float)y))
-					krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(0.5f, 0.f, -.95f), { 0.25f, 0.25f });
+					krakoa::graphics::Renderer2D::DrawTriangle(nullptr, kmaths::Vector3f(0.5f, 0.f, -.95f), { 0.25f, 0.25f }, 0.f, geometryColour);
 				else
 					krakoa::graphics::Renderer2D::DrawTriangle(pWinTexture, kmaths::Vector3f(-0.5f, 0.f, -.95f), { 0.25f, 0.25f });
-	}
+	}*/
 
 	//krakoa::graphics::Renderer2D::DrawQuad({ 0, 0, 0, 1 }, kmaths::Vector3f(0, 0), kmaths::Vector2f(20.f));
 
-	{
-		KRK_PROFILE_SCOPE("Textured quad");
-		for (auto y = 0; y < 5; ++y) {
-			for (auto x = -750.f; x < 750.f; ++x)
-			{
-				const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
-				krakoa::graphics::Renderer2D::DrawQuad({ 1, 1, 1, 0.25f }, miniSquarePos, kmaths::Vector2f(0.25f));
-			}
-		}
-	}
-	
+	//{
+	//	KRK_PROFILE_SCOPE("Textured quad");
+	//	for (auto y = 0; y < 5; ++y) {
+	//		for (auto x = -750.f; x < 750.f; ++x)
+	//		{
+	//			const auto miniSquarePos = kmaths::Vector3f{ x * .5f, y * .5f, -0.2f };
+	//			krakoa::graphics::Renderer2D::DrawQuad(nullptr, miniSquarePos, kmaths::Vector2f(0.25f));
+	//		}
+	//	}
+	//}
+
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawQuad(geometryColour, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Red, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Green, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f });
-		krakoa::graphics::Renderer2D::DrawQuad(krakoa::graphics::colours::Blue, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f });
+		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f }, 0.f, geometryColour);
+		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Cyan);
+		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Magenta);
+		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Yellow);
 
-		krakoa::graphics::Renderer2D::DrawRotatedQuad(pWinTexture, position, rotation, rotScale, geometryColour, 3.f);
+		krakoa::graphics::Renderer2D::DrawQuad(pSubTexture, position, rotScale, rotation, geometryColour, 3.f);
 	}
 
 	krakoa::graphics::Renderer2D::EndScene();
@@ -101,7 +107,7 @@ void Renderer2DLayer::OnRender()
 	KRK_PROFILE_FUNCTION();
 
 	ImGui::Begin("Geometry Colour Settings");
-	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
+	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData(), ImGuiColorEditFlags_None);
 	ImGui::End();
 
 	RenderZoomControls();

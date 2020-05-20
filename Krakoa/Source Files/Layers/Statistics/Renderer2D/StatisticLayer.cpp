@@ -27,7 +27,7 @@ namespace krakoa
 		ImGui::Begin("Renderer2D Statistics");
 		
 		ImGui::Text("Total Draw Calls: %zu", stats.TotalDrawCalls());
-		ImGui::Text("Total Geometry: %zu", stats.TotalGeometry());
+		ImGui::Text("Total Geometry: %zu", stats.TotalGeometryCount());
 
 		ImGui::NewLine();
 		ImGui::Text("Quad Draw Calls: %zu", stats.quadDrawCallsCount);

@@ -74,10 +74,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI_OVER_4;
-			constexpr auto result = Sine(x);
+			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -88,7 +88,7 @@ namespace kTest::maths
 			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -96,10 +96,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_4;
-			constexpr auto result = Sine(x);
+			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -107,10 +107,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = M_PI;
-			constexpr auto result = Sine(x);
+			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -118,10 +118,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
-			constexpr auto result = Sine(x);
+			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -129,10 +129,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::TAU;
-			constexpr auto result = Sine(x);
+			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -146,10 +146,10 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto x = 0.0;
-			constexpr auto result = Cosine(x);
+			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -157,10 +157,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI_OVER_4;
-			constexpr auto result = Cosine(x);
+			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -168,10 +168,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI_OVER_2;
-			constexpr auto result = Cosine(x, 5000);
+			const auto result = Cosine(x, 5000);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -179,10 +179,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_2;
-			constexpr auto result = Cosine(x, 500);
+			const auto result = Cosine(x, 500);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -190,10 +190,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::PI;
-			constexpr auto result = Cosine(x);
+			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -201,10 +201,10 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = 3 * constants::PI_OVER_4;
-			constexpr auto result = Cosine(x);
+			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
-			constexpr auto resultRounded = Round(result, 15);
+			const auto resultRounded = Round(result, 15);
 			const auto expectedRounded = Round(expected, 15);
 
 			VERIFY(resultRounded == expectedRounded);
@@ -342,7 +342,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto vec = constants::One(Vector2f());
+			const auto vec = constants::One(Vector2f());
 			VERIFY(vec.X() == 1.0 && vec.Y() == 1.0);
 		}
 
@@ -603,11 +603,11 @@ namespace kTest::maths
 
 		{
 			constexpr auto decimal = 10.75;
-			constexpr auto fraction = RealToFraction(decimal);
-			VERIFY_COMPILE_TIME(fraction.isNegative == false && fraction.numerator == 43 && fraction.denominator == 4);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 43 && fraction.denominator == 4);
 
-			constexpr auto f2d = fraction.GetReal<decltype(decimal)>();
-			VERIFY_COMPILE_TIME(f2d == decimal);
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
+			VERIFY(f2d == decimal);
 		}
 
 		{
@@ -621,16 +621,16 @@ namespace kTest::maths
 
 		{
 			constexpr double decimal = constants::PI;
-			constexpr auto fraction = RealToFraction(decimal);
+			const auto fraction = RealToFraction(decimal);
 			VERIFY(fraction.isNegative == false && fraction.numerator == 312689 && fraction.denominator == 99532);
 
-			constexpr auto f2d = Round(fraction.GetReal<decltype(decimal)>(), 3);
+			const auto f2d = Round(fraction.GetReal<decltype(decimal)>(), 3);
 			VERIFY(f2d == Round(decimal, 3));
 		}
 
 		{
 			constexpr double decimal = -160;
-			constexpr auto fraction = RealToFraction(decimal);
+			const auto fraction = RealToFraction(decimal);
 			VERIFY(fraction.isNegative == true && fraction.numerator == 160 && fraction.denominator == 1);
 
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
@@ -639,10 +639,10 @@ namespace kTest::maths
 
 		{
 			constexpr double decimal = 14.568464;
-			constexpr auto fraction = RealToFraction(decimal);
-			VERIFY_COMPILE_TIME(fraction.isNegative == false && fraction.numerator == 910529 && fraction.denominator == 62500);
+			const auto fraction = RealToFraction(decimal);
+			VERIFY(fraction.isNegative == false && fraction.numerator == 910529 && fraction.denominator == 62500);
 
-			constexpr auto f2d = fraction.GetReal<decltype(decimal)>();
+			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
 
@@ -785,7 +785,7 @@ namespace kTest::maths
 		{
 			constexpr auto accuracy = 4;
 			constexpr auto value = 128.4939;
-			constexpr auto rounded = Round(value, accuracy);
+			const auto rounded = Round(value, accuracy);
 
 			const auto expectedVal = 128.4939;
 			VERIFY(rounded == expectedVal);
@@ -813,7 +813,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto power = 5;
+			constexpr Big_Int_Type power = 5;
 			constexpr auto num = 4;
 			constexpr auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::powf(num, power));

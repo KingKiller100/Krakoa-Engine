@@ -4,6 +4,7 @@
 #include "Tester.hpp"
 
 // Maths Tests
+#include "Maths Tests/Random_Test.hpp"
 #include "Maths Tests/Matrix_Test.hpp"
 #include "Maths Tests/Vectors_Test.hpp"
 #include "Maths Tests/Fraction_Test.hpp"
@@ -31,6 +32,7 @@
 #include "../Utility/Timer/kTimer.hpp"
 
 #include <iostream>
+
 
 #ifdef TESTING_ENABLED
 namespace kTest
@@ -69,6 +71,7 @@ namespace kTest
 		Add(new maths::VectorsTester());
 		Add(new maths::MatricesTester());
 		Add(new maths::QuaternionsTester());
+		Add(new maths::RandomTester());
 	}
 
 	void TesterManager::InitializeUtilityTests()
@@ -133,10 +136,10 @@ namespace kTest
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Secs>();
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
-		const unsigned millisecs = CAST(unsigned, 1000.0 * remainder);
+		const unsigned millis = CAST(unsigned, 1000.0 * remainder);
 
 
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}s  {1}ms", secs, millisecs);
+		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}s  {1}ms", secs, millis);
 		klib::kFileSystem::OutputToFile(path.c_str(), finalTimeStr.c_str());
 
 		std::cout << "\n" << finalTimeStr << "\n";

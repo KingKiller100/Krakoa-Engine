@@ -22,6 +22,57 @@
 
 #include <array>
 
+
+
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+#include "../Events System/ApplicationEvent.hpp"
+
 namespace krakoa::graphics
 {
 	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
@@ -246,127 +297,54 @@ namespace krakoa::graphics
 #endif
 	}
 
-	void Renderer2D::DrawTriangle(const Colour colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>&  texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
+		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
 	{
-		DrawTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), scale);
+		DrawTriangle(texture, kmaths::Vector3f(position), scale, degreesOfRotation, tintColour, tilingFactor);
 	}
 
-	void Renderer2D::DrawTriangle(const Colour colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector3f(1.f)*/)
-	{
-		KRK_PROFILE_FUNCTION();
-
-		QueryLimitsMet();
-		AddNewTriangle(position, scale, colour);
-	}
-
-	void Renderer2D::DrawQuad(const Colour colour, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
-	{
-		DrawQuad(colour, kmaths::Vector3f(position.X(), position.Y()), scale);
-	}
-
-	void Renderer2D::DrawQuad(const Colour colour, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
-	{
-		KRK_PROFILE_FUNCTION();
-		QueryLimitsMet();
-		AddNewQuad(position, scale, colour);
-	}
-
-	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position,
-		const kmaths::Vector2f& scale, const Colour tintColour, const float tilingFactor)
-	{
-		KRK_PROFILE_FUNCTION();
-		DrawTriangle(texture, kmaths::Vector3f(position), scale, tintColour, tilingFactor);
-	}
-
-	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position,
-		const kmaths::Vector2f& scale, const Colour tintColour, const float tilingFactor)
+	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
+		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
 		const auto texIdx = UpdateTextureList(texture);
-		AddNewTriangle(position, scale, tintColour, texIdx, 0, tilingFactor);
+		AddNewTriangle(position, scale, degreesOfRotation, tintColour, texIdx, tilingFactor);
 	}
 
-	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
-		const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
+	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
+		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
 	{
-		DrawQuad(texture, kmaths::Vector3f(position.X(), position.Y()), scale, tintColour, tilingFactor);
+		DrawQuad(subTexture, kmaths::Vector3f(position), scale, degreesOfRotation, tintColour, tilingFactor);
 	}
 
-	void Renderer2D::DrawQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/,
-		const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
-	{
-		KRK_PROFILE_FUNCTION();
-
-		QueryLimitsMet();
-		const float texIdx = UpdateTextureList(texture);
-		constexpr auto degrees = 0.f;
-		AddNewQuad(position, scale, tintColour, texIdx, degrees, tilingFactor);
-	}
-
-	void Renderer2D::DrawRotatedTriangle(const Colour colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
-	{
-		DrawRotatedTriangle(colour, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, scale);
-	}
-
-	void Renderer2D::DrawRotatedTriangle(const Colour colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
+	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
+		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		QueryLimitsMet();
-		AddNewTriangle(position, scale, colour);
-	}
-
-	void Renderer2D::DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position,
-		const float degreesOfRotation, const kmaths::Vector2f& scale, const Colour tintColour,
-		const float tilingFactor)
-	{
-		DrawRotatedTriangle(texture, kmaths::Vector3f(position), degreesOfRotation, scale, tintColour, tilingFactor);
-	}
-
-	void Renderer2D::DrawRotatedTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position,
-		const float degreesOfRotation, const kmaths::Vector2f& scale, const Colour tintColour,
-		const float tilingFactor)
-	{
-		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
-		const auto texIdx = UpdateTextureList(texture);
-		AddNewTriangle(position, scale, tintColour, texIdx, degreesOfRotation, degreesOfRotation);
+
+		float texIndex = 0.f;
+		const kmaths::Vector2f* texCoords;
+
+		if (!subTexture)
+		{
+			constexpr kmaths::Vector2f defaultCoords[] = { {0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f} };
+			texCoords = defaultCoords;
+		}
+		else
+		{
+			texIndex = UpdateTextureList(subTexture->GetTexture());
+			texCoords = subTexture->GetTexCoord();
+		}
+
+		AddNewQuad(position, scale, degreesOfRotation, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const Colour colour, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
-	{
-		DrawRotatedQuad(colour, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, scale);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const Colour colour, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/, const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/)
-	{
-		KRK_PROFILE_FUNCTION();
-
-		QueryLimitsMet();
-		constexpr auto texIdx = 0.f;
-		AddNewQuad(position, scale, colour, texIdx, degreesOfRotation);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& position, const float degreesOfRotation /*= 0.f*/,
-		const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
-	{
-		DrawRotatedQuad(texture, kmaths::Vector3f(position.X(), position.Y()), degreesOfRotation, scale, tintColour);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const float degreesOfRotation /*= 0.f*/,
-		const kmaths::Vector2f& scale /*= kmaths::Vector2f(1.f)*/, const Colour tintColour /*= kmaths::Vector4f(1.f)*/, const float tilingFactor)
-	{
-		KRK_PROFILE_FUNCTION();
-
-		QueryLimitsMet();
-		const float texIdx = UpdateTextureList(texture);
-		AddNewQuad(position, scale, tintColour, texIdx, degreesOfRotation, tilingFactor);
-	}
-
-	const Renderer2D::Statistics& Renderer2D::GetStats()
+	const Statistics& Renderer2D::GetStats()
 	{
 		return stats;
 	}
@@ -403,12 +381,13 @@ namespace krakoa::graphics
 	float Renderer2D::UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept
 	{
 		float texIdx = 0.f;
-		auto& textures = pData->textures;
 
 		if (texture == nullptr)
 			return texIdx;
 
-		for (uint32_t i = 1u; i < textures.slotIdx; ++i)
+		auto& textures = pData->textures;
+
+		for (size_t i = 1u; i < textures.slotIdx; ++i)
 		{
 			if (*textures.slots[i] == *texture)
 			{
@@ -428,83 +407,22 @@ namespace krakoa::graphics
 		return texIdx;
 	}
 
-	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour,
-		const float texIdx /*=0.0f*/, const float degreesOfRotation /*=0.0f*/, const float tilingFactor)
+	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
+		const float degreesOfRotation, const Colour colour, const float texIdx, const float tilingFactor)
 	{
-		auto& quad = pData->quad;
-
-		auto& bufferPtr = quad.pVertexBuffer;
-		const auto loops = quad.vertices.GetRows();
-		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
-
-		kmaths::Quaternionf qpq_;
-
-		if (degreesOfRotation != 0)
-			qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
-
-		for (auto i = 0; i < loops; ++bufferPtr, ++i)
-		{
-			kmaths::Vector2f texCoord;
-
-			switch (i) {
-			case 0: // bottom left
-				break;
-			case 1: // bottom right
-				texCoord.X() = 1.f;
-				break;
-			case 2: // top right
-				texCoord = { 1.f, 1.f };
-				break;
-			case 3: // top left
-				texCoord.Y() = 1.f;
-				break;
-			default:
-				break;
-			}
-
-			kmaths::Vector4f worldPosition;
-
-			if (degreesOfRotation == 0)
-			{
-				worldPosition = (position + (quad.vertices[i] * scale3D));
-			}
-			else
-			{
-				const auto scaledVertex = (quad.vertices[i] * scale3D);
-				worldPosition = position + (qpq_ * scaledVertex);
-			}
-
-			bufferPtr->position = worldPosition;
-			bufferPtr->colour = colour.GetRGBA();
-			bufferPtr->texCoord = texCoord;
-			bufferPtr->texIdx = texIdx;
-			bufferPtr->tilingFactor = tilingFactor;
-		}
-
-		quad.IncrementIndexCount();
-
-#if ENABLE_STATISTICS
-		stats.quadCount++;
-#endif
-
-	}
-
-	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const Colour colour,
-	                                const float texIdx, const float degreesOfRotation, const float tilingFactor)
-	{
-		//constexpr auto qp = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1);
-		//constexpr auto q_ = kmaths::Quaternionf(1, 0, 0, 0);
-
 		auto& triangle = pData->triangle;
 
 		auto& bufferPtr = triangle.pVertexBuffer;
 		const auto loops = triangle.vertices.GetRows();
 		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
-		
-		kmaths::Quaternionf qpq_;
 
+		kmaths::Quaternionf qpq_;
 		if (degreesOfRotation != 0)
-			qpq_ = kmaths::Quaternionf(degreesOfRotation, 0, 0, 1) * kmaths::Quaternionf(1, 0, 0, 0);
+		{
+			const kmaths::Quaternionf qp(degreesOfRotation, 0, 0, 1);
+			constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f);
+			qpq_ = qp * q_;
+		}
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
@@ -543,9 +461,55 @@ namespace krakoa::graphics
 		}
 
 		triangle.IncrementIndexCount();
-		
+
 #if ENABLE_STATISTICS
 		stats.triangleCount++;
+#endif
+	}
+
+	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float degreesOfRotation,
+		const Colour colour, float texIndex, const kmaths::Vector2f*& texCoords, const float tilingFactor)
+	{
+		auto& quad = pData->quad;
+		auto& bufferPtr = quad.pVertexBuffer;
+
+		const auto loops = quad.vertices.GetRows();
+		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
+
+		kmaths::Quaternionf qpq_;
+		if (degreesOfRotation != 0)
+		{
+			const kmaths::Quaternionf qp(degreesOfRotation, 0, 0, 1);
+			constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f);
+			qpq_ = qp * q_;
+		}
+
+		for (auto i = 0; i < loops; ++bufferPtr, ++i)
+		{
+
+			kmaths::Vector4f worldPosition;
+
+			if (degreesOfRotation == 0)
+			{
+				worldPosition = (position + (quad.vertices[i] * scale3D));
+			}
+			else
+			{
+				const auto scaledVertex = (quad.vertices[i] * scale3D);
+				worldPosition = position + (qpq_ * scaledVertex);
+			}
+
+			bufferPtr->position = worldPosition;
+			bufferPtr->colour = colour.GetRGBA();
+			bufferPtr->texCoord = texCoords[i];
+			bufferPtr->texIdx = texIndex;
+			bufferPtr->tilingFactor = tilingFactor;
+		}
+
+		quad.IncrementIndexCount();
+
+#if ENABLE_STATISTICS
+		stats.quadCount++;
 #endif
 	}
 }

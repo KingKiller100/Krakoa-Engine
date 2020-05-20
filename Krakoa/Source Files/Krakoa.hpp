@@ -31,6 +31,7 @@
 // Textures
 #include "Rendering/Textures/iTexture.hpp"
 #include "Rendering/Textures/iTexture2D.hpp"
+#include "Rendering/Textures/SubTexture2d.hpp"
 
 // Rendering Resources
 #include "Rendering/ShaderLibrary.hpp"

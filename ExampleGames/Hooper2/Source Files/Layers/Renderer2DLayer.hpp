@@ -2,7 +2,7 @@
 
 #include <Layers/LayerBase.hpp>
 #include <Rendering/Rendering Resources/iVertexArray.hpp>
-#include <Rendering/Textures/iTexture2D.hpp>
+#include <Rendering/Textures/SubTexture2d.hpp>
 #include <Camera/OrthographicCameraController.hpp>
 
 #include <Maths/Vectors/Vector4.hpp>
@@ -28,6 +28,7 @@ private:
 
 private:
 	std::shared_ptr<krakoa::graphics::iTexture2D> pWinTexture;
+	std::unique_ptr<krakoa::graphics::SubTexture2D> pSubTexture;
 
 	krakoa::OrthographicCameraController cameraController;
 

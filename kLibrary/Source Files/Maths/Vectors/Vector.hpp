@@ -248,11 +248,14 @@ namespace kmaths
 
 		USE_RESULT constexpr Type& operator[](const size_t index)
 		{
+			if (index >= N) std::_Xout_of_range("Index must be between 0 and size of vector - 1!");
 			return dimensions[index];
 		}
 
 		USE_RESULT constexpr const Type& operator[](const size_t index) const
 		{
+			if (index >= N) std::_Xout_of_range("Index must be between 0 and size of vector - 1!");
+			
 			return dimensions[index];
 		}
 

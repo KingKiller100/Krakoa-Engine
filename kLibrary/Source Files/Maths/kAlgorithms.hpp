@@ -376,7 +376,7 @@ namespace kmaths
 		if (Fraction::Numerator_Value_Type(x) == x)
 			return { Fraction::Numerator_Value_Type(x), 1, isNegative, false };
 
-		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_DP_Precision<T>));
+		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_Decimal_Precision_V<T>));
 
 		const T x0 = x;
 		size_t a(0);
@@ -476,17 +476,19 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
 	{
+		using namespace constants;
+		
 		const auto isNegative = IsNegative(value);
 		if (isNegative)
 			value = -value;
 
-		const auto dpShifts = PowerOfImpl<long double>(constants::ZeroPointOne<T>(), (decimalPoints + 1)) * 5;
-		const auto accuracy = PowerOfImpl<size_t>(10, decimalPoints);
+		const auto accuracy = PowerOfImpl<AccuracyType>(CAST(AccuracyType, 10), decimalPoints);
+		const auto accuracyInverse = constants::OneOver<AccuracyType>(accuracy);
+		const auto dpShifts = constants::ZeroPointFive<AccuracyType>() * accuracyInverse;
 
-		const auto valuePlusDpsByAcc = (value + dpShifts) * accuracy;
-		const auto accuracyInverse = constants::OneOver<T>(accuracy);
-		const auto significantFigures = Floor(valuePlusDpsByAcc);
-		const T roundedValue = CAST(T, significantFigures * accuracyInverse);
+		const auto valuePlusDpsByAcc = (CAST(constants::AccuracyType, value) + dpShifts) * accuracy;
+		const auto sigFigs = Floor(valuePlusDpsByAcc); // significant figures
+		const T roundedValue = CAST(T, sigFigs * accuracyInverse);
 		return isNegative ? -roundedValue : roundedValue;
 	}
 

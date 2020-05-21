@@ -35,7 +35,8 @@ namespace kmaths
 
 		using Type = T;
 		inline static constexpr Length_Type Length = 4;
-		inline static constexpr size_t Bytes = Length * sizeof(T);
+		inline static constexpr size_t TypeSize = sizeof(T);
+		inline static constexpr size_t Bytes = Length * TypeSize;
 
 		/**
 		* \brief
@@ -107,7 +108,7 @@ namespace kmaths
 
 			// Check for zero length quaternion, and use the no-rotation
 			// quaternion in that case.
-			if (magSQ <= std::numeric_limits<T>::epsilon())
+			if (magSQ <= constants::Epsilon<T>())
 			{
 				w = constants::One<T>();
 				return;
@@ -180,12 +181,12 @@ namespace kmaths
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 
-			const T cYaw = cos(yaw * zeroPointFive);
-			const T sYaw = sin(yaw * zeroPointFive);
-			const T cRoll = cos(roll * zeroPointFive);
-			const T sRoll = sin(roll * zeroPointFive);
-			const T cPitch = cos(pitch * zeroPointFive);
-			const T sPitch = sin(pitch * zeroPointFive);
+			const T cYaw   = Cosine(yaw * zeroPointFive);
+			const T sYaw   = Sine(yaw * zeroPointFive);
+			const T cRoll  = Cosine(roll * zeroPointFive);
+			const T sRoll  = Sine(roll * zeroPointFive);
+			const T cPitch = Cosine(pitch * zeroPointFive);
+			const T sPitch = Sine(pitch * zeroPointFive);
 
 			Quaternion q;
 			q.w = cYaw * cRoll * cPitch + sYaw * sRoll * sPitch;
@@ -204,8 +205,8 @@ namespace kmaths
 		USE_RESULT constexpr void Rotate(const T degrees, const Vector<Type, 3>& n) noexcept
 		{
 			const auto halfA = ToRadians(degrees) * constants::ZeroPointFive<T>();
-			const auto c = cos(halfA);
-			const auto s = sin(halfA);
+			const auto c = Cosine(halfA);
+			const auto s = Sine(halfA);
 
 			Vector3<T> norm = n;
 
@@ -227,30 +228,31 @@ namespace kmaths
 			constexpr auto one = constants::One<T>();
 			constexpr auto two = CAST(T, 2);
 
-			const auto i = v[0];
-			const auto j = v[1];
-			const auto k = v[2];
+			const auto x = v[0];
+			const auto y = v[1];
+			const auto z = v[2];
 
 			TransformMatrix<T> mat;
-			mat[0][0] = one - two * (j * j - k * k);
-			mat[0][1] = two * (i * j - w * k);
-			mat[0][2] = two * (i * k + w * j);
+			mat[0][0] = one - two * (y * y - z * z);
+			mat[0][1] = two * (x * y - w * z);
+			mat[0][2] = two * (x * z + w * y);
 			mat[0][3] = 0;
 
-			mat[1][0] = two * (i * j + w * k);
-			mat[1][1] = one - two * (i * i - k * k);
-			mat[1][2] = two * (j * k - w * i);
+			mat[1][0] = two * (x * y + w * z);
+			mat[1][1] = one - two * (x * x - z * z);
+			mat[1][2] = two * (y * z - w * x);
 			mat[1][3] = 0;
 
-			mat[2][0] = two * (i * k - w * j);
-			mat[2][1] = two * (j * k + w * i);
-			mat[2][2] = one - two * (i * i - j * j);
+			mat[2][0] = two * (x * z - w * y);
+			mat[2][1] = two * (y * z + w * x);
+			mat[2][2] = one - two * (x * x - y * y);
 			mat[2][3] = 0;
 
 			mat[3][0] = position[0];
 			mat[3][1] = position[1];
 			mat[3][2] = position[2];
 			mat[3][3] = one;
+
 			return mat;
 		}
 

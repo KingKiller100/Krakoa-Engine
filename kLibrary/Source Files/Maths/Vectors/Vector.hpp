@@ -63,6 +63,9 @@ namespace kmaths
 				dimensions[i] = values[i];
 		}
 
+		~Vector() noexcept
+			= default;
+
 		USE_RESULT constexpr const Type& X() const noexcept
 		{
 			return dimensions[0];
@@ -438,6 +441,20 @@ namespace kmaths
 			return !(*this == v);
 		}
 
+		// bool operator == returns true if both Vector values are equal
+		template<typename U>
+		USE_RESULT constexpr bool operator==(const U scalar) const
+		{
+			return (x == scalar) && (y == scalar);
+		}
+
+		// bool operator == returns true if both Vector values are equal
+		template<typename U>
+		USE_RESULT constexpr bool operator!=(const U scalar) const
+		{
+			return !(*this == scalar);
+		}
+
 		template<typename U, Length_Type C>
 		constexpr Vector& operator=(const Vector<U, C>& other) noexcept // Copy
 		{
@@ -522,6 +539,12 @@ namespace kmaths
 	}
 
 	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator==(const Vector<T, C>& lhs, const U& rhs) noexcept
+	{
+		return lhs.Magnitude() == rhs;
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator>(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return rhs > lhs.Magnitude();
@@ -543,6 +566,12 @@ namespace kmaths
 	USE_RESULT constexpr bool operator<=(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return rhs <= lhs.Magnitude();
+	}
+
+	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	USE_RESULT constexpr bool operator==(const U& rhs, const Vector<T, C>& lhs) noexcept
+	{
+		return rhs == lhs.Magnitude();
 	}
 
 }

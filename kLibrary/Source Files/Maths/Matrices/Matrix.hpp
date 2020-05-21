@@ -24,11 +24,12 @@ namespace kmaths
 		using Column_Type = Vector<T, Rows>;
 		using Row_Type = Vector<T, Columns>;
 		inline static constexpr Length_Type Length = (Rows * Columns);
-		inline static constexpr size_t Bytes = Length * sizeof(T);
+		inline static constexpr size_t TypeSize = sizeof(T);
+		inline static constexpr size_t Bytes = Length * TypeSize;
 
 
 		constexpr Matrix() noexcept
-		{ }
+			= default;
 
 		constexpr Matrix(const Matrix& other) noexcept
 		{
@@ -351,7 +352,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			return REINTERPRET(Type*, this);
+			return elems[0].GetPointerToData();
 		}
 
 		// Operators

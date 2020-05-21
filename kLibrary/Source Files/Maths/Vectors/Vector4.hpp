@@ -31,7 +31,7 @@ namespace kmaths
 		constexpr Vector(const std::initializer_list<T> values) noexcept
 		{
 			const auto first_iter = values.begin();
-			const auto loops = values.size() < Length ? values.size() : Length;
+			const auto loops = values.size() < 4 ? values.size() : 4;
 			for (size_t i = 0; i < loops; ++i)
 			{
 				operator[](i) = first_iter[i];
@@ -49,6 +49,9 @@ namespace kmaths
 		explicit constexpr Vector(const Type values[4]) noexcept
 			: x(values[0]), y(values[1]), z(values[2]), w(values[3])
 		{}
+
+		~Vector() noexcept
+			= default;
 
 		GETTER_CONSTEXPR(Type, X, x);
 		CONST_GETTER_CONSTEXPR(Type, X, x);
@@ -125,7 +128,7 @@ namespace kmaths
 		USE_RESULT constexpr T Distance(const Vector<U, C>& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
-			return distanceVec.Magnitude();
+			return CAST(Type, distanceVec.Magnitude());
 		}
 
 		// Returns vector times by -1 - does not reassign values (except w element)
@@ -141,8 +144,8 @@ namespace kmaths
 			else
 				return Vector(
 					constants::OneOver<Type>(x),
-					constants::OneOver<Type>(y), 
-					constants::OneOver<Type>(z), 
+					constants::OneOver<Type>(y),
+					constants::OneOver<Type>(z),
 					constants::OneOver<Type>(w)
 				);
 		}
@@ -160,9 +163,9 @@ namespace kmaths
 		}
 
 		// Compilers earlier than C++20 features will not work in constexpr
-		USE_RESULT constexpr const Type* GetPointerToData() const
+		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			return REINTERPRET(const Type*, this);
+			return REINTERPRET(Type*, (void *)this);
 		}
 
 		USE_RESULT constexpr auto GetLength() const noexcept
@@ -357,7 +360,7 @@ namespace kmaths
 		{
 			constexpr size_t size = C < Length ? C : Length;
 			for (size_t i = 0; i < size; ++i)
-				operator[](i) = other[i];
+				operator[](i) = CAST(Type, other[i]);
 			return *this;
 		}
 
@@ -366,15 +369,9 @@ namespace kmaths
 		{
 			constexpr size_t size = C < Length ? C : Length;
 			for (size_t i = 0; i < size; ++i)
-				operator[](i) = other[i];
+				operator[](i) = CAST(Type, other[i]);
 			return *this;
 		}
-
-		template<typename Type, Length_Type C>
-		friend constexpr Vector<Type, C> operator*(const Vector<Type, 4>& v, const Matrix<Type, 4, C>& m) noexcept;
-
-		template<typename Type, Length_Type C>
-		friend constexpr Vector<Type, C> operator/(const Vector<Type, 4>& v, const Matrix<Type, 4, C>& m) noexcept;
 
 	public:
 		Type x = Type();

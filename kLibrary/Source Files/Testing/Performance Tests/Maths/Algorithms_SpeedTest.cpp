@@ -31,7 +31,7 @@ namespace kTest::performance::maths
 		TanTest();
 	}
 
-	constexpr auto maxIter = int(2e4);
+	constexpr auto maxIter = int(1e3);
 
 	void AlgorithmsSpeedTest::PowerOfFractionsTest()
 	{

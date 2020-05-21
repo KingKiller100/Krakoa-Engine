@@ -20,7 +20,12 @@ namespace kTest::maths
 
 	void VectorsTester::Test()
 	{
-		VERIFY(VectorTest() == true);
+		VERIFY_MULTI_INIT();
+		VERIFY_MULTI(VectorTest);
+		VERIFY_MULTI(Vector2Test);
+		VERIFY_MULTI(Vector3Test);
+		VERIFY_MULTI(Vector4Test);
+		VERIFY_MULTI_END();
 	}
 
 	bool VectorsTester::VectorTest()
@@ -63,7 +68,7 @@ namespace kTest::maths
 		VERIFY(greaterThan == false);
 		const bool lessThan = vec2d < 14;
 		VERIFY(lessThan == true);
-		
+
 		// Currently constexpr supported functions
 		constexpr auto vec2s = Vector<int, 2>(5, 12);
 		constexpr auto vec2s2 = Vector<int, 2>(2);
@@ -150,8 +155,8 @@ namespace kTest::maths
 
 	bool VectorsTester::Vector2Test()
 	{
-		constexpr auto vec2f = Vector<float, 2>(4.f);
-		constexpr auto vec2d = Vector2d{ 5, 12 };
+		constexpr auto vec2f = Vector2f(4.f);
+		constexpr auto vec2d = Vector2d(5, 12);
 
 		auto res1 = (vec2f + vec2d);
 		VERIFY(res1.x == 9.0 &&  res1.y == 16.0);
@@ -162,28 +167,59 @@ namespace kTest::maths
 		res1 = vec2f / vec2d;
 		VERIFY(res1.x == 0.8f &&  res1.y == 1.f / 3.f);
 
-		const auto distance = vec2f.Distance(vec2d);
+		constexpr auto distance = vec2f.Distance(vec2d);
 		VERIFY(distance == 8.06225777f);
-		const auto normal = vec2f.Normalize();
+		constexpr auto normal = vec2f.Normalize();
 		VERIFY(normal.x == 0.707106769f && normal.y == 0.707106769f);
 
-		const auto x = vec2f.x;
+		constexpr auto x = vec2f.x;
 		VERIFY(x == 4.f);
-		const auto y = vec2f.y;
+		constexpr auto y = vec2f.y;
 		VERIFY(y == 4.f);
 		//const auto z = vec2f.z; // Can't compile since z doesn't exist in 2 dimensions
 		//const auto w = vec2f.w; // Can't compile since w doesn't exist in 2 dimensions
-		
+
+		constexpr Vector2s data(1, 2);
+		const auto ptr = data.GetPointerToData();
+		const auto value = ptr[0];
+		VERIFY(value == data.x);
+
+		constexpr auto first = vec2d.At(0);
+		VERIFY_COMPILE_TIME(first == 5.0);
+
+		constexpr auto perp = vec2d.Perpendicular();
+		VERIFY_COMPILE_TIME(perp.x == -12.0);
+		VERIFY_COMPILE_TIME(perp.y == 5.0);
+
+
 		return success;
 	}
 
 	bool VectorsTester::Vector3Test()
 	{
+		constexpr Vector3d data(5, 6, 7);
+		const auto ptr = data.GetPointerToData();
+		const auto value = ptr[1];
+		VERIFY(value == data.y);
+
+		constexpr Vector3d d2(1, 2, 3);
+		constexpr auto cross = d2.CrossProduct(data);
+		VERIFY_COMPILE_TIME(cross.x == -4)
+		VERIFY_COMPILE_TIME(cross.y == 8)
+		VERIFY_COMPILE_TIME(cross.z == -4)
+
 		return success;
 	}
 
 	bool VectorsTester::Vector4Test()
 	{
+		constexpr Vector4d vector4 (2, 2, 2, 2);
+		const auto ptr = vector4.GetPointerToData();
+		const auto value = ptr[3];
+		VERIFY(value == vector4.w);
+
+		VERIFY_COMPILE_TIME(vector4 == 4);		
+		
 		return success;
 	}
 }

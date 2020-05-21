@@ -22,6 +22,15 @@ namespace kmaths
 		return v;
 	}
 
+	template<typename T, unsigned short N>
+	USE_RESULT decltype(auto) To_Array(const Vector<T, N>& vec) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		T arr[N]{ };
+		for (size_t i = 0; i < N; ++i)
+			arr[i] = vec[i];
+		return arr;
+	}
+
 	template<typename T>
 	USE_RESULT constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{

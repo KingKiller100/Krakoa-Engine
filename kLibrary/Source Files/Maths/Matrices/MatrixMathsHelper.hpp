@@ -22,6 +22,18 @@ namespace kmaths
 		return m;
 	}
 
+	template<typename T, unsigned short Rows, unsigned short Columns>
+	USE_RESULT decltype(auto) To_Array(const Matrix<T, Rows, Columns> mat) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		T arr[Rows * Columns];
+
+		for (Length_Type row = 0; row < Rows; ++row)
+			for (Length_Type col = 0; col < Columns; ++col)
+				arr[(row * Columns) + col] = mat[row][col];
+		return arr;
+	}
+	
+
 
 	enum class ZAxisDirection : uint8_t
 	{

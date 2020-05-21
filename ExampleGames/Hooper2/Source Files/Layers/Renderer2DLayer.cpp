@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 
 #include <Rendering/Textures/iTexture2D.hpp>
+#include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
 
 Renderer2DLayer::Renderer2DLayer() noexcept
@@ -105,7 +106,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 void Renderer2DLayer::OnRender()
 {
 	KRK_PROFILE_FUNCTION();
-
+	
 	ImGui::Begin("Geometry Colour Settings");
 	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData(), ImGuiColorEditFlags_None);
 	ImGui::End();

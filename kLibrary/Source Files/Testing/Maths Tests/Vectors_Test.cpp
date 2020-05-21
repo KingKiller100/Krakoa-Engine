@@ -147,5 +147,44 @@ namespace kTest::maths
 		
 		return success;
 	}
+
+	bool VectorsTester::Vector2Test()
+	{
+		constexpr auto vec2f = Vector<float, 2>(4.f);
+		constexpr auto vec2d = Vector2d{ 5, 12 };
+
+		auto res1 = (vec2f + vec2d);
+		VERIFY(res1.x == 9.0 &&  res1.y == 16.0);
+		res1 = vec2f - vec2d;
+		VERIFY(res1.x == -1.0 &&  res1.y == -8.0);
+		res1 = vec2f * vec2d;
+		VERIFY(res1.x == 20 && res1.y == 48);
+		res1 = vec2f / vec2d;
+		VERIFY(res1.x == 0.8f &&  res1.y == 1.f / 3.f);
+
+		const auto distance = vec2f.Distance(vec2d);
+		VERIFY(distance == 8.06225777f);
+		const auto normal = vec2f.Normalize();
+		VERIFY(normal.x == 0.707106769f && normal.y == 0.707106769f);
+
+		const auto x = vec2f.x;
+		VERIFY(x == 4.f);
+		const auto y = vec2f.y;
+		VERIFY(y == 4.f);
+		//const auto z = vec2f.z; // Can't compile since z doesn't exist in 2 dimensions
+		//const auto w = vec2f.w; // Can't compile since w doesn't exist in 2 dimensions
+		
+		return success;
+	}
+
+	bool VectorsTester::Vector3Test()
+	{
+		return success;
+	}
+
+	bool VectorsTester::Vector4Test()
+	{
+		return success;
+	}
 }
 #endif

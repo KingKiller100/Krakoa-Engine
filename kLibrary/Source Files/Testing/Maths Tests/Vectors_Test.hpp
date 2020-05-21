@@ -5,7 +5,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	class VectorsTester : public Tester
+	class VectorsTester final : public Tester
 	{
 	public:
 		VectorsTester();
@@ -15,6 +15,9 @@ namespace kTest::maths
 		void Test() override;
 		
 		bool VectorTest();
+		bool Vector2Test();
+		bool Vector3Test();
+		bool Vector4Test();
 	};
 }
 #endif

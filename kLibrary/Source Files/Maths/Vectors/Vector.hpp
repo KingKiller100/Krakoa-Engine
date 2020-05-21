@@ -211,7 +211,7 @@ namespace kmaths
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
 			for (auto val : dimensions)
-				if (val != CAST(Type, 0))
+				if (val != T())
 					return false;
 			return true;
 		}

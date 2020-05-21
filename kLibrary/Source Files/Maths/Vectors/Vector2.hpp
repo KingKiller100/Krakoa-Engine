@@ -142,14 +142,14 @@ namespace kmaths
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
-			return (x || y);
+			constexpr auto zero = constants::Zero<Type>();
+			return (x == zero && y == zero);
 		}
 
 		// Compilers earlier than C++20 features will not work in constexpr
-		USE_RESULT constexpr Type* GetPointerToData() const
+		USE_RESULT constexpr const Type* GetPointerToData() const
 		{
-			Type& first = (Type)x;
-			return std::addressof<Type>(first);
+			return REINTERPRET(const Type*, this);
 		}
 
 		USE_RESULT constexpr auto GetLength() const noexcept
@@ -195,7 +195,7 @@ namespace kmaths
 
 			Type temp[Length]{ Type() };
 			for (size_t i = 0; i < size; ++i)
-				temp[i] = operator[](i) + other[i];
+				temp[i] = CAST(Type, operator[](i) + other[i]);
 			return Vector(temp);
 		}
 
@@ -206,7 +206,7 @@ namespace kmaths
 
 			Type temp[Length]{ Type() };
 			for (size_t i = 0; i < size; ++i)
-				temp[i] = operator[](i) - other[i];
+				temp[i] = CAST(Type, operator[](i) - other[i]);
 			return Vector(temp);
 		}
 
@@ -217,7 +217,7 @@ namespace kmaths
 
 			Type temp[Length]{ Type() };
 			for (size_t i = 0; i < size; ++i)
-				temp[i] = operator[](i) * other[i];
+				temp[i] = CAST(Type, operator[](i) * other[i]);
 			return Vector(temp);
 		}
 
@@ -228,7 +228,7 @@ namespace kmaths
 
 			Type temp[Length]{ Type() };
 			for (size_t i = 0; i < size; ++i)
-				temp[i] = operator[](i) / other[i];
+				temp[i] = CAST(Type, operator[](i) / other[i]);
 			return Vector(temp);
 		}
 
@@ -236,8 +236,8 @@ namespace kmaths
 		USE_RESULT constexpr Vector operator*(const U scalar) const noexcept
 		{
 			return Vector(
-				x * scalar,
-				y * scalar
+				CAST(Type, x * scalar),
+				CAST(Type, y * scalar)
 			);
 		}
 
@@ -245,8 +245,8 @@ namespace kmaths
 		USE_RESULT constexpr Vector operator/(const U scalar) const noexcept
 		{
 			return Vector(
-				x / scalar,
-				y / scalar
+				CAST(Type, x / scalar),
+				CAST(Type, y / scalar)
 			);
 		}
 

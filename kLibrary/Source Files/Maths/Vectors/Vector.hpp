@@ -43,7 +43,7 @@ namespace kmaths
 				dimensions[i] = first_iter[i];
 		}
 
-		explicit constexpr Vector(Type _x, Type _y, Type _z = static_cast<Type>(0), Type _w = static_cast<Type>(0)) noexcept
+		explicit constexpr Vector(Type _x, Type _y, Type _z = Type(), Type _w = Type()) noexcept
 		{
 			dimensions[0] = _x;
 			dimensions[1] = _y;
@@ -119,7 +119,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Type MagnitudeSQ() const noexcept
 		{
-			auto mag = static_cast<Type>(0);
+			auto mag = Type();
 			for (auto val : dimensions)
 				mag += val * val;
 			return mag;
@@ -129,7 +129,7 @@ namespace kmaths
 		USE_RESULT constexpr T DotProduct(const Vector<U, C>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
-			auto dp = static_cast<Type>(0);
+			auto dp = Type();
 			for (auto i = 0; i < size; ++i)
 				dp += dimensions[i] * static_cast<Type>(other[i]);
 			return dp;
@@ -143,12 +143,12 @@ namespace kmaths
 
 			if (magSQ <= epsilon)
 				return Vector();
-			else if (magSQ == static_cast<Type>(1))
+			else if (magSQ == constants::One<Type>())
 				return *this;
 
 			const auto mag = constants::OneOver<Type>(Sqrt<T>(magSQ));
 
-			T temp[N]{ 0 };
+			Type temp[N]{ };
 			for (auto i = 0; i < N; ++i)
 				temp[i] = dimensions[i] * mag;
 			return Vector(temp);
@@ -164,7 +164,7 @@ namespace kmaths
 		}
 
 		// Reassigns values to be positives
-		constexpr void ToPositives() noexcept
+		constexpr void Abs() noexcept
 		{
 			for (auto& d : dimensions)
 				if (d < 0)
@@ -180,9 +180,9 @@ namespace kmaths
 		}
 
 		// Returns vector times by -1 - does not reassign values (except w element)
-		USE_RESULT constexpr Vector ReverseVector() const noexcept
+		USE_RESULT constexpr Vector Reverse() const noexcept
 		{
-			T copy[N]{ 0 };
+			Type copy[N]{ Type() };
 			for (auto i = 0; i < N; ++i)
 				copy[i] = dimensions[i] * -1;
 			return Vector(copy);
@@ -190,13 +190,15 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector Inverse() const noexcept
 		{
-			if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+			if _CONSTEXPR_IF(std::is_integral_v<Type>)
 				return *this;
-
-			T copy[N]{ 0 };
-			for (auto i = 0; i < N; ++i)
-				copy[i] = (constants::One<T>() / dimensions[i]);
-			return Vector(copy);
+			else
+			{
+				T copy[N]{ T() };
+				for (auto i = 0; i < N; ++i)
+					copy[i] = (constants::One<T>() / dimensions[i]);
+				return Vector(copy);
+			}
 		}
 
 		// Sets all values of the vector to zero
@@ -247,22 +249,29 @@ namespace kmaths
 			);
 		}
 
+		// Gives a copy
+		USE_RESULT constexpr Type At(const size_t index) const noexcept
+		{
+			return operator[](index);
+		}
+
+		// Gives a reference
 		USE_RESULT constexpr Type& operator[](const size_t index)
 		{
 			if (index >= N) std::_Xout_of_range("Index must be between 0 and size of vector - 1!");
 			return dimensions[index];
 		}
 
+		// Gives a const reference
 		USE_RESULT constexpr const Type& operator[](const size_t index) const
 		{
 			if (index >= N) std::_Xout_of_range("Index must be between 0 and size of vector - 1!");
-			
 			return dimensions[index];
 		}
 
 		USE_RESULT constexpr Vector operator-() const noexcept
 		{
-			T copy[N]{ 0 };
+			T copy[N]{ Type() };
 			for (size_t i = 0; i < N; ++i)
 				copy[i] = dimensions[i] * -1;
 			return Vector(copy);
@@ -271,7 +280,7 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator+(const Vector<U, C>& other) const noexcept
 		{
-			T copy[N]{ 0 };
+			T copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
 				copy[i] = (other.GetLength() > i)
@@ -284,7 +293,7 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
-			T copy[N]{ 0 };
+			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
 				copy[i] = (other.GetLength() > i)
@@ -297,7 +306,7 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
-			T copy[N]{ 0 };
+			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
 				copy[i] = (other.GetLength() > i)
@@ -310,7 +319,7 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator/(const Vector<U, C>& other) const noexcept
 		{
-			T copy[N]{ 0 };
+			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
 				copy[i] = (other.GetLength() > i)
@@ -323,7 +332,7 @@ namespace kmaths
 		template<typename U, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Vector operator*(const U scalar) const noexcept
 		{
-			T copy[N]{ 0 };
+			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 				copy[i] = dimensions[i] * CAST(Type, scalar);
 			return Vector(copy);
@@ -332,7 +341,7 @@ namespace kmaths
 		template<typename U, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Vector operator/(const U scalar) const noexcept
 		{
-			T copy[N]{ 0 };
+			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 				copy[i] = dimensions[i] / CAST(Type, scalar);
 			return Vector(copy);
@@ -403,7 +412,7 @@ namespace kmaths
 		{
 			return MagnitudeSQ() >= other.MagnitudeSQ();
 		}
-		
+
 
 		// bool operator == returns true if both Vector values are equal
 		USE_RESULT constexpr bool operator==(const Vector& v) const
@@ -465,13 +474,13 @@ namespace kmaths
 		template<typename U = Type>
 		std::enable_if_t < N < 4, U&> W() noexcept = delete;
 
-		template<typename U = T>
+		template<typename U = Type>
 		USE_RESULT constexpr inline std::enable_if_t<std::is_unsigned_v<U>
 			|| N != 2,
 			Vector> Perpendicular() const
 			= delete;
 
-		template<typename X, typename U = T>
+		template<typename X, typename U = Type>
 		USE_RESULT constexpr std::enable_if_t<std::is_unsigned_v<U>
 			|| std::is_unsigned_v<X>
 			|| N != 3,
@@ -485,7 +494,7 @@ namespace kmaths
 		friend constexpr Vector<Type, C> operator/(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
 
 	private:
-		T dimensions[N]{};
+		Type dimensions[N]{};
 	};
 
 	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
@@ -535,5 +544,5 @@ namespace kmaths
 	{
 		return rhs <= lhs.Magnitude();
 	}
-	
+
 }

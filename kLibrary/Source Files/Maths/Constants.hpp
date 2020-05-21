@@ -52,6 +52,14 @@ namespace kmaths::constants
 	}
 
 	template<class T>
+	USE_RESULT constexpr bool ApproximatelyEpsilon(T&& value) noexcept
+	{
+		constexpr auto epsilon = Epsilon<T>();
+
+		return (value >= -epsilon) && (value <= epsilon);
+	}
+
+	template<class T>
 	USE_RESULT constexpr T Zero() noexcept
 	{
 		return T();
@@ -67,6 +75,17 @@ namespace kmaths::constants
 	USE_RESULT constexpr T One(T&&) noexcept
 	{
 		return One<ONLY_TYPE(T)>();
+	}
+
+	template<class T>
+	USE_RESULT constexpr bool ApproximatelyOne(T&& value) noexcept
+	{
+		constexpr auto epsilon = Epsilon<T>();
+		constexpr auto one = One<T>();
+		constexpr auto lb = one - epsilon;
+		constexpr auto ub = one + epsilon;
+
+		return (value >= lb) && (value <= ub);
 	}
 
 	template<class T>

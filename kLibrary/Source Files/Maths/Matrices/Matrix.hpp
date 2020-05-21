@@ -351,8 +351,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			auto& first = (Type&)elems[0][0];
-			return std::addressof(first);
+			return REINTERPRET(Type*, this);
 		}
 
 		// Operators

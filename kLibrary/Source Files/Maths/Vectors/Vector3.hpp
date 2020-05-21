@@ -18,27 +18,23 @@ namespace kmaths
 
 		template< typename U, Length_Type C>
 		constexpr Vector(const Vector<U, C>& other) noexcept
-			: x(other[0]), y(other[1])
 		{
-			if (other.GetLength() >= 3)
-				(z = other[2]);
+			*this = other;
 		}
 
 		template< typename U, Length_Type C>
 		constexpr Vector(Vector&& other) noexcept
-			: x(std::move(other[0])), y(std::move(other[1]))
 		{
-			if (other.GetLength() >= 3)
-				(z = std::move(other[2]));
+			*this = std::move(other);
 		}
 
 		constexpr Vector(const std::initializer_list<T> values) noexcept
 		{
 			const auto first_iter = values.begin();
-			const auto loops = values.size() < 3 ? values.size() : 3;
-			for (size_t i = 0; i < Length; ++i)
+			const auto loops = values.size() < Length ? values.size() : Length;
+			for (size_t i = 0; i < loops; ++i)
 			{
-				operator[](i) = *(values.begin() + i);
+				operator[](i) = first_iter[i];
 			}
 		}
 
@@ -50,39 +46,18 @@ namespace kmaths
 			: x(_v), y(_v), z(_v)
 		{}
 
-		explicit constexpr Vector(const T values[3]) noexcept
+		explicit constexpr Vector(const Type values[3]) noexcept
 			: x(values[0]), y(values[1]), z(values[2])
 		{}
 
-		USE_RESULT constexpr const Type& X() const noexcept
-		{
-			return x;
-		}
+		GETTER_CONSTEXPR(Type, X, x);
+		CONST_GETTER_CONSTEXPR(Type, X, x);
 
-		USE_RESULT constexpr Type& X() noexcept
-		{
-			return x;
-		}
+		GETTER_CONSTEXPR(Type, Y, y);
+		CONST_GETTER_CONSTEXPR(Type, Y, y);
 
-		USE_RESULT constexpr const Type& Y() const noexcept
-		{
-			return y;
-		}
-
-		USE_RESULT constexpr Type& Y() noexcept
-		{
-			return y;
-		}
-
-		USE_RESULT constexpr const Type& Z() const noexcept
-		{
-			return z;
-		}
-
-		USE_RESULT constexpr Type& Z() noexcept
-		{
-			return z;
-		}
+		GETTER_CONSTEXPR(Type, Z, z);
+		CONST_GETTER_CONSTEXPR(Type, Z, z);
 
 		USE_RESULT constexpr Type MagnitudeSQ() const noexcept
 		{
@@ -101,7 +76,7 @@ namespace kmaths
 		USE_RESULT constexpr T DotProduct(const Vector<U, C>& other) const noexcept
 		{
 			constexpr Length_Type size = C < Length ? C : Length;
-			
+
 			Type dp = Type();
 			for (size_t i = 0; i < size; ++i)
 			{
@@ -118,12 +93,10 @@ namespace kmaths
 
 			if (magSQ <= epsilon)
 				return Vector();
-			if (magSQ == static_cast<Type>(1))
-				return *this;
 
 			const auto mag = constants::OneOver<Type>(Sqrt<T>(magSQ));
 
-			return Vector(x * mag, y * mag);
+			return Vector(x * mag, y * mag, z * mag);
 		}
 
 		// Restricts vector magnitude to max value
@@ -136,10 +109,11 @@ namespace kmaths
 		}
 
 		// Reassigns values to be positives
-		constexpr void ToPositives() noexcept
+		constexpr void Abs() noexcept
 		{
-			x = Abs(x);
-			y = Abs(y);
+			x = kmaths::Abs(x);
+			y = kmaths::Abs(y);
+			z = kmaths::Abs(z);
 		}
 
 		// Calculates distance between two 3D objects
@@ -147,32 +121,32 @@ namespace kmaths
 		USE_RESULT constexpr T Distance(const Vector<U, C>& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
-			return static_cast<Type>(distanceVec.Magnitude());
+			return distanceVec.Magnitude();
 		}
 
 		// Returns vector times by -1 - does not reassign values (except w element)
-		USE_RESULT constexpr Vector ReverseVector() const noexcept
+		USE_RESULT constexpr Vector Reverse() const noexcept
 		{
-			return Vector(-x, -y);
+			return Vector(-x, -y, -z);
 		}
 
 		USE_RESULT constexpr Vector Inverse() const noexcept
 		{
 			if _CONSTEXPR_IF(std::is_integral_v<Type>)
 				return *this;
-
-			return Vector(constants::OneOver<Type>(x), constants::OneOver<Type>(y));
+			else
+				return Vector(constants::OneOver<Type>(x), constants::OneOver<Type>(y), constants::OneOver<Type>(z));
 		}
 
 		// Sets all values of the vector to zero
 		constexpr void Zero() noexcept
 		{
-			x = y = 0;
+			x = y = z = Type();
 		}
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
-			return (x || y);
+			return (x || y || z);
 		}
 
 		// Compilers earlier than C++20 features will not work in constexpr
@@ -182,81 +156,112 @@ namespace kmaths
 			return std::addressof<Type>(first);
 		}
 
-		USE_RESULT static constexpr auto GetLength() noexcept
+		USE_RESULT constexpr auto GetLength() const noexcept
 		{
 			return Length;
 		}
-
-		template<typename U = Type>
-		USE_RESULT constexpr Vector Perpendicular() const noexcept
-		{
-			return Vector(-y, x);
-		}
-
-		/*template<typename X, typename U = T>
-		USE_RESULT constexpr std::enable_if_t<!std::is_unsigned_v<U>
-			&& !std::is_unsigned_v<X>
-			&& 3 == 3,
-			Vector> CrossProduct(const Vector<X, 3>& v) const noexcept
+		
+		template<typename X, typename U = T>
+		USE_RESULT constexpr Vector CrossProduct(const Vector<X, 3>& v) const noexcept
 		{
 			return Vector(
-				(dimensions[1] * v[3] - dimensions[3] * v[1]),
-				(dimensions[3] * v[0] - dimensions[0] * v[3]),
-				(dimensions[0] * v[1] - dimensions[1] * v[0])
+				(y * v.z) - (z * v.y),
+				(z * v.x) - (x * v.z),
+				(x * v.y) - (y * v.x)
 			);
-		}*/
-
-		USE_RESULT constexpr Type& operator[](const size_t index)
-		{
-			if (index >= 3) std::_Xout_of_range("Index allowed must be 0 or 1!");
-			return index ? y : x;
 		}
 
+		// Gives a copy
+		USE_RESULT constexpr Type At(const size_t index) const noexcept
+		{
+			return operator[](index);
+		}
+
+		// Gives a reference
+		USE_RESULT constexpr Type& operator[](const size_t index)
+		{
+			if (index >= Length) std::_Xout_of_range("Index allowed must be between 0 and 2!");
+			return index == 2 ? z
+			: index ? y
+			: x;
+		}
+
+		// Gives a const reference
 		USE_RESULT constexpr const Type& operator[](const size_t index) const
 		{
-			if (index >= 3) std::_Xout_of_range("Index allowed must be 0 or 1!");
-			return index ? y : x;
+			if (index >= Length) std::_Xout_of_range("Index allowed must be between 0 and 2!");
+			return (index == 2) ? z
+				:  (index == 1) ? y
+				: x;
 		}
 
 		USE_RESULT constexpr Vector operator-() const noexcept
 		{
-			return ReverseVector();
+			return Reverse();
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator+(const Vector<U, C>& other) const noexcept
 		{
-			return Vector(x + CAST(Type, other[0]), y + CAST(Type, other[1]));
+			constexpr auto size = C < Length ? C : Length;
+
+			Type temp[Length]{ Type() };
+			for (size_t i = 0; i < size; ++i)
+				temp[i] = operator[](i) + other[i];
+			return Vector(temp);
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
-			return Vector(x - CAST(Type, other[0]), y - CAST(Type, other[1]));
+			constexpr auto size = C < Length ? C : Length;
+
+			Type temp[Length]{ Type() };
+			for (size_t i = 0; i < size; ++i)
+				temp[i] = operator[](i) - other[i];
+			return Vector(temp);
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
-			return Vector(x * other[0], y * other[1]);
+			constexpr auto size = C < Length ? C : Length;
+
+			Type temp[Length]{ Type() };
+			for (size_t i = 0; i < size; ++i)
+				temp[i] = operator[](i) * other[i];
+			return Vector(temp);
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator/(const Vector<U, C>& other) const noexcept
 		{
-			return Vector(x / other[0], y / other[1]);
+			constexpr auto size = C < Length ? C : Length;
+
+			Type temp[Length]{ Type() };
+			for (size_t i = 0; i < size; ++i)
+				temp[i] = operator[](i) / other[i];
+			return Vector(temp);
 		}
 
 		template<typename U, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Vector operator*(const U scalar) const noexcept
 		{
-			return Vector(x * scalar, y * scalar);
+			return Vector(
+				x * scalar,
+				y * scalar,
+				z * scalar
+			);
 		}
 
 		template<typename U, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Vector operator/(const U scalar) const noexcept
 		{
-			return Vector(x / scalar, y / scalar);
+			return Vector(
+				x / scalar,
+				y / scalar,
+				z / scalar
+			);
 		}
 
 		template<typename U, Length_Type C>
@@ -329,13 +334,13 @@ namespace kmaths
 		// bool operator == returns true if both Vector values are equal
 		USE_RESULT constexpr bool operator==(const Vector& v) const
 		{
-			return (x == v.x) && (y == v.y);
+			return (x == v.x) && (y == v.y) && (z == v.z);
 		}
 
 		// bool operator == returns true if both Vector values are equal
 		USE_RESULT constexpr bool operator==(Vector&& v) const
 		{
-			return (x == v.x) && (y == v.y);
+			return (x == v.x) && (y == v.y) && (z == v.z);
 		}
 
 		// bool operator != returns true if both Vector values are NOT equal
@@ -347,18 +352,18 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		constexpr Vector& operator=(const Vector<U, C>& other) noexcept // Copy
 		{
-			x = other[0];
-			y = other[1];
-
+			constexpr size_t size = C < Length ? C : Length;
+			for (size_t i = 0; i < size; ++i)
+				operator[](i) = other[i];
 			return *this;
 		}
 
 		template<typename U, Length_Type C>
 		constexpr Vector& operator=(Vector<U, C>&& other) noexcept // Move
 		{
-			x = std::move(other[0]);
-			y = std::move(other[1]);
-
+			constexpr size_t size = C < Length ? C : Length;
+			for (size_t i = 0; i < size; ++i)
+				operator[](i) = other[i];
 			return *this;
 		}
 
@@ -369,11 +374,11 @@ namespace kmaths
 		friend constexpr Vector<Type, C> operator/(const Vector<Type, 3>& v, const Matrix<Type, 3, C>& m) noexcept;
 
 	public:
-		T x = CAST(T, 0);
-		T y = CAST(T, 0);
-		T z = CAST(T, 0);
+		Type x = Type();
+		Type y = Type();
+		Type z = Type();
 	};
-	
+
 	template<typename T>
 	using Vector3 = Vector<T, 3>;
 

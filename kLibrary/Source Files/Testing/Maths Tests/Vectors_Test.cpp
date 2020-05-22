@@ -34,13 +34,13 @@ namespace kTest::maths
 		auto vec2d = Vector<double, 2>{ 5, 12 };
 
 		auto res1 = (vec2f + vec2d);
-		VERIFY(res1.X() == 9.0 &&  res1.Y() == 16.0);
+		VERIFY(res1.X() == 9.0 && res1.Y() == 16.0);
 		res1 = vec2f - vec2d;
-		VERIFY(res1.X() == -1.0 &&  res1.Y() == -8.0);
+		VERIFY(res1.X() == -1.0 && res1.Y() == -8.0);
 		res1 = vec2f * vec2d;
 		VERIFY(res1.X() == 20 && res1.Y() == 48);
 		res1 = vec2f / vec2d;
-		VERIFY(res1.X() == 0.8f &&  res1.Y() == 1.f / 3.f);
+		VERIFY(res1.X() == 0.8f && res1.Y() == 1.f / 3.f);
 
 		const auto distance = vec2f.Distance(vec2d);
 		VERIFY(distance == 8.06225777f);
@@ -102,27 +102,50 @@ namespace kTest::maths
 		constexpr auto vec5c = Vector<char, 5>(chars);
 
 		constexpr auto w = vec5c.W();
+		VERIFY_COMPILE_TIME(w == 'P');
 
 		vec4u += vec3l;
-		vec4u -= vec2d;
+		VERIFY(vec4u.x == 7);
+		VERIFY(vec4u.y == 8);
+		VERIFY(vec4u.z == 9);
+		VERIFY(vec4u.w == 0);
+
+		vec4u -= Vector2d(2, 1);
+		VERIFY(vec4u.x == 5);
+		VERIFY(vec4u.y == 7);
+		VERIFY(vec4u.z == 9);
+		VERIFY(vec4u.w == 0);
 
 		constexpr auto vecULL = Vector<unsigned long long, 30>(100);
+		for (auto i = 0; i < vecULL.GetLength(); ++i)
+			VERIFY(vecULL[i] == 100);
+
 		constexpr bool bools[] = { true, false, false, true, false, false, true };
 		constexpr auto vecBool = Vector<bool, 7>(bools);
 		constexpr auto b6 = vecBool[6];
+		VERIFY_COMPILE_TIME(b6 == true);
 
 		constexpr auto lhs = Vector2d(10, 5);
 		constexpr auto rhs = Vector2d(9, 15);
 
 		// Operators
 		constexpr auto add = lhs + rhs;
+		VERIFY_COMPILE_TIME(add.At(0) == 19.0);
+		VERIFY_COMPILE_TIME(add.At(1) == 20.0);
 		constexpr auto subtract = lhs - rhs;
+		VERIFY_COMPILE_TIME(subtract.At(0) == 1.0);
+		VERIFY_COMPILE_TIME(subtract.At(1) == -10.0);
 		constexpr auto multiply = lhs * rhs;
+		VERIFY_COMPILE_TIME(multiply.At(0) == 90.0);
+		VERIFY_COMPILE_TIME(multiply.At(1) == 75.0);
 		constexpr auto divide = lhs / rhs;
+		VERIFY_COMPILE_TIME(divide.At(0) == 1.1111111111111112);
+		VERIFY_COMPILE_TIME(divide.At(1) == 0.33333333333333331);
 		constexpr auto noEqual = lhs != rhs;
+		VERIFY_COMPILE_TIME(noEqual)
 
-		// Functions
-		constexpr auto magnitudeSq = lhs.MagnitudeSQ();
+			// Functions
+			constexpr auto magnitudeSq = lhs.MagnitudeSQ();
 		VERIFY_COMPILE_TIME(magnitudeSq == 125);
 		constexpr auto magnitude = lhs.Magnitude();
 		VERIFY_COMPILE_TIME(magnitude == 11.180339887498949);
@@ -145,11 +168,16 @@ namespace kTest::maths
 		constexpr auto rhs3d = Vector3d(9, 15, 23);
 
 		constexpr auto crossProduct = lhs3d.CrossProduct(rhs3d);
+		VERIFY_COMPILE_TIME(crossProduct.X() == 70);
+		VERIFY_COMPILE_TIME(crossProduct.y == -203);
+		VERIFY_COMPILE_TIME(crossProduct.Z() == 105);
 
 		constexpr auto compareVal = 15;
 		constexpr bool greater = (lhs3d >= compareVal);
-		constexpr bool less = rhs3d <= 14;
-		
+		VERIFY_COMPILE_TIME(greater == false);
+		constexpr bool less = lhs3d <= compareVal;
+		VERIFY_COMPILE_TIME(less == true);
+
 		return success;
 	}
 
@@ -159,13 +187,13 @@ namespace kTest::maths
 		constexpr auto vec2d = Vector2d(5, 12);
 
 		auto res1 = (vec2f + vec2d);
-		VERIFY(res1.x == 9.0 &&  res1.y == 16.0);
+		VERIFY(res1.x == 9.0 && res1.y == 16.0);
 		res1 = vec2f - vec2d;
-		VERIFY(res1.x == -1.0 &&  res1.y == -8.0);
+		VERIFY(res1.x == -1.0 && res1.y == -8.0);
 		res1 = vec2f * vec2d;
 		VERIFY(res1.x == 20 && res1.y == 48);
 		res1 = vec2f / vec2d;
-		VERIFY(res1.x == 0.8f &&  res1.y == 1.f / 3.f);
+		VERIFY(res1.x == 0.8f && res1.y == 1.f / 3.f);
 
 		constexpr auto distance = vec2f.Distance(vec2d);
 		VERIFY(distance == 8.06225777f);
@@ -204,22 +232,22 @@ namespace kTest::maths
 
 		constexpr Vector3d d2(1, 2, 3);
 		constexpr auto cross = d2.CrossProduct(data);
-		VERIFY_COMPILE_TIME(cross.x == -4)
-		VERIFY_COMPILE_TIME(cross.y == 8)
-		VERIFY_COMPILE_TIME(cross.z == -4)
+		VERIFY_COMPILE_TIME(cross.x == -4);
+		VERIFY_COMPILE_TIME(cross.y == 8);
+		VERIFY_COMPILE_TIME(cross.z == -4);
 
 		return success;
 	}
 
 	bool VectorsTester::Vector4Test()
 	{
-		constexpr Vector4d vector4 (2, 2, 2, 2);
+		constexpr Vector4d vector4(2, 2, 2, 2);
 		const auto ptr = vector4.GetPointerToData();
 		const auto value = ptr[3];
 		VERIFY(value == vector4.w);
 
-		VERIFY_COMPILE_TIME(vector4 == 4);		
-		
+		VERIFY_COMPILE_TIME(vector4 == 4);
+
 		return success;
 	}
 }

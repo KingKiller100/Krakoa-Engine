@@ -167,12 +167,9 @@ namespace klib::kFileSystem
 		{
 			kString::StringWriter<wchar_t> temp;
 			for (auto& c : fullFilePath)
-				temp += CAST(char, c);
-			return RemoveFile<char>(temp);
+				temp += CAST(wchar_t, c);
+			return RemoveFile<wchar_t>(temp);
 		}
-
-
-		return false;
 	}
 
 	/**
@@ -200,10 +197,10 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : directory)
-				temp += CAST(char, c);
-			return DeleteDirectory<char>(temp);
+				temp += CAST(wchar_t, c);
+			return DeleteDirectory<wchar_t>(temp);
 		}
 		return false;
 	}
@@ -233,10 +230,10 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : fullFilePath)
-				temp += CAST(char, c);
-			result = CheckFileExists<char>(temp);
+				temp += CAST(wchar_t, c);
+			result = CheckFileExists<wchar_t>(temp);
 		}
 
 		if (file)
@@ -259,14 +256,14 @@ namespace klib::kFileSystem
 	{
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			struct stat info;
+			struct stat info{};
 			const auto statResult = stat(directoryPath.data(), &info);
 
-			if (statResult != 0)
+			if (statResult != KLIB_FALSE)
 				return false;
 
 			const auto result = (info.st_mode & S_IFDIR);
-			return result != 0;
+			return result != KLIB_FALSE;
 		}
 		else
 		{
@@ -341,7 +338,7 @@ namespace klib::kFileSystem
 			{
 				const auto dummyBuffer = GetCurrentWorkingDirectory<wchar_t>();
 				for (auto& c : dummyBuffer)
-					cwdFullPath += c;
+					cwdFullPath += CAST(Char, c);
 				return cwdFullPath;
 			}
 
@@ -385,7 +382,7 @@ namespace klib::kFileSystem
 			{
 				const auto dummyBuffer = GetExeDirectory<wchar_t>();
 				for (auto& c : dummyBuffer)
-					exeFullPath += c;
+					exeFullPath += CAST(Char, c);
 				return exeFullPath;
 			}
 

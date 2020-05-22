@@ -12,19 +12,19 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr DestChar* Convert(const SourceChar* source) noexcept
 	{
-		constexpr auto sourceTerminater = SourceChar();
-		constexpr auto destTerminater = DestChar();
+		constexpr auto destTerminator = DestChar();
+		constexpr auto sourceTerminator = SourceChar();
 
 		auto currentPos = source;
 		size_t size = 0;
 
-		while (*(currentPos++) != sourceTerminater)
+		while (*(currentPos++) != sourceTerminator)
 			size++;
 
-		auto result = new DestChar[size + 1]{ destTerminater };
-		do
+		auto result = new DestChar[size + 1]{ destTerminator };
+		do {
 			result[size] = CAST(DestChar, source[size]);
-		while (size-- > 0);
+		} while (size-- > 0);
 
 		return result;
 	}

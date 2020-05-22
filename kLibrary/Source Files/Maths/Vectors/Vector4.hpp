@@ -46,24 +46,24 @@ namespace kmaths
 			: x(_v), y(_v), z(_v), w(_v)
 		{}
 
-		explicit constexpr Vector(const Type values[4]) noexcept
+		explicit constexpr Vector(const Type (&values)[4]) noexcept
 			: x(values[0]), y(values[1]), z(values[2]), w(values[3])
 		{}
 
 		~Vector() noexcept
 			= default;
 
-		GETTER_CONSTEXPR(Type, X, x);
-		CONST_GETTER_CONSTEXPR(Type, X, x);
+		GETTER_CONSTEXPR(Type, X, x)
+		CONST_GETTER_CONSTEXPR(Type, X, x)
 
-		GETTER_CONSTEXPR(Type, Y, y);
-		CONST_GETTER_CONSTEXPR(Type, Y, y);
+		GETTER_CONSTEXPR(Type, Y, y)
+		CONST_GETTER_CONSTEXPR(Type, Y, y)
 
-		GETTER_CONSTEXPR(Type, Z, z);
-		CONST_GETTER_CONSTEXPR(Type, Z, z);
+		GETTER_CONSTEXPR(Type, Z, z)
+		CONST_GETTER_CONSTEXPR(Type, Z, z)
 
-		GETTER_CONSTEXPR(Type, W, w);
-		CONST_GETTER_CONSTEXPR(Type, W, w);
+		GETTER_CONSTEXPR(Type, W, w)
+		CONST_GETTER_CONSTEXPR(Type, W, w)
 
 		USE_RESULT constexpr Type MagnitudeSQ() const noexcept
 		{
@@ -109,9 +109,7 @@ namespace kmaths
 		constexpr void Truncate(const Type max) noexcept
 		{
 			if (Magnitude() > max)
-			{
 				*this = Normalize() * max;
-			}
 		}
 
 		// Reassigns values to be positives
@@ -207,44 +205,52 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator+(const Vector<U, C>& other) const noexcept
 		{
-			constexpr auto size = C < Length ? C : Length;
-
 			Type temp[Length]{ Type() };
-			for (size_t i = 0; i < size; ++i)
-				temp[i] = CAST(Type, operator[](i) + other[i]);
+			for (auto i = size_t(0); i < Length; ++i)
+			{
+				temp[i] = (C > i)
+					? CAST(Type, operator[](i) + other[i])
+					: operator[](i);
+			}
 			return Vector(temp);
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
-			constexpr auto size = C < Length ? C : Length;
-
 			Type temp[Length]{ Type() };
-			for (size_t i = 0; i < size; ++i)
-				temp[i] = CAST(Type, operator[](i) - other[i]);
+			for (auto i = size_t(0); i < Length; ++i)
+			{
+				temp[i] = (C > i)
+					? CAST(Type, operator[](i) - other[i])
+					: operator[](i);
+			}
 			return Vector(temp);
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
-			constexpr auto size = C < Length ? C : Length;
-
 			Type temp[Length]{ Type() };
-			for (size_t i = 0; i < size; ++i)
-				temp[i] = CAST(Type, operator[](i) * other[i]);
+			for (auto i = size_t(0); i < Length; ++i)
+			{
+				temp[i] = (C > i)
+					? CAST(Type, operator[](i) * other[i])
+					: operator[](i);
+			}
 			return Vector(temp);
 		}
 
 		template<typename U, Length_Type C>
 		USE_RESULT constexpr Vector operator/(const Vector<U, C>& other) const noexcept
 		{
-			constexpr auto size = C < Length ? C : Length;
-
 			Type temp[Length]{ Type() };
-			for (size_t i = 0; i < size; ++i)
-				temp[i] = CAST(Type, operator[](i) / other[i]);
+			for (auto i = size_t(0); i < Length; ++i)
+			{
+				temp[i] = (C > i)
+					? CAST(Type, operator[](i) / other[i])
+					: operator[](i);
+			}
 			return Vector(temp);
 		}
 

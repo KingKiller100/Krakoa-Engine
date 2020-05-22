@@ -140,16 +140,14 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector Normalize() const noexcept
 		{
-			constexpr auto epsilon = std::numeric_limits<Type>::epsilon();
+			constexpr auto epsilon = constants::Epsilon<T>();
 
 			const auto magSQ = MagnitudeSQ();
 
 			if (magSQ <= epsilon)
 				return Vector();
-			else if (magSQ == constants::One<Type>())
-				return *this;
 
-			const auto mag = constants::OneOver<Type>(Sqrt<T>(magSQ));
+			const auto mag = constants::OneOver<Type>(Sqrt<Type>(magSQ));
 
 			Type temp[N]{ };
 			for (auto i = 0; i < N; ++i)
@@ -171,7 +169,7 @@ namespace kmaths
 		{
 			for (auto& d : dimensions)
 				if (d < 0)
-					d = -d;
+					d = kmaths::Abs(d);
 		}
 
 		// Calculates distance between two 3D objects
@@ -274,10 +272,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector operator-() const noexcept
 		{
-			T copy[N]{ Type() };
-			for (size_t i = 0; i < N; ++i)
-				copy[i] = dimensions[i] * -1;
-			return Vector(copy);
+			return Reverse();
 		}
 
 		template<typename U, Length_Type C>
@@ -286,8 +281,8 @@ namespace kmaths
 			T copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.GetLength() > i)
-					? dimensions[i] + static_cast<Type>(other[i])
+				copy[i] = (C > i)
+					? static_cast<Type>(dimensions[i] + other[i])
 					: dimensions[i];
 			}
 			return Vector(copy);
@@ -299,8 +294,8 @@ namespace kmaths
 			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.GetLength() > i)
-					? dimensions[i] - static_cast<Type>(other[i])
+				copy[i] = (C > i)
+					? static_cast<Type>(dimensions[i] - other[i])
 					: dimensions[i];
 			}
 			return Vector(copy);
@@ -312,8 +307,8 @@ namespace kmaths
 			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.GetLength() > i)
-					? dimensions[i] * static_cast<Type>(other[i])
+				copy[i] = (C > i)
+					? static_cast<Type>(dimensions[i] * other[i])
 					: dimensions[i];
 			}
 			return Vector(copy);
@@ -325,8 +320,8 @@ namespace kmaths
 			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
 			{
-				copy[i] = (other.GetLength() > i)
-					? dimensions[i] / static_cast<Type>(other[i])
+				copy[i] = (C > i)
+					? static_cast<Type>(dimensions[i] / other[i])
 					: dimensions[i];
 			}
 			return Vector(copy);
@@ -337,7 +332,7 @@ namespace kmaths
 		{
 			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
-				copy[i] = dimensions[i] * CAST(Type, scalar);
+				copy[i] = CAST(Type, dimensions[i] * scalar);
 			return Vector(copy);
 		}
 
@@ -346,7 +341,7 @@ namespace kmaths
 		{
 			Type copy[N]{ Type() };
 			for (auto i = size_t(0); i < N; ++i)
-				copy[i] = dimensions[i] / CAST(Type, scalar);
+				copy[i] = CAST(Type, dimensions[i] / scalar);
 			return Vector(copy);
 		}
 

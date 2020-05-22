@@ -40,7 +40,7 @@ namespace klib::kDebug
 		~NoRealRootError() noexcept override;
 	};
 
-	class MathsLogicError final : MathsError
+	class MathsLogicError final : public MathsError
 	{
 	public:
 		explicit MathsLogicError(const char* const _Message);

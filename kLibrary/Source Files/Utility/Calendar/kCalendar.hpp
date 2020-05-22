@@ -64,7 +64,7 @@ namespace klib
 		// Wide Multi-Byte Chars
 		std::wstring wGetTimeText() noexcept;
 		std::wstring wGetDateInTextFormat(const bool fullDayname = true) noexcept;
-		constexpr std::wstring_view wGetMonth(const unsigned short month) noexcept
+		constexpr std::wstring_view wGetMonth(const unsigned short month)
 		{
 			constexpr  std::array<const wchar_t*, 12> kCalendar_MonthsArray = {
 				L"January", L"February", L"March",
@@ -78,7 +78,7 @@ namespace klib
 
 			throw kDebug::InvalidMonthError("Value entered does not index to a month of the year");
 		}
-		constexpr std::wstring_view wGetDayOfTheWeek(const unsigned short day) noexcept
+		constexpr std::wstring_view wGetDayOfTheWeek(const unsigned short day)
 		{
 			constexpr  std::array<const wchar_t*, 7> kCalendar_DaysOfTheWeek =
 			{ L"Sunday", L"Monday", L"Tuesday", L"Wednesday",

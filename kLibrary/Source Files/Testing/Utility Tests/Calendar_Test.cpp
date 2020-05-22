@@ -22,6 +22,7 @@ namespace kTest::utility
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(MonthTest);
+		VERIFY_MULTI(DayOfTheWeekTest);
 		VERIFY_MULTI_END();
 
 		const auto& localDateTimeTest = GetLocalDateAndTime();

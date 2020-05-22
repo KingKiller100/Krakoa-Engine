@@ -1,44 +1,52 @@
 ﻿#pragma once
 
-#include "../../../HelperMacros.hpp"
 #include "../../../Maths/Length_Type.hpp"
 
 #include <stdexcept>
 
-
-namespace klib::kDebug::errors
+namespace klib::kDebug
 {
-	class DivByZero final : public std::logic_error
+	class MathsError : public std::logic_error
 	{
 	public:
-		explicit DivByZero();
-		explicit DivByZero(const char* const _Message);
-		explicit DivByZero(const std::string& _Message);
+		explicit MathsError();
+		explicit MathsError(const char* const _Message);
+		explicit MathsError(const std::string& _Message);
 
-		~DivByZero() noexcept override = default;
+		~MathsError() noexcept override = default;
 	};
 
-	class NoRealRoot final : public std::logic_error
+	class DivByZeroError final : public MathsError
 	{
 	public:
-		explicit NoRealRoot(const float value);		
-		explicit NoRealRoot(const double value);
-		explicit NoRealRoot(const long double value);
-		explicit NoRealRoot(const kmaths::Big_Int_Type value);
+		explicit DivByZeroError();
+		explicit DivByZeroError(const char* const _Message);
+		explicit DivByZeroError(const std::string& _Message);
 
-		explicit NoRealRoot(const char* const _Message);
-		explicit NoRealRoot(const std::string& _Message);
-
-		~NoRealRoot() noexcept override;
+		~DivByZeroError() noexcept override = default;
 	};
 
-	class BreaksMathsLogic final : public std::logic_error
+	class NoRealRootError final : public MathsError
 	{
 	public:
-		explicit BreaksMathsLogic(const char* const _Message);
-		explicit BreaksMathsLogic(const std::string& _Message);
+		explicit NoRealRootError(const float value);
+		explicit NoRealRootError(const double value);
+		explicit NoRealRootError(const long double value);
+		explicit NoRealRootError(const kmaths::Big_Int_Type value);
 
-		~BreaksMathsLogic() noexcept override;
+		explicit NoRealRootError(const char* const _Message);
+		explicit NoRealRootError(const std::string& _Message);
+
+		~NoRealRootError() noexcept override;
+	};
+
+	class MathsLogicError final : MathsError
+	{
+	public:
+		explicit MathsLogicError(const char* const _Message);
+		explicit MathsLogicError(const std::string& _Message);
+
+		~MathsLogicError() noexcept override;
 	};
 
 }

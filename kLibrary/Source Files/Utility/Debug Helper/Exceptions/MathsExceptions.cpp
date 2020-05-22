@@ -3,65 +3,83 @@
 
 #include "../../Format/kFormatToString.hpp"
 
-namespace klib::kDebug::errors
+namespace klib::kDebug
 {
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Mathematical Exception Base ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	MathsError::MathsError()
+		: logic_error("Maths Error Occur")
+	{
+	}
+
+	MathsError::MathsError(const char* const _Message)
+		: logic_error(_Message)
+	{
+	}
+
+	MathsError::MathsError(const std::string& _Message)
+		: logic_error(_Message)
+	{
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Division By Zero Exception ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	DivByZero::DivByZero()
-		: logic_error("ERROR: Division by zero has occured!")
+	DivByZeroError::DivByZeroError()
+		: MathsError("ERROR: Division by zero has occured!")
 	{}
 
-	DivByZero::DivByZero(const std::string& _Message)
-		: logic_error(_Message)
+	DivByZeroError::DivByZeroError(const std::string& _Message)
+		: MathsError(_Message)
 	{}
 
-	DivByZero::DivByZero(const char* const _Message)
-		: logic_error(_Message)
+	DivByZeroError::DivByZeroError(const char* const _Message)
+		: MathsError(_Message)
 	{}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// No Real Root Exception ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	NoRealRoot::NoRealRoot(const long double value)
-		: logic_error(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
+	NoRealRootError::NoRealRootError(const long double value)
+		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
 	{}
 	
-	NoRealRoot::NoRealRoot(const double value)
-		: logic_error(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
+	NoRealRootError::NoRealRootError(const double value)
+		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
 	{}
 
-	NoRealRoot::NoRealRoot(const float value)
-		: logic_error(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
+	NoRealRootError::NoRealRootError(const float value)
+		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
 	{}
 
-	NoRealRoot::NoRealRoot(const kmaths::Big_Int_Type value)
-		: logic_error(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
+	NoRealRootError::NoRealRootError(const kmaths::Big_Int_Type value)
+		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
 	{}
 
-	NoRealRoot::NoRealRoot(const std::string& _Message)
-		: logic_error(_Message)
+	NoRealRootError::NoRealRootError(const std::string& _Message)
+		: MathsError(_Message)
 	{}
 
-	NoRealRoot::NoRealRoot(const char* const _Message)
-		: logic_error(_Message)
+	NoRealRootError::NoRealRootError(const char* const _Message)
+		: MathsError(_Message)
 	{}
 
-	NoRealRoot::~NoRealRoot() noexcept
+	NoRealRootError::~NoRealRootError() noexcept
 		= default;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Breaks Maths Logic Exception //////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Maths Logic Exception //////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	BreaksMathsLogic::BreaksMathsLogic(const std::string& _Message)
-		: logic_error(_Message)
+	MathsLogicError::MathsLogicError(const std::string& _Message)
+		: MathsError(_Message)
 	{}
 
-	BreaksMathsLogic::BreaksMathsLogic(const char* const _Message)
-		: logic_error(_Message)
+	MathsLogicError::MathsLogicError(const char* const _Message)
+		: MathsError(_Message)
 	{}
 
-	BreaksMathsLogic::~BreaksMathsLogic() noexcept
+	MathsLogicError::~MathsLogicError() noexcept
 		= default;
 }

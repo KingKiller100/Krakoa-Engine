@@ -358,7 +358,7 @@ namespace kmaths
 		const auto cosine = Cosine(x, n);
 
 		if (cosine == 0)
-			throw klib::kDebug::errors::DivByZero();
+			throw klib::kDebug::DivByZeroError();
 
 		return (sine / cosine);
 	}
@@ -522,7 +522,7 @@ namespace kmaths
 	USE_RESULT constexpr T Clamp(const T value, const T min, const T max)
 	{
 		if (max <= min)
-			throw klib::kDebug::errors::BreaksMathsLogic("Max value cannot be less than or equal to min value");
+			throw klib::kDebug::MathsLogicError("Max value cannot be less than or equal to min value");
 
 		return (Min(max, Max(value, min)));
 	}
@@ -679,7 +679,7 @@ namespace kmaths
 			maxIterations = 16;
 
 		if (IsNegative(square))
-			throw klib::kDebug::errors::NoRealRoot(square);
+			throw klib::kDebug::NoRealRootError(square);
 
 		if (square == constants::ZeroPointFive<T>())
 			return CAST(T, constants::SQRT_1_OVER_2);
@@ -746,7 +746,7 @@ namespace kmaths
 		if (IsNegative(num))
 		{
 			if ((root & 1) == 0) // Even root
-				throw klib::kDebug::errors::NoRealRoot(num);
+				throw klib::kDebug::NoRealRootError(num);
 
 			if (num == minusOne)
 				return minusOne;

@@ -12,6 +12,9 @@ namespace kTest::utility
 		
 	private:
 		void Test() override;
+
+		bool MonthTest();
+		bool DayOfTheWeekTest();
 	};
 }
 #endif

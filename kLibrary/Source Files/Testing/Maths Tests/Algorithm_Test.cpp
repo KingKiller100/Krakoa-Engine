@@ -261,7 +261,7 @@ namespace kTest::maths
 
 				VERIFY(resultRounded == expectedRounded);
 			}
-			catch (const klib::kDebug::errors::DivByZero & e)
+			catch (const klib::kDebug::errors::DivByZeroError & e)
 			{
 				constexpr auto msg = "ERROR: Division by zero has occured!";
 				const auto result = std::strcmp(e.what(), msg) == 0;
@@ -282,7 +282,7 @@ namespace kTest::maths
 
 				VERIFY(resultRounded == expectedRounded);
 			}
-			catch (const klib::kDebug::errors::DivByZero & e)
+			catch (const klib::kDebug::errors::DivByZeroError & e)
 			{
 				constexpr auto msg = "ERROR: Division by zero has occured!";
 				const auto result = std::strcmp(e.what(), msg) == 0;
@@ -1084,7 +1084,7 @@ namespace kTest::maths
 				const auto expected = std::clamp(value, lower, upper);
 				VERIFY(result == expected);
 			}
-			catch (const klib::kDebug::errors::BreaksMathsLogic & e)
+			catch (const klib::kDebug::errors::MathsLogicError & e)
 			{
 				constexpr auto msg = "Max value cannot be less than or equal to min value";
 				const auto result = std::strcmp(e.what(), msg) == 0;

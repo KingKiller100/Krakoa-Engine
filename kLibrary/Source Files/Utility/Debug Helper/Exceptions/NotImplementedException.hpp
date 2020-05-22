@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace klib::kDebug::errors
+namespace klib::kDebug
 {
 	class NotImplementedException final : public std::runtime_error
 	{

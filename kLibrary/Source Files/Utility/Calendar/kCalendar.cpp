@@ -8,7 +8,12 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #	include <Windows.h>
+
 #undef WIN32_LEAN_AND_MEAN
+
+#ifdef  max
+#	undef max
+#endif
 
 namespace klib::kCalendar
 {
@@ -31,17 +36,16 @@ namespace klib::kCalendar
 		return kCalendar_System_DateTime;
 	}
 
-	unsigned short GetComponentOfTime(const TimeComponent timeComponent)  noexcept
+	unsigned short GetComponentOfTime(const TimeComponent timeComponent)
 	{
 		const auto now = GetLocalDateAndTime();
 
-		switch (timeComponent)
-		{
-		case TimeComponent::hour:		return now.wHour;
-		case TimeComponent::min:		return now.wMinute;
-		case TimeComponent::sec:		return now.wSecond;
-		case TimeComponent::millisec:	return now.wMilliseconds;
-		default: return MAXWORD;
+		switch (timeComponent) {
+		case TimeComponent::hours:		return now.wHour;
+		case TimeComponent::mins:		return now.wMinute;
+		case TimeComponent::secs:		return now.wSecond;
+		case TimeComponent::millis:		return now.wMilliseconds;
+		default: throw kDebug::CalendarError();
 		}
 	}
 
@@ -50,42 +54,25 @@ namespace klib::kCalendar
 	std::string GetTimeText()  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		const auto dateStr = ToString("{0:2}:{1:2}:{2:2}:{3:3}", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
+		const auto dateStr = ToString("{0:2}:{1:2}:{2:2}:{3:3}", 
+			dateTime.wHour, 
+			dateTime.wMinute, 
+			dateTime.wSecond, 
+			dateTime.wMilliseconds);
 		return dateStr;
 	}
 
-	std::string GetDateInTextFormat(const bool fullDayname)  noexcept
+	std::string GetDateInTextFormat(const bool fullDayName)  noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
 		std::string day = GetDayOfTheWeek(dateTime.wDayOfWeek).data();
-		day = fullDayname ? day : day.substr(0, 3);
-		const auto dateStr = ToString("%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
+		day = fullDayName ? day : day.substr(0, 3);
+		const auto dateStr = ToString("%s %d %s %04d", 
+			day.data(), 
+			dateTime.wDay, 
+			GetMonth(dateTime.wMonth - 1).data(), 
+			dateTime.wYear);
 		return dateStr;
-	}
-
-	constexpr std::string_view GetMonth(const unsigned short month)  noexcept
-	{
-		constexpr std::array<const char*, 12> kCalendar_MonthsArray =
-		{ "January", "February", "March", "April", "May",
-		"June", "July", "August", "September", "October",
-			"November", "December" };
-
-		if (month <= kCalendar_MonthsArray.size() || month > 0)
-			return kCalendar_MonthsArray[month - 1];
-
-		return "Value entered does not index to a month of the year";
-	}
-
-	constexpr std::string_view GetDayOfTheWeek(const unsigned short day)  noexcept
-	{
-		constexpr std::array<const char*, 7> kCalendar_DaysOfTheWeek =
-		{ "Sunday", "Monday", "Tuesday", "Wednesday",
-		"Thursday", "Friday", "Saturday" };
-
-		if (day < kCalendar_DaysOfTheWeek.size())
-			return kCalendar_DaysOfTheWeek[day];
-
-		return "Value entered does not index to a day of the week";
 	}
 
 	std::string GetDateInNumericalFormat(const bool slash)  noexcept
@@ -159,38 +146,13 @@ namespace klib::kCalendar
 		const auto dateTime = GetLocalDateAndTime();
 		std::wstring day = wGetDayOfTheWeek(dateTime.wDayOfWeek).data();
 		day = fullDayname ? day : day.substr(0, 3);
-		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth).data(), dateTime.wYear);
-	}
-
-	constexpr std::wstring_view wGetMonth(const unsigned short month) noexcept
-	{
-		constexpr  std::array<const wchar_t*, 12> kCalendar_MonthsArray =
-		{ L"January", L"February", L"March", L"April", L"May",
-		L"June", L"July", L"August", L"September", L"October",
-			L"November", L"December" };
-
-		if (month < kCalendar_MonthsArray.size())
-			return kCalendar_MonthsArray[month - 1];
-
-		return L"Value entered does not index to a month of the year";
-	}
-
-	constexpr std::wstring_view  wGetDayOfTheWeek(const unsigned short day) noexcept
-	{
-		constexpr  std::array<const wchar_t*, 7> kCalendar_DaysOfTheWeek =
-		{ L"Sunday", L"Monday", L"Tuesday", L"Wednesday",
-		L"Thursday", L"Friday", L"Saturday" };
-
-		if (day < kCalendar_DaysOfTheWeek.size())
-			return kCalendar_DaysOfTheWeek[day];
-
-		return L"Value entered does not index to a day of the week";
+		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth - 1).data(), dateTime.wYear);
 	}
 
 	std::wstring wGetDateInNumericalFormat(const bool slash) noexcept
 	{
 		const auto dateTime = GetLocalDateAndTime();
-		const auto dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
+		const auto* const dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 

@@ -6,8 +6,6 @@
 #include <chrono>
 #include <ctime>
 
-#include <Windows.h>
-
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {

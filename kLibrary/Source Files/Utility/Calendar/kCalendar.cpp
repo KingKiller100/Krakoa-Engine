@@ -4,16 +4,6 @@
 #include "../Format/kFormatToString.hpp"
 #include "../String/kStringManipulation.hpp"
 
-#include <array>
-
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#	include <Windows.h>
-
-#undef WIN32_LEAN_AND_MEAN
-
-#ifdef  max
-#	undef max
-#endif
 
 namespace klib::kCalendar
 {
@@ -41,19 +31,18 @@ namespace klib::kCalendar
 		const auto now = GetLocalDateAndTime();
 
 		switch (timeComponent) {
-		case TimeComponent::hours:		return now.wHour;
-		case TimeComponent::mins:		return now.wMinute;
-		case TimeComponent::secs:		return now.wSecond;
-		case TimeComponent::millis:		return now.wMilliseconds;
+		case TimeComponent::HOURS:		return now.wHour;
+		case TimeComponent::MINS:		return now.wMinute;
+		case TimeComponent::SECS:		return now.wSecond;
+		case TimeComponent::MILLIS:		return now.wMilliseconds;
 		default: throw kDebug::CalendarError();
 		}
 	}
 
 	// ASCII
 
-	std::string GetTimeText()  noexcept
+	std::string GetTimeText(const _SYSTEMTIME dateTime)  noexcept
 	{
-		const auto dateTime = GetLocalDateAndTime();
 		const auto dateStr = ToString("{0:2}:{1:2}:{2:2}:{3:3}", 
 			dateTime.wHour, 
 			dateTime.wMinute, 
@@ -62,11 +51,11 @@ namespace klib::kCalendar
 		return dateStr;
 	}
 
-	std::string GetDateInTextFormat(const bool fullDayName)  noexcept
+	std::string GetDateInTextFormat(const DateFormat format, const _SYSTEMTIME& dateTime) noexcept
 	{
-		const auto dateTime = GetLocalDateAndTime();
 		std::string day = GetDayOfTheWeek(dateTime.wDayOfWeek).data();
-		day = fullDayName ? day : day.substr(0, 3);
+		
+		day = (format == DateFormat::FULL) ? day : day.substr(0, 3);
 		const auto dateStr = ToString("%s %d %s %04d", 
 			day.data(), 
 			dateTime.wDay, 
@@ -75,16 +64,22 @@ namespace klib::kCalendar
 		return dateStr;
 	}
 
-	std::string GetDateInNumericalFormat(const bool slash)  noexcept
+	std::string GetDateInNumericalFormat(const DateSeparator separator, const _SYSTEMTIME& dateTime) noexcept
 	{
-		const auto dateTime = GetLocalDateAndTime();
-		const auto dateFormat = slash ? "%02d/%02d/%02d" : "%02d-%02d-%04d";
+		const auto* const dateFormat = (separator == DateSeparator::SLASH) ? "%02d/%02d/%02d" : "%02d-%02d-%04d";
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
 	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second)  noexcept
 	{
 		const auto time = ToString("%02d:%02d:%02d", hour, minute, second);
+		return time;
+	}
+
+	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second,
+		unsigned milliseconds) noexcept
+	{
+		const auto time = ToString("%02d:%02d:%02d:%04d", hour, minute, second, milliseconds);
 		return time;
 	}
 
@@ -110,16 +105,16 @@ namespace klib::kCalendar
 		return systemTimeStr;
 	}
 
-	std::string GetLocalStartDateStr(const bool slash) noexcept
+	std::string GetLocalStartDateStr(const DateSeparator separator) noexcept
 	{
 		static std::string localDate;
 		if (localDate.empty())
 		{
-			localDate = GetDateInNumericalFormat(slash);
+			localDate = GetDateInNumericalFormat(separator);
 			return localDate;
 		}
 
-		if (slash)
+		if (separator == DateSeparator::SLASH)
 		{
 			if (localDate.find('/') == std::string::npos)
 				localDate = kString::Replace<char>(localDate, '-', '/');
@@ -135,30 +130,34 @@ namespace klib::kCalendar
 
 	// WIDE MULTI-BYTE CHAR
 
-	std::wstring wGetTimeText()  noexcept
+	std::wstring wGetTimeText(const _SYSTEMTIME dateTime)  noexcept
 	{
-		const auto dateTime = GetLocalDateAndTime();
 		return ToString(L"%02d:%02d:%02d:%03d", dateTime.wHour, dateTime.wMinute, dateTime.wSecond, dateTime.wMilliseconds);
 	}
 
-	std::wstring wGetDateInTextFormat(const bool fullDayname)  noexcept
+	std::wstring wGetDateInTextFormat(const DateFormat format, const _SYSTEMTIME& dateTime) noexcept
 	{
-		const auto dateTime = GetLocalDateAndTime();
 		std::wstring day = wGetDayOfTheWeek(dateTime.wDayOfWeek).data();
-		day = fullDayname ? day : day.substr(0, 3);
+		day = (format == DateFormat::FULL) ? day : day.substr(0, 3);
 		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth - 1).data(), dateTime.wYear);
 	}
 
-	std::wstring wGetDateInNumericalFormat(const bool slash) noexcept
+	std::wstring wGetDateInNumericalFormat(const DateSeparator separator, const _SYSTEMTIME& dateTime) noexcept
 	{
-		const auto dateTime = GetLocalDateAndTime();
-		const auto* const dateFormat = slash ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
+		const auto* const dateFormat = (separator == DateSeparator::SLASH) ? L"%02d/%02d/%02d" : L"%02d-%02d-%04d";
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
 	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept
 	{
 		const auto time = ToString(L"%02d:%02d:%02d", hour, minute, second);
+		return time;
+	}
+
+	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second,
+		unsigned short milliseconds) noexcept
+	{
+		const auto time = ToString(L"%02d:%02d:%02d:%04d", hour, minute, second, milliseconds);
 		return time;
 	}
 
@@ -184,16 +183,16 @@ namespace klib::kCalendar
 		return systemTimeStr;
 	}
 
-	std::wstring wGetLocalStartDateStr(const bool slash) noexcept
+	std::wstring wGetLocalStartDateStr(const DateSeparator separator) noexcept
 	{
 		static std::wstring localDate;
 		if (localDate.empty())
 		{
-			localDate = wGetDateInNumericalFormat(slash);
+			localDate = wGetDateInNumericalFormat(separator);
 			return localDate;
 		}
 
-		if (slash)
+		if (separator == DateSeparator::SLASH)
 		{
 			if (localDate.find('/') == std::wstring::npos)
 				localDate = kString::Replace<wchar_t>(localDate, L'-', L'/');

@@ -236,7 +236,7 @@ namespace klib::kLogs
 		 * \param[in] lvl
 		 *		Log level
 		 */
-		void OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) noexcept;
+		void OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) const noexcept;
 
 		/**
 		 * \brief

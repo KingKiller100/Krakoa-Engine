@@ -15,6 +15,10 @@ namespace kTest::utility
 
 		bool MonthTest();
 		bool DayOfTheWeekTest();
+		bool GetTimeComponentTest();
+		bool GetDateInTextFormatTest();
+		bool GetDateInNumericalFormatTest();
+		
 	};
 }
 #endif

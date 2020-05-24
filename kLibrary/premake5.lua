@@ -37,6 +37,7 @@ project "kLibrary"
 
         defines
         {
+            "_CRT_SECURE_NO_WARNINGS",
             "KLIB_LIB",
             "KLIB_WINDOWS_OS",
             "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"

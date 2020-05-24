@@ -68,12 +68,13 @@ namespace klib
 		}
 
 		std::string GetDateInNumericalFormat(const DateSeparator separator = DateSeparator::SLASH, const _SYSTEMTIME& dateTime = GetLocalDateAndTime()) noexcept;
-		std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept;
-		std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second, unsigned milliseconds) noexcept;
+		std::string CreateTime(uint8_t hours, uint8_t minutes) noexcept;
+		std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds) noexcept;
+		std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds) noexcept;
 		std::string GetLocalStartTimeStr() noexcept;
 		std::string GetSystemStartTimeStr() noexcept;
 		std::string GetLocalStartDateStr(const DateSeparator separator = DateSeparator::SLASH) noexcept;
-		//std::string GetSystemStartDateStr(const bool slash = true) noexcept;
+		std::string GetSystemStartDateStr(const DateSeparator separator = DateSeparator::SLASH) noexcept;
 
 
 		// Wide Multi-Byte Chars
@@ -106,11 +107,12 @@ namespace klib
 			throw kDebug::InvalidDayError("Value entered does not index to a day of the week");
 		}
 		std::wstring wGetDateInNumericalFormat(const DateSeparator separator = DateSeparator::SLASH, const _SYSTEMTIME& dateTime = GetLocalDateAndTime()) noexcept;
-		std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept;
-		std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second, unsigned short milliseconds) noexcept;
+		std::wstring wCreateTime(uint8_t hours, uint8_t minutes) noexcept;
+		std::wstring wCreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds) noexcept;
+		std::wstring wCreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds) noexcept;
 		std::wstring wGetLocalStartTimeStr() noexcept;
 		std::wstring wGetSystemStartTimeStr() noexcept;
 		std::wstring wGetLocalStartDateStr(const DateSeparator separator = DateSeparator::SLASH) noexcept;
-		//std::wstring wGetSystemStartDateStr(const bool slash = true) noexcept;
+		std::wstring wGetSystemLocalStartDateStr(const DateSeparator separator = DateSeparator::SLASH) noexcept;
 	}
 }

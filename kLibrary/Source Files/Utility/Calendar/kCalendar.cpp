@@ -43,10 +43,10 @@ namespace klib::kCalendar
 
 	std::string GetTimeText(const _SYSTEMTIME dateTime)  noexcept
 	{
-		const auto dateStr = ToString("{0:2}:{1:2}:{2:2}:{3:3}", 
-			dateTime.wHour, 
-			dateTime.wMinute, 
-			dateTime.wSecond, 
+		const auto dateStr = ToString("{0:2}:{1:2}:{2:2}:{3:3}",
+			dateTime.wHour,
+			dateTime.wMinute,
+			dateTime.wSecond,
 			dateTime.wMilliseconds);
 		return dateStr;
 	}
@@ -54,12 +54,12 @@ namespace klib::kCalendar
 	std::string GetDateInTextFormat(const DateFormat format, const _SYSTEMTIME& dateTime) noexcept
 	{
 		std::string day = GetDayOfTheWeek(dateTime.wDayOfWeek).data();
-		
-		day = (format == DateFormat::FULL) ? day : day.substr(0, 3);
-		const auto dateStr = ToString("%s %d %s %04d", 
-			day.data(), 
-			dateTime.wDay, 
-			GetMonth(dateTime.wMonth - 1).data(), 
+
+		if (format == DateFormat::SHORT) day = day.substr(0, 3);
+		const auto dateStr = ToString("%s %d %s %04d",
+			day.data(),
+			dateTime.wDay,
+			GetMonth(dateTime.wMonth - 1).data(),
 			dateTime.wYear);
 		return dateStr;
 	}
@@ -70,16 +70,28 @@ namespace klib::kCalendar
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
-	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second)  noexcept
+	std::string CreateTime(uint8_t hours, uint8_t minutes) noexcept
 	{
-		const auto time = ToString("%02d:%02d:%02d", hour, minute, second);
+		if (hours > 23) hours = 23;
+		if (minutes > 59) minutes = 59;
+		const auto time = ToString("%02d:%02d", hours, minutes);
 		return time;
 	}
 
-	std::string CreateTime(unsigned short hour, unsigned short minute, unsigned short second,
-		unsigned milliseconds) noexcept
+	std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds)  noexcept
 	{
-		const auto time = ToString("%02d:%02d:%02d:%04d", hour, minute, second, milliseconds);
+		if (hours > 23) hours = 23;
+		if (minutes > 59) minutes = 59;
+		if (seconds > 59) seconds = 59;
+		const auto time = ToString("%02d:%02d:%02d", hours, minutes, seconds);
+		return time;
+	}
+
+	std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds) noexcept
+	{
+		if (milliseconds > 999) milliseconds = 999;
+		auto time = CreateTime(hours, minutes, seconds);
+		time.append(ToString(":%03d", milliseconds));
 		return time;
 	}
 
@@ -107,25 +119,48 @@ namespace klib::kCalendar
 
 	std::string GetLocalStartDateStr(const DateSeparator separator) noexcept
 	{
-		static std::string localDate;
-		if (localDate.empty())
+		static std::string local;
+		if (local.empty())
 		{
-			localDate = GetDateInNumericalFormat(separator);
-			return localDate;
+			local = GetDateInNumericalFormat(separator, GetLocalDateAndTime());
+			return local;
 		}
 
 		if (separator == DateSeparator::SLASH)
 		{
-			if (localDate.find('/') == std::string::npos)
-				localDate = kString::Replace<char>(localDate, '-', '/');
+			if (local.find('/') == std::string::npos)
+				local = kString::Replace<char>(local, '-', '/');
 		}
 		else
 		{
-			if (localDate.find('-') == std::string::npos)
-				localDate = kString::Replace<char>(localDate, '/', '-');
+			if (local.find('-') == std::string::npos)
+				local = kString::Replace<char>(local, '/', '-');
 		}
 
-		return localDate;
+		return local;
+	}
+
+	std::string GetSystemStartDateStr(const DateSeparator separator) noexcept
+	{
+		static std::string system;
+		if (system.empty())
+		{
+			system = GetDateInNumericalFormat(separator, GetSystemDateAndTime());
+			return system;
+		}
+
+		if (separator == DateSeparator::SLASH)
+		{
+			if (system.find('/') == std::string::npos)
+				system = kString::Replace<char>(system, '-', '/');
+		}
+		else
+		{
+			if (system.find('-') == std::string::npos)
+				system = kString::Replace<char>(system, '/', '-');
+		}
+
+		return system;
 	}
 
 	// WIDE MULTI-BYTE CHAR
@@ -138,8 +173,8 @@ namespace klib::kCalendar
 	std::wstring wGetDateInTextFormat(const DateFormat format, const _SYSTEMTIME& dateTime) noexcept
 	{
 		std::wstring day = wGetDayOfTheWeek(dateTime.wDayOfWeek).data();
-		day = (format == DateFormat::FULL) ? day : day.substr(0, 3);
-		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, GetMonth(dateTime.wMonth - 1).data(), dateTime.wYear);
+		if (format == DateFormat::SHORT) day = day.substr(0, 3);
+		return ToString(L"%s %d %s %04d", day.data(), dateTime.wDay, wGetMonth(dateTime.wMonth - 1).data(), dateTime.wYear);
 	}
 
 	std::wstring wGetDateInNumericalFormat(const DateSeparator separator, const _SYSTEMTIME& dateTime) noexcept
@@ -148,16 +183,30 @@ namespace klib::kCalendar
 		return ToString(dateFormat, dateTime.wDay, dateTime.wMonth, dateTime.wYear);
 	}
 
-	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second) noexcept
+	std::wstring wCreateTime(uint8_t hours, uint8_t minutes) noexcept
 	{
-		const auto time = ToString(L"%02d:%02d:%02d", hour, minute, second);
+		if (hours > 23) hours = 23;
+		if (minutes > 59) minutes = 59;
+		const auto time = ToString(L"%02d:%02d", hours, minutes);
 		return time;
 	}
 
-	std::wstring wCreateTime(unsigned short hour, unsigned short minute, unsigned short second,
-		unsigned short milliseconds) noexcept
+	std::wstring wCreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds) noexcept
 	{
-		const auto time = ToString(L"%02d:%02d:%02d:%04d", hour, minute, second, milliseconds);
+		if (hours > 23) hours = 23;
+		if (minutes > 59) minutes = 59;
+		if (seconds > 59) seconds = 59;
+		const auto time = ToString(L"%02d:%02d:%02d", hours, minutes, seconds);
+		return time;
+	}
+
+	std::wstring wCreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds) noexcept
+	{
+		if (hours > 23) hours = 23;
+		if (minutes > 59) minutes = 59;
+		if (seconds > 59) seconds = 59;
+		if (milliseconds > 999) milliseconds = 999;
+		const auto time = ToString(L"%02d:%02d:%02d:%03d", hours, minutes, seconds, milliseconds);
 		return time;
 	}
 
@@ -185,25 +234,48 @@ namespace klib::kCalendar
 
 	std::wstring wGetLocalStartDateStr(const DateSeparator separator) noexcept
 	{
-		static std::wstring localDate;
-		if (localDate.empty())
+		static std::wstring local;
+		if (local.empty())
 		{
-			localDate = wGetDateInNumericalFormat(separator);
-			return localDate;
+			local = wGetDateInNumericalFormat(separator, GetLocalDateAndTime());
+			return local;
 		}
 
 		if (separator == DateSeparator::SLASH)
 		{
-			if (localDate.find('/') == std::wstring::npos)
-				localDate = kString::Replace<wchar_t>(localDate, L'-', L'/');
+			if (local.find(L'/') == std::wstring::npos)
+				local = kString::Replace<wchar_t>(local, L'-', L'/');
 		}
 		else
 		{
-			if (localDate.find('-') == std::wstring::npos)
-				localDate = kString::Replace<wchar_t>(localDate, L'/', L'-');
+			if (local.find(L'-') == std::wstring::npos)
+				local = kString::Replace<wchar_t>(local, L'/', L'-');
 		}
 
-		return localDate;
+		return local;
+	}
+
+	std::wstring wGetSystemLocalStartDateStr(const DateSeparator separator) noexcept
+	{
+		static std::wstring system;
+		if (system.empty())
+		{
+			system = wGetDateInNumericalFormat(separator, GetSystemDateAndTime());
+			return system;
+		}
+
+		if (separator == DateSeparator::SLASH)
+		{
+			if (system.find(L'/') == std::wstring::npos)
+				system = kString::Replace<wchar_t>(system, L'-', L'/');
+		}
+		else
+		{
+			if (system.find('-') == std::wstring::npos)
+				system = kString::Replace<wchar_t>(system, L'/', L'-');
+		}
+
+		return system;
 	}
 }
 

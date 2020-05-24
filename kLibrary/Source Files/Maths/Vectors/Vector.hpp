@@ -536,7 +536,7 @@ namespace kmaths
 	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator==(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
-		return lhs.Magnitude() == rhs;
+		return (lhs.Magnitude()) == rhs;
 	}
 
 	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>

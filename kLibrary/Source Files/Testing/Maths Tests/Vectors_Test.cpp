@@ -246,7 +246,7 @@ namespace kTest::maths
 		const auto value = ptr[3];
 		VERIFY(value == vector4.w);
 
-		VERIFY_COMPILE_TIME(vector4 == 4);
+		VERIFY(vector4 == 4);
 
 		return success;
 	}

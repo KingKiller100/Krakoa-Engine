@@ -1610,7 +1610,7 @@ namespace kTest::maths
 			}
 			catch (const klib::kDebug::NoRealRootError& e)
 			{
-				constexpr std::string_view msg = R"(Value "-64" has no 6th root)";
+				constexpr std::string_view msg = R"(ERROR: Value "-64" has no 6th root)";
 				VERIFY(msg == e.what());
 			}
 		}

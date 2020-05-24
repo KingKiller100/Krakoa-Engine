@@ -145,32 +145,32 @@ namespace klib::kFormat
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
-	constexpr std::basic_string<CharType> MakeStringFromData(const std::basic_string<CharType>& format, T arg1, Ts ...argN)
+	constexpr std::basic_string<CharType> MakeStringFromData(const std::basic_string<CharType>& format, T arg1, Ts ...argPack)
 	{
 		constexpr auto npos = std::basic_string<CharType>::npos;
 		constexpr auto one = CAST(size_t, 1);
 
-		CharType* buffer;
-		size_t length;
+		CharType* buffer = nullptr;
+		size_t length = npos;
 
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			length = static_cast<size_t>(_snprintf(nullptr, 0, format.data(), arg1, argN...)) + one;
+			length = static_cast<size_t>(_snprintf(nullptr, 0, format.data(), arg1, argPack...)) + one;
 			if (length == npos) throw std::runtime_error("Error during char type \"ToString(...)\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
-			sprintf_s(buffer, length, format.data(), arg1, argN...);
+			sprintf_s(buffer, length, format.data(), arg1, argPack...);
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
-			length = static_cast<size_t>(_snwprintf(nullptr, 0, format.data(), arg1, argN...)) + one;
+			length = static_cast<size_t>(_snwprintf(nullptr, 0, format.data(), arg1, argPack...)) + one;
 			if (length == npos) throw std::runtime_error("Error during wchar_t type \"ToString(...)\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
-			swprintf_s(buffer, length, format.data(), arg1, argN...);
+			swprintf_s(buffer, length, format.data(), arg1, argPack...);
 		}
 		else
 		{
 			auto str = kString::Convert<char>(format);
-			str = MakeStringFromData<char>(str.data(), arg1, argN...);
+			str = MakeStringFromData<char>(str.data(), arg1, argPack...);
 			const auto text = kString::Convert<CharType>(str);
 
 			return text;

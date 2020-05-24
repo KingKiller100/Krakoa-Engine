@@ -670,9 +670,10 @@ namespace kTest::maths
 		}
 
 		{
-			auto list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
+			const auto* const list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearch(list, 6ll, 7);
 			VERIFY(idx == 6);
+			delete[] list;
 		}
 
 		return success;
@@ -736,9 +737,10 @@ namespace kTest::maths
 		}
 
 		{
-			auto list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
+			const auto* list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 6ll, 7);
 			VERIFY(idx == 6);
+			delete[] list;
 		}
 
 		return success;
@@ -1200,10 +1202,10 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::ToDegreesTest()
 	{
-		constexpr auto piTo180 = ToDegrees(int(constants::PI));
+		constexpr auto piTo180 = ToDegrees(CAST(int, constants::PI));
 		VERIFY_COMPILE_TIME(piTo180 == 180);
 
-		constexpr auto tauTo360 = ToDegrees<float>(float(constants::TAU));
+		constexpr auto tauTo360 = ToDegrees<float>(static_cast<float>(constants::TAU));
 		VERIFY_COMPILE_TIME(tauTo360 == 360.f);
 
 		constexpr auto piOver2To90 = ToDegrees<double>(constants::PI_OVER_2);
@@ -1596,26 +1598,34 @@ namespace kTest::maths
 		}
 
 		// Throws error trying to find a even root of a negative number
-		//{
-		//	constexpr auto exponent = -64.0;
-		//	constexpr auto power = 6;
-		//	auto root = RootImpl(exponent, power);
-		//	constexpr auto expected = -2;
-		//	VERIFY(root == expected);
-		//}
+		{
+			try
+			{
+
+				constexpr auto exponent = -64;
+				constexpr auto power = 6;
+				auto root = Root(exponent, power);
+				constexpr auto expected = -2;
+				VERIFY(root == expected);
+			}
+			catch (const klib::kDebug::NoRealRootError& e)
+			{
+				constexpr std::string_view msg = R"(Value "-64" has no 6th root)";
+				VERIFY(msg == e.what());
+			}
+		}
 
 		return success;
 	}
 
 	bool AlgorithmsTester::LogTest()
 	{
-		//{
-		//	constexpr auto base = 2;
-		//	constexpr auto exponent = 8;
-		//	const auto log = Log(base, exponent);
-		//	const auto expected = std::log2(8); // 6379.1890908406222
-		//	VERIFY(log == expected);
-		//}
+		{
+			constexpr auto x = 8;
+			const auto result = Log2(x);
+			const auto expected = std::log2(8); // 6379.1890908406222
+			VERIFY(result == expected);
+		}
 
 		return success;
 	}

@@ -166,7 +166,7 @@ namespace kmaths
 			return REINTERPRET(Type*, (void *)this);
 		}
 
-		USE_RESULT constexpr auto GetLength() const noexcept
+		USE_RESULT static constexpr auto GetLength() noexcept
 		{
 			return Length;
 		}

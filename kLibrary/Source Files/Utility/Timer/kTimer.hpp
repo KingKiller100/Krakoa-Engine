@@ -88,7 +88,7 @@ namespace klib::kTime
 	private:
 		const char* name;
 
-		typename const Clock::time_point startTimePoint;
+		const typename Clock::time_point startTimePoint;
 		typename Clock::time_point lastTimePoint;
 	};
 

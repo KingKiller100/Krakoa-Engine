@@ -158,7 +158,7 @@ namespace kmaths
 		
 		}
 
-		USE_RESULT constexpr auto GetLength() const noexcept
+		USE_RESULT static constexpr auto GetLength() noexcept
 		{
 			return Length;
 		}

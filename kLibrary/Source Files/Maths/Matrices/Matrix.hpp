@@ -111,7 +111,7 @@ namespace kmaths
 
 			if _CONSTEXPR_IF(Rows == 2)
 			{
-				Vector<2, Type> copy[2];
+				Vector<Type, 2> copy[2];
 				if (determinant != 0.f)
 				{
 					copy[0][0] = elems[1][1] / CAST(Type, determinant);
@@ -301,7 +301,7 @@ namespace kmaths
 			return true;
 		}
 
-		USE_RESULT constexpr bool IsSquare() const noexcept
+		USE_RESULT static constexpr bool IsSquare() noexcept
 		{
 			return Rows == Columns;
 		}
@@ -335,17 +335,17 @@ namespace kmaths
 			return false;
 		}
 
-		USE_RESULT constexpr decltype(auto) GetRows() const noexcept
+		USE_RESULT static constexpr decltype(auto) GetRows() noexcept
 		{
 			return Rows;
 		}
 
-		USE_RESULT constexpr decltype(auto) GetColumns() const noexcept
+		USE_RESULT static constexpr decltype(auto) GetColumns() noexcept
 		{
 			return Columns;
 		}
 
-		USE_RESULT constexpr decltype(auto) GetSize() const noexcept
+		USE_RESULT static constexpr decltype(auto) GetSize() noexcept
 		{
 			return Rows * Columns;
 		}
@@ -556,7 +556,7 @@ namespace kmaths
 		// Deleted version of functions (under certain conditions)
 		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
-			Type> Getdeterminant() const noexcept
+			Type> GetDeterminant() const noexcept
 			= delete;
 
 		template<Length_Type R = Rows, Length_Type C = Columns>

@@ -88,7 +88,7 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr Big_Int_Type BinarySearch(T* list, T&& value, size_t size) noexcept
+	USE_RESULT constexpr Big_Int_Type BinarySearch(const T* const list, T&& value, size_t size) noexcept
 	{
 		return BinarySearchImpl(list, value, 0, size - 1, size);
 	}
@@ -126,7 +126,7 @@ namespace kmaths
 	}
 
 	template< typename T>
-	USE_RESULT constexpr Big_Int_Type BinarySearchClosest(const T* list, T&& value, size_t size)
+	USE_RESULT constexpr Big_Int_Type BinarySearchClosest(const T* const list, T&& value, size_t size)
 	{
 		return BinarySearchClosestImpl(list, value, 0, size - 1, size);
 	};
@@ -299,7 +299,7 @@ namespace kmaths
 
 		return isNeg ? -x : x;
 	}
-	
+
 
 	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -411,7 +411,7 @@ namespace kmaths
 		const auto x0 = x;
 
 		constexpr auto epsilon = std::numeric_limits<T>::epsilon() * 10;
-		
+
 		const auto integer = Floor<T>(x);
 
 		if (!IsDecimal<T>(x))
@@ -477,7 +477,7 @@ namespace kmaths
 	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
 	{
 		using namespace constants;
-		
+
 		const auto isNegative = IsNegative(value);
 		if (isNegative)
 			value = -value;
@@ -679,7 +679,7 @@ namespace kmaths
 			maxIterations = 16;
 
 		if (IsNegative(square))
-			throw klib::kDebug::NoRealRootError(square);
+			throw klib::kDebug::NoRealRootError(square, 2);
 
 		if (square == constants::ZeroPointFive<T>())
 			return CAST(T, constants::SQRT_1_OVER_2);
@@ -733,8 +733,8 @@ namespace kmaths
 #endif
 	}
 
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T RootImpl(T num, size_t root)
+	template<typename T, typename ReturnType = T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr ReturnType RootImpl(T num, size_t root)
 	{
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = -one;
@@ -746,17 +746,20 @@ namespace kmaths
 		if (IsNegative(num))
 		{
 			if ((root & 1) == 0) // Even root
-				throw klib::kDebug::NoRealRootError(num);
-
+			{
+				const auto n = static_cast<ReturnType>(num);
+				throw klib::kDebug::NoRealRootError(n, root); // No real root
+			}
+			
 			if (num == minusOne)
-				return minusOne;
+				return CAST(ReturnType, minusOne);
 		}
 
 		if (num == 0)
 			return 0;
 
 		if (num == one || root == one)
-			return num;
+			return CAST(ReturnType, num);
 
 		const auto chooseStartNumber = [&](auto number) -> T
 		{
@@ -809,7 +812,7 @@ namespace kmaths
 		const T start = chooseStartNumber(num);
 
 		if (PowerOfImpl(start, root) == num)
-			return start;
+			return CAST(ReturnType, start);
 
 		T result = start;
 		T prev[2] = { minusOne, minusOne };
@@ -833,25 +836,25 @@ namespace kmaths
 			result += next_result;
 		}
 
-		return result;
+		return CAST(ReturnType, result);
 	}
 
-//#if defined (_MSC_VER)
-//#	pragma warning(push)
-//#	pragma warning(disable : 4244)
+	//#if defined (_MSC_VER)
+	//#	pragma warning(push)
+	//#	pragma warning(disable : 4244)
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Root(T num, uint8_t root) noexcept
+	USE_RESULT constexpr T Root(T num, size_t root)
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-			return CAST(T, RootImpl<float>(CAST(float, num), root));
+			return RootImpl<float, T>(CAST(float, num), root);
 		else
 			return RootImpl<T>(num, root);
 	}
 
 	// Bakhshali Method
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Sqrt(T square) noexcept
+	USE_RESULT constexpr T Sqrt(T square)
 	{
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 			return CAST(T, SqrtImpl<float>(CAST(float, square)));
@@ -861,13 +864,13 @@ namespace kmaths
 
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T InvSqrt(T square) noexcept
+	USE_RESULT constexpr T InvSqrt(T square)
 	{
 		return constants::OneOver<T>(RootImpl<T>(square, 2));
 	}
 
-//#	pragma warning(pop)
-//#endif
+	//#	pragma warning(pop)
+	//#endif
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T PowerOf(T base, T power) noexcept
@@ -936,7 +939,7 @@ namespace kmaths
 			return CAST(T, result);
 		}
 
-		return std::log(x);
+		return CAST(T, std::log(x));
 	}
 
 	template<typename T>
@@ -956,7 +959,7 @@ namespace kmaths
 	USE_RESULT constexpr T Log2(const T x)
 	{
 		constexpr auto ln2 = constants::LN2;
-		return Logarithm(x, ln2);
+		return CAST(T, NaturalLogarithm(x) / NaturalLogarithm(2));
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 

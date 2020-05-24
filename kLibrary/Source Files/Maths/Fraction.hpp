@@ -70,8 +70,8 @@ namespace kmaths
 			for (Denominator_Value_Type i = 2; i < loops; ++i)
 			{
 				const double multiplier = 1.0 / i;
-				const auto numFactor = double(numerator) * multiplier;
-				const auto denFactor = double(denominator) * multiplier;
+				const auto numFactor = CAST(float, numerator) * multiplier;
+				const auto denFactor = CAST(float, denominator) * multiplier;
 
 				if (size_t(numFactor) == numFactor
 					&& size_t(denFactor) == denFactor)

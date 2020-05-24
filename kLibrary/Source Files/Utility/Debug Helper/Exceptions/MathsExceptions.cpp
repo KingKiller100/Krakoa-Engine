@@ -1,8 +1,6 @@
 ﻿#include "pch.hpp"
 #include "MathsExceptions.hpp"
 
-#include "../../Format/kFormatToString.hpp"
-
 namespace klib::kDebug
 {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,23 +39,7 @@ namespace klib::kDebug
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// No Real Root Exception ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	NoRealRootError::NoRealRootError(const long double value)
-		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
-	{}
 	
-	NoRealRootError::NoRealRootError(const double value)
-		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
-	{}
-
-	NoRealRootError::NoRealRootError(const float value)
-		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
-	{}
-
-	NoRealRootError::NoRealRootError(const kmaths::Big_Int_Type value)
-		: MathsError(kFormat::ToString("ERROR: No real root has occured for value \"{0}\"", value))
-	{}
-
 	NoRealRootError::NoRealRootError(const std::string& _Message)
 		: MathsError(_Message)
 	{}

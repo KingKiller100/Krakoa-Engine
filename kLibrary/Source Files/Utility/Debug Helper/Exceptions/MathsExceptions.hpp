@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../../../Maths/Length_Type.hpp"
+#include "../../Format/kFormatToString.hpp"
 
 #include <stdexcept>
 
@@ -29,10 +30,16 @@ namespace klib::kDebug
 	class NoRealRootError final : public MathsError
 	{
 	public:
-		explicit NoRealRootError(const float value);
-		explicit NoRealRootError(const double value);
-		explicit NoRealRootError(const long double value);
-		explicit NoRealRootError(const kmaths::Big_Int_Type value);
+		template<typename T>
+		NoRealRootError(const T value, const size_t root)
+			: MathsError(kFormat::ToString("ERROR: Value \"{0:2}\" has no {1}{2} root",
+				value,
+				root,
+				root == 1 ? "st"
+				: root == 2 ? "nd"
+				: root == 3 ? "rd"
+				: "th"))
+		{}
 
 		explicit NoRealRootError(const char* const _Message);
 		explicit NoRealRootError(const std::string& _Message);

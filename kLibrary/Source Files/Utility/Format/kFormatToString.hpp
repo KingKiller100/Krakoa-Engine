@@ -148,29 +148,28 @@ namespace klib::kFormat
 	constexpr std::basic_string<CharType> MakeStringFromData(const std::basic_string<CharType>& format, T arg1, Ts ...argPack)
 	{
 		constexpr auto npos = std::basic_string<CharType>::npos;
-		constexpr auto one = CAST(size_t, 1);
 
 		CharType* buffer = nullptr;
 		size_t length = npos;
 
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			length = static_cast<size_t>(_snprintf(nullptr, 0, format.data(), arg1, argPack...)) + one;
+			length = static_cast<size_t>(_snprintf(nullptr, 0, format.data(), arg1, argPack...) + 1);
 			if (length == npos) throw std::runtime_error("Error during char type \"ToString(...)\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
 			sprintf_s(buffer, length, format.data(), arg1, argPack...);
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
-			length = static_cast<size_t>(_snwprintf(nullptr, 0, format.data(), arg1, argPack...)) + one;
+			length = static_cast<size_t>(_snwprintf(nullptr, 0, format.data(), arg1, argPack...) + 1);
 			if (length == npos) throw std::runtime_error("Error during wchar_t type \"ToString(...)\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
 			swprintf_s(buffer, length, format.data(), arg1, argPack...);
 		}
 		else
 		{
-			auto str = kString::Convert<char>(format);
-			str = MakeStringFromData<char>(str.data(), arg1, argPack...);
+			const auto fmt = kString::Convert<wchar_t>(format);
+			const auto str = MakeStringFromData<wchar_t>(fmt, arg1, argPack...);
 			const auto text = kString::Convert<CharType>(str);
 
 			return text;
@@ -289,8 +288,16 @@ namespace klib::kFormat
 				}
 				else if (id.second.find("int") != npos)
 				{
-					auto data = std::any_cast<const unsigned int*>(val);
-					finalString.append(MakeStringFromData(currentSection, *data));
+					if (id.second.find("__int64") != npos)
+					{
+						auto data = std::any_cast<const unsigned __int64*>(val);
+						finalString.append(MakeStringFromData(currentSection, *data));
+					}
+					else
+					{
+						auto data = std::any_cast<const unsigned int*>(val);
+						finalString.append(MakeStringFromData(currentSection, *data));
+					}
 				}
 				else if (auto longPos = id.second.find("long"); longPos != npos)
 				{
@@ -346,9 +353,18 @@ namespace klib::kFormat
 			}
 			else if (id.second.find("int") != npos)
 			{
-				auto data = std::any_cast<const int*>(val);
-				currentSection[replacePos + 1] = CharType('d');
-				finalString.append(MakeStringFromData(currentSection, *data));
+				if (id.second.find("__int64") != npos)
+				{
+					auto data = std::any_cast<const __int64*>(val);
+					currentSection[replacePos + 1] = CharType('d');
+					finalString.append(MakeStringFromData(currentSection, *data));
+				}
+				else
+				{
+					auto data = std::any_cast<const int*>(val);
+					currentSection[replacePos + 1] = CharType('d');
+					finalString.append(MakeStringFromData(currentSection, *data));
+				}
 			}
 			else if (id.second.find("double") != npos)
 			{

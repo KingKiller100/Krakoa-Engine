@@ -65,7 +65,7 @@ namespace klib::kTime
 		}
 
 		template<typename Units>
-		USE_RESULT constexpr Rep Now() noexcept(std::is_arithmetic_v<Rep>)
+		USE_RESULT constexpr Rep Now() const noexcept(std::is_arithmetic_v<Rep>)
 		{
 			const auto currentTimePoint = Clock::now();
 			return std::chrono::time_point_cast<Units>(currentTimePoint).time_since_epoch().count();

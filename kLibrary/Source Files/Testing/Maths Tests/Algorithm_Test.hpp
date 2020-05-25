@@ -40,8 +40,8 @@ namespace kTest::maths
 		bool SquareRootTest();
 		bool InverseSquareRootTest();
 		bool RootTest();
-		bool LogarithmBase10Test();
-		bool LogTest();
+		bool Log10Test();
+		bool Log2Test();
 		bool PowerOfFractionTest();
 		bool FloatingPointRemainderTest();
 		bool ModulusTest();

@@ -474,7 +474,7 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints) noexcept
+	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints = Max_Decimal_Precision_V<T>) noexcept
 	{
 		using namespace constants;
 
@@ -750,7 +750,7 @@ namespace kmaths
 				const auto n = static_cast<ReturnType>(num);
 				throw klib::kDebug::NoRealRootError(n, root); // No real root
 			}
-			
+
 			if (num == minusOne)
 				return CAST(ReturnType, minusOne);
 		}
@@ -919,7 +919,6 @@ namespace kmaths
 	{
 		using constants::AccuracyType;
 
-		constexpr auto e = constants::E;
 		constexpr auto one = constants::One<T>();
 		constexpr auto maxIter = uint16_t(2.048e3);
 
@@ -951,15 +950,33 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T Log10(const T x)
 	{
-		constexpr auto ln10 = NaturalLogarithm<constants::AccuracyType>(10);
-		return CAST(T, NaturalLogarithm<constants::AccuracyType>(x) / ln10);
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		{
+			constexpr auto ln10 = CAST(T, constants::LN10);
+			return Round<T>(NaturalLogarithm<T>(x) / ln10, Max_Decimal_Precision_V<T>);
+		}
+		else
+		{
+			constexpr auto ln10 = CAST(float, constants::LN10);
+			const auto result = Round<float>(NaturalLogarithm<float>(CAST(float, x)) / ln10, Max_Decimal_Precision_V<T>);
+			return CAST(T, result);
+		}
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T Log2(const T x)
 	{
-		constexpr auto ln2 = constants::LN2;
-		return CAST(T, NaturalLogarithm(x) / NaturalLogarithm(2));
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		{
+			constexpr auto ln2 = CAST(T, constants::LN2);
+			return Round<T>(NaturalLogarithm<T>(x) / ln2, Max_Decimal_Precision_V<T>);
+		}
+		else
+		{
+			constexpr auto ln2 = CAST(float, constants::LN2);
+			const auto result = Round<float>(NaturalLogarithm<float>(CAST(float, x)) / ln2, Max_Decimal_Precision_V<T>);
+			return CAST(T, result);
+		}
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 

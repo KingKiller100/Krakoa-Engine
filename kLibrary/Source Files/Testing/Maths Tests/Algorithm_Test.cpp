@@ -48,13 +48,13 @@ namespace kTest::maths
 
 		VERIFY_MULTI(GammaTest);
 		VERIFY_MULTI(FactorialTest);
-		VERIFY_MULTI(LogarithmBase10Test);
+		VERIFY_MULTI(Log10Test);
 		VERIFY_MULTI(RoundingTest);
 		VERIFY_MULTI(SquareRootTest);
 		VERIFY_MULTI(RootTest);
 
 		VERIFY_MULTI(InverseSquareRootTest);
-		VERIFY_MULTI(LogTest);
+		VERIFY_MULTI(Log2Test);
 
 		VERIFY_MULTI(FloatingPointRemainderTest);
 		VERIFY_MULTI(ModulusTest);
@@ -1240,7 +1240,7 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::LogarithmBase10Test()
+	bool AlgorithmsTester::Log10Test()
 	{
 		{
 			constexpr auto number = 0.1;
@@ -1274,13 +1274,14 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
+
 		{
 			constexpr auto number = 300.0;
 			const auto result = Log10(number);
 			const auto expected = std::log10(number);
 
-			const auto resultRounded = Round(result, 15);
-			const auto expectedRounded = Round(expected, 15);
+			const auto resultRounded = Round(result, Max_Decimal_Precision_V<decltype(number)>);
+			const auto expectedRounded = Round(expected, Max_Decimal_Precision_V<decltype(number)>);
 
 			VERIFY(resultRounded == expectedRounded);
 		}
@@ -1290,8 +1291,8 @@ namespace kTest::maths
 			const auto result = Log10(number);
 			const auto expected = std::log10(number);
 
-			const auto resultRounded = Round(result, 12);
-			const auto expectedRounded = Round(expected, 12);
+			const auto resultRounded = Round(result, Max_Decimal_Precision_V<decltype(number)>);
+			const auto expectedRounded = Round(expected, Max_Decimal_Precision_V<decltype(number)>);
 
 			VERIFY(resultRounded == expectedRounded);
 		}
@@ -1618,13 +1619,56 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool AlgorithmsTester::LogTest()
-	{
+	bool AlgorithmsTester::Log2Test()
+	{		
 		{
 			constexpr auto x = 8;
 			const auto result = Log2(x);
-			const auto expected = std::log2(8); // 6379.1890908406222
+			const auto expected = std::log2(x);
+
 			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto x = 64.5f;
+			const auto result = Log2(x);
+			const auto expected = std::log2(x);
+			
+			const auto resultRounded = Round(result, Max_Decimal_Precision_V<decltype(x)>);
+			const auto expectedRounded = Round(expected, Max_Decimal_Precision_V<decltype(x)>);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+		
+		{
+			constexpr auto x = 128.F;
+			const auto result = Log2(x);
+			const auto expected = std::log2(x);
+
+			const auto resultRounded = Round(result, Max_Decimal_Precision_V<decltype(x)>);
+			const auto expectedRounded = Round(expected, Max_Decimal_Precision_V<decltype(x)>);
+
+			VERIFY(resultRounded == expectedRounded);
+		}
+		
+		{
+			constexpr auto x = 4096;
+			const auto result = Log2(x);
+			const auto expected = std::log2(x);
+
+			VERIFY(result == expected);
+
+		}
+		
+		{
+			constexpr auto x = 40.0;
+			const auto result = Log2(x);
+			const auto expected = std::log2(x); 
+
+			const auto resultRounded = Round(result, 12);
+			const auto expectedRounded = Round(expected, 12);
+
+			VERIFY(resultRounded == expectedRounded);
 		}
 
 		return success;

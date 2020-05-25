@@ -1,0 +1,5 @@
+kmaths::Vector2f vs Tightly Packed Vector: 
+	Tightly Packed Vector is the fastest on average by 19.561%
+	Fastest Instance: kmaths::Vector2f Time: 700us (microseconds)
+	Slowest Instance: kmaths::Vector2f Time: 455100us (microseconds)
+

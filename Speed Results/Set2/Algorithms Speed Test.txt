@@ -1,0 +1,55 @@
+kmaths::Abs<long double> vs std::fabsl vs kmaths::Abs<double> vs std::fabs vs kmaths::Abs<float> vs std::fabsf vs kmaths::Abs<kmaths::Big_Int_Type> vs std::fabsf<kmaths::Big_Int_Type>: 
+	kmaths::Abs<kmaths::Big_Int_Type> is the fastest on average by 292.472%
+	Fastest Instance: std::fabsl Time: 600us (microseconds)
+	Slowest Instance: std::fabsf<kmaths::Big_Int_Type> Time: 1041100us (microseconds)
+
+kmaths::Cosine vs std::cos: 
+	std::cos is the fastest on average by 675.112%
+	Fastest Instance: std::cos Time: 600us (microseconds)
+	Slowest Instance: kmaths::Cosine Time: 1685100us (microseconds)
+
+kmaths::FloatingPointRemainder vs std::fmod: 
+	std::fmod is the fastest on average by 81.657%
+	Fastest Instance: std::fmod Time: 600us (microseconds)
+	Slowest Instance: kmaths::FloatingPointRemainder Time: 768700us (microseconds)
+
+kmaths::Floor vs std::floor: 
+	kmaths::Floor is the fastest on average by 134.835%
+	Fastest Instance: kmaths::Floor Time: 600us (microseconds)
+	Slowest Instance: std::floor Time: 701500us (microseconds)
+
+kmaths::PowerOf<double> vs std::pow<double>: 
+	std::pow<double> is the fastest on average by 4895.851%
+	Fastest Instance: std::pow<double> Time: 600us (microseconds)
+	Slowest Instance: kmaths::PowerOf<double> Time: 8832400us (microseconds)
+
+kmaths::PowerOf<int> vs std::pow<int> vs kmaths::PowerOf<short> vs std::pow<short>: 
+	kmaths::PowerOf<int> is the fastest on average by 1361.536%
+	Fastest Instance: std::pow<int> Time: 600us (microseconds)
+	Slowest Instance: std::pow<short> Time: 19417400us (microseconds)
+
+kmaths::Sign vs std::copysign: 
+	std::copysign is the fastest on average by 147.190%
+	Fastest Instance: std::copysign Time: 600us (microseconds)
+	Slowest Instance: kmaths::Sign Time: 851800us (microseconds)
+
+kmaths::Sine vs std::sin: 
+	std::sin is the fastest on average by 435.620%
+	Fastest Instance: std::sin Time: 600us (microseconds)
+	Slowest Instance: kmaths::Sine Time: 4297600us (microseconds)
+
+kmaths::Sqrt vs std::sqrt vs kmaths::Root: 
+	std::sqrt is the fastest on average by 1327.613%
+	Fastest Instance: std::sqrt Time: 500us (microseconds)
+	Slowest Instance: kmaths::Sqrt Time: 5559300us (microseconds)
+
+kmaths::Square vs kmaths::PowerOfImpl vs std::pow: 
+	kmaths::PowerOfImpl is the fastest on average by 165.526%
+	Fastest Instance: kmaths::Square Time: 600us (microseconds)
+	Slowest Instance: std::pow Time: 824300us (microseconds)
+
+kmaths::Tan vs std::tan: 
+	std::tan is the fastest on average by 955.666%
+	Fastest Instance: std::tan Time: 600us (microseconds)
+	Slowest Instance: kmaths::Tan Time: 1356500us (microseconds)
+

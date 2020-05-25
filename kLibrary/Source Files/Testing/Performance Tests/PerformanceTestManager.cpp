@@ -3,6 +3,7 @@
 
 #include "PerformanceTestBase.hpp"
 
+#include "Maths/Vector_SpeedTest.hpp"
 #include "Maths/Algorithms_SpeedTest.hpp"
 
 // File System to output test results
@@ -70,7 +71,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
 	{
-		klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+		const klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
 
 		std::cout << "\tNow Testing: " << test->GetName() << " ";
 
@@ -102,6 +103,7 @@ namespace kTest::performance
 	void PerformanceTestManager::InitializeMaths()
 	{
 		Add(new maths::AlgorithmsSpeedTest());
+		Add(new maths::VectorSpeedTest());
 	}
 
 	void PerformanceTestManager::OutputResult(const std::string& name)

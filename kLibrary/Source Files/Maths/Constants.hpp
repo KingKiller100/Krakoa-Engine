@@ -97,7 +97,7 @@ namespace kmaths::constants
 	template<class T>
 	USE_RESULT constexpr T MinusOne(T&&) noexcept
 	{
-		return MinusOne<T>();
+		return MinusOne<ONLY_TYPE(T)>();
 	}
 
 	template<class T>
@@ -109,7 +109,7 @@ namespace kmaths::constants
 	template<class T>
 	USE_RESULT constexpr T Two(T&&) noexcept
 	{
-		return Two<T>();
+		return Two<ONLY_TYPE(T)>();
 	}
 
 	template<class T>
@@ -121,7 +121,7 @@ namespace kmaths::constants
 	template<class T>
 	USE_RESULT constexpr T ZeroPointOne(T&&) noexcept
 	{
-		return ZeroPointOne<T>();
+		return ZeroPointOne<ONLY_TYPE(T)>();
 	}
 
 	template<class T>

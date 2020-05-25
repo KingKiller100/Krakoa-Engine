@@ -16,6 +16,8 @@ namespace kTest::performance::maths
 
 	private:
 		void Vec2f();
+		void Vec3f();
+		void Vec4f();
 	};
 }
 #endif

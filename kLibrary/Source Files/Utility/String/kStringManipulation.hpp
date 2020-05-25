@@ -2,6 +2,8 @@
 
 #include "../../HelperMacros.hpp"
 
+#include "../../Type Traits/String.hpp"
+
 #include <string>
 #include <vector>
 
@@ -19,6 +21,18 @@ namespace klib::kString
 
 	// --------------------------------------------------------------------------------------
 
+	template<class Char = char>
+	USE_RESULT constexpr StringWriter<Char> ToWriter(const Char* string) noexcept
+	{
+		return StringWriter<Char>(string);
+	}
+
+	template<class Char = char>
+	USE_RESULT constexpr StringReader<Char> ToReader(const Char* string) noexcept
+	{
+		return StringReader<Char>(string);
+	}
+	
 	template<class Char = char>
 	USE_RESULT constexpr StringWriter<Char> Replace(const StringReader<Char>& str, const ONLY_TYPE(Char) oldChar, const ONLY_TYPE(Char) newChar) noexcept
 	{

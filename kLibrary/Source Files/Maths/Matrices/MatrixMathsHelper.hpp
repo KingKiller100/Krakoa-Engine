@@ -103,14 +103,14 @@ namespace kmaths
 		return translate;
 	}
 
-	// Rotate transform in degrees
+	// Rotate transform in radians
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T degrees, const Vector3<T>& axes) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T radians, const Vector3<T>& axes) noexcept
 	{
-		const auto a = kmaths::ToRadians(degrees);
+		const auto a = radians;
 
-		const T cosA = std::cos(a);
-		const T sinA = std::sin(a);
+		const T cosA = Cosine(a);
+		const T sinA = Sine(a);
 
 		Vector3<T> axis = axes.Normalize();
 		Vector3<T> temp = axis * (CAST(T, 1) - cosA);
@@ -137,19 +137,19 @@ namespace kmaths
 		return res;
 	}
 
-	// Rotate transform in degrees
+	// Rotate transform in radians
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate(T degrees, const Vector3<T>& axes) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate(T radians, const Vector3<T>& axes) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), degrees, axes);
+		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, axes);
 		return rotate;
 	}
 
-	// Rotate transform in degrees
+	// Rotate transform in radians
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T degrees) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T radians) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), degrees, { CAST(T, 0), CAST(T, 0), constants::One<T>() });
+		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, { CAST(T, 0), CAST(T, 0), constants::One<T>() });
 		return rotate;
 	}
 
@@ -181,25 +181,31 @@ namespace kmaths
 	/**
 	 * \brief
 	 *		Returns transform matrix made from Translation * Rotation * Scale 
-	 * \tparam T 
-	 * \param position 
-	 * \param degrees 
-	 * \param axes 
-	 * \param scale 
-	 * \return 
+	 * \tparam T
+	 *		Type
+	 * \param position
+	 *		3D Vector
+	 * \param radians
+	 *		amount to rotate
+	 * \param axes
+	 *		Axes to affect
+	 * \param scale
+	 *		Size of each component of the position
+	 * \return
+	 *		Complete transform matrix representing all three transformations taking place on a coordinate
 	 */
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> TRS(const Vector3<T>& position, const T degrees, const Vector3<T>& axes, const Vector3<T>& scale) noexcept
+	USE_RESULT constexpr TransformMatrix<T> TRS(const Vector3<T>& position, const T radians, const Vector3<T>& axes, const Vector3<T>& scale) noexcept
 	{
-		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(degrees, axes) * Scale<T>(scale);;
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(radians, axes) * Scale<T>(scale);;
 		return transform;
 	}
 
 	// Translation * Rotation * Scale in 2D
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> TRS2D(const Vector3<T>& position, const T degrees, const Vector2<T>& scale) noexcept
+	USE_RESULT constexpr TransformMatrix<T> TRS2D(const Vector3<T>& position, const T radians, const Vector2<T>& scale) noexcept
 	{
-		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(degrees) * Scale2D<T>(scale);;
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(radians) * Scale2D<T>(scale);;
 		return transform;
 	}
 	

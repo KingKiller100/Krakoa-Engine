@@ -337,7 +337,6 @@ namespace kmaths
 	{
 		constexpr constants::AccuracyType epsilon_magnitude = 2;
 
-
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
 			const auto xf = x + CAST(T, constants::PI_OVER_2);

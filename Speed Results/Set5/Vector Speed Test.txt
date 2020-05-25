@@ -1,0 +1,45 @@
+kmaths::Vector2<Big_Int_Type> vs Tightly Packed Vector: 
+	kmaths::Vector2<Big_Int_Type> is the fastest on average by 42.878%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector2d vs Tightly Packed Vector: 
+	kmaths::Vector2d is the fastest on average by 45.895%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector2f vs Tightly Packed Vector: 
+	kmaths::Vector2f is the fastest on average by 35.294%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector3<Big_Int_Type> vs Tightly Packed Vector: 
+	kmaths::Vector3<Big_Int_Type> is the fastest on average by 25.181%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector3d vs Tightly Packed Vector: 
+	kmaths::Vector3d is the fastest on average by 26.072%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector3f vs Tightly Packed Vector: 
+	Tightly Packed Vector is the fastest on average by 62.008%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector4<Big_Int_Type> vs Tightly Packed Vector: 
+	kmaths::Vector4<Big_Int_Type> is the fastest on average by 16.475%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector4d vs Tightly Packed Vector: 
+	kmaths::Vector4d is the fastest on average by 23.257%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+
+kmaths::Vector4f vs Tightly Packed Vector: 
+	Tightly Packed Vector is the fastest on average by 2.595%
+	Fastest Instance: Tightly Packed Vector Time: 600us (microseconds)
+	Slowest Instance: Tightly Packed Vector Time: 1280800us (microseconds)
+

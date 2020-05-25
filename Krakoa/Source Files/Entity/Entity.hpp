@@ -32,7 +32,7 @@ namespace krakoa
 		}
 		
 		template<typename Component, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
-		Component& AddComponent(Args&& ...params) noexcept
+		Component& Add(Args&& ...params) noexcept
 		{
 			KRK_FATAL(
 				!Find<Component>(), // Assert a brand new component being added
@@ -46,7 +46,7 @@ namespace krakoa
 		}
 
 		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
-		bool RemoveComponent() noexcept
+		bool Remove() noexcept
 		{
 			if (Find<Component>())
 			{
@@ -56,6 +56,18 @@ namespace krakoa
 
 			return false;
 		}
+
+		template<typename Component, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
+		Component& Get() noexcept
+		{
+			KRK_FATAL(
+				Find<Component>(), // Assert component already a part of entity
+				klib::kFormat::ToString("Attempt to get a component not a part of this entity - {0}", Component::GetStaticType())
+			);
+
+			return *components.at(Component::GetStaticType());
+		}
+		
 		
 	private:
 		std::string name;

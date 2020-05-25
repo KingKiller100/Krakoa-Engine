@@ -18,7 +18,7 @@ public:
 	~Hooper2Game()
 	{
 		isRunning = false;
-		Hooper2Game::Shutdown();
+		Hooper2Game::ShutDown();
 	}
 
 	void Initialize() override
@@ -28,7 +28,7 @@ public:
 		PushLayer(new Renderer2DLayer());
 	}
 
-	void Shutdown() override
+	void ShutDown() override
 	{}
 };
 

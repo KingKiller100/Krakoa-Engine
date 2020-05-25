@@ -23,7 +23,7 @@
 
 namespace krakoa
 {
-	class KRAKOA_API Application : public pattern::SimpleSingleton<Application>
+	class KRAKOA_API Application : public patterns::SimpleSingleton<Application>
 	{
 	public:
 		Application(Token&);
@@ -32,7 +32,7 @@ namespace krakoa
 		virtual void Initialize();
 		void Run() const;
 		USE_RESULT bool IsRunning() const;
-		virtual void Shutdown() = 0;
+		virtual void ShutDown() = 0;
 
 		iWindow& GetWindow() const;
 

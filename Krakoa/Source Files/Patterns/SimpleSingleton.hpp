@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include "../Core/EngineConfig.hpp"
 
-namespace pattern
+namespace patterns
 {
 	template <class T>
 	class SimpleSingleton
 	{
 	public:
 		constexpr SimpleSingleton() noexcept
-		{}
+			= default;
 
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
-
+		
 		constexpr static T& Reference()
 		{
 			return *instance;
@@ -39,4 +39,4 @@ namespace pattern
 }
 
 template<class T>
-T* pattern::SimpleSingleton<T>::instance = nullptr;
+T* patterns::SimpleSingleton<T>::instance = nullptr;

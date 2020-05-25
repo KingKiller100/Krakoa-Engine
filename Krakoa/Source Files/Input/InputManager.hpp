@@ -11,7 +11,7 @@ namespace krakoa::input
 		MIDDLE
 	};
 
-	class InputManager : protected pattern::SimpleSingleton<InputManager>
+	class InputManager : protected patterns::SimpleSingleton<InputManager>
 	{
 	public:
 		static void Initialize() noexcept                                            { CreateImpl(); }

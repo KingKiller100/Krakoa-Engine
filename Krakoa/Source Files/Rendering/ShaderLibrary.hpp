@@ -10,7 +10,7 @@ namespace krakoa::graphics
 {
 	class iShader;
 
-	class ShaderLibrary : public pattern::SimpleSingleton<ShaderLibrary>
+	class ShaderLibrary : public patterns::SimpleSingleton<ShaderLibrary>
 	{
 	public:
 		ShaderLibrary(Token&&);

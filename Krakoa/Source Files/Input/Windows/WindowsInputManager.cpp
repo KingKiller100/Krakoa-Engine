@@ -17,7 +17,7 @@ namespace krakoa::input
 	void InputManager::CreateImpl() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		InputManager::Create<WindowsInputManager>();
+		Create<WindowsInputManager>();
 	}
 
 	bool WindowsInputManager::IsKeyPressedImpl(int keycode) const noexcept

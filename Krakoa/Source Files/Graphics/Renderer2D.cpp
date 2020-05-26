@@ -26,6 +26,11 @@ namespace krakoa::graphics
 {
 	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
 
+	const Statistics& Renderer2D::GetStats()
+	{
+		return stats;
+	}
+
 	void Renderer2D::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
@@ -136,7 +141,7 @@ namespace krakoa::graphics
 		// Create white texture
 		{
 			constexpr uint32_t whiteTexture = 0xffffffff;
-			const auto pWhiteTexture = iTexture2D::Create(1u, 1u);
+			auto* const pWhiteTexture = iTexture2D::Create(1u, 1u);
 			pWhiteTexture->SetData(&whiteTexture, sizeof(whiteTexture));
 			pData->textures.slots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
 		}
@@ -293,11 +298,6 @@ namespace krakoa::graphics
 		AddNewQuad(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
-	const Statistics& Renderer2D::GetStats()
-	{
-		return stats;
-	}
-
 	void Renderer2D::QueryLimitsMet() noexcept
 	{
 		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
@@ -423,7 +423,7 @@ namespace krakoa::graphics
 		auto& bufferPtr = quad.pVertexBuffer;
 
 		const auto loops = quad.vertices.GetRows();
-		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
+		const kmaths::Vector3f scale3D(scale.x, scale.y, 1.f);
 
 		kmaths::Quaternionf qpq_;
 		if (radians != 0)

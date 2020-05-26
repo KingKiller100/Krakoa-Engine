@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Rendering/Textures/iTexture2D.hpp"
+#include "../../Graphics/Textures/iTexture2D.hpp"
 
 namespace krakoa::graphics
 {

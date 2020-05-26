@@ -2,7 +2,7 @@
 #include "OpenGLVertexArray.hpp"
 
 #include "../../Instrumentor.hpp"
-#include "../../Rendering/Rendering Resources/BufferLayout.hpp"
+#include "../../Graphics/Rendering Resources/BufferLayout.hpp"
 
 #include <GLAD/glad.h>
 

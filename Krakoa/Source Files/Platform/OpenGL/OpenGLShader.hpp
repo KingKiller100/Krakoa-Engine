@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Rendering/Rendering Resources/iShader.hpp"
+#include "../../Graphics/Rendering Resources/iShader.hpp"
 
 #include <string>
 #include <unordered_map>

@@ -7,7 +7,7 @@ namespace krakoa
 	class ComponentBase
 	{
 	public:
-		virtual ~ComponentBase() noexcept {};
+		virtual ~ComponentBase() noexcept = default;
 		USE_RESULT virtual const char* GetType() const noexcept = 0;
 
 		virtual void Initialize() {}

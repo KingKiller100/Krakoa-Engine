@@ -2,7 +2,7 @@
 #include "StatisticLayer.hpp"
 
 #include "../../../Instrumentor.hpp"
-#include "../../../Rendering/Renderer2D.hpp"
+#include "../../../Graphics/Renderer2D.hpp"
 
 #include <imgui.h>
 

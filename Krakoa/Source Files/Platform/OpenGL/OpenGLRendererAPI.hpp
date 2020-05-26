@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../../Rendering/iRendererAPI.hpp"
+#include "../../Graphics/iRendererAPI.hpp"
 
 namespace krakoa::graphics
 {

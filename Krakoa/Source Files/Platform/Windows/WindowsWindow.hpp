@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../iWindow.hpp"
-#include "../../Rendering/Rendering Resources/iGraphicsContext.hpp"
+#include "../../Graphics/Rendering Resources/iGraphicsContext.hpp"
 
 struct GLFWwindow;
 

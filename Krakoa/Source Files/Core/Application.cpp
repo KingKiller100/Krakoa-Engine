@@ -11,8 +11,8 @@
 #include "../Layers/FPS/FPSLayer.hpp"
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
-#include "../Rendering/Renderer.hpp"
-#include "../Rendering/ShaderLibrary.hpp"
+#include "../Graphics/Renderer.hpp"
+#include "../Graphics/ShaderLibrary.hpp"
 
 
 #include <Utility/Debug Helper/kDebugger.hpp>

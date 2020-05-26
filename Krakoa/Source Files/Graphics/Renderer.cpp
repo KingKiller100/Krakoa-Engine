@@ -6,7 +6,7 @@
 
 #include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
-#include "../Rendering/Rendering Resources/iShader.hpp"
+#include "../Graphics/Rendering Resources/iShader.hpp"
 
 namespace krakoa::graphics
 {

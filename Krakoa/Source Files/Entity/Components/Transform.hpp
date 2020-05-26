@@ -6,7 +6,7 @@
 #include <Maths/Matrices/TransformMatrix.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
-namespace krakoa::component
+namespace krakoa::components
 {
 	class Transform final : public ComponentBase
 	{
@@ -24,8 +24,7 @@ namespace krakoa::component
 			scale(scale)
 		{}
 
-		~Transform() noexcept override
-			= default;
+		~Transform() noexcept override;
 
 		CONST_GETTER_CONSTEXPR(kmaths::Vector3f, GetPosition, position)
 		SETTER_CONSTEXPR(kmaths::Vector3f, SetPosition, position)

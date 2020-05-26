@@ -19,6 +19,8 @@
 #include "../Layers/ImGui/ImGuiLayer.hpp"
 #include "../Layers/LayerStacker.hpp"
 
+#include "../Entity/EntitiyManager.hpp"
+
 #include <memory>
 
 namespace krakoa
@@ -54,6 +56,8 @@ namespace krakoa
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
 
+		EntityManager* entityManager;
+		
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;

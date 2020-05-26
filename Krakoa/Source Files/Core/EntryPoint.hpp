@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 		KRK_PROFILE_SESSION_END();
 
 		KRK_PROFILE_SESSION_BEGIN("ShutDown", "KRK_PROFILER-ShutDown");
-		pApp->Shutdown();
+		pApp->ShutDown();
 		KRK_PROFILE_SESSION_END();
 	}
 #endif

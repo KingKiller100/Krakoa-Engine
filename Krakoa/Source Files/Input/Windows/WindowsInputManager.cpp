@@ -28,7 +28,7 @@ namespace krakoa::input
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInputManager::IsMouseButtonPressedImpl(const MouseButtonType button) const noexcept
+	bool WindowsInputManager::IsMouseButtonPressedImpl(const MouseInputType button) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = std::any_cast<GLFWwindow*>(Application::Reference().GetWindow().GetNativeWindow());

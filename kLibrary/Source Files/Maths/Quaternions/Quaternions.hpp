@@ -3,6 +3,7 @@
 #include "../../HelperMacros.hpp"
 
 #include "../Constants.hpp"
+#include "../Angle_Type.hpp"
 #include "../Vectors/Vector3.hpp"
 #include "../Matrices/TransformMatrix.hpp"
 
@@ -42,7 +43,7 @@ namespace kmaths
 		* \brief
 		*		The explicit constructor creates a quaternion with the given components.
 		*
-		* \param degrees
+		* \param rotation
 		*		Degrees to rotate
 		*
 		*
@@ -65,11 +66,11 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		explicit constexpr Quaternion(const T degrees = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0)) noexcept
+		explicit constexpr Quaternion(T rotation = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0), const Theta_Type angleType = Angle_Type::RADIANS) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 			
-			const auto rads = ToRadians(degrees);
+			const auto rads = (angleType == Angle_Type::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
 			w = Cosine(halfRads);
@@ -79,10 +80,10 @@ namespace kmaths
 		}
 
 		// Vector must be normalized
-		explicit constexpr Quaternion(const T degrees, Vector<T, 3> n) noexcept
+		explicit constexpr Quaternion(const T rotation, Vector<T, 3> n, const Theta_Type angleType = Angle_Type::RADIANS) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
-			const auto rads = ToRadians(degrees);
+			const auto rads = (angleType == Angle_Type::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
 			if (n.MagnitudeSQ() != 1)
@@ -202,9 +203,11 @@ namespace kmaths
 			return EulerToQuaternions(axis[0], axis[1], axis[2]);
 		}
 
-		USE_RESULT constexpr void Rotate(const T degrees, const Vector<Type, 3>& n) noexcept
+		USE_RESULT constexpr void Rotate(const T rotation, const Vector<Type, 3>& n, const Theta_Type angleType = Angle_Type::RADIANS) noexcept
 		{
-			const auto halfA = ToRadians(degrees) * constants::ZeroPointFive<T>();
+			const auto rads = (angleType == Angle_Type::DEGREES) ? ToRadians(rotation) : rotation;
+			
+			const auto halfA = rads * constants::ZeroPointFive<T>();
 			const auto c = Cosine(halfA);
 			const auto s = Sine(halfA);
 
@@ -220,7 +223,7 @@ namespace kmaths
 		/**
 		 * \brief
 		 *		Calculates the new value for the given matrix transformation
-		 * \param[in] pos
+		 * \param position
 		 *		Object's current position
 		 */
 		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& position) const noexcept

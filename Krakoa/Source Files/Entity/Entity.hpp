@@ -11,7 +11,7 @@
 
 
 namespace krakoa
-{	
+{
 	class  Entity
 	{
 	public:
@@ -21,65 +21,69 @@ namespace krakoa
 		Entity(const Entity& other);
 		Entity& operator=(const Entity& other);
 
-		Entity(Entity&& other);
-		Entity& operator=(Entity&& other);
-		
+		Entity(Entity&& other) noexcept;
+		Entity& operator=(Entity&& other) noexcept;
+
+		~Entity() noexcept;
 
 		CONST_GETTER(std::string, GetName, name)
 		SETTER(std::string, SetName, name)
 
 		CONST_GETTER(unsigned, GetID, id)
 
+		bool IsActive() const;
+		void Activate();
+		void Deactivate();
+
 		void Update(double dt);
 
-		template<typename Component, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
+		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
 		USE_RESULT bool FindComponent() const noexcept
 		{
-			return (components.find(Component::GetStaticType()) != components.end());
-		}
-		
-		template<typename Component, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
-		Component& AddComponent(Args&& ...params) noexcept
-		{
-			KRK_FATAL(
-				!FindComponent<Component>(), // Assert a brand new component being added
-				klib::kFormat::ToString("Attempt to add a component already a part of this entity - {0}", Component::GetStaticType())
-			);
-			
-			std::unique_ptr<ComponentBase> componentPtr = std::make_unique<ComponentBase>(std::forward<Args>(params)...);
-			componentPtr->Initialize();
-			components.insert(std::make_pair(Component::GetStaticType(), std::move(componentPtr)));
-			return *componentPtr;
+			return (components.find(ComponentType::GetStaticType()) != components.end());
 		}
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
+		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
+		ComponentType& AddComponent(Args&& ...params)
+		{
+			KRK_FATAL(
+				!FindComponent<ComponentType>(), // Assert a brand new component being added
+				klib::kFormat::ToString("Attempt to add a component already a part of this entity - {0}", ComponentType::GetStaticType())
+			);
+
+			auto& component = ComponentType(std::forward<Args>(params)...);
+			components[ComponentType::GetStaticType()] = new ComponentType(component);
+			component.Initialize();
+			return component;
+		}
+
+		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
 		bool RemoveComponent() noexcept
 		{
-			if (FindComponent<Component>())
+			if (FindComponent<ComponentType>())
 			{
-				components.erase(Component::GetStaticType());
+				components.erase(ComponentType::GetStaticType());
 				return true;
 			}
 
 			return false;
 		}
 
-		template<typename Component, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
-		USE_RESULT Component& GetComponent() noexcept
+		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
+		USE_RESULT ComponentType& GetComponent() noexcept
 		{
 			KRK_FATAL(
-				FindComponent<Component>(), // Assert component already a part of entity
-				klib::kFormat::ToString("Attempt to get a component not a part of this entity - {0}", Component::GetStaticType())
+				FindComponent<ComponentType>(), // Assert component already a part of entity
+				klib::kFormat::ToString("Attempt to get a component not a part of this entity - {0}", ComponentType::GetStaticType())
 			);
 
-			return *(components.at(Component::GetStaticType()));
+			return *(components.at(ComponentType::GetStaticType()));
 		}
-		
-		
+
 	private:
 		std::string name;
 		const unsigned id;
-		std::unordered_map<std::string, std::unique_ptr<ComponentBase>> components;
+		std::unordered_map<const char*, ComponentBase*> components;
 
 		bool isSelected;
 		bool isActive;

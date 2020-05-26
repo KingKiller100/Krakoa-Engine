@@ -43,3 +43,7 @@
 // Layers
 #include "Layers/LayerBase.hpp"
 #include "Layers/ImGui/ImGuiLayer.hpp"
+
+// Entities & Components
+#include "Entity/EntitiyManager.hpp"
+#include "Entity/Components/Transform.hpp"

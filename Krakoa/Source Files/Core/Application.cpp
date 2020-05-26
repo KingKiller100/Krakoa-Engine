@@ -14,6 +14,7 @@
 #include "../Rendering/Renderer.hpp"
 #include "../Rendering/ShaderLibrary.hpp"
 
+
 #include <Utility/Debug Helper/kDebugger.hpp>
 
 
@@ -65,6 +66,9 @@ namespace krakoa
 		graphics::ShaderLibrary::Create();
 		graphics::Renderer::Initialize();
 
+		// Initialize Entity Manager
+		EntityManager::Create();
+		entityManager = EntityManager::Pointer();
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -126,6 +130,8 @@ namespace krakoa
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
 			pImGuiLayer->ToggleVisibility();
+
+		entityManager->Update(deltaTime);
 
 		if (!isMinimized)
 		{

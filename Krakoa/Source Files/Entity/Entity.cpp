@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "Entity.hpp"
 
+#include "Components/Transform.hpp"
+
 #include <Utility/Format/kFormatToString.hpp>
 
 namespace krakoa
@@ -8,8 +10,8 @@ namespace krakoa
 	static unsigned stored_ids = 0;
 
 	Entity::Entity()
-		: name(klib::kFormat::ToString("Entity{0)", stored_ids++)),
-		id(stored_ids),
+		: name(klib::kFormat::ToString("Entity{0}", stored_ids)),
+		id(stored_ids++),
 		isSelected(false),
 		isActive(true)
 	{}
@@ -22,17 +24,17 @@ namespace krakoa
 	{}
 
 	Entity::Entity(const Entity& other)
-		: name(klib::kFormat::ToString("Entity{0)", stored_ids++)),
-		id(stored_ids),
+		: name(klib::kFormat::ToString("Entity{0}", other.id)),
+		id(other.id),
 		components(other.components),
 		isSelected(false),
 		isActive(true)
 	{}
 
-	Entity::Entity(Entity&& other)
+	Entity::Entity(Entity&& other) noexcept
 		: name(std::move(other.name)),
-		id(std::move(other.id)),
-		components(std::move(other.components))
+		  id(std::move(other.id)),
+		  components(std::move(other.components))
 	{}
 
 	Entity& Entity::operator=(const Entity& other)
@@ -42,7 +44,7 @@ namespace krakoa
 		return *this;
 	}
 
-	Entity& Entity::operator=(Entity&& other)
+	Entity& Entity::operator=(Entity&& other) noexcept
 	{
 		name = std::move(other.name);
 		const auto* idPtr = &id;
@@ -52,13 +54,31 @@ namespace krakoa
 		return *this;
 	}
 
-	void Entity::Update(double dt)
+	Entity::~Entity() noexcept
+		= default;
+
+	bool Entity::IsActive() const
+	{
+		return isActive;
+	}
+
+	void Entity::Activate()
+	{
+		isActive = true;
+	}
+
+	void Entity::Deactivate()
+	{
+		isActive = false;
+	}
+
+	void Entity::Update(const double dt)
 	{
 		KRK_DBUG("Entiy \"" + name + "\" Update Called");
 
 		for (auto& component : components)
 		{
-			KRK_DBUG("Component \"" + component.first + "\" Update Called");
+			KRK_DBUG(klib::kFormat::ToString("Component \"{0}\" Update Called", component.first));
 
 			component.second->Update(dt);
 		}

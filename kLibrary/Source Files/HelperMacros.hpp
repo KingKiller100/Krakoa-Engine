@@ -53,12 +53,12 @@
 
 
 // Class member getter & setters constexpr
-#define GETTER_CONSTEXPR(type, name, field) USE_RESULT constexpr const type& name() const noexcept\
+#define GETTER_CONSTEXPR(type, name, field) USE_RESULT constexpr type& name() noexcept\
 {\
 	return field;\
 }\
 
-#define CONST_GETTER_CONSTEXPR(type, name, field) USE_RESULT constexpr type& name() noexcept\
+#define CONST_GETTER_CONSTEXPR(type, name, field) USE_RESULT constexpr const type& name() const noexcept\
 {\
 	return field;\
 }\

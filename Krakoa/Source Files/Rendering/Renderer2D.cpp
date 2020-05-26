@@ -247,29 +247,29 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>&  texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
-		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
-		DrawTriangle(texture, kmaths::Vector3f(position), scale, degreesOfRotation, tintColour, tilingFactor);
+		DrawTriangle(texture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
 		const auto texIdx = UpdateTextureList(texture);
-		AddNewTriangle(position, scale, degreesOfRotation, tintColour, texIdx, tilingFactor);
+		AddNewTriangle(position, scale, radians, tintColour, texIdx, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
-		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
-		DrawQuad(subTexture, kmaths::Vector3f(position), scale, degreesOfRotation, tintColour, tilingFactor);
+		DrawQuad(subTexture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-		const float degreesOfRotation, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -290,7 +290,7 @@ namespace krakoa::graphics
 			texCoords = subTexture->GetTexCoord();
 		}
 
-		AddNewQuad(position, scale, degreesOfRotation, tintColour, texIndex, texCoords, tilingFactor);
+		AddNewQuad(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
 	const Statistics& Renderer2D::GetStats()
@@ -357,7 +357,7 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-		const float degreesOfRotation, const Colour colour, const float texIdx, const float tilingFactor)
+		const float radians, const Colour colour, const float texIdx, const float tilingFactor)
 	{
 		auto& triangle = pData->triangle;
 
@@ -366,10 +366,10 @@ namespace krakoa::graphics
 		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
 
 		kmaths::Quaternionf qpq_;
-		if (degreesOfRotation != 0)
+		if (radians != 0)
 		{
-			const kmaths::Quaternionf qp(degreesOfRotation, 0, 0, 1);
-			constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f);
+			const kmaths::Quaternionf qp(radians, 0, 0, 1);
+			constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
 			qpq_ = qp * q_;
 		}
 
@@ -392,7 +392,7 @@ namespace krakoa::graphics
 
 			kmaths::Vector4f worldPosition;
 
-			if (degreesOfRotation == 0)
+			if (radians == 0)
 			{
 				worldPosition = (position + (triangle.vertices[i] * scale3D));
 			}
@@ -416,7 +416,7 @@ namespace krakoa::graphics
 #endif
 	}
 
-	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float degreesOfRotation,
+	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians,
 		const Colour colour, float texIndex, const kmaths::Vector2f*& texCoords, const float tilingFactor)
 	{
 		auto& quad = pData->quad;
@@ -426,10 +426,10 @@ namespace krakoa::graphics
 		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
 
 		kmaths::Quaternionf qpq_;
-		if (degreesOfRotation != 0)
+		if (radians != 0)
 		{
-			const kmaths::Quaternionf qp(degreesOfRotation, 0, 0, 1);
-			constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f);
+			const kmaths::Quaternionf qp(radians, 0, 0, 1);
+			constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
 			qpq_ = qp * q_;
 		}
 
@@ -438,7 +438,7 @@ namespace krakoa::graphics
 
 			kmaths::Vector4f worldPosition;
 
-			if (degreesOfRotation == 0)
+			if (radians == 0)
 			{
 				worldPosition = (position + (quad.vertices[i] * scale3D));
 			}

@@ -269,8 +269,22 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
-		const auto texIdx = UpdateTextureList(subTexture->GetTexture());
-		AddNewTriangle(position, scale, radians, tintColour, texIdx, tilingFactor);
+
+		float texIndex = 0.f;
+		const kmaths::Vector2f* texCoords;
+
+		if (!subTexture)
+		{
+			static constexpr kmaths::Vector2f defaultCoords[] = { {0.f, 0.f}, {1.f, 0.f}, {0.5f, 1.f} };
+			texCoords = defaultCoords;
+		}
+		else
+		{
+			texIndex = UpdateTextureList(subTexture->GetTexture());
+			texCoords = subTexture->GetTexCoord();
+		}
+		
+		AddNewTriangle(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
@@ -361,15 +375,15 @@ namespace krakoa::graphics
 		return texIdx;
 	}
 
-	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-		const float radians, const Colour colour, const float texIdx, const float tilingFactor)
+	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians,
+		const Colour colour, const float texIndex, const kmaths::Vector2f*& texCoords, const float tilingFactor)
 	{
 		static constexpr auto loops = kmaths::SizeOfCArray(TriangleData::vertices);
 
 		auto& triangle = pData->triangle;
 
 		auto& bufferPtr = triangle.pVertexBuffer;
-		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
+		const kmaths::Vector3f scale3D(scale.x, scale.y, 1.f);
 
 		kmaths::Quaternionf qpq_;
 		if (radians != 0)
@@ -380,21 +394,6 @@ namespace krakoa::graphics
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
-			kmaths::Vector2f texCoord;
-
-			switch (i) {
-			case 0: // bottom left
-				break;
-			case 1: // bottom right
-				texCoord.X() = 1.f;
-				break;
-			case 2: // top right
-				texCoord = { 0.5f, 1.f };
-				break;
-			default:
-				break;
-			}
-
 			kmaths::Vector4f worldPosition;
 
 			if (radians == 0)
@@ -409,8 +408,8 @@ namespace krakoa::graphics
 
 			bufferPtr->position = worldPosition;
 			bufferPtr->colour = colour.GetRGBA();
-			bufferPtr->texCoord = texCoord;
-			bufferPtr->texIdx = texIdx;
+			bufferPtr->texCoord = texCoords[i];
+			bufferPtr->texIdx = texIndex;
 			bufferPtr->tilingFactor = tilingFactor;
 		}
 

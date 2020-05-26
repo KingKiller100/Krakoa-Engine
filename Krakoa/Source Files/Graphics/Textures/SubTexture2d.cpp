@@ -7,38 +7,45 @@ namespace krakoa::graphics
 {
 	SubTexture2D* SubTexture2D::Create(const std::shared_ptr<iTexture2D > & texture, const TexCoordData& data)
 	{
-		const auto& baseCoords = data.baseCoords;
-		
-		const kmaths::Vector2f dimensions = data.spriteDimensions / texture->GetDimensions();
-		
-		TexCoordsList coords(baseCoords.size());
+		return new SubTexture2D(texture, data);
+	}
+
+	SubTexture2D* SubTexture2D::Create(iTexture2D* texture, const TexCoordData& texCoordData)
+	{
+		return Create(Multi_Ptr<iTexture2D>(texture), texCoordData);
+	}
+
+	SubTexture2D::SubTexture2D(iTexture2D* texture, const TexCoordData& data)
+		: texture(Multi_Ptr<iTexture2D>(texture)),
+		texCoordData(data)
+	{
+		CreateTexCoords();
+	}
+
+	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordData& data)
+		: texture(texture),
+		texCoordData(data)
+	{
+		CreateTexCoords();
+	}
+
+	SubTexture2D::~SubTexture2D() noexcept
+		= default;
+
+	void SubTexture2D::CreateTexCoords()
+	{
+		const auto& baseCoords = texCoordData.baseCoords;
+
+		const kmaths::Vector2f dimensions = texCoordData.spriteDimensions / texture->GetDimensions();
+
+		texCoords.reserve(CAST(uint8_t, GetGeometryType()));
 
 		for (const auto& coord : baseCoords)
 		{
-			const auto uv = (coord + data.coordIndex) * dimensions;
-			coords.emplace_back(uv);
+			const auto uv = (coord + texCoordData.coordIndex) * dimensions;
+			texCoords.emplace_back(uv);
 		}
-		
-		return new SubTexture2D(texture, coords);
 	}
-
-	SubTexture2D* SubTexture2D::Create(iTexture2D* texture, const TexCoordData& data)
-	{
-		return Create(Multi_Ptr<iTexture2D>(texture), data);
-	}
-
-	SubTexture2D::SubTexture2D(iTexture2D* texture, const TexCoordsList& texCoords)
-		: texture(Multi_Ptr<iTexture2D>(texture)),
-		texCoords(texCoords)
-	{}
-
-	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordsList& texCoords)
-		: texture(texture),
-		texCoords(texCoords)
-	{}
-
-	SubTexture2D::~SubTexture2D()
-		= default;
 
 	const std::shared_ptr<iTexture2D>& SubTexture2D::GetTexture() const noexcept
 	{
@@ -53,6 +60,16 @@ namespace krakoa::graphics
 	const kmaths::Vector2f* SubTexture2D::GetTexCoord() const noexcept
 	{
 		return &texCoords[0];
+	}
+
+	GeometryType SubTexture2D::GetGeometryType() const noexcept
+	{
+		switch (texCoordData.baseCoords.size()) {
+			case batch::limits::quad::vertices: return GeometryType::QUAD;
+			case batch::limits::circle::vertices: return GeometryType::CIRCLE;
+			case batch::limits::triangle::vertices: return GeometryType::TRIANGLE;
+			default: return GeometryType::UNKNOWN;
+		}
 	}
 
 	void SubTexture2D::SetTexture(iTexture2D* tex) noexcept

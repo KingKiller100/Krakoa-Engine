@@ -40,7 +40,7 @@ namespace krakoa
 			static void QueryLimitsMet() noexcept;
 			static float UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept;
 
-			static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians, const Colour colour, const float texIdx, const float tilingFactor);
+			static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians, const Colour colour, const float texIndex, const kmaths::Vector2f*& texCoords, const float tilingFactor);
 			static void AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians, const Colour colour, float texIndex, const kmaths::Vector2f*& texCoords, const float tilingFactor);
 
 			inline static Statistics stats;

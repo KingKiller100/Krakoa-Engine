@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Layers/LayerBase.hpp>
-#include <Rendering/Rendering Resources/iVertexArray.hpp>
-#include <Rendering/Textures/SubTexture2d.hpp>
+#include <Graphics/Rendering Resources/iVertexArray.hpp>
+#include <Graphics/Textures/SubTexture2d.hpp>
 #include <Camera/OrthographicCameraController.hpp>
 
 #include <Maths/Vectors/Vector4.hpp>

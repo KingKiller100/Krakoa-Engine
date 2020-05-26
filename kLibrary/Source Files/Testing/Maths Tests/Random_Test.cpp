@@ -6,6 +6,8 @@
 #include "../../Maths/Length_Type.hpp"
 #include "../../Maths/Random.hpp"
 
+#include <thread>
+
 namespace kTest::maths
 {
 	RandomTester::RandomTester()
@@ -26,10 +28,13 @@ namespace kTest::maths
 
 	bool RandomTester::IntegerTest()
 	{
+		using namespace std::chrono_literals;
+		
 		constexpr Big_Int_Type lb = 0;
 		constexpr Big_Int_Type ub = 100;
 
 		const auto a = RNG(lb, ub);
+		std::this_thread::sleep_for(1s);
 		const auto b = RNG(lb, ub);
 
 		VERIFY(a != b);
@@ -41,10 +46,12 @@ namespace kTest::maths
 
 	bool RandomTester::FloatingPointTest()
 	{
+		using namespace std::chrono_literals;
 		constexpr float lb = 0.25f;
 		constexpr float ub = 0.5f;
 
 		const auto a = RNG(lb, ub);
+		std::this_thread::sleep_for(1s);
 		const auto b = RNG(lb, ub);
 
 		VERIFY(a != b);

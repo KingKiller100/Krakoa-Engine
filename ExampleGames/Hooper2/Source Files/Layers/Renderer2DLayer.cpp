@@ -2,7 +2,7 @@
 
 #include <imgui/imgui.h>
 
-#include <Rendering/Textures/iTexture2D.hpp>
+#include <Graphics/Textures/iTexture2D.hpp>
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
 

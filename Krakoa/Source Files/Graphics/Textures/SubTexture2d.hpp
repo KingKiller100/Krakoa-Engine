@@ -2,7 +2,7 @@
 
 #include <Maths/Matrices/Matrix4x2.hpp>
 
-#include <memory>
+#include "../../MemoryTypes.hpp"
 
 namespace krakoa::graphics
 {
@@ -18,11 +18,14 @@ namespace krakoa::graphics
 		USE_RESULT const std::shared_ptr<iTexture2D> GetTexture() const noexcept;
 		USE_RESULT const kmaths::Vector2f* GetTexCoord() const noexcept;
 
+		USE_RESULT void SetTexture(const iTexture2D* tex) noexcept;
+		SETTER(std::shared_ptr<iTexture2D>, SetTexture, texture)
+
 		// Only for quads
 		static SubTexture2D* Create(const std::shared_ptr<iTexture2D > & texture, const kmaths::Vector2f& coordIndex, const kmaths::Vector2f& spriteDimensions, const kmaths::Vector2f& increment = {1, 1});
 		
 	private:
-		std::weak_ptr<iTexture2D> texture;
+		Multi_Ptr<iTexture2D> texture;
 		kmaths::Matrix4x2f texCoords;
 	};
 }

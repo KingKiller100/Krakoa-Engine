@@ -8,6 +8,8 @@ namespace krakoa::components
 
 	const char* Transform::GetType() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		return GetStaticType();
 	}
 }

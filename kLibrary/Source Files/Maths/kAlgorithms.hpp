@@ -300,15 +300,67 @@ namespace kmaths
 		return isNeg ? -x : x;
 	}
 
+	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
+	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return std::fmod(num, base);
+#else
+		const auto b = CAST(constants::AccuracyType, base);
+		const auto n = CAST(constants::AccuracyType, num);
+
+		const auto one_over_base = constants::OneOver<constants::AccuracyType>(b);
+		const auto num_over_base = n * one_over_base;
+		const auto int_n_over_b = CAST(Big_Int_Type, num_over_base);
+
+		if (num_over_base == int_n_over_b)
+			return constants::Zero<T>();
+
+		const auto closestMultiplier = int_n_over_b * b;
+		const auto rem = n - closestMultiplier;
+
+		return CAST(T, rem);
+#endif
+	}
+
+	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
+	USE_RESULT constexpr T Modulus(T num, T base) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		{
+			const auto mod = (num < 0)
+				? FloatingPointRemainder(num, base) + base
+				: FloatingPointRemainder(num, base);
+			return mod;
+		}
+		else
+		{
+			T const rem = num % base;
+			if _CONSTEXPR_IF(-1 % 2 == 1)
+			{
+				return rem;
+			}
+			else
+			{
+				const auto mod = rem < 0 ? rem + base : rem;
+				return mod;
+			}
+		}
+	}
+
 
 	// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
 	{
 		constexpr auto one = constants::One<constants::AccuracyType>();
-		constexpr auto two = one + one;
+		constexpr auto two = constants::Two<T>();
+		constexpr auto tau = CAST(T, constants::TAU);
+		
+		x = Modulus<T>(x, tau);
+		
 		const auto square = CAST(constants::AccuracyType, -x * x);
-
+		
 		auto t = CAST(constants::AccuracyType, x);
 		auto sine = t;
 		for (size_t a = 1; a < n; ++a)
@@ -599,56 +651,6 @@ namespace kmaths
 	}
 
 
-
-	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
-	{
-		const auto isNegative = num < 0;
-
-#if MSVC_PLATFORM_TOOLSET > 142
-		return std::fmod(num, base);
-#else
-		const auto b = CAST(long double, base);
-		const auto n = CAST(long double, num);
-
-		const auto one_over_base = constants::OneOver<long double>(b);
-		const auto num_over_base = n * one_over_base;
-		const auto int_n_over_b = CAST(int, num_over_base);
-
-		if (num_over_base == int_n_over_b)
-			return 0;
-
-		const auto closestMultiplier = int_n_over_b * b;
-		const auto rem = n - closestMultiplier;
-
-		return CAST(T, rem);
-#endif
-	}
-
-	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Modulus(T num, T base) noexcept
-	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-		{
-			const auto mod = (num < 0)
-				? FloatingPointRemainder(num, base) + base
-				: FloatingPointRemainder(num, base);
-			return mod;
-		}
-		else
-		{
-			T const rem = num % base;
-			if _CONSTEXPR_IF(-1 % 2 == 1)
-			{
-				return rem;
-			}
-			else
-			{
-				const auto mod = rem < 0 ? rem + base : rem;
-				return mod;
-			}
-		}
-	}
 
 	// Bakhshali Method
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>

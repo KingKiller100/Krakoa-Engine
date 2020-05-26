@@ -17,9 +17,9 @@ namespace kTest::maths
 	using namespace kmaths;
 
 	template<typename T>
-	const auto InRangeEpsilon = [](const T val) -> bool {
-		constexpr auto one = kmaths::constants::One<T>();
-		constexpr auto epsilon = std::numeric_limits<T>::epsilon();
+	constexpr auto InRangeEpsilon = [](const T val) -> bool {
+		constexpr auto one = constants::One<T>();
+		constexpr auto epsilon = constants::Epsilon<T>();
 		constexpr auto ub = one + epsilon;
 		constexpr auto lb = one - epsilon;
 
@@ -28,23 +28,17 @@ namespace kTest::maths
 
 	void QuaternionsTester::Test()
 	{
-
 		constexpr Matrix3x4f trianglePoints = {
 			{ 2, 1, 0, 1 },
 			{ 2, 5, 0, 1 },
 			{ 4, 1, 0, 1 }
 		};
 
-		auto q1 = Quaternionf(90, 0, 0, 1);
+		constexpr auto q1 = Quaternionf(CAST(float, constants::PI_OVER_2), 0, 0, 1);
 		const auto mag = q1.MagnitudeSQ();
 		VERIFY(InRangeEpsilon<float>(mag));
 
-		//q1.Rotate(90.f, { 0, 0, 1 });
-		const auto mag2 = q1.MagnitudeSQ();
-		VERIFY(InRangeEpsilon<float>(mag2));
-
-
-		auto q2 = Quaternionf(1, 0, 0, 0);
+		constexpr auto q2 = Quaternionf(1, 0, 0, 0, Theta_Type::DEGREES);
 		const auto q3 = q1 * q2;
 
 		constexpr auto decimalAccuracy = CAST(uint8_t, 2);
@@ -76,6 +70,7 @@ namespace kTest::maths
 			const auto y = Round(pointC[1], decimalAccuracy);
 
 			VERIFY(x == -1.f);
+
 			VERIFY(y == 4.f);
 		}
 

@@ -26,7 +26,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto transformMat = kmaths::Translate(position) *
-		kmaths::Rotate2D(kmaths::ToRadians(rotationZ)); // Z axis rotation
+			kmaths::Rotate2D(kmaths::ToRadians(rotationZ)); // Z axis rotation
 		viewMat = transformMat.Inverse();
 		UpdateViewProjectionMatrix();
 	}

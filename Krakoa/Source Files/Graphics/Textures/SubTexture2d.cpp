@@ -29,8 +29,7 @@ namespace krakoa::graphics
 		return new SubTexture2D(texture, minCoord, maxCoord);
 	}
 
-	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& minCoord,
-	                           const kmaths::Vector2f& maxCoord)
+	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& minCoord, const kmaths::Vector2f& maxCoord)
 		: texture(texture),
 		texCoords({
 			  minCoord,
@@ -45,11 +44,16 @@ namespace krakoa::graphics
 
 	const std::shared_ptr<iTexture2D> SubTexture2D::GetTexture() const noexcept
 	{
-		return texture.lock();
+		return texture;
 	}
 
 	const kmaths::Vector2f* SubTexture2D::GetTexCoord() const noexcept
 	{
 		return &texCoords[0];
+	}
+
+	void SubTexture2D::SetTexture(const iTexture2D* tex) noexcept
+	{
+		texture.reset(tex);
 	}
 }

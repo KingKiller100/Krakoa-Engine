@@ -4,8 +4,8 @@
 #include "RenderCommand.hpp"
 #include "ShaderLibrary.hpp"
 
-#include "Textures/iTexture.hpp"
 #include "Textures/iTexture2D.hpp"
+#include "Textures/SubTexture2d.hpp"
 #include "Rendering Resources/iShader.hpp"
 #include "Rendering Resources/iVertexArray.hpp"
 
@@ -278,7 +278,6 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-
 		QueryLimitsMet();
 
 		float texIndex = 0.f;
@@ -356,6 +355,8 @@ namespace krakoa::graphics
 		return texIdx;
 	}
 
+	static constexpr auto rad_1 = kmaths::ToRadians(1.f);
+
 	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
 		const float radians, const Colour colour, const float texIdx, const float tilingFactor)
 	{
@@ -369,7 +370,7 @@ namespace krakoa::graphics
 		if (radians != 0)
 		{
 			const kmaths::Quaternionf qp(radians, 0, 0, 1);
-			constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
+			constexpr kmaths::Quaternionf q_(rad_1, 0.f, 0.f, 0.f);
 			qpq_ = qp * q_;
 		}
 
@@ -429,7 +430,7 @@ namespace krakoa::graphics
 		if (radians != 0)
 		{
 			const kmaths::Quaternionf qp(radians, 0, 0, 1);
-			constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
+			constexpr kmaths::Quaternionf q_(rad_1, 0.f, 0.f, 0.f);
 			qpq_ = qp * q_;
 		}
 

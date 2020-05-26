@@ -51,10 +51,10 @@ namespace krakoa
 				klib::kFormat::ToString("Attempt to add a component already a part of this entity - {0}", ComponentType::GetStaticType())
 			);
 
-			auto& component = ComponentType(std::forward<Args>(params)...);
-			components[ComponentType::GetStaticType()] = new ComponentType(component);
-			component.Initialize();
-			return component;
+			components[ComponentType::GetStaticType()] = new ComponentType(std::forward<Args>(params)...); // Added to the list
+			ComponentType* component = dynamic_cast<ComponentType*>(components[ComponentType::GetStaticType()]);
+			component->Initialize();
+			return *component;
 		}
 
 		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>

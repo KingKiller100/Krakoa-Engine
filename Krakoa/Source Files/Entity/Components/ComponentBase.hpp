@@ -1,6 +1,7 @@
 #pragma once
 
 #include <HelperMacros.hpp>
+#include "../../Instrumentor.hpp"
 
 namespace krakoa
 {
@@ -14,5 +15,10 @@ namespace krakoa
 		virtual void Update(const double dt) {}
 	};
 
-#define STATIC_GET_COMPONENT_TYPE(self) static const char* GetStaticType() { return typeid(self).name(); }
+#define STATIC_GET_COMPONENT_TYPE(self) static const char* GetStaticType()\
+	{\
+	KRK_PROFILE_FUNCTION();\
+	return typeid(self).name();\
+	}\
+	
 }

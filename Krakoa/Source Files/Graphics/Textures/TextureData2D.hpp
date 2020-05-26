@@ -5,7 +5,6 @@
 
 #include <array>
 #include <cstdint>
-#include <memory>
 
 namespace krakoa::graphics
 {

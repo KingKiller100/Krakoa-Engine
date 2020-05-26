@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../HelperMacros.hpp"
+
 #include <random>
 
 namespace kmaths

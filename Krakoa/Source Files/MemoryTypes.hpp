@@ -14,13 +14,13 @@ namespace krakoa
 	using Single_Ptr = std::unique_ptr<T>;
 
 	template<typename T, typename ...Ts>
-	Single_Ptr<T> Make_Unique(Ts&& ...params)
+	Single_Ptr<T> Make_Single(Ts&& ...params)
 	{
 		return std::make_unique<T>(std::forward<Ts>(params)...);
 	}
 
 	template<typename T, typename ...Ts>
-	Multi_Ptr<T> Make_Shared(Ts&& ...params)
+	Multi_Ptr<T> Make_Multi(Ts&& ...params)
 	{
 		return std::make_shared<T>(std::forward<Ts>(params)...);
 	}

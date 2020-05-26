@@ -1,31 +1,43 @@
 ﻿#pragma once
 
-#include <Maths/Matrices/Matrix4x2.hpp>
-
 #include "../../MemoryTypes.hpp"
+#include <Maths/Vectors/Vector2.hpp>
+#include <vector>
 
 namespace krakoa::graphics
 {
 	class iTexture2D;
 
+	using TexCoordsList = std::vector<kmaths::Vector2f>;
+
+	struct TexCoordData
+	{
+		kmaths::Vector2f coordIndex;
+		kmaths::Vector2f spriteDimensions;
+		TexCoordsList baseCoords;
+	};
+	
 	class SubTexture2D
 	{
 	public:
 		// Only for quads
-		SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& minCoord = kmaths::constants::Zero<kmaths::Vector2f>(), const kmaths::Vector2f& maxCoord = kmaths::constants::One<kmaths::Vector2f>()); 
+		explicit SubTexture2D(iTexture2D* texture, const TexCoordsList& texCoords);
+		explicit SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordsList& texCoords);
 		~SubTexture2D();
 		
-		USE_RESULT const std::shared_ptr<iTexture2D> GetTexture() const noexcept;
+		USE_RESULT const Multi_Ptr<iTexture2D>& GetTexture() const noexcept;
+		USE_RESULT Multi_Ptr<iTexture2D>& GetTexture() noexcept;
 		USE_RESULT const kmaths::Vector2f* GetTexCoord() const noexcept;
 
-		USE_RESULT void SetTexture(const iTexture2D* tex) noexcept;
+		void SetTexture(iTexture2D* tex) noexcept;
 		SETTER(std::shared_ptr<iTexture2D>, SetTexture, texture)
 
 		// Only for quads
-		static SubTexture2D* Create(const std::shared_ptr<iTexture2D > & texture, const kmaths::Vector2f& coordIndex, const kmaths::Vector2f& spriteDimensions, const kmaths::Vector2f& increment = {1, 1});
+		static SubTexture2D* Create(iTexture2D* texture, const TexCoordData& data);
+		static SubTexture2D* Create(const std::shared_ptr<iTexture2D > & texture, const TexCoordData& data);
 		
 	private:
 		Multi_Ptr<iTexture2D> texture;
-		kmaths::Matrix4x2f texCoords;
+		std::vector<kmaths::Vector2f> texCoords;
 	};
 }

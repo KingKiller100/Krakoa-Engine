@@ -46,7 +46,7 @@
 	return field;\
 }\
 
-#define SETTER(type, name, field) USE_RESULT void name(const type& value) noexcept\
+#define SETTER(type, name, field) void name(const type& value) noexcept\
 {\
 	(field) = value;\
 }\
@@ -63,7 +63,7 @@
 	return field;\
 }\
 
-#define SETTER_CONSTEXPR(type, name, field) USE_RESULT constexpr void name(const type& value) noexcept\
+#define SETTER_CONSTEXPR(type, name, field) constexpr void name(const type& value) noexcept\
 {\
 	(field) = value;\
 }\

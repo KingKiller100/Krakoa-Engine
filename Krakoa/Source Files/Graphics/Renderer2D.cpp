@@ -24,6 +24,12 @@
 
 namespace krakoa::graphics
 {
+
+	namespace
+	{
+		static constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
+	}
+	
 	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
 
 	const Statistics& Renderer2D::GetStats()
@@ -251,19 +257,19 @@ namespace krakoa::graphics
 #endif
 	}
 
-	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>&  texture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
+	void Renderer2D::DrawTriangle(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
 		const float radians, const Colour tintColour, const float tilingFactor)
 	{
-		DrawTriangle(texture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
+		DrawTriangle(subTexture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
-	void Renderer2D::DrawTriangle(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
+	void Renderer2D::DrawTriangle(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
 		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		QueryLimitsMet();
-		const auto texIdx = UpdateTextureList(texture);
+		const auto texIdx = UpdateTextureList(subTexture->GetTexture());
 		AddNewTriangle(position, scale, radians, tintColour, texIdx, tilingFactor);
 	}
 
@@ -285,7 +291,7 @@ namespace krakoa::graphics
 
 		if (!subTexture)
 		{
-			constexpr kmaths::Vector2f defaultCoords[] = { {0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f} };
+			static constexpr kmaths::Vector2f defaultCoords[] = { {0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f} };
 			texCoords = defaultCoords;
 		}
 		else
@@ -328,10 +334,10 @@ namespace krakoa::graphics
 
 	float Renderer2D::UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept
 	{
-		float texIdx = 0.f;
-
 		if (texture == nullptr)
-			return texIdx;
+			return 0.f;
+
+		float texIdx = 0.f;
 
 		auto& textures = pData->textures;
 
@@ -355,22 +361,20 @@ namespace krakoa::graphics
 		return texIdx;
 	}
 
-	static constexpr auto rad_1 = kmaths::ToRadians(1.f);
-
 	void Renderer2D::AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
 		const float radians, const Colour colour, const float texIdx, const float tilingFactor)
 	{
+		static constexpr auto loops = kmaths::SizeOfCArray(TriangleData::vertices);
+
 		auto& triangle = pData->triangle;
 
 		auto& bufferPtr = triangle.pVertexBuffer;
-		const auto loops = triangle.vertices.GetRows();
 		const kmaths::Vector3f scale3D(scale[0], scale[1], 1.f);
 
 		kmaths::Quaternionf qpq_;
 		if (radians != 0)
 		{
 			const kmaths::Quaternionf qp(radians, 0, 0, 1);
-			constexpr kmaths::Quaternionf q_(rad_1, 0.f, 0.f, 0.f);
 			qpq_ = qp * q_;
 		}
 
@@ -420,23 +424,22 @@ namespace krakoa::graphics
 	void Renderer2D::AddNewQuad(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians,
 		const Colour colour, float texIndex, const kmaths::Vector2f*& texCoords, const float tilingFactor)
 	{
+		static constexpr auto loops = kmaths::SizeOfCArray(QuadData::vertices);
+
 		auto& quad = pData->quad;
 		auto& bufferPtr = quad.pVertexBuffer;
 
-		const auto loops = quad.vertices.GetRows();
 		const kmaths::Vector3f scale3D(scale.x, scale.y, 1.f);
 
 		kmaths::Quaternionf qpq_;
 		if (radians != 0)
 		{
 			const kmaths::Quaternionf qp(radians, 0, 0, 1);
-			constexpr kmaths::Quaternionf q_(rad_1, 0.f, 0.f, 0.f);
 			qpq_ = qp * q_;
 		}
 
 		for (auto i = 0; i < loops; ++bufferPtr, ++i)
 		{
-
 			kmaths::Vector4f worldPosition;
 
 			if (radians == 0)

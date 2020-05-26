@@ -20,13 +20,15 @@ Renderer2DLayer::Renderer2DLayer() noexcept
 void Renderer2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
-	pWinTexture.reset(krakoa::graphics::iTexture2D::Create("Assets/Win.png"));
+	const auto pWinTexture = krakoa::graphics::iTexture2D::Create("Assets/Win.png");
 	pSubTexture.reset(
 		krakoa::graphics::SubTexture2D::Create(
-				pWinTexture,
-			{0, 0},
-		kmaths::Vector2f(pWinTexture->GetDimensions())
-		)
+			pWinTexture,
+			{
+				{ 0, 0 },
+			kmaths::Convert<kmaths::Vector2f>(pWinTexture->GetDimensions()),
+			{ {0,0}, {1,0}, {1,1}, {0,1} }
+			})
 	);
 }
 
@@ -82,7 +84,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 void Renderer2DLayer::OnRender()
 {
 	KRK_PROFILE_FUNCTION();
-	
+
 	ImGui::Begin("Geometry Colour Settings");
 	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData(), ImGuiColorEditFlags_None);
 	ImGui::End();
@@ -92,8 +94,8 @@ void Renderer2DLayer::OnRender()
 
 void Renderer2DLayer::RenderZoomControls() noexcept
 {
-	constexpr kmaths::Vector2f in = { 0.f, 1.f };
-	constexpr kmaths::Vector2f out = { 0.f, -1.f };
+	static constexpr kmaths::Vector2f in(0.f, 1.f);
+	static constexpr kmaths::Vector2f out(0.f, -1.f);
 
 	ImGui::Begin("Zoom Controls");
 

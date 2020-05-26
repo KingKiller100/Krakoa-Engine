@@ -47,7 +47,7 @@ namespace krakoa::graphics
 		std::unique_ptr<iVertexArray> pVertexArray;
 	};
 	
-	struct QuadData : GeometricData
+	struct QuadData final : GeometricData
 	{
 	public:
 		void IncrementIndexCount() noexcept override
@@ -56,7 +56,7 @@ namespace krakoa::graphics
 		}
 
 	public:
-		const kmaths::Matrix4x4f vertices = {
+		inline static constexpr kmaths::Vector4f vertices[] = {
 			{-0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f, -0.5f, 0.f, 1.0f },
 			{ 0.5f,  0.5f, 0.f, 1.0f },
@@ -64,7 +64,7 @@ namespace krakoa::graphics
 		};
 	};
 	
-	struct TriangleData : GeometricData
+	struct TriangleData final : GeometricData
 	{
 	public:
 		void IncrementIndexCount() noexcept override
@@ -73,7 +73,7 @@ namespace krakoa::graphics
 		}
 
 	public:
-		const kmaths::Matrix3x4f vertices = {
+		inline static constexpr kmaths::Vector4f vertices[] = {
 			{ -0.5f, -0.5f, 0.f, 1.0f },
 			{  0.5f, -0.5f, 0.f, 1.0f },
 			{  0.0f,  0.5f, 0.f, 1.0f }

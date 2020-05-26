@@ -5,44 +5,47 @@
 
 namespace krakoa::graphics
 {
-	SubTexture2D* SubTexture2D::Create(const std::shared_ptr<iTexture2D > & texture, const kmaths::Vector2f& coordIndex, const kmaths::Vector2f& spriteDimensions, const kmaths::Vector2f& increment)
+	SubTexture2D* SubTexture2D::Create(const std::shared_ptr<iTexture2D > & texture, const TexCoordData& data)
 	{
-		const auto texWidth = texture->GetWidth();
-		const auto texHeight = texture->GetHeight();
-
-		const auto width = spriteDimensions[0];
-		const auto height = spriteDimensions[1];
-
-		const auto coordX = coordIndex.X();
-		const auto coordY = coordIndex.Y();
+		const auto& baseCoords = data.baseCoords;
 		
-		const kmaths::Vector2f minCoord(
-			(coordX * width) / texWidth,
-			(coordY * height) / texHeight
-		);
+		const kmaths::Vector2f dimensions = data.spriteDimensions / texture->GetDimensions();
+		
+		TexCoordsList coords(baseCoords.size());
 
-		const kmaths::Vector2f maxCoord(
-			((coordX + increment[0]) * width) / texWidth,
-			((coordY + increment[1]) * height) / texHeight
-		);
-
-		return new SubTexture2D(texture, minCoord, maxCoord);
+		for (const auto& coord : baseCoords)
+		{
+			const auto uv = (coord + data.coordIndex) * dimensions;
+			coords.emplace_back(uv);
+		}
+		
+		return new SubTexture2D(texture, coords);
 	}
 
-	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const kmaths::Vector2f& minCoord, const kmaths::Vector2f& maxCoord)
+	SubTexture2D* SubTexture2D::Create(iTexture2D* texture, const TexCoordData& data)
+	{
+		return Create(Multi_Ptr<iTexture2D>(texture), data);
+	}
+
+	SubTexture2D::SubTexture2D(iTexture2D* texture, const TexCoordsList& texCoords)
+		: texture(Multi_Ptr<iTexture2D>(texture)),
+		texCoords(texCoords)
+	{}
+
+	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordsList& texCoords)
 		: texture(texture),
-		texCoords({
-			  minCoord,
-			{ maxCoord[0], minCoord[1] },
-			  maxCoord,
-			{ minCoord[0], maxCoord [1] },
-			})
+		texCoords(texCoords)
 	{}
 
 	SubTexture2D::~SubTexture2D()
 		= default;
 
-	const std::shared_ptr<iTexture2D> SubTexture2D::GetTexture() const noexcept
+	const std::shared_ptr<iTexture2D>& SubTexture2D::GetTexture() const noexcept
+	{
+		return texture;
+	}
+
+	Multi_Ptr<iTexture2D>& SubTexture2D::GetTexture() noexcept
 	{
 		return texture;
 	}
@@ -52,7 +55,7 @@ namespace krakoa::graphics
 		return &texCoords[0];
 	}
 
-	void SubTexture2D::SetTexture(const iTexture2D* tex) noexcept
+	void SubTexture2D::SetTexture(iTexture2D* tex) noexcept
 	{
 		texture.reset(tex);
 	}

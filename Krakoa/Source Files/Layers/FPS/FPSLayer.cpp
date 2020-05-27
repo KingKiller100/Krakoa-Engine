@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "FPSLayer.hpp"
 
+#include "../../Instrumentor.hpp"
+
 #include <imgui.h>
 
 #include <Maths/kAlgorithms.hpp>
@@ -31,7 +33,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		currentIdx = kmaths::modulus(currentIdx, sampleTimes.size());
+		currentIdx = kmaths::Modulus(currentIdx, sampleTimes.size());
 		sampleTimes[currentIdx++] = CAST(unsigned, 1.f / deltaTime);
 	}
 
@@ -42,15 +44,12 @@ namespace krakoa
 		ImGui::Begin("Frames Per Seconds (FPS)");
 
 		const auto fps = CalculateAverageFPS();
-		ImGui::Text("Average FPS: %.2f fps", fps + 1);
+		ImGui::Text("Average FPS: %.2f fps", fps);
 
 		ImGui::End();
 	}
 
-	void FPSLayer::OnEvent(events::Event& e)
-	{}
-
-	float FPSLayer::CalculateAverageFPS() const noexcept
+	USE_RESULT float FPSLayer::CalculateAverageFPS() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 

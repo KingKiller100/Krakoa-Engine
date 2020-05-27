@@ -3,6 +3,7 @@
 #include "../../HelperMacros.hpp"
 
 #include "../String/kStringManipulation.hpp"
+#include "../String/kUTFStringConverter.hpp"
 
 #include <direct.h>
 #include <corecrt_wdirect.h>
@@ -10,6 +11,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #	include <Windows.h>
@@ -43,11 +46,9 @@ namespace klib::kFileSystem
 	 *		The data to fill the file with.
 	 */
 	template<class CharType = char>
-	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringReader<CharType>& content)
+	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringWriter<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
-		static FileWriter<CharType> outFile;
-
-		outFile.open(fullFilePath.data(), std::ios::out | std::ios::app);
+		FileWriter<CharType> outFile(fullFilePath.data(), mode);
 
 		if (outFile.is_open())
 		{
@@ -57,8 +58,16 @@ namespace klib::kFileSystem
 #ifdef _DEBUG
 		else
 		{
-			const auto failMsg = kString::StringWriter<CharType>("Cannot create/open file ") + fullFilePath.data();
-			OutputDebugStringA(failMsg.c_str());
+			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			{
+				const auto failMsg = kString::StringWriter<CharType>("Cannot create/open file ") + fullFilePath.data();
+				OutputDebugStringA(failMsg.c_str());
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+			{
+				const auto failMsg = kString::StringWriter<CharType>(L"Cannot create/open file ") + fullFilePath.data();
+				OutputDebugStringW(failMsg.c_str());
+			}
 		}
 #endif // DEBUG
 	}
@@ -84,10 +93,10 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : directory)
-				temp += CAST(char, c);
-			return CreateNewDirectory<char>(temp);
+				temp += CAST(wchar_t, c);
+			return CreateNewDirectory<wchar_t>(temp);
 		}
 
 		return false;
@@ -156,14 +165,11 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : fullFilePath)
-				temp += CAST(char, c);
-			return RemoveFile<char>(temp);
+				temp += CAST(wchar_t, c);
+			return RemoveFile<wchar_t>(temp);
 		}
-
-
-		return false;
 	}
 
 	/**
@@ -191,10 +197,10 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : directory)
-				temp += CAST(char, c);
-			return DeleteDirectory<char>(temp);
+				temp += CAST(wchar_t, c);
+			return DeleteDirectory<wchar_t>(temp);
 		}
 		return false;
 	}
@@ -224,16 +230,46 @@ namespace klib::kFileSystem
 		}
 		else
 		{
-			kString::StringWriter<char> temp;
+			kString::StringWriter<wchar_t> temp;
 			for (auto& c : fullFilePath)
-				temp += CAST(char, c);
-			result = CheckFileExists<char>(temp);
+				temp += CAST(wchar_t, c);
+			result = CheckFileExists<wchar_t>(temp);
 		}
 
 		if (file)
 			fclose(file);
 
 		return result == 0;
+	}
+
+	/**
+	 * \brief
+	 *		Checks (from folder holding the executable file in current directory) if a directory exists
+	 * \param directoryPath
+	 *		folder (or full directory)
+	 * \return
+	 *		TRUE if it exists or FALSE if it does not exist
+	 */
+
+	template<class CharType = char>
+	constexpr bool CheckDirectoryExists(const kString::StringReader<CharType>& directoryPath) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+		{
+			struct stat info{};
+			const auto statResult = stat(directoryPath.data(), &info);
+
+			if (statResult != KLIB_FALSE)
+				return false;
+
+			const auto result = (info.st_mode & S_IFDIR);
+			return result != KLIB_FALSE;
+		}
+		else
+		{
+			const auto temp = kString::Convert<char>(directoryPath);
+			return CheckDirectoryExists<char>(temp.data());
+		}
 	}
 
 	/**
@@ -276,7 +312,7 @@ namespace klib::kFileSystem
 	 *		Current working directory as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT constexpr kString::StringWriter<CharType>& GetCurrentWorkingDirectory()
+	USE_RESULT kString::StringWriter<CharType>& GetCurrentWorkingDirectory()
 	{
 		using Char = ONLY_TYPE(CharType);
 
@@ -300,9 +336,9 @@ namespace klib::kFileSystem
 			}
 			else
 			{
-				const auto dummyBuffer = GetCurrentWorkingDirectory<char>();
+				const auto dummyBuffer = GetCurrentWorkingDirectory<wchar_t>();
 				for (auto& c : dummyBuffer)
-					cwdFullPath += c;
+					cwdFullPath += CAST(Char, c);
 				return cwdFullPath;
 			}
 
@@ -322,7 +358,7 @@ namespace klib::kFileSystem
 	 *		Current working directory as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT constexpr kString::StringWriter<CharType>& GetExeDirectory()
+	USE_RESULT kString::StringWriter<CharType>& GetExeDirectory()
 	{
 		using Char = ONLY_TYPE(CharType);
 
@@ -330,10 +366,10 @@ namespace klib::kFileSystem
 
 		if (exeFullPath.empty())
 		{
-			DWORD length = 0;
-			const auto bufferSize = 1024;
+			constexpr DWORD bufferSize = 1024 * 5;
 			Char* exeBuffer = new Char[bufferSize]{};
 
+			DWORD length;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);
@@ -344,14 +380,14 @@ namespace klib::kFileSystem
 			}
 			else
 			{
-				const auto dummyBuffer = GetExeDirectory<char>();
+				const auto dummyBuffer = GetExeDirectory<wchar_t>();
 				for (auto& c : dummyBuffer)
-					exeFullPath += c;
+					exeFullPath += CAST(Char, c);
 				return exeFullPath;
 			}
 
 			exeFullPath = kString::StringWriter<Char>(exeBuffer, exeBuffer + length);
-			exeFullPath.erase(exeFullPath.find_last_of("\\") + 1);
+			exeFullPath.erase(exeFullPath.find_last_of(Char('\\')) + 1);
 
 			delete[] exeBuffer;
 		}

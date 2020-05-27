@@ -2,9 +2,9 @@
 #include "../Tester.hpp"
 
 #ifdef TESTING_ENABLED
-namespace kTest::Maths
+namespace kTest::maths
 {
-	class MatricesTester : public Tester
+	class MatricesTester final : public Tester
 	{
 	public:
 		MatricesTester();
@@ -14,6 +14,11 @@ namespace kTest::Maths
 		void Test() override;
 
 		bool DynamicMatrixTest();
+		bool AddTest();
+		bool SubtractTest();
+		bool DivideTest();
+		bool MultiplyTest();
+		bool ConstexprTest();
 	};
 }
 #endif

@@ -1,7 +1,8 @@
 project "GLFW"
 	kind "StaticLib"
 	language "C"
-    characterset ("MBCS")
+    characterset ("default")
+    -- characterset ("MBCS")
 	staticruntime "on"
 
 	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -80,7 +81,7 @@ project "GLFW"
 
 	filter "configurations:Profile"
 		runtime "Release"
-		optimize "Debug"
+		optimize "Speed"
 		symbols "on"
 
 	filter "configurations:Release"

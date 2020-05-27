@@ -3,17 +3,22 @@
 
 #include "Logging/CoreLogger.hpp"
 
+#include "../Instrumentor.hpp"
+
+#include "../Input/KeyCode.hpp"
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
+#include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
-#include "../Rendering/Renderer.hpp"
-#include "../Rendering/Renderer2D.hpp"
-#include "../Rendering/ShaderLibrary.hpp"
+#include "../Graphics/Renderer.hpp"
+#include "../Graphics/ShaderLibrary.hpp"
 
-#include "../Instrumentor.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
+
+#include "../Graphics/Renderer2D.hpp"
+
 
 namespace krakoa
 {
@@ -21,7 +26,7 @@ namespace krakoa
 
 	Application::Application(Token&)
 		: isRunning(true),
-		timeStep(),
+		timeStep(/*120*/),
 		isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -29,6 +34,7 @@ namespace krakoa
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 
 		KRK_INIT_LOGS();
+		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);
 		KRK_FATAL(!instance, "Instance of the application already exists!");
 		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
 
@@ -39,6 +45,7 @@ namespace krakoa
 
 	Application::~Application()
 	{
+		entityManager.reset();
 		graphics::Renderer::ShutDown();
 	}
 
@@ -49,10 +56,11 @@ namespace krakoa
 
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
-		pImGuiLayer->ToggleVisibility();
+		//pImGuiLayer->ToggleVisibility();
 		PushOverlay(pImGuiLayer);
 
 		PushOverlay(new FPSLayer());
+		PushOverlay(new Renderer2DStatistics());
 
 		// Initialize InputManager
 		input::InputManager::Initialize();
@@ -61,6 +69,9 @@ namespace krakoa
 		graphics::ShaderLibrary::Create();
 		graphics::Renderer::Initialize();
 
+		// Initialize Entity Manager
+		EntityManager::Create();
+		entityManager.reset(EntityManager::Pointer());
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -102,19 +113,36 @@ namespace krakoa
 		layerStack.PushOverlay(overlay);
 	}
 
-	void Application::Run()
+	void Application::PopLayer(LayerBase* layer)
 	{
 		KRK_PROFILE_FUNCTION();
-	
-		timeStep.Update();
+		layerStack.PopLayer(layer);
+	}
+
+	void Application::PopOverlay(LayerBase* overlay)
+	{
+		KRK_PROFILE_FUNCTION();
+		layerStack.PopOverlay(overlay);
+	}
+
+	void Application::Run() const
+	{
+		RendererClear();
 
 		const auto deltaTime = timeStep.GetDeltaTime();
+
+		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
+			pImGuiLayer->ToggleVisibility();
+		
+		entityManager->Update(deltaTime);
 
 		if (!isMinimized)
 		{
 			layerStack.OnUpdate(deltaTime);
 		}
 
+		entityManager->Draw();
+		
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
@@ -122,6 +150,19 @@ namespace krakoa
 		pWindow->OnUpdate();
 	}
 
+	void Application::RendererClear() noexcept
+	{
+		KRK_PROFILE_FUNCTION();
+
+#ifdef _DEBUG
+		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+#else
+		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
+#endif // DEBUG
+
+		krakoa::graphics::Renderer::Clear();
+	}
+	
 	bool Application::IsRunning() const
 	{
 		return isRunning;

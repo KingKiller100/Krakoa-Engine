@@ -1,14 +1,19 @@
 ﻿#pragma once
 
-#include "../Vectors/Vector.hpp"
+#include "../Length_Type.hpp"
 #include "../kAlgorithms.hpp"
-
-#include <array>
+#include "../Vectors/PredefinedVectors.hpp"
 
 namespace kmaths
 {
+	template<typename T, Length_Type Rows, Length_Type Columns>
+	struct Matrix;
+
+	template<typename Type, Length_Type R, Length_Type C>
+	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept;
+
 	// Row Major Matrix
-	template<typename T, unsigned short Rows, unsigned short Columns>
+	template<typename T, Length_Type Rows, Length_Type Columns>
 	struct Matrix
 	{
 	public:
@@ -16,33 +21,15 @@ namespace kmaths
 		static_assert(Rows > 0 && Columns > 0, "Must have at least one row and one column to construct a matrix");
 
 		using Type = T;
-		using Indices = std::array<Vector<Columns, Type>, Rows>;
+		using Column_Type = Vector<T, Rows>;
+		using Row_Type = Vector<T, Columns>;
+		inline static constexpr Length_Type Length = (Rows * Columns);
+		inline static constexpr size_t TypeSize = sizeof(T);
+		inline static constexpr size_t Bytes = Length * TypeSize;
+
 
 		constexpr Matrix() noexcept
-		{ }
-
-		explicit constexpr Matrix(const Indices newIndices) noexcept
-			: elems(newIndices)
-		{}
-
-		explicit constexpr Matrix(const Type initialVal) noexcept
-		{
-			for (auto row = 0u; row < Rows; ++row)
-				elems[row] = Vector<Columns, Type>(initialVal);
-		}
-
-		constexpr Matrix(const std::initializer_list<Vector<Columns, Type>> list)
-		{
-			const auto size = list.size();
-
-			if (Rows < size)
-				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
-
-			const auto first_iter = list.begin();
-
-			for (auto row = 0u; row < Rows; ++row)
-				elems[row] = *(first_iter + row);
-		}
+			= default;
 
 		constexpr Matrix(const Matrix& other) noexcept
 		{
@@ -54,20 +41,46 @@ namespace kmaths
 			*this = std::move(other);
 		}
 
-		~Matrix()
-			= default;
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr static std::enable_if_t<R == C, Matrix<Type, R, C>> Identity() noexcept
+		explicit constexpr Matrix(const Type newIndices[Rows][Columns]) noexcept
 		{
-			Matrix<Type, R, C> identity;
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
-					identity[row][col] = (row == col)
-					? CAST(Type, 1)
-					: CAST(Type, 0);
-			return identity;
+					elems[row][col] = newIndices[row][col];
 		}
+
+		explicit constexpr Matrix(const Vector<Type, Columns>& vec) noexcept
+		{
+			for (auto row = 0; row < Rows; ++row)
+				elems[row][row] = vec[row];
+		}
+
+		explicit constexpr Matrix(Type&& initialVal) noexcept
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = std::forward<Type&&>(initialVal);
+		}
+
+		constexpr Matrix(const std::initializer_list<Vector<Type, Columns>>& list)
+		{
+			const auto size = list.size();
+
+			if (Rows < size)
+				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
+
+			const auto first_iter = list.begin();
+
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+				{
+					const auto ptr = (first_iter + row);
+					const auto val = (*ptr)[col];
+					elems[row][col] = val;
+				}
+		}
+
+		~Matrix()
+			= default;
 
 		USE_RESULT constexpr Matrix<Type, Columns, Rows> Transpose() const noexcept
 		{
@@ -75,7 +88,7 @@ namespace kmaths
 				return Matrix();
 
 			if (IsIdentity())
-				return Identity();
+				return IdentityMatrix<Type, Rows, Columns>();
 
 			Matrix<Type, Columns, Rows> transposeMat;
 			for (auto row = 0u; row < Rows; ++row)
@@ -84,21 +97,21 @@ namespace kmaths
 			return transposeMat;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const
 		{
 			if (IsZero() || !ValidColumns())
 				return Matrix();
 
 			if (IsIdentity())
-				return Identity();
+				return IdentityMatrix<Type, R, C>();
 
 			Matrix inverse;
 			const auto determinant = this->GetDeterminant();
 
 			if _CONSTEXPR_IF(Rows == 2)
 			{
-				std::array<Vector<2, Type>, 2> copy;
+				Vector<Type, 2> copy[2];
 				if (determinant != 0.f)
 				{
 					copy[0][0] = elems[1][1] / CAST(Type, determinant);
@@ -106,7 +119,7 @@ namespace kmaths
 					copy[1][0] = -elems[1][0] / CAST(Type, determinant);
 					copy[1][1] = elems[0][0] / CAST(Type, determinant);
 				}
-				inverse = Matrix(copy);
+				inverse = { copy[0], copy[1] };
 			}
 			else if _CONSTEXPR_IF(Rows > 2)
 			{
@@ -131,14 +144,17 @@ namespace kmaths
 			}
 			else
 			{
-				return Matrix(CAST(Type, 1) / lhs[0][0]);
+				if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+					return Matrix(constants::OneOver<Type>(elems[0][0]));
+				else
+					return Matrix();
 			}
 
 			return inverse;
 		}
 
 		// Draws a mirror line down a square matrix through the identical row-column indices and swaps values
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Mirror() const noexcept
 		{
 			Matrix temp = *this;
@@ -149,14 +165,14 @@ namespace kmaths
 					if (row == col)
 						break;
 
-					std::swap(temp[row][col], temp[col][row]);
+					Swap(temp[row][col], temp[col][row]);
 				}
 			}
 
 			return temp;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
@@ -174,7 +190,7 @@ namespace kmaths
 		}
 
 		// Rule of Sarrus Impl
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
@@ -193,7 +209,7 @@ namespace kmaths
 			do {
 				for (auto row = 0u; row < Rows; ++row, isReverseColumnSearch ? --col : ++col)
 				{
-					const size_t colIdx = modulus(col, CAST(int, Columns));
+					const size_t colIdx = Modulus(col, CAST(int, Columns));
 					sum *= elems[row][colIdx];
 				}
 
@@ -214,7 +230,7 @@ namespace kmaths
 			return determinant;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() const
 		{
 			if (IsZero() || !ValidColumns())
@@ -236,9 +252,9 @@ namespace kmaths
 			return determinant;
 		}
 
-		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(unsigned short rowToSkip, unsigned short colToSkip) const
+		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(Length_Type rowToSkip, Length_Type colToSkip) const
 		{
-			const auto newSize = Rows - 1;
+			constexpr auto newSize = Rows - 1;
 			if (rowToSkip > newSize || colToSkip > newSize)
 				std::_Xout_of_range("Row/column entered is greater than the size of this matrix's row/column");
 
@@ -264,11 +280,11 @@ namespace kmaths
 			return minorMatrix;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> PowerOf(unsigned power) const
 		{
 			if (power == 0)
-				return Identity();
+				return IdentityMatrix<Type, R, C>();
 
 			Matrix temp = *this;
 			for (auto i = 1u; i < power; ++i)
@@ -278,19 +294,20 @@ namespace kmaths
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
-			for (auto& vec : elems)
-				if (!vec.IsZero())
-					return false;
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					if (elems[row][col] != CAST(Type, 0))
+						return false;
 			return true;
 		}
 
-		USE_RESULT constexpr bool IsSquare() const noexcept
+		USE_RESULT static constexpr bool IsSquare() noexcept
 		{
 			return Rows == Columns;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C, unsigned short> Rank() const noexcept
+		template<Length_Type R = Rows, Length_Type C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Length_Type> Rank() const noexcept
 		{
 			if (IsIdentity())
 				return Rows;
@@ -301,7 +318,7 @@ namespace kmaths
 			return 0;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, bool> IsIdentity() const noexcept
 		{
 			for (auto row = 0; row < Rows; ++row)
@@ -311,21 +328,26 @@ namespace kmaths
 			return true;
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			bool> IsIdentity() const noexcept
 		{
 			return false;
 		}
 
-		USE_RESULT constexpr unsigned short GetRows() const noexcept
+		USE_RESULT static constexpr decltype(auto) GetRows() noexcept
 		{
 			return Rows;
 		}
 
-		USE_RESULT constexpr unsigned short GetColumns() const noexcept
+		USE_RESULT static constexpr decltype(auto) GetColumns() noexcept
 		{
 			return Columns;
+		}
+
+		USE_RESULT static constexpr decltype(auto) GetSize() noexcept
+		{
+			return Rows * Columns;
 		}
 
 		USE_RESULT constexpr Type* GetPointerToData() const
@@ -334,82 +356,132 @@ namespace kmaths
 		}
 
 		// Operators
-		USE_RESULT constexpr Matrix operator+(const Matrix& other) const noexcept
+		template<typename U>
+		USE_RESULT constexpr Matrix operator+(const Matrix<U, Rows, Columns>& other) const noexcept
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] + other[row];
+				for (auto col = 0u; col < Columns; ++col)
+					m[row][col] = CAST(Type, elems[row][col] + other[row][col]);
 			return m;
 		}
 
-		USE_RESULT constexpr Matrix operator-(const Matrix& other) const noexcept
+		template<typename U>
+		USE_RESULT constexpr Matrix operator-(const Matrix<U, Rows, Columns>& other) const noexcept
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] - other[row];
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = CAST(Type, elems[row][col] - other[row][col]);
 			return m;
 		}
 
-		constexpr Matrix& operator+=(const Matrix& other)
+		template<typename U>
+		constexpr Matrix& operator+=(const Matrix<U, Rows, Columns>& other)
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		constexpr Matrix& operator-=(const Matrix& other) noexcept
+		template<typename U>
+		constexpr Matrix& operator-=(const Matrix<U, Rows, Columns>& other) noexcept
 		{
 			*this = *this - other;
 			return *this;
 		}
 
-		template<unsigned short C, unsigned short R = Columns>
-		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<Type, R, C>& other) const noexcept
+		template<typename U, Length_Type C, Length_Type R = Columns>
+		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<U, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
 			for (auto row = 0u; row < Rows; ++row) {
 				for (auto col = 0u; col < C; ++col) {
 					for (auto index = 0u; index < R; ++index)
 					{
-						m[row][col] += elems[row][index] * other[index][col];
+#ifdef KLIB_DEBUG
+						const Type left = elems[row][index];
+						const Type right = CAST(Type, other[index][col]);
+						const Type res = left * right;
+						m[row][col] += res;
+#else
+						m[row][col] += (elems[row][index] * CAST(Type, other[index][col]));
+#endif
 					}
 
 					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-					{
-						if _CONSTEXPR_IF(std::is_same_v<Type, double>)
-							m[row][col] = Round(m[row][col], 9);
-						else
-							m[row][col] = Round(m[row][col], 5);
-					}
+						m[row][col] = HandleFloatingPointError<Type>(m[row][col]);
 				}
 			}
 			return m;
 		}
 
-		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
+		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>>>
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
-			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] * scalar;
+			for (auto row = 0u; row < Rows; ++row) 
+				for (auto col = 0u; col < Columns; ++col) 
+					m.elems[row][col] = elems[row][col] * scalar;
+			
 			return m;
 		}
+
+		// For Column Major Matrix -Vector operations /////////////////////////////////////////////////////////////////
+		//		template<typename U>
+		//		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
+		//		{
+		//			Column_Type result;
+		//
+		//			for (auto row = 0; row < Rows; ++row) {
+		//				for (auto col = 0u; col < Columns; ++col) {
+		//#ifdef KLIB_DEBUG
+		//					const auto left = elems[row][col];
+		//					const auto right = v[col];
+		//					const Type res = left * right;
+		//					result[row] += res;
+		//#else
+		//					result[row] += (elems[row][col] * v[col]);
+		//#endif
+		//				}
+		//
+		//				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+		//					result[row] = HandleFloatingPointError<Type>(result[row]);
+		//			}
+		//
+		//			return result;
+		//		}
+
+				//template<typename U>
+				//USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
+				//{
+				//	return Inverse() * v;
+				//}
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
-			Matrix m;
-			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = elems[row] / scalar;
-			return m;
+			//if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+			//{
+			//	const auto multipler = constants::OneOver<Type>(scalar);
+			//	return *this * multipler;
+			//}
+			//else
+			//{
+				Matrix m;
+				for (auto row = 0u; row < Rows; ++row)
+					for (auto col = 0u; col < Columns; ++col)
+						m.elems[row][col] = elems[row][col] / scalar;
+				return m;
+			//}
 		}
 
-		template<unsigned short C, unsigned short R = Columns>
+		template<Length_Type C, Length_Type R = Columns>
 		constexpr Matrix<Type, Rows, C> operator*=(const Matrix<Type, R, C>& other) noexcept
 		{
 			*this = *this * other;
 			return *this;
 		}
-
 
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		constexpr Matrix& operator*=(const U obj)
@@ -425,65 +497,81 @@ namespace kmaths
 			return *this;
 		}
 
-		constexpr Matrix& operator=(const Matrix& other)
-		{
-			elems = other.elems;
-			return *this;
-		}
-
-		constexpr Matrix& operator=(Matrix&& other)
-		{
-			elems = std::move(other.elems);
-			return *this;
-		}
-
 		USE_RESULT constexpr Matrix operator-() const noexcept
 		{
 			Matrix m;
 			for (auto row = 0u; row < Rows; ++row)
-				m.elems[row] = -elems[row];
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = -elems[row][col];
 			return m;
 		}
 
-		USE_RESULT constexpr Vector<Columns, Type>& operator[](const size_t idx) noexcept
+		USE_RESULT constexpr decltype(auto) operator[](const size_t index) noexcept
 		{
-			return elems[idx];
+			if (index >= Rows) std::_Xout_of_range("Index must be between 0 and size of matrix's rows - 1!");
+			return elems[index];
 		}
 
-		USE_RESULT constexpr const Vector<Columns, Type>& operator[](const size_t idx) const noexcept
+		USE_RESULT constexpr decltype(auto) operator[](const size_t index) const noexcept
 		{
-			return elems[idx];
+			if (index >= Rows) std::_Xout_of_range("Index must be between 0 and size of matrix's rows - 1!");
+			return elems[index];
 		}
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		USE_RESULT constexpr decltype(auto) At(const size_t rows, const size_t columns) const noexcept
+		{
+			if (rows >= Rows || columns >= Columns) std::_Xout_of_range("Index must be within matrix's boundaries!");
+			return (elems[rows])[columns];
+		}
+
+		USE_RESULT constexpr decltype(auto) At(const size_t rows, const size_t columns) noexcept
+		{
+			if (rows >= Rows || columns >= Columns) std::_Xout_of_range("Index must be within matrix's boundaries!");
+			return (elems[rows])[columns];
+		}
+
+		constexpr Matrix& operator=(const Matrix& other) noexcept
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = other[row][col];
+
+			return *this;
+		}
+
+		constexpr Matrix& operator=(Matrix&& other) noexcept
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					elems[row][col] = std::move(other[row][col]);
+
+			return *this;
+		}
+
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Mirror() const noexcept
 			= delete;
 
-		// Deleted version of funtions (under certain conditions)
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		// Deleted version of functions (under certain conditions)
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
-			Type> Getdeterminant() const noexcept
+			Type> GetDeterminant() const noexcept
 			= delete;
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Inverse() const noexcept
 			= delete;
 
-		template<unsigned short R = Rows, unsigned short C = Columns>
-		static constexpr std::enable_if_t<R != C,
-			Matrix<Type, R, C>> Identity() noexcept
-			= delete;
-
-		template<unsigned short R = Rows, unsigned short C = Columns>
+		template<Length_Type R = Rows, Length_Type C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> PowerOf(unsigned power)  const noexcept
 			= delete;
 
 	private:
-		// Gauss-Jordan Elimination Method
-		constexpr Matrix RowEchalonMethod() noexcept
+		// TODO: Gauss-Jordan Elimination Method
+	/*	constexpr Matrix RowEchalonMethod() noexcept
 		{
 			auto lhs = elems;
 			auto rhs = Identity<Rows, Columns>();
@@ -542,7 +630,8 @@ namespace kmaths
 			}
 
 			return rhs;
-		}
+		}*/
+
 
 		USE_RESULT constexpr bool ValidColumns() const noexcept
 		{
@@ -564,6 +653,47 @@ namespace kmaths
 		}
 
 	private:
-		Indices elems;
+
+
+		Row_Type elems[Rows]{ {} };
 	};
+
+	template<typename Type, Length_Type R, Length_Type C>
+	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
+	{
+		Matrix<Type, R, C> identity;
+		for (auto row = 0u; row < R; ++row)
+			identity[row][row] = CAST(Type, 1);
+		return identity;
+	}
+
+	template<typename Type, Length_Type R, Length_Type C>
+	USE_RESULT constexpr Vector<Type, C> operator*(const Vector<Type, R>& v, const Matrix<Type, R, C>& m) noexcept
+	{
+		Vector<Type, C> result;
+
+		for (auto col = 0u; col < C; ++col) {
+			for (auto row = 0; row < R; ++row) {
+#ifdef _DEBUG
+				const auto left = v[col];
+				const auto right = m[row][col];
+				const Type res = left * right;
+				result[col] += res;
+#else
+				result[col] += (v[col] * elems[row][col]);
+#endif
+			}
+
+			if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+				result[col] = HandleFloatingPointError<Type>(result[col]);
+		}
+
+		return result;
+	}
+
+	template<typename Type, Length_Type R, Length_Type C>
+	USE_RESULT constexpr Vector<Type, C> operator/(const Vector<Type, R>& v, const Matrix<Type, R, C>& m) noexcept
+	{
+		return operator*(v, m.Inverse());
+	}
 }

@@ -11,9 +11,12 @@ namespace krakoa
 
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool isRotationAllowed)
 		: aspectRatio(aspectRatio), zoomLevel(1.f), isRotationAllowed(isRotationAllowed),
-		camera(-(aspectRatio * zoomLevel), aspectRatio * zoomLevel, -zoomLevel, zoomLevel),
+		bounds({ -(aspectRatio * zoomLevel), aspectRatio * zoomLevel, -zoomLevel, zoomLevel }),
+		camera(bounds.left, bounds.right, bounds.bottom, bounds.top),
 		rotationZ(0.f), camRotationSpeed(1.f), camTranslationSpeed(1.f)
-	{}
+	{
+		KRK_PROFILE_FUNCTION();
+	}
 
 	OrthographicCameraController::~OrthographicCameraController()
 		= default;
@@ -47,22 +50,31 @@ namespace krakoa
 
 	krakoa::OrthographicCamera& OrthographicCameraController::GetCamera() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return camera;
 	}
 
 	const krakoa::OrthographicCamera& OrthographicCameraController::GetCamera() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return camera;
 	}
 
 	void OrthographicCameraController::SetRotationSpeed(const float rotSpeed) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		camRotationSpeed = rotSpeed;
 	}
 
 	void OrthographicCameraController::SetTranslationSpeed(const float transSpeed) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		camTranslationSpeed = transSpeed;
+	}
+
+	const OrthographicCameraController::Bounds& OrthographicCameraController::GetBounds() const
+	{
+		return bounds;
 	}
 
 	void OrthographicCameraController::OnEvent(events::Event& e)
@@ -78,6 +90,9 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 		zoomLevel -= e.GetY() * 0.05f;
 		zoomLevel = kmaths::Clamp(zoomLevel, 0.25f, 5.f);
+
+		const auto xVal = aspectRatio * zoomLevel;
+		bounds = { -xVal, xVal, -zoomLevel, zoomLevel };
 		UpdateCameraProjectionMat();
 		return false;
 	}
@@ -85,14 +100,17 @@ namespace krakoa
 	bool OrthographicCameraController::OnWindowResizeEvent(const events::WindowResizeEvent& e)
 	{
 		KRK_PROFILE_FUNCTION();
-		if (e.GetHeight() != 0.f)
+		if (e.GetHeight() == 0)
+			aspectRatio = 0;
+		else
 		{
 			const auto width =  CAST(float, e.GetWidth() );
 			const auto height = CAST(float, e.GetHeight());
 			aspectRatio = width / height;
 		}
-		else
-			aspectRatio = 0;
+
+		const auto xVal = aspectRatio * zoomLevel;
+		bounds = { -xVal, xVal, -zoomLevel, zoomLevel };
 		UpdateCameraProjectionMat();
 		return false;
 	}
@@ -100,7 +118,6 @@ namespace krakoa
 	void OrthographicCameraController::UpdateCameraProjectionMat() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto xVal = aspectRatio * zoomLevel;
-		camera.SetProjection(-xVal, xVal, -zoomLevel, zoomLevel);
+		camera.SetProjection(bounds.left, bounds.right, bounds.bottom, bounds.top);
 	}
 }

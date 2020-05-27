@@ -39,7 +39,7 @@ project "Krakoa"
     kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
 	staticruntime "on"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -59,7 +59,8 @@ project "Krakoa"
 
     includedirs
     {
-        "%{IncludeDir.KLIB}",
+        -- "%{IncludeDir.KLIB}",
+        "kLibrary/Source Files/",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGUI}",
@@ -125,7 +126,7 @@ project "Krakoa"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
-        optimize "Debug"
+        optimize "Speed"
         removefiles
         {
             "%{prj.name}/Source Files/**/test*"
@@ -139,10 +140,10 @@ project "Hooper2"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
     staticruntime "On"
 
-    targetdir ("bin/Game/%{prj.name}")
+    targetdir ("bin/".. OutputDir .. "/Game/%{prj.name}")
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
     
     files
@@ -181,6 +182,8 @@ project "Hooper2"
         runtime "Debug"
 
     filter "configurations:Test"
+        targetdir ("bin/" .. OutputDir ..  "/Component Tests")
+        targetname ("Test")
         defines 
         {
             "KRAKOA_TEST",
@@ -196,7 +199,7 @@ project "Hooper2"
 
     filter "configurations:Profile"
         defines "KRAKOA_PROFILE"
-        optimize "Debug"
+        optimize "Speed"
         runtime "Release"
 
 group ""

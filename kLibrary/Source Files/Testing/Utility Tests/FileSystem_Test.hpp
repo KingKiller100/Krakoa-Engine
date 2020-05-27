@@ -13,6 +13,19 @@ namespace kTest::utility
 		
 	private:
 		void Test() override;
+
+		template<typename Dest, typename Source>
+		std::basic_string<Dest> SwitchStringFormat(Source source)
+		{
+			std::basic_string<Dest> dest;
+
+			for (auto& c : source)
+			{
+				dest.push_back(Dest(c));
+			}
+
+			return dest;
+		}
 	};
 }
 #endif

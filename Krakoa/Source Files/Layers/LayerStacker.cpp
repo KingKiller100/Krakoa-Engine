@@ -3,6 +3,8 @@
 
 #include "LayerBase.hpp"
 
+#include "../Instrumentor.hpp"
+
 namespace krakoa
 {
 	LayerStacker::LayerStacker()

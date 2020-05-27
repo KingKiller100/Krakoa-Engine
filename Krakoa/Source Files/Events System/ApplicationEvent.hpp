@@ -9,8 +9,8 @@
 
 namespace krakoa::events
 {
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<2, float>;
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<2, int>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<float, 2>;
+	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<int, 2>;
 
 	using namespace kmaths;
 	using namespace klib;

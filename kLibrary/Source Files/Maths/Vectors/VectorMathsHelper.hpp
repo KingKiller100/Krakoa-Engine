@@ -4,6 +4,7 @@
 
 #include "../kAlgorithms.hpp"
 
+#include "Vector.hpp"
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
@@ -12,6 +13,24 @@
 
 namespace kmaths
 {
+	template<typename T, unsigned short N>
+	USE_RESULT Vector<T, N> To_Vector(const T* ptr) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		Vector<T, N> v;
+		for (auto i = 0; i < N; ++i)
+			v[i] = ptr[i];
+		return v;
+	}
+
+	template<typename T, unsigned short N>
+	USE_RESULT decltype(auto) To_Array(const Vector<T, N>& vec) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		T arr[N]{ };
+		for (size_t i = 0; i < N; ++i)
+			arr[i] = vec[i];
+		return arr;
+	}
+
 	template<typename T>
 	USE_RESULT constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{
@@ -37,10 +56,10 @@ namespace kmaths
 		return lRes;
 	}
 
-	template<unsigned short N, typename T>
-	USE_RESULT constexpr T AngleBetweenVectors(const Vector<N, T>& v, const Vector<N, T>& u, const bool inDegrees = false) noexcept
+	template<typename T, unsigned short N>
+	USE_RESULT constexpr T AngleBetweenVectors(const Vector<T, N>& v, const Vector<T, N>& u, const bool inDegrees = false) noexcept
 	{
 		const T angle = u.DotProduct(v) / (v.Magnitude() * u.Magnitude());
-		return inDegrees ? RadiansToDegrees(acos(angle)) : acos(angle);
+		return inDegrees ? ToDegrees(acos(angle)) : acos(angle);
 	}
 }

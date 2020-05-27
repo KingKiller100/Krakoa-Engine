@@ -1,6 +1,8 @@
 #include "pch.hpp"
 #include "Tester.hpp"
 
+#include "TesterManager.hpp"
+
 #ifdef TESTING_ENABLED
 
 namespace kTest
@@ -33,6 +35,11 @@ namespace kTest
 	const std::string& Tester::GetFailureData() const noexcept
 	{
 		return failureData;
+	}
+
+	void Tester::Add(Tester* test)
+	{
+		TesterManager::Get().Add(test);
 	}
 
 	bool Tester::Run() noexcept

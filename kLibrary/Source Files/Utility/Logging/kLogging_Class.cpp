@@ -22,7 +22,7 @@ namespace klib::kLogs
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(GetExeDirectory<char>() + "Logs\\"),
-		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(false)).c_str(), ".log")),
+		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(DateSeparator::DASH)).c_str(), ".log")),
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
@@ -75,7 +75,7 @@ namespace klib::kLogs
 
 		const auto startLog =
 			"************************************************************************\n      Logging Initialized:    "
-			+ GetDateInTextFormat(false) + "    " + GetTimeText()
+			+ GetDateInTextFormat(DateFormat::SHORT) + "    " + GetTimeText()
 			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);
@@ -157,7 +157,7 @@ namespace klib::kLogs
 
 	void Logging::SuspendFileLogging()
 	{
-		const auto pauseLog = "\n***********************************************************************\n";
+		constexpr auto* const pauseLog = "\n************************************************************************\n";
 		AddToLogBuffer(pauseLog);
 		OutputToSubSystems(pauseLog, LLevel::NORM);
 		CloseLogFile();
@@ -220,11 +220,11 @@ namespace klib::kLogs
 
 	void Logging::FinalOutput()
 	{
-		const auto endLogLine
+		constexpr auto* const endLogLine
 			= R"(
-***********************************************************************
+************************************************************************
                           Logging Concluded                            
-***********************************************************************
+************************************************************************
 )";
 		AddToLogBuffer(endLogLine);
 		CloseLogFile();
@@ -248,7 +248,7 @@ namespace klib::kLogs
 			OutputLogToFile(logLine);
 	}
 
-	void Logging::OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) noexcept
+	void Logging::OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) const noexcept
 	{
 		if (!subSystemLoggingEnabled)
 			return;
@@ -267,13 +267,14 @@ namespace klib::kLogs
 			const auto numToErase = (log.find_first_of(':', 14) - 1) - eoNamePos;
 			log.erase(eoNamePos, numToErase);
 		}
-
+		
 		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(lvl));
+		SetConsoleTextAttribute(hConsole, CAST(WORD, kLogs_ConsoleColourMap.at(lvl)));
 
 		printf_s("%s", log.data());
 
-		SetConsoleTextAttribute(hConsole, kLogs_ConsoleColourMap.at(LLevel::BANR));
+		constexpr auto whiteText = CAST(WORD, LConsoleColour::WHITE);
+		SetConsoleTextAttribute(hConsole, whiteText);
 	}
 
 	void Logging::OutputLogToFile(const std::string_view& line)
@@ -299,7 +300,7 @@ namespace klib::kLogs
 	{
 		if (!isEnabled)
 		{
-			OutputToSubSystems("\t\tLOGGING DISABLED!\nRESART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LLevel::WARN);
+			OutputToSubSystems("\t\tLOGGING DISABLED!\nRESTART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LLevel::WARN);
 			return "";
 		}
 

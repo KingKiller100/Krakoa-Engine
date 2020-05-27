@@ -1,17 +1,12 @@
 ﻿#include "pch.hpp"
 #include "NotImplementedException.hpp"
 
-namespace klib::kDebug::kExceptions
+namespace klib::kDebug
 {
 	NotImplementedException::NotImplementedException(const char* what)
 		: runtime_error(what)
 	{ }
 
-	NotImplementedException::~NotImplementedException() throw()
-	{}
-
-	char const* NotImplementedException::what() const
-	{
-		return runtime_error::what();
-	}
+	NotImplementedException::~NotImplementedException() noexcept
+		= default;
 }

@@ -1,17 +1,20 @@
 ﻿#pragma once
 
-#include "../../Rendering/Rendering Resources/iBuffers.hpp"
+#include "../../Graphics/Rendering Resources/iBuffers.hpp"
 
 namespace krakoa::graphics
 {
 	class OpenGLVertexBuffer : public iVertexBuffer
 	{
 	public:
+		OpenGLVertexBuffer(uint32_t size);
 		OpenGLVertexBuffer(float* vertices, uint32_t size);
 		~OpenGLVertexBuffer();
 
 		void Bind() const override;
 		void Unbind() const override;
+
+		void SetData(const void* data, uint32_t size) override;
 
 		const BufferLayout& GetLayout() const override;
 		void SetLayout(const BufferLayout& layout) override;

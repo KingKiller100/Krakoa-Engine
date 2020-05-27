@@ -1,25 +1,31 @@
 ﻿#pragma once
-#include "../Core/EngineCore.hpp"
+#include "../Core/EngineConfig.hpp"
+#include "../Core/Logging/CoreLogger.hpp"
 
-namespace pattern
+namespace patterns
 {
 	template <class T>
 	class SimpleSingleton
 	{
 	public:
 		constexpr SimpleSingleton() noexcept
-		{}
+			= default;
+		virtual ~SimpleSingleton() = default;
 
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
-
+		
 		constexpr static T& Reference()
 		{
+			KRK_FATAL(instance, "Refernce to uninitialized singleton")
 			return *instance;
 		}
 
 		constexpr static T* Pointer()
 		{
+			if (!instance)
+				return nullptr;
+
 			return instance;
 		}
 
@@ -34,9 +40,7 @@ namespace pattern
 		struct Token {};
 
 	protected:
-		static T* instance;
+		inline static T* instance = nullptr;
 	};
 }
 
-template<class T>
-T* pattern::SimpleSingleton<T>::instance = nullptr;

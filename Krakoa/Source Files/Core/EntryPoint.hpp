@@ -1,18 +1,23 @@
 #pragma once
 
+#ifdef KRAKOA_TEST
+#	include <Core/TestDriver.hpp>
+#else
 #include "Application.hpp"
-
 #include "../Instrumentor.hpp"
-
 #include <memory>
 
 extern void krakoa::CreateApplication();
+#endif
 
-bool RunTestsOnkLibrary();
 
 int main(int argc, char** argv)
 {
-	if (!RunTestsOnkLibrary())
+#ifdef KRAKOA_TEST
+	tests::TestDriver::Initialize();
+	tests::TestDriver::RunAll();
+	tests::TestDriver::ShutDown();
+#else
 	{
 		KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 		krakoa::CreateApplication();
@@ -27,24 +32,9 @@ int main(int argc, char** argv)
 		KRK_PROFILE_SESSION_END();
 
 		KRK_PROFILE_SESSION_BEGIN("ShutDown", "KRK_PROFILER-ShutDown");
-		pApp->Shutdown();
+		pApp->ShutDown();
 		KRK_PROFILE_SESSION_END();
 	}
+#endif
 	return EXIT_SUCCESS;
 }
-
-
-
-#ifdef KRAKOA_TEST
-#	include <Core/TestDriver.hpp>
-bool RunTestsOnkLibrary()
-{
-	auto testDriver = tests::TestDriver();
-	testDriver.Initialize();
-	testDriver.RunTests();
-	testDriver.ShutDown();
-	return true;
-};
-#else
-bool RunTestsOnkLibrary() { return false; }
-#endif // KRAKOA_TEST

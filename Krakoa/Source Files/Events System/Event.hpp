@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/EngineCore.hpp"
+#include "../Core/EngineConfig.hpp"
 
 #include <HelperMacros.hpp>
 
@@ -67,21 +67,21 @@ namespace krakoa::events
 
 	class EventDispatcher
 	{
-		template<typename T>
-		using EventFunc = std::function<bool(T&)>;
+		template<typename EventType>
+		using EventFunc = std::function<bool(EventType&)>;
 
 	public:
 		EventDispatcher(Event& event)
 			: event(event)
 		{}
 
-		template<typename T>
-		bool Dispatch(EventFunc<T> eFunc)
+		template<typename EventType>
+		bool Dispatch(EventFunc<EventType> eFunc)
 		{
-			if (event.GetEventType() != T::GetStaticType())
+			if (event.GetEventType() != EventType::GetStaticType())
 				return false;
 
-			event.handled = eFunc(*static_cast<T*>(&event));
+			event.handled = eFunc(*static_cast<EventType*>(&event));
 			
 			return true;
 		}

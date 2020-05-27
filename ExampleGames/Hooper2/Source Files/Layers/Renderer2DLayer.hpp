@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Layers/LayerBase.hpp>
-#include <Rendering/Rendering Resources/iVertexArray.hpp>
-#include <Rendering/Textures/iTexture2D.hpp>
+#include <Graphics/Rendering Resources/iVertexArray.hpp>
+#include <Graphics/Textures/SubTexture2d.hpp>
 #include <Camera/OrthographicCameraController.hpp>
 
 #include <Maths/Vectors/Vector4.hpp>
@@ -24,16 +24,16 @@ public:
 
 private:
 	void SendRendererCommands() noexcept;
+	void RenderZoomControls() noexcept;
+
+	void SetUpEntities() const;
 
 private:
-	// Temp ----------------------------------------------------
-	std::unique_ptr<krakoa::graphics::iVertexArray> pSquareVA;
-	std::unique_ptr<krakoa::graphics::iVertexArray> pTriangleVA;
-
-	std::unique_ptr<krakoa::graphics::iTexture2D> pWinTexture;
-	// ---------------------------------------------------------
+	krakoa::Solo_Ptr<krakoa::graphics::SubTexture2D> pSubTexture;
 
 	krakoa::OrthographicCameraController cameraController;
 
 	kmaths::Vector4f geometryColour;
+	kmaths::Vector3f position;
+	float rotation = 0.f;
 };

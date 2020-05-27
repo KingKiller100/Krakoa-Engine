@@ -2,7 +2,8 @@ project "ImGui"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
+    -- characterset ("MBCS")
 	staticruntime "on"
 
 	targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -47,10 +48,10 @@ project "ImGui"
 
 	filter "configurations:Profile"
 		runtime "Release"
-        optimize "Debug"
+        optimize "Speed"
 		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
-		optimize "on"
+		optimize "Full"
 

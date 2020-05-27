@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../Timer/kTimer.hpp"
+
+#include <functional>
+#include <string>
 #include <thread>
 
 namespace klib::kProfiler
@@ -12,16 +15,16 @@ namespace klib::kProfiler
 		uint32_t threadID;
 	};
 
-	template<typename ProfilerFunc>
+	template<typename TimeUnits = kTime::units::Millis, typename ProfilerFunc = std::function<void(const klib::kProfiler::ProfilerResult&)>>
 	class Profiler
 	{
 	private:
 		using Func = ProfilerFunc;
 
 	public:
-		Profiler(const char* name, Func&& func)
-			: result({ name, 0, 0, 0 }), isRunning(true),
-			timerFunc(std::forward<Func&&>(func)), 
+		Profiler(const std::string_view& name, Func&& cb)
+			: result({ name.data(), 0, 0, 0 }), isRunning(true),
+			callback(std::forward<Func&&>(cb)),
 			timer("Profiler")
 		{}
 
@@ -34,12 +37,11 @@ namespace klib::kProfiler
 	private:
 		void Stop()
 		{
-			const auto endTimepoint = timer.Now<kTime::kUnits::Millis>();
-			result.end = endTimepoint;
-			result.start = timer.GetStartTime<kTime::kUnits::Millis>();
+			result.end = timer.Now<TimeUnits>();
+			result.start = timer.GetStartTime<TimeUnits>();
 			result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-			timerFunc(result);
+			callback(result);
 
 			isRunning = false;
 		}
@@ -47,7 +49,7 @@ namespace klib::kProfiler
 	private:
 		ProfilerResult result;
 		bool isRunning;
-		Func timerFunc;
+		Func callback;
 
 		kTime::Timer<int64_t> timer;
 	};

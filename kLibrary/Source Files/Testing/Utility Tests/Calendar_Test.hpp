@@ -12,6 +12,16 @@ namespace kTest::utility
 		
 	private:
 		void Test() override;
+
+		bool MonthTest();
+		bool GetTimeTextTest();
+		bool DayOfTheWeekTest();
+
+		bool GetTimeComponentTest();
+		bool GetDateInTextFormatTest();
+		bool GetDateInNumericalFormatTest();
+
+		bool CreateTimeTest();
 	};
 }
 #endif

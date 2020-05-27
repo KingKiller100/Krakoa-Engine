@@ -2,13 +2,16 @@
 
 #include <imgui/imgui.h>
 
+#include <Graphics/Textures/iTexture2D.hpp>
+#include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
 
 Renderer2DLayer::Renderer2DLayer() noexcept
 	: LayerBase("Renderer"),
-	cameraController((float)krakoa::Application::Reference().GetWindow().GetWidth() / // Aspect ratio from window size
-		krakoa::Application::Reference().GetWindow().GetHeight(),
-		true) // Aspect ratio from window size
+	cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
+		/ CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
+		true), // Aspect ratio from window size
+	position({ 0.f, 0.f })
 {
 	cameraController.SetRotationSpeed(180.f);
 	cameraController.SetTranslationSpeed(5.f);
@@ -17,76 +20,202 @@ Renderer2DLayer::Renderer2DLayer() noexcept
 void Renderer2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
-	pWinTexture = std::unique_ptr<krakoa::graphics::iTexture2D>(
-		krakoa::graphics::iTexture2D::Create("Assets/Win.png")
-		);
+
+	const auto pWinTexture = krakoa::graphics::iTexture2D::Create("Assets/Win.png");
+
+	pSubTexture.reset(
+		krakoa::graphics::SubTexture2D::Create(
+			pWinTexture,
+			{
+				{ 0, 0 },
+			kmaths::Convert<kmaths::Vector2f>(pWinTexture->GetDimensions()),
+			{ {0,0}, {1,0}, {1,1}, {0,1} }
+			})
+	);
+
+	SetUpEntities();
 }
 
 void Renderer2DLayer::OnDetach()
 {
 	KRK_PROFILE_FUNCTION();
-	pSquareVA->Unbind();
-	pTriangleVA->Unbind();
 }
 
 void Renderer2DLayer::OnUpdate(float deltaTime)
 {
 	KRK_PROFILE_FUNCTION();
+
+	constexpr float moveSpeed = 2.f;
+
 	cameraController.OnUpdate(deltaTime);
 	SendRendererCommands();
-}
 
-void Renderer2DLayer::OnRender()
-{
-	KRK_PROFILE_FUNCTION();
-	ImGui::Begin("Geometry Colour Settings");
-	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData());
-	ImGui::End();
-}
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
+		position.X() += moveSpeed * deltaTime;
 
-void Renderer2DLayer::OnEvent(krakoa::events::Event & e)
-{
-	KRK_PROFILE_FUNCTION();
-	cameraController.OnEvent(e);
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
+		position.X() -= moveSpeed * deltaTime;
+
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
+		position.Y() += moveSpeed * deltaTime;
+
+	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
+		position.Y() -= moveSpeed * deltaTime;
+
+	rotation -= 5 * moveSpeed * deltaTime;
 }
 
 void Renderer2DLayer::SendRendererCommands() noexcept
 {
 	KRK_PROFILE_FUNCTION();
+
 	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
+
+	{
+		KRK_PROFILE_SCOPE("Updating colour entity");
+
+		auto& colourEntity = krakoa::EntityManager::Reference().GetEntity("Colour");
+
+		auto& appearance = colourEntity.GetComponent<krakoa::components::Appearance2D>();
+		
+		appearance.SetColour(geometryColour);
+	}
+
+
+	{
+		KRK_PROFILE_SCOPE("Updating texture entity");
+
+		auto& textureEntity = krakoa::EntityManager::Reference().GetEntity("Textured");
+		auto& appearance = textureEntity.GetComponent<krakoa::components::Appearance2D>();
+		auto& transform = textureEntity.GetComponent<krakoa::components::Transform>();
+
+		transform.SetPosition(position);
+		transform.SetRotation(kmaths::ToRadians(rotation));
+		appearance.SetColour(geometryColour);
+	}
+
+}
+
+void Renderer2DLayer::OnRender()
+{
+	KRK_PROFILE_FUNCTION();
+
+	ImGui::Begin("Geometry Colour Settings");
+	ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData(), ImGuiColorEditFlags_None);
+	ImGui::End();
+
+	RenderZoomControls();
+}
+
+void Renderer2DLayer::RenderZoomControls() noexcept
+{
+	static constexpr kmaths::Vector2f in(0.f, 1.f);
+	static constexpr kmaths::Vector2f out(0.f, -1.f);
+
+	ImGui::Begin("Zoom Controls");
+
+	if (ImGui::ArrowButton("Zoom In", ImGuiDir_Up))
+	{
+		auto zoomInEvent = krakoa::events::MouseScrolledEvent(in);
+		cameraController.OnEvent(zoomInEvent);
+	}
+	else if (ImGui::ArrowButton("Zoom Out", ImGuiDir_Down))
+	{
+		auto zoomOutEvent = krakoa::events::MouseScrolledEvent(out);
+		cameraController.OnEvent(zoomOutEvent);
+	}
+
+	ImGui::End();
+}
+
+void Renderer2DLayer::SetUpEntities() const
+{
+	constexpr auto rotScale = kmaths::Vector2f(0.25f);
+
+	auto& entityManager = krakoa::EntityManager::Reference();
 	
 	{
-		KRK_PROFILE_SCOPE("Renderer colour clearing");
+		KRK_PROFILE_SCOPE("Set Up coloured entity");
 
-#ifdef _DEBUG
-		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
-#else
-		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
-#endif // DEBUG
+		auto& colourEntity = entityManager.Add("Colour");
+		
+		colourEntity.AddComponent<krakoa::components::Transform>(
+			kmaths::Vector3f(-0.5f, 0.f, -0.75f),
+			0.f,
+			kmaths::Vector3f(0, 0, 1),
+			kmaths::Vector3f(0.2f, 0.2f, 1.f)
+			);
 
-		krakoa::graphics::Renderer::Clear();
+		colourEntity.AddComponent <krakoa::components::Appearance2D>(
+			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			geometryColour
+			);
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Renderer coloured triangle");
-		krakoa::graphics::Renderer2D::DrawTriangle(geometryColour, kmaths::Vector3f(1.f, .5f, 0.8f), { 1.f, 1.f, 1.f });
+		KRK_PROFILE_SCOPE("Set Up cyan entity");
+
+		auto& colourEntity = entityManager.Add("Cyan");
+		colourEntity.AddComponent<krakoa::components::Transform>(
+			kmaths::Vector3f(0.5f, 0.f, -0.75f),
+			0.f,
+			kmaths::Vector3f(0, 0, 1),
+			kmaths::Vector3f(0.2f, 0.2f, 1.f)
+			);
+
+		colourEntity.AddComponent <krakoa::components::Appearance2D>(
+			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			krakoa::graphics::colours::Cyan
+			);
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Textured quad");
-		for (auto y = 0; y < 5; ++y) {
-			for (auto x = 0; x < 5; ++x)
-			{
-				const auto miniSquarePos = kmaths::Vector2f{ x * 2.f, y * 2.0f };
-				krakoa::graphics::Renderer2D::DrawQuad(*pWinTexture, miniSquarePos, kmaths::Vector2f(0.2f));
-			}
-		}
+		KRK_PROFILE_SCOPE("Set Up magenta entity");
+
+		auto& colourEntity = entityManager.Add("Magenta");
+		colourEntity.AddComponent<krakoa::components::Transform>(
+			kmaths::Vector3f(0.f, 0.5f, -0.75f),
+			0.f,
+			kmaths::Vector3f(0, 0, 1),
+			kmaths::Vector3f(0.2f, 0.2f, 1.f)
+			);
+
+		colourEntity.AddComponent <krakoa::components::Appearance2D>(
+			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			krakoa::graphics::colours::Magenta
+			);
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawRotatedQuad(geometryColour, kmaths::Vector3f(-1.f, -.5f, 0.5f), 45.f, kmaths::Vector3f(0.2f));
+		KRK_PROFILE_SCOPE("Set Up yellow entity");
+
+		auto& yellowEntity = entityManager.Add("Yellow");
+		yellowEntity.AddComponent<krakoa::components::Transform>(
+			kmaths::Vector3f(0.f, -0.5f, -0.75f),
+			0.f,
+			kmaths::Vector3f(0, 0, 1),
+			kmaths::Vector3f(0.2f, 0.2f, 1.f)
+			);
+
+		yellowEntity.AddComponent <krakoa::components::Appearance2D>(
+			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			krakoa::graphics::colours::Yellow
+			);
 	}
 
-	krakoa::graphics::Renderer2D::EndScene();
+	{
+		KRK_PROFILE_SCOPE("Set Up textured entity");
+
+		auto& texturedEntity = entityManager.Add("Textured");
+		auto& transform = texturedEntity.AddComponent<krakoa::components::Transform>();
+		transform.SetScale(kmaths::Vector2f{ 0.2f, 0.2f });
+
+		texturedEntity.AddComponent <krakoa::components::Appearance2D>(*pSubTexture, geometryColour, 3.f);
+	}
+}
+
+void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
+{
+	KRK_PROFILE_FUNCTION();
+	cameraController.OnEvent(e);
 }

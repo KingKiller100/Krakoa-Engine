@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Rendering/Textures/iTexture2D.hpp"
+#include "../../Graphics/Textures/iTexture2D.hpp"
 
 namespace krakoa::graphics
 {
@@ -19,6 +19,12 @@ namespace krakoa::graphics
 		void Unbind() const override;
 
 		void SetData(const void* data, const uint32_t size) override;
+
+
+		bool operator ==(const iTexture& other) const noexcept override;
+
+
+		uint32_t GetAssetID() const noexcept override;
 
 	private:
 		std::string path;

@@ -5,19 +5,47 @@
 #include "../../HelperMacros.hpp"
 #include "../Vectors/PredefinedVectors.hpp"
 
+#include <cstdint>
+
 namespace kmaths
 {
-	enum class ZAxisDirection : unsigned char
+	template<typename T, unsigned short Rows, unsigned short Columns>
+	USE_RESULT Matrix<T, Rows, Columns> To_Matrix(const T(&arr)[(Rows * Columns)]) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		constexpr auto size = Rows * Columns;
+
+		Matrix<T, Rows, Columns> m;
+
+		auto ptr = m.GetPointerToData();
+		for (auto i = 0; i < size; ++i)
+			ptr[i] = arr[i];
+		return m;
+	}
+
+	template<typename T, unsigned short Rows, unsigned short Columns>
+	USE_RESULT decltype(auto) To_Array(const Matrix<T, Rows, Columns> mat) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		T arr[Rows * Columns];
+
+		for (Length_Type row = 0; row < Rows; ++row)
+			for (Length_Type col = 0; col < Columns; ++col)
+				arr[(row * Columns) + col] = mat[row][col];
+		return arr;
+	}
+	
+
+
+	enum class ZAxisDirection : uint8_t
 	{
 		LEFT_HAND,
 		RIGHT_HAND
 	};
 
 	template<typename T>
-	USE_RESULT constexpr static const TransformMatrix<T>& GetTransformIdentity() noexcept
+	USE_RESULT static constexpr const TransformMatrix<T>& GetTransformIdentity() noexcept
 	{
-		static const auto identityMat = TransformMatrix<T>::Identity();
-		return identityMat;
+		static constexpr auto identity = IdentityMatrix<T, 4, 4>();
+		return identity;
 	}
 
 	template<typename T>
@@ -63,8 +91,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Translate(const TransformMatrix<T>& m, const Vector3<T>& v)
 	{
-		auto translate = m;
-		translate[3] = { v[0], v[1], v[2], m[3][3] };
+		TransformMatrix<T> translate = m;
+		translate[3] = (m[0] * v[0]) + (m[1] * v[1]) + (m[2] * v[2]) + m[3];
 		return translate;
 	}
 
@@ -75,14 +103,16 @@ namespace kmaths
 		return translate;
 	}
 
-	// Rotate transform in degrees
+	// Rotate transform in radians
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T angle, const Vector3<T>& v) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T radians, const Vector3<T>& axes) noexcept
 	{
-		const T cosA = std::cos(kmaths::DegreesToRadians(angle));
-		const T sinA = std::sin(kmaths::DegreesToRadians(angle));
+		const auto a = radians;
 
-		Vector3<T> axis = v.Normalize();
+		const T cosA = Cosine(a);
+		const T sinA = Sine(a);
+
+		Vector3<T> axis = axes.Normalize();
 		Vector3<T> temp = axis * (CAST(T, 1) - cosA);
 
 		TransformMatrix<T> rotate;
@@ -107,44 +137,76 @@ namespace kmaths
 		return res;
 	}
 
-	// Rotate transform in degrees
+	// Rotate transform in radians
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate(T angle, const Vector3<T>& v) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate(T radians, const Vector3<T>& axes) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), angle, v);
+		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, axes);
 		return rotate;
 	}
 
-	// Rotate transform in degrees
+	// Rotate transform in radians
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T angle) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T radians) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), angle, { CAST(T, 0), CAST(T, 0), CAST(T, 1) });
+		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, { CAST(T, 0), CAST(T, 0), constants::One<T>() });
 		return rotate;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const TransformMatrix<T>& m, const Vector3<T>& v) noexcept
 	{
-		const auto scale = {
-			m[0] * v[0],
-			m[1] * v[1],
-			m[2] * v[2],
-			m[3]
+		return TransformMatrix<T>{
+				(m[0] * v[0]),
+				(m[1] * v[1]),
+				(m[2] * v[2]),
+				m[3]
 		};
-		return scale;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale(const Vector3<T>& v) noexcept
 	{
-		const auto m = GetTransformIdentity<T>();
-		const auto scale = {
-			m[0] * v[0],
-			m[1] * v[1],
-			m[2] * v[2],
-			m[3]
-		};
+		const auto scale = Scale<T>(GetTransformIdentity<T>(), v);
 		return scale;
 	}
+
+	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
+	{
+		const auto scale = Scale<T>(GetTransformIdentity<T>(), { v[0], v[1], CAST(T, 1) });
+		return scale;
+	}
+
+	/**
+	 * \brief
+	 *		Returns transform matrix made from Translation * Rotation * Scale 
+	 * \tparam T
+	 *		Type
+	 * \param position
+	 *		3D Vector
+	 * \param radians
+	 *		amount to rotate
+	 * \param axes
+	 *		Axes to affect
+	 * \param scale
+	 *		Size of each component of the position
+	 * \return
+	 *		Complete transform matrix representing all three transformations taking place on a coordinate
+	 */
+	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> TRS(const Vector3<T>& position, const T radians, const Vector3<T>& axes, const Vector3<T>& scale) noexcept
+	{
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(radians, axes) * Scale<T>(scale);;
+		return transform;
+	}
+
+	// Translation * Rotation * Scale in 2D
+	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> TRS2D(const Vector3<T>& position, const T radians, const Vector2<T>& scale) noexcept
+	{
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(radians) * Scale2D<T>(scale);;
+		return transform;
+	}
+	
 }

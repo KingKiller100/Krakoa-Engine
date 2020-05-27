@@ -1,7 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "ImGuiLayer.hpp"
 
-#include "../../Core/EngineCore.hpp"
+#include "../../Instrumentor.hpp"
+#include "../../Core/EngineConfig.hpp"
 #include "../../Core/Application.hpp"
 
 #include <imgui.h> // ImGui include must be above any other openGL includes
@@ -12,8 +13,6 @@
 // Temp for keymap
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-
-#include <functional>
 
 namespace krakoa
 {
@@ -73,7 +72,7 @@ namespace krakoa
 	{		
 		KRK_PROFILE_FUNCTION();
 
-		ImGui::ShowDemoWindow(&isShowing);
+		//ImGui::ShowDemoWindow(&isShowing);
 	}
 
 	void ImGuiLayer::OnEvent(events::Event& e)

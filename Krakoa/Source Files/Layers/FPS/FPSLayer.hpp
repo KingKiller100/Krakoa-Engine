@@ -15,13 +15,12 @@ namespace krakoa
 		void OnDetach() override;
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;
-		void OnEvent(events::Event& e) override;
 
 	private:
-		float CalculateAverageFPS() const noexcept;
+		USE_RESULT float CalculateAverageFPS() const noexcept;
 
 	private:
-		std::array<unsigned, 100> sampleTimes;
+		std::array<unsigned short, 100> sampleTimes;
 		size_t currentIdx;
 	};
 }

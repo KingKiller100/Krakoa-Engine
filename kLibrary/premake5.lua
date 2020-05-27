@@ -3,7 +3,8 @@ project "kLibrary"
     kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
-    characterset ("MBCS")
+    characterset ("default")
+    -- characterset ("MBCS")
 	staticruntime "on"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -36,6 +37,7 @@ project "kLibrary"
 
         defines
         {
+            "_CRT_SECURE_NO_WARNINGS",
             "KLIB_LIB",
             "KLIB_WINDOWS_OS",
             "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
@@ -70,6 +72,6 @@ project "kLibrary"
         {
             "Source Files/**/*Test*"
         }
-        optimize "Debug"
+        optimize "Speed"
         runtime "Release"
         

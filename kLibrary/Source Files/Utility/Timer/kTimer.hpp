@@ -8,7 +8,7 @@
 
 namespace klib::kTime
 {
-	namespace kUnits
+	namespace units
 	{
 		using Hours = std::chrono::minutes;
 		using Mins = std::chrono::seconds;
@@ -65,7 +65,7 @@ namespace klib::kTime
 		}
 
 		template<typename Units>
-		USE_RESULT constexpr Rep Now() noexcept(std::is_arithmetic_v<Rep>)
+		USE_RESULT constexpr Rep Now() const noexcept(std::is_arithmetic_v<Rep>)
 		{
 			const auto currentTimePoint = Clock::now();
 			return std::chrono::time_point_cast<Units>(currentTimePoint).time_since_epoch().count();
@@ -78,8 +78,8 @@ namespace klib::kTime
 			static constexpr Rep thousandth = (CAST(Rep, 1) / 1000);
 			static constexpr Rep sixtieth = CAST(Rep, 1) / 60;
 
-			if _CONSTEXPR_IF(std::is_same_v<Units, kUnits::Hours>
-				|| std::is_same_v<Units, kUnits::Mins>)
+			if _CONSTEXPR_IF(std::is_same_v<Units, units::Hours>
+				|| std::is_same_v<Units, units::Mins>)
 				return std::chrono::duration_cast<Units>(now - prev).count() * sixtieth;
 			else
 				return std::chrono::duration_cast<Units>(now - prev).count() * thousandth;
@@ -88,7 +88,7 @@ namespace klib::kTime
 	private:
 		const char* name;
 
-		typename const Clock::time_point startTimePoint;
+		const typename Clock::time_point startTimePoint;
 		typename Clock::time_point lastTimePoint;
 	};
 

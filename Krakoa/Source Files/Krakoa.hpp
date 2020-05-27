@@ -5,9 +5,12 @@
 
 // For client game applications
 
+// Memory
+#include "MemoryTypes.hpp"
+
 // Core
 #include "Instrumentor.hpp"
-#include "Core/EngineCore.hpp"
+#include "Core/EngineConfig.hpp"
 #include "Core/Application.hpp"
 #include "Core/Logging/Logger.hpp"
 
@@ -20,22 +23,32 @@
 #include "Camera/OrthographicCamera.hpp"
 #include "Camera/OrthographicCameraController.hpp"
 
+// Colours
+#include "Graphics/Colour.hpp"
+
 // Rendering
-#include "Rendering/Renderer.hpp"
-#include "Rendering/Renderer2D.hpp"
-#include "Rendering/RenderCommand.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Graphics/Renderer2D.hpp"
+#include "Graphics/RenderCommand.hpp"
 
 // Textures
-#include "Rendering/Textures/iTexture.hpp"
-#include "Rendering/Textures/iTexture2D.hpp"
+#include "Graphics/Textures/iTexture.hpp"
+#include "Graphics/Textures/iTexture2D.hpp"
+#include "Graphics/Textures/SubTexture2d.hpp"
 
 // Rendering Resources
-#include "Rendering/ShaderLibrary.hpp"
-#include "Rendering/Rendering Resources/iShader.hpp"
-#include "Rendering/Rendering Resources/iBuffers.hpp"
-#include "Rendering/Rendering Resources/iVertexArray.hpp"
-#include "Rendering/Rendering Resources/BufferLayout.hpp"
+#include "Graphics/ShaderLibrary.hpp"
+#include "Graphics/Rendering Resources/iShader.hpp"
+#include "Graphics/Rendering Resources/iBuffers.hpp"
+#include "Graphics/Rendering Resources/iVertexArray.hpp"
+#include "Graphics/Rendering Resources/BufferLayout.hpp"
 
 // Layers
 #include "Layers/LayerBase.hpp"
 #include "Layers/ImGui/ImGuiLayer.hpp"
+
+// Entities & Components
+#include "Entity/Entity.hpp"
+#include "Entity/EntityManager.hpp"
+#include "Entity/Components/Transform.hpp"
+#include "Entity/Components/Appearance.hpp"

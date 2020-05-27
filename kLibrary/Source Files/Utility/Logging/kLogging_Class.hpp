@@ -24,7 +24,7 @@ namespace klib::kLogs
 	public:
 		using LogQueue = std::deque<std::string>;
 
-		enum LConsoleColour : unsigned short
+		enum class LConsoleColour : unsigned short
 		{
 			NAVY_BLUE = 1,
 			DARK_GREEN,
@@ -236,7 +236,7 @@ namespace klib::kLogs
 		 * \param[in] lvl
 		 *		Log level
 		 */
-		void OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) noexcept;
+		void OutputToSubSystems(const std::string_view& logLine, const LLevel lvl) const noexcept;
 
 		/**
 		 * \brief

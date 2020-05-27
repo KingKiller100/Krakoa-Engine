@@ -44,5 +44,3 @@ namespace patterns
 	};
 }
 
-//template<class T>
-//T* patterns::SimpleSingleton<T>::instance = nullptr;

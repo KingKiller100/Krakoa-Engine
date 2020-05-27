@@ -257,14 +257,14 @@ namespace krakoa::graphics
 #endif
 	}
 
-	void Renderer2D::DrawTriangle(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
-		const float radians, const Colour tintColour, const float tilingFactor)
+	void Renderer2D::DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
+	                              const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		DrawTriangle(subTexture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
-	void Renderer2D::DrawTriangle(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-		const float radians, const Colour tintColour, const float tilingFactor)
+	void Renderer2D::DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
+	                              const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -273,28 +273,28 @@ namespace krakoa::graphics
 		float texIndex = 0.f;
 		const kmaths::Vector2f* texCoords;
 
-		if (!subTexture)
+		if (!subTexture.GetTexture())
 		{
 			static constexpr kmaths::Vector2f defaultCoords[] = { {0.f, 0.f}, {1.f, 0.f}, {0.5f, 1.f} };
 			texCoords = defaultCoords;
 		}
 		else
 		{
-			texIndex = UpdateTextureList(subTexture->GetTexture());
-			texCoords = subTexture->GetTexCoord();
+			texIndex = UpdateTextureList(subTexture.GetTexture());
+			texCoords = subTexture.GetTexCoord();
 		}
 		
 		AddNewTriangle(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
-	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
-		const float radians, const Colour tintColour, const float tilingFactor)
+	void Renderer2D::DrawQuad(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
+	                          const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		DrawQuad(subTexture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
-	void Renderer2D::DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-		const float radians, const Colour tintColour, const float tilingFactor)
+	void Renderer2D::DrawQuad(const SubTexture2D& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
+	                          const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -303,15 +303,15 @@ namespace krakoa::graphics
 		float texIndex = 0.f;
 		const kmaths::Vector2f* texCoords;
 
-		if (!subTexture)
+		if (!subTexture.GetTexture())
 		{
 			static constexpr kmaths::Vector2f defaultCoords[] = { {0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f} };
 			texCoords = defaultCoords;
 		}
 		else
 		{
-			texIndex = UpdateTextureList(subTexture->GetTexture());
-			texCoords = subTexture->GetTexCoord();
+			texIndex = UpdateTextureList(subTexture.GetTexture());
+			texCoords = subTexture.GetTexCoord();
 		}
 
 		AddNewQuad(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);

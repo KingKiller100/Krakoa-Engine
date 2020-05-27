@@ -19,7 +19,7 @@
 #include "../Layers/ImGui/ImGuiLayer.hpp"
 #include "../Layers/LayerStacker.hpp"
 
-#include "../Entity/EntitiyManager.hpp"
+#include "../Entity/EntityManager.hpp"
 
 #include <memory>
 
@@ -50,6 +50,7 @@ namespace krakoa
 		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
 
 		static void RendererClear() noexcept;
+		static void RendererEnd() noexcept;
 
 	protected:
 		bool isRunning;

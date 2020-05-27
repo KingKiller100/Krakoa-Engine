@@ -31,7 +31,7 @@ namespace krakoa::graphics
 		};
 
 	public:
-		// Only for quads
+		SubTexture2D();
 		SubTexture2D(iTexture2D* texture, const TexCoordData& data);
 		SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordData& data);
 		~SubTexture2D() noexcept;

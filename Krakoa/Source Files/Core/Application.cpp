@@ -17,6 +17,8 @@
 
 #include <Utility/Debug Helper/kDebugger.hpp>
 
+#include "../Graphics/Renderer2D.hpp"
+
 
 namespace krakoa
 {
@@ -142,6 +144,10 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
+		entityManager->Draw();
+
+		RendererEnd();
+
 		pWindow->OnUpdate();
 	}
 
@@ -156,6 +162,11 @@ namespace krakoa
 #endif // DEBUG
 
 		krakoa::graphics::Renderer::Clear();
+	}
+
+	void Application::RendererEnd() noexcept
+	{
+		graphics::Renderer2D::EndScene();
 	}
 
 	bool Application::IsRunning() const

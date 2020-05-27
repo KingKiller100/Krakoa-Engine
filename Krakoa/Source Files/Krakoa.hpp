@@ -5,6 +5,9 @@
 
 // For client game applications
 
+// Memory
+#include "MemoryTypes.hpp"
+
 // Core
 #include "Instrumentor.hpp"
 #include "Core/EngineConfig.hpp"
@@ -45,5 +48,7 @@
 #include "Layers/ImGui/ImGuiLayer.hpp"
 
 // Entities & Components
-#include "Entity/EntitiyManager.hpp"
+#include "Entity/Entity.hpp"
+#include "Entity/EntityManager.hpp"
 #include "Entity/Components/Transform.hpp"
+#include "Entity/Components/Appearance.hpp"

@@ -40,6 +40,8 @@ namespace krakoa::components
 
 		USE_RESULT constexpr kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept
 		{
+			KRK_PROFILE_FUNCTION();
+
 			return kmaths::TRS(position, radians, rotationAxes, scale);
 		}
 

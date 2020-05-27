@@ -5,6 +5,29 @@
 
 #include <Maths/Vectors/PredefinedVectors.hpp>
 
+
+
+#include "Colour.hpp"
+#include "Colour.hpp"
+#include "Colour.hpp"
+#include "Colour.hpp"
+#include "Colour.hpp"
+#include "Colour.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+#include "Textures/iTexture.hpp"
+
 namespace krakoa
 {
 	class OrthographicCamera;
@@ -27,11 +50,11 @@ namespace krakoa
 			static void FlushQuads();
 			static void FlushTriangles();
 
-			static void DrawTriangle(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
-			static void DrawTriangle(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+			static void DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+			static void DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
 
-			static void DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
-			static void DrawQuad(const std::unique_ptr<SubTexture2D>& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+			static void DrawQuad(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
+			static void DrawQuad(const SubTexture2D& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale = kmaths::Vector2f(1.f), const float radians = 0.f, const Colour tintColour = colours::White, const float tilingFactor = 1.f);
 
 			static const Statistics& GetStats();
 

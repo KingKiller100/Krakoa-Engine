@@ -13,6 +13,11 @@ namespace krakoa
 
 		virtual void Initialize() {}
 		virtual void Update(const double dt) {}
+
+		bool IsActive() const { return active; }
+		
+	protected:
+		bool active = true;
 	};
 
 #define STATIC_GET_COMPONENT_TYPE(self) static const char* GetStaticType()\

@@ -2,21 +2,23 @@
 
 #include "Components/ComponentBase.hpp"
 
+#include "../MemoryTypes.hpp"
 #include "../Core/EngineConfig.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
 #include <string>
 #include <unordered_map>
-#include <memory>
 
 
 namespace krakoa
 {
+	class EntityManager;
+	
 	class  Entity
 	{
 	public:
-		Entity();
-		Entity(const std::string_view& name);
+		Entity(EntityManager* manager);
+		Entity(EntityManager* manager, const std::string_view& name);
 
 		Entity(const Entity& other);
 		Entity& operator=(const Entity& other);
@@ -31,19 +33,26 @@ namespace krakoa
 
 		CONST_GETTER(unsigned, GetID, id)
 
-		bool IsActive() const;
+		CONST_GETTER(bool, IsSelected, selected)
+		void Select() noexcept;
+		void Unselect() noexcept;
+
+		CONST_GETTER(bool, IsActive, active)
 		void Activate();
 		void Deactivate();
 
 		void Update(double dt);
 
-		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
+		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
 		USE_RESULT bool FindComponent() const noexcept
 		{
 			return (components.find(ComponentType::GetStaticType()) != components.end());
 		}
 
-		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
+		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<
+			std::is_base_of_v<ComponentBase, ComponentType>
+		&& std::is_constructible_v<ComponentType, Args...>
+		>>
 		ComponentType& AddComponent(Args&& ...params)
 		{
 			KRK_FATAL(
@@ -51,8 +60,8 @@ namespace krakoa
 				klib::kFormat::ToString("Attempt to add a component already a part of this entity - {0}", ComponentType::GetStaticType())
 			);
 
-			components[ComponentType::GetStaticType()] = new ComponentType(std::forward<Args>(params)...); // Added to the list
-			ComponentType* component = dynamic_cast<ComponentType*>(components[ComponentType::GetStaticType()]);
+			(components[ComponentType::GetStaticType()] = new ComponentType(std::forward<Args>(params)...)); // Adds to the list
+			ComponentType* component = dynamic_cast<ComponentType*>(components.at(ComponentType::GetStaticType()));
 			component->Initialize();
 			return *component;
 		}
@@ -62,30 +71,40 @@ namespace krakoa
 		{
 			if (FindComponent<ComponentType>())
 			{
-				components.erase(ComponentType::GetStaticType());
+				components.erase(std::remove_if(components.begin(), components.end(), [](ComponentBase*& component)
+				{
+					return component->GetType() == ComponentType::GetStaticType();
+				}
+				));
 				return true;
 			}
 
 			return false;
 		}
 
-		template<typename ComponentType, typename ...Args, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
-		USE_RESULT ComponentType& GetComponent() noexcept
+		void RemoveAllComponents() noexcept;
+
+		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
+		USE_RESULT ComponentType& GetComponent() const
 		{
 			KRK_FATAL(
 				FindComponent<ComponentType>(), // Assert component already a part of entity
 				klib::kFormat::ToString("Attempt to get a component not a part of this entity - {0}", ComponentType::GetStaticType())
 			);
 
-			return *(components.at(ComponentType::GetStaticType()));
+			ComponentType* component = dynamic_cast<ComponentType*>(components.at(ComponentType::GetStaticType()));
+
+			return *component;
 		}
 
 	private:
 		std::string name;
 		const unsigned id;
-		std::unordered_map<const char*, ComponentBase*> components;
+		std::unordered_map<const char*, ComponentBase*> components{};
 
-		bool isSelected;
-		bool isActive;
+		bool selected;
+		bool active;
+
+		EntityManager* manager;
 	};
 }

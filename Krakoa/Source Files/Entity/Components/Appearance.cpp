@@ -3,34 +3,22 @@
 
 namespace krakoa::components
 {
-	Appearance2D::Appearance2D()
-		:subTexture(nullptr),
-		colour(graphics::colours::White),
-		tilingFactor(1.f)
-	{}
-
-	Appearance2D::Appearance2D(Single_Ptr<graphics::SubTexture2D>& subTexture, const graphics::Colour colour, const float tilingFactor)
-		: subTexture(std::move(subTexture)),
+	Appearance2D::Appearance2D(const graphics::SubTexture2D& subTexture, const graphics::Colour colour, const float tilingFactor)
+		: subTexture(subTexture),
 		colour(colour),
 		tilingFactor(tilingFactor)
 	{}
 
 		Appearance2D::Appearance2D(graphics::iTexture2D* texture, const graphics::SubTexture2D::TexCoordData& texCoordData,
 			const graphics::Colour colour, const float tilingFactor)
-		: subTexture(graphics::SubTexture2D::Create(texture, texCoordData)),
+		: subTexture(graphics::SubTexture2D(texture, texCoordData)),
 		colour(colour),
 		tilingFactor(tilingFactor)
 	{}
 
 	Appearance2D::Appearance2D(const Multi_Ptr<graphics::iTexture2D>& texture, const graphics::SubTexture2D::TexCoordData& texCoordData,
 		const graphics::Colour colour, const float tilingFactor)
-		: subTexture(graphics::SubTexture2D::Create(texture, texCoordData)),
-		colour(colour),
-		tilingFactor(tilingFactor)
-	{}
-
-	Appearance2D::Appearance2D(graphics::SubTexture2D* subTexture, const graphics::Colour colour, const float tilingFactor)
-		: subTexture(subTexture),
+		: subTexture(graphics::SubTexture2D(texture, texCoordData)),
 		colour(colour),
 		tilingFactor(tilingFactor)
 	{}
@@ -38,14 +26,19 @@ namespace krakoa::components
 	Appearance2D::~Appearance2D() noexcept
 		= default;
 
-	void Appearance2D::SetTexture(graphics::iTexture2D* texture) const
+	void Appearance2D::SetTexture(graphics::iTexture2D* texture)
 	{
-		subTexture->GetTexture().reset(texture);
+		subTexture.GetTexture().reset(texture);
 	}
 
-	void Appearance2D::SetTexture(const Multi_Ptr<graphics::iTexture2D>& texture) const
+	void Appearance2D::SetTexture(const Multi_Ptr<graphics::iTexture2D>& texture) 
 	{
-		subTexture->SetTexture(texture);
+		subTexture.SetTexture(texture);
+	}
+
+	graphics::GeometryType Appearance2D::GetGeometryType() const
+	{
+		return subTexture.GetGeometryType();
 	}
 
 	const char* Appearance2D::GetType() const noexcept

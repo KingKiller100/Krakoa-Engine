@@ -70,15 +70,99 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 
 	{
 		KRK_PROFILE_SCOPE("Renderer coloured quad");
-		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f }, 0.f, geometryColour);
-		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Cyan);
-		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Magenta);
-		krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Yellow);
 
-		krakoa::graphics::Renderer2D::DrawQuad(pSubTexture, position, rotScale, kmaths::ToRadians(rotation), geometryColour, 3.f);
+		{
+			KRK_PROFILE_SCOPE("Set Up coloured entity");
+
+			auto& colourEntity = krakoa::EntityManager::Reference().Add("Colour");
+			colourEntity.AddComponent<krakoa::components::Transform>(
+				kmaths::Vector3f(-0.5f, 0.f, -0.75f),
+				0.f,
+				kmaths::Vector3f(0, 0, 1),
+				kmaths::Vector3f(0.2f, 0.2f, 1.f)
+				);
+			
+			colourEntity.AddComponent <krakoa::components::Appearance2D>(
+				krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+				geometryColour
+				);
+		}
+
+		{
+			KRK_PROFILE_SCOPE("Set Up cyan entity");
+
+			auto& colourEntity = krakoa::EntityManager::Reference().Add("Cyan");
+			colourEntity.AddComponent<krakoa::components::Transform>(
+				kmaths::Vector3f(0.5f, 0.f, -0.75f),
+				0.f,
+				kmaths::Vector3f(0, 0, 1),
+				kmaths::Vector3f(0.2f, 0.2f, 1.f)
+				);
+			
+			colourEntity.AddComponent <krakoa::components::Appearance2D>(
+				krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+				krakoa::graphics::colours::Cyan
+				);
+		}
+
+		{
+			KRK_PROFILE_SCOPE("Set Up magenta entity");
+
+			auto& colourEntity = krakoa::EntityManager::Reference().Add("Magenta");
+			colourEntity.AddComponent<krakoa::components::Transform>(
+				kmaths::Vector3f(0.f, 0.5f, -0.75f),
+				0.f,
+				kmaths::Vector3f(0, 0, 1),
+				kmaths::Vector3f(0.2f, 0.2f, 1.f)
+				);
+			
+			colourEntity.AddComponent <krakoa::components::Appearance2D>(
+				krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+				krakoa::graphics::colours::Magenta
+				);
+		}
+
+		{
+			KRK_PROFILE_SCOPE("Set Up yellow entity");
+
+			auto& colourEntity = krakoa::EntityManager::Reference().Add("Yellow");
+			colourEntity.AddComponent<krakoa::components::Transform>(
+				kmaths::Vector3f(0.f, -0.5f, -0.75f),
+				0.f,
+				kmaths::Vector3f(0, 0, 1),
+				kmaths::Vector3f(0.2f, 0.2f, 1.f)
+				);
+			
+			colourEntity.AddComponent <krakoa::components::Appearance2D>(
+				krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+				krakoa::graphics::colours::Yellow
+				);
+		}
+
+		{
+			KRK_PROFILE_SCOPE("Set Up textured entity");
+
+			auto& colourEntity = krakoa::EntityManager::Reference().Add("Textured");
+			colourEntity.AddComponent<krakoa::components::Transform>(
+				position,
+				kmaths::ToRadians(rotation),
+				kmaths::Vector3f(0, 0, 1),
+				rotScale
+				);
+			
+			colourEntity.AddComponent <krakoa::components::Appearance2D>(
+				*pSubTexture, geometryColour, 3.f
+				);
+		}
+
+		//krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(-0.5f, 0.f, -0.75f), { 0.2f, 0.2f }, 0.f, geometryColour);
+		//krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.5f, 0.f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Cyan);
+		//krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.f, 0.5f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Magenta);
+		//krakoa::graphics::Renderer2D::DrawQuad(nullptr, kmaths::Vector3f(0.f, -0.5f, -0.75f), { 0.2f, 0.2f }, 0.f, krakoa::graphics::colours::Yellow);
+
+		//krakoa::graphics::Renderer2D::DrawQuad(pSubTexture, position, rotScale, kmaths::ToRadians(rotation), geometryColour, 3.f);
 	}
 
-	krakoa::graphics::Renderer2D::EndScene();
 }
 
 void Renderer2DLayer::OnRender()

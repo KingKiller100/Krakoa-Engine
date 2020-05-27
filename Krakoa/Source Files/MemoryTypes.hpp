@@ -11,10 +11,10 @@ namespace krakoa
 	using Weak_Ptr = std::weak_ptr<T>;
 	
 	template<typename  T>
-	using Single_Ptr = std::unique_ptr<T>;
+	using Solo_Ptr = std::unique_ptr<T>;
 
 	template<typename T, typename ...Ts>
-	Single_Ptr<T> Make_Single(Ts&& ...params)
+	Solo_Ptr<T> Make_Solo(Ts&& ...params)
 	{
 		return std::make_unique<T>(std::forward<Ts>(params)...);
 	}

@@ -15,6 +15,13 @@ namespace krakoa::graphics
 		return Create(Multi_Ptr<iTexture2D>(texture), texCoordData);
 	}
 
+	SubTexture2D::SubTexture2D()
+		: texture(nullptr),
+		texCoords(),
+		texCoordData()
+	{
+	}
+
 	SubTexture2D::SubTexture2D(iTexture2D* texture, const TexCoordData& data)
 		: texture(Multi_Ptr<iTexture2D>(texture)),
 		texCoordData(data)
@@ -36,7 +43,12 @@ namespace krakoa::graphics
 	{
 		const auto& baseCoords = texCoordData.baseCoords;
 
-		const kmaths::Vector2f dimensions = texCoordData.spriteDimensions / texture->GetDimensions();
+		kmaths::Vector2f dimensions;
+
+		if (texture)
+			dimensions = texCoordData.spriteDimensions / texture->GetDimensions();
+		else
+			dimensions = { 1, 1 };
 
 		texCoords.reserve(CAST(uint8_t, GetGeometryType()));
 
@@ -65,10 +77,10 @@ namespace krakoa::graphics
 	GeometryType SubTexture2D::GetGeometryType() const noexcept
 	{
 		switch (texCoordData.baseCoords.size()) {
-			case batch::limits::quad::vertices: return GeometryType::QUAD;
-			case batch::limits::circle::vertices: return GeometryType::CIRCLE;
-			case batch::limits::triangle::vertices: return GeometryType::TRIANGLE;
-			default: return GeometryType::UNKNOWN;
+		case batch::limits::quad::vertices: return GeometryType::QUAD;
+		case batch::limits::circle::vertices: return GeometryType::CIRCLE;
+		case batch::limits::triangle::vertices: return GeometryType::TRIANGLE;
+		default: return GeometryType::UNKNOWN;
 		}
 	}
 

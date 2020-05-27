@@ -27,7 +27,7 @@ private:
 	void RenderZoomControls() noexcept;
 
 private:
-	std::unique_ptr<krakoa::graphics::SubTexture2D> pSubTexture;
+	krakoa::Solo_Ptr<krakoa::graphics::SubTexture2D> pSubTexture;
 
 	krakoa::OrthographicCameraController cameraController;
 

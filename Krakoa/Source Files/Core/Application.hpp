@@ -3,7 +3,7 @@
 #include "../EngineConfig.hpp"
 
 // Memory
-#include "../Memory/MemoryTypes.hpp"
+#include "../Memory/PointerTypes.hpp"
 
 // Time Step
 #include "../TimeStep.hpp"

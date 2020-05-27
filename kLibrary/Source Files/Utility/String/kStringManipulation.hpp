@@ -2,8 +2,6 @@
 
 #include "../../HelperMacros.hpp"
 
-#include "../../Type Traits/String.hpp"
-
 #include <string>
 #include <vector>
 

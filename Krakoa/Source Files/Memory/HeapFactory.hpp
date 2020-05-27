@@ -13,6 +13,7 @@ namespace krakoa
 		struct Token {};
 	public:
 		HeapFactory(Token&&);
+		~HeapFactory() noexcept;
 
 		static Heap* CreateHeap(const char* name);
 		static Heap* GetDefaultHeap() noexcept;

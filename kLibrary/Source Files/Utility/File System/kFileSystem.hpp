@@ -11,7 +11,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <sys/types.h>
 #include <sys/stat.h>
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
@@ -48,7 +47,7 @@ namespace klib::kFileSystem
 	template<class CharType = char>
 	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringWriter<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
-		FileWriter<CharType> outFile(fullFilePath.data(), mode);
+		FileWriter<CharType> outFile(fullFilePath, mode);
 
 		if (outFile.is_open())
 		{
@@ -60,12 +59,18 @@ namespace klib::kFileSystem
 		{
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
-				const auto failMsg = kString::StringWriter<CharType>("Cannot create/open file ") + fullFilePath.data();
+				const auto failMsg = fullFilePath + "Cannot create/open file ";
 				OutputDebugStringA(failMsg.c_str());
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
-				const auto failMsg = kString::StringWriter<CharType>(L"Cannot create/open file ") + fullFilePath.data();
+				const auto failMsg = fullFilePath + L"Cannot create/open file ";
+				OutputDebugStringW(failMsg.c_str());
+			}
+			else
+			{
+				const auto wFileName = kString::Convert<wchar_t>(fullFilePath);
+				const auto failMsg = kString::StringWriter<wchar_t>(L"Cannot create/open file ") + wFileName;
 				OutputDebugStringW(failMsg.c_str());
 			}
 		}

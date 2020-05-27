@@ -4,26 +4,26 @@
 #include "Tester.hpp"
 
 // Maths Tests
-#include "Maths Tests/Random_Test.hpp"
-#include "Maths Tests/Matrix_Test.hpp"
-#include "Maths Tests/Vectors_Test.hpp"
-#include "Maths Tests/Fraction_Test.hpp"
-#include "Maths Tests/Algorithm_Test.hpp"
-#include "Maths Tests/Quaternion_Test.hpp"
+#include "../../Tests/Maths Tests/Random_Test.hpp"
+#include "../../Tests/Maths Tests/Matrix_Test.hpp"
+#include "../../Tests/Maths Tests/Vectors_Test.hpp"
+#include "../../Tests/Maths Tests/Fraction_Test.hpp"
+#include "../../Tests/Maths Tests/Algorithm_Test.hpp"
+#include "../../Tests/Maths Tests/Quaternion_Test.hpp"
 
 // Utility
-#include "Utility Tests/Timer_Test.hpp"
-#include "Utility Tests/Logging_Test.hpp"
-#include "Utility Tests/Calendar_Test.hpp"
-#include "Utility Tests/DebugHelp_Test.hpp"
-#include "Utility Tests/FileSystem_Test.hpp"
-#include "Utility Tests/StringView_Test.hpp"
-#include "Utility Tests/UTFConverter_Test.hpp"
-#include "Utility Tests/StringManipulation_Test.hpp"
-#include "Utility Tests/FormatToString_Test.hpp"
+#include "../../Tests/Utility Tests/Timer_Test.hpp"
+#include "../../Tests/Utility Tests/Logging_Test.hpp"
+#include "../../Tests/Utility Tests/Calendar_Test.hpp"
+#include "../../Tests/Utility Tests/DebugHelp_Test.hpp"
+#include "../../Tests/Utility Tests/FileSystem_Test.hpp"
+#include "../../Tests/Utility Tests/StringView_Test.hpp"
+#include "../../Tests/Utility Tests/UTFConverter_Test.hpp"
+#include "../../Tests/Utility Tests/StringManipulation_Test.hpp"
+#include "../../Tests/Utility Tests/FormatToString_Test.hpp"
 
 // Speed Testing
-#include "Performance Tests/PerformanceTestManager.hpp"
+#include "../../Tests/Performance Tests/PerformanceTestManager.hpp"
 
 // File System to output test results
 #include "../Utility/File System/kFileSystem.hpp"
@@ -52,6 +52,7 @@ namespace kTest
 	void TesterManager::Initialize()
 	{
 		using namespace klib;
+		
 		path = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
 		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
 
@@ -61,7 +62,7 @@ namespace kTest
 		}
 
 		path += "Results.txt";
-		klib::kFileSystem::RemoveFile(path.c_str());
+		kFileSystem::RemoveFile(path.c_str());
 	}
 
 	void TesterManager::InitializeMathsTests()

@@ -2,8 +2,11 @@
 
 #include <HelperMacros.hpp>
 
-#define MEMSYSTEM_SIGNATURE 0xdeadc0de // 3735929054
-#define MEMSYSTEM_ENDMARKER 0xdeadbeef // 3735928559
+// 3735929054
+#define KRK_MEMSYSTEM_SIGNATURE 0xdeadc0de 
+
+// 3735928559
+#define KRK_MEMSYSTEM_ENDMARKER 0xdeadbeef 
 
 namespace krakoa
 {
@@ -13,37 +16,40 @@ namespace krakoa
 		explicit Heap(const char* name) noexcept;
 		~Heap() noexcept;
 
+		void Initialize(const char* n) noexcept;
+
 		template<size_t N>
-		void SetName(const char (& n)[N])
+		void SetName(const char(&n)[N]) noexcept
 		{
 			name = n;
 		}
-		void SetName(const char* n);
-		USE_RESULT const char* GetName() const;
+		void SetName(const char* n) noexcept;
+		USE_RESULT const char* GetName() const noexcept;
 
 
-		void Allocate(const size_t bytes);
-		void Deallocate(const size_t bytes);
-		USE_RESULT size_t GetTotalAllocatedBytes() const;
+		void Allocate(const size_t bytes) noexcept;
+		void Deallocate(const size_t bytes) noexcept;
+		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
-		void WalkHeap();
-		
-		USE_RESULT void* GetPrevAddress() const;
+		void WalkHeap() const;
 
-		static Heap* Create(const char* name);
-		
+		void SetPrevAddress(void* prev) noexcept;
+		USE_RESULT void* GetPrevAddress() const noexcept;
+
 	private:
 		const char* name;
 		size_t totalBytes;
-		void * prevAddress;
+		void * pPrevAddress;
 	};
 
 	struct AllocHeader
 	{
-		size_t signature;
+		unsigned signature;
 		Heap* pHeap;
-		size_t size;
+		unsigned bytes;
 		AllocHeader* pPrev;
 		AllocHeader* pNext;
 	};
+
+	static Heap* Create(const char* name);
 }

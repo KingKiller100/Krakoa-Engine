@@ -10,7 +10,7 @@
 #include "EngineConfig.hpp"
 
 // Memory
-#include "Memory/MemoryTypes.hpp"
+#include "Memory/PointerTypes.hpp"
 
 // Core
 #include "Core/Application.hpp"

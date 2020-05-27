@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Memory/MemoryTypes.hpp"
+#include "../../Memory/PointerTypes.hpp"
 #include <Maths/Vectors/Vector2.hpp>
 #include <vector>
 

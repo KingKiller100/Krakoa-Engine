@@ -17,7 +17,7 @@ namespace patterns
 		
 		constexpr static T& Reference()
 		{
-			KRK_FATAL(instance, "Refernce to uninitialized singleton")
+			KRK_FATAL(instance, "Refernce to uninitialized singleton");
 			return *instance;
 		}
 

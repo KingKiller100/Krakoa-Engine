@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "ComponentBase.hpp"
 
-#include "../../Memory/MemoryTypes.hpp"
+#include "../../Memory/PointerTypes.hpp"
 
 #include "../../Graphics/Colour.hpp"
 #include "../../Graphics/Textures/iTexture2D.hpp"

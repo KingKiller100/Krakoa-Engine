@@ -17,20 +17,22 @@ project "kLibrary"
     {
         "Source Files/**.hpp",
         "Source Files/**.cpp",
+        "Tests/**.hpp",
+        "Tests/**.cpp",
         "cpp.hint"
     }
 
-    prebuildcommands
-    {
-        ("IF EXIST \"$(ProjectDir)Include Files\\\" ( del /f /s /q \"$(ProjectDir)Include Files\\\" ) ELSE (mkdir \"Include Files\")"),
-    }
+    -- prebuildcommands
+    -- {
+    --     ("IF EXIST \"$(ProjectDir)Include Files\\\" ( del /f /s /q \"$(ProjectDir)Include Files\\\" ) ELSE (mkdir \"Include Files\")"),
+    -- }
 
-    postbuildcommands
-    {
-        ("xcopy /s /y \"$(ProjectDir)Source Files\" \"$(ProjectDir)Include Files\""),
-        ("del /s /q /f \"$(ProjectDir)Include Files\\*.cpp\""),
-        ("del \"$(ProjectDir)Include Files\\pch.hpp\" /s /f /q"),
-    }
+    -- postbuildcommands
+    -- {
+    --     ("xcopy /s /y \"$(ProjectDir)Source Files\" \"$(ProjectDir)Include Files\""),
+    --     ("del /s /q /f \"$(ProjectDir)Include Files\\*.cpp\""),
+    --     ("del \"$(ProjectDir)Include Files\\pch.hpp\" /s /f /q"),
+    -- }
 
     filter "system:Windows"
         systemversion "latest"
@@ -47,7 +49,8 @@ project "kLibrary"
         defines "KLIB_DEBUG"
         removefiles
         {
-            "Source Files/**/*Test*"
+            "Source Files/**/*Test*",
+            "Tests/**/*Test*"
         }
         symbols "On"
         runtime "Debug"
@@ -61,7 +64,8 @@ project "kLibrary"
         defines "KLIB_RELEASE"
         removefiles
         {
-            "Source Files/**/*Test*"
+            "Source Files/**/*Test*",
+            "Tests/**/*Test*",
         }
         optimize "Full"
         runtime "Release"
@@ -70,7 +74,8 @@ project "kLibrary"
         defines "KLIB_PROFILE"
         removefiles
         {
-            "Source Files/**/*Test*"
+            "Source Files/**/*Test*",
+            "Tests/**/*Test*",
         }
         optimize "Speed"
         runtime "Release"

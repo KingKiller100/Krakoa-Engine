@@ -8,49 +8,61 @@ namespace krakoa
 	Heap::Heap(const char* name) noexcept
 		: name(name),
 		totalBytes(0),
-		prevAddress(nullptr)
+		pPrevAddress(nullptr)
 	{}
 
 	Heap::~Heap() noexcept
 		= default;
 
-	Heap* Heap::Create(const char* name)
+	void Heap::Initialize(const char* n) noexcept
 	{
-		return new Heap(name);
+		name = n;
+		totalBytes = 0;
+		pPrevAddress = nullptr;
 	}
 
-	void Heap::SetName(const char* n)
+	void Heap::SetName(const char* n) noexcept
 	{
 		name = n;
 	}
 
-	const char* Heap::GetName() const
+	const char* Heap::GetName() const noexcept
 	{
 		return name;
 	}
 
-	void Heap::Allocate(const size_t bytes)
+	void Heap::Allocate(const size_t bytes) noexcept
 	{
 		totalBytes += bytes;
 	}
 
-	void Heap::Deallocate(const size_t bytes)
+	void Heap::Deallocate(const size_t bytes) noexcept
 	{
 		totalBytes -= bytes;
 	}
 
-	size_t Heap::GetTotalAllocatedBytes() const
+	size_t Heap::GetTotalAllocatedBytes() const noexcept
 	{
 		return totalBytes;
 	}
 
-	void Heap::WalkHeap()
+	void Heap::WalkHeap() const
 	{
-		throw klib::kDebug::NotImplementedException(__FUNCSIG__ " Not Implemented");
+		throw FUNC_NO_IMPL();
 	}
 
-	void* Heap::GetPrevAddress() const
+	void* Heap::GetPrevAddress() const noexcept
 	{
-		return prevAddress;
+		return pPrevAddress;
+	}
+
+	void Heap::SetPrevAddress(void* prev) noexcept
+	{
+		pPrevAddress = prev;
+	}
+
+	Heap* Create(const char* name)
+	{
+		return new Heap(name);
 	}
 }

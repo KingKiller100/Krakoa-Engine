@@ -120,6 +120,7 @@ namespace krakoa
 				break;
 			}
 		}
+		graphics::Renderer2D::EndScene();
 	}
 
 	bool EntityManager::Find(const std::string_view& name)

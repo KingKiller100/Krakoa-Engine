@@ -50,7 +50,6 @@ namespace krakoa
 		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
 
 		static void RendererClear() noexcept;
-		static void RendererEnd() noexcept;
 
 	protected:
 		bool isRunning;

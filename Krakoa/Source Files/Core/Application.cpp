@@ -147,9 +147,6 @@ namespace krakoa
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
-
-		RendererEnd();
-
 		pWindow->OnUpdate();
 	}
 
@@ -165,12 +162,7 @@ namespace krakoa
 
 		krakoa::graphics::Renderer::Clear();
 	}
-
-	void Application::RendererEnd() noexcept
-	{
-		graphics::Renderer2D::EndScene();
-	}
-
+	
 	bool Application::IsRunning() const
 	{
 		return isRunning;

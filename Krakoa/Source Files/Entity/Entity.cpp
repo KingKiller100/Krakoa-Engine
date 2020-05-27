@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "Entity.hpp"
 
+#include "EntityManager.hpp"
+
 #include "Components/Transform.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
@@ -9,20 +11,20 @@ namespace krakoa
 {
 	static unsigned stored_ids = 0;
 
-	Entity::Entity(EntityManager* manager)
+	Entity::Entity()
 		: name(klib::kFormat::ToString("Entity{0}", stored_ids)),
 		id(stored_ids++),
 		selected(false),
 		active(true),
-		manager(manager)
+		manager(EntityManager::Pointer())
 	{}
 
-	Entity::Entity(EntityManager* manager, const std::string_view& name)
+	Entity::Entity(const std::string_view& name)
 		: name(name),
 		id(stored_ids++),
 		selected(false),
 		active(true),
-		manager(manager)
+		manager(EntityManager::Pointer())
 	{}
 
 	Entity::Entity(const Entity& other)
@@ -30,7 +32,8 @@ namespace krakoa
 		id(other.id),
 		components(other.components),
 		selected(false),
-		active(true)
+		active(true),
+		manager(EntityManager::Pointer())
 	{}
 
 	Entity::Entity(Entity&& other) noexcept
@@ -38,13 +41,17 @@ namespace krakoa
 		id(std::move(other.id)),
 		components(std::move(other.components)),
 		selected(false),
-		active(other.active)
+		active(other.active),
+		manager(EntityManager::Pointer())
 	{}
 
 	Entity& Entity::operator=(const Entity& other)
 	{
 		name = klib::kFormat::ToString("Entity{0)", stored_ids++);
 		components = other.components;
+		selected = false;
+		active = other.active;
+		manager = EntityManager::Pointer();
 		return *this;
 	}
 
@@ -55,6 +62,9 @@ namespace krakoa
 		delete idPtr;
 		idPtr = new unsigned(std::move(other.id));
 		components = std::move(other.components);
+		selected = false;
+		active = other.active;
+		manager = EntityManager::Pointer();
 		return *this;
 	}
 

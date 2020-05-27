@@ -45,6 +45,7 @@ namespace krakoa
 
 	Application::~Application()
 	{
+		entityManager.reset();
 		graphics::Renderer::ShutDown();
 	}
 
@@ -70,7 +71,7 @@ namespace krakoa
 
 		// Initialize Entity Manager
 		EntityManager::Create();
-		entityManager = EntityManager::Pointer();
+		entityManager.reset(EntityManager::Pointer());
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -132,7 +133,7 @@ namespace krakoa
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
 			pImGuiLayer->ToggleVisibility();
-
+		
 		entityManager->Update(deltaTime);
 
 		if (!isMinimized)
@@ -140,11 +141,12 @@ namespace krakoa
 			layerStack.OnUpdate(deltaTime);
 		}
 
+		entityManager->Draw();
+		
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();
 
-		entityManager->Draw();
 
 		RendererEnd();
 

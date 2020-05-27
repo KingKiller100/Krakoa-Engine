@@ -5,6 +5,8 @@
 
 namespace krakoa
 {
+	class Entity;
+	
 	class ComponentBase
 	{
 	public:
@@ -14,10 +16,19 @@ namespace krakoa
 		virtual void Initialize() {}
 		virtual void Update(const double dt) {}
 
-		bool IsActive() const { return active; }
+		USE_RESULT bool IsActive() const
+		{
+			return active;
+		}
+
+		void SetOwner(Entity* entity)
+		{
+			owner = entity;
+		}
 		
 	protected:
 		bool active = true;
+		Entity* owner = nullptr;
 	};
 
 #define STATIC_GET_COMPONENT_TYPE(self) static const char* GetStaticType()\

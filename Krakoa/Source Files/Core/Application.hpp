@@ -57,7 +57,7 @@ namespace krakoa
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
 
-		EntityManager* entityManager;
+		Solo_Ptr<EntityManager> entityManager;
 		
 	private:
 		ImGuiLayer* pImGuiLayer;

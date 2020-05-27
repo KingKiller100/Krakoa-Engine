@@ -17,8 +17,8 @@ namespace krakoa
 	class  Entity
 	{
 	public:
-		Entity(EntityManager* manager);
-		Entity(EntityManager* manager, const std::string_view& name);
+		Entity();
+		Entity(const std::string_view& name);
 
 		Entity(const Entity& other);
 		Entity& operator=(const Entity& other);
@@ -62,6 +62,7 @@ namespace krakoa
 
 			(components[ComponentType::GetStaticType()] = new ComponentType(std::forward<Args>(params)...)); // Adds to the list
 			ComponentType* component = dynamic_cast<ComponentType*>(components.at(ComponentType::GetStaticType()));
+			component->SetOwner(this);
 			component->Initialize();
 			return *component;
 		}

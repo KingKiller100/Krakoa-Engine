@@ -23,6 +23,7 @@ namespace krakoa
 
 		void Remove(const std::string_view& name);
 		void Remove(const unsigned id);
+		void RemoveAll() noexcept;
 
 		void Update(double dt);
 		void Draw();
@@ -30,10 +31,11 @@ namespace krakoa
 		USE_RESULT bool Find(const std::string_view& name);
 		USE_RESULT bool Find(const unsigned id);
 		
-		USE_RESULT Entity& Get(const std::string_view& name);
-		USE_RESULT Entity& Get(const unsigned id);
+		USE_RESULT Entity& GetEntity(const std::string_view& name);
+		USE_RESULT Entity& GetEntity(const unsigned id);
 
 		USE_RESULT const std::vector<Solo_Ptr<Entity>>& GetEntities() const;
+
 		
 	private:
 		void SortEntities();

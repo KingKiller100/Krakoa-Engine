@@ -13,18 +13,22 @@ namespace krakoa
 	{}
 
 	EntityManager::~EntityManager()
-		= default;
+	{
+		RemoveAll();
+	}
 
 	Entity& EntityManager::Add()
 	{
-		const auto& entity = entities.emplace_back(Make_Solo<Entity>(this));
+		entities.emplace_back(Make_Solo<Entity>());
+		const auto& entity = entities.back();
 		SortEntities();
 		return *entity;
 	}
 
 	Entity& EntityManager::Add(const std::string_view& name)
-	{		
-		const auto& entity = entities.emplace_back(Make_Solo<Entity>(this, name));
+	{
+		entities.emplace_back(Make_Solo<Entity>(name));
+		const auto& entity = entities.back();
 		SortEntities();
 		return *entity;
 	}
@@ -32,7 +36,7 @@ namespace krakoa
 	void EntityManager::Remove(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		entities.erase(std::find_if(entities.begin(), entities.end(), [&name](const Solo_Ptr<Entity>& entity)
 		{
 			return entity->GetName() == name;
@@ -42,17 +46,22 @@ namespace krakoa
 	void EntityManager::Remove(const unsigned id)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		entities.erase(std::find_if(entities.begin(), entities.end(), [id](const Solo_Ptr<Entity>& entity)
 		{
 			return entity->GetID() == id;
 		}));
 	}
 
+	void EntityManager::RemoveAll() noexcept
+	{
+		entities.clear();
+	}
+
 	void EntityManager::Update(const double dt)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		for (auto& entity : entities)
 		{
 			if (!entity->IsActive())
@@ -65,7 +74,7 @@ namespace krakoa
 	void EntityManager::Draw()
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		for (auto& entity : entities)
 		{
 			if (!entity->FindComponent<components::Appearance2D>()
@@ -79,21 +88,21 @@ namespace krakoa
 			case graphics::GeometryType::QUAD:
 			{
 				graphics::Renderer2D::DrawQuad(appearance.GetSubTexture(),
-				                               transform.GetPosition(),
-				                               transform.GetScale(),
-				                               transform.GetRotation(),
-				                               appearance.GetColour(),
-				                               appearance.GetTilingFactor());
+					transform.GetPosition(),
+					transform.GetScale(),
+					transform.GetRotation(),
+					appearance.GetColour(),
+					appearance.GetTilingFactor());
 			}
 			break;
 			case graphics::GeometryType::TRIANGLE:
 			{
 				graphics::Renderer2D::DrawTriangle(appearance.GetSubTexture(),
-				                                   transform.GetPosition(),
-				                                   transform.GetScale(),
-				                                   transform.GetRotation(),
-				                                   appearance.GetColour(),
-				                                   appearance.GetTilingFactor());
+					transform.GetPosition(),
+					transform.GetScale(),
+					transform.GetRotation(),
+					appearance.GetColour(),
+					appearance.GetTilingFactor());
 			}
 			break;
 			case graphics::GeometryType::CIRCLE:
@@ -116,7 +125,7 @@ namespace krakoa
 	bool EntityManager::Find(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		const auto iter = std::find_if(entities.begin(), entities.end(), [&name](const Solo_Ptr<Entity>& entity)
 		{
 			return entity->GetName() == name;
@@ -128,7 +137,7 @@ namespace krakoa
 	bool EntityManager::Find(const unsigned id)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		const auto iter = std::find_if(entities.begin(), entities.end(), [&id](const Solo_Ptr<Entity>& entity)
 		{
 			return entity->GetID() == id;
@@ -137,10 +146,10 @@ namespace krakoa
 		return iter != entities.end();
 	}
 
-	Entity& EntityManager::Get(const std::string_view& name)
+	Entity& EntityManager::GetEntity(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		const auto iter = std::find_if(entities.begin(), entities.end(), [&name](const Solo_Ptr<Entity>& entity)
 		{
 			return entity->GetName() == name;
@@ -152,10 +161,10 @@ namespace krakoa
 		return **iter;
 	}
 
-	Entity& EntityManager::Get(const unsigned id)
+	Entity& EntityManager::GetEntity(const unsigned id)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		const auto iter = std::find_if(entities.begin(), entities.end(), [id](const Solo_Ptr<Entity>& entity)
 		{
 			return entity->GetID() == id;
@@ -178,7 +187,7 @@ namespace krakoa
 
 		if (entities.size() < 2)
 			return;
-		
+
 		std::sort(entities.begin(), entities.end(), [](const Solo_Ptr<Entity>& e1, const Solo_Ptr<Entity>& e2)
 		{
 			return e1->IsActive() == true

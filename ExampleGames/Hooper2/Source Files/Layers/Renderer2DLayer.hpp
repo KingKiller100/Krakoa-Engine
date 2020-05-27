@@ -26,6 +26,8 @@ private:
 	void SendRendererCommands() noexcept;
 	void RenderZoomControls() noexcept;
 
+	void SetUpEntities() const;
+
 private:
 	krakoa::Solo_Ptr<krakoa::graphics::SubTexture2D> pSubTexture;
 

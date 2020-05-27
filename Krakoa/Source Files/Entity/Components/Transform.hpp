@@ -31,12 +31,13 @@ namespace krakoa::components
 
 		CONST_GETTER_CONSTEXPR(kmaths::Vector3f, GetScale, scale)
 		SETTER_CONSTEXPR(kmaths::Vector3f, SetScale, scale)
+		void SetScale(const kmaths::Vector2f& value);
 
 		CONST_GETTER_CONSTEXPR(kmaths::Vector3f, GetRotationAxes, rotationAxes)
 		SETTER_CONSTEXPR(kmaths::Vector3f, SetRotationAxes, rotationAxes);
 
 		CONST_GETTER_CONSTEXPR(float, GetRotation, radians)
-		USE_RESULT constexpr void SetRotation(const float value) noexcept { (radians) = value; }
+		constexpr void SetRotation(const float value) noexcept { (radians) = value; }
 
 		USE_RESULT constexpr kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept
 		{

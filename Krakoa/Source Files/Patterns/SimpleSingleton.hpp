@@ -16,11 +16,15 @@ namespace patterns
 		
 		constexpr static T& Reference()
 		{
+			KRK_FATAL(instance, "Refernce to uninitialized singleton")
 			return *instance;
 		}
 
 		constexpr static T* Pointer()
 		{
+			if (!instance)
+				return nullptr;
+
 			return instance;
 		}
 
@@ -35,9 +39,9 @@ namespace patterns
 		struct Token {};
 
 	protected:
-		static T* instance;
+		inline static T* instance = nullptr;
 	};
 }
 
-template<class T>
-T* patterns::SimpleSingleton<T>::instance = nullptr;
+//template<class T>
+//T* patterns::SimpleSingleton<T>::instance = nullptr;

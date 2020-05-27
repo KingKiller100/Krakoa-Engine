@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../MemoryTypes.hpp"
+#include "../Memory/MemoryTypes.hpp"
 #include "../Patterns/SimpleSingleton.hpp"
 
 #include <string_view>

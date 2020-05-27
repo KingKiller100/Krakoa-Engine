@@ -1,6 +1,9 @@
 #pragma once
 
-#include "EngineConfig.hpp"
+#include "../EngineConfig.hpp"
+
+// Memory
+#include "../Memory/MemoryTypes.hpp"
 
 // Time Step
 #include "../TimeStep.hpp"
@@ -22,6 +25,7 @@
 #include "../Entity/EntityManager.hpp"
 
 #include <memory>
+
 
 namespace krakoa
 {

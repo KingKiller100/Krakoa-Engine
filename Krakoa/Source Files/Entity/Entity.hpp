@@ -2,8 +2,7 @@
 
 #include "Components/ComponentBase.hpp"
 
-#include "../MemoryTypes.hpp"
-#include "../Core/EngineConfig.hpp"
+#include "../EngineConfig.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
 #include <string>

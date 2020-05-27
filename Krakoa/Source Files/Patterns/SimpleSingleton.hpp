@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Core/EngineConfig.hpp"
+#include "../EngineConfig.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
 namespace patterns

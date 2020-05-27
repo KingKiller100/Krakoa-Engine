@@ -37,4 +37,4 @@
 #	define ENABLE_STATISTICS KRK_TRUE
 #endif
 
-#include "../MemoryTypes.hpp"
+#include "Memory/MemoryTypes.hpp"

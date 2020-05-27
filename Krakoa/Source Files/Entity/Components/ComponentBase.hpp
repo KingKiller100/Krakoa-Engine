@@ -1,7 +1,7 @@
 #pragma once
 
-#include <HelperMacros.hpp>
 #include "../../Instrumentor.hpp"
+#include "../../EngineConfig.hpp"
 
 namespace krakoa
 {

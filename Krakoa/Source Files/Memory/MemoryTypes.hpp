@@ -24,6 +24,4 @@ namespace krakoa
 	{
 		return std::make_shared<T>(std::forward<Ts>(params)...);
 	}
-
-	
 }

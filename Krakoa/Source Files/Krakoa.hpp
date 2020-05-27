@@ -5,12 +5,14 @@
 
 // For client game applications
 
+// System required files
+#include "Instrumentor.hpp"
+#include "EngineConfig.hpp"
+
 // Memory
-#include "MemoryTypes.hpp"
+#include "Memory/MemoryTypes.hpp"
 
 // Core
-#include "Instrumentor.hpp"
-#include "Core/EngineConfig.hpp"
 #include "Core/Application.hpp"
 #include "Core/Logging/Logger.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/EngineConfig.hpp"
+#include "../EngineConfig.hpp"
 #include "../Events System/Event.hpp"
 
 namespace krakoa

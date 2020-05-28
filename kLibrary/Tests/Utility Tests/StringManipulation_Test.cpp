@@ -35,7 +35,7 @@ namespace kTest::utility
 	{
 		const klib::kString::StringWriter<char32_t> poem = U"The wheels on the bus go round and round";
 
-		const auto splits = klib::kString::Split<char32_t>(poem, U" ");
+		const auto splits = klib::kString::Split(poem, U" ");
 		VERIFY(splits[0].compare(U"The") == 0);
 		VERIFY(splits[1].compare(U"wheels") == 0);
 		VERIFY(splits[2].compare(U"on") == 0);
@@ -46,7 +46,7 @@ namespace kTest::utility
 		VERIFY(splits[7].compare(U"and") == 0);
 		VERIFY(splits[8].compare(U"round") == 0);
 
-		const auto splitsWithSpace = klib::kString::Split<char32_t>(poem, U" ", true);
+		const auto splitsWithSpace = klib::kString::Split(poem, U" ", klib::kString::PreserveToken::YES);
 		VERIFY(splitsWithSpace[0].compare(U"The ") == 0);
 		VERIFY(splitsWithSpace[1].compare(U"wheels ") == 0);
 		VERIFY(splitsWithSpace[2].compare(U"on ") == 0);

@@ -38,11 +38,13 @@ namespace krakoa
 		void Select() noexcept;
 		void Unselect() noexcept;
 
-		CONST_GETTER(bool, IsActive, active)
+		USE_RESULT bool IsActive() const noexcept;
 		void Activate();
 		void Deactivate();
 
-		void Update(double dt);
+		void Update(const float dt);
+
+		void RemoveAllComponents() noexcept;
 
 		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
 		USE_RESULT bool FindComponent() const noexcept
@@ -83,8 +85,6 @@ namespace krakoa
 
 			return false;
 		}
-
-		void RemoveAllComponents() noexcept;
 
 		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
 		USE_RESULT ComponentType& GetComponent() const

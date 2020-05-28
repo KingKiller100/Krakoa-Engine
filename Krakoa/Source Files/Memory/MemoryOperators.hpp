@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "HeapFactory.hpp"
+#include "Heap.hpp"
 
 void* operator new(const size_t bytes);
 void* operator new[](const size_t bytes);

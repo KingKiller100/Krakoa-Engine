@@ -6,9 +6,14 @@
 
 #include <GLFW/glfw3.h>
 
+
+#include "../../Events System/ApplicationEvent.hpp"
+#include "../../Events System/ApplicationEvent.hpp"
+
 namespace krakoa::input
 {
-	WindowsInputManager::WindowsInputManager(Token&&) noexcept
+	WindowsInputManager::WindowsInputManager(const Token& t) noexcept
+		: InputManager(t)
 	{	}
 
 	WindowsInputManager::~WindowsInputManager()
@@ -36,7 +41,7 @@ namespace krakoa::input
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<float, float> WindowsInputManager::GetMousePositionImpl() const noexcept
+	kmaths::Vector2f WindowsInputManager::GetMousePositionImpl() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = std::any_cast<GLFWwindow*>(Application::Reference().GetWindow().GetNativeWindow());

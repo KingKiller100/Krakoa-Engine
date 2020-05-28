@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOperators.hpp"
 
-#include "Heap.hpp"
+#include "HeapFactory.hpp"
 #include "MemoryTypes.hpp"
 
 #include <cassert>
@@ -19,12 +19,12 @@ void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
 
 	if (pHeader->pHeap->GetPrevAddress())
 	{
-		auto* pPrevAddress = CAST(memory::AllocHeader*, pHeader->pHeap->GetPrevAddress());
-		pHeader->pPrev = pPrevAddress;
-		pPrevAddress->pNext = pHeader;
+		auto* pPrevHeader = CAST(memory::AllocHeader*, pHeader->pHeap->GetPrevAddress());
+		pHeader->pPrev = pPrevHeader;
+		pPrevHeader->pNext = pHeader;
 	}
 
-	pHeader->pHeap->SetPrevAddress(pHeader);
+	//pHeader->pHeap->SetPrevAddress(pHeader);
 
 	auto* pMemStart = pBlock + memory::allocHeaderBytes;
 	auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type, pMemStart + bytes);

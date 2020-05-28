@@ -18,7 +18,6 @@
 
 #include <Maths/Quaternions/Quaternions.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
-#include <Maths/Matrices/PredefinedMatrices.hpp>
 
 #include <array>
 
@@ -37,7 +36,7 @@ namespace krakoa::graphics
 		return stats;
 	}
 
-	void Renderer2D::Initialize()
+	void Renderer2D::Initialize(ShaderLibrary& shaderLibrary)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -160,8 +159,7 @@ namespace krakoa::graphics
 				samplers[i] = i;
 			}
 
-			auto& shaderLib = ShaderLibrary::Reference();
-			const auto mainShader = shaderLib.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
+			const auto mainShader = shaderLibrary.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
 			if (!mainShader.expired())
 			{
 				auto main_shader_s_ptr = mainShader.lock();

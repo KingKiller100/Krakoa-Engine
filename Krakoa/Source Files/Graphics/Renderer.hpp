@@ -9,11 +9,12 @@ namespace krakoa { class OrthographicCamera; }
 namespace krakoa::graphics
 {
 	class iShader;
+	class ShaderLibrary;
 
 	class Renderer
 	{
 	public:
-		static void Initialize();
+		static void Initialize(ShaderLibrary& shaderLibrary);
 		static void ShutDown();
 
 		static void OnWindowResize(const int x, const int y, const int width, const int height)  noexcept;

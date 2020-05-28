@@ -25,7 +25,7 @@ namespace memory
 		void Deallocate(const size_t bytes) noexcept;
 		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
-		void WalkHeap() const;
+		USE_RESULT std::string WalkHeap() const;
 
 		void SetPrevAddress(void* prev) noexcept;
 		USE_RESULT void* GetPrevAddress() const noexcept;
@@ -35,6 +35,4 @@ namespace memory
 		size_t totalBytes;
 		void * pPrevAddress;
 	};
-
-	static Heap* Create(const char* name);
 }

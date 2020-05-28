@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Memory/Heap.hpp"
 #include "../Memory/HeapFactory.hpp"
 #include "../Memory/MemoryOperators.hpp"
 
@@ -41,7 +42,12 @@ namespace patterns
 			::operator delete[](ptr);
 		}
 
-	protected:
+		USE_RESULT static std::string WalkHeap() noexcept
+		{
+			return heap->WalkHeap();
+		}
+
+	private:
 		inline static memory::Heap* heap = nullptr;
 	};
 }

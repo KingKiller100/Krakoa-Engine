@@ -5,17 +5,19 @@
 
 #include "../Core/Logging/CoreLogger.hpp"
 
+#include <Utility/String/kStringManipulation.hpp>
 
 namespace memory
 {
 	Heap* HeapFactory::defaultHeap = nullptr;
-	HeapList HeapFactory::heaps;
+	HeapFactory::HeapList HeapFactory::heaps;
 
 	void HeapFactory::ShutDown() noexcept
 	{
-
 		for (auto& heap : heaps)
 			free(heap);
+
+		heaps.clear();
 	}
 
 	Heap* HeapFactory::CreateHeap(const char* name)
@@ -37,25 +39,33 @@ namespace memory
 		return defaultHeap;
 	}
 
-	const HeapList& HeapFactory::GetHeaps()
+	const HeapFactory::HeapList& HeapFactory::GetHeaps()
 	{
 		return heaps;
 	}
 
-	void HeapFactory::WalkTheHeap(const size_t index)
+	std::string HeapFactory::WalkTheHeap(const size_t index)
 	{
-		KRK_FATAL(index < heaps.size(), "Index greater than size of heap container");
+		KRK_FATAL(index < heaps.size(), "Index greater than current size of the HeapFactory");
 
-		KRK_INFO("Walking the heap");
+		const auto& heap = heaps[index];
 
-		if (index == 0)
-		{
-			defaultHeap->WalkHeap();
-			return;
-		}
-		
-		heaps[index]->WalkHeap();
+		const auto name = klib::kString::ToWriter(heap->GetName());
+		KRK_INFO("Walking Heap: " + name);
 
+		return heaps[index]->WalkHeap();
+	}
+
+	std::string HeapFactory::WalkTheDefaultHeap()
+	{
+		KRK_INFO("Walking Heap: Default");
+
+		return defaultHeap->WalkHeap();
+	}
+
+	size_t HeapFactory::GetSize()
+	{
+		return heaps.size();
 	}
 
 	HeapFactory::HeapFactory(Token)

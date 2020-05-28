@@ -1,35 +1,12 @@
 #pragma once
 
-#include "../../HelperMacros.hpp"
-
-#include <string>
+#include "kStringTypes.hpp"
 #include <vector>
 
 namespace klib::kString
 {
-	//Type aliases for STL containers --------------------------------------------------------
-
-	// STL basic_string_view
-	template<class Char>
-	using StringReader = std::basic_string_view<ONLY_TYPE(Char)>;
-
-	// STL basic_string
-	template<class Char>
-	using StringWriter = std::basic_string<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>, std::allocator<ONLY_TYPE(Char)>>;
-
-	// --------------------------------------------------------------------------------------
-
-	template<class Char = char>
-	USE_RESULT constexpr StringWriter<Char> ToWriter(const Char* string) noexcept
-	{
-		return StringWriter<Char>(string);
-	}
-
-	template<class Char = char>
-	USE_RESULT constexpr StringReader<Char> ToReader(const Char* string) noexcept
-	{
-		return StringReader<Char>(string);
-	}
+	enum class PreserveToken { YES, NO, };
+	enum class PreserveEmpty { YES, NO, };
 	
 	template<class Char = char>
 	USE_RESULT constexpr StringWriter<Char> Replace(const StringReader<Char>& str, const ONLY_TYPE(Char) oldChar, const ONLY_TYPE(Char) newChar) noexcept
@@ -54,25 +31,34 @@ namespace klib::kString
 	}
 
 	template<class Char = char>
-	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const StringReader<Char>& tokens, const bool preserveToken = false)
+	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const Char* tokens, const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 	{
 		using StrW = StringWriter<Char>;
 
+		const auto keepToken = (preserveToken == PreserveToken::YES);
+		const auto keepEmpty = (preserveEmpty == PreserveEmpty::YES);
+		
 		std::vector<StrW> lines;
 
 		size_t prevPos = 0;
 		size_t tokenPos = 0;
 		while (tokenPos != StrW::npos)
 		{
-			tokenPos = str.find_first_of(tokens.data(), prevPos);
-			lines.emplace_back(str.substr(prevPos, (preserveToken ? tokenPos + 1 : tokenPos) - prevPos));
+			tokenPos = str.find_first_of(tokens, prevPos);
+			const auto line = str.substr(prevPos, (keepToken ? tokenPos + 1 : tokenPos) - prevPos);
+			if (!line.empty() || keepEmpty)
+				lines.emplace_back(line);
 			prevPos = tokenPos + 1;
 		}
 
 		return lines;
 	}
 
-
+	template<class Char = char>
+	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const StringReader<Char>& tokens, const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
+	{
+		return Split(str, tokens.data(), preserveToken, preserveEmpty);
+	}
 }
 
 

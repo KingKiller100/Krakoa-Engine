@@ -113,6 +113,10 @@ project "Krakoa"
             "KRAKOA_TEST",
             "KLIB_TEST"
         }
+        files
+        {
+            "%{prj.name}/Tests/**",
+        }
         symbols "On"
         runtime "Debug"
 

@@ -58,7 +58,7 @@ namespace krakoa
 		entities.clear();
 	}
 
-	void EntityManager::Update(const double dt)
+	void EntityManager::Update(const float dt)
 	{
 		KRK_PROFILE_FUNCTION();
 

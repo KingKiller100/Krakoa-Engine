@@ -12,12 +12,10 @@
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
 #include "../Graphics/Renderer.hpp"
+#include "../Graphics/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
 
-
 #include <Utility/Debug Helper/kDebugger.hpp>
-
-#include "../Graphics/Renderer2D.hpp"
 
 
 namespace krakoa
@@ -45,6 +43,14 @@ namespace krakoa
 
 	Application::~Application()
 	{
+		const auto size = memory::HeapFactory::GetSize();
+
+		for (auto i = 0; i < size; ++i)
+		{
+			memory::HeapFactory::WalkTheHeap(i);
+		}
+		memory::HeapFactory::GetDefaultHeap();
+		
 		entityManager.reset();
 		graphics::Renderer::ShutDown();
 	}
@@ -67,7 +73,7 @@ namespace krakoa
 
 		// Initialize Graphics Stuff
 		graphics::ShaderLibrary::Create();
-		graphics::Renderer::Initialize();
+		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
 		// Initialize Entity Manager
 		EntityManager::Create();
@@ -133,7 +139,8 @@ namespace krakoa
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
 			pImGuiLayer->ToggleVisibility();
-		
+
+		// Update
 		entityManager->Update(deltaTime);
 
 		if (!isMinimized)
@@ -141,6 +148,7 @@ namespace krakoa
 			layerStack.OnUpdate(deltaTime);
 		}
 
+		// Draw
 		entityManager->Draw();
 		
 		pImGuiLayer->BeginDraw();

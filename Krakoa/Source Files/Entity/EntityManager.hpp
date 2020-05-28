@@ -25,7 +25,7 @@ namespace krakoa
 		void Remove(const unsigned id);
 		void RemoveAll() noexcept;
 
-		void Update(double dt);
+		void Update(const float dt);
 		void Draw();
 
 		USE_RESULT bool Find(const std::string_view& name);

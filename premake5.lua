@@ -101,7 +101,8 @@ project "Krakoa"
         }
         removefiles
         {
-            "%{prj.name}/Source Files/**/test*"
+            "%{prj.name}/Source Files/**/*test*",
+            "%{prj.name}/Tests/**"
         }
         symbols "On"
         runtime "Debug"
@@ -120,7 +121,8 @@ project "Krakoa"
         optimize "Full"
         removefiles
         {
-            "%{prj.name}/Source Files/**/test*"
+            "%{prj.name}/Source Files/**/*test*",
+            "%{prj.name}/Tests/**"
         }
         runtime "Release"
 
@@ -129,7 +131,8 @@ project "Krakoa"
         optimize "Speed"
         removefiles
         {
-            "%{prj.name}/Source Files/**/test*"
+            "%{prj.name}/Source Files/**/*test*",
+            "%{prj.name}/Tests/**"
         }
         runtime "Release"
 group ""

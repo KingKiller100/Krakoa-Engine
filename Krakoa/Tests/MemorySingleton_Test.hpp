@@ -2,6 +2,7 @@
 
 #include <Testing/Tester.hpp>
 
+#ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
 	class MemorySingletonTester final : public kTest::Tester
@@ -14,3 +15,4 @@ namespace krakoa::tests
 		void Test() override;		
 	};
 }
+#endif

@@ -5,6 +5,7 @@
 
 #include "../../Tests/MemorySingleton_Test.hpp"
 
+#ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
 	void SetUpTests() noexcept
@@ -12,3 +13,4 @@ namespace krakoa::tests
 		TestDriver::AddTest(new MemorySingletonTester());
 	}
 }
+#endif

@@ -3,6 +3,7 @@
 
 #include "../Source Files/Patterns/MemorySingleton.hpp"
 
+#ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
 	MemorySingletonTester::MemorySingletonTester() noexcept
@@ -35,3 +36,4 @@ namespace krakoa::tests
 		VERIFY(ref.name == "name");
 	}
 }
+#endif

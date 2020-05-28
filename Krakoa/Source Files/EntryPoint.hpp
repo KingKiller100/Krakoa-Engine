@@ -3,12 +3,13 @@
 #ifdef KRAKOA_TEST
 #	include "Tests/TestDriver.hpp"
 #else
-#	include "Application.hpp"
+#	include "Core/Application.hpp"
 #	include "Instrumentor.hpp"
 #	include <memory>
 
 extern void krakoa::CreateApplication();
-#endif
+#endif
+
 
 #include "Memory/HeapFactory.hpp"
 

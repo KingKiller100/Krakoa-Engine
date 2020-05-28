@@ -5,6 +5,8 @@
 #include "../EngineConfig.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
+#include "../Patterns/MemoryOverrider.hpp"
+
 #include <string>
 #include <unordered_map>
 
@@ -13,7 +15,7 @@ namespace krakoa
 {
 	class EntityManager;
 	
-	class  Entity
+	class  Entity : public patterns::MemoryOverrider<Entity>
 	{
 	public:
 		Entity();

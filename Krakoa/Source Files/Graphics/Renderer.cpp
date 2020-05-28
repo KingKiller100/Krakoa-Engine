@@ -17,7 +17,7 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 		KRK_BANNER("Rendering Architecture Info", "GRAPHICS");
 		RenderCommand::Initialize();
-		graphics::Renderer2D::Initialize();
+		Renderer2D::Initialize();
 	}
 
 	void Renderer::ShutDown()

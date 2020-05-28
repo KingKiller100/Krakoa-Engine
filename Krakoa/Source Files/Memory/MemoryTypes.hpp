@@ -1,7 +1,11 @@
 ﻿#pragma once
+#include "AllocHeader.hpp"
 
-namespace krakoa
+namespace memory
 {
-	using Byte = char;
-	using Byte_Ptr = Byte * ;
+	using Byte_Type = char;
+	using Byte_Ptr_Type = Byte_Type * ;
+	
+	constexpr auto signatureBytes = sizeof(decltype(AllocHeader::signature));
+	constexpr auto allocHeaderBytes = sizeof(AllocHeader);
 }

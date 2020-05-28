@@ -10,35 +10,38 @@ namespace patterns
 	public:
 		void* operator new(const size_t bytes)
 		{
-			return krakoa::operator new(bytes, heap);
+			if (!heap)
+				heap = memory::HeapFactory::CreateHeap(typeid(T).name());
+			
+			return ::operator new(bytes, heap);
 		}
 
 		void* operator new[](const size_t bytes)
 		{
-			return  MemoryOverrider::operator new(bytes);
+			return MemoryOverrider::operator new(bytes);
 		}
 
 		void operator delete(void* ptr)
 		{
-			krakoa::operator delete(ptr);
+			::operator delete(ptr);
 		}
 
 		void operator delete(void* ptr, const size_t bytes)
 		{
-			krakoa::operator delete(ptr);
+			::operator delete(ptr);
 		}
 
 		void operator delete[](void* ptr)
 		{
-			krakoa::operator delete[](ptr);
+			::operator delete[](ptr);
 		}
 
 		void operator delete[](void* ptr, const size_t bytes)
 		{
-			krakoa::operator delete[](ptr);
+			::operator delete[](ptr);
 		}
 
-	private:
-		static krakoa::Heap* heap = krakoa::HeapFactory::CreateHeap(typeid(T).name());
+	protected:
+		inline static memory::Heap* heap = nullptr;
 	};
 }

@@ -2,13 +2,7 @@
 
 #include <HelperMacros.hpp>
 
-// 3735929054
-#define KRK_MEMSYSTEM_SIGNATURE 0xdeadc0de 
-
-// 3735928559
-#define KRK_MEMSYSTEM_ENDMARKER 0xdeadbeef 
-
-namespace krakoa
+namespace memory
 {
 	class Heap final
 	{
@@ -40,15 +34,6 @@ namespace krakoa
 		const char* name;
 		size_t totalBytes;
 		void * pPrevAddress;
-	};
-
-	struct AllocHeader
-	{
-		unsigned signature;
-		Heap* pHeap;
-		unsigned bytes;
-		AllocHeader* pPrev;
-		AllocHeader* pNext;
 	};
 
 	static Heap* Create(const char* name);

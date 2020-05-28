@@ -3,14 +3,20 @@
 #include "../EngineConfig.hpp"
 
 #ifdef KRAKOA_TEST
-namespace tests
+namespace kTest
 {
+	class Tester;
+}
+
+namespace krakoa::tests
+{
+
 	class KRAKOA_API TestDriver
 	{
 	public:
 		static void Initialize();
 		static void ShutDown();
-		static void AddTest(void* test);
+		static void AddTest(kTest::Tester* test);
 		static void RunAll();
 		static void RunPerformanceTests();
 		static void ClearAll();

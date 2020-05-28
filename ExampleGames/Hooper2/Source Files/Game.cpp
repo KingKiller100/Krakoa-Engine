@@ -1,5 +1,5 @@
 #include <Krakoa.hpp>
-#include <Core/EntryPoint.hpp>
+#include <EntryPoint.hpp>
 
 #include "Layers/Renderer2DLayer.hpp"
 

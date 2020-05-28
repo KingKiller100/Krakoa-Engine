@@ -6,17 +6,12 @@
 #include "../Core/Logging/CoreLogger.hpp"
 
 
-namespace krakoa
+namespace memory
 {
 	Heap* HeapFactory::defaultHeap = nullptr;
 	HeapList HeapFactory::heaps;
 
-	HeapFactory::HeapFactory(Token&&)
-	{
-		defaultHeap = CreateHeap("Default");
-	}
-
-	HeapFactory::~HeapFactory() noexcept
+	void HeapFactory::ShutDown() noexcept
 	{
 		if (defaultHeap)
 			free(defaultHeap);
@@ -35,6 +30,12 @@ namespace krakoa
 
 	Heap* HeapFactory::GetDefaultHeap() noexcept
 	{
+		if (!defaultHeap)
+		{
+			defaultHeap = CAST(Heap*, malloc(sizeof(Heap)));
+			defaultHeap->Initialize("Default");
+		}
+
 		return defaultHeap;
 	}
 
@@ -48,8 +49,17 @@ namespace krakoa
 		KRK_FATAL(index < heaps.size(), "Index greater than size of heap container");
 
 		KRK_INFO("Walking the heap");
+
+		if (index == 0)
+		{
+			defaultHeap->WalkHeap();
+			return;
+		}
 		
 		heaps[index]->WalkHeap();
 
 	}
+
+	HeapFactory::HeapFactory(Token)
+	{}
 }

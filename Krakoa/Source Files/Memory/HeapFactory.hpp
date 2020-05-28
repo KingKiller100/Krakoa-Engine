@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace krakoa
+namespace memory
 {
 	class Heap;
 
@@ -12,14 +12,16 @@ namespace krakoa
 	{
 		struct Token {};
 	public:
-		HeapFactory(Token&&);
-		~HeapFactory() noexcept;
+		static void ShutDown() noexcept;
 
 		static Heap* CreateHeap(const char* name);
 		static Heap* GetDefaultHeap() noexcept;
 
 		static const HeapList& GetHeaps();
 		static void WalkTheHeap(const size_t index);
+
+	private:
+		explicit HeapFactory(Token);
 		
 	private:
 		static Heap* defaultHeap;

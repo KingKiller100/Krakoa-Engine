@@ -3,7 +3,7 @@
 
 #include <Utility/Debug Helper/Exceptions/NotImplementedException.hpp>
 
-namespace krakoa
+namespace memory
 {
 	Heap::Heap(const char* name) noexcept
 		: name(name),

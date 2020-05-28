@@ -13,8 +13,6 @@ namespace memory
 
 	void HeapFactory::ShutDown() noexcept
 	{
-		if (defaultHeap)
-			free(defaultHeap);
 
 		for (auto& heap : heaps)
 			free(heap);

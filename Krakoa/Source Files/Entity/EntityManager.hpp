@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../Memory/PointerTypes.hpp"
-#include "../Patterns/MemorySingleton.hpp"
+#include "../Patterns/ManagerBase.hpp"
 
 #include <string_view>
 #include <vector>
@@ -12,7 +12,7 @@ namespace krakoa
 {
 	class Entity;
 	
-	class EntityManager : public patterns::MemorySingleton<EntityManager>
+	class EntityManager final : public patterns::ManagerBase<EntityManager>
 	{
 	public:
 		EntityManager(Token);

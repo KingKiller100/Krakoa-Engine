@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../Patterns/SimpleSingleton.hpp"
-#include "../Patterns/MemoryOverrider.hpp"
+#include "../Patterns/ManagerBase.hpp"
 
 
 namespace krakoa::input
@@ -12,7 +12,7 @@ namespace krakoa::input
 		MIDDLE
 	};
 
-	class InputManager : protected patterns::SimpleSingleton<InputManager>, public patterns::MemoryOverrider<InputManager>
+	class InputManager : public patterns::ManagerBase<InputManager>
 	{
 	public:
 		static void Initialize() noexcept                                             { CreateImpl(); }

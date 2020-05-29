@@ -1,9 +1,9 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOverrider_Test.hpp"
 
-#include "../Source Files/Core/Logging/CoreLogger.hpp"
+#include "../Source Files/Core/Logging/Logger.hpp"
 
-#include "../Source Files/Memory/PointerTypes.hpp"
+#include "../Source Files/PointerTypes.hpp"
 #include "../Source Files/Patterns/MemoryOverrider.hpp"
 
 #ifdef KRAKOA_TEST
@@ -31,7 +31,7 @@ namespace krakoa::tests
 		const auto scope = Make_Solo<TestMemType>();
 		VERIFY(scope != nullptr);
 
-		auto str = TestMemType::Status();
+		auto str = TestMemType::GetHeapStatus();
 		
 	}
 }

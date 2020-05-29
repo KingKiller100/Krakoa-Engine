@@ -16,10 +16,7 @@ public:
 	}
 
 	~Hooper2Game()
-	{
-		isRunning = false;
-		Hooper2Game::ShutDown();
-	}
+		= default;
 
 	void Initialize() override
 	{
@@ -30,6 +27,7 @@ public:
 
 	void ShutDown() override
 	{
+		isRunning = false;
 		Application::ShutDown(); // Must be the last function call in this function
 	}
 };

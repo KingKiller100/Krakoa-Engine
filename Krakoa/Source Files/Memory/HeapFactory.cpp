@@ -3,7 +3,7 @@
 
 #include "Heap.hpp"
 
-#include "../Core/Logging/CoreLogger.hpp"
+#include "../Core/Logging/MemoryLogger.hpp"
 
 #include <Utility/String/kStringManipulation.hpp>
 
@@ -16,11 +16,11 @@ namespace memory
 	{
 		for (auto& heap : heaps)
 		{
-			KRK_INFO(heap->Status());
+			MEM_INFO(heap->GetStatus());
 			free(heap);
 		}
 
-		KRK_INFO(defaultHeap->Status());
+		MEM_INFO(defaultHeap->GetStatus());
 		
 		heaps.clear();
 	}
@@ -51,21 +51,21 @@ namespace memory
 
 	std::string HeapFactory::WalkTheHeap(const size_t index)
 	{
-		KRK_FATAL(index < heaps.size(), "Index greater than current size of the HeapFactory");
+		MEM_FATAL(index < heaps.size(), "Index greater than current size of the HeapFactory");
 
 		const auto& heap = heaps[index];
 
 		const auto name = klib::kString::ToWriter(heap->GetName());
-		KRK_INFO("Walking Heap: " + name);
+		MEM_INFO("Walking Heap: " + name);
 
-		return heaps[index]->Status();
+		return heaps[index]->GetStatus();
 	}
 
 	std::string HeapFactory::WalkTheDefaultHeap()
 	{
-		KRK_INFO("Walking Heap: Default");
+		MEM_INFO("Walking Heap: Default");
 
-		return defaultHeap->Status();
+		return defaultHeap->GetStatus();
 	}
 
 	size_t HeapFactory::GetSize()

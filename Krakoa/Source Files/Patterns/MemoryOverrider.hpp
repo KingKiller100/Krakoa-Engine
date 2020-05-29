@@ -42,9 +42,9 @@ namespace patterns
 			::operator delete[](ptr);
 		}
 
-		USE_RESULT static std::string Status() noexcept
+		USE_RESULT static std::string GetHeapStatus() noexcept
 		{
-			return heap->Status();
+			return heap->GetStatus();
 		}
 
 	private:

@@ -13,7 +13,7 @@ namespace krakoa
 	public:
 		// Engine side
 		static void CoreInit();
-		static klib::kLogs::Logging& GetCoreLogger() { return *pCoreLogger; }
+		static klib::kLogs::Logging& GetCoreLogger();
 
 	private:
 		static std::unique_ptr<klib::kLogs::Logging> pCoreLogger;

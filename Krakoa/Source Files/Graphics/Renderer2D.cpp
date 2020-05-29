@@ -26,10 +26,10 @@ namespace krakoa::graphics
 
 	namespace
 	{
-		static constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
+		constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
 	}
 	
-	_2D::PrimitivesData pData;
+	_2D::PrimitivesData *pData = nullptr;
 
 	const Statistics& Renderer2D::GetStats()
 	{
@@ -40,11 +40,13 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
+		pData = new _2D::PrimitivesData();
+		
 		constexpr auto sizeOfVertexData = sizeof(VertexData);
 
 		// Triangle creation code
 		{
-			auto& triangle = pData.triangle;
+			auto& triangle = pData->triangle;
 			triangle.pVertexArray.reset(iVertexArray::Create());
 			auto& vertexArray = *triangle.pVertexArray;
 
@@ -92,10 +94,10 @@ namespace krakoa::graphics
 
 		// Quad creation code
 		{
-			auto& quad = pData.quad;
+			auto& quad = pData->quad;
 
-			pData.quad.pVertexArray.reset(iVertexArray::Create());
-			auto& vertexArray = *pData.quad.pVertexArray;
+			pData->quad.pVertexArray.reset(iVertexArray::Create());
+			auto& vertexArray = *pData->quad.pVertexArray;
 
 			// Vertex buffer
 			{
@@ -148,7 +150,7 @@ namespace krakoa::graphics
 			constexpr uint32_t whiteTexture = 0xffffffff;
 			auto* const pWhiteTexture = iTexture2D::Create(1u, 1u);
 			pWhiteTexture->SetData(&whiteTexture, sizeof(whiteTexture));
-			pData.textures.slots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
+			pData->textures.slots.front() = std::shared_ptr<iTexture2D>(pWhiteTexture); // index 0 = white texture
 		}
 
 		// Creating and setting texture sampler
@@ -166,22 +168,26 @@ namespace krakoa::graphics
 				main_shader_s_ptr->Bind();
 				main_shader_s_ptr->SetIntArray("u_Textures", samplers, batch::limits::texture::maxSlots);
 			}
-			pData.pMainShader = mainShader;
+			pData->pMainShader = mainShader;
 		}
 	}
 
 	void Renderer2D::ShutDown()
 	{
+		if (!pData)
+			return;
 		
+		delete pData;
+		pData = nullptr;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (!pData.pMainShader.expired())
+		if (!pData->pMainShader.expired())
 		{
-			auto mainShader = pData.pMainShader.lock();
+			auto mainShader = pData->pMainShader.lock();
 			mainShader->Bind();
 			mainShader->SetMat4x4("u_VpMat", camera.GetViewProjectionMatrix());
 		}
@@ -197,16 +203,16 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		auto& quad = pData.quad;
-		auto& triangle = pData.triangle;
+		auto& quad = pData->quad;
+		auto& triangle = pData->triangle;
 
 		quad.PrepareForRendering();
 		triangle.PrepareForRendering();
 
-		pData.textures.BindTextures();
+		pData->textures.BindTextures();
 
 
-		const auto totalIndices = pData.quad.indexCount + pData.triangle.indexCount;
+		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
 
 		if (totalIndices >= batch::limits::maxIndices)
 		{
@@ -224,14 +230,14 @@ namespace krakoa::graphics
 
 	void Renderer2D::RestartBatch() noexcept
 	{
-		pData.quad.Reset();
-		pData.triangle.Reset();
-		pData.textures.Reset(1);
+		pData->quad.Reset();
+		pData->triangle.Reset();
+		pData->textures.Reset(1);
 	}
 
 	void Renderer2D::FlushAll()
 	{
-		pData.textures.BindTextures();
+		pData->textures.BindTextures();
 
 		FlushQuads();
 		FlushTriangles();
@@ -239,8 +245,8 @@ namespace krakoa::graphics
 
 	void Renderer2D::FlushQuads()
 	{
-		pData.quad.pVertexArray->Bind();
-		RenderCommand::DrawIndexed(*pData.quad.pVertexArray, pData.quad.indexCount);
+		pData->quad.pVertexArray->Bind();
+		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
 #if ENABLE_STATISTICS
 		stats.quadDrawCallsCount++;
 #endif
@@ -248,8 +254,8 @@ namespace krakoa::graphics
 
 	void Renderer2D::FlushTriangles()
 	{
-		pData.triangle.pVertexArray->Bind();
-		RenderCommand::DrawIndexed(*pData.triangle.pVertexArray, pData.triangle.indexCount);
+		pData->triangle.pVertexArray->Bind();
+		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
 #if ENABLE_STATISTICS
 		stats.triangleDrawCallsCount++;
 #endif
@@ -317,9 +323,9 @@ namespace krakoa::graphics
 
 	void Renderer2D::QueryLimitsMet() noexcept
 	{
-		const auto totalIndices = pData.quad.indexCount + pData.triangle.indexCount;
+		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
 
-		if (pData.textures.slotIdx == batch::limits::texture::maxSlots)
+		if (pData->textures.slotIdx == batch::limits::texture::maxSlots)
 		{
 			EndScene();
 			RestartBatch();
@@ -331,13 +337,13 @@ namespace krakoa::graphics
 			RestartBatch();
 		}
 
-		if (pData.quad.indexCount >= batch::limits::quad::maxIndices)
+		if (pData->quad.indexCount >= batch::limits::quad::maxIndices)
 		{
 			EndScene();
 			RestartBatch();
 		}
 
-		if (pData.triangle.indexCount >= batch::limits::triangle::maxIndices)
+		if (pData->triangle.indexCount >= batch::limits::triangle::maxIndices)
 		{
 			EndScene();
 			RestartBatch();
@@ -351,7 +357,7 @@ namespace krakoa::graphics
 
 		float texIdx = 0.f;
 
-		auto& textures = pData.textures;
+		auto& textures = pData->textures;
 
 		for (size_t i = 1u; i < textures.slotIdx; ++i)
 		{
@@ -378,7 +384,7 @@ namespace krakoa::graphics
 	{
 		static constexpr auto loops = kmaths::SizeOfCArray(TriangleData::vertices);
 
-		auto& triangle = pData.triangle;
+		auto& triangle = pData->triangle;
 
 		auto& bufferPtr = triangle.pVertexBuffer;
 		const kmaths::Vector3f scale3D(scale.x, scale.y, 1.f);
@@ -423,7 +429,7 @@ namespace krakoa::graphics
 	{
 		static constexpr auto loops = kmaths::SizeOfCArray(QuadData::vertices);
 
-		auto& quad = pData.quad;
+		auto& quad = pData->quad;
 		auto& bufferPtr = quad.pVertexBuffer;
 
 		const kmaths::Vector3f scale3D(scale.x, scale.y, 1.f);

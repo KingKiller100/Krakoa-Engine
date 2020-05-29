@@ -4,11 +4,10 @@
 #include "AllocHeader.hpp"
 #include "MemoryTypes.hpp"
 
-#include "../Core/Logging/CoreLogger.hpp"
+#include "../Core/Logging/MemoryLogger.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
 
-#include <Utility/Debug Helper/Exceptions/NotImplementedException.hpp>
 
 namespace memory
 {
@@ -53,7 +52,7 @@ namespace memory
 		return totalBytes;
 	}
 
-	std::string Heap::Status() const
+	std::string Heap::GetStatus() const
 	{
 		using namespace klib::kFormat;
 
@@ -70,14 +69,14 @@ namespace memory
 				while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
 				{
 
-					KRK_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
+					MEM_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
 						klib::kFormat::ToString("CORRUPTED HEAP - Incorrect signature on heap: \"{0}\" position: {1}\n",
 							pCurrentHeader->pHeap->name,
 							count));
 
 					auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + AllocHeaderBytes + pCurrentHeader->bytes);
 
-					KRK_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
+					MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
 						klib::kFormat::ToString("CORRUPTED HEAP - Incorrect end marker on heap: \"{0}\" position: {1}\n",
 							pCurrentHeader->pHeap->name,
 							count));

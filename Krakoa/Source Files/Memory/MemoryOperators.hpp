@@ -1,6 +1,9 @@
 ﻿#pragma once
 
-#include "Heap.hpp"
+namespace memory
+{
+	class Heap;
+}
 
 void* operator new(const size_t bytes);
 void* operator new[](const size_t bytes);

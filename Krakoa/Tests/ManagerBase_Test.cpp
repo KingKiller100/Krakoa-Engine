@@ -44,7 +44,7 @@ namespace krakoa::tests
 		constexpr  auto managerTypeSize = sizeof(TestManager);
 		VERIFY_COMPILE_TIME(managerTypeSize == (heapPtrTypeSize + stringTypeSize));
 
-		const auto heapDets(TestManager::Status());
+		const auto heapDets(TestManager::GetHeapStatus());
 		VERIFY(!heapDets.empty());
 		
 		const auto lines = klib::kString::Split(heapDets, "\n");

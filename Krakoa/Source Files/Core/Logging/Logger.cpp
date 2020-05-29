@@ -18,7 +18,7 @@ namespace krakoa
 		pClientLogger->OutputInitialized();
 	}
 
-	klib::kLogs::Logging & Logger::GetClientLogger()
+	Logging & Logger::GetLogger()
 	{
 		return *pClientLogger;
 	}

@@ -18,4 +18,9 @@ namespace krakoa
 		pCoreLogger->ToggleSubSystemEnabled();
 		pCoreLogger->OutputInitialized();
 	}
+
+	Logging& CoreLogger::GetCoreLogger()
+	{
+		return *pCoreLogger;
+	}
 }

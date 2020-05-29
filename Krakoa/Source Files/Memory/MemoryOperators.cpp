@@ -1,10 +1,13 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOperators.hpp"
 
+#include "Heap.hpp"
 #include "HeapFactory.hpp"
 #include "MemoryTypes.hpp"
 
 #include <cassert>
+
+#define MEM_ASSERT(condition) assert(condition)
 
 void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
 {
@@ -56,7 +59,7 @@ void operator delete(void* ptr)
 
 	auto* pHeader = REINTERPRET(memory::AllocHeader*, pData - memory::AllocHeaderBytes);
 
-	assert(pHeader->signature == KRK_MEMSYSTEM_SIGNATURE);
+	MEM_ASSERT(pHeader->signature == KRK_MEMSYSTEM_SIGNATURE);
 
 	auto& pHeap = pHeader->pHeap;
 	const auto bytes = pHeader->bytes;
@@ -80,7 +83,7 @@ void operator delete(void* ptr)
 
 	auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type, pData + bytes);
 
-	assert(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER);
+	MEM_ASSERT(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER);
 
 	pHeap->Deallocate(totalBytes);
 	

@@ -44,7 +44,7 @@ namespace memory
 
 #ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
-#	define MEM_FATAL(condition, msg)                                  kAssert((condition), msg);
+#	define MEM_FATAL(assert, msg)                                  kAssert((assert), msg);
 #else
-#	define MEM_FATAL(condition, msg)                                  if ( !(condition) ) ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#	define MEM_FATAL(assert, msg)                                  if ( !(assert) ) ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #endif // !KRAKOA_RELEASE

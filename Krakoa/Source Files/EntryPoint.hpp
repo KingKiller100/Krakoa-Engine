@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Memory/HeapFactory.hpp"
+#include "Memory/Memory Structures/HeapFactory.hpp"
 
 #ifdef KRAKOA_TEST
 #	include "Tests/TestDriver.hpp"

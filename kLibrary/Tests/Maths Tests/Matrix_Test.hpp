@@ -19,6 +19,7 @@ namespace kTest::maths
 		bool DivideTest();
 		bool MultiplyTest();
 		bool ConstexprTest();
+		bool InitializerListTest();
 	};
 }
 #endif

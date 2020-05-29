@@ -26,7 +26,7 @@ namespace krakoa::graphics
 
 	namespace
 	{
-		constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
+		constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f, kmaths::Theta_Type::DEGREES);
 	}
 	
 	_2D::PrimitivesData *pData = nullptr;
@@ -43,7 +43,7 @@ namespace krakoa::graphics
 		pData = new _2D::PrimitivesData();
 		
 		constexpr auto sizeOfVertexData = sizeof(VertexData);
-
+		
 		// Triangle creation code
 		{
 			auto& triangle = pData->triangle;

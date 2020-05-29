@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "../Memory/Heap.hpp"
-#include "../Memory/HeapFactory.hpp"
+#include "../Memory/Memory Structures/TypedHeap.hpp"
+#include "../Memory/Memory Structures/HeapFactory.hpp"
 #include "../Memory/MemoryOperators.hpp"
 
 namespace patterns
@@ -12,7 +12,7 @@ namespace patterns
 		void* operator new(const size_t bytes)
 		{
 			if (!pHeap)
-				pHeap = memory::HeapFactory::CreateHeap(typeid(T).name());
+				pHeap = memory::HeapFactory::CreateHeap<T>();
 			
 			return ::operator new(bytes, pHeap);
 		}
@@ -53,6 +53,6 @@ namespace patterns
 		}
 
 	private:
-		inline static memory::Heap* pHeap = nullptr;
+		inline static memory::HeapBase* pHeap = nullptr;
 	};
 }

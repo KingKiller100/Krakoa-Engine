@@ -1,15 +1,15 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOperators.hpp"
 
-#include "Heap.hpp"
-#include "HeapFactory.hpp"
-#include "MemoryTypes.hpp"
+#include "Memory Structures/HeapBase.hpp"
+#include "Memory Structures/MemoryTypes.hpp"
+#include "Memory Structures/HeapFactory.hpp"
 
 #include <cassert>
 
 #define MEM_ASSERT(condition) assert(condition)
 
-void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
+void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHeader
 {
 	const size_t requestedBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes; // Alignment in memory
 	auto* pBlock = CAST(memory::Byte_Ptr_Type, malloc(requestedBytes));
@@ -38,7 +38,7 @@ void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
 	return pMemStart; // Returns the start of the object's to read
 }
 
-void* operator new [](const size_t bytes, memory::Heap* pHeap)
+void* operator new [](const size_t bytes, memory::HeapBase* pHeap)
 {
 	return operator new(bytes, pHeap);
 }
@@ -86,6 +86,8 @@ void operator delete(void* ptr)
 	MEM_ASSERT(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER);
 
 	pHeap->Deallocate(totalBytes);
+
+	pHeap->CallObjectDestructor(ptr);
 	
 	ptr = nullptr;
 

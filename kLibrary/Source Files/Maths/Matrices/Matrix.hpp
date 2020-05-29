@@ -2,7 +2,7 @@
 
 #include "../Length_Type.hpp"
 #include "../kAlgorithms.hpp"
-#include "../Vectors/PredefinedVectors.hpp"
+#include "../Vectors/Vector.hpp"
 
 namespace kmaths
 {
@@ -24,8 +24,8 @@ namespace kmaths
 		using Column_Type = Vector<T, Rows>;
 		using Row_Type = Vector<T, Columns>;
 		inline static constexpr Length_Type Length = (Rows * Columns);
-		inline static constexpr size_t TypeSize = sizeof(T);
-		inline static constexpr size_t Bytes = Length * TypeSize;
+		inline static constexpr size_t TypeBytes = sizeof(T);
+		inline static constexpr size_t TotalBytes = Length * TypeBytes;
 
 
 		constexpr Matrix() noexcept
@@ -66,16 +66,31 @@ namespace kmaths
 			const auto size = list.size();
 
 			if (Rows < size)
-				throw std::runtime_error("Attempting to create maths vector with more elements than dimensions");
+				throw std::overflow_error("Attempting to create maths vector with more elements than dimensions");
 
 			const auto first_iter = list.begin();
 
-			for (auto row = 0u; row < Rows; ++row)
+			for (auto row = 0u; row < Rows; ++row) {
+				if (row >= size)
+					return;
+				
 				for (auto col = 0u; col < Columns; ++col)
 				{
 					const auto ptr = (first_iter + row);
 					const auto val = (*ptr)[col];
 					elems[row][col] = val;
+				}
+			}
+		}
+
+		explicit constexpr Matrix(const Type (&list)[Rows * Columns])
+		{
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+				{
+					const auto index = (row * Columns) + col;
+					
+					elems[row][col] = list[index];
 				}
 		}
 
@@ -335,17 +350,17 @@ namespace kmaths
 			return false;
 		}
 
-		USE_RESULT static constexpr decltype(auto) GetRows() noexcept
+		USE_RESULT constexpr decltype(auto) GetRows() const noexcept
 		{
 			return Rows;
 		}
 
-		USE_RESULT static constexpr decltype(auto) GetColumns() noexcept
+		USE_RESULT constexpr decltype(auto) GetColumns() const noexcept
 		{
 			return Columns;
 		}
 
-		USE_RESULT static constexpr decltype(auto) GetSize() noexcept
+		USE_RESULT constexpr decltype(auto) GetSize() const noexcept
 		{
 			return Rows * Columns;
 		}
@@ -419,10 +434,10 @@ namespace kmaths
 		USE_RESULT constexpr Matrix operator*(const U scalar) const noexcept
 		{
 			Matrix m;
-			for (auto row = 0u; row < Rows; ++row) 
-				for (auto col = 0u; col < Columns; ++col) 
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
 					m.elems[row][col] = elems[row][col] * scalar;
-			
+
 			return m;
 		}
 
@@ -468,11 +483,11 @@ namespace kmaths
 			//}
 			//else
 			//{
-				Matrix m;
-				for (auto row = 0u; row < Rows; ++row)
-					for (auto col = 0u; col < Columns; ++col)
-						m.elems[row][col] = elems[row][col] / scalar;
-				return m;
+			Matrix m;
+			for (auto row = 0u; row < Rows; ++row)
+				for (auto col = 0u; col < Columns; ++col)
+					m.elems[row][col] = elems[row][col] / scalar;
+			return m;
 			//}
 		}
 
@@ -532,6 +547,9 @@ namespace kmaths
 
 		constexpr Matrix& operator=(const Matrix& other) noexcept
 		{
+			if (this == &other)
+				return *this;
+
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
 					elems[row][col] = other[row][col];
@@ -541,6 +559,9 @@ namespace kmaths
 
 		constexpr Matrix& operator=(Matrix&& other) noexcept
 		{
+			if (this == &other)
+				return *this;
+
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
 					elems[row][col] = std::move(other[row][col]);
@@ -653,8 +674,6 @@ namespace kmaths
 		}
 
 	private:
-
-
 		Row_Type elems[Rows]{ {} };
 	};
 

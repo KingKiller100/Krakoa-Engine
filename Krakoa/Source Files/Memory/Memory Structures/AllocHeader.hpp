@@ -8,7 +8,7 @@
 
 namespace memory
 {
-	class Heap;
+	class HeapBase;
 	
 	struct AllocHeader
 	{
@@ -16,7 +16,7 @@ namespace memory
 		using Signature_Ptr_Type = Signature_Type*;
 		
 		Signature_Type signature;
-		Heap* pHeap;
+		HeapBase* pHeap;
 		size_t bytes;
 		AllocHeader* pPrev;
 		AllocHeader* pNext;

@@ -2,7 +2,7 @@
 
 #include <HelperMacros.hpp>
 
-#include "../Memory/PointerTypes.hpp"
+#include "../PointerTypes.hpp"
 
 #include <atomic>
 #include <thread>

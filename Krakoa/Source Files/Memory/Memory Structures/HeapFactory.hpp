@@ -2,23 +2,31 @@
 
 #include <vector>
 
+#include "TypedHeap.hpp"
+
 namespace memory
 {
-	class Heap;
-
-
 	class HeapFactory final
 	{
-		using HeapList = std::vector<Heap*>;
+		using HeapList = std::vector<HeapBase*>;
 		
 		struct Token {};
 	public:
 		static void Initialize() noexcept;
 		static void ShutDown() noexcept;
 
-		static Heap* CreateHeap(const char* name);
+		template<typename T>
+		static HeapBase* CreateHeap()
+		{
+			using Heap = TypedHeap<T>;
+			
+			auto* heap = CAST(HeapBase*, malloc(sizeof(Heap)));
+			heap->Initialize(typeid(T).name(), &typeHeapVTBL<T>);
+			heaps.emplace_back(heap);
+			return heap;
+		}
 
-		static Heap* GetDefaultHeap() noexcept;
+		static HeapBase* GetDefaultHeap() noexcept;
 		static std::string WalkTheDefaultHeap();
 
 		static const HeapList& GetHeaps();
@@ -30,7 +38,7 @@ namespace memory
 		explicit HeapFactory(Token);
 
 	private:
-		static Heap* defaultHeap;
+		static HeapBase* defaultHeap;
 		static HeapList heaps;
 	};
 }

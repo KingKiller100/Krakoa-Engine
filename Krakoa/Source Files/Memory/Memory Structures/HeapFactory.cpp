@@ -1,15 +1,16 @@
 ﻿#include "Precompile.hpp"
 #include "HeapFactory.hpp"
 
-#include "Heap.hpp"
+#include "DefaultHeap.hpp"
 
-#include "../Core/Logging/MemoryLogger.hpp"
+#include "../../Core/Logging/MemoryLogger.hpp"
 
 #include <Utility/String/kStringManipulation.hpp>
 
+
 namespace memory
 {
-	Heap* HeapFactory::defaultHeap = nullptr;
+	HeapBase* HeapFactory::defaultHeap = nullptr;
 	HeapFactory::HeapList HeapFactory::heaps;
 
 	void HeapFactory::Initialize() noexcept
@@ -30,24 +31,18 @@ namespace memory
 		}
 
 		MEM_INFO(defaultHeap->GetStatus());
-		
+
 		heaps.clear();
 	}
 
-	Heap* HeapFactory::CreateHeap(const char* name)
+	HeapBase* HeapFactory::GetDefaultHeap() noexcept
 	{
-		auto* heap = CAST(Heap*, malloc(sizeof(Heap)));
-		heap->Initialize(name);
-		heaps.emplace_back(heap);
-		return heap;
-	}
-
-	Heap* HeapFactory::GetDefaultHeap() noexcept
-	{
+		static Heap_VTBL defaultHeapVTBL = {};
+		
 		if (!defaultHeap)
 		{
-			defaultHeap = CAST(Heap*, malloc(sizeof(Heap)));
-			defaultHeap->Initialize("Default");
+			defaultHeap = static_cast<DefaultHeap*>(malloc(sizeof(DefaultHeap)));
+			defaultHeap->Initialize("Default", &defaultHeapVTBL);
 		}
 
 		return defaultHeap;

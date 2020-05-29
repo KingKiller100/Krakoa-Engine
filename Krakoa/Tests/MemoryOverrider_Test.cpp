@@ -2,9 +2,9 @@
 #include "MemoryOverrider_Test.hpp"
 
 #include "../Source Files/PointerTypes.hpp"
-#include "../Source Files/Memory/MemoryTypes.hpp"
 #include "../Source Files/Patterns/MemoryOverrider.hpp"
 #include "../Source Files/Core/Logging/MemoryLogger.hpp"
+#include "../Source Files/Memory/Memory Structures/MemoryTypes.hpp"
 
 #include <Utility/String/kStringManipulation.hpp>
 

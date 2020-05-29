@@ -32,6 +32,7 @@
 
 #define CAST(type, val) static_cast<type>(val)
 #define REINTERPRET(type, val) reinterpret_cast<type>(val)
+#define DYNAMIC(type, val) dynamic_cast<type>(val)
 
 #define ONLY_TYPE(type) std::decay_t<std::remove_pointer_t<type>>
 

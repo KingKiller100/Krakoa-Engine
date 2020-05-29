@@ -16,7 +16,7 @@ namespace krakoa
 		static klib::kLogs::Logging& GetCoreLogger();
 
 	private:
-		static std::unique_ptr<klib::kLogs::Logging> pCoreLogger;
+		static Solo_Ptr<klib::kLogs::Logging> pCoreLogger;
 	};
 }
 

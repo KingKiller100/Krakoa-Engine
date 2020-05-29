@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "Matrix_Test.hpp"
 
-#include "../../Source Files/Maths/Vectors/PredefinedVectors.hpp"
+#include "../../Source Files/Maths/Vectors/Vector.hpp"
 #include "../../Source Files/Maths/Matrices/MatrixMathsHelper.hpp"
 #include "../../Source Files/Maths/Matrices/PredefinedMatrices.hpp"
 
@@ -19,16 +19,17 @@ namespace kTest::maths
 	void MatricesTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-		
+
 		VERIFY_MULTI(DynamicMatrixTest());
-		
+
 		VERIFY_MULTI(AddTest());
 		VERIFY_MULTI(DivideTest());
 		VERIFY_MULTI(SubtractTest());
 		VERIFY_MULTI(MultiplyTest());
-		
+		VERIFY_MULTI(InitializerListTest());
+
 		VERIFY_MULTI(ConstexprTest());
-		
+
 		VERIFY_MULTI_END();
 	}
 
@@ -136,7 +137,7 @@ namespace kTest::maths
 
 		return success;
 	}
-	
+
 	bool MatricesTester::SubtractTest()
 	{
 		constexpr auto m1 = Matrix<float, 3, 2>(1.f);
@@ -175,7 +176,7 @@ namespace kTest::maths
 			const auto y = Round(result.Y(), 3);
 			const auto z = Round(result.Z(), 3);
 
-			
+
 			VERIFY(x == 0.075f);
 			VERIFY(y == 0.05f);
 			VERIFY(z == 0.075f);
@@ -213,7 +214,63 @@ namespace kTest::maths
 			VERIFY(result.Y() == 60.f);
 			VERIFY(result.Z() == 60.f);
 		}
-		
+
+		return success;
+	}
+
+	bool MatricesTester::InitializerListTest()
+	{
+		{
+			const auto mat = Matrix4x4s{
+				{1, 1},
+				{1, 1},
+				{1, 1},
+				{1, 1},
+			};
+
+			for (auto row = 0; row < mat.GetRows(); row++) {
+				for (auto col = 0; col < mat.GetColumns(); col++)
+				{
+					const auto expected = col >= 2 ? 0 : 1;
+					VERIFY(mat[row][col] == expected);
+				}
+			}
+		}
+
+		{
+			const auto mat = Matrix4x4s{
+				{1, 1, 1, 1},
+				{1, 1, 1, 1},
+			};
+
+			for (auto row = 0; row < mat.GetRows(); row++) {
+				for (auto col = 0; col < mat.GetColumns(); col++)
+				{
+					const auto expected = ((row * mat.GetColumns()) + col) > 8 ? 0 : 1;
+					VERIFY(mat[row][col] == expected);
+				}
+			}
+		}
+
+
+		{
+			constexpr int arr[16] = {
+					1, 1, 1, 1,
+					1, 1, 1, 1,
+					0, 0, 0, 0,
+			};
+			
+			const auto mat = Matrix4x4s(arr);
+
+			for (auto row = 0; row < mat.GetRows(); row++) {
+				for (auto col = 0; col < mat.GetColumns(); col++)
+				{
+					const auto expected = ((row * mat.GetColumns()) + col) > 8 ? 0 : 1;
+					VERIFY(mat[row][col] == expected);
+				}
+			}
+		}
+
 		return success;
 	}
 

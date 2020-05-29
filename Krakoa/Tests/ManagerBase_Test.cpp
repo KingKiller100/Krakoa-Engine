@@ -38,18 +38,18 @@ namespace krakoa::tests
 
 		const auto& ref = *ptr;
 		VERIFY(ref.name == "name");
-
-		const auto heapDets(TestManager::Status());
-		VERIFY(!heapDets.empty());
 		
 		constexpr  auto heapPtrTypeSize = sizeof(memory::Heap*);
 		constexpr  auto stringTypeSize = sizeof(std::string);
 		constexpr  auto managerTypeSize = sizeof(TestManager);
 		VERIFY_COMPILE_TIME(managerTypeSize == (heapPtrTypeSize + stringTypeSize));
+
+		const auto heapDets(TestManager::Status());
+		VERIFY(!heapDets.empty());
 		
 		const auto lines = klib::kString::Split(heapDets, "\n");
 
-		const auto sizeOfTestManagerStr = lines[0];
+		const auto sizeOfTestManagerStr = lines[2];
 		const auto dataSizePos= sizeOfTestManagerStr.find(std::to_string(managerTypeSize));
 		VERIFY(dataSizePos != std::string::npos);
 

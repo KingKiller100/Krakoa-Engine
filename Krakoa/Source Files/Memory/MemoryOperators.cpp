@@ -8,7 +8,7 @@
 
 void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
 {
-	const size_t requestedBytes = memory::allocHeaderBytes + bytes + memory::signatureBytes; // Alignment in memory
+	const size_t requestedBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes; // Alignment in memory
 	auto* pBlock = CAST(memory::Byte_Ptr_Type, malloc(requestedBytes));
 	auto* pHeader = REINTERPRET(memory::AllocHeader*, pBlock);
 
@@ -26,11 +26,11 @@ void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
 
 	pHeader->pHeap->SetPrevAddress(pHeader);
 
-	auto* pMemStart = pBlock + memory::allocHeaderBytes;
+	auto* pMemStart = pBlock + memory::AllocHeaderBytes;
 	auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type, pMemStart + bytes);
 	*pMemEnd = KRK_MEMSYSTEM_ENDMARKER;
 
-	pHeap->Allocate(bytes);
+	pHeap->Allocate(requestedBytes);
 
 	return pMemStart; // Returns the start of the object's to read
 }
@@ -54,7 +54,7 @@ void operator delete(void* ptr)
 {
 	auto* pData = CAST(memory::Byte_Ptr_Type, ptr);
 
-	auto* pHeader = REINTERPRET(memory::AllocHeader*, pData - memory::allocHeaderBytes);
+	auto* pHeader = REINTERPRET(memory::AllocHeader*, pData - memory::AllocHeaderBytes);
 
 	assert(pHeader->signature == KRK_MEMSYSTEM_SIGNATURE);
 
@@ -63,7 +63,7 @@ void operator delete(void* ptr)
 	auto& pPrev = pHeader->pPrev;
 	auto& pNext = pHeader->pNext;
 
-	const auto totalBytes = memory::allocHeaderBytes + bytes + memory::signatureBytes;
+	const auto totalBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes;
 
 	if (!pPrev && !pNext) // Both null
 		pHeap->SetPrevAddress(nullptr);

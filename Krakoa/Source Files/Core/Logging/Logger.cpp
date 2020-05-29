@@ -9,6 +9,9 @@ namespace krakoa
 
 	void Logger::ClientInit(const char* name)
 	{
+		if (pClientLogger)
+			return;
+		
 		pClientLogger = std::make_unique<Logging>();
 		pClientLogger->SetName(name);
 		pClientLogger->ChangeFilename(name);

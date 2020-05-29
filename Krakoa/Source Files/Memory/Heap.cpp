@@ -55,91 +55,79 @@ namespace memory
 
 	std::string Heap::Status() const
 	{
-		size_t totalHeapBytes(0);
-		unsigned int count(0);
+		using namespace klib::kFormat;
 
+		unsigned count(0);
 		std::string details;
-
-		if (!pPrevAddress) // Gets prev address on the heap
-		{
-			details.append(klib::kFormat::ToString(
-				"Heap data \"{0}\" total bytes: {1}\n",
-				name,
-				(totalBytes)
-			));
-
-			details.append(klib::kFormat::ToString(
-				"Heap \"{0}\" total bytes (including AllocHeader and signature): {1}\n",
-				name,
-				(totalBytes + allocHeaderBytes + signatureBytes)
-			));
-
-			return details;
-		}
 
 		auto* pCurrentHeader = static_cast<AllocHeader*>(pPrevAddress); // casts to AllocHeader to find previous and next
 
 		if (pCurrentHeader)
 		{
-			size_t blockBytes(0);
-
 			if (pCurrentHeader->pPrev)
 			{
-				while (pCurrentHeader->pPrev && pCurrentHeader->pPrev != pCurrentHeader)
-				{
-					pCurrentHeader = pCurrentHeader->pPrev;
-				}
 
-				while (pCurrentHeader && pCurrentHeader->pPrev != pCurrentHeader)
+				while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
 				{
-					details.append(klib::kFormat::ToString(
-						"{0} {1}: size for each class allocated on the heap (excluding AllocHeader and signature) : {2}\n",
-						pCurrentHeader->pHeap->GetName(),
-						count,
-						pCurrentHeader->bytes
-					));
-
-					blockBytes = allocHeaderBytes + pCurrentHeader->bytes + signatureBytes;
-					count++;
 
 					KRK_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
 						klib::kFormat::ToString("CORRUPTED HEAP - Incorrect signature on heap: \"{0}\" position: {1}\n",
 							pCurrentHeader->pHeap->name,
 							count));
 
-					auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + allocHeaderBytes + pCurrentHeader->bytes);
+					auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + AllocHeaderBytes + pCurrentHeader->bytes);
 
 					KRK_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
 						klib::kFormat::ToString("CORRUPTED HEAP - Incorrect end marker on heap: \"{0}\" position: {1}\n",
 							pCurrentHeader->pHeap->name,
 							count));
 
-					pCurrentHeader = pCurrentHeader->pNext;
-					totalHeapBytes += totalBytes;
+					count++;
+					pCurrentHeader = pCurrentHeader->pPrev;
 				}
-			}
-			else
-			{
-				totalHeapBytes += totalBytes;
-				blockBytes = allocHeaderBytes + pCurrentHeader->bytes + signatureBytes;
-
-				details.append(klib::kFormat::ToString(
-					"{0} {1}: size for each class allocated on the heap(including AllocHeader and signature) : {2}\n",
-					pCurrentHeader->pHeap->GetName(),
-					count,
-					blockBytes
-				));
 			}
 		}
 
-		if (totalHeapBytes)
-			details.append(klib::kFormat::ToString(
-				R"(Heap "{0}" total bytes (excluding AllocHeader and signature: {1}\n)",
-				name,
-				totalHeapBytes
-			));
+		const auto multiplier = (count ? count : 1);
+		
+		const auto bytesPerObject = (totalBytes / multiplier) - MemoryPaddingBytes;
+		const auto objectsTotalBytes = bytesPerObject * multiplier;
+		const auto BlockTotalBytes = totalBytes * multiplier;
+
+		if (count)
+		{
+			details.append(ToString(
+				R"(Heap "{0}"
+Count: {1}
+Bytes per object: {2}
+Bytes per block: {3}
+Object's Total Bytes In Memory: {4}
+Heap's Total Bytes In Memory: {5}
+)",
+name,
+count,
+bytesPerObject,
+totalBytes,
+objectsTotalBytes,
+BlockTotalBytes));
+		}
+		else if (totalBytes)
+		{
+			details.append(ToString(
+R"(Heap "{0}"
+Count: 1
+Bytes per object: {1}
+Bytes per block: {2}
+Total Object Bytes In Memory: {1}
+Total Block Bytes In Memory: {2}
+)", 
+name,
+bytesPerObject,
+totalBytes));
+		}
 		else
-			details.append(klib::kFormat::ToString("Heap {0} is empty\n", name));
+			details.append(ToString("Heap \"{0}\" is empty\n", name));
+
 
 		return details;
 	}

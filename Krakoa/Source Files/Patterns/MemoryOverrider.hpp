@@ -11,10 +11,10 @@ namespace patterns
 	public:
 		void* operator new(const size_t bytes)
 		{
-			if (!heap)
-				heap = memory::HeapFactory::CreateHeap(typeid(T).name());
+			if (!pHeap)
+				pHeap = memory::HeapFactory::CreateHeap(typeid(T).name());
 			
-			return ::operator new(bytes, heap);
+			return ::operator new(bytes, pHeap);
 		}
 
 		void* operator new[](const size_t bytes)
@@ -44,10 +44,15 @@ namespace patterns
 
 		USE_RESULT static std::string GetHeapStatus() noexcept
 		{
-			return heap->GetStatus();
+			return pHeap->GetStatus();
+		}
+
+		USE_RESULT static decltype(auto) WalkTheHeap()
+		{
+			return pHeap->WalkTheHeap();
 		}
 
 	private:
-		inline static memory::Heap* heap = nullptr;
+		inline static memory::Heap* pHeap = nullptr;
 	};
 }

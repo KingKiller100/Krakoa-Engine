@@ -56,8 +56,6 @@ namespace krakoa::tests
 
 		const auto totalSizeOFBlockMemoryStr = lines[5];
 		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string((testMemTypeSize + memory::MemoryPaddingBytes) * 6)) != npos);
-
-		
 	}
 }
 #endif

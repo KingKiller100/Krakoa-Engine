@@ -2,6 +2,8 @@
 
 #include <HelperMacros.hpp>
 
+#include <string>
+
 namespace memory
 {
 	class Heap final
@@ -26,12 +28,11 @@ namespace memory
 		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
 		USE_RESULT std::string GetStatus() const;
+		USE_RESULT size_t WalkTheHeap() const noexcept;
 
 		void SetPrevAddress(void* prev) noexcept;
 		USE_RESULT void* GetPrevAddress() const noexcept;
 
-	private:
-		USE_RESULT size_t WalkTheHeap() const noexcept;
 		
 	private:
 		const char* name;

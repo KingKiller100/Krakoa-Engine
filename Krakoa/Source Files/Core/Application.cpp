@@ -42,16 +42,10 @@ namespace krakoa
 	}
 
 	Application::~Application()
-	{
-		const auto size = memory::HeapFactory::GetSize();
+		= default;
 
-		for (auto i = 0; i < size; ++i)
-		{
-			memory::HeapFactory::WalkTheHeap(i);
-		}
-		memory::HeapFactory::GetDefaultHeap();
-		
-		entityManager.reset();
+	void Application::ShutDown()
+	{
 		graphics::Renderer::ShutDown();
 	}
 

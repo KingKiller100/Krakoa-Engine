@@ -36,9 +36,9 @@ namespace krakoa
 		virtual ~Application();
 
 		virtual void Initialize();
+		virtual void ShutDown();
 		void Run() const;
 		USE_RESULT bool IsRunning() const;
-		virtual void ShutDown() = 0;
 
 		iWindow& GetWindow() const;
 

@@ -39,7 +39,7 @@ namespace krakoa::tests
 		const auto& ref = *ptr;
 		VERIFY(ref.name == "name");
 
-		const auto heapDets(TestManager::WalkHeap());
+		const auto heapDets(TestManager::Status());
 		VERIFY(!heapDets.empty());
 		
 		constexpr  auto heapPtrTypeSize = sizeof(memory::Heap*);

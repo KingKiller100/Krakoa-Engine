@@ -29,7 +29,9 @@ public:
 	}
 
 	void ShutDown() override
-	{}
+	{
+		Application::ShutDown(); // Must be the last function call in this function
+	}
 };
 
 void krakoa::CreateApplication()

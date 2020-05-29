@@ -25,7 +25,7 @@ namespace memory
 		void Deallocate(const size_t bytes) noexcept;
 		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
-		USE_RESULT std::string WalkHeap() const;
+		USE_RESULT std::string Status() const;
 
 		void SetPrevAddress(void* prev) noexcept;
 		USE_RESULT void* GetPrevAddress() const noexcept;

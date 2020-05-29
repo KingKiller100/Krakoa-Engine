@@ -53,7 +53,7 @@ namespace memory
 		return totalBytes;
 	}
 
-	std::string Heap::WalkHeap() const
+	std::string Heap::Status() const
 	{
 		size_t totalHeapBytes(0);
 		unsigned int count(0);
@@ -67,13 +67,13 @@ namespace memory
 				name,
 				(totalBytes)
 			));
-			
+
 			details.append(klib::kFormat::ToString(
 				"Heap \"{0}\" total bytes (including AllocHeader and signature): {1}\n",
 				name,
 				(totalBytes + allocHeaderBytes + signatureBytes)
 			));
-			
+
 			return details;
 		}
 
@@ -120,11 +120,11 @@ namespace memory
 			}
 			else
 			{
-				blockBytes = allocHeaderBytes + pCurrentHeader->bytes + signatureBytes;
 				totalHeapBytes += totalBytes;
+				blockBytes = allocHeaderBytes + pCurrentHeader->bytes + signatureBytes;
 
 				details.append(klib::kFormat::ToString(
-					"{0} {1}: size for each class allocated on the heap(excluding AllocHeader) : {2}\n",
+					"{0} {1}: size for each class allocated on the heap(including AllocHeader and signature) : {2}\n",
 					pCurrentHeader->pHeap->GetName(),
 					count,
 					blockBytes
@@ -132,10 +132,9 @@ namespace memory
 			}
 		}
 
-
 		if (totalHeapBytes)
 			details.append(klib::kFormat::ToString(
-				R"(Heap "{0}" total bytes (including AllocHeader and signature: {1}\n)",
+				R"(Heap "{0}" total bytes (excluding AllocHeader and signature: {1}\n)",
 				name,
 				totalHeapBytes
 			));

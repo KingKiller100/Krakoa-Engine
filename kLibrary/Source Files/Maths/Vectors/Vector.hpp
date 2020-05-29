@@ -464,6 +464,9 @@ namespace kmaths
 		template<typename U, Length_Type C>
 		constexpr Vector& operator=(Vector<U, C>&& other) noexcept // Move
 		{
+			if (this == &other)
+				return *this;
+			
 			constexpr auto size = (N < C) ? N : C;
 
 			for (auto i = 0; i < size; ++i)

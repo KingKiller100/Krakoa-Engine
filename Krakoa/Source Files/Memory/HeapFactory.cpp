@@ -15,8 +15,13 @@ namespace memory
 	void HeapFactory::ShutDown() noexcept
 	{
 		for (auto& heap : heaps)
+		{
+			KRK_INFO(heap->Status());
 			free(heap);
+		}
 
+		KRK_INFO(defaultHeap->Status());
+		
 		heaps.clear();
 	}
 
@@ -53,14 +58,14 @@ namespace memory
 		const auto name = klib::kString::ToWriter(heap->GetName());
 		KRK_INFO("Walking Heap: " + name);
 
-		return heaps[index]->WalkHeap();
+		return heaps[index]->Status();
 	}
 
 	std::string HeapFactory::WalkTheDefaultHeap()
 	{
 		KRK_INFO("Walking Heap: Default");
 
-		return defaultHeap->WalkHeap();
+		return defaultHeap->Status();
 	}
 
 	size_t HeapFactory::GetSize()

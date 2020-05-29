@@ -24,7 +24,7 @@ void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads AllocHeader
 		pPrevHeader->pNext = pHeader;
 	}
 
-	//pHeader->pHeap->SetPrevAddress(pHeader);
+	pHeader->pHeap->SetPrevAddress(pHeader);
 
 	auto* pMemStart = pBlock + memory::allocHeaderBytes;
 	auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type, pMemStart + bytes);

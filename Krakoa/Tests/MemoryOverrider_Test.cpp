@@ -1,10 +1,10 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOverrider_Test.hpp"
 
-#include "../Source Files/Core/Logging/Logger.hpp"
-
 #include "../Source Files/PointerTypes.hpp"
 #include "../Source Files/Patterns/MemoryOverrider.hpp"
+
+#include "../Source Files/Core/Logging/MemoryLogger.hpp"
 
 #ifdef KRAKOA_TEST
 namespace krakoa::tests
@@ -23,7 +23,7 @@ namespace krakoa::tests
 
 	void MemoryOverriderTester::Test()
 	{
-		KRK_INIT_LOGS();
+		MEM_INIT_LOGS();
 
 		for (auto i = 0; i < 5; ++i)
 			const auto* const lifeTime = new TestMemType();

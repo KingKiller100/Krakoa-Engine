@@ -13,6 +13,7 @@ namespace memory
 		
 		struct Token {};
 	public:
+		static void Initialize() noexcept;
 		static void ShutDown() noexcept;
 
 		static Heap* CreateHeap(const char* name);

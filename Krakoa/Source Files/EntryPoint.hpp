@@ -16,8 +16,8 @@ inline void Launch();
 
 int main(int argc, char** argv)
 {
+	memory::HeapFactory::Initialize();
 	Launch();
-
 	memory::HeapFactory::ShutDown();
 	
 	return EXIT_SUCCESS;

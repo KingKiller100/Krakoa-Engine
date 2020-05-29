@@ -12,6 +12,15 @@ namespace memory
 	Heap* HeapFactory::defaultHeap = nullptr;
 	HeapFactory::HeapList HeapFactory::heaps;
 
+	void HeapFactory::Initialize() noexcept
+	{
+		MEM_INIT_LOGS();
+
+#ifdef KRAKOA_RELEASE
+		MEM_TOGGLE_LOGGING(); // Disable memory logging
+#endif
+	}
+
 	void HeapFactory::ShutDown() noexcept
 	{
 		for (auto& heap : heaps)

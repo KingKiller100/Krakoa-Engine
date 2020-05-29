@@ -52,7 +52,6 @@ namespace krakoa::tests
 		const auto sizeOfTestManagerStr = lines[2];
 		const auto dataSizePos= sizeOfTestManagerStr.find(std::to_string(managerTypeSize));
 		VERIFY(dataSizePos != std::string::npos);
-
 	}
 }
 #endif

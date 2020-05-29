@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "../../PointerTypes.hpp"
+
+#include "../../PointerTypes.hpp"
 
 #include <Utility/Logging/kLogging_Class.hpp>
 
@@ -18,7 +19,7 @@ namespace memory
 
 
 // MEMORY SIDE Log Macros
-#define MEM_INIT_LOGS(name)                                 ::memory::MemoryLogger::Init(name);
+#define MEM_INIT_LOGS()                                 ::memory::MemoryLogger::Init();
 #define MEM_SET LOG_NAME(name)                              ::memory::MemoryLogger::GetLogger().SetName(name);
 #define MEM_SET_LOG_MIN(minLvl)                             ::memory::MemoryLogger::GetLogger().SetMinimumLoggingLevel(minLvl);
 #define MEM_TOGGLE_LOGGING()                                ::memory::MemoryLogger::GetLogger().ToggleLoggingEnabled();

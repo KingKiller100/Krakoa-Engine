@@ -56,42 +56,14 @@ namespace memory
 	{
 		using namespace klib::kFormat;
 
-		unsigned count(0);
-		std::string details;
-
-		auto* pCurrentHeader = static_cast<AllocHeader*>(pPrevAddress); // casts to AllocHeader to find previous and next
-
-		if (pCurrentHeader)
-		{
-			if (pCurrentHeader->pPrev)
-			{
-
-				while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
-				{
-
-					MEM_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
-						klib::kFormat::ToString("CORRUPTED HEAP - Incorrect signature on heap: \"{0}\" position: {1}\n",
-							pCurrentHeader->pHeap->name,
-							count));
-
-					auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + AllocHeaderBytes + pCurrentHeader->bytes);
-
-					MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
-						klib::kFormat::ToString("CORRUPTED HEAP - Incorrect end marker on heap: \"{0}\" position: {1}\n",
-							pCurrentHeader->pHeap->name,
-							count));
-
-					count++;
-					pCurrentHeader = pCurrentHeader->pPrev;
-				}
-			}
-		}
-
+		const auto count = WalkTheHeap();
 		const auto multiplier = (count ? count : 1);
-		
-		const auto bytesPerObject = (totalBytes / multiplier) - MemoryPaddingBytes;
-		const auto objectsTotalBytes = bytesPerObject * multiplier;
-		const auto BlockTotalBytes = totalBytes * multiplier;
+
+		const auto bytesPerBlock = (totalBytes / multiplier);
+		const auto bytesPer = bytesPerBlock - MemoryPaddingBytes;
+		const auto totalBytesOfThisObject = bytesPer * multiplier;
+
+		std::string details;
 
 		if (count)
 		{
@@ -105,23 +77,23 @@ Heap's Total Bytes In Memory: {5}
 )",
 name,
 count,
-bytesPerObject,
-totalBytes,
-objectsTotalBytes,
-BlockTotalBytes));
+bytesPer,
+bytesPerBlock,
+totalBytesOfThisObject,
+totalBytes));
 		}
 		else if (totalBytes)
 		{
 			details.append(ToString(
-R"(Heap "{0}"
+				R"(Heap "{0}"
 Count: 1
 Bytes per object: {1}
 Bytes per block: {2}
 Total Object Bytes In Memory: {1}
 Total Block Bytes In Memory: {2}
-)", 
+)",
 name,
-bytesPerObject,
+bytesPer,
 totalBytes));
 		}
 		else
@@ -129,6 +101,37 @@ totalBytes));
 
 
 		return details;
+	}
+
+	size_t Heap::WalkTheHeap() const noexcept
+	{
+		auto* pCurrentHeader = static_cast<AllocHeader*>(pPrevAddress); // casts to AllocHeader to find previous and next
+
+		if (!pCurrentHeader || !pCurrentHeader->pPrev)
+			return 0;
+
+		unsigned count(0);
+
+		while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
+		{
+			MEM_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
+				klib::kFormat::ToString("CORRUPTED HEAP - Incorrect signature on heap: \"{0}\" position: {1}\n",
+					pCurrentHeader->pHeap->name,
+					count));
+
+			auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + AllocHeaderBytes + pCurrentHeader->bytes);
+
+			MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
+				klib::kFormat::ToString("CORRUPTED HEAP - Incorrect end marker on heap: \"{0}\" position: {1}\n",
+					pCurrentHeader->pHeap->name,
+					count));
+
+			count++;
+
+			pCurrentHeader = pCurrentHeader->pPrev;
+		}
+
+		return count;
 	}
 
 	void* Heap::GetPrevAddress() const noexcept

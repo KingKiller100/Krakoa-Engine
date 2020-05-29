@@ -102,4 +102,8 @@ namespace klib::type_trait
 
 	template<typename T>
 	constexpr bool Is_StringType_V = Is_StringType<T>::value;
+
+
+	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
+	constexpr auto nullTerminator = CharType();
 }

@@ -59,6 +59,13 @@ namespace klib::kString
 	{
 		return Split(str, tokens.data(), preserveToken, preserveEmpty);
 	}
+
+	template<class Char = char>
+	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const ONLY_TYPE(Char)& token, const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
+	{
+		const auto*  ptr = &token;
+		return Split(str, ptr, preserveToken, preserveEmpty);
+	}
 }
 
 

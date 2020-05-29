@@ -31,6 +31,9 @@ namespace memory
 		USE_RESULT void* GetPrevAddress() const noexcept;
 
 	private:
+		USE_RESULT size_t WalkTheHeap() const noexcept;
+		
+	private:
 		const char* name;
 		size_t totalBytes;
 		void * pPrevAddress;

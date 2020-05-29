@@ -23,7 +23,7 @@ namespace krakoa::graphics
 	void Renderer::ShutDown()
 	{
 		KRK_PROFILE_FUNCTION();
-		graphics::Renderer2D::ShutDown();
+		Renderer2D::ShutDown();
 	}
 
 	void Renderer::OnWindowResize(const int x, const int y, const int width, const int height) noexcept

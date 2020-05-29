@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Memory/HeapFactory.hpp"
+
 #ifdef KRAKOA_TEST
 #	include "Tests/TestDriver.hpp"
 #else
@@ -10,10 +12,18 @@
 extern void krakoa::CreateApplication();
 #endif
 
-#include "Memory/HeapFactory.hpp"
-
+inline void Launch();
 
 int main(int argc, char** argv)
+{
+	Launch();
+
+	memory::HeapFactory::ShutDown();
+	
+	return EXIT_SUCCESS;
+}
+
+inline void Launch()
 {
 #ifdef KRAKOA_TEST
 	krakoa::tests::TestDriver::Initialize();
@@ -36,7 +46,4 @@ int main(int argc, char** argv)
 	pApp->ShutDown();
 	KRK_PROFILE_SESSION_END();
 #endif
-
-	memory::HeapFactory::ShutDown();
-	return EXIT_SUCCESS;
 }

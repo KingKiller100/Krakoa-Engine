@@ -83,6 +83,8 @@ void operator delete(void* ptr)
 	assert(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER);
 
 	pHeap->Deallocate(totalBytes);
+	
+	ptr = nullptr;
 
 	free(pHeader);
 }

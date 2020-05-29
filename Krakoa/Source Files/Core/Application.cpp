@@ -49,7 +49,6 @@ namespace krakoa
 		graphics::Renderer::ShutDown();
 	}
 
-
 	void Application::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();

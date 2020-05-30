@@ -23,23 +23,26 @@ namespace memory
 	{
 		using namespace klib::kFormat;
 
-		std::string report = "Heap \"Default\" is empty\n";
-		
-		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
-		const auto numOfAllocs = pHeap->WalkTheHeap();
-		const auto BlockTotal = totalBytes + MemoryPaddingBytes * numOfAllocs;
-		size_t index(numOfAllocs);
+		const auto count = pHeap->WalkTheHeap();
 
-		report.append(ToString(R"(
-Total Bytes: {0}
-Total Bytes (Including Padding): {1}
+		if (!count)
+			return "Heap \"Default\" is empty\n";
+		
+		std::string report;
+		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
+		const auto BlockTotal = totalBytes + MemoryPaddingBytes * count;
+		size_t index(count);
+
+		report.append(ToString(R"(Heap "Default"
+Total Object Bytes: {0}
+Total Block Bytes: {1}
 Total Number of Allocations: {2}
 
 # Please look below for further details #
 )",
 totalBytes,
 BlockTotal,
-numOfAllocs
+count
 ));
 
 		auto* pCurrentHeader = static_cast<AllocHeader*>(pHeap->GetPrevAddress()); // casts to AllocHeader to find previous and next
@@ -47,7 +50,6 @@ numOfAllocs
 		if (!pCurrentHeader || !pCurrentHeader->pPrev)
 			return report;
 
-		report.clear();
 
 
 		while (pCurrentHeader->pPrev && pCurrentHeader != pCurrentHeader->pPrev) // Move to the first 
@@ -64,23 +66,12 @@ Heap: "Default" Index: {0}
 Object Bytes: {1}
 Block Bytes: {2}
 )",
-index--,
+index,
 bytes,
 blockBytes));
 
 			pCurrentHeader = pCurrentHeader->pNext;
-		} while (index);
-
-
-		
-		report.append(ToString(R"(
-Heap: "Default" Index: {0}
-Object Bytes: {1}
-Block Bytes: {2}
-)",
-index,
-pCurrentHeader->bytes,
-pCurrentHeader->bytes + MemoryPaddingBytes));
+		} while (index--);
 
 		return report;
 	}

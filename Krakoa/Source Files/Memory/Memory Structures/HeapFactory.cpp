@@ -27,7 +27,11 @@ namespace memory
 		
 		MEM_INIT_LOGS();
 		MEM_SET_FLUSHING(true);
-
+		MEM_NORM(R"(Definitions:
+Object - "Structured piece of data in memory"
+Block -  "Allocated space of an object in memory including AllocHeader & end marker"
+)")
+		
 #ifdef KRAKOA_RELEASE
 		MEM_TOGGLE_LOGGING(); // Disable memory logging
 #endif

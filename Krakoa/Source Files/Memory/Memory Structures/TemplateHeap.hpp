@@ -50,11 +50,11 @@ namespace memory
 		std::string report;
 
 		report.append(ToString(R"(Heap "{0}"
-Count: {1}
-Bytes per object: {2}
-Bytes per block: {3}
-Object's Total Bytes In Memory: {4}
-Heap's Total Bytes In Memory: {5}
+Object Bytes: {2}
+Total Object Bytes: {4}
+Block Bytes: {3}
+Total Block Bytes: {5}
+Total Number of Allocations: {1}
 )",
 name,
 count,

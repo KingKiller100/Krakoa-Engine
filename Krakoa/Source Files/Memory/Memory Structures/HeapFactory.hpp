@@ -2,14 +2,14 @@
 
 #include <vector>
 
-#include "TypedHeap.hpp"
+#include "TemplateHeap.hpp"
 
 namespace memory
 {
 	class HeapFactory final
 	{
 		using HeapList = std::vector<HeapBase*>;
-		
+
 		struct Token {};
 	public:
 		static void Initialize() noexcept;
@@ -18,10 +18,12 @@ namespace memory
 		template<typename T>
 		static HeapBase* CreateHeap()
 		{
-			using Heap = TypedHeap<T>;
+			static Heap_VTBL tVTBL(GetTemplateHeapStatus<T>,
+				CallObjectDestructor<T>);
 			
-			auto* heap = CAST(HeapBase*, malloc(sizeof(Heap)));
-			heap->Initialize(typeid(T).name(), &typeHeapVTBL<T>);
+			auto* heap = CAST(HeapBase*, malloc(sizeof(THeap<T>)));
+
+			heap->Initialize(typeid(T).name(), &tVTBL);
 			heaps.emplace_back(heap);
 			return heap;
 		}

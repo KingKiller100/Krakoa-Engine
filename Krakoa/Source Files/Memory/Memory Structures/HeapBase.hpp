@@ -3,25 +3,30 @@
 #include <HelperMacros.hpp>
 
 #include <string>
+#include <functional>
 
 namespace memory
 {
+	class HeapBase;
+	
 	struct Heap_VTBL
 	{
-		typedef std::string(*GetStatusFunc)();
-		typedef void(*CallObjectDestructorFunc)(void*);
+		std::function<std::string(const HeapBase*)> getStatusFunc;
+		std::function<void(void*)> callObjFunc;
 
-		GetStatusFunc getStatusFunc;
-		CallObjectDestructorFunc callObjFunc;
+		Heap_VTBL(std::function<std::string(const HeapBase*)> statusFunc, std::function<void(void*)> destFunc)
+			: getStatusFunc(std::move(statusFunc)),
+		callObjFunc(std::move(destFunc))
+		{}
 	};
 	
 	class HeapBase 
 	{
 	public:
 		explicit HeapBase(const char* name) noexcept;
-		~HeapBase() noexcept;
+		~HeapBase() noexcept = default;
 
-		void Initialize(const char* n, Heap_VTBL *heapVTBL) noexcept;
+		void Initialize(const char* n, Heap_VTBL * heapVTBL) noexcept;
 
 		template<size_t N>
 		void SetName(const char(&n)[N]) noexcept

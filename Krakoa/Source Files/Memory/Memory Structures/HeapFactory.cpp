@@ -37,14 +37,17 @@ namespace memory
 
 	HeapBase* HeapFactory::GetDefaultHeap() noexcept
 	{
-		static Heap_VTBL defaultHeapVTBL = {};
-		
+		static Heap_VTBL defaultVTBL(
+			[](const HeapBase* ptr) {return std::string(); },
+			[](void* ptr){}
+	);
+
 		if (!defaultHeap)
 		{
-			defaultHeap = static_cast<DefaultHeap*>(malloc(sizeof(DefaultHeap)));
-			defaultHeap->Initialize("Default", &defaultHeapVTBL);
+			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(DefaultHeap)));
+			defaultHeap->Initialize("Default", &defaultVTBL);
 		}
-
+		
 		return defaultHeap;
 	}
 

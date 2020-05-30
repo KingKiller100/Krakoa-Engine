@@ -11,17 +11,17 @@
 namespace memory
 {
 	template<typename T>
-	class TypedHeap final : public HeapBase
+	class TemplateHeap final : public HeapBase
 	{
 	public:
 		using Type = T;
 		static constexpr auto TypeBytes = sizeof(Type);
 		
-		explicit TypedHeap() noexcept
+		explicit TemplateHeap() noexcept
 			: HeapBase(typeid(Type).name())
 		{}
 
-		~TypedHeap() noexcept
+		~TemplateHeap() noexcept
 			= default;
 
 		USE_RESULT constexpr size_t GetBytesPerObject() const
@@ -31,30 +31,32 @@ namespace memory
 	};
 
 	template<typename T>
+	using THeap = TemplateHeap<T>; // Template Heap
+
+	template<typename T>
 	static void CallObjectDestructor(void* pMemPtr)
 	{
-		auto ptr = REINTERPRET(T*, pMemPtr);
+		auto* ptr = REINTERPRET(T*, pMemPtr);
 
 		ptr->~T();
 	}
 
 	template<typename T>
-	static std::string GetTypedHeapStatus(HeapBase* pHeap)
+	static std::string GetTemplateHeapStatus(const HeapBase* pHeap)
 	{
 		using namespace klib::kFormat;
+		using Heap = TemplateHeap<T>;
+		
+		constexpr size_t bytesPerObj = Heap::TypeBytes;
 
 		const auto name = pHeap->GetName();
 		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
 
-		auto typeHeap = REINTERPRET(TypedHeap<T>*, pHeap);
-		const auto bytesPerObj = typeHeap->GetBytesPerObject();
+		const size_t count = pHeap->WalkTheHeap();
+		const size_t multiplier = (count ? count : 1);
 
-		
-		const auto count = pHeap->WalkTheHeap();
-		const auto multiplier = (count ? count : 1);
-
-		const auto bytesPerBlock = (pHeap->GetTotalAllocatedBytes() / multiplier);
-		const auto totalBytesOfThisObject = bytesPerObj * multiplier;
+		const size_t bytesPerBlock = (pHeap->GetTotalAllocatedBytes() / multiplier);
+		const size_t totalBytesOfThisObject = bytesPerObj * multiplier;
 
 		std::string details;
 
@@ -95,7 +97,10 @@ totalBytes));
 
 		return details;
 	}
-
-	template<typename T>
-	const Heap_VTBL typeHeapVTBL = { GetTypedHeapStatus<T>, CallObjectDestructor<T> };
+	
+	/*template<typename T>
+	Heap_VTBL templateHeapVTBL = Heap_VTBL(
+		GetTemplateHeapStatus<T>,
+		CallObjectDestructor<T>
+	);*/
 }

@@ -8,20 +8,17 @@
 
 #include <Utility/Format/kFormatToString.hpp>
 
-
 namespace memory
 {
 	HeapBase::HeapBase(const char* name) noexcept
 		: name(name),
 		totalBytes(0),
-		pPrevAddress(nullptr)
+		pPrevAddress(nullptr),
+		vtbl(nullptr)
 	{}
 
-	HeapBase::~HeapBase() noexcept
-		= default;
 
-	void HeapBase::Initialize(const char* n,
-		Heap_VTBL *heapVTBL) noexcept
+	void HeapBase::Initialize(const char* n, Heap_VTBL* heapVTBL) noexcept
 	{
 		name = n;
 		totalBytes = 0;
@@ -98,7 +95,7 @@ namespace memory
 	std::string HeapBase::GetStatus() const noexcept
 	{
 		MEM_FATAL(vtbl->getStatusFunc, "HeapBase's vtbl is unset");
-		return vtbl->getStatusFunc();
+		return vtbl->getStatusFunc(this);
 	}
 
 	void HeapBase::CallObjectDestructor(void* pMemPtr) const noexcept

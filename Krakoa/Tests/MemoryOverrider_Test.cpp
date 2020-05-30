@@ -20,9 +20,7 @@ namespace krakoa::tests
 		= default;
 
 	class TestMemType : public patterns::MemoryOverrider<TestMemType>
-	{
-
-	};
+	{};
 
 	void MemoryOverriderTester::Test()
 	{

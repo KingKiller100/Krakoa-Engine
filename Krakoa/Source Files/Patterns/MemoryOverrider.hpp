@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Memory/Memory Structures/TypedHeap.hpp"
+#include "../Memory/Memory Structures/TemplateHeap.hpp"
 #include "../Memory/Memory Structures/HeapFactory.hpp"
 #include "../Memory/MemoryOperators.hpp"
 

@@ -17,13 +17,18 @@ namespace krakoa::tests
 	{}
 
 	MemoryOverriderTester::~MemoryOverriderTester()
-	{
-		double e = 9;
-		e = 10;
-	}
+		= default;
 
 	class TestMemType : public patterns::MemoryOverrider<TestMemType>
-	{};
+	{
+	public:
+		~TestMemType()
+		{
+			int i = 6;
+			++i;
+		}
+		
+	};
 
 	void MemoryOverriderTester::Test()
 	{

@@ -14,9 +14,9 @@ namespace memory
 		std::function<std::string(const HeapBase*)> getStatusFunc;
 		std::function<void(void*)> callObjFunc;
 
-		Heap_VTBL(std::function<std::string(const HeapBase*)> statusFunc, std::function<void(void*)> destFunc)
+		Heap_VTBL(std::function<std::string(const HeapBase*)> statusFunc, std::function<void(void*)> callObjFunc)
 			: getStatusFunc(std::move(statusFunc)),
-		callObjFunc(std::move(destFunc))
+		callObjFunc(std::move(callObjFunc))
 		{}
 	};
 	

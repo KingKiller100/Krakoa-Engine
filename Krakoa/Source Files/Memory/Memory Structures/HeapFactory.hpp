@@ -18,12 +18,8 @@ namespace memory
 		template<typename T>
 		static HeapBase* CreateHeap()
 		{
-			static Heap_VTBL tVTBL(GetTemplateHeapStatus<T>,
-				CallObjectDestructor<T>);
-			
-			auto* heap = CAST(HeapBase*, malloc(sizeof(THeap<T>)));
-
-			heap->Initialize(typeid(T).name(), &tVTBL);
+			auto* heap = CAST(HeapBase*, malloc(sizeof(TemplateHeap<T>)));
+			heap->Initialize(typeid(T).name(), &templateHeapVTBL<T>);
 			heaps.emplace_back(heap);
 			return heap;
 		}

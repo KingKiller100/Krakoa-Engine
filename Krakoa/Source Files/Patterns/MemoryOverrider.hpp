@@ -22,24 +22,24 @@ namespace patterns
 			return MemoryOverrider::operator new(bytes);
 		}
 
-		void operator delete(void* ptr)
+		void operator delete(void* pMemBlock)
 		{
-			::operator delete(ptr);
+			::operator delete(pMemBlock);
 		}
 
-		void operator delete(void* ptr, const size_t bytes)
+		void operator delete(void* pMemBlock, const size_t bytes)
 		{
-			::operator delete(ptr);
+			::operator delete(pMemBlock);
 		}
 
-		void operator delete[](void* ptr)
+		void operator delete[](void* pMemBlock)
 		{
-			::operator delete[](ptr);
+			::operator delete[](pMemBlock);
 		}
 
-		void operator delete[](void* ptr, const size_t bytes)
+		void operator delete[](void* pMemBlock, const size_t bytes)
 		{
-			::operator delete[](ptr);
+			::operator delete[](pMemBlock);
 		}
 
 		USE_RESULT static std::string GetHeapStatus() noexcept

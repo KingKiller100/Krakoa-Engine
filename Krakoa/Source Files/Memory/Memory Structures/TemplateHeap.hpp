@@ -2,8 +2,6 @@
 
 #include "HeapBase.hpp"
 
-#include "MemoryTypes.hpp"
-
 #include <Utility/Format/kFormatToString.hpp>
 
 #include <string>
@@ -31,14 +29,11 @@ namespace memory
 	};
 
 	template<typename T>
-	using THeap = TemplateHeap<T>; // Template Heap
-
-	template<typename T>
 	static void CallObjectDestructor(void* pMemPtr)
 	{
 		auto& ref = *REINTERPRET(T*, pMemPtr);
 
-		ref.~T();
+		//ref.~T();
 	}
 
 	template<typename T>
@@ -58,11 +53,11 @@ namespace memory
 		const size_t bytesPerBlock = (pHeap->GetTotalAllocatedBytes() / multiplier);
 		const size_t totalBytesOfThisObject = bytesPerObj * multiplier;
 
-		std::string details;
+		std::string report;
 
 		if (count)
 		{
-			details.append(ToString(
+			report.append(ToString(
 R"(Heap "{0}"
 Count: {1}
 Bytes per object: {2}
@@ -79,7 +74,7 @@ totalBytes));
 		}
 		else if (totalBytes)
 		{
-			details.append(ToString(
+			report.append(ToString(
 R"(Heap "{0}"
 Count: 1
 Bytes per object: {1}
@@ -92,15 +87,15 @@ bytesPerObj,
 totalBytes));
 		}
 		else
-			details.append(ToString("Heap \"{0}\" is empty\n", name));
+			report.append(ToString("Heap \"{0}\" is empty\n", name));
 
 
-		return details;
+		return report;
 	}
 	
-	/*template<typename T>
+	template<typename T>
 	Heap_VTBL templateHeapVTBL = Heap_VTBL(
 		GetTemplateHeapStatus<T>,
 		CallObjectDestructor<T>
-	);*/
+	);
 }

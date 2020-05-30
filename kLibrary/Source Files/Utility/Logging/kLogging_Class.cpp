@@ -26,7 +26,8 @@ namespace klib::kLogs
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
-		inCacheMode(false)
+		inCacheMode(false),
+		constantFlushing(false)
 	{
 		SetUp();
 	}
@@ -38,7 +39,8 @@ namespace klib::kLogs
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
-		inCacheMode(false)
+		inCacheMode(false),
+		constantFlushing(false)
 	{
 		SetUp();
 	}
@@ -154,10 +156,16 @@ namespace klib::kLogs
 		filename = AppendFileExtension(newFileName.data(), ".log");
 		ResumeFileLogging();
 	}
+	
+	std::string Logging::GetOutputPath() const
+	{
+		const auto path = directory + filename;
+		return path;
+	}
 
 	void Logging::SuspendFileLogging()
 	{
-		constexpr auto* const pauseLog = "\n************************************************************************\n";
+		constexpr const auto* const pauseLog = "\n************************************************************************\n";
 		AddToLogBuffer(pauseLog);
 		OutputToSubSystems(pauseLog, LLevel::NORM);
 		CloseLogFile();
@@ -231,6 +239,12 @@ namespace klib::kLogs
 		isEnabled = false;
 	}
 
+	void Logging::Flush()
+	{
+		if (logFileStream.is_open())
+			logFileStream.flush();
+	}
+
 	void Logging::CloseLogFile()
 	{
 		if (logFileStream.is_open())
@@ -293,7 +307,10 @@ namespace klib::kLogs
 		}
 
 		if (logFileStream)
+		{
 			logFileStream << fullCache;
+			if (constantFlushing) Flush();
+		}
 	}
 
 	std::string Logging::GetFullCache()
@@ -339,5 +356,10 @@ namespace klib::kLogs
 	{
 		if (!logEntryQueue.empty())
 			logEntryQueue.clear();
+	}
+
+	void Logging::EnableConstantFlush(bool enable)
+	{
+		constantFlushing = enable;
 	}
 }

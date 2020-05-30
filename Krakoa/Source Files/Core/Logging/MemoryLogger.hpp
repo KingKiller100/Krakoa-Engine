@@ -19,9 +19,11 @@ namespace memory
 
 
 // MEMORY SIDE Log Macros
-#define MEM_INIT_LOGS()                                 ::memory::MemoryLogger::Init();
+#define MEM_INIT_LOGS()                                     ::memory::MemoryLogger::Init();
+#define MEM_SET_FLUSHING(enable)                            ::memory::MemoryLogger::GetLogger().EnableConstantFlush(enable);
 #define MEM_SET LOG_NAME(name)                              ::memory::MemoryLogger::GetLogger().SetName(name);
 #define MEM_SET_LOG_MIN(minLvl)                             ::memory::MemoryLogger::GetLogger().SetMinimumLoggingLevel(minLvl);
+#define MEM_GET_LOG_PATH()                                      ::memory::MemoryLogger::GetLogger().GetOutputPath();
 #define MEM_TOGGLE_LOGGING()                                ::memory::MemoryLogger::GetLogger().ToggleLoggingEnabled();
 #define MEM_TOGGLE_SUBSYSTEM_LOGGING()                      ::memory::MemoryLogger::GetLogger().ToggleSubSystemEnabled();
 #define MEM_DISABLE_LOGFILE_OUTPUT()                        ::memory::MemoryLogger::GetLogger().SetCacheMode(true);

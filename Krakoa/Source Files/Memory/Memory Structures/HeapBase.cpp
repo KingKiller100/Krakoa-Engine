@@ -55,10 +55,14 @@ namespace memory
 	{
 		auto* pCurrentHeader = static_cast<AllocHeader*>(pPrevAddress); // casts to AllocHeader to find previous and next
 
-		if (!pCurrentHeader || !pCurrentHeader->pPrev)
+		if (!pCurrentHeader)
 			return 0;
 
-		unsigned count(0);
+		if (!pCurrentHeader->pPrev)
+			return 1;
+
+		unsigned count(1);
+		pCurrentHeader = pCurrentHeader->pPrev;
 
 		while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
 		{
@@ -74,9 +78,9 @@ namespace memory
 					pCurrentHeader->pHeap->name,
 					count));
 
-			count++;
-
 			pCurrentHeader = pCurrentHeader->pPrev;
+
+			count++;
 		}
 
 		return count;
@@ -96,11 +100,5 @@ namespace memory
 	{
 		MEM_FATAL(vtbl->getStatusFunc, "HeapBase's vtbl is unset");
 		return vtbl->getStatusFunc(this);
-	}
-
-	void HeapBase::CallObjectDestructor(void* pMemPtr) const noexcept
-	{
-		MEM_FATAL(vtbl->callObjFunc, "HeapBase's vtbl is unset");
-		vtbl->callObjFunc(pMemPtr);
 	}
 }

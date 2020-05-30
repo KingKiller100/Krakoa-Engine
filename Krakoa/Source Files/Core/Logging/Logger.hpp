@@ -28,8 +28,9 @@ namespace krakoa
 
 // CLIENT SIDE Log Macros
 #define INIT_LOGS(name)                                 ::krakoa::Logger::ClientInit(name);
-#define SET LOG_NAME(name)                              ::krakoa::Logger::GetLogger().SetName(name);
+#define SET_LOG_NAME(name)                              ::krakoa::Logger::GetLogger().SetName(name);
 #define SET_LOG_MIN(minLvl)                             ::krakoa::Logger::GetLogger().SetMinimumLoggingLevel(minLvl);
+#define GET_LOG_PATH()                                  ::krakoa::Logger::GetLogger().GetOutputPath();
 #define TOGGLE_LOGGING()                                ::krakoa::Logger::GetLogger().ToggleLoggingEnabled();
 #define TOGGLE_SUBSYSTEM_LOGGING()                      ::krakoa::Logger::GetLogger().ToggleSubSystemEnabled();
 #define DISABLE_LOGFILE_OUTPUT()                        ::krakoa::Logger::GetLogger().SetCacheMode(true);

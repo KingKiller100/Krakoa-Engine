@@ -22,12 +22,22 @@ namespace krakoa::tests
 	class TestMemType : public patterns::MemoryOverrider<TestMemType>
 	{
 	public:
+		friend class MemoryOverriderTester;
+		
 		~TestMemType()
 		{
-			int i = 6;
-			++i;
+			if (func)
+				func(tester);
 		}
-		
+
+		void TestDestructor(const MemoryOverriderTester* test, std::function<void(const MemoryOverriderTester*)> fn)
+		{
+			tester = test;
+			func = std::move(fn);
+		}
+
+		std::function<void(const MemoryOverriderTester*)> func;
+		const MemoryOverriderTester* tester;
 	};
 
 	void MemoryOverriderTester::Test()
@@ -66,6 +76,15 @@ namespace krakoa::tests
 
 		const auto totalSizeOFBlockMemoryStr = lines[5];
 		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string((testMemTypeSize + memory::MemoryPaddingBytes) * 6)) != npos);
+
+		success = false;
+		VERIFY(!success);
+
+		scope->TestDestructor(this, [&](const MemoryOverriderTester* ptr)
+		{
+			VERIFY(ptr == this);
+			success = true;
+		});
 	}
 }
 #endif

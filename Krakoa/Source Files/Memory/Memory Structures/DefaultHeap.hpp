@@ -19,18 +19,28 @@ namespace memory
 		~DefaultHeap() noexcept;
 	};
 
-	static void DefaultCallObjectDestructor(void* pMemPtr)
-	{
-		//No Impl
-	}
-
 	static std::string GetDefaultHeapStatus(const HeapBase* pHeap)
 	{
 		using namespace klib::kFormat;
 
 		std::string report = "Heap \"Default\" is empty\n";
+		
 		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
+		const auto numOfAllocs = pHeap->WalkTheHeap();
+		const auto BlockTotal = totalBytes + MemoryPaddingBytes * numOfAllocs;
+		size_t index(numOfAllocs);
 
+		report.append(ToString(R"(
+Total Bytes: {0}
+Total Bytes (Including Padding): {1}
+Total Number of Allocations: {2}
+
+# Please look below for further details #
+)",
+totalBytes,
+BlockTotal,
+numOfAllocs
+));
 
 		auto* pCurrentHeader = static_cast<AllocHeader*>(pHeap->GetPrevAddress()); // casts to AllocHeader to find previous and next
 
@@ -39,36 +49,38 @@ namespace memory
 
 		report.clear();
 
-		unsigned index(0);
 
-		while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
+		while (pCurrentHeader->pPrev && pCurrentHeader != pCurrentHeader->pPrev) // Move to the first 
 		{
-			MEM_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
-				klib::kFormat::ToString("CORRUPTED HEAP - Incorrect signature on heap: \"{0}\" position: {1}\n",
-					pCurrentHeader->pHeap->GetName(),
-					index));
+			pCurrentHeader = pCurrentHeader->pPrev;
+		}
 
-			auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + AllocHeaderBytes + pCurrentHeader->bytes);
-
-			MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
-				klib::kFormat::ToString("CORRUPTED HEAP - Incorrect end marker on heap: \"{0}\" position: {1}\n",
-					pCurrentHeader->pHeap->GetName(),
-					index));
-
+		do {
+			const auto bytes = pCurrentHeader->bytes;
 			const auto blockBytes = pCurrentHeader->bytes + MemoryPaddingBytes;
 
 			report.append(ToString(R"(
 Heap: "Default" Index: {0}
 Object Bytes: {1}
-Block Bytes: {2})",
-index,
-pCurrentHeader->bytes,
+Block Bytes: {2}
+)",
+index--,
+bytes,
 blockBytes));
 
-			++index;
+			pCurrentHeader = pCurrentHeader->pNext;
+		} while (index);
 
-			pCurrentHeader = pCurrentHeader->pPrev;
-		}
+
+		
+		report.append(ToString(R"(
+Heap: "Default" Index: {0}
+Object Bytes: {1}
+Block Bytes: {2}
+)",
+index,
+pCurrentHeader->bytes,
+pCurrentHeader->bytes + MemoryPaddingBytes));
 
 		return report;
 	}

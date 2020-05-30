@@ -5,6 +5,7 @@
 
 #include "../../Core/Logging/MemoryLogger.hpp"
 
+#include <Utility/File System/kFileSystem.hpp>
 #include <Utility/String/kStringManipulation.hpp>
 
 
@@ -15,7 +16,17 @@ namespace memory
 
 	void HeapFactory::Initialize() noexcept
 	{
+		using namespace klib;
+		
+		const auto currentDir = kFileSystem::GetExeDirectory();
+		
+		if (kFileSystem::CheckFileExists(currentDir + "Logs\\Memory.log"))
+		{
+			kFileSystem::RemoveFile(currentDir + "Logs\\Memory.log");
+		}
+		
 		MEM_INIT_LOGS();
+		MEM_SET_FLUSHING(true);
 
 #ifdef KRAKOA_RELEASE
 		MEM_TOGGLE_LOGGING(); // Disable memory logging
@@ -31,20 +42,19 @@ namespace memory
 		}
 
 		MEM_INFO(defaultHeap->GetStatus());
-
 		heaps.clear();
 	}
 
 	HeapBase* HeapFactory::GetDefaultHeap() noexcept
 	{
-		static Heap_VTBL localVBTL(GetDefaultHeapStatus, DefaultCallObjectDestructor);
-		
+		static Heap_VTBL localVBTL(GetDefaultHeapStatus);
+
 		if (!defaultHeap)
 		{
 			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(DefaultHeap)));
 			defaultHeap->Initialize("Default", &localVBTL);
 		}
-		
+
 		return defaultHeap;
 	}
 

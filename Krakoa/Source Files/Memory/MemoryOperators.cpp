@@ -87,8 +87,6 @@ void operator delete(void* ptr)
 	MEM_ASSERT(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER);
 
 	pHeap->Deallocate(totalBytes);
-
-	pHeap->CallObjectDestructor(ptr);
 	
 	free(pHeader);
 

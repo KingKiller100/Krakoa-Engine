@@ -428,10 +428,10 @@ namespace klib::kFormat
 	}
 
 	template<class CharType, typename T>
-	constexpr std::basic_string<CharType> ToString(T object)
+	constexpr std::basic_string<CharType> ToString(T&& object)
 	{
 		std::basic_stringstream<CharType> ss;
-		ss << object;
+		ss << std::forward<T>(object);
 		return ss.str();
 	}
 }

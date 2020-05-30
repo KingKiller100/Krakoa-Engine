@@ -31,6 +31,7 @@ namespace krakoa
 // ENGINE SIDE Log Macros
 #define KRK_INIT_LOGS()                                 ::krakoa::CoreLogger::CoreInit();
 #define KRK_SET_LOG_MIN(minLvl)                         ::krakoa::CoreLogger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
+#define KRK_GET_LOG_PATH()                                  ::krakoa::CoreLogger::GetLogger().GetOutputPath();
 #define KRK_TOGGLE_LOGGING()                            ::krakoa::CoreLogger::GetCoreLogger().ToggleLoggingEnabled();
 #define KRK_DISABLE_FILE_OUTPUT()                       ::krakoa::CoreLogger::GetCoreLogger().SetCacheMode(true);
 #define KRK_ENABLE_FILE_OUTPUT()                        ::krakoa::CoreLogger::GetCoreLogger().SetCacheMode(false);

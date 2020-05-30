@@ -225,13 +225,15 @@ namespace klib::kFileSystem
 		FILE* file;
 		auto result = -1;
 
+		const auto path = kString::Replace<CharType>(fullFilePath, CharType('/'), CharType('\\'));
+		
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			result = fopen_s(&file, fullFilePath.data(), "r");
+			result = fopen_s(&file, path.data(), "r");
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
-			result = _wfopen_s(&file, fullFilePath.data(), L"r");
+			result = _wfopen_s(&file, path.data(), L"r");
 		}
 		else
 		{

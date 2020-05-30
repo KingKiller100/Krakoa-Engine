@@ -11,13 +11,15 @@ namespace memory
 	
 	struct Heap_VTBL
 	{
-		std::function<std::string(const HeapBase*)> getStatusFunc;
-		std::function<void(void*)> callObjFunc;
+	public:
+		typedef std::string(*GetStatusFunc)(const HeapBase*);
 
-		Heap_VTBL(std::function<std::string(const HeapBase*)> statusFunc, std::function<void(void*)> callObjFunc)
-			: getStatusFunc(std::move(statusFunc)),
-		callObjFunc(std::move(callObjFunc))
+		explicit Heap_VTBL(GetStatusFunc statusFunc)
+			: getStatusFunc(std::move(statusFunc))
 		{}
+		
+	public:
+		GetStatusFunc getStatusFunc = nullptr;
 	};
 	
 	class HeapBase 
@@ -47,7 +49,6 @@ namespace memory
 		USE_RESULT void* GetPrevAddress() const noexcept;
 
 		USE_RESULT std::string GetStatus() const noexcept;
-		void CallObjectDestructor(void* pMemPtr) const noexcept;
 		
 	protected:
 		const char* name;

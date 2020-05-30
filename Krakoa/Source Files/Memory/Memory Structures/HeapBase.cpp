@@ -51,7 +51,7 @@ namespace memory
 		return totalBytes;
 	}
 
-	size_t HeapBase::WalkTheHeap() const noexcept
+	size_t HeapBase::WalkTheHeap() const
 	{
 		auto* pCurrentHeader = static_cast<AllocHeader*>(pPrevAddress); // casts to AllocHeader to find previous and next
 
@@ -96,7 +96,7 @@ namespace memory
 		return pPrevAddress;
 	}
 
-	std::string HeapBase::GetStatus() const noexcept
+	std::string HeapBase::GetStatus() const
 	{
 		MEM_FATAL(vtbl->getStatusFunc, "HeapBase's vtbl is unset");
 		return vtbl->getStatusFunc(this);

@@ -67,13 +67,10 @@ namespace kmaths
 
 			if (Rows < size)
 				throw std::overflow_error("Attempting to create maths vector with more elements than dimensions");
-
+			
 			const auto first_iter = list.begin();
 
 			for (auto row = 0u; row < Rows; ++row) {
-				if (row >= size)
-					return;
-				
 				for (auto col = 0u; col < Columns; ++col)
 				{
 					const auto ptr = (first_iter + row);
@@ -83,13 +80,13 @@ namespace kmaths
 			}
 		}
 
-		explicit constexpr Matrix(const Type (&list)[Rows * Columns])
+		explicit constexpr Matrix(const Type(&list)[Rows * Columns])
 		{
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
 				{
 					const auto index = (row * Columns) + col;
-					
+
 					elems[row][col] = list[index];
 				}
 		}

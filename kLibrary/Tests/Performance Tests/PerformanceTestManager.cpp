@@ -77,7 +77,7 @@ namespace kTest::performance
 
 		test->Run();
 
-		std::cout << "Runtime: " << runTimeTimer.GetLifeTime<klib::kTime::units::Millis>() << "ms (Milliseconds)\n";
+		std::cout << "Runtime: " << runTimeTimer.GetLifeTime<klib::kTime::units::Secs>() << "s (seconds)\n";
 
 	}
 

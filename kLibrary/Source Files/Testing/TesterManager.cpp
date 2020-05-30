@@ -106,13 +106,15 @@ namespace kTest
 
 	void TesterManager::Run(Tester* test)
 	{
-		klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+		const klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
 
 		std::cout << "Now running: " << test->GetName() << "";
 
 		const auto result = test->Run();
 
-		const auto runtimeStr = klib::kFormat::ToString("| Runtime: %.fus (Microseconds)", runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
+		const auto runtimeStr = klib::kFormat::ToString(
+			"| Runtime: %.fus (microseconds)",
+			runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
 		std::cout << " " << runtimeStr << "\n";
 
 		if (!result)

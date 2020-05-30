@@ -41,17 +41,15 @@ namespace memory
 
 		const size_t count = pHeap->WalkTheHeap();
 
+		if (!count)
+			return ToString("Heap \"{0}\" is empty\n", name);
+
 		const size_t bytesPerBlock = (pHeap->GetTotalAllocatedBytes() / count);
 		const size_t totalBytesOfThisObject = bytesPerObj * count;
 
 		std::string report;
 
-		if (!count)
-			report.append(ToString("Heap \"{0}\" is empty\n", name));
-		else
-		{
-			report.append(ToString(R"(
-Heap "{0}"
+		report.append(ToString(R"(Heap "{0}"
 Count: {1}
 Bytes per object: {2}
 Bytes per block: {3}
@@ -64,7 +62,7 @@ bytesPerObj,
 bytesPerBlock,
 totalBytesOfThisObject,
 totalBytes));
-		}
+
 
 		return report;
 	}

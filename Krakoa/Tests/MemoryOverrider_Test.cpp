@@ -17,7 +17,10 @@ namespace krakoa::tests
 	{}
 
 	MemoryOverriderTester::~MemoryOverriderTester()
-		= default;
+	{
+		double e = 9;
+		e = 10;
+	}
 
 	class TestMemType : public patterns::MemoryOverrider<TestMemType>
 	{};
@@ -31,6 +34,10 @@ namespace krakoa::tests
 
 		for (auto i = 0; i < 5; ++i)
 			const auto* const lifeTime = new TestMemType();
+
+		for (auto i = 0; i < 5; ++i)
+			delete new TestMemType();
+		
 		const auto scope = Make_Solo<TestMemType>();
 
 

@@ -36,9 +36,9 @@ namespace memory
 	template<typename T>
 	static void CallObjectDestructor(void* pMemPtr)
 	{
-		auto* ptr = REINTERPRET(T*, pMemPtr);
+		auto& ref = *REINTERPRET(T*, pMemPtr);
 
-		ptr->~T();
+		ref.~T();
 	}
 
 	template<typename T>

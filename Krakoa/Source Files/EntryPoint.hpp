@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Memory/MemoryPool.hpp"
 #include "Memory/Memory Structures/HeapFactory.hpp"
 
 #ifdef KRAKOA_TEST

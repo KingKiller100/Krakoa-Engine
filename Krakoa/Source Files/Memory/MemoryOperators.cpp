@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOperators.hpp"
 
+#include "MemoryPool.hpp"
 #include "Memory Structures/HeapBase.hpp"
 #include "Memory Structures/MemoryTypes.hpp"
 #include "Memory Structures/HeapFactory.hpp"
@@ -10,13 +11,15 @@
 #include <cassert>
 
 
+
 void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHeader
 {
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
-	
+	auto& memPool = memory::MemoryPool::Reference();
+
+	memPool.Initialize(1, kmaths::BytesUnits::KILO);
 	const size_t requestedBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes; // Alignment in memory
-	auto* pBlock = CAST(memory::Byte_Ptr_Type, malloc(requestedBytes));
-	MEM_ASSERT(pBlock);
+	auto* pBlock = memPool.Allocate(requestedBytes);
 	auto* pHeader = REINTERPRET(memory::AllocHeader*, pBlock);
 
 	pHeader->signature = KRK_MEMSYSTEM_SIGNATURE;
@@ -94,8 +97,9 @@ void operator delete(void* ptr)
 
 	pHeap->Deallocate(totalBytes);
 	
-	free(pHeader);
-
+	memory::MemoryPool::Reference().Deallocate(pHeader, totalBytes);
+	//free(pHeader);
+	
 	ptr = nullptr;
 }
 

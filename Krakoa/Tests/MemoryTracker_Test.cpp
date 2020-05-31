@@ -1,8 +1,8 @@
 ﻿#include "Precompile.hpp"
-#include "MemoryOverrider_Test.hpp"
+#include "MemoryTracker_Test.hpp"
 
 #include "../Source Files/PointerTypes.hpp"
-#include "../Source Files/Patterns/MemoryOverrider.hpp"
+#include "../Source Files/Patterns/MemoryTracker.hpp"
 #include "../Source Files/Core/Logging/MemoryLogger.hpp"
 #include "../Source Files/Memory/Memory Structures/MemoryTypes.hpp"
 
@@ -12,17 +12,17 @@
 #ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
-	MemoryOverriderTester::MemoryOverriderTester() noexcept
+	MemoryTrackerTester::MemoryTrackerTester() noexcept
 		: Tester("Memory Overrider Test")
 	{}
 
-	MemoryOverriderTester::~MemoryOverriderTester()
+	MemoryTrackerTester::~MemoryTrackerTester()
 		= default;
 
-	class TestMemType : public patterns::MemoryOverrider<TestMemType>
+	class TestMemType : public patterns::MemoryTracker<TestMemType>
 	{
 	public:
-		friend class MemoryOverriderTester;
+		friend class MemoryTrackerTester;
 		
 		~TestMemType()
 		{
@@ -30,17 +30,17 @@ namespace krakoa::tests
 				func(tester);
 		}
 
-		void TestDestructor(const MemoryOverriderTester* test, std::function<void(const MemoryOverriderTester*)> fn)
+		void TestDestructor(const MemoryTrackerTester* test, std::function<void(const MemoryTrackerTester*)> fn)
 		{
 			tester = test;
 			func = std::move(fn);
 		}
 
-		std::function<void(const MemoryOverriderTester*)> func;
-		const MemoryOverriderTester* tester;
+		std::function<void(const MemoryTrackerTester*)> func;
+		const MemoryTrackerTester* tester;
 	};
 
-	void MemoryOverriderTester::Test()
+	void MemoryTrackerTester::Test()
 	{
 		constexpr auto npos = std::string::npos;
 		constexpr auto testMemTypeSize = sizeof(TestMemType);
@@ -78,12 +78,10 @@ namespace krakoa::tests
 		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string((testMemTypeSize + memory::MemoryPaddingBytes) * 6)) != npos);
 
 		success = false;
-		VERIFY(!success);
 
-		scope->TestDestructor(this, [&](const MemoryOverriderTester* ptr)
+		scope->TestDestructor(this, [&](const MemoryTrackerTester* ptr)
 		{
 			VERIFY(ptr == this);
-			success = true;
 		});
 	}
 }

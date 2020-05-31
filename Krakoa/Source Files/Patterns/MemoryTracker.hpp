@@ -6,7 +6,7 @@
 namespace patterns
 {
 	template<typename T>
-	class MemoryOverrider
+	class MemoryTracker
 	{
 	public:
 		void* operator new(const size_t bytes)
@@ -19,7 +19,7 @@ namespace patterns
 
 		void* operator new[](const size_t bytes)
 		{
-			return MemoryOverrider::operator new(bytes);
+			return MemoryTracker::operator new(bytes);
 		}
 
 		void operator delete(void* pMemBlock)

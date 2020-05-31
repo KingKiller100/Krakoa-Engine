@@ -33,6 +33,9 @@ namespace memory
 		static size_t GetSize();
 
 	private:
+		static void LogTotalBytes(const size_t* bytes) noexcept;
+		static void LogTotalAllocations(const size_t* bytes) noexcept;
+		
 		explicit HeapFactory(Token);
 
 	private:

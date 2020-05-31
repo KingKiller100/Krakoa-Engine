@@ -11,6 +11,8 @@
 
 void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHeader
 {
+	MEM_ASSERT(bytes < CAST(size_t, -1));
+	
 	const size_t requestedBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes; // Alignment in memory
 	auto* pBlock = CAST(memory::Byte_Ptr_Type, malloc(requestedBytes));
 	MEM_ASSERT(pBlock);

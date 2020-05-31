@@ -21,7 +21,8 @@ namespace kTest
 		void Shutdown();
 		void InitializeMathsTests();
 		void InitializeUtilityTests();
-		void RunPerformanceTests();
+		void InitializeTemplateTests();
+		void RunPerformanceTests() const;
 		void Add(Tester* test);
 		void Run(Tester* test);
 		void RunAll();

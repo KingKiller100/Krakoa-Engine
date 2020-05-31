@@ -352,7 +352,7 @@ namespace kTest::maths
 		}
 
 		{
-			const auto mat = constants::XOverY<Matrix3x3s>(10, 5);
+			const auto mat = constants::Divide<Matrix3x3s>(10, 5);
 			for (auto row = 0u; row < mat.GetRows(); ++row)
 				for (auto col = 0u; col < mat.GetColumns(); ++col)
 					VERIFY(mat[row][col] == 2);

@@ -8,18 +8,27 @@ namespace memory
 {
 class MemoryPool
 {
+	struct Token{};
+	
 public:
-	void Allocate(const size_t bytes);
-	void Deallocate(const size_t bytes);
+	MemoryPool(Token&) noexcept;
+	~MemoryPool() noexcept;
+
+	void Initialize();
+	
+	void Allocate(void* pBlock, const size_t bytes);
+	void Deallocate(void* pBlock, const size_t bytes);
+
 	USE_RESULT size_t GetTotalBytes() const;
 	USE_RESULT size_t GetMaxBytes() const;
 	
 	USE_RESULT size_t WalkTheHeap() const;
-	USE_RESULT std::string GetReport() const;
+	USE_RESULT std::string GetStatus() const;
 	
-	
+	static MemoryPool& GetInstance();
 private:
-	size_t maxBytes;
+	size_t maxStorage;
+	//std::array<void*, std::giga::num> 
 };
 }
 

@@ -16,6 +16,7 @@ namespace krakoa::tests
 		testMan.Initialize();
 		testMan.InitializeMathsTests();
 		testMan.InitializeUtilityTests();
+		testMan.InitializeTemplateTests();
 		
 		SetUpTests();
 	}

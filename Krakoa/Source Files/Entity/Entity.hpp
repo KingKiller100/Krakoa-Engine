@@ -3,7 +3,7 @@
 #include "Components/ComponentBase.hpp"
 
 #include "../Core/Logging/CoreLogger.hpp"
-#include "../Patterns/MemoryOverrider.hpp"
+#include "../Patterns/MemoryTracker.hpp"
 
 #include <HelperMacros.hpp>
 
@@ -15,7 +15,7 @@ namespace krakoa
 {
 	class EntityManager;
 	
-	class  Entity : public patterns::MemoryOverrider<Entity>
+	class  Entity : public patterns::MemoryTracker<Entity>
 	{
 	public:
 		Entity();

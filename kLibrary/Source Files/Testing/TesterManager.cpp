@@ -10,6 +10,7 @@
 #include "../../Tests/Maths Tests/Fraction_Test.hpp"
 #include "../../Tests/Maths Tests/Algorithm_Test.hpp"
 #include "../../Tests/Maths Tests/Quaternion_Test.hpp"
+#include "../../Tests/Maths Tests/BytesStorage_Test.hpp"
 
 // Utility
 #include "../../Tests/Utility Tests/Timer_Test.hpp"
@@ -88,7 +89,12 @@ namespace kTest
 		Add(new utility::TimerTester());
 	}
 
-	void TesterManager::RunPerformanceTests()
+	void TesterManager::InitializeTemplateTests()
+	{
+		Add(new templates::BytesStorageTester());
+	}
+
+	void TesterManager::RunPerformanceTests() const
 	{
 		if (success)
 		{

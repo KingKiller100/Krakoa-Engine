@@ -926,7 +926,7 @@ namespace kmaths
 		if (0.01 < x && x < 100)
 		{
 			AccuracyType log_result = 1.l;
-			const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
+			const AccuracyType y = constants::Divide<AccuracyType>(x - one, x + one);
 			uint32_t denominator = 3;
 			uint16_t iter = 2;
 

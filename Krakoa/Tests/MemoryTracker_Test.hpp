@@ -5,11 +5,11 @@
 #ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
-	class MemoryOverriderTester final : public kTest::Tester
+	class MemoryTrackerTester final : public kTest::Tester
 	{
 	public:
-		MemoryOverriderTester() noexcept;
-		~MemoryOverriderTester() override;
+		MemoryTrackerTester() noexcept;
+		~MemoryTrackerTester() override;
 
 	private:
 		void Test() override;

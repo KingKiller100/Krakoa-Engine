@@ -10,7 +10,6 @@
 #include "../../Tests/Maths Tests/Fraction_Test.hpp"
 #include "../../Tests/Maths Tests/Algorithm_Test.hpp"
 #include "../../Tests/Maths Tests/Quaternion_Test.hpp"
-#include "../../Tests/Maths Tests/BytesStorage_Test.hpp"
 
 // Utility
 #include "../../Tests/Utility Tests/Timer_Test.hpp"
@@ -22,6 +21,9 @@
 #include "../../Tests/Utility Tests/UTFConverter_Test.hpp"
 #include "../../Tests/Utility Tests/StringManipulation_Test.hpp"
 #include "../../Tests/Utility Tests/FormatToString_Test.hpp"
+
+// Templates
+#include "../../Tests/Maths Tests/BytesStorage_Test.hpp"
 
 // Speed Testing
 #include "../../Tests/Performance Tests/PerformanceTestManager.hpp"
@@ -110,15 +112,17 @@ namespace kTest
 		testsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
 	}
 
-	void TesterManager::Run(Tester* test)
+	void TesterManager::Run(Tester& test)
 	{
+		using namespace klib::kFormat;
+		
 		const klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
 
-		std::cout << "Now running: " << test->GetName() << "";
+		std::cout << "Now running: " << test.GetName() << "";
 
-		const auto result = test->Run();
+		const auto result = test.Run();
 
-		const auto runtimeStr = klib::kFormat::ToString(
+		const auto runtimeStr = ToString(
 			"| Runtime: %.fus (microseconds)",
 			runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
 		std::cout << " " << runtimeStr << "\n";
@@ -127,8 +131,13 @@ namespace kTest
 			success = false;
 
 		const auto resultTest = result
-			? klib::kFormat::ToString("Success: Test Name: {0} {1}\n\n", test->GetName(), runtimeStr) // Success Case
-			: klib::kFormat::ToString("Failure: Test Name: {0} {1}\n{2}", test->GetName(), runtimeStr, test->GetFailureData()); // Fail Case
+			? ToString("Success: Test Name: {0} {1}\n\n", 
+				test.GetName(),
+				runtimeStr) // Success Case
+			: ToString("Failure: Test Name: {0} {1}\n{2}",
+				test.GetName(), 
+				runtimeStr, 
+				test.GetFailureData()); // Fail Case
 
 		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
 	}
@@ -139,14 +148,13 @@ namespace kTest
 
 		for (const auto& test : testsUSet)
 		{
-			Run(test.get());
+			Run(*test);
 		}
 
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Secs>();
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned, 1000.0 * remainder);
-
 
 		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}s  {1}ms", secs, millis);
 		klib::kFileSystem::OutputToFile(path.c_str(), finalTimeStr.c_str());

@@ -19,7 +19,7 @@ namespace memory
 		static HeapBase* CreateHeap()
 		{
 			auto* heap = CAST(HeapBase*, malloc(sizeof(TemplateHeap<T>)));
-			heap->Initialize(typeid(T).name(), &templateHeapVTBL<T>);
+			heap->Initialize(typeid(T).name(), &templateHeapVFTBL<T>);
 			heaps.emplace_back(heap);
 			return heap;
 		}

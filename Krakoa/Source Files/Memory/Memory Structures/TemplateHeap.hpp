@@ -68,7 +68,7 @@ totalBytes));
 	}
 
 	template<typename T>
-	Heap_VTBL templateHeapVTBL = Heap_VTBL(
+	Heap_VFTBL templateHeapVFTBL = Heap_VFTBL(
 		GetTemplateHeapStatus<T>
 	);
 }

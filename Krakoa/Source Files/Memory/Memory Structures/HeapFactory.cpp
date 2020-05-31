@@ -66,12 +66,12 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 	HeapBase* HeapFactory::GetDefaultHeap() noexcept
 	{
-		static Heap_VTBL localVBTL(GetDefaultHeapStatus);
+		static Heap_VFTBL localVFTBL(GetDefaultHeapStatus);
 
 		if (!defaultHeap)
 		{
 			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(DefaultHeap)));
-			defaultHeap->Initialize("Default", &localVBTL);
+			defaultHeap->Initialize("Default", &localVFTBL);
 		}
 
 		return defaultHeap;

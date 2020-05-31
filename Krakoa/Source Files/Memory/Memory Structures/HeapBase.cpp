@@ -14,16 +14,16 @@ namespace memory
 		: name(name),
 		totalBytes(0),
 		pPrevAddress(nullptr),
-		vtbl(nullptr)
+		vftbl(nullptr)
 	{}
 
 
-	void HeapBase::Initialize(const char* n, Heap_VTBL* heapVTBL) noexcept
+	void HeapBase::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
 	{
 		name = n;
 		totalBytes = 0;
 		pPrevAddress = nullptr;
-		vtbl = heapVTBL;
+		vftbl = heapVTBL;
 	}
 
 	void HeapBase::SetName(const char* n) noexcept
@@ -98,7 +98,7 @@ namespace memory
 
 	std::string HeapBase::GetStatus() const
 	{
-		MEM_FATAL(vtbl->getStatusFunc, "HeapBase's vtbl is unset");
-		return vtbl->getStatusFunc(this);
+		MEM_FATAL(vftbl->getStatusFunc, "HeapBase's vftbl is unset");
+		return vftbl->getStatusFunc(this);
 	}
 }

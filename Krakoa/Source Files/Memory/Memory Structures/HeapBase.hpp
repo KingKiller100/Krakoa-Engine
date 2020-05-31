@@ -8,13 +8,14 @@
 namespace memory
 {
 	class HeapBase;
-	
-	struct Heap_VTBL
+
+	// Virtual Function Table for Heaps
+	struct Heap_VFTBL
 	{
 	public:
 		typedef std::string(*GetStatusFunc)(const HeapBase*);
 
-		explicit Heap_VTBL(GetStatusFunc statusFunc)
+		explicit Heap_VFTBL(GetStatusFunc statusFunc)
 			: getStatusFunc(std::move(statusFunc))
 		{}
 		
@@ -28,7 +29,7 @@ namespace memory
 		explicit HeapBase(const char* name) noexcept;
 		~HeapBase() noexcept = default;
 
-		void Initialize(const char* n, Heap_VTBL * heapVTBL) noexcept;
+		void Initialize(const char* n, Heap_VFTBL * heapVTBL) noexcept;
 
 		template<size_t N>
 		void SetName(const char(&n)[N]) noexcept
@@ -54,6 +55,6 @@ namespace memory
 		const char* name;
 		size_t totalBytes;
 		void * pPrevAddress;
-		Heap_VTBL* vtbl;
+		Heap_VFTBL* vftbl;
 	};
 }

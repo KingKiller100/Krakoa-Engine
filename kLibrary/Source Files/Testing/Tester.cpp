@@ -49,7 +49,7 @@ namespace kTest
 			Test();
 			return success;
 		}
-		catch (std::exception&)
+		catch (...)
 		{
 			return false;
 		}

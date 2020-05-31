@@ -23,7 +23,7 @@ namespace kTest::templates
 	void BytesStorageTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(CharacterTest());
+		//VERIFY_MULTI(CharacterTest());
 		VERIFY_MULTI(IntegerTest());
 		VERIFY_MULTI(SizeTypeTest());
 		VERIFY_MULTI(VectorTest());
@@ -140,7 +140,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::KIBI;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -164,7 +164,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::MEGA;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -219,7 +219,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::KIBI;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -243,7 +243,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::MEGA;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -299,7 +299,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::KIBI;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);
@@ -322,7 +322,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::MEGA;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);
@@ -377,7 +377,7 @@ namespace kTest::templates
 		{
 			using TestType = Vector3f;
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::KIBI;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -402,7 +402,7 @@ namespace kTest::templates
 		{
 			using TestType = Vector2u;
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::MEGA;
+			constexpr auto d_s_t = BytesType::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);

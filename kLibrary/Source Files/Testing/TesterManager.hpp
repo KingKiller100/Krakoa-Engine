@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
-#include <string>
-#include <set>
 #include <memory>
+#include <set>
+#include <string>
 
 #ifdef TESTING_ENABLED
 namespace kTest
@@ -24,7 +24,7 @@ namespace kTest
 		void InitializeTemplateTests();
 		void RunPerformanceTests() const;
 		void Add(Tester* test);
-		void Run(Tester* test);
+		void Run(Tester& test);
 		void RunAll();
 		void ClearAllTests();
 

@@ -21,7 +21,7 @@ namespace memory
 		AllocHeader* pPrev;
 		AllocHeader* pNext;
 		
-		static void Verify(AllocHeader* pHeader);
+		static bool Verify(AllocHeader* pHeader);
 		static AllocHeader* GetHeaderFromPointer(void* pHeader);
 	};
 

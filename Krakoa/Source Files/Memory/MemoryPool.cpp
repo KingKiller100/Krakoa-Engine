@@ -126,16 +126,16 @@ namespace memory
 	void MemoryPool::DefragHeap(SubPool& pool, const size_t deletedBytes)
 	{
 		auto* deadSpace = pool.pNextFree;
+		auto* nextBlock = deadSpace + deletedBytes;
 
 		do {
-			const auto* nextBlock = deadSpace + deletedBytes;
-			auto* block = (AllocHeader*)nextBlock;
+			auto* block = REINTERPRET(AllocHeader*, nextBlock);
+			AllocHeader::Verify(block);
 			
-		} while (REINTERPRET(AllocHeader*, deadSpace)->signature 
-			== KRK_MEMSYSTEM_START_SIG);
+			memmove(deadSpace, block, block->bytes + MemoryControlBlockBytes);
+			deadSpace += ;
 
-
-
+		} while (AllocHeader::Verify(REINTERPRET(AllocHeader*, nextBlock)));
 	}
 
 	size_t MemoryPool::GetTotalBytes() const

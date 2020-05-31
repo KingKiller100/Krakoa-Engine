@@ -10,26 +10,35 @@
 
 namespace memory
 {
-	void AllocHeader::Verify(AllocHeader* pHeader)
+	bool AllocHeader::Verify(AllocHeader* pHeader)
 	{
 		using namespace klib::kFormat;
-		
-		MEM_FATAL(pHeader->signature == KRK_MEMSYSTEM_START_SIG,
-			ToString("CORRUPTED HEAP - Incorrect signature"
-				" on heap: \"{0}\" Address: {1}\n",
-				pHeader->pHeap->GetName(),
-				pHeader));
-		
-		auto* pBlockStart = reinterpret_cast<std::int8_t*>(pHeader);
 
-		auto * pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type,
-			pBlockStart + AllocHeaderBytes + pHeader->bytes);
-		
-		MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_END_SIG,
-			ToString("CORRUPTED HEAP - Incorrect end marker on"
-				" heap: \"{0}\" Address: {1}\n",
-				pHeader->pHeap->GetName(),
-				pHeader));
+		try
+		{
+			MEM_FATAL(pHeader->signature == KRK_MEMSYSTEM_START_SIG,
+				ToString("CORRUPTED HEAP - Incorrect signature"
+					" on heap: \"{0}\" Address: {1}\n",
+					pHeader->pHeap->GetName(),
+					pHeader));
+
+			auto* pBlockStart = reinterpret_cast<std::int8_t*>(pHeader);
+
+			auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type,
+				pBlockStart + AllocHeaderBytes + pHeader->bytes);
+
+			MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_END_SIG,
+				ToString("CORRUPTED HEAP - Incorrect end marker on"
+					" heap: \"{0}\" Address: {1}\n",
+					pHeader->pHeap->GetName(),
+					pHeader));
+		}
+		catch (...)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	AllocHeader* AllocHeader::GetHeaderFromPointer(void* pData)
@@ -37,7 +46,7 @@ namespace memory
 		auto* pHeader = reinterpret_cast<AllocHeader*>(
 			static_cast<Byte_Ptr_Type>(pData)
 			- AllocHeaderBytes);
-		Verify(pHeader);
+		MEM_ASSERT(Verify(pHeader));
 		return pHeader;
 	}
 }

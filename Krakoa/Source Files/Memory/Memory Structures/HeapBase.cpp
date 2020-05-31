@@ -66,20 +66,8 @@ namespace memory
 
 		while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
 		{
-			MEM_FATAL(pCurrentHeader->signature == KRK_MEMSYSTEM_SIGNATURE,
-				klib::kFormat::ToString("CORRUPTED HEAP - Incorrect signature on heap: \"{0}\" position: {1}\n",
-					pCurrentHeader->pHeap->name,
-					count));
-
-			auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, REINTERPRET(Byte_Ptr_Type, pCurrentHeader) + AllocHeaderBytes + pCurrentHeader->bytes);
-
-			MEM_FATAL(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER,
-				klib::kFormat::ToString("CORRUPTED HEAP - Incorrect end marker on heap: \"{0}\" position: {1}\n",
-					pCurrentHeader->pHeap->name,
-					count));
-
+			AllocHeader::Verify(pCurrentHeader);
 			pCurrentHeader = pCurrentHeader->pPrev;
-
 			count++;
 		}
 

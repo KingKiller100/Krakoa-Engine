@@ -28,8 +28,8 @@ namespace memory
 	class MemoryPool
 	{
 		struct Token {};
-		static constexpr size_t PoolSize = 4;
-		using SubPoolList = std::array<SubPool, PoolSize>;
+		static constexpr size_t SubPoolSize = 4;
+		using SubPoolList = std::array<SubPool, SubPoolSize>;
 
 	public:
 		MemoryPool(Token&) noexcept;
@@ -38,8 +38,8 @@ namespace memory
 
 		void Initialize(const size_t volume, const kmaths::BytesUnits units);
 
-		Byte_Ptr_Type Allocate(const size_t bytes);
-		void Deallocate(AllocHeader* pHeader, const size_t bytes);
+		Byte_Ptr_Type Allocate(const size_t requestedBytes);
+		void Deallocate(AllocHeader* pHeader, const size_t bytesToDelete);
 
 		USE_RESULT size_t GetTotalBytes() const;
 		USE_RESULT size_t GetMaxBytes() const;
@@ -58,15 +58,19 @@ namespace memory
 		 * \return
 		 *		TRUE if this pool has space for this object or FALSE if this pool has no more space
 		 */
-		USE_RESULT int GetSubPoolIndex(const size_t requestedBytes) const;
+		USE_RESULT SubPool& GetSubPoolIndex(const size_t requestedBytes);
 
 		void CreateNewPool(const size_t capacity, const size_t index);
+		SubPool& FindPointerOwner(void* pHeader);
+		
+		void DefragHeap(SubPool& pool, const size_t deletedBytes);
+		
 		void ShutDown();
 		
 	private:
 		SubPoolList subPools;
 		size_t currentIndex;
-		bool active = false;
+		static bool active;
 	};
 }
 

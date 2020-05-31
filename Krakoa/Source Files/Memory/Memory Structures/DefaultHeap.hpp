@@ -49,8 +49,6 @@ count
 		if (!pCurrentHeader || !pCurrentHeader->pPrev)
 			return report;
 
-
-
 		while (pCurrentHeader->pPrev && pCurrentHeader != pCurrentHeader->pPrev) // Move to the first 
 		{
 			pCurrentHeader = pCurrentHeader->pPrev;

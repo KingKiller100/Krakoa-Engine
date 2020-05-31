@@ -10,19 +10,21 @@
 
 #include <cassert>
 
+using namespace memory;
 
+auto& memPool = MemoryPool::Reference();
 
-void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHeader
+void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads Control Blocks
 {
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
-	auto& memPool = memory::MemoryPool::Reference();
 
 	memPool.Initialize(1, kmaths::BytesUnits::KILO);
-	const size_t requestedBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes; // Alignment in memory
+	
+	const size_t requestedBytes = AllocHeaderBytes + bytes + SignatureBytes; // Alignment in memory
 	auto* pBlock = memPool.Allocate(requestedBytes);
-	auto* pHeader = REINTERPRET(memory::AllocHeader*, pBlock);
+	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
 
-	pHeader->signature = KRK_MEMSYSTEM_SIGNATURE;
+	pHeader->signature = KRK_MEMSYSTEM_START_SIG;
 	pHeader->pHeap = pHeap;
 	pHeader->bytes = bytes;
 	pHeader->pPrev = pHeader->pNext = nullptr;
@@ -36,9 +38,9 @@ void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHea
 
 	pHeader->pHeap->SetPrevAddress(pHeader);
 
-	auto* pMemStart = pBlock + memory::AllocHeaderBytes;
-	auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type, pMemStart + bytes);
-	*pMemEnd = KRK_MEMSYSTEM_ENDMARKER;
+	auto* pMemStart = pBlock + AllocHeaderBytes;
+	auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, pMemStart + bytes);
+	*pMemEnd = KRK_MEMSYSTEM_END_SIG;
 
 	pHeap->Allocate(requestedBytes);
 
@@ -64,19 +66,15 @@ void operator delete(void* ptr)
 {
 	if (!ptr)
 		return;
+
+	auto* pHeader = AllocHeader::GetHeaderFromPointer(ptr);
 	
-	auto* pData = CAST(memory::Byte_Ptr_Type, ptr);
-
-	auto* pHeader = REINTERPRET(memory::AllocHeader*, pData - memory::AllocHeaderBytes);
-
-	MEM_ASSERT(pHeader->signature == KRK_MEMSYSTEM_SIGNATURE);
-
 	auto& pHeap = pHeader->pHeap;
 	const auto bytes = pHeader->bytes;
 	auto& pPrev = pHeader->pPrev;
 	auto& pNext = pHeader->pNext;
 
-	const auto totalBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes;
+	const auto totalBytes = AllocHeaderBytes + bytes + SignatureBytes;
 
 	if (!pPrev && !pNext) // Both null
 		pHeap->SetPrevAddress(nullptr);
@@ -91,15 +89,11 @@ void operator delete(void* ptr)
 			pPrev->pNext = pHeader->pNext;
 	}
 
-	auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type, pData + bytes);
-
-	MEM_ASSERT(*pMemEnd == KRK_MEMSYSTEM_ENDMARKER);
-
 	pHeap->Deallocate(totalBytes);
-	
-	memory::MemoryPool::Reference().Deallocate(pHeader, totalBytes);
+
+	memPool.Deallocate(pHeader, totalBytes);
 	//free(pHeader);
-	
+
 	ptr = nullptr;
 }
 

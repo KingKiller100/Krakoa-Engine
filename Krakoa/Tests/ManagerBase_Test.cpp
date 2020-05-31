@@ -57,21 +57,21 @@ namespace krakoa::tests
 
 		const auto name = lines[0];
 		VERIFY(name.find(typeid(TestManager).name()) != npos);
-
-		const auto countStr = lines[1];
-		VERIFY(countStr.find("1") != npos);
 		
-		const auto sizeOfTestManagerStr = lines[2];
+		const auto sizeOfTestManagerStr = lines[1];
 		VERIFY(sizeOfTestManagerStr.find(std::to_string(managerTypeSize)) != npos);
+		
+		const auto totalSizeOFObjectMemoryStr = lines[2];
+		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(managerTypeSize)) != npos);
 		
 		const auto sizeOfBlockStr = lines[3];
 		VERIFY(sizeOfBlockStr.find(std::to_string(managerTypeSize + memory::MemoryPaddingBytes)) != npos);
 		
-		const auto totalSizeOFObjectMemoryStr = lines[4];
-		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(managerTypeSize)) != npos);
-		
-		const auto totalSizeOFBlockMemoryStr = lines[5];
+		const auto totalSizeOFBlockMemoryStr = lines[4];
 		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string(managerTypeSize + memory::MemoryPaddingBytes)) != npos);
+
+		const auto countStr = lines[5];
+		VERIFY(countStr.find("1") != npos);
 	}
 }
 #endif

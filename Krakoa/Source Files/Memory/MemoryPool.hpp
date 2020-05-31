@@ -16,7 +16,7 @@ public:
 
 	void Initialize();
 	
-	void Allocate(void* pBlock, const size_t bytes);
+	void Allocate(const size_t bytes);
 	void Deallocate(void* pBlock, const size_t bytes);
 
 	USE_RESULT size_t GetTotalBytes() const;

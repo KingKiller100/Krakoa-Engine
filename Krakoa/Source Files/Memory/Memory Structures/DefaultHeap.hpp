@@ -2,13 +2,12 @@
 
 #include "HeapBase.hpp"
 
-#include <string>
-
 #include "AllocHeader.hpp"
 #include "MemoryTypes.hpp"
-#include "../../Core/Logging/MemoryLogger.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
+
+#include <string>
 
 namespace memory
 {
@@ -30,7 +29,7 @@ namespace memory
 		
 		std::string report;
 		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
-		const auto BlockTotal = totalBytes + MemoryPaddingBytes * count;
+		const auto BlockTotal = totalBytes + MemoryControlBlockBytes * count;
 		size_t index(count);
 
 		report.append(ToString(R"(Heap "Default"
@@ -45,7 +44,7 @@ BlockTotal,
 count
 ));
 
-		auto* pCurrentHeader = static_cast<AllocHeader*>(pHeap->GetPrevAddress()); // casts to AllocHeader to find previous and next
+		auto* pCurrentHeader = pHeap->GetPrevAddress(); // AllocHeader to find previous and next
 
 		if (!pCurrentHeader || !pCurrentHeader->pPrev)
 			return report;
@@ -59,7 +58,7 @@ count
 
 		do {
 			const auto bytes = pCurrentHeader->bytes;
-			const auto blockBytes = pCurrentHeader->bytes + MemoryPaddingBytes;
+			const auto blockBytes = pCurrentHeader->bytes + MemoryControlBlockBytes;
 
 			report.append(ToString(R"(
 Heap: "Default" Index: {0}

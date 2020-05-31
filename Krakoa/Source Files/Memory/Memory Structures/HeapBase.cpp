@@ -53,7 +53,7 @@ namespace memory
 
 	size_t HeapBase::WalkTheHeap() const
 	{
-		auto* pCurrentHeader = static_cast<AllocHeader*>(pPrevAddress); // casts to AllocHeader to find previous and next
+		auto* pCurrentHeader = pPrevAddress; // casts to AllocHeader to find previous and next
 
 		if (!pCurrentHeader)
 			return 0;
@@ -86,12 +86,12 @@ namespace memory
 		return count;
 	}
 
-	void HeapBase::SetPrevAddress(void* prev) noexcept
+	void HeapBase::SetPrevAddress(AllocHeader* prev) noexcept
 	{
 		pPrevAddress = prev;
 	}
 
-	void* HeapBase::GetPrevAddress() const noexcept
+	AllocHeader* HeapBase::GetPrevAddress() const noexcept
 	{
 		return pPrevAddress;
 	}

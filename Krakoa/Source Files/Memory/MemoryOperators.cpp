@@ -25,7 +25,7 @@ void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHea
 
 	if (pHeader->pHeap->GetPrevAddress())
 	{
-		auto* pPrevHeader = CAST(memory::AllocHeader*, pHeader->pHeap->GetPrevAddress());
+		auto* pPrevHeader = pHeader->pHeap->GetPrevAddress();
 		pHeader->pPrev = pPrevHeader;
 		pPrevHeader->pNext = pHeader;
 	}
@@ -38,7 +38,7 @@ void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHea
 
 	pHeap->Allocate(requestedBytes);
 
-	return pMemStart; // Returns the start of the object's to read
+	return pMemStart; // Returns pointer to the start of the object's data
 }
 
 void* operator new [](const size_t bytes, memory::HeapBase* pHeap)
@@ -58,6 +58,9 @@ void* operator new [](const size_t bytes)
 
 void operator delete(void* ptr)
 {
+	if (!ptr)
+		return;
+	
 	auto* pData = CAST(memory::Byte_Ptr_Type, ptr);
 
 	auto* pHeader = REINTERPRET(memory::AllocHeader*, pData - memory::AllocHeaderBytes);

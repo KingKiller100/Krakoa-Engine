@@ -16,8 +16,8 @@ namespace memory
 		using Signature_Ptr_Type = Signature_Type*;
 		
 		Signature_Type signature;
-		HeapBase* pHeap;
 		size_t bytes;
+		HeapBase* pHeap;
 		AllocHeader* pPrev;
 		AllocHeader* pNext;
 	};

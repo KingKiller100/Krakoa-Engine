@@ -4,7 +4,7 @@
 
 namespace memory
 {
-	void MemoryPool::Allocate(void* pBlock, const size_t bytes)
+	void MemoryPool::Allocate(const size_t bytes)
 	{
 	}
 

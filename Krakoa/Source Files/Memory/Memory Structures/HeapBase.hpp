@@ -3,30 +3,18 @@
 #include <HelperMacros.hpp>
 
 #include <string>
-#include <functional>
 
 namespace memory
 {
-	class HeapBase;
-
-	// Virtual Function Table for Heaps
-	struct Heap_VFTBL
-	{
-	public:
-		typedef std::string(*GetStatusFunc)(const HeapBase*);
-
-		explicit Heap_VFTBL(GetStatusFunc statusFunc)
-			: getStatusFunc(std::move(statusFunc))
-		{}
-		
-	public:
-		GetStatusFunc getStatusFunc = nullptr;
-	};
+	struct Heap_VFTBL;
+	struct AllocHeader;
 	
 	class HeapBase 
 	{
 	public:
 		explicit HeapBase(const char* name) noexcept;
+		HeapBase(const HeapBase&) = delete;
+		
 		~HeapBase() noexcept = default;
 
 		void Initialize(const char* n, Heap_VFTBL * heapVTBL) noexcept;
@@ -46,15 +34,29 @@ namespace memory
 
 		USE_RESULT size_t WalkTheHeap() const;
 
-		void SetPrevAddress(void* prev) noexcept;
-		USE_RESULT void* GetPrevAddress() const noexcept;
+		void SetPrevAddress(AllocHeader* prev) noexcept;
+		USE_RESULT AllocHeader* GetPrevAddress() const noexcept;
 
 		USE_RESULT std::string GetStatus() const;
 		
 	protected:
 		const char* name;
 		size_t totalBytes;
-		void * pPrevAddress;
+		AllocHeader* pPrevAddress;
 		Heap_VFTBL* vftbl;
+	};
+
+	// Virtual Function Table for Heaps
+	struct Heap_VFTBL
+	{
+	public:
+		typedef std::string(*GetStatusFunc)(const HeapBase*);
+
+		explicit Heap_VFTBL(GetStatusFunc statusFunc)
+			: getStatusFunc(std::move(statusFunc))
+		{}
+
+	public:
+		GetStatusFunc getStatusFunc = nullptr;
 	};
 }

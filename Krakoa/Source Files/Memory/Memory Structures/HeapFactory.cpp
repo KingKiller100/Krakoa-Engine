@@ -111,13 +111,13 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		using namespace  kmaths::constants;
 
 		const auto kilo = Divide<float>(*bytes,
-			CAST(size_t, kmaths::BytesType::KILO));
+			CAST(size_t, kmaths::BytesUnits::KILO));
 
 		const auto mega = Divide<float>(*bytes,
-			CAST(size_t, kmaths::BytesType::MEGA));
+			CAST(size_t, kmaths::BytesUnits::MEGA));
 
 		const auto giga = Divide<float>(*bytes,
-			CAST(size_t, kmaths::BytesType::GIGA));
+			CAST(size_t, kmaths::BytesUnits::GIGA));
 
 
 		MEM_INFO(klib::kFormat::ToString(

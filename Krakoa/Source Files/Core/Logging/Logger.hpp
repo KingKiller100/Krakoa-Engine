@@ -53,7 +53,7 @@ namespace krakoa
 
 #ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
-#	define FATAL(condition, msg)                                  kAssert((condition), msg);
+#	define FATAL(condition, msg)                        kAssert((condition), msg);
 #else
-#	define FATAL(condition, msg)                                  if ( !(condition) ) ::krakoa::Logger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#	define FATAL(condition, msg)                        if ( !(condition) ) ::krakoa::Logger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #endif // !KRAKOA_RELEASE

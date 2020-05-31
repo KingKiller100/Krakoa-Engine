@@ -5,13 +5,14 @@
 #include "Memory Structures/MemoryTypes.hpp"
 #include "Memory Structures/HeapFactory.hpp"
 
+#include "../Core/Logging/MemoryLogger.hpp"
+
 #include <cassert>
 
-#define MEM_ASSERT(condition) assert(condition)
 
 void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads AllocHeader
 {
-	MEM_ASSERT(bytes < CAST(size_t, -1));
+	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
 	
 	const size_t requestedBytes = memory::AllocHeaderBytes + bytes + memory::SignatureBytes; // Alignment in memory
 	auto* pBlock = CAST(memory::Byte_Ptr_Type, malloc(requestedBytes));

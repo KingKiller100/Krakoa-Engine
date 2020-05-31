@@ -36,7 +36,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 100;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -60,7 +60,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::KIBI;
+			constexpr auto d_s_t = BytesUnits::KIBI;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -84,7 +84,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 5;
-			constexpr auto d_s_t = BytesType::MEGA;
+			constexpr auto d_s_t = BytesUnits::MEGA;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -116,7 +116,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 100;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -140,7 +140,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -164,7 +164,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -195,7 +195,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 100;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -219,7 +219,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -243,7 +243,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -276,7 +276,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 100;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);
@@ -299,7 +299,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);
@@ -322,7 +322,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);
@@ -352,7 +352,7 @@ namespace kTest::templates
 		{
 			using TestType = Vector<double, 50>;
 			constexpr auto volume = 100;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -377,7 +377,7 @@ namespace kTest::templates
 		{
 			using TestType = Vector3f;
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -402,7 +402,7 @@ namespace kTest::templates
 		{
 			using TestType = Vector2u;
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesType::BYTE;
+			constexpr auto d_s_t = BytesUnits::BYTE;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);

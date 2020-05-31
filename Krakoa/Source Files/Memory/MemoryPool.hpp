@@ -1,8 +1,12 @@
 ﻿#pragma once
 
+#include "Memory Structures/MemoryTypes.hpp"
+
 #include <HelperMacros.hpp>
+#include <Maths/BytesTypes.hpp>
 
 #include <string>
+
 
 namespace memory
 {
@@ -14,9 +18,9 @@ public:
 	MemoryPool(Token&) noexcept;
 	~MemoryPool() noexcept;
 
-	void Initialize();
+	void Initialize(const size_t volume, const kmaths::BytesUnits units);
 	
-	void Allocate(const size_t bytes);
+	Byte_Ptr_Type Allocate(const size_t bytes);
 	void Deallocate(void* pBlock, const size_t bytes);
 
 	USE_RESULT size_t GetTotalBytes() const;
@@ -26,9 +30,14 @@ public:
 	USE_RESULT std::string GetStatus() const;
 	
 	static MemoryPool& GetInstance();
+
 private:
-	size_t maxStorage;
-	//std::array<void*, std::giga::num> 
+	bool IsSpaceAvailable(const size_t requestedBytes) const;
+	
+private:
+	void* head;
+	size_t capacity;
+	Byte_Ptr_Type pNextFree;
 };
 }
 

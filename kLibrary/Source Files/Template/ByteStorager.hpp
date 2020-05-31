@@ -7,7 +7,7 @@
 
 namespace klib
 {
-	template<typename T, size_t N, kmaths::BytesType DigitalStorageType>
+	template<typename T, size_t N, kmaths::BytesUnits DigitalStorageType>
 	struct BytesStorage
 	{
 		using Type = T;

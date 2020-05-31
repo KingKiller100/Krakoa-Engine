@@ -23,7 +23,7 @@ namespace memory
 #define MEM_SET_FLUSHING(enable)                            ::memory::MemoryLogger::GetLogger().EnableConstantFlush(enable);
 #define MEM_SET LOG_NAME(name)                              ::memory::MemoryLogger::GetLogger().SetName(name);
 #define MEM_SET_LOG_MIN(minLvl)                             ::memory::MemoryLogger::GetLogger().SetMinimumLoggingLevel(minLvl);
-#define MEM_GET_LOG_PATH()                                      ::memory::MemoryLogger::GetLogger().GetOutputPath();
+#define MEM_GET_LOG_PATH()                                  ::memory::MemoryLogger::GetLogger().GetOutputPath();
 #define MEM_TOGGLE_LOGGING()                                ::memory::MemoryLogger::GetLogger().ToggleLoggingEnabled();
 #define MEM_TOGGLE_SUBSYSTEM_LOGGING()                      ::memory::MemoryLogger::GetLogger().ToggleSubSystemEnabled();
 #define MEM_DISABLE_LOGFILE_OUTPUT()                        ::memory::MemoryLogger::GetLogger().SetCacheMode(true);
@@ -46,7 +46,11 @@ namespace memory
 
 #ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
-#	define MEM_FATAL(assert, msg)                                  kAssert((assert), msg);
+#	include <cassert>
+
+#	define MEM_FATAL(condition, msg)                        kAssert((condition), msg);
+#	define MEM_ASSERT(condition)                            assert( (condition) );
+
 #else
-#	define MEM_FATAL(assert, msg)                                  if ( !(assert) ) ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#	define MEM_FATAL(condition, msg)                        if ( !(condition) ) ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
 #endif // !KRAKOA_RELEASE

@@ -4,7 +4,7 @@
 
 namespace kmaths
 {
-	enum class BytesType : size_t
+	enum class BytesUnits : size_t
 	{
 		BYTE = 1,
 		KILO = std::kilo::num,

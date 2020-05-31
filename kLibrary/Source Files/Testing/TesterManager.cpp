@@ -23,7 +23,7 @@
 #include "../../Tests/Utility Tests/FormatToString_Test.hpp"
 
 // Templates
-#include "../../Tests/Maths Tests/BytesStorage_Test.hpp"
+#include "../../Tests/Templates Tests/BytesStorage_Test.hpp"
 
 // Speed Testing
 #include "../../Tests/Performance Tests/PerformanceTestManager.hpp"

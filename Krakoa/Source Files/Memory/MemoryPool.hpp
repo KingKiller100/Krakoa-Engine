@@ -13,13 +13,21 @@ namespace memory
 	struct SubPool
 	{
 		void* pHead;
-		Byte_Ptr_Type pNextFree;
+		kmaths::Byte_Type* pNextFree;
 		size_t capacity;
+#ifdef KRAKOA_DEBUG
+		size_t remainingSpace;
+#endif
 
+
+		
 		SubPool() noexcept
 			: pHead(nullptr),
 			pNextFree(nullptr),
 			capacity(0)
+#ifdef KRAKOA_DEBUG
+		, remainingSpace(capacity)
+#endif
 		{}
 		
 		SubPool(const SubPool&) = delete;
@@ -38,7 +46,7 @@ namespace memory
 
 		void Initialize(const size_t volume, const kmaths::BytesUnits units);
 
-		Byte_Ptr_Type Allocate(const size_t requestedBytes);
+		kmaths::Byte_Type* Allocate(const size_t requestedBytes);
 		void Deallocate(AllocHeader* pHeader, const size_t bytesToDelete);
 
 		USE_RESULT size_t GetTotalBytes() const;
@@ -60,7 +68,8 @@ namespace memory
 		 */
 		USE_RESULT SubPool& GetSubPoolIndex(const size_t requestedBytes);
 
-		void CreateNewPool(const size_t capacity, const size_t index);
+		void CreateNewPool(const size_t capacity, const size_t index);
+
 		SubPool& FindPointerOwner(void* pHeader);
 		
 		void DefragHeap(SubPool& pool, const size_t deletedBytes);
@@ -68,9 +77,8 @@ namespace memory
 		void ShutDown();
 		
 	private:
-		SubPoolList subPools;
-		size_t currentIndex;
-		static bool active;
+		SubPoolList subPoolList;
+		const size_t poolIncrementBytes;
 	};
 }
 

@@ -13,15 +13,15 @@ namespace memory
 	struct AllocHeader
 	{
 		using Signature_Type = unsigned;
-		using Signature_Ptr_Type = Signature_Type*;
+		using Signature_Ptr_Type = Signature_Type * ;
 
 		Signature_Type signature;
 		size_t bytes;
 		HeapBase* pHeap;
 		AllocHeader* pPrev;
 		AllocHeader* pNext;
-		
-		static bool Verify(AllocHeader* pHeader);
+
+		static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
 		static AllocHeader* GetHeaderFromPointer(void* pHeader);
 	};
 

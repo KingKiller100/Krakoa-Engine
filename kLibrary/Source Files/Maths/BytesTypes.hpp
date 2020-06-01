@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <cstdint>
 #include <ratio>
 
 namespace kmaths
@@ -16,4 +17,7 @@ namespace kmaths
 		TERA = std::tera::num,
 		TEBI = GIBI * 1024,
 	};
+
+	using Byte_Type = std::int8_t;
+
 }

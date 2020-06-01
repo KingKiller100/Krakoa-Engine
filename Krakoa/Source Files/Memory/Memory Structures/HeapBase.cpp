@@ -66,7 +66,7 @@ namespace memory
 
 		while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
 		{
-			AllocHeader::Verify(pCurrentHeader);
+			AllocHeader::VerifyHeader(pCurrentHeader);
 			pCurrentHeader = pCurrentHeader->pPrev;
 			count++;
 		}

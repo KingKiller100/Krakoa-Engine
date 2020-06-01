@@ -8,12 +8,12 @@
 
 namespace memory
 {
-	bool MemoryPool::active = false;
-
+	using namespace kmaths;
+	
 	constexpr auto noAvailableSpaceFlag = -1;
 
 	MemoryPool::MemoryPool(Token&) noexcept
-		: currentIndex(0)
+		:poolIncrementBytes(500 * static_cast<size_t>(BytesUnits::KILO))
 	{}
 
 	MemoryPool::~MemoryPool() noexcept
@@ -23,17 +23,13 @@ namespace memory
 
 	void MemoryPool::Initialize(const size_t volume, const kmaths::BytesUnits units)
 	{
-		if (active)
-			return;
-
 		const auto capacity = volume * static_cast<size_t>(units);
 		CreateNewPool(capacity, 0);
-		active = true;
 	}
 
 	void MemoryPool::ShutDown()
 	{
-		for (auto& subPool : subPools)
+		for (auto& subPool : subPoolList)
 		{
 			if (!subPool.pHead)
 				continue;
@@ -44,13 +40,17 @@ namespace memory
 		}
 	}
 
-	Byte_Ptr_Type MemoryPool::Allocate(const size_t requestedBytes)
+	kmaths::Byte_Type* MemoryPool::Allocate(const size_t requestedBytes)
 	{
 		auto& pool = GetSubPoolIndex(requestedBytes);
 
 		auto& nextFree = pool.pNextFree;
 		auto* pBlock = pool.pNextFree;
 		nextFree += requestedBytes;
+
+#ifdef KRAKOA_DEBUG
+		pool.remainingSpace -= requestedBytes;
+#endif
 
 		return pBlock;
 	}
@@ -61,21 +61,27 @@ namespace memory
 
 		for (; index < SubPoolSize; ++index)
 		{
-			const auto& currentPool = subPools[index];
+			const auto& currentPool = subPoolList[index];
+
+			if (!currentPool.pHead)
+				CreateNewPool(poolIncrementBytes, index);
+			
 			const auto& head = currentPool.pHead;
 			const auto& nextFree = currentPool.pNextFree;
 
-			auto* const headByteVal = CAST(Byte_Ptr_Type, head);
-			const auto currentSpace = static_cast<size_t>(nextFree - headByteVal);
-			const auto newSpace = currentSpace + requestedBytes;
+			auto* const headByteVal = CAST(kmaths::Byte_Type*, head);
+			const auto currentStorage = static_cast<size_t>(nextFree - headByteVal);
+			const auto newStorage = currentStorage + requestedBytes;
 
-			if (currentPool.capacity >= newSpace) // TRUE - we have space to allocate FALSE - No more space within this pool
+			if (currentPool.capacity >= newStorage) // TRUE - we have space to allocate FALSE - No more space within this pool
 				break;
 		}
 
+		if (index >= SubPoolSize) index = -1;
+		
 		MEM_ASSERT(index != noAvailableSpaceFlag);
 
-		return subPools[index];
+		return subPoolList[index];
 	}
 
 	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)
@@ -85,14 +91,18 @@ namespace memory
 		if (usedIndex[index])
 			throw std::bad_alloc(); // Attempting to create a pool that already exists
 
-		auto& pool = subPools[index];
+		auto& pool = subPoolList[index];
 
 		pool.pHead = malloc(capacity);
+		
 		MEM_ASSERT(pool.pHead > nullptr);
-		pool.capacity = capacity;
-		pool.pNextFree = CAST(Byte_Ptr_Type, pool.pHead);
-
+		pool.capacity = capacity;		
+		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
 		memset(pool.pHead, 0, capacity);
+		
+#ifdef KRAKOA_DEBUG
+		pool.remainingSpace = capacity;
+#endif
 
 		usedIndex[index] = true;
 	}
@@ -101,23 +111,27 @@ namespace memory
 	{
 		auto& pool = FindPointerOwner(pHeader);
 		memset(pHeader, 0, bytesToDelete);
-		pool.pNextFree = REINTERPRET(Byte_Ptr_Type, pHeader);
+		pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
 		DefragHeap(pool, bytesToDelete);
+
+#ifdef KRAKOA_DEBUG
+		pool.remainingSpace += bytesToDelete;
+#endif
 	}
 
 	SubPool& MemoryPool::FindPointerOwner(void* pHeader)
 	{
-		const auto* const addressVal = CAST(Byte_Ptr_Type, pHeader);
+		const auto* const addressVal = CAST(kmaths::Byte_Type*, pHeader);
 
 		for (auto i = 0; i < SubPoolSize; ++i)
 		{
-			const auto& pool = subPools[i];
-			const auto* startPoint = CAST(Byte_Ptr_Type, pool.pHead);
+			const auto& pool = subPoolList[i];
+			const auto* startPoint = CAST(kmaths::Byte_Type*, pool.pHead);
 			const auto* endPoint = startPoint + pool.capacity;
 
-			if (startPoint >= addressVal
-				&& endPoint <= addressVal)
-				return subPools[i];
+			if (startPoint <= addressVal
+				&& endPoint > addressVal)
+				return subPoolList[i];
 		}
 
 		throw std::exception("Pointer not from any of our memory pools");
@@ -125,17 +139,20 @@ namespace memory
 
 	void MemoryPool::DefragHeap(SubPool& pool, const size_t deletedBytes)
 	{
-		auto* deadSpace = pool.pNextFree;
-		auto* nextBlock = deadSpace + deletedBytes;
+		auto* currentDeadSpace = pool.pNextFree;
+		auto* nextBlock = currentDeadSpace + deletedBytes;
 
-		do {
+		while (AllocHeader::VerifyHeader(REINTERPRET(AllocHeader*, nextBlock), false))
+		{
 			auto* block = REINTERPRET(AllocHeader*, nextBlock);
-			AllocHeader::Verify(block);
-			
-			memmove(deadSpace, block, block->bytes + MemoryControlBlockBytes);
-			deadSpace += ;
+			const auto jumpBytes = block->bytes + MemoryControlBlockBytes;
+			memmove(currentDeadSpace, block, jumpBytes);
+			memset(block, 0, jumpBytes);
+			currentDeadSpace = REINTERPRET(kmaths::Byte_Type*, block);
+			nextBlock += deletedBytes;
+		}
 
-		} while (AllocHeader::Verify(REINTERPRET(AllocHeader*, nextBlock)));
+		pool.pNextFree = currentDeadSpace;
 	}
 
 	size_t MemoryPool::GetTotalBytes() const

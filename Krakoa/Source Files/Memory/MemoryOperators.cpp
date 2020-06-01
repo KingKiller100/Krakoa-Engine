@@ -12,14 +12,20 @@
 
 using namespace memory;
 
-auto& memPool = MemoryPool::Reference();
+static bool isMemPoolInitialized = false;
 
-void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads Control Blocks
+void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 {
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
 
-	memPool.Initialize(1, kmaths::BytesUnits::KILO);
+	auto& memPool = MemoryPool::Reference();
 	
+	if (!isMemPoolInitialized)
+	{
+		memPool.Initialize(1, kmaths::BytesUnits::KILO);
+		isMemPoolInitialized = true;
+	}
+
 	const size_t requestedBytes = AllocHeaderBytes + bytes + SignatureBytes; // Alignment in memory
 	auto* pBlock = memPool.Allocate(requestedBytes);
 	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
@@ -68,7 +74,7 @@ void operator delete(void* ptr)
 		return;
 
 	auto* pHeader = AllocHeader::GetHeaderFromPointer(ptr);
-	
+
 	auto& pHeap = pHeader->pHeap;
 	const auto bytes = pHeader->bytes;
 	auto& pPrev = pHeader->pPrev;
@@ -91,10 +97,9 @@ void operator delete(void* ptr)
 
 	pHeap->Deallocate(totalBytes);
 
-	memPool.Deallocate(pHeader, totalBytes);
-	//free(pHeader);
+	MemoryPool::Reference().Deallocate(pHeader, totalBytes);
 
-	ptr = nullptr;
+	//ptr = nullptr;
 }
 
 void operator delete [](void* ptr)

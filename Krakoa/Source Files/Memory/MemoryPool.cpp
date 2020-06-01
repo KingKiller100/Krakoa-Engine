@@ -47,7 +47,7 @@ namespace memory
 		auto* pBlock = pool.pNextFree;
 		pool.pNextFree += requestedBytes;
 
-#ifdef KRAKOA_DEBUG
+#ifndef KRAKOA_RELEASE
 		pool.remainingSpace -= requestedBytes;
 #endif
 
@@ -99,7 +99,7 @@ namespace memory
 		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
 		memset(pool.pHead, 0, capacity);
 		
-#ifdef KRAKOA_DEBUG
+#ifndef KRAKOA_RELEASE
 		pool.remainingSpace = capacity;
 #endif
 
@@ -113,7 +113,7 @@ namespace memory
 		pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
 		DefragHeap(pool, bytesToDelete);
 
-#ifdef KRAKOA_DEBUG
+#ifndef KRAKOA_RELEASE
 		pool.remainingSpace += bytesToDelete;
 #endif
 	}
@@ -144,9 +144,11 @@ namespace memory
 		while (AllocHeader::VerifyHeader(REINTERPRET(AllocHeader*, nextBlock), false))
 		{
 			auto* block = REINTERPRET(AllocHeader*, nextBlock);
+			
 			auto* data = nextBlock + AllocHeaderSize;
 			auto** pDataPtr = &data;
 			*pDataPtr = (currentDeadSpace + AllocHeaderSize);
+
 			const auto jumpBytes = block->bytes + ControlBlockSize;
 			memmove(currentDeadSpace, block, jumpBytes);
 			memset(block, 0, jumpBytes);

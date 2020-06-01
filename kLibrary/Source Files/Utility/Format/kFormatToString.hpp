@@ -10,7 +10,6 @@
 #include <string>
 #include <sstream>
 #include <variant>
-#include <vector>
 #include <xtr1common>
 
 #if defined (_MSC_VER)

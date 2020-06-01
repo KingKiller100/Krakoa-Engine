@@ -15,7 +15,7 @@ namespace memory
 		void* pHead;
 		kmaths::Byte_Type* pNextFree;
 		size_t capacity;
-#ifdef KRAKOA_DEBUG
+#ifndef KRAKOA_RELEASE
 		size_t remainingSpace;
 #endif
 
@@ -25,7 +25,7 @@ namespace memory
 			: pHead(nullptr),
 			pNextFree(nullptr),
 			capacity(0)
-#ifdef KRAKOA_DEBUG
+#ifndef KRAKOA_RELEASE
 		, remainingSpace(capacity)
 #endif
 		{}
@@ -71,8 +71,8 @@ namespace memory
 		void CreateNewPool(const size_t capacity, const size_t index);
 
 		SubPool& FindPointerOwner(void* pHeader);
-		
-		void DefragHeap(SubPool& pool, const size_t deletedBytes);
+
+		static void DefragHeap(SubPool& pool, const size_t deletedBytes);
 		
 		void ShutDown();
 		

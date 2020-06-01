@@ -13,7 +13,7 @@ namespace memory
 	constexpr auto noAvailableSpaceFlag = -1;
 
 	MemoryPool::MemoryPool(Token&) noexcept
-		:poolIncrementBytes(500 * static_cast<size_t>(BytesUnits::KILO))
+		:poolIncrementBytes(100 * static_cast<size_t>(BytesUnits::KILO))
 	{}
 
 	MemoryPool::~MemoryPool() noexcept
@@ -76,7 +76,8 @@ namespace memory
 				break;
 		}
 
-		if (index >= SubPoolSize) index = -1;
+		if (index >= SubPoolSize) 
+			index = -1;
 		
 		MEM_ASSERT(index != noAvailableSpaceFlag);
 

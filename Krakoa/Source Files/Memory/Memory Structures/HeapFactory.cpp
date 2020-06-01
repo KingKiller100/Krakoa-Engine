@@ -22,11 +22,11 @@ namespace memory
 	{
 		using namespace klib;
 
-		const auto currentDir = kFileSystem::GetExeDirectory();
-
-		if (kFileSystem::CheckFileExists(currentDir + "Logs\\Memory.log"))
+		const auto path = kFileSystem::GetExeDirectory() + "Logs\\Memory.log";
+		
+		if (kFileSystem::CheckFileExists(path))
 		{
-			kFileSystem::RemoveFile(currentDir + "Logs\\Memory.log");
+			kFileSystem::RemoveFile(path);
 		}
 
 		MEM_INIT_LOGS();

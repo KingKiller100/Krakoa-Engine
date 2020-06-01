@@ -20,7 +20,7 @@ namespace memory
 		const auto correctStart = pHeader->signature == KRK_MEMSYSTEM_START_SIG;
 
 		auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type,
-			reinterpret_cast<kmaths::Byte_Type*>(pHeader) + AllocHeaderBytes + pHeader->bytes);
+			reinterpret_cast<kmaths::Byte_Type*>(pHeader) + AllocHeaderSize + pHeader->bytes);
 
 		const auto correctEnd = *pMemEnd == KRK_MEMSYSTEM_END_SIG;
 
@@ -35,15 +35,16 @@ namespace memory
 					" a heap - memory address: {0}\n",
 					pHeader));
 		}
-
-		return (correctStart & correctEnd); // Both correct
+		
+		const auto result = (correctStart && correctEnd);
+		return result; // Both correct
 	}
 
 	AllocHeader* AllocHeader::GetHeaderFromPointer(void* pData)
 	{
 		auto* pHeader = reinterpret_cast<AllocHeader*>(
 			static_cast<kmaths::Byte_Type*>(pData)
-			- AllocHeaderBytes);
+			- AllocHeaderSize);
 		MEM_ASSERT(VerifyHeader(pHeader));
 		return pHeader;
 	}

@@ -65,10 +65,10 @@ namespace krakoa::tests
 		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(managerTypeSize)) != npos);
 		
 		const auto sizeOfBlockStr = lines[3];
-		VERIFY(sizeOfBlockStr.find(std::to_string(managerTypeSize + memory::MemoryPaddingBytes)) != npos);
+		VERIFY(sizeOfBlockStr.find(std::to_string(managerTypeSize + memory::ControlBlockSize)) != npos);
 		
 		const auto totalSizeOFBlockMemoryStr = lines[4];
-		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string(managerTypeSize + memory::MemoryPaddingBytes)) != npos);
+		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string(managerTypeSize + memory::ControlBlockSize)) != npos);
 
 		const auto countStr = lines[5];
 		VERIFY(countStr.find("1") != npos);

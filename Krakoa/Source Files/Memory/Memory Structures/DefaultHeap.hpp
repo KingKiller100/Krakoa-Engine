@@ -29,7 +29,7 @@ namespace memory
 		
 		std::string report;
 		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
-		const auto BlockTotal = totalBytes + MemoryControlBlockBytes * count;
+		const auto BlockTotal = totalBytes + ControlBlockSize * count;
 		size_t index(count);
 
 		report.append(ToString(R"(Heap "Default"
@@ -56,7 +56,7 @@ count
 
 		do {
 			const auto bytes = pCurrentHeader->bytes;
-			const auto blockBytes = pCurrentHeader->bytes + MemoryControlBlockBytes;
+			const auto blockBytes = pCurrentHeader->bytes + ControlBlockSize;
 
 			report.append(ToString(R"(
 Heap: "Default" Index: {0}

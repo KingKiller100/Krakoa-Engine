@@ -3,7 +3,7 @@
 
 namespace memory
 {
-	constexpr auto SignatureBytes = sizeof(AllocHeader::Signature_Type);
-	constexpr auto AllocHeaderBytes = sizeof(AllocHeader);
-	constexpr auto MemoryControlBlockBytes = SignatureBytes + AllocHeaderBytes;
+	constexpr auto SignatureSize = sizeof(AllocHeader::Signature_Type);
+	constexpr auto AllocHeaderSize = sizeof(AllocHeader);
+	constexpr auto ControlBlockSize = SignatureSize + AllocHeaderSize;
 }

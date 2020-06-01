@@ -24,8 +24,8 @@ namespace kmaths
 		using Column_Type = Vector<T, Rows>;
 		using Row_Type = Vector<T, Columns>;
 		inline static constexpr Length_Type Length = (Rows * Columns);
-		inline static constexpr size_t TypeBytes = sizeof(T);
-		inline static constexpr size_t TotalBytes = Length * TypeBytes;
+		inline static constexpr size_t TypeSize = sizeof(T);
+		inline static constexpr size_t TotalBytes = Length * TypeSize;
 
 
 		constexpr Matrix() noexcept
@@ -357,9 +357,14 @@ namespace kmaths
 			return Columns;
 		}
 
-		USE_RESULT constexpr decltype(auto) GetSize() const noexcept
+		USE_RESULT constexpr decltype(auto) GetLength() const noexcept
 		{
 			return Rows * Columns;
+		}
+
+		USE_RESULT constexpr auto GetTotalBytes() const noexcept
+		{
+			return TotalBytes;
 		}
 
 		USE_RESULT constexpr Type* GetPointerToData() const

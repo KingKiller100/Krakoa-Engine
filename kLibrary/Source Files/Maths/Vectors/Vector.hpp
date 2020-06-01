@@ -17,8 +17,8 @@ namespace kmaths
 
 		using Type = T;
 		inline static constexpr Length_Type Length = N;
-		inline static constexpr size_t TypeBytes = sizeof(T);
-		inline static constexpr size_t TotalBytes = Length * TypeBytes;
+		inline static constexpr size_t TypeSize = sizeof(T);
+		inline static constexpr size_t TotalBytes = Length * TypeSize;
 		
 		constexpr Vector() noexcept
 			= default;
@@ -222,6 +222,11 @@ namespace kmaths
 		{
 			Type& first = (Type)dimensions[0];
 			return std::addressof<Type>(first);
+		}
+
+		USE_RESULT constexpr auto GetTotalBytes() const noexcept
+		{
+			return TotalBytes;
 		}
 
 		USE_RESULT constexpr auto GetLength() const noexcept

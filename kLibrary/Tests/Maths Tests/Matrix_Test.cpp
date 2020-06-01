@@ -94,7 +94,7 @@ namespace kTest::maths
 				m14[r][c] = (c == 0 && r == 0) ? 10.0f : ++count;
 		VERIFY(!m14.IsIdentity());
 
-		constexpr auto size = m14.GetSize();
+		constexpr auto size = m14.GetLength();
 
 		const auto inverse3x3 = m14.Inverse();
 
@@ -302,7 +302,7 @@ namespace kTest::maths
 		UNUSED constexpr auto determinant = m15.GetDeterminant();
 		UNUSED constexpr auto inverse = m15.Inverse();
 		UNUSED constexpr auto isIdentity = m15.IsIdentity();
-		UNUSED constexpr auto numberOfElems = m15.GetSize();
+		UNUSED constexpr auto numberOfElems = m15.GetLength();
 		UNUSED constexpr auto numberOfRows = m15.GetRows();
 		UNUSED constexpr auto numberOfColumns = m15.GetColumns();
 		UNUSED constexpr auto isSquare = m15.IsSquare();

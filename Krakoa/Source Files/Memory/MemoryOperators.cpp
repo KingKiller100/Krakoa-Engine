@@ -26,7 +26,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 		isMemPoolInitialized = true;
 	}
 
-	const size_t requestedBytes = AllocHeaderBytes + bytes + SignatureBytes; // Alignment in memory
+	const size_t requestedBytes = AllocHeaderSize + bytes + SignatureSize; // Alignment in memory
 	auto* pBlock = memPool.Allocate(requestedBytes);
 	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
 
@@ -44,7 +44,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 
 	pHeader->pHeap->SetPrevAddress(pHeader);
 
-	auto* pMemStart = pBlock + AllocHeaderBytes;
+	auto* pMemStart = pBlock + AllocHeaderSize;
 	auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, pMemStart + bytes);
 	*pMemEnd = KRK_MEMSYSTEM_END_SIG;
 
@@ -80,7 +80,7 @@ void operator delete(void* ptr)
 	auto& pPrev = pHeader->pPrev;
 	auto& pNext = pHeader->pNext;
 
-	const auto totalBytes = AllocHeaderBytes + bytes + SignatureBytes;
+	const auto totalBytes = AllocHeaderSize + bytes + SignatureSize;
 
 	if (!pPrev && !pNext) // Both null
 		pHeap->SetPrevAddress(nullptr);
@@ -98,8 +98,6 @@ void operator delete(void* ptr)
 	pHeap->Deallocate(totalBytes);
 
 	MemoryPool::Reference().Deallocate(pHeader, totalBytes);
-
-	//ptr = nullptr;
 }
 
 void operator delete [](void* ptr)

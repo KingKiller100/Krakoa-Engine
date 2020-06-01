@@ -52,5 +52,8 @@ namespace memory
 #	define MEM_ASSERT(condition)                            assert( (condition) );
 
 #else
+#	include <cassert>
+
 #	define MEM_FATAL(condition, msg)                        if ( !(condition) ) ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#	define MEM_ASSERT(condition)                            assert( (condition) );
 #endif // !KRAKOA_RELEASE

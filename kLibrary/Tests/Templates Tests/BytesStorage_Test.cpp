@@ -54,7 +54,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -78,7 +78,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -102,7 +102,7 @@ namespace kTest::templates
 			const auto maxBytes = storage.GetMaxBytes();
 			VERIFY(maxBytes == (volume * storageTypeValue));
 
-			const auto size = storage.GetSize();
+			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -134,7 +134,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -158,7 +158,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -182,7 +182,7 @@ namespace kTest::templates
 			const auto maxBytes = storage.GetMaxBytes();
 			VERIFY(maxBytes == (volume * storageTypeValue));
 
-			const auto size = storage.GetSize();
+			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -213,7 +213,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -237,7 +237,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -261,7 +261,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -293,7 +293,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -316,7 +316,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -339,7 +339,7 @@ namespace kTest::templates
 			const auto maxBytes = storage.GetMaxBytes();
 			VERIFY(maxBytes == (volume * storageTypeValue));
 
-			const auto size = storage.GetSize();
+			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -370,7 +370,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -395,7 +395,7 @@ namespace kTest::templates
 			constexpr auto maxBytes = storage.GetMaxBytes();
 			VERIFY_COMPILE_TIME(maxBytes == (volume * storageTypeValue));
 
-			constexpr auto size = storage.GetSize();
+			constexpr auto size = storage.GetLength();
 			VERIFY_COMPILE_TIME(size == (volume * storageTypeValue) / typeSize);
 		}
 
@@ -420,7 +420,7 @@ namespace kTest::templates
 			const auto maxBytes = storage.GetMaxBytes();
 			VERIFY(maxBytes == (volume * storageTypeValue));
 
-			const auto size = storage.GetSize();
+			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 

@@ -13,7 +13,7 @@ namespace memory
 	{
 	public:
 		using Type = T;
-		static constexpr auto TypeBytes = sizeof(Type);
+		static constexpr auto TypeSize = sizeof(Type);
 
 		explicit TemplateHeap() noexcept
 			: HeapBase(typeid(Type).name())
@@ -34,7 +34,7 @@ namespace memory
 		using namespace klib::kFormat;
 		using Heap = TemplateHeap<T>;
 
-		constexpr size_t bytesPerObj = Heap::TypeBytes;
+		constexpr size_t bytesPerObj = Heap::TypeSize;
 
 		const auto name = pHeap->GetName();
 		const auto totalBytes = pHeap->GetTotalAllocatedBytes();

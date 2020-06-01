@@ -11,18 +11,20 @@ namespace klib
 	struct BytesStorage
 	{
 		using Type = T;
-		static constexpr auto TypeBytes = sizeof(T);
+		static constexpr auto TypeSize = sizeof(T);
 		static constexpr auto StorageType = DigitalStorageType;
-		static constexpr auto StorageValue = CAST(size_t, DigitalStorageType);
-		static constexpr auto MaxBytes = StorageValue * N;
-		static constexpr auto Size = MaxBytes / TypeBytes;
+		static constexpr auto StorageSize = CAST(size_t, DigitalStorageType);
+		static constexpr auto MaxBytes = StorageSize * N;
+		static constexpr auto Length = MaxBytes / TypeSize;
+		static constexpr auto SizeInBytes = Length * TypeSize;
 
-		CONST_GETTER_CONSTEXPR(auto, GetTypeSize, TypeBytes)
+		CONST_GETTER_CONSTEXPR(auto, GetTypeSize, TypeSize)
 		CONST_GETTER_CONSTEXPR(auto, GetStorageType, StorageType)
-		CONST_GETTER_CONSTEXPR(auto, GetStorageValue, StorageValue)
+		CONST_GETTER_CONSTEXPR(auto, GetStorageValue, StorageSize)
 		CONST_GETTER_CONSTEXPR(auto, GetMaxBytes, MaxBytes)
-		CONST_GETTER_CONSTEXPR(auto, GetSize, Size)
+		CONST_GETTER_CONSTEXPR(auto, GetLength, Length)
+		CONST_GETTER_CONSTEXPR(auto, GetSizeInBytes, SizeInBytes)
 
-		std::array<T, Size> storage;
+		std::array<T, Length> storage;
 	};
 }

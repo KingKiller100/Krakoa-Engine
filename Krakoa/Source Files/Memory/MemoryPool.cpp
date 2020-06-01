@@ -44,9 +44,8 @@ namespace memory
 	{
 		auto& pool = GetSubPoolIndex(requestedBytes);
 
-		auto& nextFree = pool.pNextFree;
 		auto* pBlock = pool.pNextFree;
-		nextFree += requestedBytes;
+		pool.pNextFree += requestedBytes;
 
 #ifdef KRAKOA_DEBUG
 		pool.remainingSpace -= requestedBytes;
@@ -145,11 +144,14 @@ namespace memory
 		while (AllocHeader::VerifyHeader(REINTERPRET(AllocHeader*, nextBlock), false))
 		{
 			auto* block = REINTERPRET(AllocHeader*, nextBlock);
-			const auto jumpBytes = block->bytes + MemoryControlBlockBytes;
+			auto* data = nextBlock + AllocHeaderSize;
+			auto** pDataPtr = &data;
+			*pDataPtr = (currentDeadSpace + AllocHeaderSize);
+			const auto jumpBytes = block->bytes + ControlBlockSize;
 			memmove(currentDeadSpace, block, jumpBytes);
 			memset(block, 0, jumpBytes);
-			currentDeadSpace = REINTERPRET(kmaths::Byte_Type*, block);
-			nextBlock += deletedBytes;
+			currentDeadSpace += jumpBytes;
+			nextBlock = currentDeadSpace + deletedBytes;
 		}
 
 		pool.pNextFree = currentDeadSpace;

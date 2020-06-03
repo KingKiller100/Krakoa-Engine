@@ -371,10 +371,13 @@ namespace klib::kFileSystem
 
 		static kString::StringWriter<Char> exeFullPath;
 
+		
 		if (exeFullPath.empty())
 		{
-			constexpr DWORD bufferSize = 1024 * 5;
+			constexpr DWORD bufferSize = 1024 * 2;
 			Char* exeBuffer = new Char[bufferSize]{};
+			
+			auto** ebPtr = &exeBuffer;
 
 			DWORD length;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)

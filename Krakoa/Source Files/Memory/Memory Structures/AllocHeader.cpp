@@ -9,10 +9,13 @@
 #include <Maths/BytesTypes.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
-
-
 namespace memory
 {
+	size_t AllocHeader::GetMemoryBookmark() const
+	{
+		return id;
+	}
+
 	bool AllocHeader::VerifyHeader(AllocHeader* pHeader, bool enableAssert)
 	{
 		using namespace klib::kFormat;
@@ -42,6 +45,8 @@ namespace memory
 
 	AllocHeader* AllocHeader::GetHeaderFromPointer(void* pData)
 	{
+
+		
 		auto* pHeader = reinterpret_cast<AllocHeader*>(
 			static_cast<kmaths::Byte_Type*>(pData)
 			- AllocHeaderSize);

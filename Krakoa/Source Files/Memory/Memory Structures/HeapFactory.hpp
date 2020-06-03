@@ -32,6 +32,8 @@ namespace memory
 
 		static size_t GetSize();
 
+		void ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark);
+		
 	private:
 		static void LogTotalBytes(const size_t* bytes) noexcept;
 		static void LogTotalAllocations(const size_t* bytes) noexcept;

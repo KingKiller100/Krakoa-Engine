@@ -601,6 +601,14 @@ namespace kmaths
 		return maxVal - minVal;
 	}
 
+	template<typename T> // Inclusive range
+	USE_RESULT constexpr bool InRange(const T value, const T minVal, const T maxVal) noexcept
+	{
+		return (value >= minVal) && (value <= maxVal);
+	}
+
+	
+
 	template <typename T>
 	USE_RESULT constexpr T Lerp(T a, T b, T t) noexcept
 	{
@@ -615,12 +623,12 @@ namespace kmaths
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T LerpPartial(T a, T b, T t, T tmin, T tmax) noexcept
+	USE_RESULT constexpr T LerpPartial(T a, T b, T t, T tMin, T tMax) noexcept
 	{
-		t = Clamp<T>(t, tmin, tmax);
+		t = Clamp<T>(t, tMin, tMax);
 
-		t -= tmin;
-		t /= (tmax - tmin);
+		t -= tMin;
+		t /= (tMax - tMin);
 
 		return LerpClampled<T>(a, b, t);
 	}

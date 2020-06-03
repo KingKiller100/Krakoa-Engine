@@ -2,11 +2,8 @@
 #include "HeapBase.hpp"
 
 #include "AllocHeader.hpp"
-#include "MemoryTypes.hpp"
 
 #include "../../Core/Logging/MemoryLogger.hpp"
-
-#include <Utility/Format/kFormatToString.hpp>
 
 namespace memory
 {

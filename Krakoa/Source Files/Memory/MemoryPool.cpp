@@ -5,11 +5,12 @@
 
 #include "../Core/Logging/MemoryLogger.hpp"
 
+#include "MemoryErrors.hpp"
 
 namespace memory
 {
 	using namespace kmaths;
-	
+
 	constexpr auto noAvailableSpaceFlag = -1;
 
 	MemoryPool::MemoryPool(Token&) noexcept
@@ -42,7 +43,7 @@ namespace memory
 
 	kmaths::Byte_Type* MemoryPool::Allocate(const size_t requestedBytes)
 	{
-		auto& pool = GetSubPoolIndex(requestedBytes);
+		auto& pool = GetSubPoolWithSpace(requestedBytes);
 
 		auto* pBlock = pool.pNextFree;
 		pool.pNextFree += requestedBytes;
@@ -54,17 +55,15 @@ namespace memory
 		return pBlock;
 	}
 
-	SubPool& MemoryPool::GetSubPoolIndex(const size_t requestedBytes)
+	SubPool& MemoryPool::GetSubPoolWithSpace(const size_t requestedBytes)
 	{
-		int index = 0;
-
-		for (; index < SubPoolSize; ++index)
+		for (int index = 0; index < SubPoolSize; ++index)
 		{
 			const auto& currentPool = subPoolList[index];
 
 			if (!currentPool.pHead)
 				CreateNewPool(poolIncrementBytes, index);
-			
+
 			const auto& head = currentPool.pHead;
 			const auto& nextFree = currentPool.pNextFree;
 
@@ -73,15 +72,10 @@ namespace memory
 			const auto newStorage = currentStorage + requestedBytes;
 
 			if (currentPool.capacity >= newStorage) // TRUE - we have space to allocate FALSE - No more space within this pool
-				break;
+				return subPoolList[index];
 		}
 
-		if (index >= SubPoolSize) 
-			index = -1;
-		
-		MEM_ASSERT(index != noAvailableSpaceFlag);
-
-		return subPoolList[index];
+		throw debug::MemoryFullError();
 	}
 
 	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)
@@ -94,12 +88,12 @@ namespace memory
 		auto& pool = subPoolList[index];
 
 		pool.pHead = malloc(capacity);
-		
+
 		MEM_ASSERT(pool.pHead > nullptr);
-		pool.capacity = capacity;		
+		pool.capacity = capacity;
 		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
 		memset(pool.pHead, 0, capacity);
-		
+
 #ifndef KRAKOA_RELEASE
 		pool.remainingSpace = capacity;
 #endif
@@ -134,7 +128,7 @@ namespace memory
 				return subPoolList[i];
 		}
 
-		throw std::exception("Pointer not from any of our memory pools");
+		throw debug::UnknownPointerError();
 	}
 
 	void MemoryPool::DefragHeap(SubPool& pool, const size_t deletedBytes)
@@ -144,16 +138,14 @@ namespace memory
 
 		while (AllocHeader::VerifyHeader(REINTERPRET(AllocHeader*, nextBlock), false))
 		{
-			auto* block = REINTERPRET(AllocHeader*, nextBlock);
-			
-			auto* data = nextBlock + AllocHeaderSize;
-			auto** pDataPtr = &data;
-			*pDataPtr = (currentDeadSpace + AllocHeaderSize);
+			auto* header = REINTERPRET(AllocHeader*, nextBlock);
+			const auto storedBytes = header->bytes + ControlBlockSize;
 
-			const auto jumpBytes = block->bytes + ControlBlockSize;
-			memmove(currentDeadSpace, block, jumpBytes);
-			memset(block, 0, jumpBytes);
-			currentDeadSpace += jumpBytes;
+			memmove(currentDeadSpace, header, storedBytes);
+			nextBlock = currentDeadSpace + storedBytes;
+			memset(nextBlock, 0, deletedBytes);
+
+			currentDeadSpace += storedBytes;
 			nextBlock = currentDeadSpace + deletedBytes;
 		}
 

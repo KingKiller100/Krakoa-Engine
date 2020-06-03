@@ -58,6 +58,8 @@ namespace memory
 		static MemoryPool& Reference();
 
 	private:
+		void ShutDown();
+
 		/**
 		 * \brief
 		 *		Inform's current pool if there is enough space inside
@@ -66,7 +68,7 @@ namespace memory
 		 * \return
 		 *		TRUE if this pool has space for this object or FALSE if this pool has no more space
 		 */
-		USE_RESULT SubPool& GetSubPoolIndex(const size_t requestedBytes);
+		USE_RESULT SubPool& GetSubPoolWithSpace(const size_t requestedBytes);
 
 		void CreateNewPool(const size_t capacity, const size_t index);
 
@@ -74,7 +76,6 @@ namespace memory
 
 		static void DefragHeap(SubPool& pool, const size_t deletedBytes);
 		
-		void ShutDown();
 		
 	private:
 		SubPoolList subPoolList;

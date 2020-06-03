@@ -11,7 +11,9 @@
 #include <Utility/File System/kFileSystem.hpp>
 #include <Utility/String/kStringManipulation.hpp>
 #include <Maths/Constants.hpp>
+#include <Maths/kAlgorithms.hpp>
 
+#include <iostream>
 
 namespace memory
 {
@@ -23,7 +25,7 @@ namespace memory
 		using namespace klib;
 
 		const auto path = kFileSystem::GetExeDirectory() + "Logs\\Memory.log";
-		
+
 		if (kFileSystem::CheckFileExists(path))
 		{
 			kFileSystem::RemoveFile(path);
@@ -104,6 +106,43 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 	size_t HeapFactory::GetSize()
 	{
 		return heaps.size();
+	}
+
+	void HeapFactory::ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark)
+	{
+		auto* currentHeader = heap->GetPrevAddress();
+
+		AllocHeader::VerifyHeader(currentHeader);
+
+		while (currentHeader && currentHeader->pNext != currentHeader)
+		{
+			if (currentHeader->GetMemoryBookmark() < minBookmark)
+				break;
+
+			currentHeader = currentHeader->pPrev;
+		}
+
+		if (currentHeader->pNext)
+			currentHeader = currentHeader->pNext;
+		else
+			return;
+
+		if (currentHeader->GetMemoryBookmark() > maxBookmark)
+			return;
+
+		auto bookmark = currentHeader->GetMemoryBookmark();
+
+		while (kmaths::InRange(bookmark, minBookmark, maxBookmark))
+		{
+			std::cout << "Heap: " << heap->GetName() << " id: " << bookmark << "\n"
+				<< "Bytes: " << currentHeader->bytes << "\n";
+
+			if (!currentHeader->pNext)
+				break;
+
+			currentHeader = currentHeader->pNext;
+			bookmark = currentHeader->GetMemoryBookmark();
+		}
 	}
 
 	void HeapFactory::LogTotalBytes(const size_t *bytes) noexcept

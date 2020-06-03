@@ -16,11 +16,14 @@ namespace memory
 		using Signature_Ptr_Type = Signature_Type * ;
 
 		Signature_Type signature;
+		size_t id;
 		size_t bytes;
 		HeapBase* pHeap;
 		AllocHeader* pPrev;
 		AllocHeader* pNext;
 
+		size_t GetMemoryBookmark() const;
+		
 		static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
 		static AllocHeader* GetHeaderFromPointer(void* pHeader);
 	};

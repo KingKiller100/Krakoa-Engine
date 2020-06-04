@@ -356,11 +356,11 @@ namespace kmaths
 		constexpr auto one = constants::One<constants::AccuracyType>();
 		constexpr auto two = constants::Two<T>();
 		constexpr auto tau = CAST(T, constants::TAU);
-		
+
 		x = Modulus<T>(x, tau);
-		
+
 		const auto square = CAST(constants::AccuracyType, -x * x);
-		
+
 		auto t = CAST(constants::AccuracyType, x);
 		auto sine = t;
 		for (size_t a = 1; a < n; ++a)
@@ -601,13 +601,13 @@ namespace kmaths
 		return maxVal - minVal;
 	}
 
-	template<typename T> // Inclusive range
+	template<typename T>
 	USE_RESULT constexpr bool InRange(const T value, const T minVal, const T maxVal) noexcept
 	{
-		return (value >= minVal) && (value <= maxVal);
+		return (value >= minVal) && (value < maxVal);
 	}
 
-	
+
 
 	template <typename T>
 	USE_RESULT constexpr T Lerp(T a, T b, T t) noexcept

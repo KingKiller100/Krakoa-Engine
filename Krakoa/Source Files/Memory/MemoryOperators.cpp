@@ -92,15 +92,15 @@ void operator delete(void* ptr)
 
 	if (!pPrev && !pNext) // Both null
 		pHeap->SetPrevAddress(nullptr);
-	else // Only one null
+	else // Maybe one null
 	{
 		if (pNext)
 			pNext->pPrev = pHeader->pPrev;
-		else
-			pHeap->SetPrevAddress(pPrev);
 
 		if (pPrev)
 			pPrev->pNext = pHeader->pNext;
+		else
+			pHeap->SetPrevAddress(pNext);
 	}
 
 	pPrev = pNext = nullptr;

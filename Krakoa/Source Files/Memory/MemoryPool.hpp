@@ -33,14 +33,15 @@ namespace memory
 		SubPool(const SubPool&) = delete;
 	};
 
+
 	class MemoryPool
 	{
-		struct Token {};
 		static constexpr size_t SubPoolSize = 4;
 		using SubPoolList = std::array<SubPool, SubPoolSize>;
 
 	public:
-		MemoryPool(Token&) noexcept;
+		
+		MemoryPool(const size_t typeSize, const size_t minInstances) noexcept;
 		MemoryPool(const MemoryPool&) = delete;
 		~MemoryPool() noexcept;
 
@@ -55,11 +56,11 @@ namespace memory
 		USE_RESULT size_t WalkTheHeap() const;
 		USE_RESULT std::string GetStatus() const;
 
-		static MemoryPool& Reference();
-
 	private:
 		void ShutDown();
 
+		bool DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes);
+		
 		/**
 		 * \brief
 		 *		Inform's current pool if there is enough space inside
@@ -73,13 +74,12 @@ namespace memory
 		void CreateNewPool(const size_t capacity, const size_t index);
 
 		SubPool& FindPointerOwner(void* pHeader);
-
-		static void DefragHeap(SubPool& pool, const size_t deletedBytes);
 		
 		
 	private:
 		SubPoolList subPoolList;
 		const size_t poolIncrementBytes;
+		const size_t typeSize;
 	};
 }
 

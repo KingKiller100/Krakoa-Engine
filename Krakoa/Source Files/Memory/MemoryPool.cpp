@@ -13,8 +13,9 @@ namespace memory
 
 	constexpr auto noAvailableSpaceFlag = -1;
 
-	MemoryPool::MemoryPool(Token&) noexcept
-		:poolIncrementBytes(100 * static_cast<size_t>(BytesUnits::KILO))
+	MemoryPool::MemoryPool(const size_t typeSize, const size_t minInstances) noexcept
+		:poolIncrementBytes(MinimumStorage(typeSize, minInstances)),
+		typeSize(typeSize)
 	{}
 
 	MemoryPool::~MemoryPool() noexcept
@@ -36,7 +37,7 @@ namespace memory
 				continue;
 
 			free(subPool.pHead);
-			subPool.pNextFree = nullptr;
+			subPool.pHead = subPool.pNextFree = nullptr;
 			subPool.capacity = 0;
 		}
 	}
@@ -78,6 +79,28 @@ namespace memory
 		throw debug::MemoryFullError();
 	}
 
+	bool MemoryPool::DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes)
+	{
+		const char arr[requestedBytes]{};
+
+		if (mem(pool.pNextFree, ))
+
+			auto* const prevFree = pool.pNextFree;
+
+		const auto distance = pool.pNextFree - pool.pHead;
+
+		if (distance > requestedBytes)
+			pool.pNextFree = static_cast<Byte_Type*>(pool.pHead);
+
+		do
+		{
+
+
+		} while (AllocHeader::VerifyHeader(reinterpret_cast<AllocHeader*>(pool.pNextFree)));
+
+		pool.pNextFree = prevFree;
+	}
+
 	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)
 	{
 		static std::array<bool, SubPoolSize> usedIndex{};
@@ -106,7 +129,6 @@ namespace memory
 		auto& pool = FindPointerOwner(pHeader);
 		memset(pHeader, 0, bytesToDelete);
 		pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
-		DefragHeap(pool, bytesToDelete);
 
 #ifndef KRAKOA_RELEASE
 		pool.remainingSpace += bytesToDelete;
@@ -129,27 +151,6 @@ namespace memory
 		}
 
 		throw debug::UnknownPointerError();
-	}
-
-	void MemoryPool::DefragHeap(SubPool& pool, const size_t deletedBytes)
-	{
-		auto* currentDeadSpace = pool.pNextFree;
-		auto* nextBlock = currentDeadSpace + deletedBytes;
-
-		while (AllocHeader::VerifyHeader(REINTERPRET(AllocHeader*, nextBlock), false))
-		{
-			auto* header = REINTERPRET(AllocHeader*, nextBlock);
-			const auto storedBytes = header->bytes + ControlBlockSize;
-
-			memmove(currentDeadSpace, header, storedBytes);
-			nextBlock = currentDeadSpace + storedBytes;
-			memset(nextBlock, 0, deletedBytes);
-
-			currentDeadSpace += storedBytes;
-			nextBlock = currentDeadSpace + deletedBytes;
-		}
-
-		pool.pNextFree = currentDeadSpace;
 	}
 
 	size_t MemoryPool::GetTotalBytes() const

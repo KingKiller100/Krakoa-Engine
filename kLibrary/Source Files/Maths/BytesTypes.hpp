@@ -20,4 +20,15 @@ namespace kmaths
 
 	using Byte_Type = std::int8_t;
 
+	USE_RESULT constexpr size_t MinimumStorage(const size_t typeSize, const size_t count) noexcept
+	{
+		return typeSize * count;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr size_t MinimumStorage(const size_t count) noexcept
+	{
+		return sizeof(T) * count;
+	}
+	
 }

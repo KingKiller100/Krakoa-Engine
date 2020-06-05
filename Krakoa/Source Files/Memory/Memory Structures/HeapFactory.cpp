@@ -18,7 +18,7 @@
 namespace memory
 {
 	HeapBase* HeapFactory::defaultHeap = nullptr;
-	HeapFactory::HeapList HeapFactory::heaps;
+	HeapFactory::HeapList HeapFactory::heaps{};
 
 	void HeapFactory::Initialize() noexcept
 	{
@@ -48,19 +48,20 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		size_t totalBytes(0);
 		size_t totalAllocations(0);
 
-		for (auto& heap : heaps)
+		for (auto i = 1; heaps[i] != nullptr; ++i)
 		{
+			auto& heap = heaps[i];
+			
 			totalBytes += heap->GetTotalAllocatedBytes();
 			totalAllocations += heap->WalkTheHeap();
 			MEM_INFO(heap->GetStatus());
 			free(heap);
+			heap = nullptr;
 		}
 
 		MEM_INFO(defaultHeap->GetStatus());
 		totalBytes += defaultHeap->GetTotalAllocatedBytes();
 		totalAllocations += defaultHeap->WalkTheHeap();
-
-		heaps.clear();
 
 		LogTotalBytes(&totalBytes);
 		LogTotalAllocations(&totalAllocations);
@@ -74,6 +75,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		{
 			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(DefaultHeap)));
 			defaultHeap->Initialize("Default", &localVFTBL);
+			heaps[0] = defaultHeap;
 		}
 
 		return defaultHeap;

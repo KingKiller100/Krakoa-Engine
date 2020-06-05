@@ -6,6 +6,8 @@
 // 3735928559
 #define KRK_MEMSYSTEM_END_SIG 0xdeadbeef
 
+#include <HelperMacros.hpp>
+
 namespace memory
 {
 	class HeapBase;
@@ -13,19 +15,18 @@ namespace memory
 	struct AllocHeader
 	{
 		using Signature_Type = unsigned;
-		using Signature_Ptr_Type = Signature_Type * ;
 
 		Signature_Type signature;
-		size_t id;
+		size_t bookmark;
 		size_t bytes;
-		HeapBase* pHeap;
-		AllocHeader* pPrev;
-		AllocHeader* pNext;
+		HeapBase* pHeap = nullptr;
+		AllocHeader* pPrev = nullptr;
+		AllocHeader* pNext = nullptr;
 
-		size_t GetMemoryBookmark() const;
+		USE_RESULT size_t GetMemoryBookmark() const noexcept;
 		
 		static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
-		static AllocHeader* GetHeaderFromPointer(void* pHeader);
+		static AllocHeader* GetHeaderFromPointer(void* pData);
 	};
 
 }

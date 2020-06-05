@@ -1,7 +1,6 @@
 ﻿#include "Precompile.hpp"
 #include "AllocHeader.hpp"
 
-#include "HeapBase.hpp"
 #include "MemoryTypes.hpp"
 
 #include "../../Core/Logging/MemoryLogger.hpp"
@@ -13,40 +12,44 @@ namespace memory
 {
 	size_t AllocHeader::GetMemoryBookmark() const
 	{
-		return id;
+		return bookmark;
 	}
 
 	bool AllocHeader::VerifyHeader(AllocHeader* pHeader, bool enableAssert)
 	{
 		using namespace klib::kFormat;
+		
+		if (pHeader->signature != KRK_MEMSYSTEM_START_SIG)
+		{
+			if (enableAssert)
+			{
+				MEM_FATAL(false, ToString("CORRUPTED HEAP - Incorrect signature"
+					" on a heap - memory Address: {0}\n",
+					pHeader));
+			}
+			return false;
+		}
 
-		const auto correctStart = pHeader->signature == KRK_MEMSYSTEM_START_SIG;
-
-		auto* pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Ptr_Type,
+		auto* const pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Type*,
 			reinterpret_cast<kmaths::Byte_Type*>(pHeader) + AllocHeaderSize + pHeader->bytes);
 
-		const auto correctEnd = *pMemEnd == KRK_MEMSYSTEM_END_SIG;
-
-		if (enableAssert)
+		if (*pMemEnd != KRK_MEMSYSTEM_END_SIG)
 		{
-			MEM_FATAL(correctStart, ToString("CORRUPTED HEAP - Incorrect signature"
-				" on a heap - memory Address: {0}\n",
-				pHeader));
-
-			MEM_FATAL(correctEnd,
-				ToString("CORRUPTED HEAP - Incorrect end marker on"
-					" a heap - memory address: {0}\n",
-					pHeader));
+			if (enableAssert)
+			{
+				MEM_FATAL(false,
+					ToString("CORRUPTED HEAP - Incorrect end marker on"
+						" a heap - memory address: {0}\n",
+						pHeader));
+			}
+			return false;
 		}
 		
-		const auto result = (correctStart && correctEnd);
-		return result; // Both correct
+		return true; // Both correct
 	}
 
 	AllocHeader* AllocHeader::GetHeaderFromPointer(void* pData)
 	{
-
-		
 		auto* pHeader = reinterpret_cast<AllocHeader*>(
 			static_cast<kmaths::Byte_Type*>(pData)
 			- AllocHeaderSize);

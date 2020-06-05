@@ -1,11 +1,12 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryPool.hpp"
 
+#include "MemoryErrors.hpp"
 #include "Memory Structures/MemoryTypes.hpp"
 
 #include "../Core/Logging/MemoryLogger.hpp"
 
-#include "MemoryErrors.hpp"
+#include <Maths/kAlgorithms.hpp>
 
 namespace memory
 {
@@ -63,45 +64,62 @@ namespace memory
 	{
 		for (int index = 0; index < SubPoolSize; ++index)
 		{
-			const auto& currentPool = subPoolList[index];
+			auto& currentPool = subPoolList[index];
 
 			if (!currentPool.pHead)
 				CreateNewPool(poolIncrementBytes, index);
 
-			const auto& head = currentPool.pHead;
-			const auto& nextFree = currentPool.pNextFree;
-
-			auto* const headByteVal = CAST(kmaths::Byte_Type*, head);
-			const auto currentStorage = static_cast<size_t>(nextFree - headByteVal);
-			const auto newStorage = currentStorage + requestedBytes;
-
-			if (currentPool.capacity >= newStorage) // TRUE - we have space to allocate FALSE - No more space within this pool
+			if (DoesPoolHaveEnoughSpace(currentPool, requestedBytes)) // TRUE - we have space to allocate | FALSE - No more space within this pool
 				return subPoolList[index];
 		}
 
 		throw debug::MemoryFullError();
 	}
 
-	bool MemoryPool::DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes)
+	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)
+	{
+		static std::array<bool, SubPoolSize> usedIndex{};
+
+		if (usedIndex[index]) throw std::bad_alloc(); // Attempting to create a pool that already exists
+		usedIndex[index] = true;
+
+		auto& pool = subPoolList[index];
+
+		pool.pHead = malloc(capacity);
+
+		MEM_ASSERT(pool.pHead > nullptr);
+		pool.capacity = capacity;
+		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
+		memset(pool.pHead, 0, capacity);
+
+#ifndef KRAKOA_RELEASE
+		pool.remainingSpace = capacity;
+#endif
+	}
+
+	bool MemoryPool::DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes) const
 	{
 		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
 			return true;
 
 		auto*& pNextFree = pool.pNextFree;
-
 		auto* const prevFree = pool.pNextFree;
+		const auto distance = pool.pNextFree - static_cast<Byte_Type*>(pool.pHead);
 
-		const auto distance = pool.pNextFree - pool.pHead;
+		if (IsNegative(distance))
+			throw debug::MemmoryError();
 
 		if (distance > requestedBytes)
 			pNextFree = static_cast<Byte_Type*>(pool.pHead);
+		else
+			pNextFree++;
 
 		bool isBlockFree = false;
 		do
 		{
 			auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
-			const auto isHeader = AllocHeader::VerifyHeader(pHeader, false);
-			if (isHeader)
+
+			if (AllocHeader::VerifyHeader(pHeader, false))
 			{
 				pNextFree += pHeader->bytes + ControlBlockSize;
 			}
@@ -112,22 +130,32 @@ namespace memory
 
 			if (!isBlockFree)
 			{
-				auto* const endAddress = pool.capacity + (Byte_Type*)pool.pHead;
 				auto maxLoops = requestedBytes;
-				for (; pNextFree != endAddress || maxLoops > 0; pNextFree++, maxLoops--)
+				auto* const endAddress = pool.capacity + static_cast<Byte_Type*>(pool.pHead);
+
+				while (maxLoops > 0 && pNextFree < endAddress)
 				{
 					auto* const interruptingData = reinterpret_cast<AllocHeader*>(pNextFree);
-					if (AllocHeader::VerifyHeader(reinterpret_cast<AllocHeader*>(pNextFree), false))
+					if (AllocHeader::VerifyHeader(interruptingData, false))
 					{
 						pNextFree += interruptingData->bytes + ControlBlockSize;
 						break;
 					}
+
+					pNextFree++;
+					maxLoops--;
+				}
+
+				if (endAddress <= pNextFree)
+				{
+					pool.pNextFree = prevFree;
+					return false;
 				}
 			}
 
 		} while (!isBlockFree);
 
-		pool.pNextFree = prevFree;
+		return true;
 	}
 
 	bool MemoryPool::CheckBlockIsDead(const Byte_Type* pNextFree, const size_t requestedBytes) const
@@ -159,7 +187,6 @@ namespace memory
 				const auto remainingSize = requestedBytes % deadBlockSize;
 				if (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0)
 					passedTest = false;
-
 			}
 
 			if (passedTest)
@@ -169,34 +196,14 @@ namespace memory
 		return false;
 	}
 
-	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)
-	{
-		static std::array<bool, SubPoolSize> usedIndex{};
-
-		if (usedIndex[index])
-			throw std::bad_alloc(); // Attempting to create a pool that already exists
-
-		auto& pool = subPoolList[index];
-
-		pool.pHead = malloc(capacity);
-
-		MEM_ASSERT(pool.pHead > nullptr);
-		pool.capacity = capacity;
-		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
-		memset(pool.pHead, 0, capacity);
-
-#ifndef KRAKOA_RELEASE
-		pool.remainingSpace = capacity;
-#endif
-
-		usedIndex[index] = true;
-	}
 
 	void MemoryPool::Deallocate(AllocHeader* pHeader, const size_t bytesToDelete)
 	{
 		auto& pool = FindPointerOwner(pHeader);
 		memset(pHeader, 0, bytesToDelete);
-		pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
+
+		if (REINTERPRET(Byte_Type*, pHeader) < pool.pNextFree)
+			pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
 
 #ifndef KRAKOA_RELEASE
 		pool.remainingSpace += bytesToDelete;
@@ -241,7 +248,7 @@ namespace memory
 		return "";
 	}
 
-	MemoryPool& MemoryPool::Reference()
+	MemoryPool& MemoryPool::Reference() noexcept
 	{
 		static Token token;
 		static MemoryPool instance(token);

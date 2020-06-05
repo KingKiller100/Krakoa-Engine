@@ -34,7 +34,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
 
 	pHeader->signature = KRK_MEMSYSTEM_START_SIG;
-	pHeader->id = allocIter++;
+	pHeader->bookmark = allocIter++;
 	pHeader->pHeap = pHeap;
 	pHeader->bytes = bytes;
 	pHeader->pPrev = pHeader->pNext = nullptr;
@@ -49,7 +49,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 	pHeader->pHeap->SetPrevAddress(pHeader);
 
 	auto* pMemStart = pBlock + AllocHeaderSize;
-	auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Ptr_Type, pMemStart + bytes);
+	auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Type*, pMemStart + bytes);
 	*pMemEnd = KRK_MEMSYSTEM_END_SIG;
 
 	pHeap->Allocate(requestedBytes);

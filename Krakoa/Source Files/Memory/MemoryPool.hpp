@@ -62,7 +62,7 @@ namespace memory
 	private:
 		void ShutDown();
 
-		bool DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes);
+		bool DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes) const;
 		bool CheckBlockIsDead(const kmaths::Byte_Type* pNextFree, size_t requestedBytes) const;
 
 		/**

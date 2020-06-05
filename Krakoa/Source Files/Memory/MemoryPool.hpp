@@ -36,12 +36,13 @@ namespace memory
 
 	class MemoryPool
 	{
+		struct Token {};
 		static constexpr size_t SubPoolSize = 4;
 		using SubPoolList = std::array<SubPool, SubPoolSize>;
 
 	public:
 		
-		MemoryPool(const size_t typeSize, const size_t minInstances) noexcept;
+		MemoryPool(Token&) noexcept;
 		MemoryPool(const MemoryPool&) = delete;
 		~MemoryPool() noexcept;
 
@@ -56,11 +57,14 @@ namespace memory
 		USE_RESULT size_t WalkTheHeap() const;
 		USE_RESULT std::string GetStatus() const;
 
+		USE_RESULT static MemoryPool& Reference() noexcept;
+		
 	private:
 		void ShutDown();
 
 		bool DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes);
-		
+		bool CheckBlockIsDead(const kmaths::Byte_Type* pNextFree, size_t requestedBytes) const;
+
 		/**
 		 * \brief
 		 *		Inform's current pool if there is enough space inside
@@ -79,7 +83,7 @@ namespace memory
 	private:
 		SubPoolList subPoolList;
 		const size_t poolIncrementBytes;
-		const size_t typeSize;
+		void* exampleDeadBlock;
 	};
 }
 

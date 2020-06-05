@@ -12,18 +12,21 @@ namespace memory
 	using namespace kmaths;
 
 	constexpr auto noAvailableSpaceFlag = -1;
+	constexpr auto deadBlockSize = 100 * static_cast<size_t>(BytesUnits::KILO);
 
-	MemoryPool::MemoryPool(const size_t typeSize, const size_t minInstances) noexcept
-		:poolIncrementBytes(MinimumStorage(typeSize, minInstances)),
-		typeSize(typeSize)
-	{}
+	MemoryPool::MemoryPool(Token&) noexcept
+		: poolIncrementBytes(100 * static_cast<size_t>(BytesUnits::KILO))
+	{
+		exampleDeadBlock = malloc(deadBlockSize);
+		memset(exampleDeadBlock, 0, deadBlockSize);
+	}
 
 	MemoryPool::~MemoryPool() noexcept
 	{
 		ShutDown();
 	}
 
-	void MemoryPool::Initialize(const size_t volume, const kmaths::BytesUnits units)
+	void MemoryPool::Initialize(const size_t volume, const BytesUnits units)
 	{
 		const auto capacity = volume * static_cast<size_t>(units);
 		CreateNewPool(capacity, 0);
@@ -81,24 +84,89 @@ namespace memory
 
 	bool MemoryPool::DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes)
 	{
-		const char arr[requestedBytes]{};
+		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
+			return true;
 
-		if (mem(pool.pNextFree, ))
+		auto*& pNextFree = pool.pNextFree;
 
-			auto* const prevFree = pool.pNextFree;
+		auto* const prevFree = pool.pNextFree;
 
 		const auto distance = pool.pNextFree - pool.pHead;
 
 		if (distance > requestedBytes)
-			pool.pNextFree = static_cast<Byte_Type*>(pool.pHead);
+			pNextFree = static_cast<Byte_Type*>(pool.pHead);
 
+		bool isBlockFree = false;
 		do
 		{
+			auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
+			const auto isHeader = AllocHeader::VerifyHeader(pHeader, false);
+			if (isHeader)
+			{
+				pNextFree += pHeader->bytes + ControlBlockSize;
+			}
+			else
+			{
+				isBlockFree = CheckBlockIsDead(pNextFree, requestedBytes);
+			}
 
+			if (!isBlockFree)
+			{
+				auto* const endAddress = pool.capacity + (Byte_Type*)pool.pHead;
+				auto maxLoops = requestedBytes;
+				for (; pNextFree != endAddress || maxLoops > 0; pNextFree++, maxLoops--)
+				{
+					auto* const interruptingData = reinterpret_cast<AllocHeader*>(pNextFree);
+					if (AllocHeader::VerifyHeader(reinterpret_cast<AllocHeader*>(pNextFree), false))
+					{
+						pNextFree += interruptingData->bytes + ControlBlockSize;
+						break;
+					}
+				}
+			}
 
-		} while (AllocHeader::VerifyHeader(reinterpret_cast<AllocHeader*>(pool.pNextFree)));
+		} while (!isBlockFree);
 
 		pool.pNextFree = prevFree;
+	}
+
+	bool MemoryPool::CheckBlockIsDead(const Byte_Type* pNextFree, const size_t requestedBytes) const
+	{
+		if (requestedBytes <= deadBlockSize)
+		{
+			if (memcmp(pNextFree, exampleDeadBlock, requestedBytes) == 0)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			bool passedTest = true;
+			auto initialLoops = requestedBytes / deadBlockSize;
+
+			while (initialLoops-- > 0)
+			{
+				if (memcmp(pNextFree + (deadBlockSize * initialLoops), exampleDeadBlock, deadBlockSize) != 0)
+				{
+					passedTest = false;
+					break;
+				}
+
+			}
+
+			if (passedTest)
+			{
+				const auto remainingSize = requestedBytes % deadBlockSize;
+				if (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0)
+					passedTest = false;
+
+			}
+
+			if (passedTest)
+				return true;
+		}
+
+		return false;
 	}
 
 	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)

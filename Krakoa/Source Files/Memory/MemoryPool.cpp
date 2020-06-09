@@ -42,7 +42,6 @@ namespace memory
 
 			free(subPool.pHead);
 			subPool.pHead = subPool.pNextFree = nullptr;
-			subPool.capacity = 0;
 		}
 	}
 
@@ -80,21 +79,18 @@ namespace memory
 	{
 		static std::array<bool, SubPoolSize> usedIndex{};
 
-		if (usedIndex[index]) throw std::bad_alloc(); // Attempting to create a pool that already exists
-		usedIndex[index] = true;
+		if (usedIndex[index]) throw debug::MemoryPoolError(); // Attempting to create a pool that already exists
 
 		auto& pool = subPoolList[index];
 
+		pool = SubPool(capacity);
 		pool.pHead = malloc(capacity);
 
-		MEM_ASSERT(pool.pHead > nullptr);
-		pool.capacity = capacity;
+		MEM_ASSERT(pool.pHead);
 		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
 		memset(pool.pHead, 0, capacity);
-
-#ifndef KRAKOA_RELEASE
-		pool.remainingSpace = capacity;
-#endif
+		
+		usedIndex[index] = true;
 	}
 
 	bool MemoryPool::DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes) const
@@ -107,7 +103,8 @@ namespace memory
 		const auto distance = pool.pNextFree - static_cast<Byte_Type*>(pool.pHead);
 
 		if (IsNegative(distance))
-			throw debug::MemmoryError();
+			throw debug::MemoryPoolError("Distance between pool's head and" 
+				" pool's next free space pointers is negative!");
 
 		if (distance > requestedBytes)
 			pNextFree = static_cast<Byte_Type*>(pool.pHead);
@@ -196,7 +193,6 @@ namespace memory
 		return false;
 	}
 
-
 	void MemoryPool::Deallocate(AllocHeader* pHeader, const size_t bytesToDelete)
 	{
 		auto& pool = FindPointerOwner(pHeader);
@@ -205,9 +201,7 @@ namespace memory
 		if (REINTERPRET(Byte_Type*, pHeader) < pool.pNextFree)
 			pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
 
-#ifndef KRAKOA_RELEASE
 		pool.remainingSpace += bytesToDelete;
-#endif
 	}
 
 	SubPool& MemoryPool::FindPointerOwner(void* pHeader)
@@ -228,19 +222,21 @@ namespace memory
 		throw debug::UnknownPointerError();
 	}
 
-	size_t MemoryPool::GetTotalBytes() const
+	size_t MemoryPool::GetBytes() const
 	{
-		return 0;
+		size_t currentStorage = 0;
+		for (auto& pool : subPoolList)
+			currentStorage += (pool.capacity -  pool.remainingSpace);
+		return currentStorage;
 	}
 
 	size_t MemoryPool::GetMaxBytes() const
 	{
-		return 0;
-	}
-
-	size_t MemoryPool::WalkTheHeap() const
-	{
-		return 0;
+		size_t maxBytes = 0;
+		for (auto& pool : subPoolList)
+			maxBytes += pool.capacity;
+		
+		return maxBytes;
 	}
 
 	std::string MemoryPool::GetStatus() const

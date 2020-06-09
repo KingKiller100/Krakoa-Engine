@@ -1,17 +1,15 @@
 #pragma once
 
-#include "Memory/MemoryPool.hpp"
-#include "Memory/Memory Structures/HeapFactory.hpp"
-
 #ifdef KRAKOA_TEST
 #	include "Tests/TestDriver.hpp"
 #else
 #	include "Core/Application.hpp"
 #	include "Instrumentor.hpp"
 #	include <memory>
-
 extern void krakoa::CreateApplication();
 #endif
+#include "Memory/Memory Structures/HeapFactory.hpp"
+
 
 inline void Launch();
 
@@ -19,6 +17,7 @@ int main(int argc, char** argv)
 {
 	memory::HeapFactory::Initialize();
 	Launch();
+	memory::HeapFactory::ReportMemoryLeaks();
 	memory::HeapFactory::ShutDown();
 	
 	return EXIT_SUCCESS;

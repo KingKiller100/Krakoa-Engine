@@ -10,7 +10,7 @@
 
 namespace memory
 {
-	size_t AllocHeader::GetMemoryBookmark() const
+	size_t AllocHeader::GetMemoryBookmark() const noexcept
 	{
 		return bookmark;
 	}

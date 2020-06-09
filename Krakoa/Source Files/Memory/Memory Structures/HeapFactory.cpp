@@ -1,17 +1,17 @@
 ﻿#include "Precompile.hpp"
 #include "HeapFactory.hpp"
 
-#include <Maths/BytesTypes.hpp>
-
-
 #include "DefaultHeap.hpp"
 
+#include "../MemoryPool.hpp"
 #include "../../Core/Logging/MemoryLogger.hpp"
+
+#include <Maths/Constants.hpp>
+#include <Maths/BytesTypes.hpp>
+#include <Maths/kAlgorithms.hpp>
 
 #include <Utility/File System/kFileSystem.hpp>
 #include <Utility/String/kStringManipulation.hpp>
-#include <Maths/Constants.hpp>
-#include <Maths/kAlgorithms.hpp>
 
 #include <iostream>
 
@@ -48,10 +48,10 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		size_t totalBytes(0);
 		size_t totalAllocations(0);
 
-		for (auto i = 1; heaps[i] != nullptr; ++i)
+		for (auto i = 1; i < heaps.size() && heaps[i] != nullptr; ++i)
 		{
 			auto& heap = heaps[i];
-			
+
 			totalBytes += heap->GetTotalAllocatedBytes();
 			totalAllocations += heap->WalkTheHeap();
 			MEM_INFO(heap->GetStatus());
@@ -73,7 +73,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 		if (!defaultHeap)
 		{
-			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(DefaultHeap)));
+			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(HeapBase)));
 			defaultHeap->Initialize("Default", &localVFTBL);
 			heaps[0] = defaultHeap;
 		}
@@ -110,11 +110,23 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		return heaps.size();
 	}
 
+	void HeapFactory::ReportMemoryLeaks()
+	{
+		for (HeapBase* heap : heaps)
+		{
+			ReportMemoryLeaks(heap, 0, heap->GetPrevAddress()->bookmark);
+		}
+	}
+
 	void HeapFactory::ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark)
 	{
 		auto* currentHeader = heap->GetPrevAddress();
 
-		AllocHeader::VerifyHeader(currentHeader);
+		if (!currentHeader)
+			return;
+		
+		if (!AllocHeader::VerifyHeader(currentHeader))
+			return;
 
 		while (currentHeader && currentHeader->pNext != currentHeader)
 		{

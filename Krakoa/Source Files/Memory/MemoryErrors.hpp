@@ -4,31 +4,43 @@
 
 namespace memory::debug
 {
-	class MemmoryError : public std::exception
+	class MemoryError : public std::exception
 	{
 	public:
-		MemmoryError()
+		MemoryError()
 			= default;
 
 	protected:
-		MemmoryError(const char* const message)
+		MemoryError(const char* const message)
 			: exception(message)
 		{}
 	};
 
-	class MemoryFullError : public MemmoryError
+	class MemoryPoolError : public MemoryError
 	{
 	public:
-		MemoryFullError()
-			: MemmoryError("Memory pool does not have enough space for this data")
+		MemoryPoolError()
+			: MemoryError("Error in memory pool")
+		{}
+
+		MemoryPoolError(const char* message)
+			: MemoryError(message)
 		{}
 	};
 
-	class UnknownPointerError : public MemmoryError
+	class MemoryFullError : public MemoryError
+	{
+	public:
+		MemoryFullError()
+			: MemoryError("Memory pool does not have enough space for this data")
+		{}
+	};
+
+	class UnknownPointerError : public MemoryError
 	{
 	public:
 		UnknownPointerError()
-			: MemmoryError("Pointer given not from our pool")
+			: MemoryError("Pointer given not from our pool")
 		{}
 	};
 

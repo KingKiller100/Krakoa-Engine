@@ -8,13 +8,11 @@
 
 #include "../Core/Logging/MemoryLogger.hpp"
 
-#include <cassert>
 
-using namespace memory;
-
+static size_t bookmarkIter = 0;
 static bool isMemPoolInitialized = false;
 
-static size_t allocIter = 0;
+using namespace memory;
 
 void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 {
@@ -22,7 +20,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
 
 	auto& memPool = MemoryPool::Reference();
-	
+
 	if (!isMemPoolInitialized)
 	{
 		memPool.Initialize(200, kmaths::BytesUnits::MEGA);
@@ -34,7 +32,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
 
 	pHeader->signature = KRK_MEMSYSTEM_START_SIG;
-	pHeader->bookmark = allocIter++;
+	pHeader->bookmark = bookmarkIter++;
 	pHeader->pHeap = pHeap;
 	pHeader->bytes = bytes;
 	pHeader->pPrev = pHeader->pNext = nullptr;
@@ -83,10 +81,10 @@ void operator delete(void* ptr)
 #ifndef KRAKOA_RELEASE
 	auto* pHeader = AllocHeader::GetHeaderFromPointer(ptr);
 
-	auto& pHeap = pHeader->pHeap;
+	auto* pHeap = pHeader->pHeap;
 	const auto bytes = pHeader->bytes;
-	auto& pPrev = pHeader->pPrev;
-	auto& pNext = pHeader->pNext;
+	auto* pPrev = pHeader->pPrev;
+	auto* pNext = pHeader->pNext;
 
 	const auto totalBytes = AllocHeaderSize + bytes + SignatureSize;
 
@@ -101,10 +99,10 @@ void operator delete(void* ptr)
 			pPrev->pNext = pHeader->pNext;
 		else
 			pHeap->SetPrevAddress(pNext);
+
+		pPrev = pNext = nullptr;
 	}
 
-	pPrev = pNext = nullptr;
-	
 	pHeap->Deallocate(totalBytes);
 	MemoryPool::Reference().Deallocate(pHeader, totalBytes);
 #else

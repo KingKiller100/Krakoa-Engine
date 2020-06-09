@@ -12,27 +12,41 @@ namespace memory
 {
 	struct SubPool
 	{
-		void* pHead;
-		kmaths::Byte_Type* pNextFree;
-		size_t capacity;
-#ifndef KRAKOA_RELEASE
-		size_t remainingSpace;
-#endif
-
-
-		
-		SubPool() noexcept
+	public:
+		explicit SubPool(const size_t capacity = 0) noexcept
 			: pHead(nullptr),
 			pNextFree(nullptr),
-			capacity(0)
-#ifndef KRAKOA_RELEASE
-		, remainingSpace(capacity)
-#endif
+			capacity(capacity)
+			, remainingSpace(capacity)
 		{}
-		
-		SubPool(const SubPool&) = delete;
-	};
 
+		SubPool(SubPool&& other) noexcept
+			: pHead(other.pHead),
+			pNextFree(other.pNextFree),
+			capacity(other.capacity),
+			remainingSpace(other.remainingSpace)
+		{ }
+
+		SubPool& operator=(SubPool&& other) noexcept
+		{
+			pHead = other.pHead;
+			pNextFree = other.pNextFree;
+			remainingSpace = other.remainingSpace;
+
+			auto* capPtr = const_cast<size_t*>(&capacity);
+			*capPtr = other.capacity;
+
+			return *this;
+		}
+
+		SubPool(const SubPool&) = delete;
+
+	public:
+		void* pHead;
+		kmaths::Byte_Type* pNextFree;
+		const size_t capacity;
+		size_t remainingSpace;
+	};
 
 	class MemoryPool
 	{
@@ -41,7 +55,7 @@ namespace memory
 		using SubPoolList = std::array<SubPool, SubPoolSize>;
 
 	public:
-		
+
 		MemoryPool(Token&) noexcept;
 		MemoryPool(const MemoryPool&) = delete;
 		~MemoryPool() noexcept;
@@ -51,14 +65,13 @@ namespace memory
 		kmaths::Byte_Type* Allocate(const size_t requestedBytes);
 		void Deallocate(AllocHeader* pHeader, const size_t bytesToDelete);
 
-		USE_RESULT size_t GetTotalBytes() const;
+		USE_RESULT size_t GetBytes() const;
 		USE_RESULT size_t GetMaxBytes() const;
 
-		USE_RESULT size_t WalkTheHeap() const;
 		USE_RESULT std::string GetStatus() const;
 
 		USE_RESULT static MemoryPool& Reference() noexcept;
-		
+
 	private:
 		void ShutDown();
 
@@ -78,8 +91,8 @@ namespace memory
 		void CreateNewPool(const size_t capacity, const size_t index);
 
 		SubPool& FindPointerOwner(void* pHeader);
-		
-		
+
+
 	private:
 		SubPoolList subPoolList;
 		const size_t poolIncrementBytes;

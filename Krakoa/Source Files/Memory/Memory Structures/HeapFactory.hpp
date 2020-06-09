@@ -33,11 +33,12 @@ namespace memory
 
 		static size_t GetSize();
 
-		static void ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark);
+		static void ReportMemoryLeaks();
 
 	private:
 		static void LogTotalBytes(const size_t* bytes) noexcept;
 		static void LogTotalAllocations(const size_t* bytes) noexcept;
+		static void ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark);
 
 		explicit HeapFactory(Token);
 

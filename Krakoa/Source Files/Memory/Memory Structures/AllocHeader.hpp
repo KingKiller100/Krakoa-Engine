@@ -1,12 +1,12 @@
 ﻿#pragma once
 
+#include <HelperMacros.hpp>
+
 // 3735929054
 #define KRK_MEMSYSTEM_START_SIG 0xdeadc0de 
 
 // 3735928559
 #define KRK_MEMSYSTEM_END_SIG 0xdeadbeef
-
-#include <HelperMacros.hpp>
 
 namespace memory
 {
@@ -25,8 +25,7 @@ namespace memory
 
 		USE_RESULT size_t GetMemoryBookmark() const noexcept;
 		
-		static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
-		static AllocHeader* GetHeaderFromPointer(void* pData);
+		USE_RESULT static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
+		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
 	};
-
 }

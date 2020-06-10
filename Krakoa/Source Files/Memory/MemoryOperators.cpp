@@ -8,27 +8,37 @@
 
 #include "../Core/Logging/MemoryLogger.hpp"
 
-
 static size_t bookmarkIter = 0;
 static bool isMemPoolInitialized = false;
 
-using namespace memory;
+void InitializeMemoryPool() noexcept;
 
+
+void* operator new [](const size_t bytes, memory::HeapBase* pHeap)
+{
+	return operator new(bytes, pHeap);
+}
+
+void* operator new(const size_t bytes)
+{
+	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
+}
+
+void* operator new [](const size_t bytes)
+{
+	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
+}
+
+using namespace memory;
 void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 {
 #ifndef  KRAKOA_RELEASE
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
 
-	auto& memPool = MemoryPool::Reference();
-
-	if (!isMemPoolInitialized)
-	{
-		memPool.Initialize(200, kmaths::BytesUnits::MEGA);
-		isMemPoolInitialized = true;
-	}
+	if (!isMemPoolInitialized) InitializeMemoryPool();
 
 	const size_t requestedBytes = AllocHeaderSize + bytes + SignatureSize; // Alignment in memory
-	auto* pBlock = memPool.Allocate(requestedBytes);
+	auto* pBlock = MemoryPool::Reference().Allocate(requestedBytes);
 	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
 
 	pHeader->signature = KRK_MEMSYSTEM_START_SIG;
@@ -58,19 +68,14 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 #endif	
 }
 
-void* operator new [](const size_t bytes, memory::HeapBase* pHeap)
+void InitializeMemoryPool() noexcept
 {
-	return operator new(bytes, pHeap);
-}
-
-void* operator new(const size_t bytes)
-{
-	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
-}
-
-void* operator new [](const size_t bytes)
-{
-	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
+#ifdef KRAKOA_TEST
+	MemoryPool::Reference().Initialize(5, kmaths::BytesUnits::MEBI);
+#else
+	MemoryPool::Reference().Initialize(200, kmaths::BytesUnits::MEGA);
+#endif
+	isMemPoolInitialized = true;
 }
 
 void operator delete(void* ptr)

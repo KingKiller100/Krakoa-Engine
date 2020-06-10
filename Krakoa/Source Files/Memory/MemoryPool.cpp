@@ -16,7 +16,6 @@ namespace memory
 	constexpr auto deadBlockSize = 100 * static_cast<size_t>(BytesUnits::KILO);
 
 	MemoryPool::MemoryPool(Token&) noexcept
-		: poolIncrementBytes(100 * static_cast<size_t>(BytesUnits::KILO))
 	{
 		exampleDeadBlock = malloc(deadBlockSize);
 		memset(exampleDeadBlock, 0, deadBlockSize);
@@ -51,10 +50,7 @@ namespace memory
 
 		auto* pBlock = pool.pNextFree;
 		pool.pNextFree += requestedBytes;
-
-#ifndef KRAKOA_RELEASE
 		pool.remainingSpace -= requestedBytes;
-#endif
 
 		return pBlock;
 	}
@@ -66,9 +62,12 @@ namespace memory
 			auto& currentPool = subPoolList[index];
 
 			if (!currentPool.pHead)
-				CreateNewPool(poolIncrementBytes, index);
+			{
+				const auto nextCapacity = subPoolList[index - 1].capacity >> 1; // Next pool has half the capacity as the previous
+				CreateNewPool(nextCapacity, index);
+			}
 
-			if (DoesPoolHaveEnoughSpace(currentPool, requestedBytes)) // TRUE - we have space to allocate | FALSE - No more space within this pool
+			if (FindBlockStartPointer(currentPool, requestedBytes)) // TRUE - we have space to allocate | FALSE - No more space within this pool
 				return subPoolList[index];
 		}
 
@@ -78,38 +77,42 @@ namespace memory
 	void MemoryPool::CreateNewPool(const size_t capacity, const size_t index)
 	{
 		static std::array<bool, SubPoolSize> usedIndex{};
-
-		if (usedIndex[index]) throw debug::MemoryPoolError(); // Attempting to create a pool that already exists
+		if (usedIndex[index]) // Attempting to create a pool that already exists
+			throw debug::MemoryPoolError("Attempting to initialize a pool already in uses");
 
 		auto& pool = subPoolList[index];
-
 		pool = SubPool(capacity);
 		pool.pHead = malloc(capacity);
-
-		MEM_ASSERT(pool.pHead);
 		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
 		memset(pool.pHead, 0, capacity);
-		
+
+		MEM_ASSERT(pool.pHead);
 		usedIndex[index] = true;
 	}
 
-	bool MemoryPool::DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes) const
+	kmaths::Byte_Type* MemoryPool::FindBlockStartPointer(SubPool& pool, const size_t requestedBytes) const
 	{
 		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
-			return true;
+		{
+			auto* allocPoint = pool.pNextFree;
+			pool.pNextFree += ControlBlockSize + requestedBytes + SignatureSize;
 
-		auto*& pNextFree = pool.pNextFree;
+			auto* currentHeader = reinterpret_cast<AllocHeader*>(pool.pNextFree);
+			while (AllocHeader::VerifyHeader(currentHeader, false))
+			{
+				pool.pNextFree += ControlBlockSize + currentHeader->bytes + SignatureSize;
+			}
+
+			return allocPoint;
+		}
+
+		auto* pNextFree = pool.pNextFree + 1;
 		auto* const prevFree = pool.pNextFree;
 		const auto distance = pool.pNextFree - static_cast<Byte_Type*>(pool.pHead);
 
 		if (IsNegative(distance))
-			throw debug::MemoryPoolError("Distance between pool's head and" 
+			throw debug::MemoryPoolError("Distance between pool's head and"
 				" pool's next free space pointers is negative!");
-
-		if (distance > requestedBytes)
-			pNextFree = static_cast<Byte_Type*>(pool.pHead);
-		else
-			pNextFree++;
 
 		bool isBlockFree = false;
 		do
@@ -128,7 +131,7 @@ namespace memory
 			if (!isBlockFree)
 			{
 				auto maxLoops = requestedBytes;
-				auto* const endAddress = pool.capacity + static_cast<Byte_Type*>(pool.pHead);
+				auto* const endAddress = static_cast<Byte_Type*>(pool.pHead) + pool.capacity;
 
 				while (maxLoops > 0 && pNextFree < endAddress)
 				{
@@ -146,13 +149,21 @@ namespace memory
 				if (endAddress <= pNextFree)
 				{
 					pool.pNextFree = prevFree;
-					return false;
+					return nullptr;
 				}
 			}
 
 		} while (!isBlockFree);
 
-		return true;
+		if (*pool.pNextFree != 0)
+		{
+			while (*pool.pNextFree != 0)
+			{
+				pool.pNextFree++;
+			}
+		}
+
+		return pNextFree;
 	}
 
 	bool MemoryPool::CheckBlockIsDead(const Byte_Type* pNextFree, const size_t requestedBytes) const
@@ -226,7 +237,7 @@ namespace memory
 	{
 		size_t currentStorage = 0;
 		for (auto& pool : subPoolList)
-			currentStorage += (pool.capacity -  pool.remainingSpace);
+			currentStorage += (pool.capacity - pool.remainingSpace);
 		return currentStorage;
 	}
 
@@ -235,7 +246,7 @@ namespace memory
 		size_t maxBytes = 0;
 		for (auto& pool : subPoolList)
 			maxBytes += pool.capacity;
-		
+
 		return maxBytes;
 	}
 

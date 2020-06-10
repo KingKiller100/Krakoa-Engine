@@ -75,7 +75,7 @@ namespace memory
 	private:
 		void ShutDown();
 
-		bool DoesPoolHaveEnoughSpace(SubPool& pool, const size_t requestedBytes) const;
+		kmaths::Byte_Type* FindBlockStartPointer(SubPool& pool, const size_t requestedBytes) const;
 		bool CheckBlockIsDead(const kmaths::Byte_Type* pNextFree, size_t requestedBytes) const;
 
 		/**
@@ -95,7 +95,6 @@ namespace memory
 
 	private:
 		SubPoolList subPoolList;
-		const size_t poolIncrementBytes;
 		void* exampleDeadBlock;
 	};
 }

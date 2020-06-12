@@ -75,7 +75,7 @@ namespace memory
 	private:
 		void ShutDown();
 
-		kmaths::Byte_Type* FindBlockStartPointer(SubPool& pool, const size_t requestedBytes) const;
+		kmaths::Byte_Type* FindFreeBlock(SubPool& pool, const size_t requestedBytes) const;
 		bool CheckBlockIsDead(const kmaths::Byte_Type* pNextFree, size_t requestedBytes) const;
 
 		/**
@@ -86,10 +86,11 @@ namespace memory
 		 * \return
 		 *		TRUE if this pool has space for this object or FALSE if this pool has no more space
 		 */
-		USE_RESULT SubPool& GetSubPoolWithSpace(const size_t requestedBytes);
+		USE_RESULT kmaths::Byte_Type* GetBlockStartPtr(const size_t requestedBytes);
 
 		void CreateNewPool(const size_t capacity, const size_t index);
-
+		void MoveNextFreePointer(const kmaths::Byte_Type*& pNextFree);
+		
 		SubPool& FindPointerOwner(void* pHeader);
 
 

@@ -46,16 +46,11 @@ namespace memory
 
 	kmaths::Byte_Type* MemoryPool::Allocate(const size_t requestedBytes)
 	{
-		auto& pool = GetSubPoolWithSpace(requestedBytes);
-
-		auto* pBlock = pool.pNextFree;
-		pool.pNextFree += requestedBytes;
-		pool.remainingSpace -= requestedBytes;
-
-		return pBlock;
+		auto* pBlockStart = GetBlockStartPtr(requestedBytes);
+		return pBlockStart;
 	}
 
-	SubPool& MemoryPool::GetSubPoolWithSpace(const size_t requestedBytes)
+	kmaths::Byte_Type* MemoryPool::GetBlockStartPtr(const size_t requestedBytes)
 	{
 		for (int index = 0; index < SubPoolSize; ++index)
 		{
@@ -67,8 +62,13 @@ namespace memory
 				CreateNewPool(nextCapacity, index);
 			}
 
-			if (FindBlockStartPointer(currentPool, requestedBytes)) // TRUE - we have space to allocate | FALSE - No more space within this pool
-				return subPoolList[index];
+			auto* pBlockStart = FindFreeBlock(currentPool, requestedBytes);
+			
+			if (pBlockStart)
+			{
+				currentPool.remainingSpace -= requestedBytes;
+				return pBlockStart;
+			}
 		}
 
 		throw debug::MemoryFullError();
@@ -90,7 +90,7 @@ namespace memory
 		usedIndex[index] = true;
 	}
 
-	kmaths::Byte_Type* MemoryPool::FindBlockStartPointer(SubPool& pool, const size_t requestedBytes) const
+	kmaths::Byte_Type* MemoryPool::FindFreeBlock(SubPool& pool, const size_t requestedBytes) const
 	{
 		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
 		{
@@ -203,6 +203,24 @@ namespace memory
 
 		return false;
 	}
+
+	void MemoryPool::MoveNextFreePointer(const kmaths::Byte_Type*& pNextFree)
+	{
+		constexpr auto initialIncrement = 1 << 6;
+		auto increment = initialIncrement;
+		const auto* originalPtr = pNextFree;
+
+		
+		if (*pNextFree != 0)
+		{
+			while (*pNextFree != 0)
+			{
+				pNextFree++;
+			}
+		}
+		
+	}
+
 
 	void MemoryPool::Deallocate(AllocHeader* pHeader, const size_t bytesToDelete)
 	{

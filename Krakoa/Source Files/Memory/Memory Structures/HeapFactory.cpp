@@ -114,6 +114,9 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 	{
 		for (HeapBase* heap : heaps)
 		{
+			if (!heap)
+				break;
+			
 			ReportMemoryLeaks(heap, 0, heap->GetPrevAddress()->bookmark);
 		}
 	}
@@ -124,38 +127,36 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 		if (!currentHeader)
 			return;
-		
+
 		if (!AllocHeader::VerifyHeader(currentHeader))
 			return;
 
-		while (currentHeader && currentHeader->pNext != currentHeader)
+		while (currentHeader->pPrev && currentHeader->pNext != currentHeader)
 		{
-			if (currentHeader->GetMemoryBookmark() < minBookmark)
+			if (currentHeader->bookmark < minBookmark)
+			{
+				currentHeader = currentHeader->pNext;
 				break;
+			}
 
 			currentHeader = currentHeader->pPrev;
 		}
 
-		if (currentHeader->pNext)
-			currentHeader = currentHeader->pNext;
-		else
+		if (currentHeader->bookmark > maxBookmark)
 			return;
 
-		if (currentHeader->GetMemoryBookmark() > maxBookmark)
-			return;
-
-		auto bookmark = currentHeader->GetMemoryBookmark();
+		auto bookmark = currentHeader->bookmark;
 
 		while (kmaths::InRange(bookmark, minBookmark, maxBookmark))
 		{
-			std::cout << "Heap: " << heap->GetName() << " id: " << bookmark << "\n"
+			std::cout << "Heap: \"" << heap->GetName() << "\" id: " << bookmark << " "
 				<< "Bytes: " << currentHeader->bytes << "\n";
 
 			if (!currentHeader->pNext)
 				break;
 
 			currentHeader = currentHeader->pNext;
-			bookmark = currentHeader->GetMemoryBookmark();
+			bookmark = currentHeader->bookmark;
 		}
 	}
 

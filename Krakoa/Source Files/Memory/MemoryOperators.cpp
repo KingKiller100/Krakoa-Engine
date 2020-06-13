@@ -38,7 +38,7 @@ void* operator new(const size_t bytes, HeapBase* pHeap) // Pads Control Blocks
 	if (!isMemPoolInitialized) InitializeMemoryPool();
 
 	const size_t requestedBytes = AllocHeaderSize + bytes + SignatureSize; // Alignment in memory
-	auto* pBlock = MemoryPool::Reference().Allocate(requestedBytes);
+	auto* pBlock = MemoryPool::Reference().Allocate(requestedBytes); //CAST(kmaths::Byte_Type*, malloc(requestedBytes));//
 	auto* pHeader = REINTERPRET(AllocHeader*, pBlock);
 
 	pHeader->signature = KRK_MEMSYSTEM_START_SIG;
@@ -88,8 +88,8 @@ void operator delete(void* ptr)
 
 	auto* pHeap = pHeader->pHeap;
 	const auto bytes = pHeader->bytes;
-	auto* pPrev = pHeader->pPrev;
-	auto* pNext = pHeader->pNext;
+	auto*& pPrev = pHeader->pPrev;
+	auto*& pNext = pHeader->pNext;
 
 	const auto totalBytes = AllocHeaderSize + bytes + SignatureSize;
 
@@ -102,13 +102,15 @@ void operator delete(void* ptr)
 
 		if (pPrev)
 			pPrev->pNext = pHeader->pNext;
-		else
-			pHeap->SetPrevAddress(pNext);
+
+		if (pHeap->GetPrevAddress() == pHeader)
+			pHeap->SetPrevAddress(pPrev);
 
 		pPrev = pNext = nullptr;
 	}
 
 	pHeap->Deallocate(totalBytes);
+	//free(pHeader);
 	MemoryPool::Reference().Deallocate(pHeader, totalBytes);
 #else
 	free(ptr);

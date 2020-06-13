@@ -10,11 +10,6 @@
 
 namespace memory
 {
-	size_t AllocHeader::GetMemoryBookmark() const noexcept
-	{
-		return bookmark;
-	}
-
 	bool AllocHeader::VerifyHeader(AllocHeader* pHeader, bool enableAssert)
 	{
 		using namespace klib::kFormat;
@@ -50,8 +45,8 @@ namespace memory
 
 	AllocHeader* AllocHeader::GetHeaderFromPointer(void* pData)
 	{
-		auto* pHeader = reinterpret_cast<AllocHeader*>(
-			static_cast<kmaths::Byte_Type*>(pData)
+		auto* pHeader = REINTERPRET(AllocHeader*,
+			CAST(kmaths::Byte_Type*, pData)
 			- AllocHeaderSize);
 		MEM_ASSERT(VerifyHeader(pHeader));
 		return pHeader;

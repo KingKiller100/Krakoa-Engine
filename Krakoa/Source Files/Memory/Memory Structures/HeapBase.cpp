@@ -61,9 +61,10 @@ namespace memory
 		unsigned count(1);
 		pCurrentHeader = pCurrentHeader->pPrev;
 
-		while (pCurrentHeader && pCurrentHeader->pNext != pCurrentHeader)
+		while (pCurrentHeader 
+			&& pCurrentHeader->pNext != pCurrentHeader 
+			&& AllocHeader::VerifyHeader(pCurrentHeader))
 		{
-			AllocHeader::VerifyHeader(pCurrentHeader);
 			pCurrentHeader = pCurrentHeader->pPrev;
 			count++;
 		}

@@ -16,9 +16,9 @@ namespace patterns
 		using Type = T;
 		using Pointer = Type * ;
 
-		static constexpr auto Length = Max;
+		static constexpr auto MaxLength = Max;
 		static constexpr auto TypeSize = sizeof(T);
-		static constexpr auto Bytes = TypeSize * Length;
+		static constexpr auto Bytes = TypeSize * MaxLength;
 
 		ObjectPool()
 			: size(0)
@@ -71,6 +71,12 @@ namespace patterns
 		{
 			return size;
 		}
+
+		USE_RESULT constexpr size_t GetMaxSize() const noexcept
+		{
+			return MaxLength;
+		}
+
 
 		ObjectPool(const ObjectPool& other) = delete;
 		ObjectPool& operator =(const ObjectPool& other) = delete;

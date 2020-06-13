@@ -14,18 +14,22 @@ namespace memory
 
 	struct AllocHeader
 	{
-		using Signature_Type = unsigned;
+	public:
+		using Signature_Type = std::uint32_t;
 
+	public:
+		USE_RESULT static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
+		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
+
+	public:
 		Signature_Type signature;
+		size_t bytes = 0;
 		size_t bookmark;
-		size_t bytes;
+		
+#ifndef KRAKOA_RELEASE
 		HeapBase* pHeap = nullptr;
 		AllocHeader* pPrev = nullptr;
 		AllocHeader* pNext = nullptr;
-
-		USE_RESULT size_t GetMemoryBookmark() const noexcept;
-		
-		USE_RESULT static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
-		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
+#endif
 	};
 }

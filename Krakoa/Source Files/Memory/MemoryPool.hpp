@@ -89,7 +89,7 @@ namespace memory
 		USE_RESULT kmaths::Byte_Type* GetBlockStartPtr(const size_t requestedBytes);
 
 		void CreateNewPool(const size_t capacity, const size_t index);
-		void MoveNextFreePointer(const kmaths::Byte_Type*& pNextFree);
+		static void MoveNextFreePointer(kmaths::Byte_Type*& pNextFree);
 		
 		SubPool& FindPointerOwner(void* pHeader);
 

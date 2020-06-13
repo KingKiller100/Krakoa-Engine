@@ -12,8 +12,7 @@ namespace memory
 {
 	using namespace kmaths;
 
-	constexpr auto noAvailableSpaceFlag = -1;
-	constexpr auto deadBlockSize = 100 * static_cast<size_t>(BytesUnits::KILO);
+	constexpr auto deadBlockSize = 1 << 17;
 
 	MemoryPool::MemoryPool(Token&) noexcept
 	{
@@ -63,12 +62,12 @@ namespace memory
 			}
 
 			auto* pBlockStart = FindFreeBlock(currentPool, requestedBytes);
-			
-			if (pBlockStart)
-			{
-				currentPool.remainingSpace -= requestedBytes;
-				return pBlockStart;
-			}
+
+			if (!pBlockStart)
+				continue;
+
+			currentPool.remainingSpace -= requestedBytes;
+			return pBlockStart;
 		}
 
 		throw debug::MemoryFullError();
@@ -94,46 +93,36 @@ namespace memory
 	{
 		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
 		{
-			auto* allocPoint = pool.pNextFree;
-			pool.pNextFree += ControlBlockSize + requestedBytes + SignatureSize;
-
-			auto* currentHeader = reinterpret_cast<AllocHeader*>(pool.pNextFree);
-			while (AllocHeader::VerifyHeader(currentHeader, false))
-			{
-				pool.pNextFree += ControlBlockSize + currentHeader->bytes + SignatureSize;
-			}
-
-			return allocPoint;
+			auto* pBlockStart = pool.pNextFree;
+			pool.pNextFree += requestedBytes;
+			MoveNextFreePointer(pool.pNextFree);
+			return pBlockStart;
 		}
 
 		auto* pNextFree = pool.pNextFree + 1;
-		auto* const prevFree = pool.pNextFree;
+		auto* const prevFree = pNextFree;
 		const auto distance = pool.pNextFree - static_cast<Byte_Type*>(pool.pHead);
 
 		if (IsNegative(distance))
-			throw debug::MemoryPoolError("Distance between pool's head and"
+			throw debug::MemoryPoolError("Distance from pool's head to the"
 				" pool's next free space pointers is negative!");
 
 		bool isBlockFree = false;
-		do
-		{
+		do {
 			auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
 
 			if (AllocHeader::VerifyHeader(pHeader, false))
-			{
 				pNextFree += pHeader->bytes + ControlBlockSize;
-			}
 			else
-			{
 				isBlockFree = CheckBlockIsDead(pNextFree, requestedBytes);
-			}
+
 
 			if (!isBlockFree)
 			{
 				auto maxLoops = requestedBytes;
-				auto* const endAddress = static_cast<Byte_Type*>(pool.pHead) + pool.capacity;
+				auto* const pEndAddress = static_cast<Byte_Type*>(pool.pHead) + pool.capacity;
 
-				while (maxLoops > 0 && pNextFree < endAddress)
+				while (maxLoops-- > 0 && pNextFree < pEndAddress)
 				{
 					auto* const interruptingData = reinterpret_cast<AllocHeader*>(pNextFree);
 					if (AllocHeader::VerifyHeader(interruptingData, false))
@@ -141,12 +130,10 @@ namespace memory
 						pNextFree += interruptingData->bytes + ControlBlockSize;
 						break;
 					}
-
 					pNextFree++;
-					maxLoops--;
 				}
 
-				if (endAddress <= pNextFree)
+				if (pEndAddress <= pNextFree)
 				{
 					pool.pNextFree = prevFree;
 					return nullptr;
@@ -155,13 +142,7 @@ namespace memory
 
 		} while (!isBlockFree);
 
-		if (*pool.pNextFree != 0)
-		{
-			while (*pool.pNextFree != 0)
-			{
-				pool.pNextFree++;
-			}
-		}
+		MoveNextFreePointer(pool.pNextFree);
 
 		return pNextFree;
 	}
@@ -187,7 +168,6 @@ namespace memory
 					passedTest = false;
 					break;
 				}
-
 			}
 
 			if (passedTest)
@@ -197,28 +177,20 @@ namespace memory
 					passedTest = false;
 			}
 
-			if (passedTest)
-				return true;
+			return passedTest;
 		}
 
 		return false;
 	}
 
-	void MemoryPool::MoveNextFreePointer(const kmaths::Byte_Type*& pNextFree)
+	void MemoryPool::MoveNextFreePointer(kmaths::Byte_Type*& pNextFree)
 	{
-		constexpr auto initialIncrement = 1 << 6;
-		auto increment = initialIncrement;
-		const auto* originalPtr = pNextFree;
-
-		
-		if (*pNextFree != 0)
+		auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
+		while (AllocHeader::VerifyHeader(pHeader, false))
 		{
-			while (*pNextFree != 0)
-			{
-				pNextFree++;
-			}
+			pNextFree += pHeader->bytes + ControlBlockSize;
+			pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
 		}
-		
 	}
 
 
@@ -235,16 +207,16 @@ namespace memory
 
 	SubPool& MemoryPool::FindPointerOwner(void* pHeader)
 	{
-		const auto* const addressVal = CAST(kmaths::Byte_Type*, pHeader);
+		const auto* const pAddress = CAST(kmaths::Byte_Type*, pHeader);
 
 		for (auto i = 0; i < SubPoolSize; ++i)
 		{
 			const auto& pool = subPoolList[i];
-			const auto* startPoint = CAST(kmaths::Byte_Type*, pool.pHead);
-			const auto* endPoint = startPoint + pool.capacity;
+			const auto* pStartAddress = CAST(kmaths::Byte_Type*, pool.pHead);
+			const auto* pEndAddress = pStartAddress + pool.capacity;
 
-			if (startPoint <= addressVal
-				&& endPoint > addressVal)
+			if (pStartAddress <= pAddress
+				&& pEndAddress > pAddress)
 				return subPoolList[i];
 		}
 

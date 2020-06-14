@@ -6,6 +6,18 @@
 // Common math helper functions
 #include "kAlgorithms.hpp"
 
+// Angles
+#include "Angle_Type.hpp"
+
+// Bytes
+#include "BytesTypes.hpp"
+
+// Fractions
+#include "Fraction.hpp"
+
+// Random Number Generator
+#include "Random.hpp"
+
 // Matrices
 #include "Matrices/PredefinedMatrices.hpp"
 

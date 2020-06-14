@@ -12,23 +12,29 @@ namespace memory
 {
 	using namespace kmaths;
 
-	constexpr auto deadBlockSize = 1 << 17;
+	constexpr size_t deadBlockSize = 1 << 17;
 
-	MemoryPool::MemoryPool(Token&) noexcept
+	void* MemoryPool::exampleDeadBlock = nullptr;
+
+	MemoryPool::MemoryPool(const size_t initialVolume, const size_t typeSize)
+		: typeSize(typeSize)
 	{
-		exampleDeadBlock = malloc(deadBlockSize);
-		memset(exampleDeadBlock, 0, deadBlockSize);
+		if (!exampleDeadBlock)
+		{
+			exampleDeadBlock = malloc(deadBlockSize);
+			memset(exampleDeadBlock, 0, deadBlockSize);
+
+			if (!exampleDeadBlock)
+				throw debug::MemoryPoolError("Cannot allocate space for example dead memory block");
+		}
+
+		const auto capacity = initialVolume * typeSize;;
+		CreateNewPool(capacity, 0);
 	}
 
 	MemoryPool::~MemoryPool() noexcept
 	{
 		ShutDown();
-	}
-
-	void MemoryPool::Initialize(const size_t volume, const BytesUnits units)
-	{
-		const auto capacity = volume * static_cast<size_t>(units);
-		CreateNewPool(capacity, 0);
 	}
 
 	void MemoryPool::ShutDown()
@@ -194,13 +200,15 @@ namespace memory
 	}
 
 
-	void MemoryPool::Deallocate(AllocHeader* pHeader, const size_t bytesToDelete)
+	void MemoryPool::Deallocate(void* pBlockStart, const size_t bytesToDelete)
 	{
-		auto& pool = FindPointerOwner(pHeader);
-		memset(pHeader, 0, bytesToDelete);
+		auto& pool = FindPointerOwner(pBlockStart);
+		memset(pBlockStart, 0, bytesToDelete);
 
-		if (REINTERPRET(Byte_Type*, pHeader) < pool.pNextFree)
-			pool.pNextFree = REINTERPRET(kmaths::Byte_Type*, pHeader);
+		auto* pAddress = REINTERPRET(Byte_Type*, pBlockStart);
+
+		if (pAddress < pool.pNextFree)
+			pool.pNextFree = pAddress;
 
 		pool.remainingSpace += bytesToDelete;
 	}
@@ -243,13 +251,5 @@ namespace memory
 	std::string MemoryPool::GetStatus() const
 	{
 		return "";
-	}
-
-	MemoryPool& MemoryPool::Reference() noexcept
-	{
-		static Token token;
-		static MemoryPool instance(token);
-
-		return instance;
 	}
 }

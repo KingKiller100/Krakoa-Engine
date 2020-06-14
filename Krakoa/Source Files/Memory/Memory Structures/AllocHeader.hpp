@@ -18,9 +18,14 @@ namespace memory
 		using Signature_Type = std::uint32_t;
 
 	public:
-		USE_RESULT static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
-		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
+		USE_RESULT static void* Initialize(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept;
+		static AllocHeader* Destroy(void* pData) noexcept;
 
+		
+		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
+		USE_RESULT static void* GetPointerFromHeader(AllocHeader* pHeader);
+		USE_RESULT static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);
+		
 	public:
 		Signature_Type signature;
 		size_t bytes = 0;

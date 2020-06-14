@@ -50,28 +50,24 @@ namespace memory
 
 	class MemoryPool
 	{
-		struct Token {};
 		static constexpr size_t SubPoolSize = 4;
 		using SubPoolList = std::array<SubPool, SubPoolSize>;
 
 	public:
 
-		MemoryPool(Token&) noexcept;
-		MemoryPool(const MemoryPool&) = delete;
+		MemoryPool(const size_t initialVolume, const size_t typeSize);
 		~MemoryPool() noexcept;
 
-		void Initialize(const size_t volume, const kmaths::BytesUnits units);
-
 		kmaths::Byte_Type* Allocate(const size_t requestedBytes);
-		void Deallocate(AllocHeader* pHeader, const size_t bytesToDelete);
+		void Deallocate(void* pBlockStart, const size_t bytesToDelete);
 
 		USE_RESULT size_t GetBytes() const;
 		USE_RESULT size_t GetMaxBytes() const;
 
 		USE_RESULT std::string GetStatus() const;
 
-		USE_RESULT static MemoryPool& Reference() noexcept;
-
+		MemoryPool(const MemoryPool&) = delete;
+		MemoryPool& operator=(const MemoryPool&) noexcept = delete;
 	private:
 		void ShutDown();
 
@@ -90,13 +86,15 @@ namespace memory
 
 		void CreateNewPool(const size_t capacity, const size_t index);
 		static void MoveNextFreePointer(kmaths::Byte_Type*& pNextFree);
-		
+
 		SubPool& FindPointerOwner(void* pHeader);
 
 
 	private:
 		SubPoolList subPoolList;
-		void* exampleDeadBlock;
+		size_t typeSize;
+		
+		static void* exampleDeadBlock;
 	};
 }
 

@@ -33,6 +33,7 @@ namespace memory
 		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
 		USE_RESULT size_t WalkTheHeap() const;
+		void DeleteLeaks();
 
 		void SetPrevAddress(AllocHeader* prev) noexcept;
 		USE_RESULT AllocHeader* GetPrevAddress() const noexcept;

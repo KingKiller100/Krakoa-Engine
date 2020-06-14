@@ -55,13 +55,15 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 			totalBytes += heap->GetTotalAllocatedBytes();
 			totalAllocations += heap->WalkTheHeap();
 			MEM_INFO(heap->GetStatus());
+
+			heap->DeleteLeaks();
 			free(heap);
 			heap = nullptr;
 		}
 
-		MEM_INFO(defaultHeap->GetStatus());
 		totalBytes += defaultHeap->GetTotalAllocatedBytes();
 		totalAllocations += defaultHeap->WalkTheHeap();
+		MEM_INFO(defaultHeap->GetStatus());
 
 		LogTotalBytes(&totalBytes);
 		LogTotalAllocations(&totalAllocations);
@@ -116,9 +118,10 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		{
 			if (!heap)
 				break;
-			
+
 			ReportMemoryLeaks(heap, 0, heap->GetPrevAddress()->bookmark);
 		}
+		std::cin.get();
 	}
 
 	void HeapFactory::ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark)
@@ -147,15 +150,16 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 		auto bookmark = currentHeader->bookmark;
 
-		while (kmaths::InRange(bookmark, minBookmark, maxBookmark))
+		while (kmaths::InRange(bookmark, minBookmark, maxBookmark + 1))
 		{
 			std::cout << "Heap: \"" << heap->GetName() << "\" id: " << bookmark << " "
 				<< "Bytes: " << currentHeader->bytes << "\n";
 
-			if (!currentHeader->pNext)
+			currentHeader = currentHeader->pNext;
+			
+			if (!currentHeader)
 				break;
 
-			currentHeader = currentHeader->pNext;
 			bookmark = currentHeader->bookmark;
 		}
 	}
@@ -166,10 +170,8 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 		const auto kilo = Divide<float>(*bytes,
 			CAST(size_t, kmaths::BytesUnits::KILO));
-
 		const auto mega = Divide<float>(*bytes,
 			CAST(size_t, kmaths::BytesUnits::MEGA));
-
 		const auto giga = Divide<float>(*bytes,
 			CAST(size_t, kmaths::BytesUnits::GIGA));
 

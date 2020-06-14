@@ -5,6 +5,8 @@
 
 #include "../../Core/Logging/MemoryLogger.hpp"
 
+#include <Maths/BytesTypes.hpp>
+
 namespace memory
 {
 	HeapBase::HeapBase(const char* name) noexcept
@@ -72,6 +74,27 @@ namespace memory
 		return count;
 	}
 
+	void HeapBase::DeleteLeaks()
+	{
+		auto& pCurrentHeader = pPrevAddress; // casts to AllocHeader to find previous and next
+
+		if (!pCurrentHeader)
+			return;
+
+		if (!pCurrentHeader->pPrev)
+			return;
+
+		while (pCurrentHeader 
+			&& pCurrentHeader->pPrev != pCurrentHeader 
+			&& AllocHeader::VerifyHeader(pCurrentHeader))
+		{
+			auto* pPrev = pCurrentHeader->pPrev;
+			auto* ptr = static_cast<kmaths::Byte_Type*>(AllocHeader::GetPointerFromHeader(pCurrentHeader));
+			delete ptr;
+			pCurrentHeader = pPrev;
+		}
+	}
+
 	void HeapBase::SetPrevAddress(AllocHeader* prev) noexcept
 	{
 		pPrevAddress = prev;
@@ -84,7 +107,7 @@ namespace memory
 
 	std::string HeapBase::GetStatus() const
 	{
-		MEM_FATAL(vftbl->getStatusFunc, "HeapBase's vftbl is unset");
+		MEM_FATAL(vftbl->getStatusFunc, "HeapBase's vftbl is empty");
 		return vftbl->getStatusFunc(this);
 	}
 }

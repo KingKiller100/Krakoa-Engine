@@ -3,6 +3,9 @@
 #include <HelperMacros.hpp>
 
 #include "../PointerTypes.hpp"
+#include "../Core/Logging/CoreLogger.hpp"
+
+#include <Utility/Format/kFormatToString.hpp>
 
 #include <atomic>
 #include <thread>
@@ -30,11 +33,8 @@ namespace patterns
 		}
 
 		ObjectPool(ObjectPool&& other) noexcept
-			: pool(std::move(other.pool)),
-			nextFree(std::move(other.nextFree)),
-			size(other.size)
 		{
-			other.nextFree = nullptr;
+			*this = std::move(other);
 		}
 
 		ObjectPool& operator=(ObjectPool&& other) noexcept
@@ -43,7 +43,7 @@ namespace patterns
 				return *this;
 
 			pool = std::move(other.pool);
-			nextFree = std::move(other.nextFree);
+			nextFree.store(std::move(other.nextFree));
 
 			other.nextFree = nullptr;
 
@@ -87,7 +87,7 @@ namespace patterns
 			auto thisThreadID = std::this_thread::get_id();
 			const auto idPtr = REINTERPRET(_Thrd_id_t*, &thisThreadID);
 
-			const auto node = nextFree.load();
+			auto* node = nextFree.load();
 			while (node && !nextFree.compare_exchange_weak(node, node->next, std::memory_order_seq_cst))
 			{
 				const auto msg = klib::kFormat::ToString("Thread {0} failed to allocate", *idPtr);

@@ -105,48 +105,43 @@ namespace memory
 			return pBlockStart;
 		}
 
-		auto* pNextFree = pool.pNextFree + 1;
-		auto* const prevFree = pNextFree;
-		const auto distance = pool.pNextFree - static_cast<Byte_Type*>(pool.pHead);
-
-		if (IsNegative(distance))
+		if (IsNegative(pool.pNextFree - static_cast<Byte_Type*>(pool.pHead)))
 			throw debug::MemoryPoolError("Distance from pool's head to the"
 				" pool's next free space pointers is negative!");
 
-		bool isBlockFree = false;
+		auto* pNextFree = pool.pNextFree;
+		auto* const prevFree = pNextFree;
+
 		do {
 			auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
 
 			if (AllocHeader::VerifyHeader(pHeader, false))
 				pNextFree += pHeader->bytes + ControlBlockSize;
 			else
-				isBlockFree = CheckBlockIsDead(pNextFree, requestedBytes);
-
-
-			if (!isBlockFree)
 			{
 				auto maxLoops = requestedBytes;
 				auto* const pEndAddress = static_cast<Byte_Type*>(pool.pHead) + pool.capacity;
 
-				while (maxLoops-- > 0 && pNextFree < pEndAddress)
+				while (maxLoops-- > 0 && (pNextFree + requestedBytes) <= pEndAddress)
 				{
-					auto* const interruptingData = reinterpret_cast<AllocHeader*>(pNextFree);
-					if (AllocHeader::VerifyHeader(interruptingData, false))
+					pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
+
+					if (!AllocHeader::VerifyHeader(pHeader, false))
+						pNextFree++;
+					else
 					{
-						pNextFree += interruptingData->bytes + ControlBlockSize;
+						pNextFree += pHeader->bytes + ControlBlockSize;
 						break;
 					}
-					pNextFree++;
 				}
 
-				if (pEndAddress <= pNextFree)
+				if ((pNextFree + requestedBytes) <= pEndAddress)
 				{
 					pool.pNextFree = prevFree;
 					return nullptr;
 				}
 			}
-
-		} while (!isBlockFree);
+		} while (!CheckBlockIsDead(pNextFree, requestedBytes));
 
 		MoveNextFreePointer(pool.pNextFree);
 
@@ -157,36 +152,30 @@ namespace memory
 	{
 		if (requestedBytes <= deadBlockSize)
 		{
-			if (memcmp(pNextFree, exampleDeadBlock, requestedBytes) == 0)
-			{
-				return true;
-			}
+			return (memcmp(
+				pNextFree,
+				exampleDeadBlock,
+				requestedBytes)
+				== 0);
 		}
-		else
+
+		auto initialLoops = requestedBytes / deadBlockSize;
+
+		while (initialLoops-- > 0)
 		{
-			bool passedTest = true;
-			auto initialLoops = requestedBytes / deadBlockSize;
-
-			while (initialLoops-- > 0)
-			{
-				if (memcmp(pNextFree + (deadBlockSize * initialLoops), exampleDeadBlock, deadBlockSize) != 0)
-				{
-					passedTest = false;
-					break;
-				}
-			}
-
-			if (passedTest)
-			{
-				const auto remainingSize = requestedBytes % deadBlockSize;
-				if (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0)
-					passedTest = false;
-			}
-
-			return passedTest;
+			if (memcmp(
+				pNextFree + (deadBlockSize * initialLoops),
+				exampleDeadBlock,
+				deadBlockSize)
+				!= 0)
+				return false;
 		}
 
-		return false;
+		const auto remainingSize = requestedBytes % deadBlockSize;
+		if (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0)
+			return false;
+
+		return true;
 	}
 
 	void MemoryPool::MoveNextFreePointer(kmaths::Byte_Type*& pNextFree)
@@ -199,16 +188,15 @@ namespace memory
 		}
 	}
 
-
 	void MemoryPool::Deallocate(void* pBlockStart, const size_t bytesToDelete)
 	{
+		auto* pFreeAddress = REINTERPRET(Byte_Type*, pBlockStart);
+
 		auto& pool = FindPointerOwner(pBlockStart);
 		memset(pBlockStart, 0, bytesToDelete);
 
-		auto* pAddress = REINTERPRET(Byte_Type*, pBlockStart);
-
-		if (pAddress < pool.pNextFree)
-			pool.pNextFree = pAddress;
+		if (pFreeAddress < pool.pNextFree)
+			pool.pNextFree = pFreeAddress;
 
 		pool.remainingSpace += bytesToDelete;
 	}

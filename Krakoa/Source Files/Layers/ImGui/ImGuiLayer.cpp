@@ -2,7 +2,7 @@
 #include "ImGuiLayer.hpp"
 
 #include "../../Instrumentor.hpp"
-#include "../../EngineConfig.hpp"
+#include "../../EngineMacros.hpp"
 #include "../../Core/Application.hpp"
 
 #include <imgui.h> // ImGui include must be above any other openGL includes

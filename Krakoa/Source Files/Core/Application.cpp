@@ -47,6 +47,7 @@ namespace krakoa
 	void Application::ShutDown()
 	{
 		graphics::Renderer::ShutDown();
+		delete input::InputManager::Pointer();
 	}
 
 	void Application::Initialize()

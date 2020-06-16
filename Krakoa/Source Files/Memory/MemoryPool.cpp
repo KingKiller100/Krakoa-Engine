@@ -160,6 +160,7 @@ namespace memory
 		}
 
 		auto initialLoops = requestedBytes / deadBlockSize;
+		const auto remainingSize = requestedBytes % deadBlockSize;
 
 		while (initialLoops-- > 0)
 		{
@@ -170,12 +171,8 @@ namespace memory
 				!= 0)
 				return false;
 		}
-
-		const auto remainingSize = requestedBytes % deadBlockSize;
-		if (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0)
-			return false;
-
-		return true;
+		
+		return (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0);
 	}
 
 	void MemoryPool::MoveNextFreePointer(kmaths::Byte_Type*& pNextFree)

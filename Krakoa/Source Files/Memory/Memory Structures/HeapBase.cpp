@@ -81,9 +81,6 @@ namespace memory
 		if (!pCurrentHeader)
 			return;
 
-		if (!pCurrentHeader->pPrev)
-			return;
-
 		while (pCurrentHeader 
 			&& pCurrentHeader->pPrev != pCurrentHeader 
 			&& AllocHeader::VerifyHeader(pCurrentHeader))

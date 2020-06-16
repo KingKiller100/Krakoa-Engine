@@ -17,8 +17,6 @@ namespace memory
 		template<typename T>
 		static HeapBase* CreateHeap()
 		{
-			static std::uint16_t activeHeapIndex = 1;
-			
 			auto* heap = CAST(HeapBase*, malloc(sizeof(TemplateHeap<T>)));
 			heap->Initialize(typeid(T).name(), &templateHeapVFTBL<T>);
 			heaps[activeHeapIndex++] = heap;
@@ -45,5 +43,6 @@ namespace memory
 	private:
 		static HeapBase* defaultHeap;
 		static HeapList heaps;
+		inline static std::uint16_t activeHeapIndex = 1;
 	};
 }

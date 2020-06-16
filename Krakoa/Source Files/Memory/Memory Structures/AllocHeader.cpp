@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "AllocHeader.hpp"
 
+#include "HeapBase.hpp"
 #include "MemoryTypes.hpp"
 
 #include "../../Core/Logging/MemoryLogger.hpp"
@@ -8,13 +9,12 @@
 #include <Maths/BytesTypes.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
-#include "HeapBase.hpp"
 
 namespace memory
 {
 	static size_t bookmarkIter = 0;
 
-	void* AllocHeader::Initialize(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept
+	void* AllocHeader::Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept
 	{
 		pHeader->signature = KRK_MEMSYSTEM_START_SIG;
 		pHeader->bookmark = bookmarkIter++;

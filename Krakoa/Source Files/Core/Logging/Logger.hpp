@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../EngineConfig.hpp"
+#include "../../EngineMacros.hpp"
 
 #include <Utility/Logging/kLogging_Class.hpp>
 

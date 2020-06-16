@@ -18,7 +18,7 @@ namespace memory
 		using Signature_Type = std::uint32_t;
 
 	public:
-		USE_RESULT static void* Initialize(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept;
+		USE_RESULT static void* Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept;
 		static AllocHeader* Destroy(void* pData) noexcept;
 
 		

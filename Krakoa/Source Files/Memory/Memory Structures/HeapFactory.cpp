@@ -119,6 +119,9 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 			if (!heap)
 				break;
 
+			if (!heap->GetPrevAddress())
+				continue;
+			
 			ReportMemoryLeaks(heap, 0, heap->GetPrevAddress()->bookmark);
 		}
 		std::cin.get();

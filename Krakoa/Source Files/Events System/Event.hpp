@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../EngineConfig.hpp"
+#include "../EngineMacros.hpp"
 
 #include <HelperMacros.hpp>
 

@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include <HelperMacros.hpp>
 
 #include "../PointerTypes.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
+#include <HelperMacros.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
 #include <atomic>

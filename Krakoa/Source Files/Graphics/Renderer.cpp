@@ -3,6 +3,7 @@
 #include "RenderCommand.hpp"
 
 #include "Renderer2D.hpp"
+#include "ShaderLibrary.hpp"
 
 #include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
@@ -24,6 +25,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		Renderer2D::ShutDown();
+		delete ShaderLibrary::Pointer();
 	}
 
 	void Renderer::OnWindowResize(const int x, const int y, const int width, const int height) noexcept

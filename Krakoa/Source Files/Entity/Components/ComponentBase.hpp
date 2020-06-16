@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Instrumentor.hpp"
-#include "../../EngineConfig.hpp"
+#include "../../EngineMacros.hpp"
 
 namespace krakoa
 {

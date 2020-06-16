@@ -9,6 +9,7 @@
 #include <corecrt_wdirect.h>
 #include <cstdio>
 #include <fstream>
+#include <filesystem>
 #include <string>
 #include <vector>
 #include <sys/stat.h>
@@ -35,6 +36,22 @@ namespace klib::kFileSystem
 
 	// --------------------------------------------------------------------------------------
 
+	template<class CharType, class = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr auto pathSeparator = CharType('\\');
+
+	template<class SourceType, class = std::enable_if_t<type_trait::Is_StringType_V<SourceType>>>
+	USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType& src)
+	{
+		using CharType = typename SourceType::value_type;
+		return kString::Replace<CharType>(src, CharType('/'), pathSeparator<CharType>);
+	}
+
+	template<class SourceType, class = std::enable_if_t<type_trait::Is_CharType_V<SourceType>>>
+	USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType* src)
+	{
+		using CharType = SourceType;
+		return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
+	}
 
 	/**
 	 * \brief
@@ -103,8 +120,6 @@ namespace klib::kFileSystem
 				temp += CAST(wchar_t, c);
 			return CreateNewDirectory<wchar_t>(temp);
 		}
-
-		return false;
 	}
 
 	/**
@@ -126,11 +141,11 @@ namespace klib::kFileSystem
 
 		kString::StringWriter<Char> dir(directory);
 
-		if (dir.back() != Char('\\'))
-			dir += Char('\\'); // Final suffix of directory char type must end with '\\'
+		if (dir.back() != pathSeparator<Char>)
+			dir += pathSeparator<Char>; // Final suffix of directory char type must end with '\\'
 
 		bool isDirCreated = false;
-		auto pos = dir.find_first_of(Char('\\')) + 1;
+		auto pos = dir.find_first_of(pathSeparator<Char>) + 1;
 
 		kString::StringWriter<Char> nextDirectory;
 
@@ -138,7 +153,7 @@ namespace klib::kFileSystem
 		{
 			isDirCreated = CreateNewDirectory<Char>(nextDirectory.c_str());
 
-			const auto nextForwardSlash = dir.find_first_of(Char('\\'), pos) + 1;
+			const auto nextForwardSlash = dir.find_first_of(pathSeparator<Char>, pos) + 1;
 			nextDirectory = dir.substr(0, nextForwardSlash);
 			pos = nextForwardSlash;
 		}
@@ -223,10 +238,10 @@ namespace klib::kFileSystem
 	constexpr bool CheckFileExists(const kString::StringReader<CharType>& fullFilePath) noexcept
 	{
 		FILE* file;
-		auto result = -1;
+		errno_t result;
 
-		const auto path = kString::Replace<CharType>(fullFilePath, CharType('/'), CharType('\\'));
-		
+		const auto path = CorrectFilePathSeparators(fullFilePath);
+
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
 			result = fopen_s(&file, path.data(), "r");
@@ -261,9 +276,13 @@ namespace klib::kFileSystem
 	template<class CharType = char>
 	constexpr bool CheckDirectoryExists(const kString::StringReader<CharType>& directoryPath) noexcept
 	{
+#if MSVC_PLATFORM_TOOLSET > 140
+		const auto exists = std::filesystem::exists(directoryPath);
+		return exists;
+#else
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			struct stat info{};
+			struct stat info {};
 			const auto statResult = stat(directoryPath.data(), &info);
 
 			if (statResult != KLIB_FALSE)
@@ -277,6 +296,7 @@ namespace klib::kFileSystem
 			const auto temp = kString::Convert<char>(directoryPath);
 			return CheckDirectoryExists<char>(temp.data());
 		}
+#endif
 	}
 
 	/**
@@ -328,7 +348,7 @@ namespace klib::kFileSystem
 		if (cwdFullPath.empty())
 		{
 			Char* cwdBuffer;
-			DWORD length = 0;
+			DWORD length(0);
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetCurrentDirectoryA(0, nullptr);
@@ -350,7 +370,7 @@ namespace klib::kFileSystem
 			}
 
 			cwdFullPath = kString::StringWriter<Char>(cwdBuffer, cwdBuffer + (length - 1));
-			cwdFullPath += (Char('\\'));
+			cwdFullPath += pathSeparator<Char>;
 
 			delete[] cwdBuffer;
 		}
@@ -371,13 +391,10 @@ namespace klib::kFileSystem
 
 		static kString::StringWriter<Char> exeFullPath;
 
-		
 		if (exeFullPath.empty())
 		{
 			constexpr DWORD bufferSize = 1024 * 2;
 			Char* exeBuffer = new Char[bufferSize]{};
-			
-			auto** ebPtr = &exeBuffer;
 
 			DWORD length;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
@@ -396,8 +413,8 @@ namespace klib::kFileSystem
 				return exeFullPath;
 			}
 
-			exeFullPath = kString::StringWriter<Char>(exeBuffer, exeBuffer + length);
-			exeFullPath.erase(exeFullPath.find_last_of(Char('\\')) + 1);
+			exeFullPath = kString::StringWriter<Char>(exeBuffer, exeBuffer + (length - 1));
+			exeFullPath.erase(exeFullPath.find_last_of(pathSeparator<Char>) + 1);
 
 			delete[] exeBuffer;
 		}
@@ -409,8 +426,8 @@ namespace klib::kFileSystem
 	USE_RESULT constexpr kString::StringWriter<CharType> GetFileName(const kString::StringWriter<CharType>& path) noexcept
 	{
 		using Char = std::decay_t<std::remove_pointer_t<CharType>>;
-		const auto text = kString::Replace<Char>(path, Char('/'), Char('\\'));
-		const auto filename = text.substr(text.find_last_of(Char('\\')) + 1);
+		const auto text = kString::Replace<Char>(path, Char('/'), pathSeparator<Char>);
+		const auto filename = text.substr(text.find_last_of(pathSeparator<Char>) + 1);
 		return filename;
 	}
 
@@ -426,8 +443,8 @@ namespace klib::kFileSystem
 	USE_RESULT constexpr kString::StringWriter<CharType> GetPath(const kString::StringWriter<CharType>& path)
 	{
 		using Char = ONLY_TYPE(CharType);
-		auto parentPath = kString::Replace<ONLY_TYPE(Char)>(path, Char('/'), Char('\\'));
-		parentPath = parentPath.substr(0, parentPath.find_last_of('\\'));
+		auto parentPath = kString::Replace<ONLY_TYPE(Char)>(path, Char('/'), pathSeparator<Char>);
+		parentPath = parentPath.substr(0, parentPath.find_last_of(pathSeparator<Char>));
 		return parentPath;
 	}
 

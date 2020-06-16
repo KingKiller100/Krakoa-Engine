@@ -7,7 +7,7 @@
 
 // System required files
 #include "Instrumentor.hpp"
-#include "EngineConfig.hpp"
+#include "EngineMacros.hpp"
 
 // Memory
 #include "PointerTypes.hpp"

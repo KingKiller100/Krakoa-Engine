@@ -1,10 +1,17 @@
 ﻿#pragma once
 
 #include "TemplateHeap.hpp"
+
 #include <array>
+#include <atomic>
 
 namespace memory
 {
+	namespace
+	{
+		std::atomic<std::uint16_t> activeHeapIndex(1);
+	}
+
 	class HeapFactory final
 	{
 		using HeapList = std::array<HeapBase*, 128>;
@@ -43,6 +50,5 @@ namespace memory
 	private:
 		static HeapBase* defaultHeap;
 		static HeapList heaps;
-		inline static std::uint16_t activeHeapIndex = 1;
 	};
 }

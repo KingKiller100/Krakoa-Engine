@@ -77,7 +77,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		{
 			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(HeapBase)));
 			defaultHeap->Initialize("Default", &localVFTBL);
-			heaps[0] = defaultHeap;
+			heaps.front() = defaultHeap;
 		}
 
 		return defaultHeap;

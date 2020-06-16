@@ -4,6 +4,7 @@
 
 #include "../Core/Logging/CoreLogger.hpp"
 #include "../Patterns/MemoryTracker.hpp"
+#include "../Patterns/MemPooler.hpp"
 
 #include <HelperMacros.hpp>
 

@@ -10,7 +10,7 @@
 #include "Angle_Type.hpp"
 
 // Bytes
-#include "BytesTypes.hpp"
+#include "BytesUnits.hpp"
 
 // Fractions
 #include "Fraction.hpp"

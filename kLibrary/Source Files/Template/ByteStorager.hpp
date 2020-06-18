@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
-#include "../Maths/BytesTypes.hpp"
+#include "../Maths/BytesUnits.hpp"
 
 #include <array>
 

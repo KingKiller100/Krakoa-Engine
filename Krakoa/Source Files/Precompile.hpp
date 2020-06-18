@@ -1,5 +1,8 @@
 #pragma once
 
+// C STD libraries
+#include <cstdint>
+
 // STL libraries
 
 // Containers

@@ -6,7 +6,7 @@
 
 #include "../../Core/Logging/MemoryLogger.hpp"
 
-#include <Maths/BytesTypes.hpp>
+#include <Maths/BytesUnits.hpp>
 #include <Utility/Format/kFormatToString.hpp>
 
 

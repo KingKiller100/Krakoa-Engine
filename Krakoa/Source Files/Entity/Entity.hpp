@@ -3,7 +3,6 @@
 #include "Components/ComponentBase.hpp"
 
 #include "../Core/Logging/CoreLogger.hpp"
-#include "../Patterns/MemoryTracker.hpp"
 #include "../Patterns/MemPooler.hpp"
 
 #include <HelperMacros.hpp>
@@ -16,7 +15,7 @@ namespace krakoa
 {
 	class EntityManager;
 	
-	class  Entity : public patterns::MemoryTracker<Entity>
+	class Entity : public patterns::MemPooler<Entity, 10000>
 	{
 	public:
 		Entity();

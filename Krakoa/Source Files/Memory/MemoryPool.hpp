@@ -3,7 +3,7 @@
 #include "Memory Structures/MemoryTypes.hpp"
 
 #include <HelperMacros.hpp>
-#include <Maths/BytesTypes.hpp>
+#include <Maths/BytesUnits.hpp>
 
 #include <array>
 #include <string>

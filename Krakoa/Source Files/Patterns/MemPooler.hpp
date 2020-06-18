@@ -6,33 +6,37 @@
 
 namespace patterns
 {
-	template<typename T>
+	template<typename T, size_t InitialSize>
 	class MemPooler
 	{
 	public:
 		void* operator new (size_t bytes)
 		{
 			if (!memoryPool)
-				memoryPool = new memory::MemoryPool(10000, sizeof(T));
+				memoryPool = new memory::MemoryPool(InitialSize, sizeof(T));
 			return memoryPool->Allocate(bytes);
 		}
 
 		void operator delete(void* ptr)
 		{
-			auto* pHeader = memory::AllocHeader::GetHeaderFromPointer(ptr);
-			memoryPool->Deallocate(pHeader, pHeader->bytes);
+			memoryPool->Deallocate(ptr, sizeof(T));
 		}
 
-		static size_t GetCurrentBytes() noexcept
+		virtual ~MemPooler()
+		{
+			delete memoryPool;
+		}
+		
+		USE_RESULT static size_t GetCurrentBytes() noexcept
 		{
 			return memoryPool->GetBytes();
 		}
 
-		static size_t GetCurrentCapacity() noexcept
+		USE_RESULT static size_t GetCurrentCapacity() noexcept
 		{
 			return memoryPool->GetMaxBytes();
 		}
-		
+
 	private:
 		inline static memory::MemoryPool* memoryPool = nullptr;
 	};

@@ -7,7 +7,7 @@
 #include "../../Core/Logging/MemoryLogger.hpp"
 
 #include <Maths/Constants.hpp>
-#include <Maths/BytesTypes.hpp>
+#include <Maths/BytesUnits.hpp>
 #include <Maths/kAlgorithms.hpp>
 
 #include <Utility/File System/kFileSystem.hpp>

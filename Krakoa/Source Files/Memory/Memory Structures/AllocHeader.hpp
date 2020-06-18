@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <HelperMacros.hpp>
+#include <cstdint>
 
 // 3735929054
 #define KRK_MEMSYSTEM_START_SIG 0xdeadc0de 

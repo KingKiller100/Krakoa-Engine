@@ -53,6 +53,14 @@ namespace memory
 		static constexpr size_t SubPoolSize = 4;
 		using SubPoolList = std::array<SubPool, SubPoolSize>;
 
+		struct MemLinkedList
+		{
+		public:
+			size_t bytes;
+			void* pPrev;
+			void* pNext;
+		};
+		
 	public:
 
 		MemoryPool(const size_t initialVolume, const size_t typeSize);

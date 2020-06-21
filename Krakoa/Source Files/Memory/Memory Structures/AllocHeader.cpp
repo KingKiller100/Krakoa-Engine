@@ -31,7 +31,7 @@ namespace memory
 		
 		pHeader->pHeap->SetPrevAddress(pHeader);
 
-		auto* pMemEnd = REINTERPRET(AllocHeader::Signature_Type*, 
+		auto* pMemEnd = REINTERPRET(Signature_Type*, 
 			REINTERPRET(kmaths::Byte_Type*, pHeader)
 			+ AllocHeaderSize + bytes);
 		*pMemEnd = KRK_MEMSYSTEM_END_SIG;
@@ -86,7 +86,7 @@ namespace memory
 			return false;
 		}
 
-		auto* const pMemEnd = REINTERPRET(memory::AllocHeader::Signature_Type*,
+		auto* const pMemEnd = REINTERPRET(Signature_Type*,
 			reinterpret_cast<kmaths::Byte_Type*>(pHeader) + AllocHeaderSize + pHeader->bytes);
 
 		if (*pMemEnd != KRK_MEMSYSTEM_END_SIG)

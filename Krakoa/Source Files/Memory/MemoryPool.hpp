@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Memory Structures/MemoryTypes.hpp"
-
 #include <HelperMacros.hpp>
 #include <Maths/BytesUnits.hpp>
 
@@ -34,7 +32,9 @@ namespace memory
 			remainingSpace = other.remainingSpace;
 
 			auto* capPtr = const_cast<size_t*>(&capacity);
-			*capPtr = other.capacity;
+			auto* otherCapPtr = const_cast<size_t*>(&other.capacity);
+
+			std::swap(capPtr, otherCapPtr);
 
 			return *this;
 		}
@@ -56,6 +56,7 @@ namespace memory
 		struct MemLinkedList
 		{
 		public:
+			unsigned signature;
 			size_t bytes;
 			void* pPrev;
 			void* pNext;

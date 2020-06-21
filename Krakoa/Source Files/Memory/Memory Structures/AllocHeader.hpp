@@ -1,13 +1,8 @@
 ﻿#pragma once
 
+#include "MemorySignatures.hpp"
+
 #include <HelperMacros.hpp>
-#include <cstdint>
-
-// 3735929054
-#define KRK_MEMSYSTEM_START_SIG 0xdeadc0de 
-
-// 3735928559
-#define KRK_MEMSYSTEM_END_SIG 0xdeadbeef
 
 namespace memory
 {
@@ -16,13 +11,9 @@ namespace memory
 	struct AllocHeader
 	{
 	public:
-		using Signature_Type = std::uint32_t;
-
-	public:
 		USE_RESULT static void* Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept;
 		static AllocHeader* Destroy(void* pData) noexcept;
 
-		
 		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
 		USE_RESULT static void* GetPointerFromHeader(AllocHeader* pHeader);
 		USE_RESULT static bool VerifyHeader(AllocHeader* pHeader, bool enableAssert = true);

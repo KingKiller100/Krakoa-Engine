@@ -15,6 +15,9 @@ namespace klib::kString
 
 		auto text = StrW(str);
 
+#if MSVC_PLATFORM_TOOLSET >= 141
+		std::replace(text.cbegin(), text.cend(), oldChar, newChar);
+#else
 		auto oldCharPos = str.find_first_of(oldChar);
 
 		if (oldCharPos == StrW::npos)
@@ -27,6 +30,7 @@ namespace klib::kString
 			text[oldCharPos] = newChar;
 			oldCharPos = text.find_first_of(oldChar);
 		} while (oldCharPos != StrW::npos);
+#endif
 		return text;
 	}
 

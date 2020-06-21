@@ -5,18 +5,21 @@
 #include "../String/kStringManipulation.hpp"
 #include "../String/kUTFStringConverter.hpp"
 
-#include <direct.h>
-#include <corecrt_wdirect.h>
 #include <cstdio>
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
-#include <sys/stat.h>
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#	include <Windows.h>
-#undef WIN32_LEAN_AND_MEAN
+#ifdef KLIB_WINDOWS_OS
+#	include <corecrt_wdirect.h>
+#	include <direct.h>
+#	include <sys/stat.h>
+
+#	define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#		include <Windows.h>
+#	undef WIN32_LEAN_AND_MEAN
+#endif
 
 namespace klib::kFileSystem
 {

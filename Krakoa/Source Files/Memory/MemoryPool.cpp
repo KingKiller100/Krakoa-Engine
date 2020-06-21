@@ -51,8 +51,7 @@ namespace memory
 
 	kmaths::Byte_Type* MemoryPool::Allocate(const size_t requestedBytes)
 	{
-		auto* pBlockStart = GetBlockStartPtr(requestedBytes);
-		return pBlockStart;
+		return GetBlockStartPtr(requestedBytes);
 	}
 
 	kmaths::Byte_Type* MemoryPool::GetBlockStartPtr(const size_t requestedBytes)
@@ -113,10 +112,10 @@ namespace memory
 		auto* const prevFree = pNextFree;
 
 		do {
-			auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
+			auto* pLList = reinterpret_cast<MemLinkedList*>(pNextFree);
 
-			if (AllocHeader::VerifyHeader(pHeader, false))
-				pNextFree += pHeader->bytes + ControlBlockSize;
+			if (pLList)
+				pNextFree += pLList->bytes;
 			else
 			{
 				auto maxLoops = requestedBytes;
@@ -124,13 +123,13 @@ namespace memory
 
 				while (maxLoops-- > 0 && (pNextFree + requestedBytes) <= pEndAddress)
 				{
-					pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
+					pLList = reinterpret_cast<AllocHeader*>(pNextFree);
 
-					if (!AllocHeader::VerifyHeader(pHeader, false))
+					if (!AllocHeader::VerifyHeader(pLList, false))
 						pNextFree++;
 					else
 					{
-						pNextFree += pHeader->bytes + ControlBlockSize;
+						pNextFree += pLList->bytes + ControlBlockSize;
 						break;
 					}
 				}

@@ -52,23 +52,13 @@ namespace memory
 	{
 		static constexpr size_t SubPoolSize = 4;
 		using SubPoolList = std::array<SubPool, SubPoolSize>;
-
-		struct MemLinkedList
-		{
-		public:
-			unsigned signature;
-			size_t bytes;
-			void* pPrev;
-			void* pNext;
-		};
 		
 	public:
-
 		MemoryPool(const size_t initialVolume, const size_t typeSize);
 		~MemoryPool() noexcept;
 
 		kmaths::Byte_Type* Allocate(const size_t requestedBytes);
-		void Deallocate(void* pBlockStart, const size_t bytesToDelete);
+		void Deallocate(void* pBlockStart, const size_t objectBytesToDelete);
 
 		USE_RESULT size_t GetBytes() const;
 		USE_RESULT size_t GetMaxBytes() const;
@@ -98,12 +88,8 @@ namespace memory
 
 		SubPool& FindPointerOwner(void* pHeader);
 
-
 	private:
 		SubPoolList subPoolList;
-		size_t typeSize;
-		
-		static void* exampleDeadBlock;
 	};
 }
 

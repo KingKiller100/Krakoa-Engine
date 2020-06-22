@@ -16,22 +16,25 @@ namespace memory
 
 	void* AllocHeader::Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept
 	{
-		pHeader->signature = KRK_MEMSYSTEM_START_SIG;
 		pHeader->bookmark = bookmarkIter++;
 		pHeader->pHeap = pHeap;
-		pHeader->bytes = bytes;
-		pHeader->pPrev = pHeader->pNext = nullptr;
-		
-		if (pHeader->pHeap->GetPrevAddress())
+
+		if (!pHeap->GetPrevAddress())
+			CreateLinkedList(pHeader, bytes);
+		else
 		{
 			auto* pPrevHeader = pHeader->pHeap->GetPrevAddress();
-			pHeader->pPrev = pPrevHeader;
 			pPrevHeader->pNext = pHeader;
+			CreateLinkedList(
+				pHeader,
+				bytes,
+				pPrevHeader,
+				nullptr);
 		}
-		
+
 		pHeader->pHeap->SetPrevAddress(pHeader);
 
-		auto* pMemEnd = REINTERPRET(Signature_Type*, 
+		auto* pMemEnd = REINTERPRET(Signature_Type*,
 			REINTERPRET(kmaths::Byte_Type*, pHeader)
 			+ AllocHeaderSize + bytes);
 		*pMemEnd = KRK_MEMSYSTEM_END_SIG;
@@ -75,7 +78,7 @@ namespace memory
 	{
 		using namespace klib::kFormat;
 
-		if (pHeader->signature != KRK_MEMSYSTEM_START_SIG)
+		if (!VerifyLinkedList(pHeader))
 		{
 			if (enableAssert)
 			{
@@ -109,7 +112,7 @@ namespace memory
 		auto* pHeader = REINTERPRET(AllocHeader*,
 			CAST(kmaths::Byte_Type*, pData)
 			- AllocHeaderSize);
-		
+
 		MEM_ASSERT(VerifyHeader(pHeader));
 		return pHeader;
 	}

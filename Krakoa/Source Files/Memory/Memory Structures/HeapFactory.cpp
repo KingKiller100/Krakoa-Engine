@@ -2,8 +2,8 @@
 #include "HeapFactory.hpp"
 
 #include "DefaultHeap.hpp"
+#include "AllocHeader.hpp"
 
-#include "../MemoryPool.hpp"
 #include "../../Core/Logging/MemoryLogger.hpp"
 
 #include <Maths/Constants.hpp>

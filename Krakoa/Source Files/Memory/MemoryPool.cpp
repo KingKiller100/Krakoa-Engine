@@ -10,23 +10,21 @@
 
 namespace memory
 {
+	using MemoryPoolLinkedList = MemoryLinkedList<void>;
+
+	constexpr size_t DeadBlockSize = 4 * static_cast<size_t>(kmaths::BytesUnits::KIBI);
+	constexpr size_t MPLLSize = MemoryLinkedListSize<void>;
+
+	void* exampleDeadBlock = nullptr;
+
 	using namespace kmaths;
 
-
-	constexpr size_t deadBlockSize = 1 << 17;
-	constexpr size_t memLinkListSize = sizeof(MemoryPool::MemLinkedList);
-
-	
-
-	void* MemoryPool::exampleDeadBlock = nullptr;
-
 	MemoryPool::MemoryPool(const size_t initialVolume, const size_t typeSize)
-		: typeSize(typeSize)
 	{
 		if (!exampleDeadBlock)
 		{
-			exampleDeadBlock = malloc(deadBlockSize);
-			memset(exampleDeadBlock, 0, deadBlockSize);
+			exampleDeadBlock = malloc(DeadBlockSize);
+			memset(exampleDeadBlock, 0, DeadBlockSize);
 
 			if (!exampleDeadBlock)
 				throw debug::MemoryPoolError("Cannot allocate space for example dead memory block");
@@ -102,10 +100,11 @@ namespace memory
 	{
 		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
 		{
-			auto* pBlockStart = pool.pNextFree;
-			pool.pNextFree += requestedBytes;
+			auto* pBlockStart = reinterpret_cast<MemoryPoolLinkedList*>(pool.pNextFree);
+			MemoryPoolLinkedList::CreateLinkedList(pBlockStart)
+			pool.pNextFree += requestedBytes + MPLLSize;
 			MoveNextFreePointer(pool.pNextFree);
-			return pBlockStart;
+			return pBlockStart + MPLLSize;
 		}
 
 		if (IsNegative(pool.pNextFree - static_cast<Byte_Type*>(pool.pHead)))
@@ -116,10 +115,10 @@ namespace memory
 		auto* const prevFree = pNextFree;
 
 		do {
-			auto* pLList = reinterpret_cast<MemLinkedList*>(pNextFree);
+			auto* pLList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
 
-			if (pLList)
-				pNextFree += pLList->bytes;
+			if (MemoryPoolLinkedList::VerifyLinkedList(pLList))
+				pNextFree += pLList->bytes + MPLLSize;
 			else
 			{
 				auto maxLoops = requestedBytes;
@@ -127,13 +126,13 @@ namespace memory
 
 				while (maxLoops-- > 0 && (pNextFree + requestedBytes) <= pEndAddress)
 				{
-					pLList = reinterpret_cast<MemLinkedList*>(pNextFree);
+					pLList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
 
-					if (!(pLList->signature == KRK_MEMSYSTEM_START_SIG))
+					if (!MemoryPoolLinkedList::VerifyLinkedList(pLList))
 						pNextFree++;
 					else
 					{
-						pNextFree += pLList->bytes + ;
+						pNextFree += MPLLSize + pLList->bytes;
 						break;
 					}
 				}
@@ -153,7 +152,7 @@ namespace memory
 
 	bool MemoryPool::CheckBlockIsDead(const Byte_Type* pNextFree, const size_t requestedBytes) const
 	{
-		if (requestedBytes <= deadBlockSize)
+		if (requestedBytes <= DeadBlockSize)
 		{
 			return (memcmp(
 				pNextFree,
@@ -162,15 +161,15 @@ namespace memory
 				== 0);
 		}
 
-		auto initialLoops = requestedBytes / deadBlockSize;
-		const auto remainingSize = requestedBytes % deadBlockSize;
+		auto initialLoops = requestedBytes / DeadBlockSize;
+		const auto remainingSize = requestedBytes % DeadBlockSize;
 
 		while (initialLoops-- > 0)
 		{
 			if (memcmp(
-				pNextFree + (deadBlockSize * initialLoops),
+				pNextFree + (DeadBlockSize * initialLoops),
 				exampleDeadBlock,
-				deadBlockSize)
+				DeadBlockSize)
 				!= 0)
 				return false;
 		}
@@ -180,25 +179,26 @@ namespace memory
 
 	void MemoryPool::MoveNextFreePointer(kmaths::Byte_Type*& pNextFree)
 	{
-		auto* pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
-		while (AllocHeader::VerifyHeader(pHeader, false))
+		auto* pLinkedList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
+		while (MemoryPoolLinkedList::VerifyLinkedList(pLinkedList))
 		{
-			pNextFree += pHeader->bytes + ControlBlockSize;
-			pHeader = reinterpret_cast<AllocHeader*>(pNextFree);
+			pNextFree += pLinkedList->bytes + MPLLSize;
+			pLinkedList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
 		}
 	}
+	
 
-	void MemoryPool::Deallocate(void* pBlockStart, const size_t bytesToDelete)
+	void MemoryPool::Deallocate(void* pBlockStart, const size_t objectBytesToDelete)
 	{
-		auto* pFreeAddress = REINTERPRET(Byte_Type*, pBlockStart);
+		auto* pFreeAddress = REINTERPRET(Byte_Type*, pBlockStart) - MPLLSize;
 
 		auto& pool = FindPointerOwner(pBlockStart);
-		memset(pBlockStart, 0, bytesToDelete);
+		memset(pBlockStart, 0, objectBytesToDelete);
 
 		if (pFreeAddress < pool.pNextFree)
 			pool.pNextFree = pFreeAddress;
 
-		pool.remainingSpace += bytesToDelete;
+		pool.remainingSpace += objectBytesToDelete;
 	}
 
 	SubPool& MemoryPool::FindPointerOwner(void* pHeader)

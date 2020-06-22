@@ -3,7 +3,7 @@
 
 #include "MemoryPool.hpp"
 #include "Memory Structures/HeapBase.hpp"
-#include "Memory Structures/MemoryTypes.hpp"
+#include "Memory Structures/MemoryTypeSizes.hpp"
 #include "Memory Structures/HeapFactory.hpp"
 
 #include "../Core/Logging/MemoryLogger.hpp"

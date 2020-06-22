@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "DefaultHeap.hpp"
 
-#include "MemoryTypes.hpp"
+#include "MemoryTypeSizes.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
 

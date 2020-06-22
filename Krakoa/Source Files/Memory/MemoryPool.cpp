@@ -2,7 +2,7 @@
 #include "MemoryPool.hpp"
 
 #include "MemoryErrors.hpp"
-#include "Memory Structures/MemoryTypes.hpp"
+#include "Memory Structures/MemoryTypeSizes.hpp"
 
 #include "../Core/Logging/MemoryLogger.hpp"
 
@@ -12,7 +12,11 @@ namespace memory
 {
 	using namespace kmaths;
 
+
 	constexpr size_t deadBlockSize = 1 << 17;
+	constexpr size_t memLinkListSize = sizeof(MemoryPool::MemLinkedList);
+
+	
 
 	void* MemoryPool::exampleDeadBlock = nullptr;
 
@@ -123,13 +127,13 @@ namespace memory
 
 				while (maxLoops-- > 0 && (pNextFree + requestedBytes) <= pEndAddress)
 				{
-					pLList = reinterpret_cast<AllocHeader*>(pNextFree);
+					pLList = reinterpret_cast<MemLinkedList*>(pNextFree);
 
-					if (!AllocHeader::VerifyHeader(pLList, false))
+					if (!(pLList->signature == KRK_MEMSYSTEM_START_SIG))
 						pNextFree++;
 					else
 					{
-						pNextFree += pLList->bytes + ControlBlockSize;
+						pNextFree += pLList->bytes + ;
 						break;
 					}
 				}

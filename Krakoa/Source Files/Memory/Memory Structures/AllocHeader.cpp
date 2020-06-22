@@ -2,7 +2,7 @@
 #include "AllocHeader.hpp"
 
 #include "HeapBase.hpp"
-#include "MemoryTypes.hpp"
+#include "MemoryTypeSizes.hpp"
 
 #include "../../Core/Logging/MemoryLogger.hpp"
 

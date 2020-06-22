@@ -4,7 +4,7 @@
 #include "../Source Files/PointerTypes.hpp"
 #include "../Source Files/Patterns/MemoryTracker.hpp"
 #include "../Source Files/Core/Logging/MemoryLogger.hpp"
-#include "../Source Files/Memory/Memory Structures/MemoryTypes.hpp"
+#include "../Source Files/Memory/Memory Structures/MemoryTypeSizes.hpp"
 
 #include <Utility/String/kStringManipulation.hpp>
 

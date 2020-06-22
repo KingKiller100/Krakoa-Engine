@@ -12,7 +12,7 @@ namespace memory
 	{
 	public:
 		USE_RESULT static void* Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept;
-		static AllocHeader* Destroy(void* pData) noexcept;
+		USE_RESULT static AllocHeader* Destroy(void* pData) noexcept;
 
 		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
 		USE_RESULT static void* GetPointerFromHeader(AllocHeader* pHeader);
@@ -20,7 +20,7 @@ namespace memory
 		
 	public:
 		Signature_Type signature;
-		size_t bytes = 0;
+		size_t bytes;
 		size_t bookmark;
 		
 #ifndef KRAKOA_RELEASE

@@ -2,7 +2,7 @@
 #include "ManagerBase_Test.hpp"
 
 #include "../Source Files/Patterns/ManagerBase.hpp"
-#include "../Source Files/Memory/Memory Structures/MemoryTypes.hpp"
+#include "../Source Files/Memory/Memory Structures/MemoryTypeSizes.hpp"
 
 #include <Utility/String/kStringManipulation.hpp>
 

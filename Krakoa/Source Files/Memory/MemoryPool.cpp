@@ -7,6 +7,7 @@
 #include "../Core/Logging/MemoryLogger.hpp"
 
 #include <Maths/kAlgorithms.hpp>
+#include <Utility/Format/kFormatToString.hpp>
 
 namespace memory
 {
@@ -280,8 +281,48 @@ namespace memory
 		return maxBytes;
 	}
 
-	std::string MemoryPool::GetStatus() const
+	bool MemoryPool::IsEmpty() const noexcept
 	{
-		return "";
+		for (const auto& pool : subPoolList)
+		{
+			if (pool.capacity - pool.remainingSpace != 0)
+				return false;
+		}
+		
+		return true;
+	}
+
+	size_t MemoryPool::GetAllocationCount() const noexcept
+	{
+		size_t count = 0;
+		for (const auto& pool : subPoolList)
+		{
+			auto* pCurrentHeader = *pool.ppHead;
+			while (pCurrentHeader)
+			{
+				count++;
+				pCurrentHeader = pCurrentHeader->pNext;
+			}
+		}
+		
+		return count;
+	}
+
+	std::string MemoryPool::GetStatus(const char* type) const
+	{
+		std::string status;
+
+		status += klib::kFormat::ToString(R"(
+Type: {0}
+Bytes: {1}
+Capacity: {2}
+Allocations: {3}
+)", 
+type,
+IsEmpty() ? 0 : GetBytes(),
+GetMaxBytes(),
+GetAllocationCount());
+		
+		return status;
 	}
 }

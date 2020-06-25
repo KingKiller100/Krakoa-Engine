@@ -43,6 +43,11 @@ namespace patterns
 			return memoryPool->GetMaxBytes();
 		}
 
+		USE_RESULT static std::string GetStatus() noexcept
+		{
+			return memoryPool->GetStatus(typeid(T).name());
+		}
+
 	private:
 		inline static memory::MemoryPool* memoryPool = nullptr;
 	};

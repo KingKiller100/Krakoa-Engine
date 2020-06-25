@@ -70,8 +70,10 @@ namespace memory
 
 		USE_RESULT size_t GetBytes() const;
 		USE_RESULT size_t GetMaxBytes() const;
+		USE_RESULT bool IsEmpty() const noexcept;
+		USE_RESULT size_t GetAllocationCount() const noexcept;
 
-		USE_RESULT std::string GetStatus() const;
+		USE_RESULT std::string GetStatus(const char* type) const;
 
 		MemoryPool(const MemoryPool&) = delete;
 		MemoryPool& operator=(const MemoryPool&) noexcept = delete;

@@ -57,6 +57,7 @@ namespace krakoa
 	void EntityManager::RemoveAll() noexcept
 	{
 		entities.clear();
+		Entity::TerminatePool();
 	}
 
 	void EntityManager::Update(const float dt)

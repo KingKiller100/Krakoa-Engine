@@ -25,6 +25,9 @@ namespace patterns
 		}
 
 		virtual ~MemPooler()
+			= default;
+
+		static void TerminatePool() noexcept
 		{
 			delete memoryPool;
 			memoryPool = nullptr;

@@ -69,7 +69,7 @@ namespace memory
 			if (!pBlockStart)
 				continue;
 
-			currentPool.remainingSpace -= requestedBytes;
+			currentPool.remainingSpace -= requestedBytes + HeaderSize;
 			return pBlockStart;
 		}
 
@@ -231,16 +231,19 @@ namespace memory
 		auto& pool = FindOwner(pHeaderList);
 		
 		if (pHeaderList == *pool.ppHead)
+		{
 			pool.ppHead = &pHeaderList->pNext;
+			pHeaderList->pNext->pPrev = nullptr;
+		}
 
-		memset(pHeaderList, 0, objectBytesToDelete);
+		memset(pHeaderList, 0, objectBytesToDelete + HeaderSize);
 
 		auto* pBlockStart = REINTERPRET(kmaths::Byte_Type*, pHeaderList);
 		
 		if (pBlockStart < pool.pNextFree)
 			pool.pNextFree = pBlockStart;
 
-		pool.remainingSpace += objectBytesToDelete;
+		pool.remainingSpace += + HeaderSize + HeaderSize;
 	}
 
 	SubPool& MemoryPool::FindOwner(void* pBlock)

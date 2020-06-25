@@ -9,15 +9,15 @@
 
 #include <atomic>
 #include <thread>
+#include <type_traits>
 
 namespace patterns
 {
-	template<typename T, size_t Max = 1000>
+	template<typename T, size_t Max>
 	class ObjectPool
 	{
 	public:
 		using Type = T;
-		using Pointer = Type * ;
 
 		static constexpr auto MaxLength = Max;
 		static constexpr auto TypeSize = sizeof(T);
@@ -26,8 +26,8 @@ namespace patterns
 		ObjectPool()
 			: size(0)
 		{
-			for (auto i = 0; i < Max; ++i)
-				pool[i - 1].next = &pool[i];
+			for (auto i = 0; i < MaxLength; ++i)
+				pool[i].next = &pool[i+1];
 
 			nextFree = &pool[0];
 		}
@@ -50,19 +50,18 @@ namespace patterns
 			return *this;
 		}
 
-
-		template<typename ...Args>
-		USE_RESULT Pointer Create(Args&& ...params)
+		template<typename ...Args, typename = std::enable_if_t<std::is_constructible_v<Type, Args...>>>
+		USE_RESULT Type* Create(Args&& ...params)
 		{
 			return new (Allocate()) Type(std::forward<Args>(params)...);
 		}
 
-		void Destroy(Pointer ptr)
+		void Destroy(Type* ptr)
 		{
 			if (!ptr)
 				return;
 
-			ptr->~Type();
+			ptr->~T();
 
 			Deallocate(ptr);
 		}
@@ -82,48 +81,48 @@ namespace patterns
 		ObjectPool& operator =(const ObjectPool& other) = delete;
 
 	private:
-		USE_RESULT Pointer Allocate()
+		USE_RESULT Type* Allocate()
 		{
-			auto thisThreadID = std::this_thread::get_id();
-			const auto idPtr = REINTERPRET(_Thrd_id_t*, &thisThreadID);
+			const auto threadID = GetThreadID();
 
 			auto* node = nextFree.load();
 			while (node && !nextFree.compare_exchange_weak(node, node->next, std::memory_order_seq_cst))
 			{
-				const auto msg = klib::kFormat::ToString("Thread {0} failed to allocate", *idPtr);
+				const auto msg = klib::kFormat::ToString("Thread {0} failed to allocate", threadID);
 				KRK_DBUG(msg);
 			}
 
-			KRK_DBUG(klib::kFormat::ToString("Thread {0} successfully allocatedd", *idPtr));
+			KRK_DBUG(klib::kFormat::ToString("Thread {0} successfully allocatedd", threadID));
 
 			if (nextFree == nullptr)
 				throw std::bad_alloc();
 
 			size++;
 
-			return REINTERPRET(Pointer, &node->storage);
+			return REINTERPRET(Type*, &node->storage);
 		}
 
-		void Deallocate(Pointer ptr)
+		void Deallocate(Type* ptr)
 		{
-			if (!ptr)
-				return;
-
+			const auto threadID = GetThreadID();
+			
 			const auto node = REINTERPRET(Node*, ptr);
-
-			auto thisThreadID = std::this_thread::get_id();
-			const auto idPtr = REINTERPRET(_Thrd_id_t*, &thisThreadID);
 
 			node->next = nextFree;
 			while (!nextFree.compare_exchange_weak(node->next, node, std::memory_order_seq_cst))
 			{
-				const auto msg = klib::kFormat::ToString("Thread {0} failed to deallocate", *idPtr);
+				const auto msg = klib::kFormat::ToString("Thread {0} failed to deallocate", threadID);
 				KRK_DBUG(msg);
 			}
 
-			KRK_DBUG(klib::kFormat::ToString("Thread {0} successfully deallocatedd", *idPtr));
+			KRK_DBUG(klib::kFormat::ToString("Thread {0} successfully deallocatedd", threadID));
 
 			size--;
+		}
+
+		USE_RESULT constexpr _Thrd_id_t GetThreadID(std::thread::id threadID = std::this_thread::get_id()) const noexcept
+		{
+			return *REINTERPRET(_Thrd_id_t*, &threadID);
 		}
 
 	private:

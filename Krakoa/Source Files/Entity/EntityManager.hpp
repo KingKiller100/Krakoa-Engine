@@ -3,15 +3,14 @@
 #include "../PointerTypes.hpp"
 #include "../Patterns/ManagerBase.hpp"
 
-#include <string_view>
+#include <string>
 #include <vector>
-
 
 
 namespace krakoa
 {
 	class Entity;
-	
+
 	class EntityManager final : public patterns::ManagerBase<EntityManager>
 	{
 	public:
@@ -30,13 +29,13 @@ namespace krakoa
 
 		USE_RESULT bool Find(const std::string_view& name);
 		USE_RESULT bool Find(const unsigned id);
-		
+
 		USE_RESULT Entity& GetEntity(const std::string_view& name);
 		USE_RESULT Entity& GetEntity(const unsigned id);
 
 		USE_RESULT const std::vector<Solo_Ptr<Entity>>& GetEntities() const;
 
-		
+
 	private:
 		void SortEntities();
 

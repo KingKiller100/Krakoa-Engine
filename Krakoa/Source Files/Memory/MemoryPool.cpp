@@ -10,14 +10,10 @@
 
 namespace memory
 {
-	using MemoryPoolLinkedList = MemoryLinkedList<void>;
-
-	constexpr size_t DeadBlockSize = 4 * static_cast<size_t>(kmaths::BytesUnits::KIBI);
-	constexpr size_t MPLLSize = MemoryLinkedListSize<void>;
-
 	void* exampleDeadBlock = nullptr;
+	constexpr size_t DeadBlockSize = 4 * static_cast<size_t>(kmaths::BytesUnits::MEBI);
 
-	using namespace kmaths;
+	constexpr size_t HeaderSize = sizeof(HeaderList);
 
 	MemoryPool::MemoryPool(const size_t initialVolume, const size_t typeSize)
 	{
@@ -43,11 +39,11 @@ namespace memory
 	{
 		for (auto& subPool : subPoolList)
 		{
-			if (!subPool.pHead)
+			if (!subPool.pStartAddress)
 				continue;
 
-			free(subPool.pHead);
-			subPool.pHead = subPool.pNextFree = nullptr;
+			free(subPool.pStartAddress);
+			subPool.pStartAddress = subPool.pNextFree = nullptr;
 		}
 	}
 
@@ -62,7 +58,7 @@ namespace memory
 		{
 			auto& currentPool = subPoolList[index];
 
-			if (!currentPool.pHead)
+			if (!currentPool.pStartAddress)
 			{
 				const auto nextCapacity = subPoolList[index - 1].capacity >> 1; // Next pool has half the capacity as the previous
 				CreateNewPool(nextCapacity, index);
@@ -88,11 +84,11 @@ namespace memory
 
 		auto& pool = subPoolList[index];
 		pool = SubPool(capacity);
-		pool.pHead = malloc(capacity);
-		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pHead);
-		memset(pool.pHead, 0, capacity);
+		pool.pStartAddress = malloc(capacity);
+		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pStartAddress);
+		memset(pool.pStartAddress, 0, capacity);
 
-		MEM_ASSERT(pool.pHead);
+		MEM_ASSERT(pool.pStartAddress);
 		usedIndex[index] = true;
 	}
 
@@ -100,14 +96,13 @@ namespace memory
 	{
 		if (CheckBlockIsDead(pool.pNextFree, requestedBytes))
 		{
-			auto* pBlockStart = reinterpret_cast<MemoryPoolLinkedList*>(pool.pNextFree);
-			MemoryPoolLinkedList::CreateLinkedList(pBlockStart)
-			pool.pNextFree += requestedBytes + MPLLSize;
+			AddNewLink(pool, pool.pNextFree, requestedBytes);
+			auto* pBlockStart = pool.pNextFree;
 			MoveNextFreePointer(pool.pNextFree);
-			return pBlockStart + MPLLSize;
+			return pBlockStart + HeaderSize;
 		}
 
-		if (IsNegative(pool.pNextFree - static_cast<Byte_Type*>(pool.pHead)))
+		if (kmaths::IsNegative(pool.pNextFree - static_cast<kmaths::Byte_Type*>(pool.pStartAddress)))
 			throw debug::MemoryPoolError("Distance from pool's head to the"
 				" pool's next free space pointers is negative!");
 
@@ -115,42 +110,83 @@ namespace memory
 		auto* const prevFree = pNextFree;
 
 		do {
-			auto* pLList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
+			auto* pLList = reinterpret_cast<HeaderList*>(pNextFree);
 
-			if (MemoryPoolLinkedList::VerifyLinkedList(pLList))
-				pNextFree += pLList->bytes + MPLLSize;
+			if (HeaderList::VerifyLinkedList(pLList))
+				pNextFree += pLList->bytes + HeaderSize;
 			else
 			{
 				auto maxLoops = requestedBytes;
-				auto* const pEndAddress = static_cast<Byte_Type*>(pool.pHead) + pool.capacity;
+				auto* const pEndAddress = static_cast<kmaths::Byte_Type*>(pool.pStartAddress) + pool.capacity;
 
-				while (maxLoops-- > 0 && (pNextFree + requestedBytes) <= pEndAddress)
+				while (maxLoops-- > 0)
 				{
-					pLList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
+					if ((pNextFree + requestedBytes) >= pEndAddress)
+					{
+						pool.pNextFree = prevFree;
+						return nullptr;
+					}
 
-					if (!MemoryPoolLinkedList::VerifyLinkedList(pLList))
+					pLList = reinterpret_cast<HeaderList*>(pNextFree);
+
+					if (!HeaderList::VerifyLinkedList(pLList))
 						pNextFree++;
 					else
 					{
-						pNextFree += MPLLSize + pLList->bytes;
+						pNextFree += HeaderSize + pLList->bytes;
 						break;
 					}
-				}
-
-				if ((pNextFree + requestedBytes) <= pEndAddress)
-				{
-					pool.pNextFree = prevFree;
-					return nullptr;
 				}
 			}
 		} while (!CheckBlockIsDead(pNextFree, requestedBytes));
 
+		AddNewLink(pool, pNextFree, requestedBytes);
 		MoveNextFreePointer(pool.pNextFree);
 
 		return pNextFree;
 	}
 
-	bool MemoryPool::CheckBlockIsDead(const Byte_Type* pNextFree, const size_t requestedBytes) const
+	void MemoryPool::AddNewLink(SubPool& pool, void* pNextBlock, const size_t bytes) const
+	{
+		static HeaderList* dummy = nullptr;
+
+		if (!pool.ppHead)
+		{
+			dummy = static_cast<HeaderList*>(pNextBlock);
+			pool.ppHead = &dummy;
+			HeaderList::CreateLinkedList(*pool.ppHead, bytes, nullptr, nullptr);
+			return;
+		}
+
+		auto* pCurrent = *pool.ppHead;
+
+		while (HeaderList::VerifyLinkedList(pCurrent)
+			&& pCurrent < pNextBlock
+			&& pCurrent->pNext)
+		{
+			pCurrent = static_cast<HeaderList*>(pCurrent->pNext);
+		}
+
+		auto* pLinkedList = REINTERPRET(HeaderList*, pNextBlock);
+
+		if (pCurrent > pLinkedList)
+		{
+			HeaderList::CreateLinkedList(pLinkedList, bytes, pCurrent->pPrev, pCurrent);
+			pCurrent->pPrev = pLinkedList;
+		}
+		else
+		{
+			HeaderList::CreateLinkedList(pLinkedList, bytes, pCurrent, pCurrent->pNext);
+			pCurrent->pNext = pLinkedList;
+		}
+
+
+		if (*pool.ppHead > pLinkedList)
+			dummy = pLinkedList;
+
+	}
+
+	bool MemoryPool::CheckBlockIsDead(const kmaths::Byte_Type* pNextFree, const size_t requestedBytes) const
 	{
 		if (requestedBytes <= DeadBlockSize)
 		{
@@ -173,46 +209,51 @@ namespace memory
 				!= 0)
 				return false;
 		}
-		
+
 		return (memcmp(pNextFree, exampleDeadBlock, remainingSize) != 0);
 	}
 
 	void MemoryPool::MoveNextFreePointer(kmaths::Byte_Type*& pNextFree)
 	{
-		auto* pLinkedList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
-		while (MemoryPoolLinkedList::VerifyLinkedList(pLinkedList))
+		auto* pLinkedList = reinterpret_cast<HeaderList*>(pNextFree);
+		while (HeaderList::VerifyLinkedList(pLinkedList))
 		{
-			pNextFree += pLinkedList->bytes + MPLLSize;
-			pLinkedList = reinterpret_cast<MemoryPoolLinkedList*>(pNextFree);
+			pNextFree += pLinkedList->bytes + HeaderSize;
+			pLinkedList = reinterpret_cast<HeaderList*>(pNextFree);
 		}
 	}
-	
 
-	void MemoryPool::Deallocate(void* pBlockStart, const size_t objectBytesToDelete)
+
+	void MemoryPool::Deallocate(void* ptr, const size_t objectBytesToDelete)
 	{
-		auto* pFreeAddress = REINTERPRET(Byte_Type*, pBlockStart) - MPLLSize;
+		auto* pHeaderList =  REINTERPRET(HeaderList*, (REINTERPRET(kmaths::Byte_Type*, ptr) - HeaderSize));
+		
+		auto& pool = FindOwner(pHeaderList);
+		
+		if (pHeaderList == *pool.ppHead)
+			pool.ppHead = &pHeaderList->pNext;
 
-		auto& pool = FindPointerOwner(pBlockStart);
-		memset(pBlockStart, 0, objectBytesToDelete);
+		memset(pHeaderList, 0, objectBytesToDelete);
 
-		if (pFreeAddress < pool.pNextFree)
-			pool.pNextFree = pFreeAddress;
+		auto* pBlockStart = REINTERPRET(kmaths::Byte_Type*, pHeaderList);
+		
+		if (pBlockStart < pool.pNextFree)
+			pool.pNextFree = pBlockStart;
 
 		pool.remainingSpace += objectBytesToDelete;
 	}
 
-	SubPool& MemoryPool::FindPointerOwner(void* pHeader)
+	SubPool& MemoryPool::FindOwner(void* pBlock)
 	{
-		const auto* const pAddress = CAST(kmaths::Byte_Type*, pHeader);
+		const auto* const pAddress = CAST(kmaths::Byte_Type*, pBlock);
 
 		for (auto i = 0; i < SubPoolSize; ++i)
 		{
 			const auto& pool = subPoolList[i];
-			const auto* pStartAddress = CAST(kmaths::Byte_Type*, pool.pHead);
+			const auto* pStartAddress = CAST(kmaths::Byte_Type*, pool.pStartAddress);
 			const auto* pEndAddress = pStartAddress + pool.capacity;
 
-			if (pStartAddress <= pAddress
-				&& pEndAddress > pAddress)
+			if (kmaths::InRange(pAddress, pStartAddress, pEndAddress))
 				return subPoolList[i];
 		}
 

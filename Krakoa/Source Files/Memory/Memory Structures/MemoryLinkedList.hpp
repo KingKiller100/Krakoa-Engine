@@ -7,12 +7,12 @@
 namespace memory
 {
 	template<typename T>
-	struct MemoryLinkedList // Doubly linked list of pointers
+	class MemoryLinkedList // Doubly linked list of pointers
 	{
 		using Type = T;
 		
 	public:
-		static void CreateLinkedList(MemoryLinkedList* pLinkedList, const size_t bytes, T* pPrev = nullptr, T* pNext = nullptr) noexcept
+		static void CreateLinkedList(MemoryLinkedList* pLinkedList, const size_t bytes, T* pPrev, T* pNext) noexcept
 		{
 			pLinkedList->signature = KRK_MEMSYSTEM_START_SIG;
 			pLinkedList->bytes = bytes;

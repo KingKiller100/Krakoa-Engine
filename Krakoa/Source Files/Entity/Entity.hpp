@@ -2,8 +2,8 @@
 
 #include "Components/ComponentBase.hpp"
 
-#include "../Core/Logging/CoreLogger.hpp"
 #include "../Patterns/MemPooler.hpp"
+#include "../Core/Logging/CoreLogger.hpp"
 
 #include <HelperMacros.hpp>
 

@@ -20,7 +20,7 @@ namespace memory
 		pHeader->pHeap = pHeap;
 
 		if (!pHeap->GetPrevAddress())
-			CreateLinkedList(pHeader, bytes);
+			CreateLinkedList(pHeader, bytes, nullptr, nullptr);
 		else
 		{
 			auto* pPrevHeader = pHeader->pHeap->GetPrevAddress();

@@ -19,12 +19,15 @@ namespace patterns
 
 		void operator delete(void* ptr)
 		{
+			if (!memoryPool) return;
+			
 			memoryPool->Deallocate(ptr, sizeof(T));
 		}
 
 		virtual ~MemPooler()
 		{
 			delete memoryPool;
+			memoryPool = nullptr;
 		}
 		
 		USE_RESULT static size_t GetCurrentBytes() noexcept

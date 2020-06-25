@@ -6,35 +6,42 @@
 #include <array>
 #include <string>
 
+#include "Memory Structures/MemoryLinkedList.hpp"
+
 namespace memory
 {
+	class HeaderList : public MemoryLinkedList<HeaderList>
+	{};
+	
+	
 	struct SubPool
 	{
 	public:
 		explicit SubPool(const size_t capacity = 0) noexcept
-			: pHead(nullptr),
+			: pStartAddress(nullptr),
+			ppHead(nullptr),
 			pNextFree(nullptr),
 			capacity(capacity)
 			, remainingSpace(capacity)
 		{}
 
 		SubPool(SubPool&& other) noexcept
-			: pHead(other.pHead),
+			: pStartAddress(other.pStartAddress),
 			pNextFree(other.pNextFree),
+			ppHead(other.ppHead),
 			capacity(other.capacity),
 			remainingSpace(other.remainingSpace)
 		{ }
 
 		SubPool& operator=(SubPool&& other) noexcept
 		{
-			pHead = other.pHead;
+			pStartAddress = other.pStartAddress;
 			pNextFree = other.pNextFree;
+			ppHead = other.ppHead;
 			remainingSpace = other.remainingSpace;
 
 			auto* capPtr = const_cast<size_t*>(&capacity);
-			auto* otherCapPtr = const_cast<size_t*>(&other.capacity);
-
-			std::swap(capPtr, otherCapPtr);
+			*capPtr = other.capacity;
 
 			return *this;
 		}
@@ -42,7 +49,8 @@ namespace memory
 		SubPool(const SubPool&) = delete;
 
 	public:
-		void* pHead;
+		void* pStartAddress;
+		HeaderList** ppHead;
 		kmaths::Byte_Type* pNextFree;
 		const size_t capacity;
 		size_t remainingSpace;
@@ -58,7 +66,7 @@ namespace memory
 		~MemoryPool() noexcept;
 
 		kmaths::Byte_Type* Allocate(const size_t requestedBytes);
-		void Deallocate(void* pBlockStart, const size_t objectBytesToDelete);
+		void Deallocate(void* ptr, const size_t objectBytesToDelete);
 
 		USE_RESULT size_t GetBytes() const;
 		USE_RESULT size_t GetMaxBytes() const;
@@ -71,6 +79,7 @@ namespace memory
 		void ShutDown();
 
 		kmaths::Byte_Type* FindFreeBlock(SubPool& pool, const size_t requestedBytes) const;
+		void AddNewLink(SubPool& pool, void* pNextBlock, size_t bytes) const;
 		bool CheckBlockIsDead(const kmaths::Byte_Type* pNextFree, size_t requestedBytes) const;
 
 		/**
@@ -82,11 +91,11 @@ namespace memory
 		 *		TRUE if this pool has space for this object or FALSE if this pool has no more space
 		 */
 		USE_RESULT kmaths::Byte_Type* GetBlockStartPtr(const size_t requestedBytes);
-
+		
 		void CreateNewPool(const size_t capacity, const size_t index);
 		static void MoveNextFreePointer(kmaths::Byte_Type*& pNextFree);
 
-		SubPool& FindPointerOwner(void* pHeader);
+		SubPool& FindOwner(void* pBlock);
 
 	private:
 		SubPoolList subPoolList;

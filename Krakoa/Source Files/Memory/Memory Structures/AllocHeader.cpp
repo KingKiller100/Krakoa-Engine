@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "AllocHeader.hpp"
 
-#include "HeapBase.hpp"
+#include "Heap.hpp"
 #include "MemoryTypeSizes.hpp"
 
 #include "../../Core/Logging/MemoryLogger.hpp"
@@ -14,7 +14,7 @@ namespace memory
 {
 	static size_t bookmarkIter = 0;
 
-	void* AllocHeader::Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept
+	void* AllocHeader::Create(AllocHeader* pHeader, const size_t bytes, Heap* pHeap) noexcept
 	{
 		pHeader->bookmark = bookmarkIter++;
 		pHeader->pHeap = pHeap;

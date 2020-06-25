@@ -53,6 +53,6 @@ namespace patterns
 		}
 
 	private:
-		inline static memory::HeapBase* pHeap = nullptr;
+		inline static memory::Heap* pHeap = nullptr;
 	};
 }

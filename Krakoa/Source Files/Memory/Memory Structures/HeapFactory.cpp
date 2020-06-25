@@ -17,7 +17,7 @@
 
 namespace memory
 {
-	HeapBase* HeapFactory::defaultHeap = nullptr;
+	Heap* HeapFactory::defaultHeap = nullptr;
 	HeapFactory::HeapList HeapFactory::heaps{};
 
 	void HeapFactory::Initialize() noexcept
@@ -69,13 +69,13 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		LogTotalAllocations(&totalAllocations);
 	}
 
-	HeapBase* HeapFactory::GetDefaultHeap() noexcept
+	Heap* HeapFactory::GetDefaultHeap() noexcept
 	{
 		static Heap_VFTBL localVFTBL(GetDefaultHeapStatus);
 
 		if (!defaultHeap)
 		{
-			defaultHeap = static_cast<HeapBase*>(malloc(sizeof(HeapBase)));
+			defaultHeap = static_cast<Heap*>(malloc(sizeof(Heap)));
 			defaultHeap->Initialize("Default", &localVFTBL);
 			heaps.front() = defaultHeap;
 		}
@@ -114,7 +114,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 	void HeapFactory::ReportMemoryLeaks()
 	{
-		for (HeapBase* heap : heaps)
+		for (Heap* heap : heaps)
 		{
 			if (!heap)
 				break;
@@ -127,7 +127,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		std::cin.get();
 	}
 
-	void HeapFactory::ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark)
+	void HeapFactory::ReportMemoryLeaks(Heap* const heap, const size_t minBookmark, const size_t maxBookmark)
 	{
 		auto* currentHeader = heap->GetPrevAddress();
 

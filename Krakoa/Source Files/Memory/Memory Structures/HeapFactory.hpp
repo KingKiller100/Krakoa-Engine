@@ -14,7 +14,7 @@ namespace memory
 
 	class HeapFactory final
 	{
-		using HeapList = std::array<HeapBase*, 128>;
+		using HeapList = std::array<Heap*, 128>;
 
 		struct Token {};
 	public:
@@ -22,15 +22,15 @@ namespace memory
 		static void ShutDown() noexcept;
 
 		template<typename T>
-		static HeapBase* CreateHeap()
+		static Heap* CreateHeap()
 		{
-			auto* heap = CAST(HeapBase*, malloc(sizeof(TemplateHeap<T>)));
+			auto* heap = CAST(Heap*, malloc(sizeof(TemplateHeap<T>)));
 			heap->Initialize(typeid(T).name(), &templateHeapVFTBL<T>);
 			heaps[activeHeapIndex++] = heap;
 			return heap;
 		}
 
-		static HeapBase* GetDefaultHeap() noexcept;
+		static Heap* GetDefaultHeap() noexcept;
 		static std::string WalkTheDefaultHeap();
 
 		static const HeapList& GetHeaps();
@@ -43,12 +43,12 @@ namespace memory
 	private:
 		static void LogTotalBytes(const size_t* bytes) noexcept;
 		static void LogTotalAllocations(const size_t* bytes) noexcept;
-		static void ReportMemoryLeaks(HeapBase* const heap, const size_t minBookmark, const size_t maxBookmark);
+		static void ReportMemoryLeaks(Heap* const heap, const size_t minBookmark, const size_t maxBookmark);
 
 		explicit HeapFactory(Token);
 
 	private:
-		static HeapBase* defaultHeap;
+		static Heap* defaultHeap;
 		static HeapList heaps;
 	};
 }

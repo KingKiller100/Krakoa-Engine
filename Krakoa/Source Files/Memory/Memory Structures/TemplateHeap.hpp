@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "HeapBase.hpp"
+#include "Heap.hpp"
 
 #include <Utility/Format/kFormatToString.hpp>
 
@@ -9,14 +9,14 @@
 namespace memory
 {
 	template<typename T>
-	class TemplateHeap final : public HeapBase
+	class TemplateHeap final : public Heap
 	{
 	public:
 		using Type = T;
 		static constexpr auto TypeSize = sizeof(Type);
 
 		explicit TemplateHeap() noexcept
-			: HeapBase(typeid(Type).name())
+			: Heap(typeid(Type).name())
 		{}
 
 		~TemplateHeap() noexcept
@@ -29,7 +29,7 @@ namespace memory
 	};
 
 	template<typename T>
-	static std::string GetTemplateHeapStatus(const HeapBase* pHeap)
+	static std::string GetTemplateHeapStatus(const Heap* pHeap)
 	{
 		using namespace klib::kFormat;
 		using Heap = TemplateHeap<T>;

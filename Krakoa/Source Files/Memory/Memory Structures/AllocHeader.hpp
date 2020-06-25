@@ -6,12 +6,12 @@
 
 namespace memory
 {
-	class HeapBase;
+	class Heap;
 
 	struct AllocHeader : MemoryLinkedList<AllocHeader>
 	{
 	public:
-		USE_RESULT static void* Create(AllocHeader* pHeader, const size_t bytes, HeapBase* pHeap) noexcept;
+		USE_RESULT static void* Create(AllocHeader* pHeader, const size_t bytes, Heap* pHeap) noexcept;
 		USE_RESULT static AllocHeader* Destroy(void* pData) noexcept;
 
 		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
@@ -20,8 +20,6 @@ namespace memory
 
 	public:
 		size_t bookmark;
-#ifndef KRAKOA_RELEASE
-		HeapBase* pHeap = nullptr;
-#endif
+		Heap* pHeap = nullptr;
 	};
 }

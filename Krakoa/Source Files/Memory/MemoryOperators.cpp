@@ -2,13 +2,13 @@
 #include "MemoryOperators.hpp"
 
 #include "MemoryPool.hpp"
-#include "Memory Structures/HeapBase.hpp"
+#include "Memory Structures/Heap.hpp"
 #include "Memory Structures/MemoryTypeSizes.hpp"
 #include "Memory Structures/HeapFactory.hpp"
 
 #include "../Core/Logging/MemoryLogger.hpp"
 
-void* operator new [](const size_t bytes, memory::HeapBase* pHeap)
+void* operator new [](const size_t bytes, memory::Heap* pHeap)
 {
 	return operator new(bytes, pHeap);
 }
@@ -23,7 +23,7 @@ void* operator new [](const size_t bytes)
 	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
 }
 
-void* operator new(const size_t bytes, memory::HeapBase* pHeap) // Pads Control Blocks
+void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads Control Blocks
 {
 #ifndef  KRAKOA_RELEASE
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));

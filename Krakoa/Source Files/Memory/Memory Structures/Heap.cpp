@@ -1,5 +1,5 @@
 ﻿#include "Precompile.hpp"
-#include "HeapBase.hpp"
+#include "Heap.hpp"
 
 #include "AllocHeader.hpp"
 
@@ -9,7 +9,7 @@
 
 namespace memory
 {
-	HeapBase::HeapBase(const char* name) noexcept
+	Heap::Heap(const char* name) noexcept
 		: name(name),
 		totalBytes(0),
 		pPrevAddress(nullptr),
@@ -17,7 +17,7 @@ namespace memory
 	{}
 
 
-	void HeapBase::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
+	void Heap::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
 	{
 		name = n;
 		totalBytes = 0;
@@ -25,32 +25,32 @@ namespace memory
 		vftbl = heapVTBL;
 	}
 
-	void HeapBase::SetName(const char* n) noexcept
+	void Heap::SetName(const char* n) noexcept
 	{
 		name = n;
 	}
 
-	const char* HeapBase::GetName() const noexcept
+	const char* Heap::GetName() const noexcept
 	{
 		return name;
 	}
 
-	void HeapBase::Allocate(const size_t bytes) noexcept
+	void Heap::Allocate(const size_t bytes) noexcept
 	{
 		totalBytes += bytes;
 	}
 
-	void HeapBase::Deallocate(const size_t bytes) noexcept
+	void Heap::Deallocate(const size_t bytes) noexcept
 	{
 		totalBytes -= bytes;
 	}
 
-	size_t HeapBase::GetTotalAllocatedBytes() const noexcept
+	size_t Heap::GetTotalAllocatedBytes() const noexcept
 	{
 		return totalBytes;
 	}
 
-	size_t HeapBase::WalkTheHeap() const
+	size_t Heap::WalkTheHeap() const
 	{
 		auto* pCurrentHeader = pPrevAddress; // casts to AllocHeader to find previous and next
 
@@ -74,7 +74,7 @@ namespace memory
 		return count;
 	}
 
-	void HeapBase::DeleteLeaks()
+	void Heap::DeleteLeaks()
 	{
 		auto& pCurrentHeader = pPrevAddress; // casts to AllocHeader to find previous and next
 
@@ -92,19 +92,19 @@ namespace memory
 		}
 	}
 
-	void HeapBase::SetPrevAddress(AllocHeader* prev) noexcept
+	void Heap::SetPrevAddress(AllocHeader* prev) noexcept
 	{
 		pPrevAddress = prev;
 	}
 
-	AllocHeader* HeapBase::GetPrevAddress() const noexcept
+	AllocHeader* Heap::GetPrevAddress() const noexcept
 	{
 		return pPrevAddress;
 	}
 
-	std::string HeapBase::GetStatus() const
+	std::string Heap::GetStatus() const
 	{
-		MEM_FATAL(vftbl->getStatusFunc, "HeapBase's vftbl is empty");
+		MEM_FATAL(vftbl->getStatusFunc, "Heap's vftbl is empty");
 		return vftbl->getStatusFunc(this);
 	}
 }

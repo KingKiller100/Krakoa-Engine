@@ -7,7 +7,7 @@
 
 namespace memory
 {
-	std::string GetDefaultHeapStatus(const HeapBase* pHeap)
+	std::string GetDefaultHeapStatus(const Heap* pHeap)
 	{
 		using namespace klib::kFormat;
 

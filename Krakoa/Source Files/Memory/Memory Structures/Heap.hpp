@@ -9,13 +9,13 @@ namespace memory
 	struct Heap_VFTBL;
 	struct AllocHeader;
 	
-	class HeapBase 
+	class Heap 
 	{
 	public:
-		explicit HeapBase(const char* name) noexcept;
-		HeapBase(const HeapBase&) = delete;
+		explicit Heap(const char* name) noexcept;
+		Heap(const Heap&) = delete;
 		
-		~HeapBase() noexcept = default;
+		~Heap() noexcept = default;
 
 		void Initialize(const char* n, Heap_VFTBL * heapVTBL) noexcept;
 
@@ -51,7 +51,7 @@ namespace memory
 	struct Heap_VFTBL
 	{
 	public:
-		typedef std::string(*GetStatusFunc)(const HeapBase*);
+		typedef std::string(*GetStatusFunc)(const Heap*);
 
 		explicit Heap_VFTBL(GetStatusFunc statusFunc)
 			: getStatusFunc(std::move(statusFunc))

@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "HeapBase.hpp"
+#include "Heap.hpp"
 
 #include <string>
 
 namespace memory
 {
-	std::string GetDefaultHeapStatus(const HeapBase* pHeap);
+	std::string GetDefaultHeapStatus(const Heap* pHeap);
 }

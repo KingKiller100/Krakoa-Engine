@@ -297,6 +297,9 @@ namespace memory
 		size_t count = 0;
 		for (const auto& pool : subPoolList)
 		{
+			if (!pool.pStartAddress || !pool.ppHead)
+				continue;
+			
 			auto* pCurrentHeader = *pool.ppHead;
 			while (pCurrentHeader)
 			{

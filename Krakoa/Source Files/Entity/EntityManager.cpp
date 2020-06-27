@@ -15,7 +15,14 @@ namespace krakoa
 
 	EntityManager::~EntityManager()
 	{
+		const auto status = Entity::GetStatus();
 		RemoveAll();
+		Entity::TerminatePool();
+	}
+
+	void EntityManager::RemoveAll() noexcept
+	{
+		entities.clear();
 	}
 
 	Entity& EntityManager::Add()
@@ -52,12 +59,6 @@ namespace krakoa
 		{
 			return entity->GetID() == id;
 		}));
-	}
-
-	void EntityManager::RemoveAll() noexcept
-	{
-		entities.clear();
-		Entity::TerminatePool();
 	}
 
 	void EntityManager::Update(const float dt)

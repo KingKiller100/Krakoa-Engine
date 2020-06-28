@@ -10,6 +10,9 @@ namespace patterns
 	class MemPooler
 	{
 	public:
+		static constexpr auto MemoryPoolSize = InitialSize;
+		
+	public:
 		void* operator new (size_t bytes)
 		{
 			if (!memoryPool)

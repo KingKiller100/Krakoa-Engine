@@ -8,6 +8,7 @@
 
 #include <Utility/String/kStringManipulation.hpp>
 
+#include <functional>
 
 #ifdef KRAKOA_TEST
 namespace krakoa::tests

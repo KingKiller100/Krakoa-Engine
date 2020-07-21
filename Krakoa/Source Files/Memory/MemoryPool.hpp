@@ -59,7 +59,6 @@ namespace memory
 	class MemoryPool
 	{
 		static constexpr size_t SubPoolSize = 4;
-		using SubPoolList = std::array<SubPool, SubPoolSize>;
 		
 	public:
 		MemoryPool(const size_t initialVolume, const size_t typeSize);
@@ -100,7 +99,7 @@ namespace memory
 		SubPool& FindOwner(void* pBlock);
 
 	private:
-		SubPoolList subPoolList;
+		std::array<SubPool, SubPoolSize> subPoolList;
 	};
 }
 

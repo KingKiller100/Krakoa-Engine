@@ -44,6 +44,9 @@ namespace memory
 		const char* name;
 		size_t totalBytes;
 		AllocHeader* pPrevAddress;
+		Heap* pParent;
+		Heap* pSiblings;
+		
 		Heap_VFTBL* vftbl;
 	};
 

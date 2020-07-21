@@ -157,12 +157,12 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 #ifdef _DEBUG
-		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+		graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
 #else
-		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
+		graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
 #endif // DEBUG
 
-		krakoa::graphics::Renderer::Clear();
+		graphics::Renderer::Clear();
 	}
 	
 	bool Application::IsRunning() const

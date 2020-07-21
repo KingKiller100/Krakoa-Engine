@@ -18,9 +18,6 @@ namespace memory
 
 		struct Token {};
 	public:
-		static void Initialize() noexcept;
-		static void ShutDown() noexcept;
-
 		template<typename T>
 		static Heap* CreateHeap()
 		{
@@ -29,6 +26,11 @@ namespace memory
 			heaps[activeHeapIndex++] = heap;
 			return heap;
 		}
+
+		static void AddParent(const char* parentName, Heap* pHeap);
+		
+		static void Initialize() noexcept;
+		static void ShutDown() noexcept;
 
 		static Heap* GetDefaultHeap() noexcept;
 		static std::string WalkTheDefaultHeap();

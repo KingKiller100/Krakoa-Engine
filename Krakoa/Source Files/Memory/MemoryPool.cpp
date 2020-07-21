@@ -181,7 +181,6 @@ namespace memory
 			pCurrent->pNext = pLinkedList;
 		}
 
-
 		if (*pool.ppHead > pLinkedList)
 			dummy = pLinkedList;
 
@@ -227,7 +226,8 @@ namespace memory
 
 	void MemoryPool::Deallocate(void* ptr, const size_t objectBytesToDelete)
 	{
-		auto* pHeaderList =  REINTERPRET(HeaderList*, (REINTERPRET(kmaths::Byte_Type*, ptr) - HeaderSize));
+		auto* pHeaderList =
+			REINTERPRET(HeaderList*, (REINTERPRET(kmaths::Byte_Type*, ptr) - HeaderSize));
 		
 		auto& pool = FindOwner(pHeaderList);
 		

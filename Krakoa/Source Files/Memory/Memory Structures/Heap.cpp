@@ -76,7 +76,7 @@ namespace memory
 
 	void Heap::DeleteLeaks()
 	{
-		auto& pCurrentHeader = pPrevAddress; // casts to AllocHeader to find previous and next
+		auto& pCurrentHeader = pPrevAddress;
 
 		if (!pCurrentHeader)
 			return;

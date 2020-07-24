@@ -9,10 +9,18 @@ namespace krakoa
 
 	void CoreLogger::CoreInit()
 	{
+		if (pCoreLogger)
+			return;
+		
 		pCoreLogger = std::make_unique<Logging>();
 		pCoreLogger->SetName("Krakoa");
 		pCoreLogger->ChangeFilename("Krakoa Engine");
 		pCoreLogger->ToggleSubSystemEnabled();
 		pCoreLogger->OutputInitialized();
+	}
+
+	Logging& CoreLogger::GetCoreLogger()
+	{
+		return *pCoreLogger;
 	}
 }

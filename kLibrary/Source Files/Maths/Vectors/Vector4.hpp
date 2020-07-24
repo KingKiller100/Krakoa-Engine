@@ -11,7 +11,7 @@ namespace kmaths
 		using Type = T;
 		inline static constexpr Length_Type Length = 4;
 		inline static constexpr size_t TypeSize = sizeof(T);
-		inline static constexpr size_t Bytes = Length * TypeSize;
+		inline static constexpr size_t TotalBytes = Length * TypeSize;
 
 		constexpr Vector() noexcept
 			= default;
@@ -166,7 +166,12 @@ namespace kmaths
 			return REINTERPRET(Type*, (void *)this);
 		}
 
-		USE_RESULT static constexpr auto GetLength() noexcept
+		USE_RESULT constexpr auto GetTotalBytes() const noexcept
+		{
+			return TotalBytes;
+		}
+
+		USE_RESULT constexpr auto GetLength() const noexcept
 		{
 			return Length;
 		}

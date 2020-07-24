@@ -1,5 +1,5 @@
 #include <Krakoa.hpp>
-#include <Core/EntryPoint.hpp>
+#include <EntryPoint.hpp>
 
 #include "Layers/Renderer2DLayer.hpp"
 
@@ -16,10 +16,7 @@ public:
 	}
 
 	~Hooper2Game()
-	{
-		isRunning = false;
-		Hooper2Game::ShutDown();
-	}
+		= default;
 
 	void Initialize() override
 	{
@@ -29,7 +26,10 @@ public:
 	}
 
 	void ShutDown() override
-	{}
+	{
+		isRunning = false;
+		Application::ShutDown(); // Must be the last function call in this function
+	}
 };
 
 void krakoa::CreateApplication()

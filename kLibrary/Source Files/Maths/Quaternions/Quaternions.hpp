@@ -36,8 +36,8 @@ namespace kmaths
 
 		using Type = T;
 		inline static constexpr Length_Type Length = 4;
-		inline static constexpr size_t TypeSize = sizeof(T);
-		inline static constexpr size_t Bytes = Length * TypeSize;
+		inline static constexpr size_t TypeBytes = sizeof(T);
+		inline static constexpr size_t TotalBytes = Length * TypeBytes;
 
 		/**
 		* \brief

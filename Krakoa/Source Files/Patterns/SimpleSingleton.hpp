@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../Core/EngineConfig.hpp"
+#include "../EngineMacros.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
 namespace patterns
@@ -7,21 +7,24 @@ namespace patterns
 	template <class T>
 	class SimpleSingleton
 	{
+	protected:
+		struct Token {};
+		
 	public:
 		constexpr SimpleSingleton() noexcept
 			= default;
-		virtual ~SimpleSingleton() = default;
+		virtual ~SimpleSingleton() noexcept = default;
 
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
-		
-		constexpr static T& Reference()
+
+		static constexpr T& Reference()
 		{
-			KRK_FATAL(instance, "Refernce to uninitialized singleton")
+			KRK_FATAL(instance, "Refernce to uninitialized singleton");
 			return *instance;
 		}
 
-		constexpr static T* Pointer()
+		static constexpr T* Pointer()
 		{
 			if (!instance)
 				return nullptr;
@@ -29,15 +32,14 @@ namespace patterns
 			return instance;
 		}
 
-		template<class ThisOrChild = T>
-		constexpr static void Create()
+		template<class ThisOrDerivedType = T, typename ...Args, typename = std::enable_if_t<
+			std::is_base_of_v<T, ThisOrDerivedType>
+			&& std::is_constructible_v<ThisOrDerivedType, Token, Args...>>>
+		static constexpr void Create(Args&& ...params)
 		{
 			if (!instance)
-				instance = new ThisOrChild(Token());
+				instance = new ThisOrDerivedType(Token(), std::forward<Args>(params)...);
 		}
-
-	protected:
-		struct Token {};
 
 	protected:
 		inline static T* instance = nullptr;

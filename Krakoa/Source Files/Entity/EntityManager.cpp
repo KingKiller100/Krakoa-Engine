@@ -3,6 +3,7 @@
 
 #include "Entity.hpp"
 #include "../Graphics/Renderer2D.hpp"
+
 #include "Components/Transform.hpp"
 #include "Components/Appearance.hpp"
 
@@ -14,7 +15,14 @@ namespace krakoa
 
 	EntityManager::~EntityManager()
 	{
+		const auto status = Entity::GetStatus();
 		RemoveAll();
+		Entity::TerminatePool();
+	}
+
+	void EntityManager::RemoveAll() noexcept
+	{
+		entities.clear();
 	}
 
 	Entity& EntityManager::Add()
@@ -53,12 +61,7 @@ namespace krakoa
 		}));
 	}
 
-	void EntityManager::RemoveAll() noexcept
-	{
-		entities.clear();
-	}
-
-	void EntityManager::Update(const double dt)
+	void EntityManager::Update(const float dt)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -77,8 +80,8 @@ namespace krakoa
 
 		for (auto& entity : entities)
 		{
-			if (!entity->FindComponent<components::Appearance2D>()
-				|| !entity->FindComponent<components::Transform>())
+			if (!entity->HasComponent<components::Appearance2D>()
+				|| !entity->HasComponent<components::Transform>())
 				continue;
 
 			const auto& appearance = entity->GetComponent<components::Appearance2D>();

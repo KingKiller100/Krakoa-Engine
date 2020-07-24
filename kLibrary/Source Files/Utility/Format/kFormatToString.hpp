@@ -10,7 +10,6 @@
 #include <string>
 #include <sstream>
 #include <variant>
-#include <vector>
 #include <xtr1common>
 
 #if defined (_MSC_VER)
@@ -189,6 +188,8 @@ namespace klib::kFormat
 		static constexpr auto printfSymbol = CharType('%');
 		static constexpr auto openerSymbol = CharType('{');
 		static constexpr auto closerSymbol = CharType('}');
+		static constexpr auto precisionSymbol = CharType(':');
+		static constexpr auto nullTerminator = type_trait::nullTerminator<CharType>;
 
 		static constexpr auto npos = std::basic_string<CharType>::npos;
 
@@ -202,10 +203,10 @@ namespace klib::kFormat
 		std::deque<std::pair<unsigned char, std::string>> identifiers;
 		for (auto i = format.find_first_of(openerSymbol); i != npos; i = format.find_first_of(openerSymbol, i + 1))
 		{
-			if (format[i + 1] == format[i] ||
+			if (format[i + 1] == openerSymbol ||
 				format[i + 1] == CharType(' ') ||
 				format[i + 1] == CharType('\t') ||
-				format[i + 1] == CharType('\0'))
+				format[i + 1] == nullTerminator)
 			{
 				i += 2;
 				continue;
@@ -214,10 +215,9 @@ namespace klib::kFormat
 			std::string objIndex;
 
 			const auto closePos = format.find_first_of(closerSymbol, i);
-			for (auto j = 1; (i + j) < closePos; ++j)
-				objIndex += (char)format[i + j];
+			objIndex.append(kString::Convert<char>(format.substr(i + 1, closePos - 1).data()));
 
-			const auto idx = (unsigned char)std::stoi(objIndex);
+			const auto idx = static_cast<unsigned char>(std::stoi(objIndex.substr(0, objIndex.find_first_of(precisionSymbol))));
 			identifiers.push_back(std::make_pair(idx, elems[idx].type().name()));
 		}
 		identifiers.shrink_to_fit();
@@ -229,8 +229,8 @@ namespace klib::kFormat
 			const auto inputPos = format.find_first_of(closerSymbol) + 1;
 			auto currentSection = format.substr(0, inputPos);
 			auto replacePos = currentSection.find_first_of(openerSymbol);
-			auto colonPos = currentSection.find(CharType(':'), replacePos);
-			auto padding = CharType('\0');
+			auto colonPos = currentSection.find(precisionSymbol, replacePos);
+			auto padding = nullTerminator;
 			if (colonPos != npos)
 			{
 				padding = currentSection[colonPos + 1];
@@ -238,11 +238,11 @@ namespace klib::kFormat
 			currentSection[replacePos] = printfSymbol;
 			currentSection.erase(replacePos + 2);
 
-			if (padding != CharType('\0'))
+			if (padding != nullTerminator)
 			{
 				currentSection.insert(replacePos + 1, 1, padding);
 				currentSection.insert(replacePos + 1, 1, CharType('0'));
-				replacePos += 2;
+				replacePos = currentSection.size() - 2;
 			}
 
 			if (id.second.find("void") != npos)
@@ -427,10 +427,10 @@ namespace klib::kFormat
 	}
 
 	template<class CharType, typename T>
-	constexpr std::basic_string<CharType> ToString(T object)
+	constexpr std::basic_string<CharType> ToString(T&& object)
 	{
 		std::basic_stringstream<CharType> ss;
-		ss << object;
+		ss << std::forward<T>(object);
 		return ss.str();
 	}
 }

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "EngineConfig.hpp"
+#include "../EngineMacros.hpp"
+
+// Memory
+#include "../PointerTypes.hpp"
 
 // Time Step
 #include "../TimeStep.hpp"
@@ -9,7 +12,7 @@
 #include "../iWindow.hpp"
 
 // Pattern
-#include "../Patterns/SimpleSingleton.hpp"
+#include "../Patterns/ManagerBase.hpp"
 
 // Events
 #include "../Events System/Event.hpp"
@@ -23,18 +26,19 @@
 
 #include <memory>
 
+
 namespace krakoa
 {
-	class KRAKOA_API Application : public patterns::SimpleSingleton<Application>
+	class KRAKOA_API Application : public patterns::ManagerBase<Application>
 	{
 	public:
 		Application(Token&);
 		virtual ~Application();
 
 		virtual void Initialize();
+		virtual void ShutDown();
 		void Run() const;
 		USE_RESULT bool IsRunning() const;
-		virtual void ShutDown() = 0;
 
 		iWindow& GetWindow() const;
 

@@ -81,6 +81,11 @@ namespace krakoa
 		selected = false;
 	}
 
+	bool Entity::IsActive() const noexcept
+	{
+		return active;
+	}
+
 	void Entity::Activate()
 	{
 		active = true;
@@ -91,16 +96,16 @@ namespace krakoa
 		active = false;
 	}
 
-	void Entity::Update(const double dt)
+	void Entity::Update(const float dt)
 	{
-		KRK_DBUG("Entiy \"" + name + "\" Update Called");
+		//KRK_DBUG("Entiy \"" + name + "\" Update Called");
 
 		for (auto& component : components)
 		{
 			if (!component.second->IsActive())
 				continue;
 
-			KRK_DBUG(klib::kFormat::ToString("Component \"{0}\" Update Called", component.first));
+			//KRK_DBUG(klib::kFormat::ToString("Component \"{0}\" Update Called", component.first));
 
 			component.second->Update(dt);
 		}

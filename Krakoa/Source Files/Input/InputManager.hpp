@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "../Patterns/SimpleSingleton.hpp"
+#include "../Patterns/ManagerBase.hpp"
 
+#include <Maths/Vectors/Vector2.hpp>
 
 namespace krakoa::input
 {
@@ -11,9 +12,11 @@ namespace krakoa::input
 		MIDDLE
 	};
 
-	class InputManager : protected patterns::SimpleSingleton<InputManager>
+	class InputManager : public patterns::ManagerBase<InputManager>
 	{
 	public:
+		InputManager(Token) {}
+		
 		static void Initialize() noexcept                                             { CreateImpl(); }
 
 		// Keys
@@ -22,20 +25,20 @@ namespace krakoa::input
 		// Mouse
 		static inline float GetMousePosX() noexcept                                   { return Reference().GetMousePosXImpl(); }
 		static inline float GetMousePosY() noexcept                                   { return Reference().GetMousePosYImpl(); }
-		static inline std::pair<float, float> GetMousePosition() noexcept             { return Reference().GetMousePositionImpl(); }
+		static inline kmaths::Vector2f GetMousePosition() noexcept                    { return Reference().GetMousePositionImpl(); }
 		static inline bool IsMouseButtonPressed(MouseInputType button) noexcept       { return Reference().IsMouseButtonPressedImpl(button); }
 
 	protected:
 		static void CreateImpl() noexcept;
 
 		// Keys
-		virtual bool IsKeyPressedImpl(const int keycode) const noexcept = 0;
+		USE_RESULT virtual bool IsKeyPressedImpl(const int keycode) const noexcept = 0;
 
 		// Mouse
-		virtual float GetMousePosXImpl() const noexcept = 0;
-		virtual float GetMousePosYImpl() const noexcept = 0;
-		virtual std::pair<float, float> GetMousePositionImpl() const noexcept = 0;
-		virtual bool IsMouseButtonPressedImpl(const MouseInputType button) const noexcept = 0;
+		USE_RESULT virtual float GetMousePosXImpl() const noexcept = 0;
+		USE_RESULT virtual float GetMousePosYImpl() const noexcept = 0;
+		USE_RESULT virtual kmaths::Vector2f GetMousePositionImpl() const noexcept = 0;
+		USE_RESULT virtual bool IsMouseButtonPressedImpl(const MouseInputType button) const noexcept = 0;
 
 	};
 }

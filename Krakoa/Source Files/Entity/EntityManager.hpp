@@ -1,18 +1,17 @@
 ﻿#pragma once
 
-#include "../MemoryTypes.hpp"
-#include "../Patterns/SimpleSingleton.hpp"
+#include "../PointerTypes.hpp"
+#include "../Patterns/ManagerBase.hpp"
 
-#include <string_view>
+#include <string>
 #include <vector>
-
 
 
 namespace krakoa
 {
 	class Entity;
-	
-	class EntityManager : public patterns::SimpleSingleton<EntityManager>
+
+	class EntityManager final : public patterns::ManagerBase<EntityManager>
 	{
 	public:
 		EntityManager(Token);
@@ -25,18 +24,18 @@ namespace krakoa
 		void Remove(const unsigned id);
 		void RemoveAll() noexcept;
 
-		void Update(double dt);
+		void Update(const float dt);
 		void Draw();
 
 		USE_RESULT bool Find(const std::string_view& name);
 		USE_RESULT bool Find(const unsigned id);
-		
+
 		USE_RESULT Entity& GetEntity(const std::string_view& name);
 		USE_RESULT Entity& GetEntity(const unsigned id);
 
 		USE_RESULT const std::vector<Solo_Ptr<Entity>>& GetEntities() const;
 
-		
+
 	private:
 		void SortEntities();
 

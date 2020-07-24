@@ -18,7 +18,6 @@
 
 #include <Maths/Quaternions/Quaternions.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
-#include <Maths/Matrices/PredefinedMatrices.hpp>
 
 #include <array>
 
@@ -27,22 +26,24 @@ namespace krakoa::graphics
 
 	namespace
 	{
-		static constexpr kmaths::Quaternionf q_(kmaths::ToRadians(1.f), 0.f, 0.f, 0.f);
+		constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f, kmaths::Theta_Type::DEGREES);
 	}
 	
-	_2D::PrimitivesData* pData = new _2D::PrimitivesData();
+	_2D::PrimitivesData *pData = nullptr;
 
 	const Statistics& Renderer2D::GetStats()
 	{
 		return stats;
 	}
 
-	void Renderer2D::Initialize()
+	void Renderer2D::Initialize(ShaderLibrary& shaderLibrary)
 	{
 		KRK_PROFILE_FUNCTION();
 
+		pData = new _2D::PrimitivesData();
+		
 		constexpr auto sizeOfVertexData = sizeof(VertexData);
-
+		
 		// Triangle creation code
 		{
 			auto& triangle = pData->triangle;
@@ -160,8 +161,7 @@ namespace krakoa::graphics
 				samplers[i] = i;
 			}
 
-			auto& shaderLib = ShaderLibrary::Reference();
-			const auto mainShader = shaderLib.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
+			const auto mainShader = shaderLibrary.Load("MainShader", "../../../../Krakoa/Assets/Shaders/OpenGL/MainShader");
 			if (!mainShader.expired())
 			{
 				auto main_shader_s_ptr = mainShader.lock();
@@ -174,7 +174,11 @@ namespace krakoa::graphics
 
 	void Renderer2D::ShutDown()
 	{
+		if (!pData)
+			return;
+		
 		delete pData;
+		pData = nullptr;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)

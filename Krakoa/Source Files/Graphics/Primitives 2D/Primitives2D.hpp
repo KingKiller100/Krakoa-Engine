@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "GeometryData.hpp"
+#include "../../Patterns/ManagerBase.hpp"
 
 #include "../Textures/TextureData2D.hpp"
 #include "../Rendering Resources/iShader.hpp"
@@ -8,7 +9,7 @@
 
 namespace krakoa::graphics::_2D
 {
-	struct PrimitivesData
+	struct PrimitivesData 
 	{
 	public:
 		void IncrementQuadIndexCount() noexcept;

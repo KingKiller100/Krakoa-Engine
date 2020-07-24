@@ -15,7 +15,7 @@ namespace klib::kProfiler
 		uint32_t threadID;
 	};
 
-	template<typename TimeUnits = kTime::units::Millis, typename ProfilerFunc = std::function<void(const klib::kProfiler::ProfilerResult&)>>
+	template<typename TimeUnits = kTime::units::Millis, typename ProfilerFunc = std::function<void(const ProfilerResult&)>>
 	class Profiler
 	{
 	private:

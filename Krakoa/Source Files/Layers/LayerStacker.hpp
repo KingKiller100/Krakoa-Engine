@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/EngineConfig.hpp"
+#include "../EngineMacros.hpp"
 
 #include "../Events System/Event.hpp"
 

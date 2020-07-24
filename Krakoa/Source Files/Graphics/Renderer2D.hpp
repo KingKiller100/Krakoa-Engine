@@ -3,30 +3,9 @@
 #include "Colour.hpp"
 #include "Renderer2DStatistics.hpp"
 
+#include "Textures/iTexture.hpp"
+
 #include <Maths/Vectors/PredefinedVectors.hpp>
-
-
-
-#include "Colour.hpp"
-#include "Colour.hpp"
-#include "Colour.hpp"
-#include "Colour.hpp"
-#include "Colour.hpp"
-#include "Colour.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
-#include "Textures/iTexture.hpp"
 
 namespace krakoa
 {
@@ -34,13 +13,14 @@ namespace krakoa
 
 	namespace graphics
 	{
+		class ShaderLibrary;
 		class iTexture2D;
 		class SubTexture2D;
 		
 		class Renderer2D
 		{
 		public:
-			static void Initialize();
+			static void Initialize(ShaderLibrary& shaderLibrary);
 			static void ShutDown();
 
 			static void BeginScene(const OrthographicCamera& camera);

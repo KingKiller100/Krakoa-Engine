@@ -154,9 +154,9 @@ namespace kmaths::constants
 		return One<ReturnType>() / value;
 	}
 
-	template<class ReturnType, class T, class T2>
-	USE_RESULT constexpr ReturnType XOverY(T&& x, T2&& y) noexcept
+	template<class ReturnType, class T, class U>
+	USE_RESULT constexpr ReturnType Divide(T&& x, U&& y) noexcept
 	{
-		return ReturnType(std::forward<T&&>(x)) / y;
+		return ReturnType(std::forward<T>(x)) / std::forward<U>(y);
 	}
 }

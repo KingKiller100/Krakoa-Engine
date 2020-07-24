@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../EngineConfig.hpp"
+#include "../../EngineMacros.hpp"
 
 #include <Utility/Logging/kLogging_Class.hpp>
 
@@ -13,10 +13,10 @@ namespace krakoa
 	public:
 		// Engine side
 		static void CoreInit();
-		static klib::kLogs::Logging& GetCoreLogger() { return *pCoreLogger; }
+		static klib::kLogs::Logging& GetCoreLogger();
 
 	private:
-		static std::unique_ptr<klib::kLogs::Logging> pCoreLogger;
+		static Solo_Ptr<klib::kLogs::Logging> pCoreLogger;
 	};
 }
 
@@ -31,6 +31,7 @@ namespace krakoa
 // ENGINE SIDE Log Macros
 #define KRK_INIT_LOGS()                                 ::krakoa::CoreLogger::CoreInit();
 #define KRK_SET_LOG_MIN(minLvl)                         ::krakoa::CoreLogger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
+#define KRK_GET_LOG_PATH()                                  ::krakoa::CoreLogger::GetLogger().GetOutputPath();
 #define KRK_TOGGLE_LOGGING()                            ::krakoa::CoreLogger::GetCoreLogger().ToggleLoggingEnabled();
 #define KRK_DISABLE_FILE_OUTPUT()                       ::krakoa::CoreLogger::GetCoreLogger().SetCacheMode(true);
 #define KRK_ENABLE_FILE_OUTPUT()                        ::krakoa::CoreLogger::GetCoreLogger().SetCacheMode(false);
@@ -51,7 +52,7 @@ namespace krakoa
 
 #ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
-#	define KRK_FATAL(condition, msg)                                  kAssert(condition, msg)
+#	define KRK_FATAL(condition, msg)                    kAssert(condition, msg)
 #else
-#	define KRK_FATAL(condition, msg)                                  if ( !(condition) ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__)
+#	define KRK_FATAL(condition, msg)                    if ( !(condition) ) ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(msg, __FILE__, __LINE__)
 #endif // !KRAKOA_RELEASE

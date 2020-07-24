@@ -8,9 +8,8 @@ namespace klib::kDebug
 	{
 	public:
 		NotImplementedException(const char* what);
-
 		~NotImplementedException() noexcept;
-
-		char const* what() const override;
 	};
 }
+
+#define FUNC_NO_IMPL() ::klib::kDebug::NotImplementedException(__FUNCSIG__ " Not Implemented")

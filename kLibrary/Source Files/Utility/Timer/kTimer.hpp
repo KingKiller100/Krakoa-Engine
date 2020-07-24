@@ -75,8 +75,8 @@ namespace klib::kTime
 		template<typename Units>
 		USE_RESULT constexpr Rep ConvertToUsableValue(const typename Clock::time_point& now, const typename Clock::time_point& prev) const noexcept(std::is_arithmetic_v<Rep>)
 		{
+			static constexpr Rep sixtieth =   (CAST(Rep, 1) / 60);
 			static constexpr Rep thousandth = (CAST(Rep, 1) / 1000);
-			static constexpr Rep sixtieth = CAST(Rep, 1) / 60;
 
 			if _CONSTEXPR_IF(std::is_same_v<Units, units::Hours>
 				|| std::is_same_v<Units, units::Mins>)

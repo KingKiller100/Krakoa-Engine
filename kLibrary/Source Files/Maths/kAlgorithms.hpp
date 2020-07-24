@@ -147,13 +147,13 @@ namespace kmaths
 	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
 	{
 		unsigned int count = 1;
-		bool stop = CAST(T, 10) > x&& x > CAST(T, -10);
+		bool stop = CAST(T, 10) > x && x > CAST(T, -10);
 
 		while (!stop)
 		{
 			x /= CAST(T, 10);
 			count++;
-			stop = CAST(T, 10) > x&& x > CAST(T, -10);
+			stop = CAST(T, 10) > x && x > CAST(T, -10);
 		}
 
 		return count;
@@ -356,11 +356,11 @@ namespace kmaths
 		constexpr auto one = constants::One<constants::AccuracyType>();
 		constexpr auto two = constants::Two<T>();
 		constexpr auto tau = CAST(T, constants::TAU);
-		
+
 		x = Modulus<T>(x, tau);
-		
+
 		const auto square = CAST(constants::AccuracyType, -x * x);
-		
+
 		auto t = CAST(constants::AccuracyType, x);
 		auto sine = t;
 		for (size_t a = 1; a < n; ++a)
@@ -601,6 +601,14 @@ namespace kmaths
 		return maxVal - minVal;
 	}
 
+	template<typename T>
+	USE_RESULT constexpr bool InRange(const T value, const T minVal, const T maxVal) noexcept
+	{
+		return (value >= minVal) && (value < maxVal);
+	}
+
+
+
 	template <typename T>
 	USE_RESULT constexpr T Lerp(T a, T b, T t) noexcept
 	{
@@ -615,12 +623,12 @@ namespace kmaths
 	}
 
 	template <typename T>
-	USE_RESULT constexpr T LerpPartial(T a, T b, T t, T tmin, T tmax) noexcept
+	USE_RESULT constexpr T LerpPartial(T a, T b, T t, T tMin, T tMax) noexcept
 	{
-		t = Clamp<T>(t, tmin, tmax);
+		t = Clamp<T>(t, tMin, tMax);
 
-		t -= tmin;
-		t /= (tmax - tmin);
+		t -= tMin;
+		t /= (tMax - tMin);
 
 		return LerpClampled<T>(a, b, t);
 	}
@@ -659,25 +667,8 @@ namespace kmaths
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, sqrt(square));
 #else
-		constexpr T lookUpMap[] = {
-			CAST(T, 0),    CAST(T, 1),    CAST(T, 4),    CAST(T, 9),      // 0, 1, 2, 3 
-			CAST(T, 16),   CAST(T, 25),   CAST(T, 36),   CAST(T, 49),     // 4, 5, 6, 7
-			CAST(T, 64),   CAST(T, 81),   CAST(T, 100),  CAST(T, 121),    // 8, 9, 10, 11
-			CAST(T, 144),  CAST(T, 169),  CAST(T, 196),  CAST(T, 225),    // 12, 13, 14, 15
-			CAST(T, 256),  CAST(T, 289),  CAST(T, 324),  CAST(T, 361),    // 16, 17, 18, 19
-			CAST(T, 400),  CAST(T, 441),  CAST(T, 484),  CAST(T, 529),    // 20, 21, 22, 23
-			CAST(T, 576),  CAST(T, 625),  CAST(T, 676),  CAST(T, 729),    // 24, 25, 26, 27
-			CAST(T, 784),  CAST(T, 841),  CAST(T, 900),  CAST(T, 961),    // 28, 29, 30, 31
-			CAST(T, 1024), CAST(T, 1089), CAST(T, 1156), CAST(T, 1225) // 32, 33, 34, 35
-		};
-		constexpr auto lookUpMapSize = SizeOfCArray(lookUpMap);
 
-		auto maxIterations = 0;
-
-		if _CONSTEXPR_IF(std::is_same_v<T, float>)
-			maxIterations = 7;
-		else
-			maxIterations = 16;
+		auto maxIterations = std::numeric_limits<T>::max_digits10;
 
 		if (IsNegative(square))
 			throw klib::kDebug::NoRealRootError(square, 2);
@@ -688,8 +679,21 @@ namespace kmaths
 		if (square == 2)
 			return CAST(T, constants::ROOT2);
 
-		const auto chooseStartValueFunc = [&]() -> T // Utilizes binary search if given square is between 0 and lookUpMap's size squared
+		const auto chooseStartValueFunc = [=]() -> T // Utilizes binary search if given square is between 0 and lookUpMap's size squared
 		{
+			constexpr T lookUpMap[] = {
+				CAST(T, 0),    CAST(T, 1),    CAST(T, 4),    CAST(T, 9),      // 0, 1, 2, 3 
+				CAST(T, 16),   CAST(T, 25),   CAST(T, 36),   CAST(T, 49),     // 4, 5, 6, 7
+				CAST(T, 64),   CAST(T, 81),   CAST(T, 100),  CAST(T, 121),    // 8, 9, 10, 11
+				CAST(T, 144),  CAST(T, 169),  CAST(T, 196),  CAST(T, 225),    // 12, 13, 14, 15
+				CAST(T, 256),  CAST(T, 289),  CAST(T, 324),  CAST(T, 361),    // 16, 17, 18, 19
+				CAST(T, 400),  CAST(T, 441),  CAST(T, 484),  CAST(T, 529),    // 20, 21, 22, 23
+				CAST(T, 576),  CAST(T, 625),  CAST(T, 676),  CAST(T, 729),    // 24, 25, 26, 27
+				CAST(T, 784),  CAST(T, 841),  CAST(T, 900),  CAST(T, 961),    // 28, 29, 30, 31
+				CAST(T, 1024), CAST(T, 1089), CAST(T, 1156), CAST(T, 1225)    // 32, 33, 34, 35
+			};
+			constexpr auto lookUpMapSize = SizeOfCArray(lookUpMap);
+
 			T estimate = CAST(T, BinarySearchClosestImpl(lookUpMap, square, 0, lookUpMapSize - 1, lookUpMapSize));
 			if (!estimate || estimate == constants::MinusOne<T>())
 			{
@@ -716,10 +720,9 @@ namespace kmaths
 			return true;
 		};
 
-		while (checkResultIsUnique() && maxIterations > 0)
+		while (checkResultIsUnique() && maxIterations-- > 0)
 		{
 			prevValue[Modulus(maxIterations, 2)] = result;
-			--maxIterations;
 
 			// Bakhshali Method
 			const auto a = (square - (result * result)) / (2 * result);
@@ -926,7 +929,7 @@ namespace kmaths
 		if (0.01 < x && x < 100)
 		{
 			AccuracyType log_result = 1.l;
-			const AccuracyType y = constants::XOverY<AccuracyType>(x - one, x + one);
+			const AccuracyType y = constants::Divide<AccuracyType>(x - one, x + one);
 			uint32_t denominator = 3;
 			uint16_t iter = 2;
 

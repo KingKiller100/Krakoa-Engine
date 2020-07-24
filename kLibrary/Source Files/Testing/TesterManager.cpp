@@ -4,26 +4,29 @@
 #include "Tester.hpp"
 
 // Maths Tests
-#include "Maths Tests/Random_Test.hpp"
-#include "Maths Tests/Matrix_Test.hpp"
-#include "Maths Tests/Vectors_Test.hpp"
-#include "Maths Tests/Fraction_Test.hpp"
-#include "Maths Tests/Algorithm_Test.hpp"
-#include "Maths Tests/Quaternion_Test.hpp"
+#include "../../Tests/Maths Tests/Random_Test.hpp"
+#include "../../Tests/Maths Tests/Matrix_Test.hpp"
+#include "../../Tests/Maths Tests/Vectors_Test.hpp"
+#include "../../Tests/Maths Tests/Fraction_Test.hpp"
+#include "../../Tests/Maths Tests/Algorithm_Test.hpp"
+#include "../../Tests/Maths Tests/Quaternion_Test.hpp"
 
 // Utility
-#include "Utility Tests/Timer_Test.hpp"
-#include "Utility Tests/Logging_Test.hpp"
-#include "Utility Tests/Calendar_Test.hpp"
-#include "Utility Tests/DebugHelp_Test.hpp"
-#include "Utility Tests/FileSystem_Test.hpp"
-#include "Utility Tests/StringView_Test.hpp"
-#include "Utility Tests/UTFConverter_Test.hpp"
-#include "Utility Tests/StringManipulation_Test.hpp"
-#include "Utility Tests/FormatToString_Test.hpp"
+#include "../../Tests/Utility Tests/Timer_Test.hpp"
+#include "../../Tests/Utility Tests/Logging_Test.hpp"
+#include "../../Tests/Utility Tests/Calendar_Test.hpp"
+#include "../../Tests/Utility Tests/DebugHelp_Test.hpp"
+#include "../../Tests/Utility Tests/FileSystem_Test.hpp"
+#include "../../Tests/Utility Tests/StringView_Test.hpp"
+#include "../../Tests/Utility Tests/UTFConverter_Test.hpp"
+#include "../../Tests/Utility Tests/StringManipulation_Test.hpp"
+#include "../../Tests/Utility Tests/FormatToString_Test.hpp"
+
+// Templates
+#include "../../Tests/Templates Tests/BytesStorage_Test.hpp"
 
 // Speed Testing
-#include "Performance Tests/PerformanceTestManager.hpp"
+#include "../../Tests/Performance Tests/PerformanceTestManager.hpp"
 
 // File System to output test results
 #include "../Utility/File System/kFileSystem.hpp"
@@ -52,6 +55,7 @@ namespace kTest
 	void TesterManager::Initialize()
 	{
 		using namespace klib;
+		
 		path = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
 		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
 
@@ -61,7 +65,7 @@ namespace kTest
 		}
 
 		path += "Results.txt";
-		klib::kFileSystem::RemoveFile(path.c_str());
+		kFileSystem::RemoveFile(path.c_str());
 	}
 
 	void TesterManager::InitializeMathsTests()
@@ -87,7 +91,12 @@ namespace kTest
 		Add(new utility::TimerTester());
 	}
 
-	void TesterManager::RunPerformanceTests()
+	void TesterManager::InitializeTemplateTests()
+	{
+		Add(new templates::BytesStorageTester());
+	}
+
+	void TesterManager::RunPerformanceTests() const
 	{
 		if (success)
 		{
@@ -103,23 +112,32 @@ namespace kTest
 		testsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
 	}
 
-	void TesterManager::Run(Tester* test)
+	void TesterManager::Run(Tester& test)
 	{
-		klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+		using namespace klib::kFormat;
+		
+		const klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
 
-		std::cout << "Now running: " << test->GetName() << "";
+		std::cout << "Now running: " << test.GetName() << "";
 
-		const auto result = test->Run();
+		const auto result = test.Run();
 
-		const auto runtimeStr = klib::kFormat::ToString("| Runtime: %.fus (Microseconds)", runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
+		const auto runtimeStr = ToString(
+			"| Runtime: %.fus (microseconds)",
+			runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
 		std::cout << " " << runtimeStr << "\n";
 
 		if (!result)
 			success = false;
 
 		const auto resultTest = result
-			? klib::kFormat::ToString("Success: Test Name: {0} {1}\n\n", test->GetName(), runtimeStr) // Success Case
-			: klib::kFormat::ToString("Failure: Test Name: {0} {1}\n{2}", test->GetName(), runtimeStr, test->GetFailureData()); // Fail Case
+			? ToString("Success: Test Name: {0} {1}\n\n", 
+				test.GetName(),
+				runtimeStr) // Success Case
+			: ToString("Failure: Test Name: {0} {1}\n{2}",
+				test.GetName(), 
+				runtimeStr, 
+				test.GetFailureData()); // Fail Case
 
 		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
 	}
@@ -130,14 +148,13 @@ namespace kTest
 
 		for (const auto& test : testsUSet)
 		{
-			Run(test.get());
+			Run(*test);
 		}
 
 		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Secs>();
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned, 1000.0 * remainder);
-
 
 		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}s  {1}ms", secs, millis);
 		klib::kFileSystem::OutputToFile(path.c_str(), finalTimeStr.c_str());

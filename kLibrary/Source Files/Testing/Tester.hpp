@@ -55,7 +55,7 @@ namespace kTest
 	// Verify using multiple test functions
 #define VERIFY_MULTI_INIT() bool noFails = true;
 #define VERIFY_MULTI_END()  this->success = noFails;
-#define VERIFY_MULTI(func) VERIFY(func() == true)\
+#define VERIFY_MULTI(func) VERIFY(func == true)\
 if (!success) noFails = false;\
 success = true;\
 

@@ -30,8 +30,9 @@
 #define KLIB_TRUE 1
 #define KLIB_FALSE 0
 
-#define CAST(type, val) static_cast<type>(val)
-#define REINTERPRET(type, val) reinterpret_cast<type>(val)
+#define CAST(type, value) static_cast<type>(value)
+#define REINTERPRET(type, value) reinterpret_cast<type>(value)
+#define DYNAMIC(type, value) dynamic_cast<type>(value)
 
 #define ONLY_TYPE(type) std::decay_t<std::remove_pointer_t<type>>
 

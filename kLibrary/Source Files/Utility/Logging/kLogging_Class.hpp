@@ -120,6 +120,14 @@ namespace klib::kLogs
 		 *		STL string view representing filename
 		 */
 		void ChangeFilename(const std::string_view newFileName);
+		
+		/**
+		 * \brief
+		 *		Gets the full output path of the logger
+		 * \return 
+		 *		Gets the full output path of the logger
+		 */
+		std::string GetOutputPath() const;
 
 		/**
 		 * \brief
@@ -142,6 +150,12 @@ namespace klib::kLogs
 		 */
 		void FinalOutput();
 
+		/**
+		 * \brief
+		 *		Flush stored log stream to file
+		 */
+		void Flush();
+		
 		/**
 		 * \brief
 		 *		Outputs all cached kLogs up to file with the logged error message at the end
@@ -197,6 +211,14 @@ namespace klib::kLogs
 		*/
 		void ClearCache();
 
+		/**
+		 * \brief
+		 *		Enables constant flushing
+		 * \param enable
+		 *		Boolean representing whether to constantly flush or not
+		 */
+		void EnableConstantFlush(bool enable);
+		
 	private:
 		void SetUp();
 		
@@ -266,6 +288,7 @@ namespace klib::kLogs
 		bool isEnabled;
 		bool subSystemLoggingEnabled;
 		bool inCacheMode;
+		bool constantFlushing;
 	};
 }
 

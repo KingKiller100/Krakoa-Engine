@@ -12,12 +12,10 @@
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
 #include "../Graphics/Renderer.hpp"
+#include "../Graphics/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
 
-
 #include <Utility/Debug Helper/kDebugger.hpp>
-
-#include "../Graphics/Renderer2D.hpp"
 
 
 namespace krakoa
@@ -44,11 +42,13 @@ namespace krakoa
 	}
 
 	Application::~Application()
-	{
-		entityManager.reset();
-		graphics::Renderer::ShutDown();
-	}
+		= default;
 
+	void Application::ShutDown()
+	{
+		graphics::Renderer::ShutDown();
+		delete input::InputManager::Pointer();
+	}
 
 	void Application::Initialize()
 	{
@@ -67,7 +67,7 @@ namespace krakoa
 
 		// Initialize Graphics Stuff
 		graphics::ShaderLibrary::Create();
-		graphics::Renderer::Initialize();
+		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
 		// Initialize Entity Manager
 		EntityManager::Create();
@@ -133,7 +133,8 @@ namespace krakoa
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
 			pImGuiLayer->ToggleVisibility();
-		
+
+		// Update
 		entityManager->Update(deltaTime);
 
 		if (!isMinimized)
@@ -141,6 +142,7 @@ namespace krakoa
 			layerStack.OnUpdate(deltaTime);
 		}
 
+		// Draw
 		entityManager->Draw();
 		
 		pImGuiLayer->BeginDraw();
@@ -155,12 +157,12 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 #ifdef _DEBUG
-		krakoa::graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+		graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
 #else
-		krakoa::graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
+		graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
 #endif // DEBUG
 
-		krakoa::graphics::Renderer::Clear();
+		graphics::Renderer::Clear();
 	}
 	
 	bool Application::IsRunning() const

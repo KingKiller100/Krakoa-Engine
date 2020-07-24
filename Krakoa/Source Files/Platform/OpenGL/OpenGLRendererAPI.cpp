@@ -59,10 +59,10 @@ namespace krakoa::graphics
 		
 		// Rendering hardware info
 		KRK_INFO("API: OpenGL");
-		KRK_INFO(klib::kFormat::ToString("Version: %s",   REINTERPRET(const char*, glGetString(GL_VERSION))));
-		KRK_INFO(klib::kFormat::ToString("Vendor: %s",    REINTERPRET(const char*, glGetString(GL_VENDOR))));
-		KRK_INFO(klib::kFormat::ToString("Hardware: %s",  REINTERPRET(const char*, glGetString(GL_RENDERER))));
-		KRK_INFO(klib::kFormat::ToString("GLFW Version: %s", glfwGetVersionString()));
+		KRK_INFO(klib::kFormat::ToString("Version: %s",       REINTERPRET(const char*, glGetString(GL_VERSION))));
+		KRK_INFO(klib::kFormat::ToString("Vendor: %s",        REINTERPRET(const char*, glGetString(GL_VENDOR))));
+		KRK_INFO(klib::kFormat::ToString("Hardware: %s",      REINTERPRET(const char*, glGetString(GL_RENDERER))));
+		KRK_INFO(klib::kFormat::ToString("GLFW Version: %s",  glfwGetVersionString()));
 		KRK_INFO(klib::kFormat::ToString("ImGui Version: %s", IMGUI_VERSION));
 	}
 

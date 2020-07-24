@@ -71,7 +71,7 @@ namespace krakoa::graphics
 		std::string name;
 		ShaderDataType type;
 		uint32_t bytes;
-		uint32_t offset;
+		ptrdiff_t offset;
 		bool normalized;
 
 		BufferElement(ShaderDataType type, const std::string_view name, bool normalized = false)
@@ -94,11 +94,11 @@ namespace krakoa::graphics
 		const std::vector<BufferElement>& GetElements() const noexcept;
 		void CalculateOffsetAndStride() noexcept;
 
-		std::vector<BufferElement>::iterator begin();
-		std::vector<BufferElement>::iterator end();
+		USE_RESULT std::vector<BufferElement>::iterator begin();
+		USE_RESULT std::vector<BufferElement>::iterator end();
 
-		std::vector<BufferElement>::const_iterator begin() const;
-		std::vector<BufferElement>::const_iterator end() const;
+		USE_RESULT std::vector<BufferElement>::const_iterator begin() const;
+		USE_RESULT std::vector<BufferElement>::const_iterator end() const;
 
 		size_t GetSize() const noexcept;
 

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Patterns/SimpleSingleton.hpp"
+#include "../Patterns/ManagerBase.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -10,7 +10,7 @@ namespace krakoa::graphics
 {
 	class iShader;
 
-	class ShaderLibrary : public patterns::SimpleSingleton<ShaderLibrary>
+	class ShaderLibrary : public patterns::ManagerBase<ShaderLibrary>
 	{
 	public:
 		ShaderLibrary(Token&&);

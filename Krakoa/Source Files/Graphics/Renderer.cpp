@@ -3,6 +3,7 @@
 #include "RenderCommand.hpp"
 
 #include "Renderer2D.hpp"
+#include "ShaderLibrary.hpp"
 
 #include "../Instrumentor.hpp"
 #include "../Camera/OrthographicCamera.hpp"
@@ -12,18 +13,19 @@ namespace krakoa::graphics
 {
 	const kmaths::Matrix4x4f* Renderer::camera_VPMat = nullptr;
 
-	void Renderer::Initialize()
+	void Renderer::Initialize(ShaderLibrary& shaderLibrary)
 	{
 		KRK_PROFILE_FUNCTION();
 		KRK_BANNER("Rendering Architecture Info", "GRAPHICS");
 		RenderCommand::Initialize();
-		graphics::Renderer2D::Initialize();
+		Renderer2D::Initialize(shaderLibrary);
 	}
 
 	void Renderer::ShutDown()
 	{
 		KRK_PROFILE_FUNCTION();
-		graphics::Renderer2D::ShutDown();
+		Renderer2D::ShutDown();
+		delete ShaderLibrary::Pointer();
 	}
 
 	void Renderer::OnWindowResize(const int x, const int y, const int width, const int height) noexcept

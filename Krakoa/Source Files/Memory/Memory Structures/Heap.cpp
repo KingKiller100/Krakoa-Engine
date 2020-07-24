@@ -9,20 +9,17 @@
 
 namespace memory
 {
-	Heap::Heap(const char* name) noexcept
-		: name(name),
-		totalBytes(0),
-		pPrevAddress(nullptr),
-		vftbl(nullptr)
-	{}
-
-
 	void Heap::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
 	{
 		name = n;
 		totalBytes = 0;
 		pPrevAddress = nullptr;
 		vftbl = heapVTBL;
+
+		family.pParent = nullptr;
+		family.pFirstChild = nullptr;
+		family.pPrevSibling = nullptr;
+		family.pNextSibling = nullptr;
 	}
 
 	void Heap::SetName(const char* n) noexcept
@@ -33,6 +30,16 @@ namespace memory
 	const char* Heap::GetName() const noexcept
 	{
 		return name;
+	}
+
+	const Heap::Family& Heap::GetFamily() const noexcept
+	{
+		return family;
+	}
+
+	Heap::Family& Heap::GetFamily() noexcept
+	{
+		return family;
 	}
 
 	void Heap::Allocate(const size_t bytes) noexcept
@@ -63,8 +70,8 @@ namespace memory
 		unsigned count(1);
 		pCurrentHeader = pCurrentHeader->pPrev;
 
-		while (pCurrentHeader 
-			&& pCurrentHeader->pNext != pCurrentHeader 
+		while (pCurrentHeader
+			&& pCurrentHeader->pNext != pCurrentHeader
 			&& AllocHeader::VerifyHeader(pCurrentHeader))
 		{
 			pCurrentHeader = pCurrentHeader->pPrev;
@@ -81,8 +88,8 @@ namespace memory
 		if (!pCurrentHeader)
 			return;
 
-		while (pCurrentHeader 
-			&& pCurrentHeader->pPrev != pCurrentHeader 
+		while (pCurrentHeader
+			&& pCurrentHeader->pPrev != pCurrentHeader
 			&& AllocHeader::VerifyHeader(pCurrentHeader))
 		{
 			auto* pPrev = pCurrentHeader->pPrev;

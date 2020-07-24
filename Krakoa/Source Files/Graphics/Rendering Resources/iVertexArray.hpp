@@ -2,11 +2,11 @@
 
 #include "iBuffers.hpp"
 
-#include <cstdint>
+#include "../../Patterns/MemoryTracker.hpp"
 
 namespace krakoa::graphics
 {
-	class iVertexArray
+	class iVertexArray : public patterns::MemoryTracker<iVertexArray>
 	{
 	public:
 		virtual ~iVertexArray();

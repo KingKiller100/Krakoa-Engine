@@ -80,8 +80,8 @@ namespace krakoa
 
 		for (auto& entity : entities)
 		{
-			if (!entity->FindComponent<components::Appearance2D>()
-				|| !entity->FindComponent<components::Transform>())
+			if (!entity->HasComponent<components::Appearance2D>()
+				|| !entity->HasComponent<components::Transform>())
 				continue;
 
 			const auto& appearance = entity->GetComponent<components::Appearance2D>();

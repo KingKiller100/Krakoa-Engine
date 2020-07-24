@@ -14,8 +14,11 @@ namespace memory
 
 	class HeapFactory final
 	{
-		using HeapList = std::array<Heap*, 128>;
-
+		static constexpr size_t ListSize = 128;
+		
+		template<size_t N>
+		using HeapList = std::array<Heap*, N>;
+		
 		struct Token {};
 	public:
 		template<typename T>
@@ -27,7 +30,7 @@ namespace memory
 			return heap;
 		}
 
-		static void AddParent(const char* parentName, Heap* pHeap);
+		static bool AddToParent(const char* parentName, Heap* pHeap);
 		
 		static void Initialize() noexcept;
 		static void ShutDown() noexcept;
@@ -35,7 +38,7 @@ namespace memory
 		static Heap* GetDefaultHeap() noexcept;
 		static std::string WalkTheDefaultHeap();
 
-		static const HeapList& GetHeaps();
+		static const HeapList<ListSize>& GetHeaps();
 		static std::string WalkTheHeap(const size_t index);
 
 		static size_t GetSize();
@@ -51,6 +54,6 @@ namespace memory
 
 	private:
 		static Heap* defaultHeap;
-		static HeapList heaps;
+		static HeapList<ListSize> heaps;
 	};
 }

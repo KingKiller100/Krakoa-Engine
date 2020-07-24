@@ -18,7 +18,43 @@
 namespace memory
 {
 	Heap* HeapFactory::defaultHeap = nullptr;
-	HeapFactory::HeapList HeapFactory::heaps{};
+	HeapFactory::HeapList<HeapFactory::ListSize> HeapFactory::heaps{};
+
+	bool HeapFactory::AddToParent(const char* parentName, Heap* pHeap)
+	{
+		if (!pHeap || !parentName || !strlen(parentName)) return false;
+
+		for (auto& heap : heaps)
+		{
+			if (!heap) return false;
+
+			if (heap->GetName() == parentName)
+			{
+				auto& firstChild = heap->GetFamily().pFirstChild;
+
+				if (!firstChild)
+					firstChild = pHeap;
+				else
+				{
+					auto currentChild = firstChild;
+
+					while (currentChild->GetFamily().pNextSibling)
+					{
+						currentChild = currentChild->GetFamily().pNextSibling;
+					}
+
+					currentChild->GetFamily().pNextSibling = pHeap;
+					pHeap->GetFamily().pPrevSibling = currentChild;
+				}
+
+				pHeap->GetFamily().pParent = heap;
+
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	void HeapFactory::Initialize() noexcept
 	{
@@ -83,7 +119,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		return defaultHeap;
 	}
 
-	const HeapFactory::HeapList& HeapFactory::GetHeaps()
+	const HeapFactory::HeapList<HeapFactory::ListSize>& HeapFactory::GetHeaps()
 	{
 		return heaps;
 	}
@@ -121,7 +157,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 			if (!heap->GetPrevAddress())
 				continue;
-			
+
 			ReportMemoryLeaks(heap, 0, heap->GetPrevAddress()->bookmark);
 		}
 		std::cin.get();
@@ -159,7 +195,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 				<< "Bytes: " << currentHeader->bytes << "\n";
 
 			currentHeader = currentHeader->pNext;
-			
+
 			if (!currentHeader)
 				break;
 

@@ -1,7 +1,8 @@
 ﻿#pragma once
-#include "../Memory/Memory Structures/TemplateHeap.hpp"
-#include "../Memory/Memory Structures/HeapFactory.hpp"
+
 #include "../Memory/MemoryOperators.hpp"
+#include "../Memory/Memory Structures/HeapFactory.hpp"
+#include "../Memory/Memory Structures/TemplateHeap.hpp"
 
 namespace patterns
 {
@@ -40,6 +41,11 @@ namespace patterns
 		void operator delete[](void* pMemBlock, const size_t bytes)
 		{
 			::operator delete[](pMemBlock);
+		}
+
+		static bool AddToParent(const char* parentName)
+		{
+			return memory::HeapFactory::AddToParent(parentName, pHeap);
 		}
 
 		USE_RESULT static std::string GetHeapStatus() noexcept

@@ -30,7 +30,7 @@ namespace memory
 			return heap;
 		}
 
-		static bool AddToParent(const char* parentName, Heap* pHeap);
+		static bool AddToParent(const char* parentName, Heap* pChild);
 		
 		static void Initialize() noexcept;
 		static void ShutDown() noexcept;
@@ -50,6 +50,8 @@ namespace memory
 		static void LogTotalAllocations(const size_t* bytes) noexcept;
 		static void ReportMemoryLeaks(Heap* const heap, const size_t minBookmark, const size_t maxBookmark);
 
+		static Heap* FindHeap(const char* name);
+		
 		explicit HeapFactory(Token);
 
 	private:

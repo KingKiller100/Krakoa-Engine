@@ -22,6 +22,11 @@ namespace memory
 		family.pNextSibling = nullptr;
 	}
 
+	bool Heap::AddToParent(Heap* pParent)
+	{
+		
+	}
+
 	void Heap::SetName(const char* n) noexcept
 	{
 		name = n;

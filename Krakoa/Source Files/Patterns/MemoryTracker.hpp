@@ -6,15 +6,20 @@
 
 namespace patterns
 {
-	template<typename T>
+	template<typename T, const char* ParentName = nullptr>
 	class MemoryTracker
 	{
 	public:
 		void* operator new(const size_t bytes)
 		{
 			if (!pHeap)
+			{
 				pHeap = memory::HeapFactory::CreateHeap<T>();
-			
+
+				if (ParentName)
+					AddToFamily(ParentName);
+			}
+
 			return ::operator new(bytes, pHeap);
 		}
 
@@ -23,7 +28,7 @@ namespace patterns
 			return MemoryTracker::operator new(bytes);
 		}
 
-		void operator delete(void* pMemBlock)
+			void operator delete(void* pMemBlock)
 		{
 			::operator delete(pMemBlock);
 		}
@@ -43,9 +48,14 @@ namespace patterns
 			::operator delete[](pMemBlock);
 		}
 
-		static bool AddToParent(const char* parentName)
+		static bool AddToFamily(const char* parent)
 		{
-			return memory::HeapFactory::AddToParent(parentName, pHeap);
+			return memory::HeapFactory::AddToParent(parent, pHeap);
+		}
+
+		USE_RESULT static memory::Heap* GetHeap() noexcept
+		{
+			return pHeap;
 		}
 
 		USE_RESULT static std::string GetHeapStatus() noexcept

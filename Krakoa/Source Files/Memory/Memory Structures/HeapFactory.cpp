@@ -20,40 +20,30 @@ namespace memory
 	Heap* HeapFactory::defaultHeap = nullptr;
 	HeapFactory::HeapList<HeapFactory::ListSize> HeapFactory::heaps{};
 
-	bool HeapFactory::AddToParent(const char* parentName, Heap* pHeap)
+	bool HeapFactory::AddToParent(const char* parentName, Heap* pChild)
 	{
-		if (!pHeap || !parentName || !strlen(parentName)) return false;
+		auto* parentHeap = FindHeap(parentName);
 
-		for (auto& heap : heaps)
+		if (!parentName)
+			return false;
+
+		auto& firstChild = parentHeap->GetFamily().pFirstChild;
+
+		pChild->GetFamily().pParent = parentHeap;
+
+		if (!firstChild)
+			firstChild = pChild;
+		else
 		{
-			if (!heap) return false;
+			firstChild->GetFamily().pPrevSibling = pChild;
 
-			if (heap->GetName() == parentName)
-			{
-				auto& firstChild = heap->GetFamily().pFirstChild;
+			auto& fam = pChild->GetFamily();
+			fam.pNextSibling = firstChild;
 
-				if (!firstChild)
-					firstChild = pHeap;
-				else
-				{
-					auto currentChild = firstChild;
-
-					while (currentChild->GetFamily().pNextSibling)
-					{
-						currentChild = currentChild->GetFamily().pNextSibling;
-					}
-
-					currentChild->GetFamily().pNextSibling = pHeap;
-					pHeap->GetFamily().pPrevSibling = currentChild;
-				}
-
-				pHeap->GetFamily().pParent = heap;
-
-				return true;
-			}
+			parentHeap->GetFamily().pFirstChild = pChild;
 		}
 
-		return false;
+		return true;
 	}
 
 	void HeapFactory::Initialize() noexcept
@@ -201,6 +191,22 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 			bookmark = currentHeader->bookmark;
 		}
+	}
+
+	Heap* HeapFactory::FindHeap(const char* name)
+	{
+		for (auto& heap : heaps)
+		{
+			if (!heap)
+				return nullptr;
+
+			std::string_view currentHeapName = heap->GetName();
+
+			if (currentHeapName.compare(name))
+				return heap;
+		}
+
+		return nullptr;
 	}
 
 	void HeapFactory::LogTotalBytes(const size_t *bytes) noexcept

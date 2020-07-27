@@ -27,6 +27,8 @@ namespace memory
 
 		void Initialize(const char* n, Heap_VFTBL * heapVTBL) noexcept;
 
+		bool AddToParent(Heap* pParent);
+		
 		template<size_t N>
 		void SetName(const char(&n)[N]) noexcept
 		{

@@ -24,7 +24,7 @@ namespace memory
 
 	bool Heap::AddToParent(Heap* pParent)
 	{
-		
+		return false;
 	}
 
 	void Heap::SetName(const char* n) noexcept

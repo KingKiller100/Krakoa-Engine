@@ -495,6 +495,31 @@ namespace klib::kFileSystem
 
 		return newFilename;
 	}
+
+	template<class CharType = char>
+	void SetAppDirectory(const kString::StringWriter<CharType>& dir)
+	{
+		using Char = ONLY_TYPE(CharType);
+
+		const auto path = GetPath(dir);
+		
+		if _CONSTEXPR_IF(std::is_same_v<Char, char>)
+		{
+			::SetCurrentDirectoryA(path.c_str());
+		}
+		else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
+		{
+			::SetCurrentDirectoryW(path.c_str());
+		}
+		else
+		{
+			kString::StringWriter<CharType> newPath;
+			for (auto& c : dir)
+				newPath += CAST(wchar_t, c);
+			SetAppDirectory<wchar_t>(newPath);
+		}
+		
+	}
 }
 
 

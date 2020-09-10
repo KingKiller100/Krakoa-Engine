@@ -16,7 +16,8 @@
 #include "../Graphics/ShaderLibrary.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
-
+#include <Utility/Calendar/kCalendar.hpp>
+#include "Enum/EnumHelper.hpp"
 
 namespace krakoa
 {
@@ -31,6 +32,15 @@ namespace krakoa
 
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 
+		util::EnumToStringManager::Create<klib::kCalendar::TimeComponent>();
+
+
+		const auto hours = kCalendar::TimeComponent::HOURS;
+		util::EnumToStringManager::AddTo(hours, "Hours");
+
+		const auto h =
+			util::EnumToStringManager::ToString(hours);
+		
 		KRK_INIT_LOGS();
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);
 		KRK_FATAL(!instance, "Instance of the application already exists!");

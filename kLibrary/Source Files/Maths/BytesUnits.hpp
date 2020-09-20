@@ -18,7 +18,7 @@ namespace kmaths
 		TEBI = GIBI * 1024,
 	};
 
-	using Byte_Type = std::int8_t;
+	using Byte_Type = std::uint8_t;
 
 	USE_RESULT constexpr size_t MinimumStorage(const size_t typeSize, const size_t count) noexcept
 	{

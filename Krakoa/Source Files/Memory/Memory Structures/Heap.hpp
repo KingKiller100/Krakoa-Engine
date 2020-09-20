@@ -53,6 +53,7 @@ namespace memory
 		USE_RESULT std::string GetStatus() const;
 
 		Heap(const Heap&) = delete;
+		Heap& operator=(const Heap&) = delete;
 
 	protected:
 		const char* name;

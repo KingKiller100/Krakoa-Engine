@@ -26,7 +26,7 @@ namespace kTest
 
 	Tester::~Tester()
 		= default;
-	   
+
 	const char* Tester::GetName() const noexcept
 	{
 		return name.c_str();
@@ -47,12 +47,13 @@ namespace kTest
 		try
 		{
 			Test();
-			return success;
 		}
 		catch (...)
 		{
-			return false;
+			success = false;
 		}
+
+		return success;
 	}
 }
 

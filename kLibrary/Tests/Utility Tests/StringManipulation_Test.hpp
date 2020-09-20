@@ -16,6 +16,8 @@ namespace kTest::utility
 
 		bool ReplaceTest();
 		bool SplitTest();
+		bool ToLower();
+		bool ToUpper();
 		bool ToWriterAndToReaderTest();
 	};
 

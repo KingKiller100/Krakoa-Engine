@@ -63,9 +63,11 @@ namespace klib::kFileSystem
 	 *		The full file directory with the final filename and file extension
 	 * \param content
 	 *		The data to fill the file with.
+	 * \param mode
+	 *		File mode i.e. out/append/binary/etc...
 	 */
 	template<class CharType = char>
-	constexpr void OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringWriter<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
+	constexpr bool OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringWriter<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
 		FileWriter<CharType> outFile(fullFilePath, mode);
 
@@ -73,28 +75,29 @@ namespace klib::kFileSystem
 		{
 			outFile << content.data();
 			outFile.close();
+			return true;
 		}
+		
 #ifdef _DEBUG
+		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+		{
+			const auto failMsg = fullFilePath + "Cannot create/open file ";
+			OutputDebugStringA(failMsg.c_str());
+		}
+		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+		{
+			const auto failMsg = fullFilePath + L"Cannot create/open file ";
+			OutputDebugStringW(failMsg.c_str());
+		}
 		else
 		{
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-			{
-				const auto failMsg = fullFilePath + "Cannot create/open file ";
-				OutputDebugStringA(failMsg.c_str());
-			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-			{
-				const auto failMsg = fullFilePath + L"Cannot create/open file ";
-				OutputDebugStringW(failMsg.c_str());
-			}
-			else
-			{
-				const auto wFileName = kString::Convert<wchar_t>(fullFilePath);
-				const auto failMsg = kString::StringWriter<wchar_t>(L"Cannot create/open file ") + wFileName;
-				OutputDebugStringW(failMsg.c_str());
-			}
+			const auto wFileName = kString::Convert<wchar_t>(fullFilePath);
+			const auto failMsg = kString::StringWriter<wchar_t>(L"Cannot create/open file ") + wFileName;
+			OutputDebugStringW(failMsg.c_str());
 		}
 #endif // DEBUG
+
+		return false;
 	}
 
 	/**
@@ -502,7 +505,7 @@ namespace klib::kFileSystem
 		using Char = ONLY_TYPE(CharType);
 
 		const auto path = GetPath(dir);
-		
+
 		if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 		{
 			::SetCurrentDirectoryA(path.c_str());
@@ -518,7 +521,7 @@ namespace klib::kFileSystem
 				newPath += CAST(wchar_t, c);
 			SetAppDirectory<wchar_t>(newPath);
 		}
-		
+
 	}
 }
 

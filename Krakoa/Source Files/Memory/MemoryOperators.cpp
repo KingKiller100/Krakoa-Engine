@@ -25,7 +25,7 @@ void* operator new [](const size_t bytes)
 
 void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads Control Blocks
 {
-#ifndef  KRAKOA_RELEASE
+#ifdef  KRAKOA_RELEASE
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
 
 	const size_t requestedBytes = memory::AllocHeaderSize + bytes + memory::SignatureSize; // Alignment in memory
@@ -46,7 +46,7 @@ void operator delete(void* ptr)
 {
 	if (!ptr) return;
 	
-#ifndef KRAKOA_RELEASE
+#ifdef KRAKOA_RELEASE
 	auto* pHeader = memory::AllocHeader::Destroy(ptr);
 	free(pHeader);
 #else

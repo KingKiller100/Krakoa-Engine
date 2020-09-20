@@ -4,6 +4,8 @@
 
 #include <Utility/Logging/kLogging_Class.hpp>
 
+#include <stdexcept>
+
 namespace memory
 {
 	class MemoryLogger
@@ -54,6 +56,6 @@ namespace memory
 #else
 #	include <cassert>
 
-#	define MEM_FATAL(condition, msg)                        if ( !(condition) ) ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__);
+#	define MEM_FATAL(condition, msg)                        if ( !(condition) ) { ::memory::MemoryLogger::GetLogger().OutputToFatalFile(msg, __FILE__, __LINE__); std::runtime_error(msg); }
 #	define MEM_ASSERT(condition)                            assert( (condition) );
 #endif // !KRAKOA_RELEASE

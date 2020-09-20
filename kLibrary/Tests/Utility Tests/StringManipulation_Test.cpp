@@ -17,6 +17,8 @@ namespace kTest::utility
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(ToWriterAndToReaderTest());
+		VERIFY_MULTI(ToLower());
+		VERIFY_MULTI(ToUpper());
 		VERIFY_MULTI(ReplaceTest());
 		VERIFY_MULTI(SplitTest());
 		VERIFY_MULTI_END();
@@ -59,6 +61,73 @@ namespace kTest::utility
 
 		return success;
 	}
+
+	bool StringManipulationTester::ToLower()
+	{
+		{
+			constexpr char text[] = "EXAMPLE TEXT";
+			const auto res = klib::kString::ToLower(text);
+			constexpr std::string_view expected = "example text";
+			VERIFY(expected == res);
+		}
+
+		{
+			constexpr std::wstring_view text = L"EXAMPLE TEXT";
+			const auto res = klib::kString::ToLower(text);
+			constexpr std::wstring_view expected = L"example text";
+			VERIFY(expected == res);
+		}
+
+		{
+			const std::u16string text = u"EXAMPLE TEXT";
+			const auto res = klib::kString::ToLower(text);
+			const std::u16string expected = u"example text";
+			VERIFY(expected == res);
+		}
+
+		{
+			constexpr char32_t* text = U"EXAMPLE TEXT";
+			const auto res = klib::kString::ToLower(text);
+			constexpr std::u32string_view expected = U"example text";
+			VERIFY(expected == res);
+		}
+
+		return success;
+	}
+
+	bool StringManipulationTester::ToUpper()
+	{
+		{
+			constexpr char text[] = "example text 345";
+			const auto res = klib::kString::ToUpper(text);
+			constexpr std::string_view expected = "EXAMPLE TEXT 345";
+			VERIFY(expected == res);
+		}
+
+		{
+			constexpr std::wstring_view text = L"example text";
+			const auto res = klib::kString::ToUpper(text);
+			constexpr std::wstring_view expected = L"EXAMPLE TEXT";
+			VERIFY(expected == res);
+		}
+
+		{
+			const std::u16string text = u"example text";
+			const auto res = klib::kString::ToUpper(text);
+			const std::u16string expected = u"EXAMPLE TEXT";
+			VERIFY(expected == res);
+		}
+
+		{
+			constexpr char32_t* text = U"example text";
+			const auto res = klib::kString::ToUpper(text);
+			constexpr std::u32string_view expected = U"EXAMPLE TEXT";
+			VERIFY(expected == res);
+		}
+		
+		return success;
+	}
+
 
 	bool StringManipulationTester::ToWriterAndToReaderTest()
 	{

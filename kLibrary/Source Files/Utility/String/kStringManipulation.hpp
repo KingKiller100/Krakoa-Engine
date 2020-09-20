@@ -1,6 +1,8 @@
 #pragma once
 
 #include "kStringTypes.hpp"
+
+#include <algorithm>
 #include <vector>
 
 namespace klib::kString
@@ -69,6 +71,56 @@ namespace klib::kString
 	{
 		const auto*  ptr = &token;
 		return Split(str, ptr, preserveToken, preserveEmpty);
+	}
+
+	template<class Char = char>
+	USE_RESULT constexpr Char* ToUpper(const Char* input)
+	{
+		using StrR = StringReader<Char> ;
+		StrR in(input);
+		Char* output = new Char[in.length() + 1]{};
+		
+		for (auto i = 0; i < in.length(); ++i)
+		{
+			Char c = in[i];
+			if (c >= Char('a') && c <= Char('z'))
+				output[i] = CAST(Char, c - 32);
+			else
+				output[i] = c;
+		}
+
+		return output;
+	}
+
+	template<class Char = char>
+	USE_RESULT constexpr Char* ToLower(const Char* input)
+	{
+		using StrR = StringReader<Char> ;
+		StrR in(input);
+		Char* output = new Char[in.length() + 1]{};
+		
+		for (auto i = 0; i < in.length(); ++i)
+		{
+			Char c = in[i];
+			if (c >= Char('A') && c <= Char('Z'))
+				output[i] = CAST(Char, c + 32);
+			else
+				output[i] = c;
+		}
+
+		return output;
+	}
+
+	template<class T, class = std::enable_if_t<type_trait::Is_StringType_V< T >>>
+	USE_RESULT constexpr StringWriter<typename T::value_type > ToUpper(const T& input)
+	{
+		return ToUpper(input.data());
+	}
+
+	template<class T, class = std::enable_if_t<type_trait::Is_StringType_V< T >>>
+	USE_RESULT constexpr StringWriter<typename T::value_type > ToLower(const T& input)
+	{
+		return ToLower<typename T::value_type>(input.data());
 	}
 }
 

@@ -25,15 +25,18 @@ namespace krakoa::tests
 	public:
 		friend class MemoryTrackerTester;
 		
+		TestMemType(const MemoryTrackerTester* test)
+			: tester(test)
+		{}
+		
 		~TestMemType()
 		{
-			if (func)
+			if (func && tester)
 				func(tester);
 		}
 
-		void TestDestructor(const MemoryTrackerTester* test, std::function<void(const MemoryTrackerTester*)> fn)
+		void SetDestructorCallback(std::function<void(const MemoryTrackerTester*)> fn)
 		{
-			tester = test;
 			func = std::move(fn);
 		}
 
@@ -49,12 +52,12 @@ namespace krakoa::tests
 		MEM_INIT_LOGS();
 
 		for (auto i = 0; i < 5; ++i)
-			const auto* const lifeTime = new TestMemType();
+			const auto* const lifeTime = new TestMemType(this);
 
 		for (auto i = 0; i < 5; ++i)
-			delete new TestMemType();
+			delete new TestMemType(this);
 		
-		const auto scope = Make_Solo<TestMemType>();
+		const auto scope = Make_Solo<TestMemType>(this);
 
 
 		const auto status = TestMemType::GetHeapStatus();
@@ -63,24 +66,24 @@ namespace krakoa::tests
 		const auto name = lines[0];
 		VERIFY(name.find(typeid(TestMemType).name()) != npos);
 
-		const auto sizeOfTestManagerStr = lines[1];
-		VERIFY(sizeOfTestManagerStr.find(std::to_string(testMemTypeSize)) != npos);
+		const auto countStr = lines[1];
+		VERIFY(countStr.find("6") != npos);
 
-		const auto totalSizeOFObjectMemoryStr = lines[2];
-		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(testMemTypeSize * 6)) != npos);
+		const auto sizeOfTestManagerStr = lines[2];
+		VERIFY(sizeOfTestManagerStr.find(std::to_string(testMemTypeSize)) != npos);
 
 		const auto sizeOfBlockStr = lines[3];
 		VERIFY(sizeOfBlockStr.find(std::to_string(testMemTypeSize + memory::ControlBlockSize)) != npos);
 
-		const auto totalSizeOFBlockMemoryStr = lines[4];
-		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string((testMemTypeSize + memory::ControlBlockSize) * 6)) != npos);
+		const auto totalSizeOFObjectMemoryStr = lines[4];
+		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(testMemTypeSize * 6)) != npos);
 
-		const auto countStr = lines[5];
-		VERIFY(countStr.find("6") != npos);
+		const auto totalSizeOFBlockMemoryStr = lines[5];
+		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string((testMemTypeSize + memory::ControlBlockSize) * 6)) != npos);
 
 		success = false;
 
-		scope->TestDestructor(this, [&](const MemoryTrackerTester* ptr)
+		scope->SetDestructorCallback([&](const MemoryTrackerTester* ptr)
 		{
 			success = ptr == this;
 			VERIFY(success);

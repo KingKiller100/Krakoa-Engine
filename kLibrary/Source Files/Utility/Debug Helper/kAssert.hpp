@@ -3,7 +3,7 @@
 #include <exception>
 #include <string>
 
-#if defined(_DEBUG) ||  defined(KLIB_TEST)
+#if defined(_DEBUG) || defined(KLIB_TEST)
 namespace klib::kDebug
 {
 	class AssertOnFailedConditionException final : public std::exception

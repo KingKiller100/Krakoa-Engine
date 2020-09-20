@@ -15,16 +15,12 @@ namespace memory
 		using Type = T;
 		static constexpr auto TypeSize = sizeof(Type);
 
-		explicit TemplateHeap() noexcept
-			: Heap(typeid(Type).name())
-		{}
-
 		~TemplateHeap() noexcept
 			= default;
 
 		USE_RESULT constexpr size_t GetBytesPerObject() const
 		{
-			return TypeBytes;
+			return TypeSize;
 		}
 	};
 
@@ -32,37 +28,32 @@ namespace memory
 	static std::string GetTemplateHeapStatus(const Heap* pHeap)
 	{
 		using namespace klib::kFormat;
-		using Heap = TemplateHeap<T>;
-
-		constexpr size_t bytesPerObj = Heap::TypeSize;
 
 		const auto name = pHeap->GetName();
-		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
-
 		const size_t count = pHeap->WalkTheHeap();
 
 		if (!count)
 			return ToString("Heap \"{0}\" is empty\n", name);
 
-		const size_t bytesPerBlock = (pHeap->GetTotalAllocatedBytes() / count);
-		const size_t totalBytesOfThisObject = bytesPerObj * count;
+		constexpr size_t bytes_per_object = TemplateHeap<T>::TypeSize;
+		const size_t bytes_total = bytes_per_object * count;
 
-		std::string report;
+		const auto totalBytes = pHeap->GetTotalAllocatedBytes();
+		const size_t bytes_per_block = (totalBytes / count);
 
-		report.append(ToString(R"(Heap "{0}"
-Object Bytes: {2}
-Total Object Bytes: {4}
-Block Bytes: {3}
-Total Block Bytes: {5}
-Total Number of Allocations: {1}
+		std::string report = ToString(R"(Heap "{0}"
+Count:              {1}
+Bytes Per Object:   {2}
+Bytes Per Block:    {4}
+Total Object:       {3}
+Total Block:        {5}
 )",
-name,
-count,
-bytesPerObj,
-bytesPerBlock,
-totalBytesOfThisObject,
-totalBytes));
-
+name
+, count
+, bytes_per_object
+, bytes_total
+, bytes_per_block
+, totalBytes);
 
 		return report;
 	}

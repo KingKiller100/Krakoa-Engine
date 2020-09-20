@@ -3,10 +3,10 @@
 #include "../HelperMacros.hpp"
 
 #include <random>
+#include <ctime>
 
 namespace kmaths
 {
-
 	/**
 	 * \brief
 	 *		Random number generator
@@ -22,18 +22,16 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT static T RNG(T lowerBound, T upperBound)
 	{
+		static std::mt19937_64 generator (std::time(nullptr));
+		
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
 			std::uniform_real_distribution<T> distribution(lowerBound, upperBound);
-			std::random_device device;
-			std::default_random_engine generator(device());
 			return distribution(generator);
 		}
 		else
 		{
 			std::uniform_int_distribution<T> distribution(lowerBound, upperBound);
-			std::random_device device;
-			std::default_random_engine generator(device());
 			return distribution(generator);
 		}
 	}

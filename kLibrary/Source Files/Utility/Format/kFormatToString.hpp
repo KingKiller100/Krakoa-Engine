@@ -291,7 +291,7 @@ namespace klib::kFormat
 					if (id.second.find("__int64") != npos)
 					{
 						auto data = std::any_cast<const unsigned __int64*>(val);
-						finalString.append(MakeStringFromData(currentSection, *data));
+						finalString += MakeStringFromData(currentSection, *data);
 					}
 					else
 					{

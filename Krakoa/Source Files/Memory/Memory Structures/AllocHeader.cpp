@@ -12,10 +12,11 @@
 
 namespace memory
 {
-	static size_t bookmarkIter = 0;
 
 	void* AllocHeader::Create(AllocHeader* pHeader, const size_t bytes, Heap* pHeap) noexcept
 	{
+		static size_t bookmarkIter = 0;
+		
 		pHeader->bookmark = bookmarkIter++;
 		pHeader->pHeap = pHeap;
 
@@ -66,7 +67,7 @@ namespace memory
 			if (pHeap->GetPrevAddress() == pHeader)
 				pHeap->SetPrevAddress(pPrev);
 
-			pPrev = pNext = nullptr;
+			//pHeader->pPrev = pHeader->pNext = nullptr;
 		}
 
 		pHeap->Deallocate(bytes + ControlBlockSize);

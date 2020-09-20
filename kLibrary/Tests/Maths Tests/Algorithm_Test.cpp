@@ -5,6 +5,7 @@
 #include "../../Source Files/Maths/Vectors/PredefinedVectors.hpp"
 #include "../../Source Files/Maths/Matrices/PredefinedMatrices.hpp"
 
+#include <algorithm>
 #include <numeric>
 #include <string>
 

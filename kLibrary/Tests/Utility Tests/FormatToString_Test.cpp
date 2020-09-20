@@ -20,9 +20,9 @@ namespace kTest::utility
 		VERIFY(SingleObjectToStringTest() == true);
 	}
 
-	struct Entity
+	struct Object
 	{
-		const std::string& ToString() const
+		USE_RESULT const std::string& ToString() const
 		{
 			return str;
 		}
@@ -34,8 +34,8 @@ namespace kTest::utility
 	{
 		using namespace klib::kFormat;
 
-		Entity e;
-		auto tempIntPtr = std::make_unique<int>(76);
+		Object o;
+		const auto tempIntPtr = std::make_unique<int>(76);
 
 		const auto testStr  = ToString("This test %d ", 1U);
 		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
@@ -43,7 +43,7 @@ namespace kTest::utility
 		const auto testStr4 = ToString("doubles {0:7}, ", kmaths::constants::E);
 		const auto testStr5 = ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
-		const auto testStr7 = ToString("%s", e);
+		const auto testStr7 = ToString("%s", o);
 
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");

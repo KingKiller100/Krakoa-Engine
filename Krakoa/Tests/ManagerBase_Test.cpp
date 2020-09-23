@@ -64,11 +64,11 @@ namespace krakoa::tests
 		const auto sizeOfTestManagerStr = lines[2];
 		VERIFY(sizeOfTestManagerStr.find(std::to_string(managerTypeSize)) != npos);
 		
-		const auto totalSizeOFObjectMemoryStr = lines[3];
-		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(managerTypeSize)) != npos);
-		
-		const auto sizeOfBlockStr = lines[4];
+		const auto sizeOfBlockStr = lines[3];
 		VERIFY(sizeOfBlockStr.find(std::to_string(managerTypeSize + memory::ControlBlockSize)) != npos);
+		
+		const auto totalSizeOFObjectMemoryStr = lines[4];
+		VERIFY(totalSizeOFObjectMemoryStr.find(std::to_string(managerTypeSize)) != npos);
 		
 		const auto totalSizeOFBlockMemoryStr = lines[5];
 		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string(managerTypeSize + memory::ControlBlockSize)) != npos);

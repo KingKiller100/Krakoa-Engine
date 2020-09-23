@@ -61,7 +61,7 @@ namespace krakoa::tests
 
 
 		const auto status = TestMemType::GetHeapStatus();
-		const auto lines = klib::kString::Split(status, '\n');
+		const auto lines = klib::kString::Split(status, "\n");
 
 		const auto name = lines[0];
 		VERIFY(name.find(typeid(TestMemType).name()) != npos);
@@ -81,12 +81,9 @@ namespace krakoa::tests
 		const auto totalSizeOFBlockMemoryStr = lines[5];
 		VERIFY(totalSizeOFBlockMemoryStr.find(std::to_string((testMemTypeSize + memory::ControlBlockSize) * 6)) != npos);
 
-		success = false;
-
 		scope->SetDestructorCallback([&](const MemoryTrackerTester* ptr)
 		{
-			success = ptr == this;
-			VERIFY(success);
+			VERIFY(ptr == this);
 		});
 	}
 }

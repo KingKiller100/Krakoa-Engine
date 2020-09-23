@@ -17,12 +17,14 @@
 
 #include <Utility/Debug Helper/kDebugger.hpp>
 #include <Utility/Calendar/kCalendar.hpp>
-#include "Enum/EnumHelper.hpp"
+#include <Utility/Logging/kLogging_Class.hpp>
+
+#include "Types/TypeToString.hpp"
 
 namespace krakoa
 {
 	using namespace klib;
-
+	
 	Application::Application(Token&)
 		: isRunning(true),
 		timeStep(/*120*/),
@@ -32,14 +34,13 @@ namespace krakoa
 
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 
-		util::EnumToStringManager::Create<klib::kCalendar::TimeComponent>();
-
-
-		const auto hours = kCalendar::TimeComponent::HOURS;
-		util::EnumToStringManager::AddTo(hours, "Hours");
-
 		const auto h =
-			util::EnumToStringManager::ToString(hours);
+			STRINGIFIER(kCalendar::TimeComponent::HOURS);
+
+		const auto mins = kCalendar::TimeComponent::MINS;
+		const auto m = STRINGIFIER(mins);
+
+		const auto err = STRINGIFIER(kLogs::LLevel::ERRR);
 		
 		KRK_INIT_LOGS();
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);
@@ -57,7 +58,13 @@ namespace krakoa
 	void Application::ShutDown()
 	{
 		graphics::Renderer::ShutDown();
-		delete input::InputManager::Pointer();
+
+		auto* inputPtr = input::InputManager::Pointer();
+		if (inputPtr)
+		{
+			delete inputPtr;
+			inputPtr = nullptr;
+		}
 	}
 
 	void Application::Initialize()

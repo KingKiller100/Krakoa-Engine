@@ -144,7 +144,7 @@ namespace krakoa
 
 	void Application::Run() const
 	{
-		RendererClear();
+		graphics::Renderer::Update();
 
 		const auto deltaTime = timeStep.GetDeltaTime();
 
@@ -167,19 +167,6 @@ namespace krakoa
 		pImGuiLayer->EndDraw();
 
 		pWindow->OnUpdate();
-	}
-
-	void Application::RendererClear() noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-
-#ifdef _DEBUG
-		graphics::Renderer::SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
-#else
-		graphics::Renderer::SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
-#endif // DEBUG
-
-		graphics::Renderer::Clear();
 	}
 	
 	bool Application::IsRunning() const

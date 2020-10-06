@@ -55,6 +55,19 @@ namespace krakoa::graphics
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	void Renderer::Update()
+	{
+		KRK_PROFILE_FUNCTION();
+		
+#ifdef _DEBUG
+		SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+#else
+		SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
+#endif // DEBUG
+
+		Clear();
+	}
+
 	void Renderer::Clear()
 	{
 		KRK_PROFILE_FUNCTION();

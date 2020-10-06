@@ -23,6 +23,8 @@ namespace krakoa::graphics
 		static void EndScene();
 		static void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>());
 
+		static void Update();
+		
 		static void Clear();
 		static void SetClearColour(const kmaths::Vector4f& colour);
 

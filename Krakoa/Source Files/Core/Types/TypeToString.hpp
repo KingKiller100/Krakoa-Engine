@@ -13,14 +13,14 @@ namespace util
 		virtual ~iStringifier() = default;
 	};
 	
-	template<typename  E>
+	template<typename  T>
 	class StringEntry : public iStringifier
 	{
 	public:
 		StringEntry() = default;
 		~StringEntry() override = default;
 		
-		void Add(const E& e, const std::string& str)
+		void Add(const T& e, const std::string& str)
 		{
 			if (Exists(e))
 				return;
@@ -29,13 +29,13 @@ namespace util
 			table.insert(std::make_pair(e, str));
 		}
 
-		bool Exists(const E& e)
+		bool Exists(const T& e)
 		{
 			return table.find(e) != table.end();
 		}
 
 		
-		std::string ToString(const E& e)
+		std::string ToString(const T& e)
 		{
 			KRK_PROFILE_FUNCTION();
 			if (const auto it = table.find(e); it != table.end())
@@ -43,11 +43,11 @@ namespace util
 				return it->second;
 			}
 
-			throw std::exception("Unknown value for this enum type");
+			throw std::exception("Unknown value for this type");
 		}
 		
 	private:
-		std::unordered_map<E, std::string> table;
+		std::unordered_map<T, std::string> table;
 	};
 
 	class Stringifier
@@ -84,7 +84,7 @@ namespace util
 		static void Create()
 		{
 			KRK_PROFILE_FUNCTION();
-			enums.emplace_back(new StringEntry<E>());
+			types.emplace_back(new StringEntry<E>());
 		}
 		
 		template<typename E>
@@ -99,7 +99,7 @@ namespace util
 		static bool HasEnum()
 		{
 			KRK_PROFILE_FUNCTION();
-			return (enums.size() > GetUniqueID<E>());
+			return (types.size() > GetUniqueID<E>());
 		}
 		
 		static size_t MakeUniqueID()
@@ -121,11 +121,11 @@ namespace util
 		static StringEntry<E>* Convert()
 		{
 			KRK_PROFILE_FUNCTION();
-			return dynamic_cast<StringEntry<E>*>(enums[GetUniqueID<E>()]);
+			return dynamic_cast<StringEntry<E>*>(types[GetUniqueID<E>()]);
 		}
 		
 	private:
-		inline static std::vector<iStringifier*> enums{};
+		inline static std::vector<iStringifier*> types{};
 	};
 }
 

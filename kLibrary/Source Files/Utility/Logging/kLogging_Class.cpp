@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "kLogging_Class.hpp"
 
+#include "../Calendar/kDateTime.hpp"
 #include "../Calendar/kCalendar.hpp"
 #include "../Format/kFormatToString.hpp"
 #include "../File System/kFileSystem.hpp"
@@ -22,7 +23,7 @@ namespace klib::kLogs
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(GetExeDirectory<char>() + "Logs\\"),
-		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(DateSeparator::DASH)).c_str(), ".log")),
+		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(DateNumericalSeparator::DASH)).c_str(), ".log")),
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
@@ -77,7 +78,7 @@ namespace klib::kLogs
 
 		const auto startLog =
 			"************************************************************************\n      Logging Initialized:    "
-			+ GetDateInTextFormat(DateFormat::SHORT) + "    " + GetTimeText()
+			+ GetDateInTextFormat(DateTextLength::SHORT) + "    " + GetTimeText()
 			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);

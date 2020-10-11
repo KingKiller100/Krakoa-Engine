@@ -36,6 +36,8 @@
 
 #define ONLY_TYPE(type) std::decay_t<std::remove_pointer_t<type>>
 
+#define BIT_SHIFT(n) (1 << n)
+
 // Class member getter & setters
 #define GETTER(type, name, field) USE_RESULT type& name() noexcept\
 {\
@@ -68,7 +70,6 @@
 {\
 	(field) = value;\
 }\
-
 
 #if defined(KLIB_TEST)
 #	define TESTING_ENABLED 1

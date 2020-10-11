@@ -67,7 +67,7 @@ namespace kmaths
 	{
 		return Size;
 	}
-
+	
 	template<typename List, typename T>
 	USE_RESULT constexpr Big_Int_Type BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 	{

@@ -22,8 +22,6 @@
 #define KRK_TRUE KLIB_TRUE
 #define KRK_FALSE KLIB_FALSE
 
-#define BIT_SHIFT(n) (1 << n)
-
 // Standard Placeholders
 #define PL_HOLDER(x) std::placeholders::_##x
 

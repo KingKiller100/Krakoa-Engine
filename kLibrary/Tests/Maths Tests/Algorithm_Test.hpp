@@ -14,6 +14,7 @@ namespace kTest::maths
 	private:
 		void Test() override;
 
+		bool CountTest();
 		bool SineTest();
 		bool CosineTest();
 		bool TanTest();

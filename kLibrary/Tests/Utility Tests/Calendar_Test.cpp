@@ -3,6 +3,7 @@
 
 #include "../../Source Files/Utility/Calendar/kCalendar.hpp"
 
+#include <Windows.h>
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -24,15 +25,15 @@ namespace kTest::utility
 
 		if _CONSTEXPR_IF(std::is_same_v<T, char>)
 		{
-			const auto length = 1 + _snprintf_l(nullptr, 0, format, nullptr, arg, args...);
-			if (length <= -1) throw std::exception();
+			const auto length = 1 + std::snprintf(nullptr, 0, format, nullptr, arg, args...);
+			if (length <= 0) throw std::exception();
 			buffer = new T[length]{};
 			sprintf_s(buffer, length, format, arg, args...);
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<T, wchar_t>)
 		{
 			const auto length = 1 + _snwprintf_l(nullptr, 0, format, nullptr, arg, args...);
-			if (length <= -1) throw std::exception();
+			if (length <= 0) throw std::exception();
 			buffer = new T[length]{};
 			swprintf_s(buffer, length, format, arg, args...);
 		}
@@ -58,24 +59,27 @@ namespace kTest::utility
 	bool CalendarTester::MonthTest()
 	{
 		{
-			constexpr auto result = GetMonth(2);
-			VERIFY_COMPILE_TIME(result.compare("March") == 0);
+			const Date date(DaysOfTheWeek::FRIDAY, 1, 2, 2020);
+			const auto result = date.GetMonthStr();
+			VERIFY(result.compare("March") == 0);
 		}
 
 		{
-			constexpr auto result = GetMonth(5);
-			VERIFY_COMPILE_TIME(result.compare("June") == 0);
+			const Date date(DaysOfTheWeek::FRIDAY, 1, 5, 2020);
+			const auto result = date.GetMonthStr();
+			VERIFY(result.compare("June") == 0);
 		}
 
 		{
-			constexpr auto result = GetMonth(11);
-			VERIFY_COMPILE_TIME(result.compare("December") == 0);
+			const Date date(DaysOfTheWeek::FRIDAY, 1, 11, 2020);
+			const auto result = date.GetMonthStr();
+			VERIFY(result.compare("December") == 0);
 		}
 
 		{
 			try
 			{
-				const auto result = GetMonth(12);
+				const Date date(DaysOfTheWeek::FRIDAY, 1, 12, 2020);
 			}
 			catch (const klib::kDebug::CalendarError & e)
 			{
@@ -104,7 +108,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
-			const auto result = wGetTimeText();
+			const auto result = klib::kString::Convert<wchar_t>(GetTimeText());
 			const auto expected = MakeString(L"%02d:%02d:%02d:%03d", 
 				localTime.wHour, 
 				localTime.wMinute, 
@@ -116,7 +120,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetTimeText(GetSystemDateAndTime());
+			const auto result = GetTimeText(CalendarInfoSource::SYSTEM);
 			const auto expected = MakeString("%02d:%02d:%02d:%03d", 
 				systemTime.wHour, 
 				systemTime.wMinute, 
@@ -128,7 +132,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = wGetTimeText(GetSystemDateAndTime());
+			const auto result = GetTimeText(CalendarInfoSource::SYSTEM);
 			const auto expected = MakeString(L"%02d:%02d:%02d:%03d", 
 				systemTime.wHour, 
 				systemTime.wMinute, 
@@ -340,7 +344,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
-			const auto result = GetDateInNumericalFormat(DateSeparator::DASH);
+			const auto result = GetDateInNumericalFormat(DateNumericalSeparator::DASH);
 			const auto expected = klib::kFormat::ToString("%02d-%02d-%02d", localTime.wDay, localTime.wMonth, localTime.wYear);
 			VERIFY(result == expected)
 		}
@@ -348,7 +352,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInNumericalFormat(DateSeparator::SLASH, GetSystemDateAndTime());
+			const auto result = GetDateInNumericalFormat(DateNumericalSeparator::SLASH, GetSystemDateAndTime());
 			const auto expected = klib::kFormat::ToString("%02d/%02d/%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}
@@ -356,7 +360,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = wGetDateInNumericalFormat(DateSeparator::DASH, GetSystemDateAndTime());
+			const auto result = wGetDateInNumericalFormat(DateNumericalSeparator::DASH, GetSystemDateAndTime());
 			const auto expected = klib::kFormat::ToString(L"%02d-%02d-%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}

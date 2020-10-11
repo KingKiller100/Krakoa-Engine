@@ -22,7 +22,8 @@ namespace kTest::maths
 	void AlgorithmsTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-
+		
+		VERIFY_MULTI(CountTest());
 		VERIFY_MULTI(AbsTest());
 		VERIFY_MULTI(TanTest());
 		VERIFY_MULTI(SineTest());
@@ -62,7 +63,25 @@ namespace kTest::maths
 
 		VERIFY_MULTI_END();
 	}
+
 	using namespace kmaths;
+
+	bool AlgorithmsTester::CountTest()
+	{
+		{
+			constexpr kmaths::Vector2d a{}, b{}, c{}, d{}, e{}, f{};
+			constexpr auto count = constants::Count(a, b, c, d, e, f);
+			VERIFY_COMPILE_TIME(count == 6);
+		}
+		
+		{
+			constexpr std::string_view one;
+			constexpr auto count = kmaths::Count(one);
+			VERIFY_COMPILE_TIME(count == 1);
+		}
+
+		return success;
+	}
 
 	bool AlgorithmsTester::SineTest()
 	{
@@ -818,7 +837,7 @@ namespace kTest::maths
 		{
 			constexpr Big_Int_Type power = 5;
 			constexpr auto num = 4;
-			constexpr auto value = PowerOf(num, power);
+			const auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::powf(num, power));
 			VERIFY(value == expectedVal);
 		}
@@ -826,7 +845,7 @@ namespace kTest::maths
 		{
 			constexpr auto power = 2;
 			constexpr auto num = 17;
-			constexpr auto value = PowerOf(num, power);
+			const auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::powf(num, power));
 			VERIFY(value == expectedVal);
 		}
@@ -834,7 +853,7 @@ namespace kTest::maths
 		{
 			constexpr auto power = 12;
 			constexpr auto num = 7ll;
-			constexpr auto value = PowerOf(num, power);
+			const auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::pow(num, power));
 			VERIFY(value == expectedVal);
 		}
@@ -850,7 +869,7 @@ namespace kTest::maths
 		{
 			constexpr auto power = 8;
 			constexpr auto num = 25ll;
-			constexpr auto value = PowerOf(num, power);
+			const auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::pow(num, power));
 			VERIFY(value == expectedVal);
 		}

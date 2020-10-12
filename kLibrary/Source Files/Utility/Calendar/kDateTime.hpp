@@ -5,9 +5,6 @@
 
 #include "../../HelperMacros.hpp"
 
-
-#include "../Debug Helper/Exceptions/CalenderExceptions.hpp"
-
 namespace klib
 {
 	namespace kCalendar
@@ -16,52 +13,50 @@ namespace klib
 		{
 			SYSTEM, LOCAL,
 		};
-		
-		enum class TimeComponent : uint8_t
-		{
-			HOURS,
-			MINS,
-			SECS,
-			MILLIS,
-		};
-		
-		enum class DateTextLength : uint8_t
-		{
-			FULL,
-			SHORT
-		};
-
-		enum class DateNumericalSeparator : uint8_t
-		{
-			SLASH,
-			DASH,
-		};
-
-		enum DaysOfTheWeek : unsigned char
-		{
-			SUNDAY = 0,
-			MONDAY,
-			TUESDAY,
-			WEDNESDAY,
-			THURSDAY,
-			FRIDAY,
-			SATURDAY,
-		};
 
 		class Date
 		{
 			using DDMMYYYY_t = std::uint16_t;
+
+		public:
+			enum DateTextLength : uint8_t
+			{
+				FULL,
+				SHORT
+			};
+
+			enum DateNumericalSeparator : char
+			{
+				SLASH = '/',
+				DASH = '-',
+			};
+			
+			enum DaysOfTheWeek : unsigned char
+			{
+				SUNDAY = 0, MONDAY, TUESDAY,
+				WEDNESDAY, THURSDAY, FRIDAY,
+				SATURDAY,
+			};
+
+			enum MonthOfTheYear : unsigned char
+			{
+				JAN = 0, FEB, MAR,
+				APR, MAY, JUN,
+				JUL, AUG, SEPT,
+				OCT, NOV, DEC,
+			};
 			
 		public:
-			explicit Date(CalendarInfoSource sourceInfo = CalendarInfoSource::LOCAL);
-			Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d, const DDMMYYYY_t m, const DDMMYYYY_t y);
+			explicit Date(CalendarInfoSource sourceInfo);
+			Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d = 1, const MonthOfTheYear m = JAN, const DDMMYYYY_t y = 1900);
 			
 			USE_RESULT std::string NumericalFormat(DateNumericalSeparator separator) const;
 			USE_RESULT std::string TextFormat(DateTextLength format) const;
 
 			USE_RESULT DDMMYYYY_t GetDay() const;
 			USE_RESULT std::string GetDayStr() const;
-			USE_RESULT DDMMYYYY_t GetMonth() const;
+			USE_RESULT DDMMYYYY_t GetMonthIndex() const;
+			USE_RESULT MonthOfTheYear GetMonth() const;
 			USE_RESULT std::string GetMonthStr() const;
 			USE_RESULT DDMMYYYY_t GetYear() const;
 			USE_RESULT std::string GetYearStr() const;
@@ -73,7 +68,7 @@ namespace klib
 			
 		private:
 			DDMMYYYY_t day;
-			DDMMYYYY_t month;
+			MonthOfTheYear month;
 			DDMMYYYY_t year;
 			DaysOfTheWeek dayOfWeek;
 		};
@@ -81,9 +76,19 @@ namespace klib
 		class Time
 		{
 			using HHMMSSMS_t = std::uint16_t;
+
+		public:
+			enum TimeComponent : uint8_t
+			{
+				HOURS,
+				MINS,
+				SECS,
+				MILLIS,
+				COMPONENT_END_MARKER
+			};
 			
 		public:
-			explicit Time(CalendarInfoSource sourceInfo = CalendarInfoSource::LOCAL);
+			explicit Time(CalendarInfoSource sourceInfo);
 			Time(const HHMMSSMS_t h, const HHMMSSMS_t m, const HHMMSSMS_t s,
 				const HHMMSSMS_t ms = 0);
 
@@ -98,7 +103,7 @@ namespace klib
 		private:
 			void CheckTime() const;
 
-			private:
+		private:
 			HHMMSSMS_t hours;
 			HHMMSSMS_t minutes;
 			HHMMSSMS_t seconds;

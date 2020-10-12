@@ -23,7 +23,7 @@ namespace klib::kLogs
 	Logging::Logging()
 		: minimumLoggingLevel(LLevel::NORM),
 		directory(GetExeDirectory<char>() + "Logs\\"),
-		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(DateNumericalSeparator::DASH)).c_str(), ".log")),
+		filename(AppendFileExtension(("Logs - " + GetDateInNumericalFormat(Date::DateNumericalSeparator::DASH)).c_str(), ".log")),
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
@@ -78,7 +78,7 @@ namespace klib::kLogs
 
 		const auto startLog =
 			"************************************************************************\n      Logging Initialized:    "
-			+ GetDateInTextFormat(DateTextLength::SHORT) + "    " + GetTimeText()
+			+ GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
 			+ "\n************************************************************************\n\n";
 		AddToLogBuffer(startLog);
 		OutputToSubSystems(startLog, LLevel::BANR);

@@ -1,6 +1,7 @@
 ﻿#include "pch.hpp"
 #include "kDateTime.hpp"
 #include "../Format/kFormatToString.hpp"
+#include "../Debug Helper/Exceptions/CalenderExceptions.hpp"
 #include <Windows.h>
 
 namespace klib::kCalendar
@@ -23,7 +24,7 @@ namespace klib::kCalendar
 
 		const char* MonthToString(const size_t month)
 		{
-			std::array<const char*, 12> kCalendar_MonthsArray = {
+			static std::array<const char*, 12> kCalendar_MonthsArray = {
 				"January", "February", "March",
 				"April", "May", "June",
 				"July", "August", "September",
@@ -37,7 +38,7 @@ namespace klib::kCalendar
 		}
 		const char* DayOfTheWeekToString(const size_t day)
 		{
-			std::array<const char*, 7> kCalendar_DaysOfTheWeek = {
+			static std::array<const char*, 7> kCalendar_DaysOfTheWeek = {
 				"Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday"
 			};
@@ -58,12 +59,12 @@ namespace klib::kCalendar
 			: GetSystemDateAndTime();
 
 		day = source.wDay;
-		month = source.wMonth;
+		month = static_cast<MonthOfTheYear>(source.wMonth - 1);
 		year = source.wYear;
 		dayOfWeek = static_cast<DaysOfTheWeek>(source.wDayOfWeek);
 	}
 
-	Date::Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d, const DDMMYYYY_t m, const DDMMYYYY_t y)
+	Date::Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d, const MonthOfTheYear m, const DDMMYYYY_t y)
 		: day(d)
 	, month(m)
 	, year(y)
@@ -74,48 +75,46 @@ namespace klib::kCalendar
 
 	std::string Date::NumericalFormat(DateNumericalSeparator separator) const
 	{
-		std::string str;
-		switch (separator)
-		{
-		case DateNumericalSeparator::SLASH: 
-			str = kFormat::ToString("{0}/{1}/{2}"
-				, GetDay()
-				, GetMonth()
-				, GetYear());
-			break;
-			
-		case DateNumericalSeparator::DASH:
-			str = kFormat::ToString("{0}-{1}-{2}"
-				, GetDay()
-				, GetMonth()
-				, GetYear());
-			break;
-			
-		default: 
-			throw kDebug::CalendarError("Unknown date separator");
-		}
+		std::string separatorStr;
+		separatorStr += (separator);
+
+		std::string str(
+			kFormat::ToString("{0}{1}{2}{1}{3}"
+			, GetDay()
+			, separatorStr
+			, GetMonthIndex()
+			, GetYear()));
 		
 		return str;
 	}
 
 	std::string Date::TextFormat(DateTextLength format) const
 	{
+		const auto dayStr = GetDayStr();
+		const auto monthStr = GetMonthStr();
+		const auto yearStr = GetYearStr();
+		
 		std::string str;
+
 		switch (format)
 		{
-		case DateTextLength::FULL: 
-			str = kFormat::ToString("{0} {1} {2} {3)"
-				, GetDayOfWeekStr()
-				, GetDayStr()
-				, GetMonthStr()
-				, GetYearStr());
+		case DateTextLength::FULL:
+		{
+			const auto dotwStr = GetDayOfWeekStr();
+			str = kFormat::ToString("{0} {1} {2} {3}"
+			, dotwStr
+			, dayStr
+			, monthStr
+			, yearStr);
+		}
 			break;
 			
 		case DateTextLength::SHORT:
-			str = kFormat::ToString(" {0} {1} {2)"
-				, GetMonthStr()
-				, GetDayStr()
-				, GetYearStr());
+			str = kFormat::ToString("{0} {1} {2}"
+				, monthStr
+				, dayStr
+				, yearStr
+			);
 			break;
 			
 		default:
@@ -134,8 +133,8 @@ namespace klib::kCalendar
 	{
 		const auto dateSuffix = [&]()
 		{
-			return day == 1 ? "st"
-				: day == 2 ? "nd"
+			return (day == 1 || day == 21 || day == 31) ? "st"
+				: (day == 2 || day == 22) ? "nd"
 				: day == 3 ? "rd"
 				: "th";
 		};
@@ -143,6 +142,11 @@ namespace klib::kCalendar
 			, day
 			, dateSuffix());
 		return str;
+	}
+
+	Date::DDMMYYYY_t Date::GetMonthIndex() const
+	{
+		return static_cast<DDMMYYYY_t>(month) + 1;
 	}
 
 	std::string Date::GetMonthStr() const
@@ -156,12 +160,12 @@ namespace klib::kCalendar
 		return str;
 	}
 
-	DaysOfTheWeek Date::GetDayOfWeek() const
+	Date::DaysOfTheWeek Date::GetDayOfWeek() const
 	{
 		return dayOfWeek;
 	}
 
-	Date::DDMMYYYY_t Date::GetMonth() const
+	Date::MonthOfTheYear Date::GetMonth() const
 	{
 		return month;
 	}
@@ -178,7 +182,10 @@ namespace klib::kCalendar
 	}
 
 	void Date::CheckDate() const
-	{		
+	{
+		if (day < 1)
+			throw kDebug::CalendarError();
+		
 		if (month > 11)
 			throw kDebug::InvalidMonthError();
 		
@@ -209,9 +216,9 @@ namespace klib::kCalendar
 	// TIME ////////////////////////////////////////////////////////////
 	Time::Time(CalendarInfoSource sourceInfo)
 	{
-		auto source = sourceInfo == CalendarInfoSource::LOCAL
-			? GetLocalDateAndTime()
-			: GetSystemDateAndTime();
+		const auto source = sourceInfo == CalendarInfoSource::LOCAL
+			                    ? GetLocalDateAndTime()
+			                    : GetSystemDateAndTime();
 		
 		hours = source.wHour;
 		minutes = source.wMinute;
@@ -224,7 +231,24 @@ namespace klib::kCalendar
 	, minutes(m)
 	, seconds(s)
 	, milliseconds(ms)
-	{}
+	{
+		CheckTime();
+	}
+	
+	void Time::CheckTime() const
+	{
+		if (hours > 23)
+			kDebug::CalendarError("Invalid Hours");
+
+		if (minutes > 59)
+			kDebug::CalendarError("Invalid Minutes");
+
+		if (seconds > 59)
+			kDebug::CalendarError("Invalid Seconds");
+
+		if (milliseconds > 999)
+			kDebug::CalendarError("Invalid Milliseconds");
+	}
 
 	Time::HHMMSSMS_t Time::GetComponent(const TimeComponent timeComponent) const
 	{
@@ -243,7 +267,7 @@ namespace klib::kCalendar
 		HHMMSSMS_t times[] = { hours, minutes, seconds };
 		
 		for (auto i = CAST(HHMMSSMS_t, TimeComponent::HOURS);
-			i < CAST(HHMMSSMS_t, accuracy);
+			i <= CAST(HHMMSSMS_t, accuracy);
 			++i)
 		{
 			if (!str.empty())
@@ -274,20 +298,5 @@ namespace klib::kCalendar
 	Time::HHMMSSMS_t Time::GetMilliseconds() const
 	{
 		return milliseconds;
-	}
-
-	void Time::CheckTime() const
-	{
-		if (hours > 23)
-			kDebug::CalendarError("Invalid Hours");
-
-		if (minutes > 59)
-			kDebug::CalendarError("Invalid Minutes");
-
-		if (seconds > 59)
-			kDebug::CalendarError("Invalid Seconds");
-
-		if (milliseconds > 999)
-			kDebug::CalendarError("Invalid Milliseconds");
 	}
 }

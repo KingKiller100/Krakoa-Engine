@@ -115,31 +115,55 @@ namespace kTest
 	void TesterManager::Run(Tester& test)
 	{
 		using namespace klib::kFormat;
-		
-		const klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-		std::cout << "Now running: " << test.GetName() << "";
+		const klib::kTime::HighAccuracyTimer timer("Test Run Time");
 
-		const auto result = test.Run();
-
-		const auto runtimeStr = ToString(
-			"| Runtime: %.fus (microseconds)",
-			runTimeTimer.GetLifeTime<klib::kTime::units::Micros>());
-		std::cout << " " << runtimeStr << "\n";
-
-		if (!result)
+		std::cout << "Now running: " << test.GetName();
+		const auto pass = test.Run();
+		const auto testTime = timer.GetLifeTime<klib::kTime::units::Micros>();
+		if (!pass)
 			success = false;
 
-		const auto resultTest = result
+		const auto runtimeResultStr
+			= WriteResults(pass, testTime);
+		
+		const auto resultTest = pass
 			? ToString("Success: Test Name: {0} {1}\n\n", 
 				test.GetName(),
-				runtimeStr) // Success Case
+				runtimeResultStr) // Success Case
 			: ToString("Failure: Test Name: {0} {1}\n{2}",
 				test.GetName(), 
-				runtimeStr, 
+				runtimeResultStr, 
 				test.GetFailureData()); // Fail Case
 
 		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
+	}
+
+	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
+	{
+		using namespace klib::kFormat;
+
+		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+		std::cout << " | ";
+		
+		SetConsoleTextAttribute(hConsole, pass ? 10 : 12);
+		auto resultStr = ToString("%s"
+			, (pass ? "Pass" : "Fail")
+		);
+		std::cout << resultStr;
+		SetConsoleTextAttribute(hConsole, 7);
+
+		resultStr.insert(0, "| ");
+
+		auto runtimeResultStr = ToString(
+			"| Runtime: %.fus (microseconds)", resTime);
+		std::cout << " " << runtimeResultStr << "\n";
+
+		runtimeResultStr.insert(0, resultStr + " ");
+
+		return runtimeResultStr;
 	}
 
 	void TesterManager::RunAll()

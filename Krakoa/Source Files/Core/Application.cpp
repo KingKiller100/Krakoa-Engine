@@ -33,14 +33,6 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
-
-		const auto h =
-			STRINGIFIER(kCalendar::TimeComponent::HOURS);
-
-		const auto mins = kCalendar::TimeComponent::MINS;
-		const auto m = STRINGIFIER(mins);
-
-		const auto err = STRINGIFIER(kLogs::LLevel::ERRR);
 		
 		KRK_INIT_LOGS();
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);

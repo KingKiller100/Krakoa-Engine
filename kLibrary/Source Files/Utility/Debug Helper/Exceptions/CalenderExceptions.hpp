@@ -4,7 +4,7 @@
 
 namespace klib::kDebug
 {
-	class CalendarError : public std::runtime_error
+	class CalendarError : public std::exception
 	{
 	public:
 		explicit CalendarError();

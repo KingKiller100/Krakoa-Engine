@@ -69,7 +69,8 @@ project "Krakoa"
 
     defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+        "KLIB_SHORTHAND_NAMESPACE",
+        "_CRT_SECURE_NO_WARNINGS"
 	}
 
     links

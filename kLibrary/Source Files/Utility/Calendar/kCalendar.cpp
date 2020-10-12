@@ -20,27 +20,27 @@ namespace klib::kCalendar
 		 { CalendarInfoSource::SYSTEM, Time(CalendarInfoSource::SYSTEM) }
 	};
 
-	unsigned short GetComponentOfTime(const TimeComponent timeComponent)
+	unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSource source)
 	{
-		const auto now = Time();
+		const auto now = Time(source);
 		return now.GetComponent(timeComponent);
 	}
 
 	std::string GetTimeText(CalendarInfoSource calendarInfo)  noexcept
 	{
 		const auto now = Time(calendarInfo);
-		return now.ToString(TimeComponent::MILLIS);
+		return now.ToString(Time::TimeComponent::MILLIS);
 	}
 
-	std::string GetDateInTextFormat(const DateTextLength format) noexcept
+	std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSource source) noexcept
 	{
-		const auto date = Date();
+		const auto date = Date(source);
 		return date.TextFormat(format);
 	}
 
-	std::string GetDateInNumericalFormat(const DateNumericalSeparator separator) noexcept
+	std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarInfoSource source) noexcept
 	{
-		const auto date = Date();
+		const auto date = Date(source);
 		return date.NumericalFormat(separator);
 	}
 
@@ -71,29 +71,29 @@ namespace klib::kCalendar
 
 	std::string GetLocalStartTimeStr() noexcept
 	{
-		static const auto& info = times[CalendarInfoSource::LOCAL];
-		static const auto str =  info.ToString(TimeComponent::MILLIS);
+		static const auto& info = times.at(CalendarInfoSource::LOCAL);
+		static const auto str =  info.ToString(Time::TimeComponent::MILLIS);
 		return str;
 	}
 
 	std::string GetSystemStartTimeStr() noexcept
 	{
-		static const auto& info = times[CalendarInfoSource::SYSTEM];
-		static const auto str = info.ToString(TimeComponent::MILLIS);
+		static const auto& info = times.at(CalendarInfoSource::SYSTEM);
+		static const auto str = info.ToString(Time::TimeComponent::MILLIS);
 		return str;
 	}
 
-	std::string GetLocalStartDateStr(const DateNumericalSeparator separator) noexcept
+	std::string GetLocalStartDateStr(const Date::DateNumericalSeparator separator) noexcept
 	{
 		static std::string local;
 		if (local.empty())
 		{
-			static const auto& info = dates[CalendarInfoSource::LOCAL];
+			static const auto& info = dates.at(CalendarInfoSource::LOCAL);
 			local = info.NumericalFormat(separator);
 			return local;
 		}
 
-		if (separator == DateNumericalSeparator::SLASH)
+		if (separator == Date::DateNumericalSeparator::SLASH)
 		{
 			if (local.find('/') == std::string::npos)
 				local = kString::Replace<char>(local, '-', '/');
@@ -107,17 +107,17 @@ namespace klib::kCalendar
 		return local;
 	}
 
-	std::string GetSystemStartDateStr(const DateNumericalSeparator separator) noexcept
+	std::string GetSystemStartDateStr(const Date::DateNumericalSeparator separator) noexcept
 	{
 		static std::string system;
 		if (system.empty())
 		{
-			static const auto& info = dates[CalendarInfoSource::SYSTEM];
+			static const auto& info = dates.at(CalendarInfoSource::SYSTEM);
 			system = info.NumericalFormat(separator);
 			return system;
 		}
 
-		if (separator == DateNumericalSeparator::SLASH)
+		if (separator == Date::DateNumericalSeparator::SLASH)
 		{
 			if (system.find('/') == std::string::npos)
 				system = kString::Replace<char>(system, '-', '/');

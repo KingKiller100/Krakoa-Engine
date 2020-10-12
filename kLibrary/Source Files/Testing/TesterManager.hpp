@@ -31,6 +31,9 @@ namespace kTest
 		static TesterManager& Get();
 
 	private:
+		std::string WriteResults(const bool result, const double resTime) const;
+		
+	private:
 		std::string path;
 		std::set< std::unique_ptr<Tester> > testsUSet;
 

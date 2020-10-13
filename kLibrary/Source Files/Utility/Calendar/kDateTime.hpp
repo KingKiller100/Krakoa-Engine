@@ -93,7 +93,7 @@ namespace klib
 				const HHMMSSMS_t ms = 0);
 
 			USE_RESULT HHMMSSMS_t GetComponent(const TimeComponent timeComponent) const;
-			USE_RESULT std::string ToString(const TimeComponent accuracy) const;
+			USE_RESULT std::string ToString(const TimeComponent accuracy = MILLIS) const;
 
 			USE_RESULT HHMMSSMS_t GetHours() const;
 			USE_RESULT HHMMSSMS_t GetMinutes() const;

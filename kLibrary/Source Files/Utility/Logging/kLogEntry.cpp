@@ -18,35 +18,5 @@ namespace klib
 			, msg(message)
 		{
 		}
-
-		const Date& LogEntry::GetDate() const
-		{
-			return date;
-		}
-
-		const Time& LogEntry::GetTime() const
-		{
-			return time;
-		}
-
-		LogLevel LogEntry::GetLevel() const
-		{
-			return lvl;
-		}
-
-		const std::string& LogEntry::GetMsg() const
-		{
-			return msg;
-		}
-
-		const std::string& LogEntry::GetFile() const
-		{
-			return file;
-		}
-
-		std::uint32_t LogEntry::GetLine() const
-		{
-			return line;
-		}
 	}
 }

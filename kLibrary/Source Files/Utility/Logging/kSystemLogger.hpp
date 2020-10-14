@@ -35,10 +35,9 @@ namespace klib
 			USE_RESULT std::string_view GetName() const override;
 			void SetName(const std::string_view& newName) override;
 			
-			void OutputInitialized(const std::string& openingMsg) override;
+			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry) override;
-			void AddEntryBanner(const LogEntry& entry, const std::string_view type, const std::string frontPadding,
-				const std::string& rearPadding, size_t paddingCount) override;
+			void AddBanner(const BannerEntry& entry) override;
 			bool Open() override;
 			void Close() override;
 

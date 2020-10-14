@@ -1,61 +1,73 @@
 #include "pch.hpp"
 #include "kLogging_Class.hpp"
 
-#include "../Calendar/kCalendar.hpp"
 #include "../Format/kFormatToString.hpp"
-#include "../File System/kFileSystem.hpp"
-
-#include <string_view>
-#include <unordered_map>
-
 
 #include "kFileLogger.hpp"
 #include "kLogEntry.hpp"
 #include "kSystemLogger.hpp"
 
+#include "../../Maths/kAlgorithms.hpp"
+#include "../../Type Traits/ToImpl.hpp"
+
+#include "../File System/kFileSystem.hpp"
+
+
 namespace klib::kLogs
 {
 	using namespace kFormat;
 	using namespace kCalendar;
-	using namespace kFileSystem;
+	using namespace type_trait;
 
 	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
 
 	Logging::Logging(const std::string& directory, const std::string& filename)
-		: minimumLoggingLevel(LogLevel::NORM),
+		: minimumLoggingLevel(LogEntry::LogLevel::NORM),
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
-		inCacheMode(false)
+		inCacheMode(false),
+		constantFlushing(false),
+		logIndex(0)
 	{
-		SetUp(filename, directory);
+		Initialize(filename, directory);
 	}
 
 	Logging::~Logging()
 	{
-		if (GetLastCachedEntry() != kLogs_Empty)
+		if (!logEntries.empty() || !bannerEntries.empty())
 			FinalOutput();
 	}
 
-	void Logging::SetUp(const std::string& directory, const std::string& filename)
+	void Logging::Initialize(const std::string& directory, const std::string& filename)
 	{
 		loggers[LoggerType::FILE].reset(new FileLogger(name, directory, filename));
 		loggers[LoggerType::SYSTEM].reset(new SystemLogger(name));
 		
-		SetMinimumLoggingLevel(LogLevel::NORM);
+		SetMinimumLoggingLevel(LogEntry::LogLevel::NORM);
 		ToggleLoggingEnabled();
 	}
 
-	void Logging::OutputInitialized()
+	void Logging::Open()
+	{
+		for (auto& logger : loggers)
+		{
+			if (!logger.second->Open())
+			{
+				const auto errMsg = ToString("Unable to open log: {0}", name);
+				throw std::runtime_error(errMsg);
+			}
+		}
+	}
+
+	void Logging::OutputInitialized(const std::string_view& startLog)
 	{
 		if (!isEnabled) { return; }
-
-		const auto startLog =
-			"************************************************************************\n      Logging Initialized:    "
-			+ GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
-			+ "\n************************************************************************\n\n";
-		AddToLogBuffer(startLog);
-		OutputToSubSystems(startLog, LogLevel::BANR);
+		
+		for (auto& logger : loggers)
+		{
+			logger.second->OutputInitialized(startLog);
+		}
 	}
 
 	constexpr void Logging::ToggleLoggingEnabled() noexcept
@@ -66,9 +78,13 @@ namespace klib::kLogs
 	void Logging::SetName(const std::string_view& newName)
 	{
 		name = newName;
+		for (const auto& logger : loggers)
+		{
+			logger.second->SetName(newName);
+		}
 	}
 
-	void Logging::SetMinimumLoggingLevel(const LogLevel newMin) noexcept
+	void Logging::SetMinimumLoggingLevel(const LogEntry::LogLevel newMin) noexcept
 	{
 		minimumLoggingLevel = newMin;
 	}
@@ -85,37 +101,33 @@ namespace klib::kLogs
 
 	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & fname)
 	{
-		Close();
-		directory = dir;
-		filename = AppendFileExtension(fname.data(), ".log");
-		ResumeFileLogging();
+		ChangeOutputDirectory(dir);
+		ChangeFilename(fname);
 	}
 
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
-		Close();
-		directory = dir;
-		ResumeFileLogging();
+		auto& fLogger = type_trait::ToImpl<FileLogger>(loggers.at(LoggerType::FILE));
+		fLogger.SetDirectory(dir);
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
-		Close();
-		filename = AppendFileExtension(newFileName.data(), ".log");
-		ResumeFileLogging();
+		auto& fLogger = type_trait::ToImpl<FileLogger>(loggers.at(LoggerType::FILE));
+		const auto filename = kFileSystem::AppendFileExtension(newFileName.data(), ".log");
+		fLogger.SetFileName(filename);
 	}
 	
 	std::string Logging::GetOutputPath() const
 	{
-		const auto path = directory + filename;
+		auto& fLogger = type_trait::ToImpl<FileLogger>(loggers.at(LoggerType::FILE));
+		const auto path = fLogger.GetPath();
 		return path;
 	}
 
 	void Logging::SuspendFileLogging()
 	{
 		constexpr const auto* const pauseLog = "\n************************************************************************\n";
-		AddToLogBuffer(pauseLog);
-		OutputToSubSystems(pauseLog, LogLevel::NORM);
 		Close();
 		SetCacheMode(true);
 	}
@@ -123,76 +135,62 @@ namespace klib::kLogs
 	void Logging::ResumeFileLogging()
 	{
 		SetCacheMode(false);
-		OutputLogToFile("");
 	}
 
 
-	void Logging::OutputToFatalFile(const LogEntry&)
+	void Logging::OutputToFatalFile(const LogEntry& entry)
 	{
-		AddEntry(entry, LogLevel::FATL, file, line);
+		AddEntry(entry);
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const std::string_view& msg, const LogLevel lvl /* = NORM */, const char* file /* = "" */, const unsigned line /* = 0 */)
+	void Logging::AddEntry(const LogEntry& entry)
 	{
-		if (!isEnabled && lvl < LogLevel::ERRR) return;
-		if (lvl < minimumLoggingLevel) return;
+		if (!isEnabled || !Loggable(entry.lvl)) 
+			return;
 
-		auto logLine = ToString("[%s] [%s] [%s]:  %s",
-			GetTimeText().data(),
-			name.data(),
-			kLogs_LogLevelMap.at(lvl),
-			msg.data());
-
-		if (lvl >= LogLevel::ERRR)
-		{
-			logLine.append(ToString(R"(
-               [FILE]: %s
-               [LINE]: %d)",
-				file,
-				line)
-				);
-		}
-
-		logLine.append("\n");
-
-		AddToLogBuffer(logLine);
-		OutputToSubSystems(logLine, lvl);
+		logEntries.insert(std::make_pair(logIndex++, entry));
 	}
 
-	void Logging::AddEntryBanner(const std::string_view msg, const std::string_view type)
+	void Logging::AddBanner(const BannerEntry& entry)
 	{
-		if (!isEnabled) return;
+		if (!isEnabled)
+			return;
 
-		const auto bannerLine = ToString("[%s] [%s] [%s]: [%s]\n",
-			GetTimeText().data(),
-			name.data(),
-			type.data(),
-			msg.data());
-
-		AddToLogBuffer(bannerLine);
-		OutputToSubSystems(bannerLine, LogLevel::BANR);
+		bannerEntries.insert(std::make_pair(logIndex++, entry));
 	}
 
 	void Logging::FinalOutput()
 	{
-		constexpr auto* const endLogLine
-			= R"(
-************************************************************************
-                          Logging Concluded                            
-************************************************************************
-)";
-		AddToLogBuffer(endLogLine);
 		Close();
 		isEnabled = false;
 	}
 
 	void Logging::Flush()
 	{
+		const auto start = kmaths::Min(
+			logEntries.begin()->first
+			, bannerEntries.begin()->first
+			);
 
-		for (auto& logger : loggers)
+		for (auto i = start; i < logIndex; ++i)
 		{
-			logger.second->Close();
+			if (auto entry_iter = logEntries.find(i); entry_iter != logEntries.end())
+			{
+				for (auto& logger : loggers)
+				{
+					logger.second->AddEntry(entry_iter->second);
+				}
+			}
+			else
+			{
+				const auto& entry = bannerEntries.at(i);
+				
+				for (auto& logger : loggers)
+				{
+					logger.second->AddBanner(entry);
+				}
+			}
 		}
 	}
 
@@ -204,108 +202,42 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::AddToLogBuffer(const std::string_view& logLine)
+	bool Logging::Loggable(const LogEntry::LogLevel lvl) const
 	{
-		if (inCacheMode)
-			logEntryQueue.emplace_back(logLine.data());
-		else
-			OutputLogToFile(logLine);
+		return (lvl > minimumLoggingLevel);
 	}
 
-	void Logging::OutputToSubSystems(const std::string_view& logLine, const LogLevel lvl) const noexcept
+	std::string_view Logging::GetLastCachedEntry()
 	{
-		if (!subSystemLoggingEnabled)
-			return;
-
-#ifdef _DEBUG
-		OutputDebugStringA(logLine.data());
-#endif
-
-		auto log = std::string(logLine);
-
-		const auto namePos = log.find(name);
-		if (namePos != std::string::npos)
-		{
-			const auto nameSize = name.length();
-			const auto eoNamePos = namePos + nameSize;
-			const auto numToErase = (log.find_first_of(':', 14) - 1) - eoNamePos;
-			log.erase(eoNamePos, numToErase);
-		}
-		
-		const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, CAST(WORD, kLogs_ConsoleColourMap.at(lvl)));
-
-		printf_s("%s", log.data());
-
-		constexpr auto whiteText = CAST(WORD, LConsoleColour::WHITE);
-		SetConsoleTextAttribute(hConsole, whiteText);
-	}
-
-	void Logging::OutputLogToFile(const std::string_view& line)
-	{
-		if (inCacheMode)
-			return;
-
-		auto fullCache = GetFullCache();
-		fullCache += line;
-
-		if (!logFileStream.is_open())
-		{
-			const auto path = directory + filename;
-			CreateNewDirectories(directory.c_str());
-			logFileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
-		}
-
-		if (logFileStream)
-		{
-			logFileStream << fullCache;
-			if (constantFlushing) Flush();
-		}
-	}
-
-	std::string Logging::GetFullCache()
-	{
-		if (!isEnabled)
-		{
-			OutputToSubSystems("\t\tLOGGING DISABLED!\nRESTART LOGGING BY CALLING THE 'ResumeFileLogging' METHOD BEFORE USES", LogLevel::WARN);
-			return "";
-		}
-
-		LogQueue::value_type fullLog;
-		while (!logEntryQueue.empty())
-		{
-			fullLog += logEntryQueue.front();
-			logEntryQueue.pop_front();
-		}
-		return fullLog;
-	}
-
-	Logging::LogQueue::value_type Logging::GetLastCachedEntry()
-	{
-		if (!logEntryQueue.empty())
-			return logEntryQueue.back();
+		if (logEntries.empty() && bannerEntries.empty())
+			return kLogs_Empty;
 
 		if (!inCacheMode)
-			return "CHECK LOGGING FILE: " + directory + filename;
+			return "CHECK LOGGING FILE: " + GetOutputPath();
 
-		return kLogs_Empty;
-	}
+		const auto lastlog_iter = logEntries.crbegin();
+		const auto lastbanner_iter = bannerEntries.crbegin();
+		
+		const auto lastIndex = kmaths::Max(lastlog_iter->first,
+			lastbanner_iter->first);
 
-	void Logging::ErasePreviousCacheEntries(const size_t numOfEntries)
-	{
-		if (logEntryQueue.empty())
-			return;
-
-		const auto AfterLastEntryIter = logEntryQueue.cend();
-		const auto startPosition = AfterLastEntryIter - numOfEntries;
-
-		logEntryQueue.erase(startPosition, AfterLastEntryIter);
+		if (lastIndex == lastlog_iter->first)
+		{
+			return lastlog_iter->second.msg;
+		}
+		else
+		{
+			return lastbanner_iter->second.msg;
+		}
 	}
 
 	void Logging::ClearCache()
 	{
-		if (!logEntryQueue.empty())
-			logEntryQueue.clear();
+		if (!logEntries.empty())
+			logEntries.clear();
+
+		if (bannerEntries.empty())
+			bannerEntries.clear();
 	}
 
 	void Logging::EnableConstantFlush(bool enable)

@@ -49,29 +49,29 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("BANNER!") != std::string::npos);
 
-		testLogger->AddEntry("DEBUG!", LLevel::DBUG);
+		testLogger->AddEntry(LLevel::DBUG);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("DEBUG!") == std::string::npos);
 
 		testLogger->SetMinimumLoggingLevel(LLevel::DBUG);
 
-		testLogger->AddEntry("DEBUG!", LLevel::DBUG);
+		testLogger->AddEntry(LLevel::DBUG);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("DEBUG!") != std::string::npos);
 
-		testLogger->AddEntry("NORMAL!");
+		testLogger->AddEntry();
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("NORMAL!") != std::string::npos);
 
-		testLogger->AddEntry("INFORMATIVE!", LLevel::INFO);
+		testLogger->AddEntry(LLevel::INFO);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("INFORMATIVE!") != std::string::npos);
 
-		testLogger->AddEntry("WARN", LLevel::WARN);
+		testLogger->AddEntry(LLevel::WARN);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("WARN") != std::string::npos);
 
-		testLogger->AddEntry("ERROR!", LLevel::ERRR, __FILE__, __LINE__);
+		testLogger->AddEntry(LLevel::ERRR, ,);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR!") != std::string::npos);
 
@@ -79,7 +79,7 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR!") == std::string::npos);
 
-		testLogger->AddEntry("ERROR AGAIN!", LLevel::ERRR, __FILE__, __LINE__);
+		testLogger->AddEntry(LLevel::ERRR, ,);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
 
@@ -95,7 +95,7 @@ namespace kTest::utility
 		fullFilePathToDelete = dir + filename + ".log";
 		VERIFY(klib::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
 
-		testLogger->AddEntry("end");
+		testLogger->AddEntry();
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("end") == std::string::npos);
 

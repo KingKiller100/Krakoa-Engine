@@ -1,20 +1,19 @@
 #pragma once
 
+#include "kLogEntry.hpp"
+
 #include "../../HelperMacros.hpp"
 
-#include <deque>
-#include <fstream>
+#include <unordered_map>
 #include <map>
 #include <string>
 
-#include "kLogEntry.hpp"
 
 namespace klib
 {
 	namespace kLogs
 	{
 		class iLogger;
-		enum class LogLevel : unsigned short;
 		
 		class Logging
 		{
@@ -25,7 +24,8 @@ namespace klib
 			};
 			
 		public:
-			using LogQueue = std::deque<std::string>;
+			using LogEntries = std::map<std::uint64_t, LogEntry>;
+			using BannerEntries = std::map<std::uint64_t, BannerEntry>;
 
 		public:
 			Logging(const std::string& directory, const std::string& filename);
@@ -38,7 +38,7 @@ namespace klib
 			 * \note
 			 *		No logging calls will function properly until this is called.
 			 */
-			void OutputInitialized();
+			void OutputInitialized(const std::string_view& startLog);
 
 			/**
 			 * \brief
@@ -56,7 +56,7 @@ namespace klib
 			 * \note
 			 *		No logs less than this given level will be stored by the log system.
 			 */
-			void SetMinimumLoggingLevel(const LogLevel newMinLevel) noexcept;
+			void SetMinimumLoggingLevel(const LogEntry::LogLevel newMinLevel) noexcept;
 
 			/**
 			 * \brief
@@ -152,22 +152,22 @@ namespace klib
 			 *		Formats log message and level to the appropriate log message and then caches it
 			 * \param[in] msg
 			 *		Log message
-			 * \param lvl
+			 * \param entry
 			 *		Log level type
 			 * \param file
 			 * \param line
 			 */
-			void AddEntry(const std::string_view& msg, const LogLevel lvl = LogLevel::NORM, const char* file = "", const unsigned line = 0);
+			void AddEntry(const LogEntry& entry);
 
 			/**
 			 * \brief
 			 *		Formats the log banner to become the appropriate log banner message then caches it
-			 * \param[in] msg
+			 * \param[in] entry
 			 *		Log banner title
 			 * \param type
 			 *		The category/subject of the log banner
 			 */
-			void AddEntryBanner(const std::string_view msg, const std::string_view type);
+			void AddBanner(const BannerEntry& entry);
 
 			/**
 			 * \brief
@@ -176,15 +176,7 @@ namespace klib
 			 * \return
 			 *		String of the final log entry
 			*/
-			LogQueue::value_type GetLastCachedEntry();
-
-			/**
-			 * \brief
-			 *		Deletes a given number of logs entries last entered
-			 * \param numOfEntries
-			 *		Amount of entries to delete
-			*/
-			void ErasePreviousCacheEntries(const size_t numOfEntries);
+			std::string_view GetLastCachedEntry();
 
 			/**
 			 * \brief
@@ -201,58 +193,47 @@ namespace klib
 			void EnableConstantFlush(bool enable);
 
 		private:
-			void SetUp(const std::string& directory, const std::string& filename);
+			void Initialize(const std::string& directory, const std::string& filename);
 
 			/**
 			 * \brief
-			 *		Creates the log file with the cached log entries
+			 *		Open up logs
 			 */
-			void OutputLogToFile(const std::string_view& line);
-
-			/**
-			 * \brief
-			 *		Places the cached kLogs from the queue to a single string object
-			 * \return
-			 *		The cached string of all currently cached kLogs
-			 */
-			std::string GetFullCache();
-
-			/**
-			 * \brief
-			 *		Adds log message to the cache
-			 * \param logLine
-			 *		Full log message
-			 */
-			void AddToLogBuffer(const std::string_view& logLine);
-
-			/**
-			 * \brief
-			 *		Outputs log message to sub systems (i.e. console and output debug console)
-			 * \param[in] logLine
-			 *		STL string_view representing the log message
-			 * \param[in] lvl
-			 *		Log level
-			 */
-			void OutputToSubSystems(const std::string_view& logLine, const LogLevel lvl) const noexcept;
-
+			void Open();
+			
 			/**
 			 * \brief
 			 *		Outputs logs to file then closes it
 			 */
 			void Close();
 
+			/**
+			 * \brief
+			 *		Checks log level is above the minimum
+			 * \param lvl
+			 *		Log level of upcoming entry
+			 * \return
+			 *		TRUE if equal/above minimum log level
+			 */
+			bool Loggable(const LogEntry::LogLevel lvl) const;
+			
 		public:
 			static const char* kLogs_Empty;
 
 		protected:
-			LogQueue logEntryQueue; // Queue buffer to cache the logged messages
+			LogEntries logEntries; // Queue buffer to cache the logged messages
+			BannerEntries bannerEntries; // Queue buffer to cache the logged banner messages
 
-			LogLevel minimumLoggingLevel;
-			std::map<LoggerType, std::unique_ptr<iLogger>> loggers;
+			LogEntry::LogLevel minimumLoggingLevel;
+			std::unordered_map<LoggerType, std::unique_ptr<iLogger>> loggers;
 			std::string name;
 			bool isEnabled;
 			bool subSystemLoggingEnabled;
 			bool inCacheMode;
+			bool constantFlushing;
+
+
+			std::uint64_t logIndex;
 		};
 	}
 

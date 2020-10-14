@@ -2,7 +2,6 @@
 
 #include "kLogEntry.hpp"
 
-#include <deque>
 #include <string>
 
 namespace klib
@@ -15,9 +14,6 @@ namespace klib
 
 		class iLogger
 		{
-		protected:
-			using LogQueue = std::deque<std::string>;
-			
 		public:
 			virtual ~iLogger() = default;
 
@@ -29,7 +25,7 @@ namespace klib
 			 * \note
 			 *		No logging calls will function properly until this is called.
 			 */
-			virtual void OutputInitialized(const std::string& openingMsg) = 0;
+			virtual void OutputInitialized(const std::string_view& openingMsg) = 0;
 
 			/**
 			 * \brief
@@ -53,9 +49,7 @@ namespace klib
 			 * \param paddingCount
 			 *		number of padding elements
 			 */
-			virtual void AddEntryBanner(const LogEntry& entry, const std::string_view type,
-			                            const std::string frontPadding, const std::string& rearPadding, size_t
-			                            paddingCount) = 0;
+			virtual void AddBanner(const BannerEntry& entry) = 0;
 
 
 			/**

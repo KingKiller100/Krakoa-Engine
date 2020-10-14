@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "iLogger.hpp"
+#include <filesystem>
 #include <fstream>
 
 namespace klib
@@ -10,7 +11,7 @@ namespace klib
 		class FileLogger final : public iLogger
 		{
 		public:
-			FileLogger(const std::string& newName, const std::string& dir, const std::string& fName);
+			FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName);
 			~FileLogger() noexcept;
 
 			USE_RESULT std::string_view GetName() const override;
@@ -21,11 +22,12 @@ namespace klib
 
 			USE_RESULT std::string_view GetDirectory() const;
 			void SetDirectory(const std::string_view& newDir);
+
+			USE_RESULT std::string GetPath() const;
 			
-			void OutputInitialized(const std::string& openingMsg) override;
+			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry) override;
-			void AddEntryBanner(const LogEntry& entry, const std::string_view type, const std::string frontPadding, 
-				const std::string& backPadding, size_t paddingCount) override;
+			void AddBanner(const BannerEntry& entry) override;
 			bool Open() override;
 			void Close() override;
 

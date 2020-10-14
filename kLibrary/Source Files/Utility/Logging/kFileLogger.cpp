@@ -14,7 +14,7 @@ namespace klib
 	
 	namespace kLogs
 	{
-		FileLogger::FileLogger(const std::string& newName, const std::string& dir, const std::string& fName)
+		FileLogger::FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName)
 			: name(newName)
 			, directory(dir)
 			, filename(fName)
@@ -40,7 +40,9 @@ namespace klib
 
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
+			Close();
 			filename = newFilename;
+			Open();
 		}
 
 		std::string_view FileLogger::GetDirectory() const
@@ -50,10 +52,17 @@ namespace klib
 
 		void FileLogger::SetDirectory(const std::string_view& newDir)
 		{
+			Close();
 			directory = newDir;
+			Open();
 		}
 
-		void FileLogger::OutputInitialized(const std::string& openingMsg)
+		std::string FileLogger::GetPath() const
+		{
+			return directory + filename;
+		}
+
+		void FileLogger::OutputInitialized(const std::string_view& openingMsg)
 		{
 			const auto startLog =
 				"************************************************************************\n      File logger activated: "
@@ -70,7 +79,7 @@ namespace klib
 				//kLogs_LLevelMap.at(lvl),
 				entry.msg.data());
 
-			if (entry.lvl >= LogLevel::ERRR)
+			if (entry.lvl >= LogEntry::LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: %s
@@ -85,22 +94,21 @@ namespace klib
 			Flush(logLine);
 		}
 
-		void FileLogger::AddEntryBanner(const LogEntry& entry, const std::string_view type, 
-			const std::string frontPadding, const std::string& backPadding, size_t paddingCount)
+		void FileLogger::AddBanner(const BannerEntry& entry)
 		{
 			std::string front, back;
 
-			for (auto i = 0; i < paddingCount; ++i)
+			for (auto i = 0; i < entry.paddingCount; ++i)
 			{
-				front.append(frontPadding);
-				back.append(backPadding);
+				front.append(entry.frontPadding);
+				back.append(entry.backPadding);
 			}
 
-			auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
+			const auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
 			const auto bannerLine = ToString(format
 			                                 , entry.time.ToString().data()
 			                                 , name.data()
-			                                 , type.data()
+			                                 , entry.type.data()
 			                                 , entry.msg.data()
 			);
 
@@ -111,7 +119,7 @@ namespace klib
 		{
 			if (!logFileStream.is_open())
 			{
-				const auto path = directory + filename;
+				const auto path = GetPath();
 				CreateNewDirectories(directory.c_str());
 				logFileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
 			}

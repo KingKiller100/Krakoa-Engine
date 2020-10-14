@@ -18,7 +18,7 @@ namespace klib
 	
 	namespace kLogs
 	{		
-		static std::unordered_map<LogLevel, ConsoleColour> kLogs_ConsoleColourMap;
+		static std::unordered_map<LogEntry::LogLevel, ConsoleColour> kLogs_ConsoleColourMap;
 		
 		SystemLogger::SystemLogger(const std::string& newName)
 			: active(false)
@@ -33,16 +33,17 @@ namespace klib
 
 		void SystemLogger::InitializeConsoleColourMap()
 		{
+			using kLogs::LogEntry;
+			
 			if (!kLogs_ConsoleColourMap.empty())
 				return;
 
-			kLogs_ConsoleColourMap[LogLevel::BANR] = ConsoleColour::WHITE;
-			kLogs_ConsoleColourMap[LogLevel::DBUG] = ConsoleColour::AQUA_BLUE;
-			kLogs_ConsoleColourMap[LogLevel::NORM] = ConsoleColour::LIGHT_GREY;
-			kLogs_ConsoleColourMap[LogLevel::WARN] = ConsoleColour::YELLOW;
-			kLogs_ConsoleColourMap[LogLevel::INFO] = ConsoleColour::LIGHT_GREEN;
-			kLogs_ConsoleColourMap[LogLevel::ERRR] = ConsoleColour::SCARLET_RED;
-			kLogs_ConsoleColourMap[LogLevel::FATL] = ConsoleColour::RED_BG_WHITE_TEXT;
+			kLogs_ConsoleColourMap[LogEntry::LogLevel::DBUG] = ConsoleColour::AQUA_BLUE;
+			kLogs_ConsoleColourMap[LogEntry::LogLevel::NORM] = ConsoleColour::LIGHT_GREY;
+			kLogs_ConsoleColourMap[LogEntry::LogLevel::WARN] = ConsoleColour::YELLOW;
+			kLogs_ConsoleColourMap[LogEntry::LogLevel::INFO] = ConsoleColour::LIGHT_GREEN;
+			kLogs_ConsoleColourMap[LogEntry::LogLevel::ERRR] = ConsoleColour::SCARLET_RED;
+			kLogs_ConsoleColourMap[LogEntry::LogLevel::FATL] = ConsoleColour::RED_BG_WHITE_TEXT;
 		}
 
 		std::string_view SystemLogger::GetName() const
@@ -55,7 +56,7 @@ namespace klib
 			name = newName;
 		}
 
-		void SystemLogger::OutputInitialized(const std::string& openingMsg)
+		void SystemLogger::OutputInitialized(const std::string_view& openingMsg)
 		{
 			const auto format = "************************************************************************\n     {0} activated: "
 				+ openingMsg + "\n    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
@@ -75,7 +76,7 @@ namespace klib
 				static_cast<WORD>(entry.lvl),
 				entry.msg.data());
 
-			if (entry.lvl >= LogLevel::ERRR)
+			if (entry.lvl >= LogEntry::LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: %s
@@ -91,31 +92,30 @@ namespace klib
 			OutputToConsole(logLine);
 		}
 
-		void SystemLogger::AddEntryBanner(const LogEntry& entry, const std::string_view type,
-			const std::string frontPadding, const std::string& rearPadding, size_t paddingCount)
+		void SystemLogger::AddBanner(const BannerEntry& entry)
 		{
 			if (!active)
 				return;
 
 			std::string front, back;
 
-			for (auto i = 0; i < paddingCount; ++i)
+			for (auto i = 0; i < entry.paddingCount; ++i)
 			{
-				front.append(frontPadding);
-				back.append(rearPadding);
+				front.append(entry.frontPadding);
+				back.append(entry.backPadding);
 			}
 
 			const auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
 			auto bannerLine = ToString(format
 				, entry.time.ToString().data()
 				, name.data()
-				, type.data()
+				, entry.type.data()
 				, entry.msg.data()
 			);
 			
 			bannerLine.push_back('\n');
 
-			currentConsoleColour = kLogs_ConsoleColourMap.at(entry.lvl);
+			currentConsoleColour = ConsoleColour::WHITE;
 			OutputToConsole(bannerLine);
 		}
 

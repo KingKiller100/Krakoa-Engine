@@ -199,7 +199,7 @@ namespace klib {
 				return MakeStringFromData<CharType>(format, GetValue<CharType, T>(arg), GetValue<CharType, Ts>(argPack)...);
 			}
 
-			const std::basic_string<CharType> fmt(format);
+			std::basic_string<CharType> fmt(format);
 			
 			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { GetValuePtr<CharType, T>(arg), GetValuePtr<CharType, Ts>(argPack)... };
 
@@ -424,7 +424,8 @@ namespace klib {
 		template<class CharType, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
 		{
-			const std::basic_string<CharType> text = ToString(format, arg, argPack...);
+			const std::basic_string<CharType> fmt;
+			const std::basic_string<CharType> text = ToString(fmt, arg, argPack...);
 			return text;
 		}
 

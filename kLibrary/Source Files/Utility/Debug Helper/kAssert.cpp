@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "kAssert.hpp"
 
+#include "../File System/kFileSystem.hpp"
 #include "../Format/kFormatToString.hpp"
 #include "../Logging/kLogging_Class.hpp"
 
@@ -10,12 +11,12 @@ namespace klib::kDebug
 	AssertOnFailedConditionException::AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const unsigned line)
 		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [DETAILS]: %s.", exp.data(), msg.data()))
 	{
-		auto exceptionLog = kLogs::Logging();
+		const auto currentDir = kFileSystem::GetExeDirectory();
+		
+		auto exceptionLog = kLogs::Logging(currentDir, "Assert");
 		exceptionLog.SetName("ASSERT");
-		exceptionLog.ChangeFilename("Assert Condition Failed");
 		exceptionLog.ToggleSubSystemEnabled();
-		exceptionLog.SetMinimumLoggingLevel(kLogs::LLevel::FATL);
-		exceptionLog.AddEntry(report, kLogs::LLevel::FATL, file, line);
+		exceptionLog.AddEntry({report, kLogs::LogEntry::LogLevel::FATL, file, line, CalendarInfoSource::LOCAL});
 	}
 
 	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()

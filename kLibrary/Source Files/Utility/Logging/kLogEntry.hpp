@@ -10,29 +10,46 @@ namespace klib
 	
 	namespace kLogs
 	{
-		enum class LogLevel : unsigned short
+		struct EntryBase
 		{
-			BANR, // Log Banner
-			DBUG, // Debug
-			NORM, // Normal
-			INFO, // Informative
-			WARN, // Warning
-			ERRR, // Error
-			FATL  // Fatal
+			EntryBase(const std::string_view& message, CalendarInfoSource calendarInfoSource);
+
+			const Date date;
+			const Time time;
+			const std::string msg;
+		};
+
+		struct BannerEntry : public EntryBase
+		{
+			BannerEntry(const std::string& msg, CalendarInfoSource calendarInfoSource, const std::string& type
+				, const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
+
+			const std::string type;
+			const std::string frontPadding;
+			const std::string backPadding;
+			const std::uint16_t paddingCount;
 		};
 		
-		struct LogEntry
+		struct LogEntry : public EntryBase
 		{
+		public:
+			enum class LogLevel : unsigned short
+			{
+				DBUG, // Debug
+				NORM, // Normal
+				INFO, // Informative
+				WARN, // Warning
+				ERRR, // Error
+				FATL  // Fatal
+			};
+
 		public:
 			LogEntry(const std::string_view& message, const LogLevel level, const std::string_view& file, 
 				const std::uint32_t line, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
 
-			Date date;
-			Time time;
-			LogLevel lvl;
-			std::string msg;
-			std::string file;
-			std::uint32_t line;
+			const LogLevel lvl;
+			const std::string file;
+			const std::uint32_t line;
 		};
 	}
 }

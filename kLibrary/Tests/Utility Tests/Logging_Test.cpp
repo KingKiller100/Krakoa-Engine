@@ -85,7 +85,7 @@ namespace kTest::utility
 
 		testLogger->ResumeFileLogging();
 
-		testLogger->OutputToFatalFile("FATAL!", __FILE__, __LINE__);
+		testLogger->OutputToFatalFile("FATAL!", ,);
 
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("CHECK LOGGING FILE") != std::string::npos);

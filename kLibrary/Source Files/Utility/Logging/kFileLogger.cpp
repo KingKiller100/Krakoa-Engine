@@ -55,7 +55,6 @@ namespace klib
 
 		void FileLogger::OutputInitialized(const std::string& openingMsg)
 		{
-
 			const auto startLog =
 				"************************************************************************\n      File logger activated: "
 				+ openingMsg + "    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
@@ -97,7 +96,7 @@ namespace klib
 				back.append(backPadding);
 			}
 
-			auto format = "[%s] [%s] [%s]: " + front + "  %s" + back;
+			auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
 			const auto bannerLine = ToString(format
 			                                 , entry.time.ToString().data()
 			                                 , name.data()
@@ -124,7 +123,13 @@ namespace klib
 		{
 			if (logFileStream.is_open())
 			{
-				logFileStream.flush();
+				constexpr char endLogLine[]
+					= R"(
+************************************************************************
+                     File Logging Concluded                            
+************************************************************************
+)";
+				Flush(endLogLine);
 				logFileStream.close();
 			}
 		}

@@ -182,7 +182,7 @@ namespace klib {
 
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharType, typename T, typename ...Ts>
-		USE_RESULT constexpr std::basic_string<CharType> ToString(std::basic_string<CharType>& format, const T arg, const Ts ...argPack)
+		USE_RESULT constexpr std::basic_string<CharType> ToString(const std::basic_string<CharType>& format, const T arg, const Ts ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 
@@ -199,15 +199,17 @@ namespace klib {
 				return MakeStringFromData<CharType>(format, GetValue<CharType, T>(arg), GetValue<CharType, Ts>(argPack)...);
 			}
 
+			const std::basic_string<CharType> fmt(format);
+			
 			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { GetValuePtr<CharType, T>(arg), GetValuePtr<CharType, Ts>(argPack)... };
 
 			std::deque<std::pair<unsigned char, std::string>> identifiers;
-			for (auto i = format.find_first_of(openerSymbol); i != npos; i = format.find_first_of(openerSymbol, i + 1))
+			for (auto i = fmt.find_first_of(openerSymbol); i != npos; i = fmt.find_first_of(openerSymbol, i + 1))
 			{
-				if (format[i + 1] == openerSymbol ||
-					format[i + 1] == CharType(' ') ||
-					format[i + 1] == CharType('\t') ||
-					format[i + 1] == nullTerminator)
+				if (fmt[i + 1] == openerSymbol ||
+					fmt[i + 1] == CharType(' ') ||
+					fmt[i + 1] == CharType('\t') ||
+					fmt[i + 1] == nullTerminator)
 				{
 					i += 2;
 					continue;
@@ -215,8 +217,8 @@ namespace klib {
 
 				std::string objIndex;
 
-				const auto closePos = format.find_first_of(closerSymbol, i);
-				objIndex.append(kString::Convert<char>(format.substr(i + 1, closePos - 1).data()));
+				const auto closePos = fmt.find_first_of(closerSymbol, i);
+				objIndex.append(kString::Convert<char>(fmt.substr(i + 1, closePos - 1).data()));
 
 				const auto idx = static_cast<unsigned char>(std::stoi(objIndex.substr(0, objIndex.find_first_of(precisionSymbol))));
 				identifiers.push_back(std::make_pair(idx, elems[idx].type().name()));
@@ -227,8 +229,8 @@ namespace klib {
 			for (const auto& id : identifiers)
 			{
 				auto& val = elems[id.first];
-				const auto inputPos = format.find_first_of(closerSymbol) + 1;
-				auto currentSection = format.substr(0, inputPos);
+				const auto inputPos = fmt.find_first_of(closerSymbol) + 1;
+				auto currentSection = fmt.substr(0, inputPos);
 				auto replacePos = currentSection.find_first_of(openerSymbol);
 				auto colonPos = currentSection.find(precisionSymbol, replacePos);
 				auto padding = nullTerminator;
@@ -409,12 +411,12 @@ namespace klib {
 					throw std::runtime_error("Type entered not recognised/supported");
 				}
 
-				format.erase(0, inputPos);
+				fmt.erase(0, inputPos);
 				identifiers.pop_front();
 			}
 
-			if (!format.empty())
-				finalString.append(format);
+			if (!fmt.empty())
+				finalString.append(fmt);
 
 			return finalString;
 		}
@@ -422,8 +424,7 @@ namespace klib {
 		template<class CharType, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
 		{
-			std::basic_string<CharType> formatStr = format;
-			const std::basic_string<CharType> text = ToString(formatStr, arg, argPack...);
+			const std::basic_string<CharType> text = ToString(format, arg, argPack...);
 			return text;
 		}
 

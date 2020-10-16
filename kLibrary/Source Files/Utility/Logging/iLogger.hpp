@@ -8,9 +8,7 @@ namespace klib
 {
 	namespace kLogs
 	{
-
 		constexpr char kLogs_Empty[] = "*EMPTY*";
-
 
 		class iLogger
 		{

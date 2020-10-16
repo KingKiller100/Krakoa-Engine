@@ -1,5 +1,5 @@
 ﻿#include <pch.hpp>
-#include "kSystemLogger.hpp"
+#include "kConsoleLogger.hpp"
 
 
 #include <consoleapi2.h>
@@ -17,10 +17,10 @@ namespace klib
 	using namespace kFormat;
 	
 	namespace kLogs
-	{		
+	{
 		static std::unordered_map<LogEntry::LogLevel, ConsoleColour> kLogs_ConsoleColourMap;
 		
-		SystemLogger::SystemLogger(const std::string& newName)
+		ConsoleLogger::ConsoleLogger(const std::string& newName)
 			: active(false)
 			, name(newName)
 			, currentConsoleColour(ConsoleColour::WHITE)
@@ -28,10 +28,10 @@ namespace klib
 			InitializeConsoleColourMap();
 		}
 
-		SystemLogger::~SystemLogger() noexcept
+		ConsoleLogger::~ConsoleLogger() noexcept
 			= default;
 
-		void SystemLogger::InitializeConsoleColourMap()
+		void ConsoleLogger::InitializeConsoleColourMap()
 		{
 			using kLogs::LogEntry;
 			
@@ -46,26 +46,27 @@ namespace klib
 			kLogs_ConsoleColourMap[LogEntry::LogLevel::FATL] = ConsoleColour::RED_BG_WHITE_TEXT;
 		}
 
-		std::string_view SystemLogger::GetName() const
+		std::string_view ConsoleLogger::GetName() const
 		{
 			return name;
 		}
 
-		void SystemLogger::SetName(const std::string_view& newName)
+		void ConsoleLogger::SetName(const std::string_view& newName)
 		{
 			name = newName;
 		}
 
-		void SystemLogger::OutputInitialized(const std::string_view& openingMsg)
+		void ConsoleLogger::OutputInitialized(const std::string_view& openingMsg)
 		{
+			const std::string msg(openingMsg);
 			const auto format = "************************************************************************\n     {0} activated: "
-				+ openingMsg + "\n    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
+				+ msg + "\n    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
 				+ "\n************************************************************************\n\n";
 			const auto startLog = ToString(format, name);
 			OutputToConsole(startLog);
 		}
 
-		void SystemLogger::AddEntry(const LogEntry& entry)
+		void ConsoleLogger::AddEntry(const LogEntry& entry)
 		{
 			if (!active)
 				return;
@@ -92,7 +93,7 @@ namespace klib
 			OutputToConsole(logLine);
 		}
 
-		void SystemLogger::AddBanner(const BannerEntry& entry)
+		void ConsoleLogger::AddBanner(const BannerEntry& entry)
 		{
 			if (!active)
 				return;
@@ -119,13 +120,13 @@ namespace klib
 			OutputToConsole(bannerLine);
 		}
 
-		bool SystemLogger::Open()
+		bool ConsoleLogger::Open()
 		{
 			active = true;
 			return active;
 		}
 
-		void SystemLogger::Close()
+		void ConsoleLogger::Close()
 		{
 			const auto endLogLine
 				= ToString(R"(
@@ -139,7 +140,7 @@ namespace klib
 			active = false;
 		}
 
-		void SystemLogger::OutputToConsole(const std::string& msg)
+		void ConsoleLogger::OutputToConsole(const std::string& msg)
 		{
 #if defined(KLIB_DEBUG) || defined(_DEBUG)
 			OutputDebugStringA(msg.c_str());

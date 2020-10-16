@@ -33,15 +33,6 @@ namespace klib
 		struct LogEntry : public EntryBase
 		{
 		public:
-			enum class LogLevel : unsigned short
-			{
-				DBUG, // Debug
-				NORM, // Normal
-				INFO, // Informative
-				WARN, // Warning
-				ERRR, // Error
-				FATL  // Fatal
-			};
 
 		public:
 			LogEntry(const std::string_view& message, const LogLevel level, const std::string_view& file, 

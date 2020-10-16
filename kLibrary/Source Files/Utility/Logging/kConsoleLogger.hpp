@@ -26,11 +26,11 @@ namespace klib
 			RED_BG_WHITE_TEXT = 79
 		};
 		
-		class SystemLogger final : public iLogger
+		class ConsoleLogger final : public iLogger
 		{
 		public:
-			SystemLogger(const std::string& newName);
-			~SystemLogger() noexcept;
+			ConsoleLogger(const std::string& newName);
+			~ConsoleLogger() noexcept;
 			
 			USE_RESULT std::string_view GetName() const override;
 			void SetName(const std::string_view& newName) override;

@@ -5,7 +5,7 @@
 
 #include "kFileLogger.hpp"
 #include "kLogEntry.hpp"
-#include "kSystemLogger.hpp"
+#include "kConsoleLogger.hpp"
 
 #include "../../Maths/kAlgorithms.hpp"
 #include "../../Type Traits/ToImpl.hpp"
@@ -42,7 +42,7 @@ namespace klib::kLogs
 	void Logging::Initialize(const std::string& directory, const std::string& filename)
 	{
 		loggers[LoggerType::FILE].reset(new FileLogger(name, directory, filename));
-		loggers[LoggerType::SYSTEM].reset(new SystemLogger(name));
+		loggers[LoggerType::SYSTEM].reset(new ConsoleLogger(name));
 		
 		SetMinimumLoggingLevel(LogEntry::LogLevel::NORM);
 		ToggleLoggingEnabled();

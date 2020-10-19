@@ -4,6 +4,7 @@
 #include "../File System/kFileSystem.hpp"
 #include "../Format/kFormatToString.hpp"
 #include "../Logging/kLogging_Class.hpp"
+#include "../Logging/kLogLevel.hpp"
 
 #if defined(_DEBUG) ||  defined(KLIB_TEST)
 namespace klib::kDebug
@@ -16,7 +17,9 @@ namespace klib::kDebug
 		auto exceptionLog = kLogs::Logging(currentDir, "Assert");
 		exceptionLog.SetName("ASSERT");
 		exceptionLog.ToggleSubSystemEnabled();
-		exceptionLog.AddEntry({report, kLogs::LogEntry::LogLevel::FATL, file, line, CalendarInfoSource::LOCAL});
+		exceptionLog.AddEntry(
+			{report, file, line, kCalendar::CalendarInfoSource::LOCAL}
+			, kLogs::LogLevel::FATL);
 	}
 
 	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()

@@ -140,19 +140,20 @@ namespace klib::kLogs
 
 	void Logging::OutputToFatalFile(const LogEntry& entry)
 	{
-		AddEntry(entry);
+		AddEntry(entry,);
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const LogEntry& entry)
+	void Logging::AddEntry(const LogEntry& entry, const LogLevel lvl)
 	{
-		if (!isEnabled || !Loggable(entry.lvl)) 
+		if (!isEnabled || !Loggable(lvl)) 
 			return;
 
 		logEntries.insert(std::make_pair(logIndex++, entry));
 	}
 
-	void Logging::AddBanner(const BannerEntry& entry)
+	void Logging::AddBanner(const LogEntry& entry, const std::string& type
+		, const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount)
 	{
 		if (!isEnabled)
 			return;
@@ -179,7 +180,7 @@ namespace klib::kLogs
 			{
 				for (auto& logger : loggers)
 				{
-					logger.second->AddEntry(entry_iter->second);
+					logger.second->AddEntry(entry_iter->second,);
 				}
 			}
 			else
@@ -202,42 +203,28 @@ namespace klib::kLogs
 		}
 	}
 
-	bool Logging::Loggable(const LogEntry::LogLevel lvl) const
+	bool Logging::IsLoggable(const LogLevel lvl) const
 	{
 		return (lvl > minimumLoggingLevel);
 	}
 
 	std::string_view Logging::GetLastCachedEntry()
 	{
-		if (logEntries.empty() && bannerEntries.empty())
+		if (logEntries.empty())
 			return kLogs_Empty;
 
 		if (!inCacheMode)
 			return "CHECK LOGGING FILE: " + GetOutputPath();
 
-		const auto lastlog_iter = logEntries.crbegin();
-		const auto lastbanner_iter = bannerEntries.crbegin();
+		const auto& lastlog = logEntries.front();
 		
-		const auto lastIndex = kmaths::Max(lastlog_iter->first,
-			lastbanner_iter->first);
-
-		if (lastIndex == lastlog_iter->first)
-		{
-			return lastlog_iter->second.msg;
-		}
-		else
-		{
-			return lastbanner_iter->second.msg;
-		}
+		return lastlog.msg;
 	}
 
 	void Logging::ClearCache()
 	{
 		if (!logEntries.empty())
 			logEntries.clear();
-
-		if (bannerEntries.empty())
-			bannerEntries.clear();
 	}
 
 	void Logging::EnableConstantFlush(bool enable)

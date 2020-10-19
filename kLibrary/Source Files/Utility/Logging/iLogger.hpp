@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "kLogEntry.hpp"
+#include "kLogLevel.hpp"
 
 #include <string>
 
@@ -14,6 +15,22 @@ namespace klib
 		{
 		public:
 			virtual ~iLogger() = default;
+
+			/**
+			 * \brief
+			 *		Returns the name of the logger
+			 * \return
+			 *		Returns name as a string_view
+			 */
+			USE_RESULT virtual std::string_view GetName() const = 0;
+
+			/**
+			 * \brief
+			 *		Change name of the logger
+			 * \param[in] newName
+			 *		STL string representing a name
+			 */
+			virtual void SetName(const std::string_view & newName) = 0;
 
 			/**
 			 * \brief
@@ -31,7 +48,7 @@ namespace klib
 			 * \param[in] entry
 			 *		Log entry containing message, time, date, log level, file and file line
 			 */
-			virtual void AddEntry(const LogEntry& entry) = 0;
+			virtual void AddEntry(const LogEntry& entry, const LogLevel& lvl) = 0;
 
 			/**
 			 * \brief
@@ -42,13 +59,13 @@ namespace klib
 			 *		The category/subject of the log banner
 			 * \param frontPadding
 			 *		Padding before banner message
-			 * \param rearPadding
+			 * \param backPadding
 			 *		Padding after banner message
 			 * \param paddingCount
 			 *		number of padding elements
 			 */
-			virtual void AddBanner(const BannerEntry& entry) = 0;
-
+			virtual void AddBanner(const LogEntry& entry, const std::string_view& type
+			                       , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount) = 0;
 
 			/**
 			 * \brief
@@ -61,25 +78,9 @@ namespace klib
 			 *		Closes the log destination
 			 */
 			virtual void Close() = 0;
-
-			/**
-			 * \brief
-			 *		Returns the name of the logger
-			 * \return
-			 *		Returns name as a string_view
-			 */
-			USE_RESULT virtual std::string_view GetName() const = 0;
-
-			/**
-			 * \brief
-			 *		Change name of the logger
-			 * \param[in] newName
-			 *		STL string representing a name
-			 */
-			virtual void SetName(const std::string_view& newName) = 0;
 		};
-
 	}
+
 #ifdef KLIB_SHORTHAND_NAMESPACE
 	using namespace kLogs;
 #endif

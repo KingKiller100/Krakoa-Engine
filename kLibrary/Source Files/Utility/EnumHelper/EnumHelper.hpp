@@ -119,6 +119,11 @@ public:																					\
 		return static_cast<enum_t>(value);												\
 	}																					\
 																						\
+	[[nodiscard]] constexpr enum_t ToEnum() const										\
+	{																					\
+		return static_cast<enum_t>(value);												\
+	}																					\
+																						\
 	[[nodiscard]] constexpr underlying_t ToUnderlying() const							\
 	{																					\
 		return value;																	\

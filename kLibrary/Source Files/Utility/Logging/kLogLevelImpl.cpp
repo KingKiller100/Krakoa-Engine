@@ -1,22 +1,19 @@
 ﻿#include "pch.hpp"
-#include "kLogType.hpp"
+#include "kLogLevelImpl.hpp"
+#include "kLogLevel.hpp"
 
 namespace klib
 {
 	namespace kLogs
 	{
-		LogLevelImpl::LogLevelImpl(const LogLevel::_enum& lvl)
+		LogLevelImpl::LogLevelImpl(const LogLevel& lvl)
 		{
-			type = LogLevel::ToString(lvl);
+			type = lvl.ToString();
 		}
 
 		LogLevelImpl::LogLevelImpl(const std::string_view& type)
 			: type(type)
 		{}
-
-		LogLevelImpl::~LogLevelImpl()
-		{
-		}
 
 		std::string_view LogLevelImpl::GetLevel() const
 		{

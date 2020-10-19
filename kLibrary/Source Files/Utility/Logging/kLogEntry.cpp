@@ -4,32 +4,15 @@
 
 namespace klib
 {
-	using namespace kCalendar;
-
 	namespace kLogs
 	{
-		EntryBase::EntryBase(const std::string_view& message, CalendarInfoSource calendarInfoSource)
-			: date(calendarInfoSource)
-			, time(calendarInfoSource)
-			, msg(message)
-		{}
-
-		BannerEntry::BannerEntry(const std::string& msg, CalendarInfoSource calendarInfoSource, const std::string& type,
-			const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount)
-			: EntryBase(msg, calendarInfoSource)
-			, type(type)
-			, frontPadding(frontPadding)
-			, backPadding(backPadding)
-			, paddingCount(paddingCount)
-		{}
-
-		LogEntry::LogEntry(const std::string_view& message, const LogLevel level, const std::string_view& file,
+		LogEntry::LogEntry(const std::string_view& message, const std::string_view& file,
 		                   const std::uint32_t line, CalendarInfoSource calendarInfoSource)
-			: EntryBase(msg, calendarInfoSource)
-			, lvl(level)
+			: time (calendarInfoSource)
+			, date(calendarInfoSource)
+			, msg(message)
 			, file(file)
 			, line(line)
 		{}
-
 	}
 }

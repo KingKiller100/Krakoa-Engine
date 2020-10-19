@@ -49,13 +49,13 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("BANNER!") != std::string::npos);
 
-		testLogger->AddEntry(LLevel::DBUG);
+		testLogger->AddEntry(LLevel::DBUG,);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("DEBUG!") == std::string::npos);
 
 		testLogger->SetMinimumLoggingLevel(LLevel::DBUG);
 
-		testLogger->AddEntry(LLevel::DBUG);
+		testLogger->AddEntry(LLevel::DBUG,);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("DEBUG!") != std::string::npos);
 
@@ -63,11 +63,11 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("NORMAL!") != std::string::npos);
 
-		testLogger->AddEntry(LLevel::INFO);
+		testLogger->AddEntry(LLevel::INFO,);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("INFORMATIVE!") != std::string::npos);
 
-		testLogger->AddEntry(LLevel::WARN);
+		testLogger->AddEntry(LLevel::WARN,);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("WARN") != std::string::npos);
 

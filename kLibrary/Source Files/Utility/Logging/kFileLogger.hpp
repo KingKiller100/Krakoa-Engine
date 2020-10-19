@@ -8,6 +8,8 @@ namespace klib
 {
 	namespace kLogs
 	{
+		class LogLevel;
+
 		class FileLogger final : public iLogger
 		{
 		public:
@@ -26,13 +28,14 @@ namespace klib
 			USE_RESULT std::string GetPath() const;
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
-			void AddEntry(const LogEntry& entry) override;
-			void AddBanner(const BannerEntry& entry) override;
+			void AddEntry(const LogEntry& entry, const LogLevel& lvl) override;
+			void AddBanner(const LogEntry& entry, const std::string_view& type
+			               , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount) override;
 			bool Open() override;
 			void Close() override;
 
 		private:
-			void Flush(const std::string& msg);
+			void Flush(const std::string_view& msg);
 			
 		private:
 			std::string name;

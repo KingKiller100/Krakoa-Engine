@@ -36,14 +36,18 @@ namespace klib
 			void SetName(const std::string_view& newName) override;
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
-			void AddEntry(const LogEntry& entry) override;
-			void AddBanner(const BannerEntry& entry) override;
+			void AddEntry(const LogEntry& entry, const LogLevel& lvl) override;
+			void AddBanner(const LogEntry& entry, const std::string_view& type
+			               , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount) override;
 			bool Open() override;
 			void Close() override;
 
 		private:
-			void OutputToConsole(const std::string& msg);
-			void InitializeConsoleColourMap();
+			void UpdateConsoleColour(const LogLevel lvl);
+
+			void Flush(const std::string_view& msg);
+			void OutputToDebugString(const std::string_view& msg);
+			void OutputToConsole(const std::string_view& msg);
 			
 		private:
 			bool active;

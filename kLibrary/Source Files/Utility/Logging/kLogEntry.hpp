@@ -6,41 +6,24 @@
 
 namespace klib
 {
-	using namespace kCalendar;
-	
 	namespace kLogs
-	{
-		struct EntryBase
+	{		
+		using namespace kCalendar;
+	
+		struct LogEntry
 		{
-			EntryBase(const std::string_view& message, CalendarInfoSource calendarInfoSource);
-
-			const Date date;
-			const Time time;
-			const std::string msg;
-		};
-
-		struct BannerEntry : public EntryBase
-		{
-			BannerEntry(const std::string& msg, CalendarInfoSource calendarInfoSource, const std::string& type
-				, const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
-
-			const std::string type;
-			const std::string frontPadding;
-			const std::string backPadding;
-			const std::uint16_t paddingCount;
-		};
-		
-		struct LogEntry : public EntryBase
-		{
-		public:
-
-		public:
-			LogEntry(const std::string_view& message, const LogLevel level, const std::string_view& file, 
+			LogEntry(const std::string_view& message, const std::string_view& file, 
 				const std::uint32_t line, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
 
-			const LogLevel lvl;
+			const Time time;
+			const Date date;
+			const std::string msg;
 			const std::string file;
 			const std::uint32_t line;
 		};
 	}
+
+#ifdef KLIB_SHORTHAND_NAMESPACE
+		using namespace kLogs;
+#endif
 }

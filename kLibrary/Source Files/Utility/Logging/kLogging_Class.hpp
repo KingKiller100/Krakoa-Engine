@@ -5,8 +5,10 @@
 #include "../../HelperMacros.hpp"
 
 #include <unordered_map>
-#include <map>
+#include <deque>
 #include <string>
+
+#include "kLogLevel.hpp"
 
 
 namespace klib
@@ -24,8 +26,7 @@ namespace klib
 			};
 			
 		public:
-			using LogEntries = std::map<std::uint64_t, LogEntry>;
-			using BannerEntries = std::map<std::uint64_t, BannerEntry>;
+			using LogEntries = std::deque<LogEntry>;
 
 		public:
 			Logging(const std::string& directory, const std::string& filename);
@@ -56,7 +57,7 @@ namespace klib
 			 * \note
 			 *		No logs less than this given level will be stored by the log system.
 			 */
-			void SetMinimumLoggingLevel(const LogEntry::LogLevel newMinLevel) noexcept;
+			void SetMinimumLoggingLevel(const LogLevel newMinLevel) noexcept;
 
 			/**
 			 * \brief
@@ -157,7 +158,7 @@ namespace klib
 			 * \param file
 			 * \param line
 			 */
-			void AddEntry(const LogEntry& entry);
+			void AddEntry(const LogEntry& entry, const LogLevel lvl);
 
 			/**
 			 * \brief
@@ -166,8 +167,12 @@ namespace klib
 			 *		Log banner title
 			 * \param type
 			 *		The category/subject of the log banner
+			 * \param frontPadding
+			 * \param backPadding
+			 * \param paddingCount
 			 */
-			void AddBanner(const BannerEntry& entry);
+			void AddBanner(const LogEntry& entry, const std::string& type
+				, const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
 
 			/**
 			 * \brief
@@ -215,25 +220,21 @@ namespace klib
 			 * \return
 			 *		TRUE if equal/above minimum log level
 			 */
-			bool Loggable(const LogEntry::LogLevel lvl) const;
+			bool IsLoggable(const LogLevel lvl) const;
 			
 		public:
 			static const char* kLogs_Empty;
 
 		protected:
 			LogEntries logEntries; // Queue buffer to cache the logged messages
-			BannerEntries bannerEntries; // Queue buffer to cache the logged banner messages
 
-			LogEntry::LogLevel minimumLoggingLevel;
+			LogLevel minimumLoggingLevel;
 			std::unordered_map<LoggerType, std::unique_ptr<iLogger>> loggers;
 			std::string name;
 			bool isEnabled;
 			bool subSystemLoggingEnabled;
 			bool inCacheMode;
 			bool constantFlushing;
-
-
-			std::uint64_t logIndex;
 		};
 	}
 

@@ -64,22 +64,24 @@ namespace klib
 
 		void FileLogger::OutputInitialized(const std::string_view& openingMsg)
 		{
-			const auto startLog =
-				"************************************************************************\n      File logger activated: "
-				+ openingMsg + "    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText()
-				+ "\n************************************************************************\n\n";
+			const std::string padding = "************************************************************************\n";
+			std::string startLog = padding + "      File logger activated: ";
+			startLog += openingMsg;
+			startLog += "    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText();
+			startLog += "\n" + padding +"\n";
 			Flush(startLog);
 		}
 
-		void FileLogger::AddEntry(const LogEntry& entry)
+		void FileLogger::AddEntry(const LogEntry& entry, const LogLevel& lvl)
 		{
+			const auto timeStr = entry.time.ToString();
 			auto logLine = ToString("[%s] [%s] [%s]:  %s",
-				entry.time.ToString().data(),
+				timeStr.data(),
 				name.data(),
-				//kLogs_LLevelMap.at(lvl),
+				lvl.ToString().data(),
 				entry.msg.data());
 
-			if (entry.lvl >= LogEntry::LogLevel::ERRR)
+			if (lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: %s
@@ -94,21 +96,22 @@ namespace klib
 			Flush(logLine);
 		}
 
-		void FileLogger::AddBanner(const BannerEntry& entry)
+		void FileLogger::AddBanner(const LogEntry& entry, const std::string_view& type
+		                           , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount)
 		{
 			std::string front, back;
 
-			for (auto i = 0; i < entry.paddingCount; ++i)
+			for (auto i = 0; i < paddingCount; ++i)
 			{
-				front.append(entry.frontPadding);
-				back.append(entry.backPadding);
+				front.append(frontPadding);
+				back.append(backPadding);
 			}
 
 			const auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
 			const auto bannerLine = ToString(format
 			                                 , entry.time.ToString().data()
 			                                 , name.data()
-			                                 , entry.type.data()
+			                                 , type.data()
 			                                 , entry.msg.data()
 			);
 
@@ -131,18 +134,19 @@ namespace klib
 		{
 			if (logFileStream.is_open())
 			{
-				constexpr char endLogLine[]
-					= R"(
-************************************************************************
-                     File Logging Concluded                            
-************************************************************************
-)";
-				Flush(endLogLine);
+				const std::string padding(72, '*');
+				static constexpr char msg[]
+					= "                     File Logging Concluded                            ";
+
+				Flush(padding);
+				Flush(msg);
+				Flush(padding);
+
 				logFileStream.close();
 			}
 		}
 
-		void FileLogger::Flush(const std::string& msg)
+		void FileLogger::Flush(const std::string_view& msg)
 		{
 			logFileStream << msg;
 			logFileStream.flush();

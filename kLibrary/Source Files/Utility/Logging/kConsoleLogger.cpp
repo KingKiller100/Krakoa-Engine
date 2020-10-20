@@ -52,7 +52,7 @@ namespace klib
 				currentConsoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
 				break;
 			default: 
-				throw std::runtime_error("Unknown log level");
+				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: " + std::string(lvl.ToString()));
 			}
 		}
 

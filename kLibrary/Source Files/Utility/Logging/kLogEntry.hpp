@@ -4,6 +4,8 @@
 #include <string>
 #include <cstdint>
 
+#include "kLogLevel.hpp"
+
 namespace klib
 {
 	namespace kLogs
@@ -12,12 +14,13 @@ namespace klib
 	
 		struct LogEntry
 		{
-			LogEntry(const std::string_view& message, const std::string_view& file, 
+			LogEntry(const std::string_view& message, const LogLevel lvl, const std::string_view& file, 
 				const std::uint32_t line, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
 
 			const Time time;
 			const Date date;
-			const std::string msg;
+			const LogLevel lvl;
+			std::string msg;
 			const std::string file;
 			const std::uint32_t line;
 		};

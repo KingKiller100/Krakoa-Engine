@@ -19,7 +19,7 @@ namespace klib::kDebug
 		exceptionLog.ToggleSubSystemEnabled();
 		exceptionLog.AddEntry(
 			{report, file, line, kCalendar::CalendarInfoSource::LOCAL}
-			, kLogs::LogLevel::FATL);
+		);
 	}
 
 	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()

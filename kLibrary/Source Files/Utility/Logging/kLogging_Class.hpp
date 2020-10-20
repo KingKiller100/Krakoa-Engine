@@ -158,21 +158,21 @@ namespace klib
 			 * \param file
 			 * \param line
 			 */
-			void AddEntry(const LogEntry& entry, const LogLevel lvl);
+			void AddEntry(const LogEntry& entry);
 
 			/**
 			 * \brief
 			 *		Formats the log banner to become the appropriate log banner message then caches it
 			 * \param[in] entry
 			 *		Log banner title
-			 * \param type
+			 * \param desc
 			 *		The category/subject of the log banner
 			 * \param frontPadding
 			 * \param backPadding
 			 * \param paddingCount
 			 */
-			void AddBanner(const LogEntry& entry, const std::string& type
-				, const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
+			void AddBanner(LogEntry& entry, const std::string& desc
+			               , const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
 
 			/**
 			 * \brief

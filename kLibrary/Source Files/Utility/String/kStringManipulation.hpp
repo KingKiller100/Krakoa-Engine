@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kStringTypes.hpp"
+#include "../../Type Traits/String.hpp"
 
 #include <algorithm>
 #include <vector>

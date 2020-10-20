@@ -11,13 +11,12 @@ namespace klib
 			type = lvl.ToString();
 		}
 
-		LogLevelImpl::LogLevelImpl(const std::string_view& type)
+		LogLevelImpl::LogLevelImpl(const std::string_view& type, const std::string_view frontPad,
+			const std::string_view rearPad)
 			: type(type)
-		{}
-
-		std::string_view LogLevelImpl::GetLevel() const
+			, frontPadding(frontPad)
+			, rearPadding(rearPad)
 		{
-			return type;
 		}
 	}
 }

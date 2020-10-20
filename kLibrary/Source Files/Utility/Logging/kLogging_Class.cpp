@@ -22,20 +22,19 @@ namespace klib::kLogs
 	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
 
 	Logging::Logging(const std::string& directory, const std::string& filename)
-		: minimumLoggingLevel(LogEntry::LogLevel::NORM),
+		: minimumLoggingLevel(LogLevel::NORM),
 		name("logger"),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
 		inCacheMode(false),
-		constantFlushing(false),
-		logIndex(0)
+		constantFlushing(false)
 	{
 		Initialize(filename, directory);
 	}
 
 	Logging::~Logging()
 	{
-		if (!logEntries.empty() || !bannerEntries.empty())
+		if (!logEntries.empty())
 			FinalOutput();
 	}
 
@@ -44,7 +43,7 @@ namespace klib::kLogs
 		loggers[LoggerType::FILE].reset(new FileLogger(name, directory, filename));
 		loggers[LoggerType::SYSTEM].reset(new ConsoleLogger(name));
 		
-		SetMinimumLoggingLevel(LogEntry::LogLevel::NORM);
+		SetMinimumLoggingLevel(LogLevel::NORM);
 		ToggleLoggingEnabled();
 	}
 
@@ -84,7 +83,7 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::SetMinimumLoggingLevel(const LogEntry::LogLevel newMin) noexcept
+	void Logging::SetMinimumLoggingLevel(const LogLevel newMin) noexcept
 	{
 		minimumLoggingLevel = newMin;
 	}
@@ -140,25 +139,41 @@ namespace klib::kLogs
 
 	void Logging::OutputToFatalFile(const LogEntry& entry)
 	{
-		AddEntry(entry,);
+		AddEntry(entry);
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const LogEntry& entry, const LogLevel lvl)
+	void Logging::AddEntry(const LogEntry& entry)
 	{
-		if (!isEnabled || !Loggable(lvl)) 
+		if (!isEnabled || !IsLoggable(entry.lvl)) 
 			return;
 
-		logEntries.insert(std::make_pair(logIndex++, entry));
+		logEntries.push_back(entry);
 	}
 
-	void Logging::AddBanner(const LogEntry& entry, const std::string& type
-		, const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount)
+	void Logging::AddBanner(LogEntry& entry, const std::string& desc
+	                        , const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount)
 	{
 		if (!isEnabled)
 			return;
 
-		bannerEntries.insert(std::make_pair(logIndex++, entry));
+		std::string front, back;
+
+		for (auto i = 0; i < paddingCount; ++i)
+		{
+			front.append(frontPadding);
+			back.append(backPadding);
+		}
+		
+		constexpr  auto format = "[%s]: %s %s %s";
+		entry.msg = ToString(format,
+			desc.c_str()
+			, frontPadding.c_str()
+			, entry.msg.c_str()
+			, backPadding.c_str()
+		);
+		
+		logEntries.push_back(entry);
 	}
 
 	void Logging::FinalOutput()

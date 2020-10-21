@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "iLogger.hpp"
+#include "iLogDestination.hpp"
 
 namespace klib
 {
@@ -26,7 +26,7 @@ namespace klib
 			RED_BG_WHITE_TEXT = 79
 		};
 		
-		class ConsoleLogger final : public iLogger
+		class ConsoleLogger final : public iLogDestination
 		{
 		public:
 			ConsoleLogger(const std::string& newName);
@@ -36,9 +36,9 @@ namespace klib
 			void SetName(const std::string_view& newName) override;
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
-			void AddEntry(const LogEntry& entry, const LogLevel& lvl) override;
-			void AddBanner(const LogEntry& entry, const std::string_view& type
-			               , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount) override;
+			void AddEntry(const LogEntry& entry, const LogDescriptor& desc) override;
+			void AddBanner(const LogEntry& entry, const LogDescriptor& desc
+			) override;
 			bool Open() override;
 			void Close() override;
 

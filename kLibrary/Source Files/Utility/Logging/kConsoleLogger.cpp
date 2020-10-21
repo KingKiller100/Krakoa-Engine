@@ -1,15 +1,12 @@
 ﻿#include <pch.hpp>
-#include "kConsoleLogger.hpp"
 #include "kLogLevel.hpp"
-
-
-#include <consoleapi2.h>
-#include <processenv.h>
-#include <winbase.h>
+#include "kConsoleLogger.hpp"
+#include "kLogDescriptor.hpp"
 
 #include "../Calendar/kCalendar.hpp"
 #include "../Format/kFormatToString.hpp"
 
+#include <Windows.h>
 #include <unordered_map>
 
 
@@ -78,7 +75,7 @@ namespace klib
 			OutputToConsole(startLog);
 		}
 
-		void ConsoleLogger::AddEntry(const LogEntry& entry, const LogLevel& lvl)
+		void ConsoleLogger::AddEntry(const LogEntry& entry, const LogDescriptor& desc)
 		{
 			if (!active)
 				return;
@@ -86,10 +83,10 @@ namespace klib
 			auto logLine = ToString("[%s] [%s] [%d]:  %s",
 				entry.time.ToString().data(),
 				name.data(),
-				lvl.ToUnderlying(),
+				desc.lvl.ToUnderlying(),
 				entry.msg.data());
 
-			if (lvl >= LogLevel::ERRR)
+			if (desc.lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: %s
@@ -101,29 +98,21 @@ namespace klib
 
 			logLine.push_back('\n');
 			
-			UpdateConsoleColour(lvl);
+			UpdateConsoleColour(desc.lvl);
 			Flush(logLine);
 		}
 
-		void ConsoleLogger::AddBanner(const LogEntry& entry, const std::string_view& type
-		                              , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount)
+		void ConsoleLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
 		{
 			if (!active)
 				return;
 
-			std::string front, back;
+			constexpr char format[] = "[%s] [%s] [%s]: %s";
 
-			for (auto i = 0; i < paddingCount; ++i)
-			{
-				front.append(frontPadding);
-				back.append(backPadding);
-			}
-
-			const auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
 			auto bannerLine = ToString(format
 				, entry.time.ToString().data()
 				, name.data()
-				, type.data()
+				, desc.info.data()
 				, entry.msg.data()
 			);
 			

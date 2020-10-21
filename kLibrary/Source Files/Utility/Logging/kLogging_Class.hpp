@@ -1,21 +1,20 @@
 #pragma once
 
+#include "kLogLevel.hpp"
 #include "kLogEntry.hpp"
-
-#include "../../HelperMacros.hpp"
+#include "kLogDescriptor.hpp"
 
 #include <unordered_map>
 #include <deque>
 #include <string>
 
-#include "kLogLevel.hpp"
 
 
 namespace klib
 {
 	namespace kLogs
 	{
-		class iLogger;
+		class iLogDestination;
 		
 		class Logging
 		{
@@ -26,20 +25,23 @@ namespace klib
 			};
 			
 		public:
-			using LogEntries = std::deque<LogEntry>;
+			using LogEntries = std::deque<std::pair<LogEntry, LogDescriptor>>;
 
 		public:
-			Logging(const std::string& directory, const std::string& filename);
+			Logging(const std::string_view& directory, const std::string_view& filename
+				, const std::string_view& name = "Logger");
 
 			~Logging();
 
 			/**
 			 * \brief
 			 *		Initializes logging system
+			 * \param[in] openingMsg
+			 *		Opening message
 			 * \note
 			 *		No logging calls will function properly until this is called.
 			 */
-			void OutputInitialized(const std::string_view& startLog);
+			void OutputInitialized(const std::string_view& openingMsg);
 
 			/**
 			 * \brief
@@ -142,23 +144,19 @@ namespace klib
 			 * \brief
 			 *		Outputs all cached kLogs up to file with the logged error message at the end
 			 * \param entry
-			 *		Error message
-			 * \param file
-			 * \param line
+			 *		Error information
 			 */
 			void OutputToFatalFile(const LogEntry& entry);
 
 			/**
 			 * \brief
 			 *		Formats log message and level to the appropriate log message and then caches it
-			 * \param[in] msg
-			 *		Log message
-			 * \param entry
+			 * \param[in] lvl
 			 *		Log level type
-			 * \param file
-			 * \param line
+			 * \param entry
+			 *		Log entry details
 			 */
-			void AddEntry(const LogEntry& entry);
+			void AddEntry(const LogLevel lvl, const LogEntry& entry);
 
 			/**
 			 * \brief
@@ -196,9 +194,19 @@ namespace klib
 			 *		Boolean representing whether to constantly flush or not
 			 */
 			void EnableConstantFlush(bool enable);
+			
+			/**
+			 * \brief
+			 *		If in cache mode, erases a maximum of count many of the most recent logs
+			 * \param count
+			 *		Number of logs to erase
+			 * \return
+			 *		TRUE if managed to erase any, FALSE if nothing erased or not in cache mode
+			 */
+			bool ErasePrevious(size_t count);
 
 		private:
-			void Initialize(const std::string& directory, const std::string& filename);
+			void Initialize(const std::string_view& directory, const std::string_view& filename);
 
 			/**
 			 * \brief
@@ -226,14 +234,14 @@ namespace klib
 			static const char* kLogs_Empty;
 
 		protected:
-			LogEntries logEntries; // Queue buffer to cache the logged messages
+			LogEntries entriesQ; // Queue buffer to cache the logged messages
 
 			LogLevel minimumLoggingLevel;
-			std::unordered_map<LoggerType, std::unique_ptr<iLogger>> loggers;
+			std::unordered_map<LoggerType, std::unique_ptr<iLogDestination>> destinations;
 			std::string name;
 			bool isEnabled;
 			bool subSystemLoggingEnabled;
-			bool inCacheMode;
+			bool cacheMode;
 			bool constantFlushing;
 		};
 	}

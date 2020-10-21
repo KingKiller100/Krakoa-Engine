@@ -6,11 +6,10 @@ namespace klib
 {
 	namespace kLogs
 	{
-		LogEntry::LogEntry(const std::string_view& message, const LogLevel lvl, const std::string_view& file,
-		                   const std::uint32_t line, CalendarInfoSource calendarInfoSource)
+		LogEntry::LogEntry(const char* message, const char* file,
+		                   const std::int64_t line, CalendarInfoSource calendarInfoSource)
 			: time (calendarInfoSource)
 			, date(calendarInfoSource)
-			, lvl(lvl)
 			, msg(message)
 			, file(file)
 			, line(line)

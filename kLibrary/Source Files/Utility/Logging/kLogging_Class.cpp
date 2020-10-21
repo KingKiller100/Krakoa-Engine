@@ -1,15 +1,14 @@
 #include "pch.hpp"
 #include "kLogging_Class.hpp"
 
-#include "../Format/kFormatToString.hpp"
 
-#include "kFileLogger.hpp"
 #include "kLogEntry.hpp"
+#include "kFileLogger.hpp"
 #include "kConsoleLogger.hpp"
+#include "kLogDescriptor.hpp"
 
-#include "../../Maths/kAlgorithms.hpp"
 #include "../../Type Traits/ToImpl.hpp"
-
+#include "../Format/kFormatToString.hpp"
 #include "../File System/kFileSystem.hpp"
 
 
@@ -21,27 +20,28 @@ namespace klib::kLogs
 
 	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
 
-	Logging::Logging(const std::string& directory, const std::string& filename)
+	Logging::Logging(const std::string_view& directory, const std::string_view& filename
+		, const std::string_view& name)
 		: minimumLoggingLevel(LogLevel::NORM),
-		name("logger"),
+		name(name),
 		isEnabled(false),
 		subSystemLoggingEnabled(false),
-		inCacheMode(false),
+		cacheMode(false),
 		constantFlushing(false)
 	{
-		Initialize(filename, directory);
+		Initialize(directory, filename);
 	}
 
 	Logging::~Logging()
 	{
-		if (!logEntries.empty())
+		if (!entriesQ.empty())
 			FinalOutput();
 	}
 
-	void Logging::Initialize(const std::string& directory, const std::string& filename)
+	void Logging::Initialize(const std::string_view& directory, const std::string_view& filename)
 	{
-		loggers[LoggerType::FILE].reset(new FileLogger(name, directory, filename));
-		loggers[LoggerType::SYSTEM].reset(new ConsoleLogger(name));
+		destinations[LoggerType::FILE].reset(new FileLogger(name, directory, filename));
+		destinations[LoggerType::SYSTEM].reset(new ConsoleLogger(name));
 		
 		SetMinimumLoggingLevel(LogLevel::NORM);
 		ToggleLoggingEnabled();
@@ -49,7 +49,7 @@ namespace klib::kLogs
 
 	void Logging::Open()
 	{
-		for (auto& logger : loggers)
+		for (auto& logger : destinations)
 		{
 			if (!logger.second->Open())
 			{
@@ -59,13 +59,13 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::OutputInitialized(const std::string_view& startLog)
+	void Logging::OutputInitialized(const std::string_view& openingMsg)
 	{
 		if (!isEnabled) { return; }
 		
-		for (auto& logger : loggers)
+		for (auto& logger : destinations)
 		{
-			logger.second->OutputInitialized(startLog);
+			logger.second->OutputInitialized(openingMsg);
 		}
 	}
 
@@ -77,7 +77,7 @@ namespace klib::kLogs
 	void Logging::SetName(const std::string_view& newName)
 	{
 		name = newName;
-		for (const auto& logger : loggers)
+		for (const auto& logger : destinations)
 		{
 			logger.second->SetName(newName);
 		}
@@ -95,7 +95,7 @@ namespace klib::kLogs
 
 	constexpr void Logging::SetCacheMode(const bool enable) noexcept
 	{
-		inCacheMode = enable;
+		cacheMode = enable;
 	}
 
 	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & fname)
@@ -106,20 +106,20 @@ namespace klib::kLogs
 
 	void Logging::ChangeOutputDirectory(const std::string_view dir)
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(loggers.at(LoggerType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LoggerType::FILE));
 		fLogger.SetDirectory(dir);
 	}
 
 	void Logging::ChangeFilename(const std::string_view newFileName)
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(loggers.at(LoggerType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LoggerType::FILE));
 		const auto filename = kFileSystem::AppendFileExtension(newFileName.data(), ".log");
 		fLogger.SetFileName(filename);
 	}
 	
 	std::string Logging::GetOutputPath() const
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(loggers.at(LoggerType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LoggerType::FILE));
 		const auto path = fLogger.GetPath();
 		return path;
 	}
@@ -139,16 +139,16 @@ namespace klib::kLogs
 
 	void Logging::OutputToFatalFile(const LogEntry& entry)
 	{
-		AddEntry(entry);
+		AddEntry(LogLevel::FATL,entry);
 		FinalOutput();
 	}
 
-	void Logging::AddEntry(const LogEntry& entry)
+	void Logging::AddEntry(const LogLevel lvl, const LogEntry& entry)
 	{
-		if (!isEnabled || !IsLoggable(entry.lvl)) 
+		if (!isEnabled || !IsLoggable(lvl)) 
 			return;
 
-		logEntries.push_back(entry);
+		entriesQ.push_back(std::make_pair(entry, LogDescriptor(lvl)));
 	}
 
 	void Logging::AddBanner(LogEntry& entry, const std::string& desc
@@ -157,6 +157,8 @@ namespace klib::kLogs
 		if (!isEnabled)
 			return;
 
+		static constexpr  auto format = "%s %s %s";
+		
 		std::string front, back;
 
 		for (auto i = 0; i < paddingCount; ++i)
@@ -165,15 +167,13 @@ namespace klib::kLogs
 			back.append(backPadding);
 		}
 		
-		constexpr  auto format = "[%s]: %s %s %s";
-		entry.msg = ToString(format,
-			desc.c_str()
+		entry.msg = ToString(format
 			, frontPadding.c_str()
 			, entry.msg.c_str()
 			, backPadding.c_str()
 		);
 		
-		logEntries.push_back(entry);
+		entriesQ.emplace_back(entry, LogDescriptor(desc));
 	}
 
 	void Logging::FinalOutput()
@@ -184,35 +184,29 @@ namespace klib::kLogs
 
 	void Logging::Flush()
 	{
-		const auto start = kmaths::Min(
-			logEntries.begin()->first
-			, bannerEntries.begin()->first
-			);
-
-		for (auto i = start; i < logIndex; ++i)
+		while (!entriesQ.empty())
 		{
-			if (auto entry_iter = logEntries.find(i); entry_iter != logEntries.end())
+			for (auto& logger : destinations)
 			{
-				for (auto& logger : loggers)
-				{
-					logger.second->AddEntry(entry_iter->second,);
-				}
+				const auto& details = entriesQ.front();
+				const auto& entry = details.first;
+				const auto& desc = details.second;
+
+				if (desc.lvl == LogLevel::BANR)
+					logger.second->AddBanner(entry, desc);
+				else
+					logger.second->AddEntry(entry, desc);
+
 			}
-			else
-			{
-				const auto& entry = bannerEntries.at(i);
-				
-				for (auto& logger : loggers)
-				{
-					logger.second->AddBanner(entry);
-				}
-			}
+			entriesQ.pop_front();
 		}
 	}
 
 	void Logging::Close()
 	{
-		for (auto& logger : loggers)
+		Flush();
+		
+		for (auto& logger : destinations)
 		{
 			logger.second->Close();
 		}
@@ -225,25 +219,41 @@ namespace klib::kLogs
 
 	std::string_view Logging::GetLastCachedEntry()
 	{
-		if (logEntries.empty())
+		if (entriesQ.empty())
 			return kLogs_Empty;
 
-		if (!inCacheMode)
+		if (!cacheMode)
 			return "CHECK LOGGING FILE: " + GetOutputPath();
 
-		const auto& lastlog = logEntries.front();
+		const auto& lastlog = entriesQ.front();
 		
-		return lastlog.msg;
+		return lastlog.first.msg;
 	}
 
 	void Logging::ClearCache()
 	{
-		if (!logEntries.empty())
-			logEntries.clear();
+		if (!entriesQ.empty())
+			entriesQ.clear();
 	}
 
 	void Logging::EnableConstantFlush(bool enable)
 	{
 		constantFlushing = enable;
+	}
+
+	bool Logging::ErasePrevious(size_t count)
+	{
+		if (cacheMode)
+			return false;
+
+		if (entriesQ.empty())
+			return false;
+
+		do 
+		{
+			entriesQ.pop_front();
+		} while (count-- != 0);
+
+		return true;
 	}
 }

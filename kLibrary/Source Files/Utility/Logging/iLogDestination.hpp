@@ -9,12 +9,13 @@ namespace klib
 {
 	namespace kLogs
 	{
+		class LogDescriptor;
 		constexpr char kLogs_Empty[] = "*EMPTY*";
 
-		class iLogger
+		class iLogDestination
 		{
 		public:
-			virtual ~iLogger() = default;
+			virtual ~iLogDestination() = default;
 
 			/**
 			 * \brief
@@ -47,25 +48,20 @@ namespace klib
 			 *		Formats log message and level to the appropriate log message and then caches it
 			 * \param[in] entry
 			 *		Log entry containing message, time, date, log level, file and file line
+			 * \param desc
+			 *		The category/subject of the log banner
 			 */
-			virtual void AddEntry(const LogEntry& entry, const LogLevel& lvl) = 0;
+			virtual void AddEntry(const LogEntry& entry, const LogDescriptor& desc) = 0;
 
 			/**
 			 * \brief
 			 *		Formats the log banner to become the appropriate log banner message then caches it
 			 * \param[in] entry
 			 *		Log banner title
-			 * \param type
+			 * \param desc
 			 *		The category/subject of the log banner
-			 * \param frontPadding
-			 *		Padding before banner message
-			 * \param backPadding
-			 *		Padding after banner message
-			 * \param paddingCount
-			 *		number of padding elements
 			 */
-			virtual void AddBanner(const LogEntry& entry, const std::string_view& type
-			                       , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount) = 0;
+			virtual void AddBanner(const LogEntry& entry, const LogDescriptor& desc) = 0;
 
 			/**
 			 * \brief

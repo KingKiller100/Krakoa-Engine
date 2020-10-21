@@ -1,6 +1,9 @@
 ﻿#include <pch.hpp>
 #include "kFileLogger.hpp"
 
+#include "kLogDescriptor.hpp"
+
+
 #include "../Calendar/kCalendar.hpp"
 #include "../Format/kFormatToString.hpp"
 #include "../File System/kFileSystem.hpp"
@@ -17,7 +20,7 @@ namespace klib
 		FileLogger::FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName)
 			: name(newName)
 			, directory(dir)
-			, filename(fName)
+			, filename(AppendFileExtension(fName, ".log"))
 		{}
 
 		FileLogger::~FileLogger() noexcept
@@ -72,16 +75,16 @@ namespace klib
 			Flush(startLog);
 		}
 
-		void FileLogger::AddEntry(const LogEntry& entry, const LogLevel& lvl)
+		void FileLogger::AddEntry(const LogEntry& entry, const LogDescriptor& desc)
 		{
 			const auto timeStr = entry.time.ToString();
 			auto logLine = ToString("[%s] [%s] [%s]:  %s",
 				timeStr.data(),
 				name.data(),
-				lvl.ToString().data(),
+				desc.info.data(),
 				entry.msg.data());
 
-			if (lvl >= LogLevel::ERRR)
+			if (desc.lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: %s
@@ -96,22 +99,14 @@ namespace klib
 			Flush(logLine);
 		}
 
-		void FileLogger::AddBanner(const LogEntry& entry, const std::string_view& type
-		                           , const std::string_view& frontPadding, const std::string_view& backPadding, const std::uint16_t paddingCount)
+		void FileLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
 		{
-			std::string front, back;
+			constexpr char format[] = "[%s] [%s] [%s]: %s";
 
-			for (auto i = 0; i < paddingCount; ++i)
-			{
-				front.append(frontPadding);
-				back.append(backPadding);
-			}
-
-			const auto format = "[%s] [%s] [%s]: " + front + " %s" + back;
 			const auto bannerLine = ToString(format
 			                                 , entry.time.ToString().data()
 			                                 , name.data()
-			                                 , type.data()
+			                                 , desc.info.data()
 			                                 , entry.msg.data()
 			);
 

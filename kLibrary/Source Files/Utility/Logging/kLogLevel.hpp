@@ -10,13 +10,13 @@ namespace klib
 	namespace kLogs
 	{		
 		ENUM_CLASS(LogLevel, std::uint8_t,
-			BANR, // Debug
 			DBUG, // Debug
 			NORM, // Normal
 			INFO, // Informative
 			WARN, // Warning
 			ERRR, // Error
-			FATL  // Fatal
+			FATL,  // Fatal
+			BANR // Banner
 		);
 
 	}

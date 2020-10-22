@@ -1,11 +1,12 @@
 #include "pch.hpp"
-#include "kLogging_Class.hpp"
+#include "kLogging.hpp"
 
 
 #include "kLogEntry.hpp"
 #include "kFileLogger.hpp"
 #include "kConsoleLogger.hpp"
 #include "kLogDescriptor.hpp"
+#include "iLogDestination.hpp"
 
 #include "../../Type Traits/ToImpl.hpp"
 #include "../Format/kFormatToString.hpp"
@@ -20,12 +21,11 @@ namespace klib::kLogs
 
 	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
 
-	Logging::Logging(const std::string_view& directory, const std::string_view& filename
-		, const std::string_view& name)
+	Logging::Logging(const std::string_view& directory, const std::string_view& filename, const std::string_view& name)
 		: minimumLoggingLevel(LogLevel::NORM),
 		name(name),
 		isEnabled(false),
-		subSystemLoggingEnabled(false),
+		consoleLoggingEnabled(false),
 		cacheMode(false),
 		constantFlushing(false)
 	{
@@ -40,8 +40,8 @@ namespace klib::kLogs
 
 	void Logging::Initialize(const std::string_view& directory, const std::string_view& filename)
 	{
-		destinations[LoggerType::FILE].reset(new FileLogger(name, directory, filename));
-		destinations[LoggerType::SYSTEM].reset(new ConsoleLogger(name));
+		destinations[DestionationType::FILE].reset(new FileLogger(name, directory, filename));
+		destinations[DestionationType::CONSOLE].reset(new ConsoleLogger(name));
 		
 		SetMinimumLoggingLevel(LogLevel::NORM);
 		ToggleLoggingEnabled();
@@ -49,11 +49,12 @@ namespace klib::kLogs
 
 	void Logging::Open()
 	{
-		for (auto& logger : destinations)
+		for (auto& dest : destinations)
 		{
-			if (!logger.second->Open())
+			if (!dest.second->Open())
 			{
-				const auto errMsg = ToString("Unable to open log: {0}", name);
+				const auto destType = DestionationType::PrettyType(dest.first);
+				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destType);
 				throw std::runtime_error(errMsg);
 			}
 		}
@@ -63,9 +64,9 @@ namespace klib::kLogs
 	{
 		if (!isEnabled) { return; }
 		
-		for (auto& logger : destinations)
+		for (auto& dest : destinations)
 		{
-			logger.second->OutputInitialized(openingMsg);
+			dest.second->OutputInitialized(openingMsg);
 		}
 	}
 
@@ -77,9 +78,9 @@ namespace klib::kLogs
 	void Logging::SetName(const std::string_view& newName)
 	{
 		name = newName;
-		for (const auto& logger : destinations)
+		for (const auto& dest : destinations)
 		{
-			logger.second->SetName(newName);
+			dest.second->SetName(newName);
 		}
 	}
 
@@ -88,9 +89,9 @@ namespace klib::kLogs
 		minimumLoggingLevel = newMin;
 	}
 
-	void Logging::ToggleSubSystemEnabled() noexcept
+	void Logging::ToggleConsoleEnabled() noexcept
 	{
-		subSystemLoggingEnabled = !subSystemLoggingEnabled;
+		consoleLoggingEnabled = !consoleLoggingEnabled;
 	}
 
 	constexpr void Logging::SetCacheMode(const bool enable) noexcept
@@ -104,22 +105,22 @@ namespace klib::kLogs
 		ChangeFilename(fname);
 	}
 
-	void Logging::ChangeOutputDirectory(const std::string_view dir)
+	void Logging::ChangeOutputDirectory(const std::string_view& directory)
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LoggerType::FILE));
-		fLogger.SetDirectory(dir);
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
+		fLogger.SetDirectory(directory);
 	}
 
-	void Logging::ChangeFilename(const std::string_view newFileName)
+	void Logging::ChangeFilename(const std::string_view& fname)
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LoggerType::FILE));
-		const auto filename = kFileSystem::AppendFileExtension(newFileName.data(), ".log");
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
+		const auto filename = kFileSystem::AppendFileExtension(fname, ".log");
 		fLogger.SetFileName(filename);
 	}
 	
 	std::string Logging::GetOutputPath() const
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LoggerType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
 		const auto path = fLogger.GetPath();
 		return path;
 	}
@@ -151,13 +152,13 @@ namespace klib::kLogs
 		entriesQ.push_back(std::make_pair(entry, LogDescriptor(lvl)));
 	}
 
-	void Logging::AddBanner(LogEntry& entry, const std::string& desc
+	void Logging::AddBanner(const LogEntry& entry, const std::string& desc
 	                        , const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount)
 	{
 		if (!isEnabled)
 			return;
 
-		static constexpr  auto format = "%s %s %s";
+		constexpr  auto format = "%s %s %s";
 		
 		std::string front, back;
 
@@ -167,13 +168,13 @@ namespace klib::kLogs
 			back.append(backPadding);
 		}
 		
-		entry.msg = ToString(format
+		const auto msg = ToString(format
 			, frontPadding.c_str()
 			, entry.msg.c_str()
 			, backPadding.c_str()
 		);
 		
-		entriesQ.emplace_back(entry, LogDescriptor(desc));
+		entriesQ.emplace_back(LogEntry(msg.data(), entry.file.data(), entry.line), LogDescriptor(desc));
 	}
 
 	void Logging::FinalOutput()
@@ -186,17 +187,22 @@ namespace klib::kLogs
 	{
 		while (!entriesQ.empty())
 		{
-			for (auto& logger : destinations)
+			for (auto& dest : destinations)
 			{
+				if (!consoleLoggingEnabled)
+				{
+					if (dest.first == DestionationType::CONSOLE)
+						continue;
+				}
+				
 				const auto& details = entriesQ.front();
 				const auto& entry = details.first;
 				const auto& desc = details.second;
 
 				if (desc.lvl == LogLevel::BANR)
-					logger.second->AddBanner(entry, desc);
+					dest.second->AddBanner(entry, desc);
 				else
-					logger.second->AddEntry(entry, desc);
-
+					dest.second->AddEntry(entry, desc);
 			}
 			entriesQ.pop_front();
 		}
@@ -206,9 +212,9 @@ namespace klib::kLogs
 	{
 		Flush();
 		
-		for (auto& logger : destinations)
+		for (auto& dest : destinations)
 		{
-			logger.second->Close();
+			dest.second->Close();
 		}
 	}
 
@@ -225,9 +231,9 @@ namespace klib::kLogs
 		if (!cacheMode)
 			return "CHECK LOGGING FILE: " + GetOutputPath();
 
-		const auto& lastlog = entriesQ.front();
+		const auto& lastLog = entriesQ.front();
 		
-		return lastlog.first.msg;
+		return lastLog.first.msg;
 	}
 
 	void Logging::ClearCache()

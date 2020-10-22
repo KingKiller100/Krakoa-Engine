@@ -80,7 +80,7 @@ namespace klib::kEnum::secret::helper
 	}
 }
 
-// Prepends "(ignore_assign<_underlying>)" to each argument.
+// Prepends "(ignore_assign<underlying_t>)" to each argument.
 #define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::helper::ignore_assign<underlying_t>)e,
 #define IGNORE_ASSIGN(...) \
     IDENTITY(MAP(IGNORE_ASSIGN_SINGLE, __VA_ARGS__))
@@ -90,7 +90,7 @@ namespace klib::kEnum::secret::helper
 
 #define ENUM_CLASS(enumName, underlying, ...)											\
 																						\
-namespace data_##enumName																\
+struct data_##enumName																\
 {																						\
 	using underlying_t = underlying;													\
 	enum { __VA_ARGS__ };																\
@@ -101,7 +101,7 @@ namespace data_##enumName																\
 																						\
 	static constexpr std::array<std::string_view, size> raw_names =						\
 	{ IDENTITY(STRINGIZE(__VA_ARGS__)) };												\
-}																						\
+};																						\
 																						\
 class enumName																			\
 {																						\

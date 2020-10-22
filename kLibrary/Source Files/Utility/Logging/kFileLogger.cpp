@@ -44,7 +44,7 @@ namespace klib
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
 			Close();
-			filename = newFilename;
+			filename = AppendFileExtension(newFilename, ".log");
 			Open();
 		}
 

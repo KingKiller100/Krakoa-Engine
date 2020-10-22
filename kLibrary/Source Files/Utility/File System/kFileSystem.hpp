@@ -445,8 +445,19 @@ namespace klib::kFileSystem
 		return filename;
 	}
 
+	template<class Char = char>
+	USE_RESULT constexpr kString::StringWriter<Char> GetExtension(const kString::StringWriter<Char>& path)
+	{
+		kString::StringWriter<Char> extension = GetFileName<ONLY_TYPE(Char)>(path);
+		const size_t dotPos = extension.find_first_of('.');
+		const auto start = extension.cbegin();
+		const auto end = start + dotPos;
+		extension.erase(start, end);
+		return extension;
+	}
+
 	template<class CharType = char>
-	USE_RESULT constexpr kString::StringWriter<CharType> GetPath(const kString::StringWriter<CharType>& path)
+	USE_RESULT constexpr kString::StringWriter<CharType> GetParentPath(const kString::StringWriter<CharType>& path)
 	{
 		using Char = ONLY_TYPE(CharType);
 		auto parentPath = kString::Replace<ONLY_TYPE(Char)>(path, Char('/'), pathSeparator<Char>);
@@ -504,7 +515,7 @@ namespace klib::kFileSystem
 	{
 		using Char = ONLY_TYPE(CharType);
 
-		const auto path = GetPath(dir);
+		const auto path = GetParentPath(dir);
 
 		if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 		{

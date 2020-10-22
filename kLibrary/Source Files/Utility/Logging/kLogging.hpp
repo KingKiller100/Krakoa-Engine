@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <deque>
 #include <string>
-
+#include <cstdint>
 
 
 namespace klib
@@ -18,11 +18,9 @@ namespace klib
 		
 		class Logging
 		{
-			enum class LoggerType
-			{
-				FILE,
-				SYSTEM,
-			};
+			ENUM_CLASS(DestionationType , std::uint8_t
+				, FILE
+				, CONSOLE);
 			
 		public:
 			using LogEntries = std::deque<std::pair<LogEntry, LogDescriptor>>;
@@ -71,7 +69,7 @@ namespace klib
 			 * \brief
 			 *		Toggles if sub system outputting is enabled
 			 */
-			void ToggleSubSystemEnabled() noexcept;
+			void ToggleConsoleEnabled() noexcept;
 
 			/**
 			 * \brief
@@ -92,18 +90,18 @@ namespace klib
 			/**
 			 * \brief
 			 *		Change the directory the log file outputs to
-			 * \param dir
+			 * \param directory
 			 *		STL string view representing the new directory
 			 */
-			void ChangeOutputDirectory(const std::string_view dir);
+			void ChangeOutputDirectory(const std::string_view& directory);
 
 			/**
 			 * \brief
 			 *		Change name of log filename
-			 * \param newFileName
+			 * \param fname
 			 *		STL string view representing filename
 			 */
-			void ChangeFilename(const std::string_view newFileName);
+			void ChangeFilename(const std::string_view& fname);
 
 			/**
 			 * \brief
@@ -169,7 +167,7 @@ namespace klib
 			 * \param backPadding
 			 * \param paddingCount
 			 */
-			void AddBanner(LogEntry& entry, const std::string& desc
+			void AddBanner(const LogEntry& entry, const std::string& desc
 			               , const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
 
 			/**
@@ -237,10 +235,10 @@ namespace klib
 			LogEntries entriesQ; // Queue buffer to cache the logged messages
 
 			LogLevel minimumLoggingLevel;
-			std::unordered_map<LoggerType, std::unique_ptr<iLogDestination>> destinations;
+			std::unordered_map<DestionationType::enum_t, std::unique_ptr<iLogDestination>> destinations;
 			std::string name;
 			bool isEnabled;
-			bool subSystemLoggingEnabled;
+			bool consoleLoggingEnabled;
 			bool cacheMode;
 			bool constantFlushing;
 		};

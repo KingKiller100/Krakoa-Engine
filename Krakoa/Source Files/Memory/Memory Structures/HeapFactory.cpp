@@ -57,12 +57,11 @@ namespace memory
 			kFileSystem::RemoveFile(path);
 		}
 
-		MEM_INIT_LOGS();
-		MEM_SET_FLUSHING(true);
-		MEM_NORM(R"(Definitions:
+		MEM_INIT_LOGS(R"(Definitions:
 Object - "Structured piece of data in memory"
 Block -  "Allocated space of an object in memory including AllocHeader & end marker"
-)")
+)");
+		MEM_SET_FLUSHING(true);
 
 #ifdef KRAKOA_RELEASE
 MEM_TOGGLE_LOGGING(); // Disable memory logging

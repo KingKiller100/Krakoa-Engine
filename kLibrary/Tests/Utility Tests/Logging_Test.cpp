@@ -3,7 +3,7 @@
 
 
 #include "../../Source Files/Utility/File System/kFileSystem.hpp"
-#include "../../Source Files/Utility/Logging/kLogging_Class.hpp"
+#include "../../Source Files/Utility/Logging/kLogging.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -19,9 +19,7 @@ namespace kTest::utility
 	{
 		VERIFY(LogTest() == true);
 
-		klib::kFileSystem::RemoveFile(fullFilePathToDelete.data());
-		fullFilePathToDelete.erase(fullFilePathToDelete.find_last_of('\\'));
-		klib::kFileSystem::DeleteDirectory(fullFilePathToDelete.data());
+		std::filesystem::remove_all(fullFilePathToDelete);
 	}
 
 	bool LoggingTester::LogTest()
@@ -29,7 +27,7 @@ namespace kTest::utility
 		using namespace klib::kLogs;
 
 		const auto filename = "DiffFileName";
-		const auto dir = klib::kFileSystem::GetExeDirectory() + "Test Results\\Log Test Dir\\";
+		const auto dir = std::filesystem::current_path().string() + "\\Test Results\\Log Test Dir\\";
 
 		auto testLogger = std::make_unique<Logging>(dir, filename);
 
@@ -39,12 +37,13 @@ namespace kTest::utility
 
 		testLogger->SetCacheMode(true);
 
-		testLogger->AddBanner(LogEntry("Welcome to the Log Tests!")
-			, "Tests", "*", "*", 12);
+		testLogger->AddBanner("Welcome to the Log Tests!", "Tests", 
+			"*", "*", 12);
 		auto last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("Welcome to the Log Tests!") != std::string::npos);
 
-		testLogger->AddBanner(LogEntry("BANNER!"), "TEST", "*", "*", 12);
+		testLogger->AddBanner("BANNER!", "TEST",
+			"*", "*", 12);
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("BANNER!") != std::string::npos);
 
@@ -70,7 +69,8 @@ namespace kTest::utility
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("WARNING") != std::string::npos);
 
-		testLogger->AddEntry(LogLevel::ERRR, { "ERROR", __FILE__, __LINE__, CalendarInfoSource::LOCAL });
+		testLogger->AddEntry(LogLevel::ERRR, 
+			{ "ERROR", __FILE__, __LINE__, CalendarInfoSource::LOCAL });
 		last = testLogger->GetLastCachedEntry();
 		VERIFY(last.find("ERROR!") != std::string::npos);
 

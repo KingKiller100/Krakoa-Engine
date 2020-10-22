@@ -15,6 +15,8 @@ namespace klib
 		{
 			LogEntry(const char* message, const char* file = __FILE__, 
 				const std::int64_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
+			LogEntry(const std::string& message, const char* file = __FILE__, 
+				const std::int64_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
 
 			const Time time;
 			const Date date;

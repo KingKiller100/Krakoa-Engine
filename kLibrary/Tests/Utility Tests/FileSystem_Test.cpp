@@ -109,13 +109,15 @@ namespace kTest::utility
 		VERIFY(DeleteDirectory((exeDir + "Create Directories Test\\").c_str()) == true);
 
 		const auto path = exeDir + "Arbitrary Folder Name\\File.txt";
-		const auto folders = GetPath(path);
+		const auto folders = GetParentPath(path);
 		const auto file = GetFileName(path);
 		const auto fileNoExt = GetFileNameWithoutExtension(path);
+		const auto extension = GetExtension(path);
 
 		VERIFY(folders.compare(exeDir + "Arbitrary Folder Name") == 0);
 		VERIFY(file.compare("File.txt") == 0);
 		VERIFY(fileNoExt.compare("File") == 0);
+		VERIFY(extension == ".txt");
 
 		const auto fileTestExt = AppendFileExtension(fileNoExt, ".test");
 		VERIFY(fileTestExt.compare("File.test") == 0);

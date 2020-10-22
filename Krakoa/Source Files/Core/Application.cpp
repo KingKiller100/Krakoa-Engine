@@ -17,7 +17,7 @@
 
 #include <Utility/Debug Helper/kDebugger.hpp>
 #include <Utility/Calendar/kCalendar.hpp>
-#include <Utility/Logging/kLogging_Class.hpp>
+#include <Utility/Logging/kLogging.hpp>
 
 #include "Types/TypeToString.hpp"
 
@@ -37,7 +37,7 @@ namespace krakoa
 		KRK_INIT_LOGS();
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);
 		KRK_FATAL(!instance, "Instance of the application already exists!");
-		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY");
+		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY", "*", "*", 20);
 
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());

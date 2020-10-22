@@ -16,7 +16,7 @@ namespace krakoa::graphics
 	void Renderer::Initialize(ShaderLibrary& shaderLibrary)
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_BANNER("Rendering Architecture Info", "GRAPHICS");
+		KRK_BANNER("Rendering Architecture Info", "GRAPHICS", "*", "*", 20);
 		RenderCommand::Initialize();
 		Renderer2D::Initialize(shaderLibrary);
 	}

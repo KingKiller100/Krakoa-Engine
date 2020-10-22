@@ -42,8 +42,7 @@ namespace krakoa
 #define INFO(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_INFO, ::klib::kLogs::LogEntry(msg));
 #define WARN(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_WARN, ::klib::kLogs::LogEntry(msg));
 #define ERRR(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_ERRR, ::klib::kLogs::LogEntry(msg, __FILE__, __LINE__));
-#define BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::Logger::GetLogger().AddBanner(banner, category, frontPad, backPad, count);
-#define BANNER(banner, category)                                ::krakoa::Logger::GetLogger().AddEntryBanner(banner, category);
+#define BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::Logger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define LOG_SUSPEND()                                           ::krakoa::Logger::GetLogger().SuspendFileLogging();
 #define LOG_RESUME()                                            ::krakoa::Logger::GetLogger().ResumeFileLogging();
 #define LOG_END()                                               ::krakoa::Logger::GetLogger().FinalOutput();

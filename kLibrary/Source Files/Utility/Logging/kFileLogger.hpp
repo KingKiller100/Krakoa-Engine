@@ -29,20 +29,23 @@ namespace klib
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry, const LogDescriptor& desc) override;
-			void AddBanner(const LogEntry& entry, const LogDescriptor& desc
-			) override;
+			void AddBanner(const LogEntry& entry, const LogDescriptor& desc) override;
+
 			bool Open() override;
-			void Close() override;
+
+			bool IsOpen() override;
+
+			void Close(const bool outputClosingMsg) override;
 
 		private:
 			void Flush(const std::string_view& msg);
-			
+
 		private:
 			std::string name;
 
 			std::string directory;
 			std::string filename;
-			std::fstream logFileStream;
+			std::fstream fileStream;
 		};
 		
 	}

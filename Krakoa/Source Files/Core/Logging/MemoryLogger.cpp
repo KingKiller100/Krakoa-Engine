@@ -14,11 +14,13 @@ namespace memory
 		if (pMemoryLogger)
 			return;
 
-		const auto dir = klib::kFileSystem::GetExeDirectory() + "\\Logs";
+		std::string dir(klib::kFileSystem::GetExeDirectory());
+		dir += "Logs\\";
 		constexpr auto filename = "Memory";
 		constexpr auto name = filename;
 		
 		pMemoryLogger = std::make_unique<Logging>(dir, filename, name);
+		pMemoryLogger->ToggleConsoleEnabled();
 		pMemoryLogger->OutputInitialized(openingMsg);
 	}
 

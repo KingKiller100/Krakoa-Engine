@@ -43,7 +43,7 @@ namespace klib
 
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
-			Close();
+			Close(true);
 			filename = AppendFileExtension(newFilename, ".log");
 			Open();
 		}
@@ -55,7 +55,7 @@ namespace klib
 
 		void FileLogger::SetDirectory(const std::string_view& newDir)
 		{
-			Close();
+			Close(true);
 			directory = newDir;
 			Open();
 		}
@@ -67,16 +67,44 @@ namespace klib
 
 		void FileLogger::OutputInitialized(const std::string_view& openingMsg)
 		{
+			if (!IsOpen())
+			{
+				const auto msg = ToString("{0}: file logger not open", name);
+				std::cout << msg << std::endl;
+				throw std::runtime_error(msg);
+			}
+		
+
 			const std::string padding = "************************************************************************\n";
-			std::string startLog = padding + "      File logger activated: ";
+			std::string startLog = padding + "File logger activated: ";
 			startLog += openingMsg;
 			startLog += "    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText();
 			startLog += "\n" + padding +"\n";
 			Flush(startLog);
 		}
 
+		bool FileLogger::Open()
+		{
+			if (!IsOpen())
+			{
+				const auto path = GetPath();
+				CreateNewDirectories(directory.c_str());
+				fileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
+			}
+
+			return fileStream.good();
+		}
+
+		bool FileLogger::IsOpen()
+		{
+			return fileStream.is_open() && fileStream.good();
+		}
+
 		void FileLogger::AddEntry(const LogEntry& entry, const LogDescriptor& desc)
 		{
+			if (!IsOpen())
+				return;
+			
 			const auto timeStr = entry.time.ToString();
 			auto logLine = ToString("[%s] [%s] [%s]:  %s",
 				timeStr.data(),
@@ -101,6 +129,9 @@ namespace klib
 
 		void FileLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
 		{
+			if (!IsOpen())
+				return;
+			
 			constexpr char format[] = "[%s] [%s] [%s]: %s";
 
 			const auto bannerLine = ToString(format
@@ -113,21 +144,12 @@ namespace klib
 			Flush(bannerLine);
 		}
 
-		bool FileLogger::Open()
+		void FileLogger::Close(const bool outputClosingMsg)
 		{
-			if (!logFileStream.is_open())
-			{
-				const auto path = GetPath();
-				CreateNewDirectories(directory.c_str());
-				logFileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
-			}
+			if (!IsOpen())
+				return;
 
-			return logFileStream.good();
-		}
-
-		void FileLogger::Close()
-		{
-			if (logFileStream.is_open())
+			if (outputClosingMsg)
 			{
 				const std::string padding(72, '*');
 				static constexpr char msg[]
@@ -136,15 +158,18 @@ namespace klib
 				Flush(padding);
 				Flush(msg);
 				Flush(padding);
-
-				logFileStream.close();
 			}
+
+			fileStream.close();
 		}
 
 		void FileLogger::Flush(const std::string_view& msg)
 		{
-			logFileStream << msg;
-			logFileStream.flush();
+			if (!IsOpen())
+				return;
+			
+			fileStream << msg;
+			fileStream.flush();
 		}
 	}
 }

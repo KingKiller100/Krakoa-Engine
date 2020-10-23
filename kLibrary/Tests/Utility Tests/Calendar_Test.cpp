@@ -265,7 +265,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInTextFormat(Date::SHORT);
+			const auto result = GetDateInTextFormat(Date::SHORT, CalendarInfoSource::SYSTEM);
 			const auto expected = DateTextFunc(systemTime, Date::DateTextLength::SHORT);
 			VERIFY(result == expected);
 		}

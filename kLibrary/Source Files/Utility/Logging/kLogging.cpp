@@ -22,10 +22,9 @@ namespace klib::kLogs
 	const char* Logging::kLogs_Empty = "NO ENTRIES! CACHE IS EMPTY";
 
 	Logging::Logging(const std::string_view& directory, const std::string_view& filename, const std::string_view& name)
-		: minimumLoggingLevel(LogLevel::NORM),
+		: minimumLoggingLevel(LogLevel::DBUG),
 		name(name),
 		isEnabled(false),
-		consoleLoggingEnabled(false),
 		cacheMode(false),
 		constantFlushing(false)
 	{
@@ -43,8 +42,8 @@ namespace klib::kLogs
 		destinations[DestionationType::FILE].reset(new FileLogger(name, directory, filename));
 		destinations[DestionationType::CONSOLE].reset(new ConsoleLogger(name));
 		
-		SetMinimumLoggingLevel(LogLevel::NORM);
 		ToggleLoggingEnabled();
+		Open();
 	}
 
 	void Logging::Open()
@@ -66,7 +65,8 @@ namespace klib::kLogs
 		
 		for (auto& dest : destinations)
 		{
-			dest.second->OutputInitialized(openingMsg);
+			if (dest.second->IsOpen())
+				dest.second->OutputInitialized(openingMsg);
 		}
 	}
 
@@ -91,7 +91,15 @@ namespace klib::kLogs
 
 	void Logging::ToggleConsoleEnabled() noexcept
 	{
-		consoleLoggingEnabled = !consoleLoggingEnabled;
+		auto& consoleLogger = destinations.at(DestionationType::CONSOLE);
+		if (consoleLogger->IsOpen())
+		{
+			consoleLogger->Close(false);
+		}
+		else
+		{
+			consoleLogger->Open();
+		}
 	}
 
 	constexpr void Logging::SetCacheMode(const bool enable) noexcept
@@ -189,12 +197,6 @@ namespace klib::kLogs
 		{
 			for (auto& dest : destinations)
 			{
-				if (!consoleLoggingEnabled)
-				{
-					if (dest.first == DestionationType::CONSOLE)
-						continue;
-				}
-				
 				const auto& details = entriesQ.front();
 				const auto& entry = details.first;
 				const auto& desc = details.second;
@@ -214,7 +216,7 @@ namespace klib::kLogs
 		
 		for (auto& dest : destinations)
 		{
-			dest.second->Close();
+			dest.second->Close(true);
 		}
 	}
 
@@ -231,7 +233,7 @@ namespace klib::kLogs
 		if (!cacheMode)
 			return "CHECK LOGGING FILE: " + GetOutputPath();
 
-		const auto& lastLog = entriesQ.front();
+		const auto& lastLog = entriesQ.back();
 		
 		return lastLog.first.msg;
 	}

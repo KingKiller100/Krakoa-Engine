@@ -26,16 +26,16 @@ namespace kTest::performance
 	void PerformanceTestManager::Initialize()
 	{
 		using namespace klib;
-		path = kFileSystem::GetExeDirectory<char>() + "Speed Results\\";
-		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
+		path = kFileSystem::GetExeDirectory<char>();
+		path += "Speed Results\\";
+		const auto isMade = kFileSystem::CreateNewDirectory(path);
 
-		if (!kFileSystem::CheckDirectoryExists(path))
+		if (!kFileSystem::CheckDirectoryExists(path.string()))
 		{
 			throw std::runtime_error("Test Results path could not be created/found. Please check why!");
 		}
 
-		std::filesystem::path startPoint(path);
-		for (auto iter = std::filesystem::directory_iterator(startPoint);
+		for (auto iter = std::filesystem::directory_iterator(path);
 			iter != std::filesystem::directory_iterator();
 			++iter)
 		{
@@ -110,9 +110,9 @@ namespace kTest::performance
 	{
 		using namespace klib;
 		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
-		const auto fullPath = path + filename;
+		const auto fullPath = path / filename;
 
-		kFileSystem::OutputToFile(fullPath, results);
+		kFileSystem::OutputToFile(fullPath.string(), results);
 		results.clear();
 	}
 

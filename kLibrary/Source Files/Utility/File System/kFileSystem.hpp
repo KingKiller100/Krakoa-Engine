@@ -25,6 +25,9 @@ namespace klib::kFileSystem
 {
 	//Type aliases for STL containers --------------------------------------------------------
 
+	// STL filesystem::path
+	using Path = std::filesystem::path;
+	
 	// STL basic_ifstream
 	template<class Char>
 	using FileReader = std::basic_ifstream<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>>;
@@ -56,6 +59,11 @@ namespace klib::kFileSystem
 		return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
 	}
 
+	namespace secret::helper
+	{
+		inline bool update_cwd = true;
+	}
+	
 	/**
 	 * \brief
 	 *		Outputs a file to the specified directory and fills it with the given data
@@ -67,7 +75,8 @@ namespace klib::kFileSystem
 	 *		File mode i.e. out/append/binary/etc...
 	 */
 	template<class CharType = char>
-	constexpr bool OutputToFile(const kString::StringWriter<CharType>& fullFilePath, const kString::StringWriter<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
+	constexpr bool OutputToFile(const kString::StringWriter<CharType>& fullFilePath, 
+		const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
 		FileWriter<CharType> outFile(fullFilePath, mode);
 
@@ -78,7 +87,7 @@ namespace klib::kFileSystem
 			return true;
 		}
 		
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(KLIB_DEBUG)
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
 			const auto failMsg = fullFilePath + "Cannot create/open file ";
@@ -108,24 +117,9 @@ namespace klib::kFileSystem
 	 * \return
 	 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 	 */
-	template<class CharType = char>
-	constexpr bool CreateNewDirectory(const kString::StringReader<CharType>& directory) noexcept
+	inline bool CreateNewDirectory(const Path& directory) noexcept
 	{
-		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-		{
-			return _mkdir(directory.data()) == 0; // 0 == SUCCESS
-		}
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-		{
-			return _wmkdir(directory.data()) == 0; // 0 == SUCCESS
-		}
-		else
-		{
-			kString::StringWriter<wchar_t> temp;
-			for (auto& c : directory)
-				temp += CAST(wchar_t, c);
-			return CreateNewDirectory<wchar_t>(temp);
-		}
+		return _wmkdir(directory.wstring().data()) == 0; // 0 == SUCCESS
 	}
 
 	/**
@@ -140,30 +134,20 @@ namespace klib::kFileSystem
 	 *		The path must be completely unique otherwise the path will not be created. If parts of the
 	 *		path already exist, only
 	 */
-	template<class CharType = char>
-	constexpr bool CreateNewDirectories(const kString::StringReader<CharType>& directory)
+	inline bool CreateNewDirectories(const Path& directory)
 	{
-		using Char = ONLY_TYPE(CharType);
+		using Char = wchar_t;
+		
+		Path dir(directory);
 
-		kString::StringWriter<Char> dir(directory);
-
-		if (dir.back() != pathSeparator<Char>)
+		if (dir.wstring().back() != pathSeparator<Char>)
 			dir += pathSeparator<Char>; // Final suffix of directory char type must end with '\\'
 
-		bool isDirCreated = false;
-		auto pos = dir.find_first_of(pathSeparator<Char>) + 1;
+		bool isDirCreated = std::filesystem::create_directories(dir);
 
-		kString::StringWriter<Char> nextDirectory;
-
-		while (pos != 0)
-		{
-			isDirCreated = CreateNewDirectory<Char>(nextDirectory.c_str());
-
-			const auto nextForwardSlash = dir.find_first_of(pathSeparator<Char>, pos) + 1;
-			nextDirectory = dir.substr(0, nextForwardSlash);
-			pos = nextForwardSlash;
-		}
-
+		if (!isDirCreated)
+			isDirCreated = std::filesystem::exists(dir);
+		
 		return isDirCreated;
 	}
 
@@ -173,29 +157,14 @@ namespace klib::kFileSystem
 	*		Deletes file from system
 	* \tparam CharType
 	*		Char type i.e. must be char/wchar_t/u32char_t/etc...
-	* \param[in] fullFilePath
+	* \param[in] filepath
 	*		Full file path of the file to delete
 	* \return
 	*		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
 	*/
-	template<typename CharType = char>
-	constexpr bool RemoveFile(const kString::StringReader<CharType>& fullFilePath)
+	inline bool RemoveFile(const Path& filepath)
 	{
-		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-		{
-			return remove(fullFilePath.data()) == 0; // 0 == SUCCESS
-		}
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-		{
-			return _wremove(fullFilePath.data()) == 0; // 0 == SUCCESS
-		}
-		else
-		{
-			kString::StringWriter<wchar_t> temp;
-			for (auto& c : fullFilePath)
-				temp += CAST(wchar_t, c);
-			return RemoveFile<wchar_t>(temp);
-		}
+		return std::filesystem::remove(filepath);
 	}
 
 	/**
@@ -289,7 +258,7 @@ namespace klib::kFileSystem
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
 			struct stat info {};
-			const auto statResult = stat(directoryPath.data(), &info);
+			const auto statResult = stat(GetParentPath(directoryPath).data(), &info);
 
 			if (statResult != KLIB_FALSE)
 				return false;
@@ -345,13 +314,13 @@ namespace klib::kFileSystem
 	 *		Current working directory as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT kString::StringWriter<CharType>& GetCurrentWorkingDirectory()
+	USE_RESULT kString::StringReader<CharType> GetCurrentWorkingDirectory()
 	{
 		using Char = ONLY_TYPE(CharType);
 
 		static kString::StringWriter<Char> cwdFullPath;
 
-		if (cwdFullPath.empty())
+		if (cwdFullPath.empty() || secret::helper::update_cwd)
 		{
 			Char* cwdBuffer;
 			DWORD length(0);
@@ -379,9 +348,34 @@ namespace klib::kFileSystem
 			cwdFullPath += pathSeparator<Char>;
 
 			delete[] cwdBuffer;
+			secret::helper::update_cwd = false;
 		}
 
 		return cwdFullPath;
+	}
+
+	/**
+	 * \brief
+	 *		Changes the current working directory to a new path
+	 * \tparam CharType
+	 *		character type
+	 * \param path
+	 *		Path to change to as an STL string
+	 * \return
+	 *		TRUE if path is valid and change is attempted, FALSE if bad path
+	 */
+	template<class CharType = char>
+	bool SetCurrentWorkingDirectory(const kString::StringReader<CharType>& path)
+	{
+		if (!CheckDirectoryExists(path))
+			return false;
+
+		std::filesystem::current_path(path);
+
+		// Flag to notify current working directory to update
+		secret::helper::update_cwd = true; 
+		
+		return true;
 	}
 
 	/**
@@ -391,7 +385,7 @@ namespace klib::kFileSystem
 	 *		Current working directory as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT kString::StringWriter<CharType>& GetExeDirectory()
+	USE_RESULT kString::StringReader<CharType> GetExeDirectory()
 	{
 		using Char = ONLY_TYPE(CharType);
 
@@ -510,30 +504,10 @@ namespace klib::kFileSystem
 		return newFilename;
 	}
 
-	template<class CharType = char>
-	void SetAppDirectory(const kString::StringWriter<CharType>& dir)
-	{
-		using Char = ONLY_TYPE(CharType);
+#ifdef KLIB_SHORT_NAMESPACE
+	using namespace kFileSystem;
+#endif
 
-		const auto path = GetParentPath(dir);
-
-		if _CONSTEXPR_IF(std::is_same_v<Char, char>)
-		{
-			::SetCurrentDirectoryA(path.c_str());
-		}
-		else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
-		{
-			::SetCurrentDirectoryW(path.c_str());
-		}
-		else
-		{
-			kString::StringWriter<CharType> newPath;
-			for (auto& c : dir)
-				newPath += CAST(wchar_t, c);
-			SetAppDirectory<wchar_t>(newPath);
-		}
-
-	}
 }
 
 

@@ -14,7 +14,9 @@ namespace krakoa
 		if (pCoreLogger)
 			return;
 
-		const auto dir = klib::kFileSystem::GetExeDirectory() + "Logs\\";
+		std::string dir(klib::kFileSystem::GetExeDirectory());
+		dir += "Logs\\";
+		
 		constexpr auto name = "Krakoa";
 		constexpr auto filename = "Krakoa Engine";
 		

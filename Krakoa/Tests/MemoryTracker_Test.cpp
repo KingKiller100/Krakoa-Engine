@@ -49,7 +49,7 @@ namespace krakoa::tests
 		constexpr auto npos = std::string::npos;
 		constexpr auto testMemTypeSize = sizeof(TestMemType);
 		
-		MEM_INIT_LOGS();
+		MEM_INIT_LOGS("Test from MemoryTracker_Test");
 
 		for (auto i = 0; i < 5; ++i)
 			const auto* const lifeTime = new TestMemType(this);

@@ -65,6 +65,14 @@ namespace klib
 
 			/**
 			 * \brief
+			 *		Returns if destination is open
+			 * \return
+			 *		TRUE if open, FALSE if not unopened
+			 */
+			virtual bool IsOpen() = 0;
+			
+			/**
+			 * \brief
 			 *		Opens up the log destination
 			 */
 			virtual bool Open() = 0;
@@ -72,12 +80,14 @@ namespace klib
 			/**
 			 * \brief
 			 *		Closes the log destination
+			 *	\param[in] outputClosingMsg
+			 *			whether we should output the close message when closing
 			 */
-			virtual void Close() = 0;
+			virtual void Close(const bool outputClosingMsg) = 0;
 		};
 	}
 
-#ifdef KLIB_SHORTHAND_NAMESPACE
+#ifdef KLIB_SHORT_NAMESPACE
 	using namespace kLogs;
 #endif
 }

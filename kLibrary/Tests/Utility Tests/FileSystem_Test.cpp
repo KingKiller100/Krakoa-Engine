@@ -19,7 +19,7 @@ namespace kTest::utility
 	{
 		using namespace klib::kFileSystem;
 
-		const auto exeDir = GetExeDirectory<char>();
+		const auto exeDir = std::string(GetExeDirectory<char>());
 		const auto w_exeDir = GetExeDirectory<wchar_t>();
 		const auto exeDir16 = GetExeDirectory<char16_t>();
 		const auto exeDir32 = GetExeDirectory<char32_t>();
@@ -121,8 +121,10 @@ namespace kTest::utility
 
 		const auto fileTestExt = AppendFileExtension(fileNoExt, ".test");
 		VERIFY(fileTestExt.compare("File.test") == 0);
-		const auto fileTestExt2 = AppendFileExtension(fileNoExt, "test");
-		VERIFY(fileTestExt2.compare("File.test") == 0)
+		const auto fileTestExt2 = AppendFileExtension(fileNoExt, "win");
+		VERIFY(fileTestExt2 == "File.win");
+		const auto fileTestExt3 = AppendFileExtension(fileNoExt, "win.test");
+		VERIFY(fileTestExt3 == "File.win.test");
 	}
 }
 #endif

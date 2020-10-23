@@ -50,9 +50,10 @@ namespace memory
 	{
 		using namespace klib;
 
-		const auto path = kFileSystem::GetExeDirectory() + "Logs\\Memory.log";
+		std::filesystem::path path(kFileSystem::GetExeDirectory());
+		path /= "Logs\\Memory.log";
 
-		if (kFileSystem::CheckFileExists(path))
+		if (kFileSystem::CheckFileExists(path.string()))
 		{
 			kFileSystem::RemoveFile(path);
 		}

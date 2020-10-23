@@ -42,7 +42,19 @@ namespace kTest
 {
 	TesterManager::TesterManager(Token&)
 		: success(true)
-	{	}
+	{
+		const auto before = klib::kFileSystem::GetCurrentWorkingDirectory();
+		const auto ewd = klib::kFileSystem::GetExeDirectory();
+		const auto dirChanged = klib::kFileSystem::SetCurrentWorkingDirectory(ewd);
+
+		if (!dirChanged)
+			std::runtime_error("Failed to change current directory");
+		
+		const auto after =  klib::kFileSystem::GetCurrentWorkingDirectory();
+		
+		if (before == after)
+			std::runtime_error("no change occurred");
+	}
 
 	TesterManager::~TesterManager()
 		= default;
@@ -56,16 +68,16 @@ namespace kTest
 	{
 		using namespace klib;
 		
-		path = kFileSystem::GetExeDirectory<char>() + "Test Results\\";
-		const auto isMade = kFileSystem::CreateNewDirectory(path.c_str());
+		path = std::filesystem::current_path().string() + "\\Test Results\\";
+		const auto isMade = std::filesystem::create_directory(path.c_str());
 
-		if (!kFileSystem::CheckDirectoryExists(path))
+		if (!isMade && !std::filesystem::exists(path))
 		{
 			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
 		}
 
 		path += "Results.txt";
-		kFileSystem::RemoveFile(path.c_str());
+		std::filesystem::remove(path.c_str());
 	}
 
 	void TesterManager::InitializeMathsTests()

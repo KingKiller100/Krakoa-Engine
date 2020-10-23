@@ -15,7 +15,7 @@ namespace krakoa::graphics
 
 	iShader * iShader::Create(const std::string_view& name, const std::string_view & shaderFilePath)
 	{
-		const auto currentDir = klib::kFileSystem::GetExeDirectory();
+		const std::string currentDir(klib::kFileSystem::GetExeDirectory());
 
 		const auto formattedPath = klib::kString::Replace(shaderFilePath, '/', '\\');
 

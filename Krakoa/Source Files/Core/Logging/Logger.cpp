@@ -14,9 +14,10 @@ namespace krakoa
 		if (pClientLogger)
 			return;
 
-		const auto dir = klib::kFileSystem::GetExeDirectory() + "Logs\\";
+		std::string dir(klib::kFileSystem::GetExeDirectory());
+		dir += "Logs\\";
 		
-		pClientLogger = std::make_unique<Logging>(dir.c_str(), name, name);
+		pClientLogger = std::make_unique<Logging>(dir, name, name);
 		pClientLogger->OutputInitialized("Welcome client!");
 	}
 

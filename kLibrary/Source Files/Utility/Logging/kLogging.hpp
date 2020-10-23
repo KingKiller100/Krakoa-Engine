@@ -208,7 +208,7 @@ namespace klib
 
 			/**
 			 * \brief
-			 *		Open up logs
+			 *		Opens log destinations
 			 */
 			void Open();
 			
@@ -238,13 +238,12 @@ namespace klib
 			std::unordered_map<DestionationType::enum_t, std::unique_ptr<iLogDestination>> destinations;
 			std::string name;
 			bool isEnabled;
-			bool consoleLoggingEnabled;
 			bool cacheMode;
 			bool constantFlushing;
 		};
 	}
 
-#ifdef KLIB_SHORTHAND_NAMESPACE
+#ifdef KLIB_SHORT_NAMESPACE
 	using namespace kLogs;
 #endif
 }

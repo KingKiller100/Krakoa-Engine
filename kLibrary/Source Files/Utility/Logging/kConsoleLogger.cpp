@@ -13,7 +13,7 @@
 namespace klib
 {
 	using namespace kFormat;
-	
+
 	namespace kLogs
 	{
 		ConsoleLogger::ConsoleLogger(const std::string& newName)
@@ -30,25 +30,25 @@ namespace klib
 
 			switch (lvl.ToEnum())
 			{
-			case LogLevel::DBUG: 
+			case LogLevel::DBUG:
 				currentConsoleColour = ConsoleColour::AQUA_BLUE;
 				break;
 			case LogLevel::NORM:
 				currentConsoleColour = ConsoleColour::LIGHT_GREY;
 				break;
-			case LogLevel::INFO: 
+			case LogLevel::INFO:
 				currentConsoleColour = ConsoleColour::LIGHT_GREEN;
 				break;
-			case LogLevel::WARN: 
+			case LogLevel::WARN:
 				currentConsoleColour = ConsoleColour::YELLOW;
-					break;
-			case LogLevel::ERRR: 
+				break;
+			case LogLevel::ERRR:
 				currentConsoleColour = ConsoleColour::SCARLET_RED;
 				break;
-			case LogLevel::FATL: 
+			case LogLevel::FATL:
 				currentConsoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
 				break;
-			default: 
+			default:
 				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: " + std::string(lvl.ToString()));
 			}
 		}
@@ -65,19 +65,29 @@ namespace klib
 
 		void ConsoleLogger::OutputInitialized(const std::string_view& openingMsg)
 		{
+			if (!IsOpen())
+				return;
+
+			constexpr char newLine[] = "\n";
 			const std::string msg(openingMsg);
-			const std::string padding = "************************************************************************\n";
-			auto format = padding + "     {0} activated: ";
+			const std::string padding(73, '*');
+			const std::string prefixSpaces(19, ' ');
+			const auto date = GetDateInTextFormat(Date::DateTextLength::SHORT);
+			const auto time = GetTimeText();
+			
+			std::string format = newLine + padding + newLine;
+			format += prefixSpaces + "{0} - ";
 			format += openingMsg;
-			format += "\n    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText();
-			format += "\n" + padding + "\n";
-			const auto startLog = ToString(format, name);
-			OutputToConsole(startLog);
+			format += newLine + prefixSpaces + date + "    " + time;
+			format += newLine + padding + newLine;
+			const auto opener = ToString(format, name);
+
+			Flush(opener);
 		}
 
 		void ConsoleLogger::AddEntry(const LogEntry& entry, const LogDescriptor& desc)
 		{
-			if (!active)
+			if (!IsOpen())
 				return;
 
 			auto logLine = ToString("[%s] [%s] [%d]:  %s",
@@ -97,14 +107,14 @@ namespace klib
 			}
 
 			logLine.push_back('\n');
-			
+
 			UpdateConsoleColour(desc.lvl);
 			Flush(logLine);
 		}
 
 		void ConsoleLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
 		{
-			if (!active)
+			if (!IsOpen())
 				return;
 
 			constexpr char format[] = "[%s] [%s] [%s]: %s";
@@ -115,7 +125,7 @@ namespace klib
 				, desc.info.data()
 				, entry.msg.data()
 			);
-			
+
 			bannerLine.push_back('\n');
 
 			Flush(bannerLine);
@@ -127,22 +137,36 @@ namespace klib
 			return active;
 		}
 
-		void ConsoleLogger::Close()
+		bool ConsoleLogger::IsOpen()
 		{
-			const auto endLogLine
-				= ToString(R"(
-************************************************************************
-               {0} Console Logger Concluded                            
-************************************************************************
+			return active;
+		}
+
+		void ConsoleLogger::Close(const bool outputClosingMsg)
+		{
+			if (outputClosingMsg)
+			{
+				const std::string padding(72, '*');
+				const auto msg
+					= ToString(R"(
+               {0}: Console Logger Concluded                            
 )"
-,  name
+, name
 );
-			OutputToConsole(endLogLine);
+
+				Flush(padding);
+				Flush(msg);
+				Flush(padding);
+			}
+
 			active = false;
 		}
 
 		void ConsoleLogger::Flush(const std::string_view& msg)
 		{
+			if (!active)
+				return;
+
 			OutputToConsole(msg);
 			OutputToDebugString(msg);
 		}

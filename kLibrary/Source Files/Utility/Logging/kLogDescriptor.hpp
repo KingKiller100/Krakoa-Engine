@@ -18,7 +18,7 @@ namespace klib
 		};
 	}
 
-#ifdef KLIB_SHORTHAND_NAMESPACE
+#ifdef KLIB_SHORT_NAMESPACE
 	using namespace kLogs;
 #endif
 }

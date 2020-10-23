@@ -1,7 +1,9 @@
 ﻿#pragma once
 
+
 #include "../../Source Files/Testing/Tester.hpp"
 
+#include <filesystem>
 #include <string>
 #include <unordered_set>
 
@@ -39,7 +41,7 @@ namespace kTest::performance
 	private:
 		std::unordered_set<PerformanceTestBase*> tests;
 		std::string results;
-		std::string path;
+		std::filesystem::path path;
 	};
 }
 #endif

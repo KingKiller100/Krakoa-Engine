@@ -31,9 +31,9 @@ namespace kTest::utility
 
 		auto testLogger = std::make_unique<Logging>(dir, filename);
 
-		testLogger->SuspendFileLogging();
-
 		testLogger->OutputInitialized("Welcome to logging test");
+
+		testLogger->SuspendFileLogging();
 
 		testLogger->SetCacheMode(true);
 

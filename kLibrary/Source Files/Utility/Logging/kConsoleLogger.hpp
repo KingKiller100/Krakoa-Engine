@@ -37,10 +37,13 @@ namespace klib
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry, const LogDescriptor& desc) override;
-			void AddBanner(const LogEntry& entry, const LogDescriptor& desc
-			) override;
+			void AddBanner(const LogEntry& entry, const LogDescriptor& desc) override;
+			
 			bool Open() override;
-			void Close() override;
+			
+			bool IsOpen() override;
+			
+			void Close(const bool outputClosingMsg) override;
 
 		private:
 			void UpdateConsoleColour(const LogLevel lvl);
@@ -48,7 +51,7 @@ namespace klib
 			void Flush(const std::string_view& msg);
 			void OutputToDebugString(const std::string_view& msg);
 			void OutputToConsole(const std::string_view& msg);
-			
+
 		private:
 			bool active;
 			std::string name;

@@ -424,7 +424,7 @@ namespace klib {
 		template<class CharType, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharType> ToString(const CharType* format, const T arg, const Ts ...argPack)
 		{
-			const std::basic_string<CharType> fmt;
+			const std::basic_string<CharType> fmt(format);
 			const std::basic_string<CharType> text = ToString(fmt, arg, argPack...);
 			return text;
 		}
@@ -438,7 +438,7 @@ namespace klib {
 		}
 	}
 
-#ifdef KLIB_SHORTHAND_NAMESPACE
+#ifdef KLIB_SHORT_NAMESPACE
 	using namespace kFormat;
 #endif
 }

@@ -24,7 +24,7 @@ namespace klib
 		std::string GetSystemStartTimeStr() noexcept;
 	}
 
-#ifdef KLIB_SHORTHAND_NAMESPACE
+#ifdef KLIB_SHORT_NAMESPACE
 	using namespace kCalendar;
 #endif
 }

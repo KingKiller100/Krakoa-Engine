@@ -61,7 +61,7 @@ namespace klib
 			 * \param desc
 			 *		The category/subject of the log banner
 			 */
-			virtual void AddBanner(const LogEntry& entry, const LogDescriptor& desc) = 0;
+			//virtual void AddBanner(const LogEntry& entry, const LogDescriptor& desc) = 0;
 
 			/**
 			 * \brief

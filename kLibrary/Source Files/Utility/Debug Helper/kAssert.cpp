@@ -8,13 +8,12 @@
 #if defined(_DEBUG) ||  defined(KLIB_TEST)
 namespace klib::kDebug
 {
-	AssertOnFailedConditionException::AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const unsigned line)
+	AssertOnFailedConditionException::AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const std::int16_t line)
 		: report(kFormat::ToString("Condition \"%s\" was not met! \n               [DETAILS]: %s.", exp.data(), msg.data()))
 	{
 		const auto currentDir = kFileSystem::GetExeDirectory();
 		
-		auto exceptionLog = kLogs::Logging(currentDir, "Assert");
-		exceptionLog.SetName("ASSERT");
+		auto exceptionLog = kLogs::Logging(currentDir, "AssertOnFailCondition", "ASSERT");
 		exceptionLog.ToggleConsoleEnabled();
 		exceptionLog.OutputToFatalFile({report.data(), file, line, kCalendar::CalendarInfoSource::LOCAL});
 	}

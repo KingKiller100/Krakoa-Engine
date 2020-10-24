@@ -14,9 +14,9 @@ namespace klib
 			NORM, // Normal
 			INFO, // Informative
 			WARN, // Warning
+			BANR, // Banner
 			ERRR, // Error
-			FATL,  // Fatal
-			BANR // Banner
+			FATL  // Fatal
 		);
 
 	}

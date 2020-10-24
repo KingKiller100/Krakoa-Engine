@@ -9,7 +9,7 @@ namespace klib::kDebug
 	class AssertOnFailedConditionException final : public std::exception
 	{
 	public:
-		AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* f, const unsigned l);
+		AssertOnFailedConditionException(const std::string_view& exp, const std::string_view& msg, const char* file, const std::int16_t line);
 		~AssertOnFailedConditionException() throw();
 
 		char const* what() const override;

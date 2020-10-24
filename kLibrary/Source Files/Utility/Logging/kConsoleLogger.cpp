@@ -42,6 +42,9 @@ namespace klib
 			case LogLevel::WARN:
 				currentConsoleColour = ConsoleColour::YELLOW;
 				break;
+			case LogLevel::BANR:
+				currentConsoleColour = ConsoleColour::WHITE;
+				break;
 			case LogLevel::ERRR:
 				currentConsoleColour = ConsoleColour::SCARLET_RED;
 				break;
@@ -90,46 +93,50 @@ namespace klib
 			if (!IsOpen())
 				return;
 
-			auto logLine = ToString("[%s] [%s] [%d]:  %s",
-				entry.time.ToString().data(),
-				name.data(),
+			const auto timeStr = entry.time.ToString();
+			const auto dateStr = entry.date.ToString(Date::SLASH);
+			
+			auto logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
+				dateStr,
+				timeStr,
+				name,
 				desc.lvl.ToUnderlying(),
-				entry.msg.data());
+				entry.msg);
 
 			if (desc.lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
-               [FILE]: %s
-               [LINE]: %d)",
+               [FILE]: {0}
+               [LINE]: {1})",
 					entry.file,
 					entry.line)
 				);
 			}
 
-			logLine.push_back('\n');
+			logLine.push_back(type_trait::s_NewLine<char>);
 
 			UpdateConsoleColour(desc.lvl);
 			Flush(logLine);
 		}
 
-		void ConsoleLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
-		{
-			if (!IsOpen())
-				return;
-
-			constexpr char format[] = "[%s] [%s] [%s]: %s";
-
-			auto bannerLine = ToString(format
-				, entry.time.ToString().data()
-				, name.data()
-				, desc.info.data()
-				, entry.msg.data()
-			);
-
-			bannerLine.push_back('\n');
-
-			Flush(bannerLine);
-		}
+		// void ConsoleLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
+		// {
+		// 	if (!IsOpen())
+		// 		return;
+		//
+		// 	constexpr char format[] = "[%s] [%s] [%s]: %s";
+		//
+		// 	auto bannerLine = ToString(format
+		// 		, entry.time.ToString().data()
+		// 		, name.data()
+		// 		, desc.info.data()
+		// 		, entry.msg.data()
+		// 	);
+		//
+		// 	bannerLine.push_back('\n');
+		//
+		// 	Flush(bannerLine);
+		// }
 
 		bool ConsoleLogger::Open()
 		{
@@ -146,7 +153,7 @@ namespace klib
 		{
 			if (outputClosingMsg)
 			{
-				const std::string padding(72, '*');
+				const std::string padding(73, '*');
 				const auto msg
 					= ToString(R"(
                {0}: Console Logger Concluded                            
@@ -178,18 +185,17 @@ namespace klib
 #endif
 		}
 
-		void ConsoleLogger::OutputToConsole(const std::string_view& msg)
+		void ConsoleLogger::OutputToConsole(const std::string_view& msg) const
 		{
 			static constexpr auto whiteText = CAST(WORD, ConsoleColour::WHITE);
 
-			const auto msgColour = CAST(WORD, currentConsoleColour);
-			currentConsoleColour = ConsoleColour::WHITE;
-
 			auto* handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-			SetConsoleTextAttribute(handle, msgColour);
+			SetConsoleTextAttribute(handle, currentConsoleColour);
 			std::printf("%s", msg.data());
-			SetConsoleTextAttribute(handle, whiteText);
+			
+			if (whiteText != currentConsoleColour)
+				SetConsoleTextAttribute(handle, whiteText);
 		}
 	}
 }

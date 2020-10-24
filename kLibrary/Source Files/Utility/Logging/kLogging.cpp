@@ -166,7 +166,7 @@ namespace klib::kLogs
 		if (!isEnabled)
 			return;
 
-		constexpr  auto format = "%s %s %s";
+		constexpr  auto format = "{0} {1} {2}";
 		
 		std::string front, back;
 
@@ -177,14 +177,22 @@ namespace klib::kLogs
 		}
 		
 		const auto msg = ToString(format
-			, frontPadding.c_str()
-			, entry.msg.c_str()
-			, backPadding.c_str()
+			, frontPadding
+			, entry.msg
+			, backPadding
 		);
 		
-		entriesQ.emplace_back(LogEntry(msg.data(), entry.file.data(), entry.line), LogDescriptor(desc));
+		QueueEntry(LogEntry(msg, entry.file, entry.line), LogDescriptor(desc));
 	}
 
+	void Logging::QueueEntry(const LogEntry& entry, const LogDescriptor& desc)
+	{
+		entriesQ.push_back(std::make_pair(entry, desc));
+
+		if (!cacheMode)
+			Flush();
+	}
+	
 	void Logging::FinalOutput()
 	{
 		Close();
@@ -201,10 +209,7 @@ namespace klib::kLogs
 				const auto& entry = details.first;
 				const auto& desc = details.second;
 
-				if (desc.lvl == LogLevel::BANR)
-					dest.second->AddBanner(entry, desc);
-				else
-					dest.second->AddEntry(entry, desc);
+				dest.second->AddEntry(entry, desc);
 			}
 			entriesQ.pop_front();
 		}

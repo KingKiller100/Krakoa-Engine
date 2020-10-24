@@ -5,7 +5,7 @@
 namespace klib::kLogs
 {
 		LogEntry::LogEntry(const char* message, const char* file,
-		                   const std::int64_t line, CalendarInfoSource calendarInfoSource)
+		                   const std::int32_t line, CalendarInfoSource calendarInfoSource)
 			: time (calendarInfoSource)
 			, date(calendarInfoSource)
 			, msg(message)
@@ -13,7 +13,7 @@ namespace klib::kLogs
 			, line(line)
 		{}
 
-		LogEntry::LogEntry(const std::string& message, const char* file, const std::int64_t line,
+		LogEntry::LogEntry(const std::string& message, const std::string_view& file, const std::int32_t line,
 			CalendarInfoSource calendarInfoSource)
 			: time(calendarInfoSource)
 			, date(calendarInfoSource)

@@ -30,13 +30,19 @@
 #define MAP12(m, x, ...) m(x) IDENTITY(MAP11(m, __VA_ARGS__))
 #define MAP13(m, x, ...) m(x) IDENTITY(MAP12(m, __VA_ARGS__))
 #define MAP14(m, x, ...) m(x) IDENTITY(MAP13(m, __VA_ARGS__))
+#define MAP15(m, x, ...) m(x) IDENTITY(MAP14(m, __VA_ARGS__))
+#define MAP16(m, x, ...) m(x) IDENTITY(MAP15(m, __VA_ARGS__))
+#define MAP17(m, x, ...) m(x) IDENTITY(MAP16(m, __VA_ARGS__))
+#define MAP18(m, x, ...) m(x) IDENTITY(MAP17(m, __VA_ARGS__))
+#define MAP19(m, x, ...) m(x) IDENTITY(MAP18(m, __VA_ARGS__))
+#define MAP20(m, x, ...) m(x) IDENTITY(MAP19(m, __VA_ARGS__))
+#define MAP21(m, x, ...) m(x) IDENTITY(MAP20(m, __VA_ARGS__))
 
-#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, count, ...) \
+#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, count, ...) \
     count
 
 #define COUNT(...) \
-    IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
-
+    IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 
 // Stringizes each argument.
 #define STRINGIZE_SINGLE(e) #e,
@@ -44,19 +50,24 @@
 
 namespace klib::kEnum::secret::helper
 {
-	// The type "T" mentioned above that drops assignment operations.
+	// The type "U" mentioned above that drops assignment operations.
 	template <typename U>
 	struct ignore_assign {
-		constexpr explicit ignore_assign(U value) : _value(value) { }
+		constexpr explicit ignore_assign(U&& value) : _value(std::forward<U>(value)) { }
 		constexpr operator U() const { return _value; }
 
-		constexpr ignore_assign& operator =(int dummy) const
+		constexpr const ignore_assign& operator =(int) const
 		{
 			return *this;
 		}
 
-		U   _value;
+		U _value;
 	};
+
+// Prepends "(ignore_assign<underlying_t>)" to each argument.
+#define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::helper::ignore_assign<underlying_t>)e,
+#define IGNORE_ASSIGN(...) \
+    IDENTITY(MAP(IGNORE_ASSIGN_SINGLE, __VA_ARGS__))
 
 	// Some helpers needed for _from_string.
 	constexpr char    terminators[] = " =\t\r\n";
@@ -80,17 +91,11 @@ namespace klib::kEnum::secret::helper
 	}
 }
 
-// Prepends "(ignore_assign<underlying_t>)" to each argument.
-#define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::helper::ignore_assign<underlying_t>)e,
-#define IGNORE_ASSIGN(...) \
-    IDENTITY(MAP(IGNORE_ASSIGN_SINGLE, __VA_ARGS__))
-
 
 
 
 #define ENUM_CLASS(enumName, underlying, ...)											\
-																						\
-struct data_##enumName																\
+struct data_##enumName																	\
 {																						\
 	using underlying_t = underlying;													\
 	enum { __VA_ARGS__ };																\

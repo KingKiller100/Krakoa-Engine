@@ -29,7 +29,7 @@ namespace klib
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry, const LogDescriptor& desc) override;
-			void AddBanner(const LogEntry& entry, const LogDescriptor& desc) override;
+			//void AddBanner(const LogEntry& entry, const LogDescriptor& desc) override;
 
 			bool Open() override;
 

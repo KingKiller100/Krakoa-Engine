@@ -2,12 +2,13 @@
 
 #include "iLogDestination.hpp"
 
+#include "../EnumHelper/EnumHelper.hpp"
+
 namespace klib
 {
 	namespace kLogs
 	{
-		enum class ConsoleColour : unsigned short
-		{
+		ENUM_CLASS(ConsoleColour, unsigned short,
 			NAVY_BLUE = 1,
 			DARK_GREEN,
 			AQUA_BLUE,
@@ -24,7 +25,7 @@ namespace klib
 			YELLOW,
 			WHITE,
 			RED_BG_WHITE_TEXT = 79
-		};
+		);
 		
 		class ConsoleLogger final : public iLogDestination
 		{
@@ -37,7 +38,7 @@ namespace klib
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry, const LogDescriptor& desc) override;
-			void AddBanner(const LogEntry& entry, const LogDescriptor& desc) override;
+			//void AddBanner(const LogEntry& entry, const LogDescriptor& desc) override;
 			
 			bool Open() override;
 			
@@ -50,7 +51,7 @@ namespace klib
 
 			void Flush(const std::string_view& msg);
 			void OutputToDebugString(const std::string_view& msg);
-			void OutputToConsole(const std::string_view& msg);
+			void OutputToConsole(const std::string_view& msg) const;
 
 		private:
 			bool active;

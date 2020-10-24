@@ -14,15 +14,15 @@ namespace klib
 		struct LogEntry
 		{
 			LogEntry(const char* message, const char* file = __FILE__, 
-				const std::int64_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
-			LogEntry(const std::string& message, const char* file = __FILE__, 
-				const std::int64_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
+				const std::int32_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
+			LogEntry(const std::string& message, const std::string_view& file = __FILE__,
+				const std::int32_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
 
 			const Time time;
 			const Date date;
-			std::string msg;
+			const std::string msg;
 			const std::string file;
-			const std::int64_t line;
+			const std::int32_t line;
 		};
 	}
 

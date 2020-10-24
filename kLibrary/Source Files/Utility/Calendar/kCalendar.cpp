@@ -35,13 +35,13 @@ namespace klib::kCalendar
 	std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSource source) noexcept
 	{
 		const auto date = Date(source);
-		return date.TextFormat(format);
+		return date.ToString(format);
 	}
 
 	std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarInfoSource source) noexcept
 	{
 		const auto date = Date(source);
-		return date.NumericalFormat(separator);
+		return date.ToString(separator);
 	}
 
 	std::string CreateTime(uint8_t hours, uint8_t minutes) noexcept
@@ -89,7 +89,7 @@ namespace klib::kCalendar
 		if (local.empty())
 		{
 			static const auto& info = dates.at(CalendarInfoSource::LOCAL);
-			local = info.NumericalFormat(separator);
+			local = info.ToString(separator);
 			return local;
 		}
 
@@ -113,7 +113,7 @@ namespace klib::kCalendar
 		if (system.empty())
 		{
 			static const auto& info = dates.at(CalendarInfoSource::SYSTEM);
-			system = info.NumericalFormat(separator);
+			system = info.ToString(separator);
 			return system;
 		}
 

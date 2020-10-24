@@ -73,7 +73,7 @@ namespace klib::kCalendar
 		CheckDate();
 	}
 
-	std::string Date::NumericalFormat(DateNumericalSeparator separator) const
+	std::string Date::ToString(DateNumericalSeparator separator) const
 	{
 		std::string separatorStr;
 		separatorStr += (separator);
@@ -88,7 +88,7 @@ namespace klib::kCalendar
 		return str;
 	}
 
-	std::string Date::TextFormat(DateTextLength format) const
+	std::string Date::ToString(DateTextLength format) const
 	{
 		const auto dayStr = GetDayStr();
 		const auto monthStr = GetMonthStr();
@@ -100,9 +100,9 @@ namespace klib::kCalendar
 		{
 		case DateTextLength::FULL:
 		{
-			const auto dotwStr = GetDayOfWeekStr();
+			const auto d_o_t_wStr = GetDayOfWeekStr();
 			str = kFormat::ToString("{0} {1} {2} {3}"
-			, dotwStr
+			, d_o_t_wStr
 			, dayStr
 			, monthStr
 			, yearStr);

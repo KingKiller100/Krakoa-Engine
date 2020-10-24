@@ -24,6 +24,8 @@ namespace klib
 			
 		public:
 			using LogEntries = std::deque<std::pair<LogEntry, LogDescriptor>>;
+			using LogDestinationsMap = std::unordered_map<DestionationType::enum_t
+			, std::unique_ptr<iLogDestination>>;
 
 		public:
 			Logging(const std::string_view& directory, const std::string_view& filename
@@ -208,6 +210,16 @@ namespace klib
 
 			/**
 			 * \brief
+			 *		Adds an entry and log description to queue
+			 * \param entry
+			 *		Log entry
+			 * \param desc
+			 *		Log description
+			 */
+			void QueueEntry(const LogEntry& entry, const LogDescriptor& desc);
+			
+			/**
+			 * \brief
 			 *		Opens log destinations
 			 */
 			void Open();
@@ -235,7 +247,7 @@ namespace klib
 			LogEntries entriesQ; // Queue buffer to cache the logged messages
 
 			LogLevel minimumLoggingLevel;
-			std::unordered_map<DestionationType::enum_t, std::unique_ptr<iLogDestination>> destinations;
+			LogDestinationsMap destinations;
 			std::string name;
 			bool isEnabled;
 			bool cacheMode;

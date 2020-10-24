@@ -8,6 +8,7 @@
 #include "../Format/kFormatToString.hpp"
 #include "../File System/kFileSystem.hpp"
 
+#include <iostream>
 
 namespace klib
 {
@@ -74,13 +75,16 @@ namespace klib
 				throw std::runtime_error(msg);
 			}
 		
-
-			const std::string padding = "************************************************************************\n";
-			std::string startLog = padding + "File logger activated: ";
-			startLog += openingMsg;
-			startLog += "    " + GetDateInTextFormat(Date::DateTextLength::SHORT) + "    " + GetTimeText();
-			startLog += "\n" + padding +"\n";
-			Flush(startLog);
+			const std::string spacing(5, ' ');
+			const std::string padding(73, '*');
+			constexpr auto nl = type_trait::s_NewLine<char>;
+			
+			std::string opener = padding + nl;
+			opener += "File logger activated: ";
+			opener += spacing + GetDateInTextFormat(Date::DateTextLength::SHORT) + spacing + GetTimeText() + nl;
+			opener += openingMsg;
+			opener += nl + padding + nl;
+			Flush(opener);
 		}
 
 		bool FileLogger::Open()
@@ -106,33 +110,36 @@ namespace klib
 				return;
 			
 			const auto timeStr = entry.time.ToString();
-			auto logLine = ToString("[%s] [%s] [%s]:  %s",
-				timeStr.data(),
-				name.data(),
-				desc.info.data(),
-				entry.msg.data());
+			const auto dateStr = entry.date.ToString(Date::SLASH);
+			
+			auto logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
+				dateStr,
+				timeStr,
+				name,
+				desc.info,
+				entry.msg);
 
 			if (desc.lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
-               [FILE]: %s
-               [LINE]: %d)",
+               [FILE]: {0}
+               [LINE]: {1})",
 					entry.file,
 					entry.line)
 				);
 			}
 
-			logLine.append("\n");
+			logLine.push_back(type_trait::s_NewLine<char>);
 
 			Flush(logLine);
 		}
 
-		void FileLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
+		/*void FileLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
 		{
 			if (!IsOpen())
 				return;
 			
-			constexpr char format[] = "[%s] [%s] [%s]: %s";
+			constexpr char format[] = "[%s] [%s] [%s] [%s]: %s";
 
 			const auto bannerLine = ToString(format
 			                                 , entry.time.ToString().data()
@@ -142,7 +149,7 @@ namespace klib
 			);
 
 			Flush(bannerLine);
-		}
+		}*/
 
 		void FileLogger::Close(const bool outputClosingMsg)
 		{

@@ -190,7 +190,7 @@ namespace klib {
 			static constexpr auto openerSymbol = CharType('{');
 			static constexpr auto closerSymbol = CharType('}');
 			static constexpr auto precisionSymbol = CharType(':');
-			static constexpr auto nullTerminator = type_trait::nullTerminator<CharType>;
+			static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
 
 			static constexpr auto npos = std::basic_string<CharType>::npos;
 

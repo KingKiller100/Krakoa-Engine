@@ -2,12 +2,14 @@
 
 #include "kLogLevel.hpp"
 #include "kLogEntry.hpp"
-#include "kLogDescriptor.hpp"
+#include "kLogMessage.hpp"
+#include "../../Type Traits/String.hpp"
 
 #include <unordered_map>
 #include <deque>
 #include <string>
 #include <cstdint>
+
 
 
 namespace klib
@@ -23,7 +25,7 @@ namespace klib
 				, CONSOLE);
 			
 		public:
-			using LogEntries = std::deque<std::pair<LogEntry, LogDescriptor>>;
+			using LogEntries = std::deque<LogEntry>;
 			using LogDestinationsMap = std::unordered_map<DestionationType::enum_t
 			, std::unique_ptr<iLogDestination>>;
 
@@ -143,34 +145,45 @@ namespace klib
 			/**
 			 * \brief
 			 *		Outputs all cached kLogs up to file with the logged error message at the end
-			 * \param entry
+			 * \param msg
 			 *		Error information
 			 */
-			void OutputToFatalFile(const LogEntry& entry);
+			void OutputToFatalFile(const LogMessage& msg);
 
 			/**
 			 * \brief
-			 *		Formats log message and level to the appropriate log message and then caches it
-			 * \param[in] lvl
-			 *		Log level type
-			 * \param entry
+			 *		Logs text verbatim. No time, data or padding
+			 * \param text
+			 *		Text to log
+			 */
+			void AddVerbatim(const std::string_view& text = "");
+			
+			/**
+			 * \brief
+			 *		Formats log message and level to the appropriate log message and then logs it
+			 * \param message
+			 *		Log message details including time, data, text, source file and source line
+			 * \param level
 			 *		Log entry details
 			 */
-			void AddEntry(const LogLevel lvl, const LogEntry& entry);
+			void AddEntry(const LogLevel& level, const LogMessage& message);
 
 			/**
 			 * \brief
-			 *		Formats the log banner to become the appropriate log banner message then caches it
-			 * \param[in] entry
-			 *		Log banner title
-			 * \param desc
-			 *		The category/subject of the log banner
+			 *		Formats the log banner to become the appropriate log banner message and logs it
+			 * \param message
+			 *		Log message details including time, data, text, source file and source line
+			 * \param[in] descriptor
+			 *		Log descriptor of lvl and type info
 			 * \param frontPadding
+			 *		Padding character/string before banner text
 			 * \param backPadding
+			 *		Padding character/string after banner text
 			 * \param paddingCount
+			 *		Repetition of paddings
 			 */
-			void AddBanner(const LogEntry& entry, const std::string& desc
-			               , const std::string& frontPadding, const std::string& backPadding, const std::uint16_t paddingCount);
+			void AddBanner(const std::string_view& descriptor, const LogMessage& message, const std::string_view& frontPadding, const std::
+			               string_view& backPadding, const std::uint16_t paddingCount);
 
 			/**
 			 * \brief
@@ -179,7 +192,7 @@ namespace klib
 			 * \return
 			 *		String of the final log entry
 			*/
-			std::string_view GetLastCachedEntry();
+			const LogEntry& GetLastCachedEntry() const;
 
 			/**
 			 * \brief
@@ -213,10 +226,10 @@ namespace klib
 			 *		Adds an entry and log description to queue
 			 * \param entry
 			 *		Log entry
-			 * \param desc
+			 * \param entry
 			 *		Log description
 			 */
-			void QueueEntry(const LogEntry& entry, const LogDescriptor& desc);
+			void AddLog(const LogEntry& entry);
 			
 			/**
 			 * \brief
@@ -240,9 +253,6 @@ namespace klib
 			 */
 			bool IsLoggable(const LogLevel lvl) const;
 			
-		public:
-			static const char* kLogs_Empty;
-
 		protected:
 			LogEntries entriesQ; // Queue buffer to cache the logged messages
 

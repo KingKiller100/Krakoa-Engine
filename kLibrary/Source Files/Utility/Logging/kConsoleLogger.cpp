@@ -1,7 +1,7 @@
 ﻿#include <pch.hpp>
 #include "kLogLevel.hpp"
 #include "kConsoleLogger.hpp"
-#include "kLogDescriptor.hpp"
+#include "kLogEntry.hpp"
 
 #include "../Calendar/kCalendar.hpp"
 #include "../Format/kFormatToString.hpp"
@@ -13,6 +13,7 @@
 namespace klib
 {
 	using namespace kFormat;
+	using namespace kCalendar;
 
 	namespace kLogs
 	{
@@ -25,35 +26,15 @@ namespace klib
 		ConsoleLogger::~ConsoleLogger() noexcept
 			= default;
 
-		void ConsoleLogger::UpdateConsoleColour(const LogLevel lvl)
+		bool ConsoleLogger::Open()
 		{
+			active = true;
+			return active;
+		}
 
-			switch (lvl.ToEnum())
-			{
-			case LogLevel::DBUG:
-				currentConsoleColour = ConsoleColour::AQUA_BLUE;
-				break;
-			case LogLevel::NORM:
-				currentConsoleColour = ConsoleColour::LIGHT_GREY;
-				break;
-			case LogLevel::INFO:
-				currentConsoleColour = ConsoleColour::LIGHT_GREEN;
-				break;
-			case LogLevel::WARN:
-				currentConsoleColour = ConsoleColour::YELLOW;
-				break;
-			case LogLevel::BANR:
-				currentConsoleColour = ConsoleColour::WHITE;
-				break;
-			case LogLevel::ERRR:
-				currentConsoleColour = ConsoleColour::SCARLET_RED;
-				break;
-			case LogLevel::FATL:
-				currentConsoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
-				break;
-			default:
-				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: " + std::string(lvl.ToString()));
-			}
+		bool ConsoleLogger::IsOpen()
+		{
+			return active;
 		}
 
 		std::string_view ConsoleLogger::GetName() const
@@ -88,67 +69,88 @@ namespace klib
 			Flush(opener);
 		}
 
-		void ConsoleLogger::AddEntry(const LogEntry& entry, const LogDescriptor& desc)
+		void ConsoleLogger::AddEntry(const LogEntry& entry)
 		{
 			if (!IsOpen())
 				return;
 
-			const auto timeStr = entry.time.ToString();
-			const auto dateStr = entry.date.ToString(Date::SLASH);
-			
-			auto logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
-				dateStr,
-				timeStr,
-				name,
-				desc.lvl.ToUnderlying(),
-				entry.msg);
+			const auto& msg = entry.GetMsg();
+			const auto& desc = entry.GetDescriptor();
+			const auto logLine = CreateLogText(msg, desc);
+
+			UpdateConsoleColour(desc.lvl);
+			Flush(logLine);
+		}
+
+		std::string ConsoleLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
+		{
+			std::string logLine;
+
+			if (desc.lvl == LogLevel::VBAT)
+			{
+				logLine = msg.text;
+			}
+			else
+			{
+				const auto timeStr = msg.time.ToString();
+				const auto dateStr = msg.date.ToString(Date::SLASH);
+
+				logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
+					dateStr,
+					timeStr,
+					name,
+					desc.lvl.ToUnderlying(),
+					msg.text);
+			}
 
 			if (desc.lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
                [LINE]: {1})",
-					entry.file,
-					entry.line)
+					msg.file,
+					msg.line)
 				);
 			}
 
 			logLine.push_back(type_trait::s_NewLine<char>);
 
-			UpdateConsoleColour(desc.lvl);
-			Flush(logLine);
+			return logLine;
 		}
 
-		// void ConsoleLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
-		// {
-		// 	if (!IsOpen())
-		// 		return;
-		//
-		// 	constexpr char format[] = "[%s] [%s] [%s]: %s";
-		//
-		// 	auto bannerLine = ToString(format
-		// 		, entry.time.ToString().data()
-		// 		, name.data()
-		// 		, desc.info.data()
-		// 		, entry.msg.data()
-		// 	);
-		//
-		// 	bannerLine.push_back('\n');
-		//
-		// 	Flush(bannerLine);
-		// }
-
-		bool ConsoleLogger::Open()
+		void ConsoleLogger::UpdateConsoleColour(const LogLevel lvl)
 		{
-			active = true;
-			return active;
+			switch (lvl.ToEnum())
+			{
+			case LogLevel::DBUG:
+				currentConsoleColour = ConsoleColour::AQUA_BLUE;
+				break;
+			case LogLevel::NORM:
+				currentConsoleColour = ConsoleColour::LIGHT_GREY;
+				break;
+			case LogLevel::INFO:
+				currentConsoleColour = ConsoleColour::LIGHT_GREEN;
+				break;
+			case LogLevel::WARN:
+				currentConsoleColour = ConsoleColour::YELLOW;
+				break;
+			case LogLevel::VBAT:
+			case LogLevel::BANR:
+				currentConsoleColour = ConsoleColour::WHITE;
+				break;
+			case LogLevel::ERRR:
+				currentConsoleColour = ConsoleColour::SCARLET_RED;
+				break;
+			case LogLevel::FATL:
+				currentConsoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
+				break;
+			default:
+				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: " + std::string(lvl.ToString()));
+			}
 		}
 
-		bool ConsoleLogger::IsOpen()
-		{
-			return active;
-		}
 
+		
 		void ConsoleLogger::Close(const bool outputClosingMsg)
 		{
 			if (outputClosingMsg)
@@ -156,7 +158,7 @@ namespace klib
 				const std::string padding(73, '*');
 				const auto msg
 					= ToString(R"(
-               {0}: Console Logger Concluded                            
+               {0}: Console Logger Concluded
 )"
 , name
 );

@@ -58,9 +58,11 @@ namespace memory
 			kFileSystem::RemoveFile(path);
 		}
 
-		MEM_INIT_LOGS(R"(Definitions:
-Object - "Structured piece of data in memory"
-Block -  "Allocated space of an object in memory including AllocHeader & end marker"
+		MEM_INIT_LOGS(R"(
+   Definitions:
+   Object - "Structured piece of data in memory"
+   Block -  "Allocated space of an object in memory 
+   including AllocHeader & end marker"
 )");
 		MEM_SET_FLUSHING(true);
 

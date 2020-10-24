@@ -1,8 +1,7 @@
-﻿#include <pch.hpp>
+﻿#include "pch.hpp"
 #include "kFileLogger.hpp"
 
-#include "kLogDescriptor.hpp"
-
+#include "kLogEntry.hpp"
 
 #include "../Calendar/kCalendar.hpp"
 #include "../Format/kFormatToString.hpp"
@@ -80,10 +79,11 @@ namespace klib
 			constexpr auto nl = type_trait::s_NewLine<char>;
 			
 			std::string opener = padding + nl;
-			opener += "File logger activated: ";
+			opener += spacing + "File logger activated: ";
 			opener += spacing + GetDateInTextFormat(Date::DateTextLength::SHORT) + spacing + GetTimeText() + nl;
 			opener += openingMsg;
 			opener += nl + padding + nl;
+			
 			Flush(opener);
 		}
 
@@ -104,52 +104,54 @@ namespace klib
 			return fileStream.is_open() && fileStream.good();
 		}
 
-		void FileLogger::AddEntry(const LogEntry& entry, const LogDescriptor& desc)
+		void FileLogger::AddEntry(const LogEntry& entry)
 		{
 			if (!IsOpen())
 				return;
+
+			const auto logLine = CreateLogText(entry);
 			
-			const auto timeStr = entry.time.ToString();
-			const auto dateStr = entry.date.ToString(Date::SLASH);
-			
-			auto logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
-				dateStr,
-				timeStr,
-				name,
-				desc.info,
-				entry.msg);
+			Flush(logLine);
+		}
+
+		std::string FileLogger::CreateLogText(const LogEntry& entry) const
+		{
+			std::string logLine;
+
+			const auto& message = entry.GetMsg();
+			const auto& desc = entry.GetDescriptor();
+
+			if (entry.HasDescription(LogDescriptor(LogLevel::VBAT)))
+			{
+				logLine = message.text;
+			}
+			else
+			{
+				const auto timeStr = message.time.ToString();
+				const auto dateStr = message.date.ToString(Date::SLASH);
+
+				logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
+					dateStr,
+					timeStr,
+					name,
+					desc.info,
+					message.text);
+			}
 
 			if (desc.lvl >= LogLevel::ERRR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
                [LINE]: {1})",
-					entry.file,
-					entry.line)
+					message.file,
+					message.line)
 				);
 			}
 
 			logLine.push_back(type_trait::s_NewLine<char>);
 
-			Flush(logLine);
+			return logLine;
 		}
-
-		/*void FileLogger::AddBanner(const LogEntry& entry, const LogDescriptor& desc)
-		{
-			if (!IsOpen())
-				return;
-			
-			constexpr char format[] = "[%s] [%s] [%s] [%s]: %s";
-
-			const auto bannerLine = ToString(format
-			                                 , entry.time.ToString().data()
-			                                 , name.data()
-			                                 , desc.info.data()
-			                                 , entry.msg.data()
-			);
-
-			Flush(bannerLine);
-		}*/
 
 		void FileLogger::Close(const bool outputClosingMsg)
 		{

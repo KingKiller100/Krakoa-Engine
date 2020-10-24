@@ -37,11 +37,12 @@ namespace krakoa
 #define KRK_ENABLE_FILE_OUTPUT()                                    ::krakoa::CoreLogger::GetCoreLogger().SetCacheMode(false);
 #define KRK_CHANGE_LOGS_DESTINATION(destination)                    ::krakoa::CoreLogger::GetCoreLogger().ChangeOutputDirectory(destination);
 #define KRK_CHANGE_LOGS_FILENAME(name)                              ::krakoa::CoreLogger::GetCoreLogger().ChangeFilename(name);
-#define KRK_DBUG(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_DBUG, ::klib::kLogs::LogEntry(msg));
-#define KRK_NORM(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_NORM, ::klib::kLogs::LogEntry(msg));
-#define KRK_INFO(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_INFO, ::klib::kLogs::LogEntry(msg));
-#define KRK_WARN(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_WARN, ::klib::kLogs::LogEntry(msg));
-#define KRK_ERRR(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_ERRR, ::klib::kLogs::LogEntry(msg, __FILE__, __LINE__));
+#define KRK_VBAT(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddVerbatim(msg);
+#define KRK_DBUG(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_DBUG, ::klib::kLogs::LogMessage(msg));
+#define KRK_NORM(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_NORM, ::klib::kLogs::LogMessage(msg));
+#define KRK_INFO(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_INFO, ::klib::kLogs::LogMessage(msg));
+#define KRK_WARN(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_WARN, ::klib::kLogs::LogMessage(msg));
+#define KRK_ERRR(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_ERRR, ::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));
 #define KRK_BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::CoreLogger::GetCoreLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define KRK_SUSPEND()                                               ::krakoa::CoreLogger::GetCoreLogger().SuspendFileLogging();
 #define KRK_RESUME()                                                ::krakoa::CoreLogger::GetCoreLogger().ResumeFileLogging();
@@ -54,5 +55,5 @@ namespace krakoa
 #	include <Utility/Debug Helper/kAssert.hpp>
 #	define KRK_FATAL(condition, msg)                                kAssert(condition, msg)
 #else								                                
-#	define KRK_FATAL(condition, msg)                                if ( !(condition) ) { ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(klib::kLogs::LogEntry(msg, __FILE__, __LINE__)); throw std::exception(); }
+#	define KRK_FATAL(condition, msg)                                if ( !(condition) ) { ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(klib::kLogs::LogMessage(msg, __FILE__, __LINE__)); throw std::exception(); }
 #endif // !KRAKOA_RELEASE

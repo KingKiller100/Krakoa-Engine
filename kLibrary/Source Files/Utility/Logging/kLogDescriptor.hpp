@@ -13,12 +13,8 @@ namespace klib
 			explicit LogDescriptor(const LogLevel& lvl);
 			explicit LogDescriptor(const std::string_view& type);
 
-			LogLevel lvl;
-			std::string info;
+			const LogLevel lvl;
+			const std::string info;
 		};
 	}
-
-#ifdef KLIB_SHORT_NAMESPACE
-	using namespace kLogs;
-#endif
 }

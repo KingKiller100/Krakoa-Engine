@@ -1,32 +1,27 @@
 ﻿#pragma once
 
-#include "../Calendar/kDateTime.hpp"
-#include <string>
-#include <cstdint>
+#include "kLogMessage.hpp"
+#include "kLogDescriptor.hpp"
 
-
-namespace klib
+namespace klib::kLogs
 {
-	namespace kLogs
-	{		
-		using namespace kCalendar;
-	
-		struct LogEntry
-		{
-			LogEntry(const char* message, const char* file = __FILE__, 
-				const std::int32_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
-			LogEntry(const std::string& message, const std::string_view& file = __FILE__,
-				const std::int32_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
+	class LogEntry
+	{
+	public:
+		LogEntry(const LogMessage& data, const LogDescriptor& descriptor);
+		~LogEntry();
 
-			const Time time;
-			const Date date;
-			const std::string msg;
-			const std::string file;
-			const std::int32_t line;
-		};
-	}
+		USE_RESULT bool HasText(const std::string_view& msg) const;
+		USE_RESULT bool HasDescription(const LogDescriptor& desc) const;
+		USE_RESULT bool HasDescription(const std::string_view& desc) const;
+		USE_RESULT bool HasDescription(const LogLevel desc) const;
 
-#ifdef KLIB_SHORT_NAMESPACE
-		using namespace kLogs;
-#endif
+		USE_RESULT const LogMessage& GetMsg() const;
+		USE_RESULT const LogDescriptor& GetDescriptor() const;
+		
+	private:
+		LogMessage message;
+		LogDescriptor descriptor;
+	};
 }
+

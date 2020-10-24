@@ -37,11 +37,12 @@ namespace krakoa
 #define ENABLE_LOGFILE_OUTPUT()                                 ::krakoa::Logger::GetLogger().SetCacheMode(false);
 #define CHANGE_LOGS_DESTINATION(destination)                    ::krakoa::Logger::GetLogger().ChangeOutputDirectory(destination);
 #define CHANGE_LOGS_FILENAME(name)                              ::krakoa::Logger::GetLogger().ChangeFilename(name);
-#define DBUG(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_DBUG, ::klib::kLogs::LogEntry(msg));
-#define NORM(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_NORM, ::klib::kLogs::LogEntry(msg));
-#define INFO(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_INFO, ::klib::kLogs::LogEntry(msg));
-#define WARN(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_WARN, ::klib::kLogs::LogEntry(msg));
-#define ERRR(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_ERRR, ::klib::kLogs::LogEntry(msg, __FILE__, __LINE__));
+#define VERBATIM(msg)                                           ::krakoa::Logger::GetLogger().AddVerbatim(msg);
+#define DBUG(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_DBUG, ::klib::kLogs::LogMessage(msg));
+#define NORM(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_NORM, ::klib::kLogs::LogMessage(msg));
+#define INFO(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_INFO, ::klib::kLogs::LogMessage(msg));
+#define WARN(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_WARN, ::klib::kLogs::LogMessage(msg));
+#define ERRR(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_ERRR, ::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));
 #define BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::Logger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define LOG_SUSPEND()                                           ::krakoa::Logger::GetLogger().SuspendFileLogging();
 #define LOG_RESUME()                                            ::krakoa::Logger::GetLogger().ResumeFileLogging();
@@ -55,5 +56,5 @@ namespace krakoa
 #	include <Utility/Debug Helper/kAssert.hpp>
 #	define FATAL(condition, msg)                                kAssert((condition), msg);
 #else
-#	define FATAL(condition, msg)                                if ( !(condition) ) ::krakoa::Logger::GetLogger().OutputToFatalFile(::klib::kLogs::LogEntry(msg, __FILE__, __LINE__));
+#	define FATAL(condition, msg)                                if ( !(condition) ) ::krakoa::Logger::GetLogger().OutputToFatalFile(::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));
 #endif // !KRAKOA_RELEASE

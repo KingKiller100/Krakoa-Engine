@@ -7,7 +7,7 @@
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
-{		
+{
 	LoggingTester::LoggingTester()
 		: Tester("Logging Test")
 	{	}
@@ -37,66 +37,105 @@ namespace kTest::utility
 
 		testLogger->SetCacheMode(true);
 
-		testLogger->AddBanner("Welcome to the Log Tests!", "Tests", 
-			"*", "*", 12);
-		auto last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("Welcome to the Log Tests!") != std::string::npos);
+		{
+			testLogger->AddBanner("TEST", "BANNER!",
+			                      "*", "*", 12);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText("BANNER!"));
+			VERIFY(last.HasDescription("TEST"));
+		}
 
-		testLogger->AddBanner("BANNER!", "TEST",
-			"*", "*", 12);
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("BANNER!") != std::string::npos);
+		testLogger->SetMinimumLoggingLevel(LogLevel::NORM);
 
-		testLogger->AddEntry(LogLevel::DBUG, "DEBUG");
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("DEBUG!") != std::string::npos);
+		{
+			testLogger->AddEntry(LogLevel::DBUG, "DEBUG!");
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(!last.HasText("DEBUG!"));
+			VERIFY(!last.HasDescription(LogLevel::DBUG));
+		}
 
 		testLogger->SetMinimumLoggingLevel(LogLevel::DBUG);
 
-		testLogger->AddEntry(LogLevel::DBUG, "DEBUG");
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("DEBUG!") != std::string::npos);
+		{
+			constexpr char msg[] = "DEBUG!";
+			constexpr auto desc = LogLevel::DBUG;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText(msg));
+			VERIFY(last.HasDescription(desc));
+		}
 
-		testLogger->AddEntry(LogLevel::NORM, "NORM");
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("NORMAL!") != std::string::npos);
+		{
+			constexpr char msg[] = "NORMAL!";
+			constexpr auto desc = LogLevel::NORM;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText(msg));
+			VERIFY(last.HasDescription(desc));
+		}
 
-		testLogger->AddEntry(LogLevel::INFO, "INFORMATIVE");
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("INFORMATIVE!") != std::string::npos);
+		{
+			constexpr char msg[] = "INFORMATIVE!";
+			constexpr auto desc = LogLevel::INFO;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText(msg));
+			VERIFY(last.HasDescription(desc));
+		}
 
-		testLogger->AddEntry(LogLevel::WARN, "WARNING");
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("WARNING") != std::string::npos);
+		{
+			constexpr char msg[] = "WARNING!";
+			constexpr auto desc = LogLevel::WARN;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText(msg));
+			VERIFY(last.HasDescription(desc));
+		}
 
-		testLogger->AddEntry(LogLevel::ERRR, 
-			{ "ERROR", __FILE__, __LINE__, CalendarInfoSource::LOCAL });
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("ERROR!") != std::string::npos);
+		{
+			constexpr char msg[] = "ERROR!";
+			constexpr auto desc = LogLevel::ERRR;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText(msg));
+			VERIFY(last.HasDescription(desc));
+		}
 
 		testLogger->ErasePrevious(1);
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("ERROR!") == std::string::npos);
 
-		testLogger->AddEntry(LogLevel::ERRR, { "ERROR AGAIN", __FILE__, __LINE__, CalendarInfoSource::LOCAL });
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("ERROR AGAIN!") != std::string::npos);
+		{
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(!last.HasText("ERROR!"));
+		}
+
+
+		{
+			constexpr char msg[] = "ERROR AGAIN!";
+			constexpr auto desc = LogLevel::ERRR;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(last.HasText(msg));
+			VERIFY(last.HasDescription(desc));
+		}
 
 		testLogger->ResumeFileLogging();
 
-		testLogger->OutputToFatalFile(LogEntry("FATAL!", __FILE__, __LINE__));
-
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("CHECK LOGGING FILE") != std::string::npos);
+		testLogger->OutputToFatalFile(LogMessage("FATAL!", __FILE__, __LINE__));
 
 		testLogger->FinalOutput();
 
 		fullFilePathToDelete = dir + filename + ".log";
-		VERIFY(klib::kFileSystem::CheckFileExists(fullFilePathToDelete.c_str()) == true);
+		VERIFY(std::filesystem::exists(fullFilePathToDelete.c_str()) == true);
 
-		testLogger->AddEntry(LogLevel::NORM, "End");
-		last = testLogger->GetLastCachedEntry();
-		VERIFY(last.find("End") == std::string::npos);
+
+		{
+			constexpr char msg[] = "END!";
+			constexpr auto desc = LogLevel::NORM;
+			testLogger->AddEntry(desc, msg);
+			const auto& last = testLogger->GetLastCachedEntry();
+			VERIFY(!last.HasText(msg));
+			VERIFY(!last.HasDescription(desc));
+		}
 
 		return success;
 	}

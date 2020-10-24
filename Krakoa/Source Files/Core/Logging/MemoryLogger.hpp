@@ -32,11 +32,12 @@ namespace memory
 #define MEM_ENABLE_LOGFILE_OUTPUT()                                 ::memory::MemoryLogger::GetLogger().SetCacheMode(false);
 #define MEM_CHANGE_LOGS_DESTINATION(destination)                    ::memory::MemoryLogger::GetLogger().ChangeOutputDirectory(destination);
 #define MEM_CHANGE_LOGS_FILENAME(name)                              ::memory::MemoryLogger::GetLogger().ChangeFilename(name);
-#define MEM_DBUG(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::DBUG, ::klib::kLogs::LogEntry(msg));
-#define MEM_NORM(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::NORM, ::klib::kLogs::LogEntry(msg));
-#define MEM_INFO(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::INFO, ::klib::kLogs::LogEntry(msg));
-#define MEM_WARN(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::WARN, ::klib::kLogs::LogEntry(msg));
-#define MEM_ERRR(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::ERRR, ::klib::kLogs::LogEntry(msg,  __FILE__, __LINE__));
+#define MEM_VBAT(msg)                                               ::memory::MemoryLogger::GetLogger().AddVerbatim(msg);
+#define MEM_DBUG(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::DBUG, ::klib::kLogs::LogMessage(msg));
+#define MEM_NORM(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::NORM, ::klib::kLogs::LogMessage(msg));
+#define MEM_INFO(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::INFO, ::klib::kLogs::LogMessage(msg));
+#define MEM_WARN(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::WARN, ::klib::kLogs::LogMessage(msg));
+#define MEM_ERRR(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::ERRR, ::klib::kLogs::LogMessage(msg,  __FILE__, __LINE__));
 #define MEM_BANNER(msg, descriptor, frontPad, backPad, count)       ::memory::MemoryLogger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define MEM_LOG_SUSPEND()                                           ::memory::MemoryLogger::GetLogger().SuspendFileLogging();
 #define MEM_LOG_RESUME()                                            ::memory::MemoryLogger::GetLogger().ResumeFileLogging();
@@ -58,7 +59,7 @@ namespace memory
 
 #	define MEM_FATAL(condition, msg)                        if ( !(condition) )\
 	{\
-		::memory::MemoryLogger::GetLogger().OutputToFatalFile(::klib::kLogs::LogEntry(msg, __FILE__, __LINE__));\
+		::memory::MemoryLogger::GetLogger().OutputToFatalFile(::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));\
 		std::runtime_error(msg);\
 	}\
 	

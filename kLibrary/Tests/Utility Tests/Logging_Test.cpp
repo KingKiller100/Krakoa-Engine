@@ -108,7 +108,6 @@ namespace kTest::utility
 			VERIFY(!last.HasText("ERROR!"));
 		}
 
-
 		{
 			constexpr char msg[] = "ERROR AGAIN!";
 			constexpr auto desc = LogLevel::ERRR;
@@ -126,7 +125,6 @@ namespace kTest::utility
 
 		fullFilePathToDelete = dir + filename + ".log";
 		VERIFY(std::filesystem::exists(fullFilePathToDelete.c_str()) == true);
-
 
 		{
 			constexpr char msg[] = "END!";

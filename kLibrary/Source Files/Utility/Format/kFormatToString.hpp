@@ -155,14 +155,14 @@ namespace klib {
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
 				length = static_cast<size_t>(_snprintf(nullptr, 0, format.data(), arg1, argPack...) + 1);
-				if (length == npos) throw std::runtime_error("Error during char type \"ToString(...)\" formatting: string returned length <= 0");
+				if (length == 0) throw std::runtime_error("Error during char type \"ToString(...)\" formatting: string returned length == 0");
 				buffer = new CharType[length]();
 				sprintf_s(buffer, length, format.data(), arg1, argPack...);
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 			{
 				length = static_cast<size_t>(_snwprintf(nullptr, 0, format.data(), arg1, argPack...) + 1);
-				if (length == npos) throw std::runtime_error("Error during wchar_t type \"ToString(...)\" formatting: string returned length <= 0");
+				if (length == 0) throw std::runtime_error("Error during wchar_t type \"ToString(...)\" formatting: string returned length == 0");
 				buffer = new CharType[length]();
 				swprintf_s(buffer, length, format.data(), arg1, argPack...);
 			}
@@ -268,13 +268,6 @@ namespace klib {
 					currentSection.insert(replacePos, data->data());
 					finalString.append(currentSection);
 				}
-				else if (id.second.find("char") != npos)
-				{
-					const auto data = std::any_cast<const CharType*>(val);
-					currentSection.erase(replacePos);
-					currentSection.insert(replacePos, data);
-					finalString.append(currentSection);
-				}
 				else if (id.second.find("unsigned") != npos)
 				{
 					currentSection[replacePos + 1] = CharType('u');
@@ -347,6 +340,13 @@ namespace klib {
 						currentSection[replacePos + 1] = CharType('l');
 						finalString.append(MakeStringFromData(currentSection, *data));
 					}
+				}
+				else if (id.second.find("char") != npos)
+				{
+					const auto data = std::any_cast<const CharType*>(val);
+					currentSection.erase(replacePos);
+					currentSection.insert(replacePos, data);
+					finalString.append(currentSection);
 				}
 				else if (id.second.find("short") != npos)
 				{

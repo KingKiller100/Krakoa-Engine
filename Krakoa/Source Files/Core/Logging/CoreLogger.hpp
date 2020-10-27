@@ -12,7 +12,7 @@ namespace krakoa
 	{
 	public:
 		// Engine side
-		static void CoreInit();
+		static void CoreInit(const std::string_view& initMsg);
 		static klib::kLogs::Logging& GetCoreLogger();
 
 	private:
@@ -29,7 +29,7 @@ namespace krakoa
 
 
 // ENGINE SIDE Log Macros
-#define KRK_INIT_LOGS()                                             ::krakoa::CoreLogger::CoreInit();
+#define KRK_INIT_LOGS(msg)                                          ::krakoa::CoreLogger::CoreInit(msg);
 #define KRK_SET_LOG_MIN(minLvl)                                     ::krakoa::CoreLogger::GetCoreLogger().SetMinimumLoggingLevel(minLvl);
 #define KRK_GET_LOG_PATH()                                          ::krakoa::CoreLogger::GetCoreLogger().GetOutputPath();
 #define KRK_TOGGLE_LOGGING()                                        ::krakoa::CoreLogger::GetCoreLogger().ToggleLoggingEnabled();

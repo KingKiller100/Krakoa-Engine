@@ -9,7 +9,7 @@ namespace krakoa
 
 	std::unique_ptr<Logging> CoreLogger::pCoreLogger;
 
-	void CoreLogger::CoreInit()
+	void CoreLogger::CoreInit(const std::string_view& initMsg)
 	{
 		if (pCoreLogger)
 			return;
@@ -21,8 +21,7 @@ namespace krakoa
 		constexpr auto filename = "Krakoa Engine";
 		
 		pCoreLogger = std::make_unique<Logging>(dir, filename, name);
-		pCoreLogger->ToggleConsoleEnabled();
-		pCoreLogger->OutputInitialized("Welcome to the engine");
+		pCoreLogger->OutputInitialized(initMsg);
 	}
 
 	Logging& CoreLogger::GetCoreLogger()

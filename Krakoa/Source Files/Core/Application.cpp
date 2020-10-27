@@ -34,10 +34,10 @@ namespace krakoa
 
 		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
 		
-		KRK_INIT_LOGS();
+		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);
 		KRK_FATAL(!instance, "Instance of the application already exists!");
-		KRK_BANNER("WELCOME TO THE KRAKOA ENGINE", "ENTRY", "*", "*", 20);
+		//KRK_BANNER( "ENTRY", "WELCOME TO THE KRAKOA ENGINE", "*", "*", 20);
 
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());

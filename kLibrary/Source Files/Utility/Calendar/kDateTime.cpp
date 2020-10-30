@@ -66,9 +66,9 @@ namespace klib::kCalendar
 
 	Date::Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d, const MonthOfTheYear m, const DDMMYYYY_t y)
 		: day(d)
-	, month(m)
-	, year(y)
-	, dayOfWeek(dayOfTheWeek)
+		, month(m)
+		, year(y)
+		, dayOfWeek(dayOfTheWeek)
 	{
 		CheckDate();
 	}
@@ -80,11 +80,11 @@ namespace klib::kCalendar
 
 		std::string str(
 			kString::ToString("{0}{1}{2}{1}{3}"
-			, GetDay()
-			, separatorStr
-			, GetMonthIndex()
-			, GetYear()));
-		
+				, GetDay()
+				, separatorStr
+				, GetMonthIndex()
+				, GetYear()));
+
 		return str;
 	}
 
@@ -93,7 +93,7 @@ namespace klib::kCalendar
 		const auto dayStr = GetDayStr();
 		const auto monthStr = GetMonthStr();
 		const auto yearStr = GetYearStr();
-		
+
 		std::string str;
 
 		switch (format)
@@ -102,13 +102,13 @@ namespace klib::kCalendar
 		{
 			const auto d_o_t_wStr = GetDayOfWeekStr();
 			str = kString::ToString("{0} {1} {2} {3}"
-			, d_o_t_wStr
-			, dayStr
-			, monthStr
-			, yearStr);
+				, d_o_t_wStr
+				, dayStr
+				, monthStr
+				, yearStr);
 		}
-			break;
-			
+		break;
+
 		case DateTextLength::SHORT:
 			str = kString::ToString("{0} {1} {2}"
 				, monthStr
@@ -116,7 +116,7 @@ namespace klib::kCalendar
 				, yearStr
 			);
 			break;
-			
+
 		default:
 			throw kDebug::CalendarError("Unknown date text format");
 		}
@@ -185,10 +185,10 @@ namespace klib::kCalendar
 	{
 		if (day < 1)
 			throw kDebug::CalendarError();
-		
+
 		if (month > 11)
 			throw kDebug::InvalidMonthError();
-		
+
 		if (month == 1)
 		{
 			if (year % 4 && day > 29)
@@ -217,9 +217,9 @@ namespace klib::kCalendar
 	Time::Time(CalendarInfoSource sourceInfo)
 	{
 		const auto source = sourceInfo == CalendarInfoSource::LOCAL
-			                    ? GetLocalDateAndTime()
-			                    : GetSystemDateAndTime();
-		
+			? GetLocalDateAndTime()
+			: GetSystemDateAndTime();
+
 		hours = source.wHour;
 		minutes = source.wMinute;
 		seconds = source.wSecond;
@@ -227,14 +227,14 @@ namespace klib::kCalendar
 	}
 
 	Time::Time(const HHMMSSMS_t h, const HHMMSSMS_t m, const HHMMSSMS_t s, const HHMMSSMS_t ms)
-		: hours(h) 
-	, minutes(m)
-	, seconds(s)
-	, milliseconds(ms)
+		: hours(h)
+		, minutes(m)
+		, seconds(s)
+		, milliseconds(ms)
 	{
 		CheckTime();
 	}
-	
+
 	void Time::CheckTime() const
 	{
 		if (hours > 23)
@@ -262,10 +262,10 @@ namespace klib::kCalendar
 	}
 
 	std::string Time::ToString(const TimeComponent accuracy) const
-	{		
+	{
 		std::string str;
 		HHMMSSMS_t times[] = { hours, minutes, seconds };
-		
+
 		for (auto i = CAST(HHMMSSMS_t, TimeComponent::HOURS);
 			i <= CAST(HHMMSSMS_t, accuracy);
 			++i)
@@ -276,7 +276,7 @@ namespace klib::kCalendar
 				? kString::ToString("{0:3}", milliseconds)
 				: kString::ToString("{0:2}", times[i]));
 		}
-		
+
 		return str;
 	}
 

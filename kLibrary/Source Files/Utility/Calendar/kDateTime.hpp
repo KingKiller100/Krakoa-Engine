@@ -49,8 +49,9 @@ namespace klib
 		public:
 			explicit Date(CalendarInfoSource sourceInfo);
 			Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d = 1, const MonthOfTheYear m = JAN, const DDMMYYYY_t y = 1900);
-			
-			USE_RESULT std::string ToString(DateNumericalSeparator separator) const;
+
+			USE_RESULT std::string ToString(const std::string_view& format) const;
+			USE_RESULT std::string ToString(DateNumericalSeparator separator = DateNumericalSeparator::SLASH) const;
 			USE_RESULT std::string ToString(DateTextLength format) const;
 
 			USE_RESULT DDMMYYYY_t GetDay() const;

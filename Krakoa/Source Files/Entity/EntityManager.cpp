@@ -160,7 +160,7 @@ namespace krakoa
 		});
 
 		if (iter == entities.end())
-			KRK_FATAL(false, klib::kFormat::ToString("Entity \"{0}\" is not contained", name));
+			KRK_FATAL(false, klib::kString::ToString("Entity \"{0}\" does not exist", name));
 
 		return **iter;
 	}
@@ -175,7 +175,7 @@ namespace krakoa
 		});
 
 		if (iter == entities.end())
-			KRK_FATAL(false, klib::kFormat::ToString("Entity ID \"{0}\" is not contained", id));
+			KRK_FATAL(false, klib::kString::ToString("Entity ID \"{0}\" does not exist", id));
 
 		return **iter;
 	}

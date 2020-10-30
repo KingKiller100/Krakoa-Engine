@@ -3,8 +3,7 @@
 
 #include "../../Core/Logging/CoreLogger.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
-#include <Utility/String/kStringManipulation.hpp>
+#include <Utility/String/kToString.hpp>
 #include <Utility/File System/kFileSystem.hpp>
 
 #include <GLAD/glad.h>
@@ -15,7 +14,7 @@ namespace krakoa::graphics
 	OpenGLShader::OpenGLShader(const std::string_view& name, const std::string_view & shaderFilePath)
 		: name(name)
 	{
-		const auto sources = ParseShaderFile(shaderFilePath);
+		const auto sources = OpenGLShader::ParseShaderFile(shaderFilePath);
 		BuildShader(sources);
 	}
 
@@ -23,9 +22,9 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
-		const auto shaderData = klib::kFileSystem::ParseFileData(path);
+		const auto shaderData = klib::kFileSystem::ReadFile(path);
 
-		KRK_FATAL(!shaderData.empty(), klib::kFormat::ToString("Shader file is empty: %s", path.data()));
+		KRK_FATAL(!shaderData.empty(), klib::kString::ToString("Shader file is empty: %s", path.data()));
 
 		std::unordered_map<uint32_t, std::string> sources;
 		decltype(sources)::value_type::second_type* currentSource = nullptr;
@@ -99,7 +98,7 @@ namespace krakoa::graphics
 				// We don't need the shader anymore.
 				glDeleteShader(shaderIDs[i]);
 
-				KRK_FATAL(false, klib::kFormat::ToString("%s Shader Compilation Error: \n%s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), infoLog));
+				KRK_FATAL(false, klib::kString::ToString("%s Shader Compilation Error: \n%s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), infoLog));
 				delete[] infoLog;
 				return;
 			}
@@ -130,7 +129,7 @@ namespace krakoa::graphics
 				glDeleteShader(id);
 
 
-			KRK_FATAL(false, klib::kFormat::ToString("Shader Linking Error: \n%s", infoLog));
+			KRK_FATAL(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
 			delete[] infoLog;
 			return;
 		}
@@ -173,7 +172,7 @@ namespace krakoa::graphics
 			glDeleteShader(fragmentShader);
 
 
-			KRK_FATAL(false, klib::kFormat::ToString("Shader Linking Error: \n%s", infoLog));
+			KRK_FATAL(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
 			delete[] infoLog;
 			return;
 		}
@@ -311,7 +310,7 @@ namespace krakoa::graphics
 		}
 
 		location = glGetUniformLocation(rendererID, name.data());
-		if (location < 0) KRK_INFO(klib::kFormat::ToString("uniform %s does not exist inside this shader", name.data()));
+		if (location < 0) KRK_INFO(klib::kString::ToString("uniform %s does not exist inside this shader", name));
 		uniformLocationUMap.insert(std::make_pair(name, location));
 		return location;
 	}

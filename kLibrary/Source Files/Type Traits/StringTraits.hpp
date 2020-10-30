@@ -53,46 +53,46 @@ namespace klib::type_trait
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::string> : std::true_type
+	struct Is_StringTypeBase<std::string> : Is_CharType<char>
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::wstring> : std::true_type
+	struct Is_StringTypeBase<std::wstring> : Is_CharType<wchar_t>
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::u16string> : std::true_type
+	struct Is_StringTypeBase<std::u16string> : Is_CharType<char16_t>
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::u32string> : std::true_type
+	struct Is_StringTypeBase<std::u32string> : Is_CharType<char32_t>
 	{};
 
 #ifdef __cpp_char8_t
 	template<>
-	struct Is_StringTypeBase<std::u8string> : std::true_type
+	struct Is_StringTypeBase<std::basic_string<char8_t>> : Is_CharType<char8_t>
 	{};
 #endif
 
 	template<>
-	struct Is_StringTypeBase<std::string_view> : std::true_type
+	struct Is_StringTypeBase<std::string_view> : Is_CharType<char>
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::wstring_view> : std::true_type
+	struct Is_StringTypeBase<std::wstring_view> : Is_CharType<wchar_t>
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::u16string_view> : std::true_type
+	struct Is_StringTypeBase<std::u16string_view> : Is_CharType<char16_t>
 	{};
 
 	template<>
-	struct Is_StringTypeBase<std::u32string_view> : std::true_type
+	struct Is_StringTypeBase<std::u32string_view> : Is_CharType<char32_t>
 	{};
 
 #ifdef __cpp_char8_t
 	template<>
-	struct Is_StringTypeBase<std::u8string_view> : std::true_type
+	struct Is_StringTypeBase<std::basic_string_view<char8_t>> : Is_CharType<char8_t>
 	{};
 #endif
 
@@ -105,7 +105,4 @@ namespace klib::type_trait
 
 	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
 	constexpr auto s_NullTerminator = CharType();
-	
-	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
-	constexpr auto s_NewLine = CharType('\n');
 }

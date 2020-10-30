@@ -2,7 +2,7 @@
 #include "FormatToString_Test.hpp"
 
 #include "../../Source Files/Maths/Constants.hpp"
-#include "../../Source Files/Utility/Format/kFormatToString.hpp"
+#include "../../Source Files/Utility/String/kToString.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -32,7 +32,7 @@ namespace kTest::utility
 
 	bool FormatToStringTester::FormatToStringTest()
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 
 		Object o;
 		const auto tempIntPtr = std::make_unique<int>(76);
@@ -59,10 +59,10 @@ namespace kTest::utility
 	bool FormatToStringTester::SingleObjectToStringTest()
 	{
 #ifdef __cpp_char8_t
-		const auto test = klib::kFormat::ToString<char8_t>(980u);
+		const auto test = klib::kString::ToString<char8_t>(980u);
 		VERIFY(test == u8"980");
 #else
-		const auto test = klib::kFormat::ToString<char16_t>(980u);
+		const auto test = klib::kString::ToString<char16_t>(980u);
 		VERIFY(test == u"980");
 #endif
 		return success;

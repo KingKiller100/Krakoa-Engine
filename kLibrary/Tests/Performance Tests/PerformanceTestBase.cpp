@@ -3,7 +3,7 @@
 
 #include "PerformanceTestManager.hpp"
 
-#include "../../Source Files/Utility/Format/kFormatToString.hpp"
+#include "../../Source Files/Utility/String/kToString.hpp"
 
 #include <iostream>
 
@@ -25,7 +25,7 @@ namespace kTest::performance
 		}
 		catch (...)
 		{
-			const auto output = klib::kFormat::ToString("{0} seems to have crashed!\n", name);
+			const auto output = klib::kString::ToString("{0} seems to have crashed!\n", name);
 			PerformanceTestManager::Get().CollectResult(output);
 		}
 
@@ -141,7 +141,7 @@ namespace kTest::performance
 		const auto fastestName = fastest.name;
 		const auto slowestName = slowest.name;
 
-		const auto output = klib::kFormat::ToString(R"(%s: 
+		const auto output = klib::kString::ToString(R"(%s: 
 	%s is the fastest on average by %.3f%%
 	Fastest Instance: %s Time: %dus (microseconds)
 	Slowest Instance: %s Time: %dus (microseconds)

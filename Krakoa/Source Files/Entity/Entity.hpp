@@ -60,7 +60,7 @@ namespace krakoa
 		{
 			KRK_FATAL(
 				!HasComponent<ComponentType>(), // Assert a brand new component being added
-				klib::kFormat::ToString("Attempt to add a component already a part of this entity - {0}", ComponentType::GetStaticType())
+				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", ComponentType::GetStaticType())
 			);
 
 			(components[ComponentType::GetStaticType()] = new ComponentType(std::forward<Args>(params)...)); // Adds to the list
@@ -91,7 +91,7 @@ namespace krakoa
 		{
 			KRK_FATAL(
 				HasComponent<ComponentType>(), // Assert component already a part of entity
-				klib::kFormat::ToString("Attempt to get a component not a part of this entity - {0}", ComponentType::GetStaticType())
+				klib::kString::ToString("Attempt to get a component not a part of this entity - {0}", ComponentType::GetStaticType())
 			);
 
 			ComponentType* component = dynamic_cast<ComponentType*>(components.at(ComponentType::GetStaticType()));

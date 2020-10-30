@@ -2,14 +2,14 @@
 #include "kCalendar.hpp"
 #include "kDateTime.hpp"
 
-#include "../Format/kFormatToString.hpp"
+#include "../String/kToString.hpp"
 #include "../String/kStringManipulation.hpp"
 
 #include <unordered_map>
 
 namespace klib::kCalendar
 {
-	using namespace kFormat;
+	using namespace kString;
 
 	static std::unordered_map<CalendarInfoSource, Date> dates = {
 		 { CalendarInfoSource::LOCAL, Date(CalendarInfoSource::LOCAL) },

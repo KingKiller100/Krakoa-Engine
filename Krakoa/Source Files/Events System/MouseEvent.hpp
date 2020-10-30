@@ -2,7 +2,7 @@
 #include "Event.hpp"
 
 #include <Maths/Vectors/Vector2.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 namespace krakoa::events
 {
@@ -50,7 +50,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Mouse Moved Event: (%.f, %.f)", position.X(), position.Y());
+			return klib::kString::ToString("Mouse Moved Event: (%.f, %.f)", position.X(), position.Y());
 		}
 
 		EVENT_CLASS_TYPE(MOUSE_MOVE)
@@ -88,7 +88,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Mouse Scrolled Event: (%.f, %.f)", offset.X(), offset.Y());
+			return klib::kString::ToString("Mouse Scrolled Event: (%.f, %.f)", offset.X(), offset.Y());
 		}
 
 		EVENT_CLASS_TYPE(MOUSE_SCROLL)
@@ -124,7 +124,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Mouse Clicked Event: %d", button);
+			return klib::kString::ToString("Mouse Clicked Event: %d", button);
 		}
 
 		EVENT_CLASS_TYPE(MOUSE_CLICK)
@@ -139,7 +139,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Mouse Button Released Event: %d", button);
+			return klib::kString::ToString("Mouse Button Released Event: %d", button);
 		}
 
 		EVENT_CLASS_TYPE(MOUSE_RELEASE)

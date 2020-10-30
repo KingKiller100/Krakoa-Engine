@@ -18,7 +18,7 @@
 #include "../../Tests/Utility Tests/DebugHelp_Test.hpp"
 #include "../../Tests/Utility Tests/FileSystem_Test.hpp"
 #include "../../Tests/Utility Tests/StringView_Test.hpp"
-#include "../../Tests/Utility Tests/UTFConverter_Test.hpp"
+#include "../../Tests/Utility Tests/StringConverter_Test.hpp"
 #include "../../Tests/Utility Tests/StringManipulation_Test.hpp"
 #include "../../Tests/Utility Tests/FormatToString_Test.hpp"
 
@@ -126,7 +126,7 @@ namespace kTest
 
 	void TesterManager::Run(Tester& test)
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		const klib::kTime::HighAccuracyTimer timer("Test Run Time");
@@ -149,12 +149,12 @@ namespace kTest
 				runtimeResultStr, 
 				test.GetFailureData()); // Fail Case
 
-		klib::kFileSystem::OutputToFile(path.c_str(), resultTest.c_str());
+		klib::kFileSystem::WriteFile(path.c_str(), resultTest.c_str());
 	}
 
 	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -192,8 +192,8 @@ namespace kTest
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned, 1000.0 * remainder);
 
-		const auto finalTimeStr = klib::kFormat::ToString("Total Runtime: {0}s  {1}ms", secs, millis);
-		klib::kFileSystem::OutputToFile(path, finalTimeStr);
+		const auto finalTimeStr = klib::kString::ToString("Total Runtime: {0}s  {1}ms", secs, millis);
+		klib::kFileSystem::WriteFile(path, finalTimeStr);
 
 		std::cout << "\n" << finalTimeStr << "\n";
 

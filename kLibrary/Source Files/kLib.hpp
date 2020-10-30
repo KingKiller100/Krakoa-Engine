@@ -4,7 +4,7 @@
 #include <Maths/kMaths.hpp>
 
 // Simple Type Traits Include
-#include <Type Traits/String.hpp>
+#include <Type Traits/StringTraits.hpp>
 #include <Type Traits/Constexpr.hpp>
 
 // Util Includes
@@ -14,10 +14,10 @@
 #include <Utility/Profiler/kProfiler.hpp>
 #include <Utility/Debug Helper/kAssert.hpp>
 #include <Utility/Debug Helper/kDebugger.hpp>
-#include <Utility/Format/kFormatToString.hpp>
 #include <Utility/File System/kFileSystem.hpp>
+#include <Utility/String/kStringConverter.hpp>
 #include <Utility/String/kStringManipulation.hpp>
-#include <Utility/String/kUTFStringConverter.hpp>
+#include <Utility/String/kToString.hpp>
 
 // Macros
 #include <HelperMacros.hpp>

@@ -3,7 +3,7 @@
 
 #include "../../Source Files/Maths/kAlgorithms.hpp"
 #include "../../Source Files/Utility/Timer/kTimer.hpp"
-#include "../../Source Files/Utility/Format/kFormatToString.hpp"
+#include "../../Source Files/Utility/String/kToString.hpp"
 
 #include <thread>
 
@@ -36,7 +36,7 @@ namespace kTest::utility
 			const auto dt = testTime.GetDeltaTime<klib::kTime::units::Micros>();
 			nums[i] = i;
 			VERIFY(nums[i] == i && dt != 0);
-			s = klib::kFormat::ToString("Test Time %d : %fus (Microseconds)\n", i, dt);
+			s = klib::kString::ToString("Test Time %d : %fus (Microseconds)\n", i, dt);
 		}
 
 		const auto lifetime = testTime.GetLifeTime<klib::kTime::units::Micros>();

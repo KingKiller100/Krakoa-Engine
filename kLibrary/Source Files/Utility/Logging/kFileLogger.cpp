@@ -4,14 +4,14 @@
 #include "kLogEntry.hpp"
 
 #include "../Calendar/kCalendar.hpp"
-#include "../Format/kFormatToString.hpp"
+#include "../String/kToString.hpp"
 #include "../File System/kFileSystem.hpp"
 
 #include <iostream>
 
 namespace klib
 {
-	using namespace kFormat;
+	using namespace kString;
 	using namespace kCalendar;
 	using namespace kFileSystem;
 	
@@ -76,7 +76,7 @@ namespace klib
 		
 			const std::string spacing(5, ' ');
 			const std::string padding(73, '*');
-			constexpr auto nl = type_trait::s_NewLine<char>;
+			constexpr auto nl = "\n";
 			
 			std::string opener = padding + nl;
 			opener += spacing + "File logger activated: ";
@@ -148,7 +148,7 @@ namespace klib
 				);
 			}
 
-			logLine.push_back(type_trait::s_NewLine<char>);
+			logLine.push_back('\n');
 
 			return logLine;
 		}
@@ -160,12 +160,14 @@ namespace klib
 
 			if (outputClosingMsg)
 			{
+				static constexpr char msg[] = "File Logging Concluded";
+				
 				const std::string padding(72, '*');
-				static constexpr char msg[]
-					= "                     File Logging Concluded                            ";
-
+				const std::string spacing(25, ' ');
+				const auto logMsg = spacing + msg + spacing;
+				
 				Flush(padding);
-				Flush(msg);
+				Flush(logMsg);
 				Flush(padding);
 			}
 

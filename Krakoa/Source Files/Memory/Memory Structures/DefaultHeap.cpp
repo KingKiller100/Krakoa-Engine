@@ -3,13 +3,13 @@
 
 #include "MemoryTypeSizes.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 namespace memory
 {
 	std::string GetDefaultHeapStatus(const Heap* pHeap)
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 
 		const auto count = pHeap->WalkTheHeap();
 

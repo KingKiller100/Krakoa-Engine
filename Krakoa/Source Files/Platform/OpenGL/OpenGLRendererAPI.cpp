@@ -4,7 +4,7 @@
 #include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <imgui.h>
 #include <GLFW/glfw3.h>
@@ -12,6 +12,12 @@
 
 namespace krakoa::graphics
 {
+	static const std::string_view s_GlVersion = REINTERPRET(const char*, glGetString(GL_VERSION));
+	static const std::string_view s_GlVendor = REINTERPRET(const char*, glGetString(GL_VENDOR));
+	static const std::string_view s_GlRenderer = REINTERPRET(const char*, glGetString(GL_RENDERER));
+	static const std::string_view s_GlfwVersion = glfwGetVersionString();
+	static const std::string_view s_ImGuiVersion = IMGUI_VERSION;
+	
 	void OpenGLRendererAPI::Initialize()
 	{
 		OutputRenderingArchitecture();
@@ -25,23 +31,23 @@ namespace krakoa::graphics
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 		{
-			const auto msgType = klib::kFormat::ToString("OpenGL %s:",
+			const auto msgType = klib::kString::ToString("OpenGL %s:",
 				type == GL_DEBUG_TYPE_ERROR
 				? "ERROR"
 				: "CALLBACK");
-			auto msgFormat = msgType +
+			const auto msgFormat = msgType +
 				"\n type = 0x%08x\n severity = 0x%08x\n message = %s\n";
 
 			if (type == GL_DEBUG_TYPE_ERROR)
 			{
-				KRK_ERRR(klib::kFormat::ToString(msgFormat,
+				KRK_ERRR(klib::kString::ToString(msgFormat,
 					type,
 					severity,
 					message));
 			}
 			else
 			{
-				KRK_DBUG(klib::kFormat::ToString(msgFormat,
+				KRK_DBUG(klib::kString::ToString(msgFormat,
 					type,
 					severity,
 					message));
@@ -55,15 +61,13 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-		
 		// Rendering hardware info
 		KRK_INFO("API: OpenGL");
-		KRK_INFO(klib::kFormat::ToString("Version: %s",       REINTERPRET(const char*, glGetString(GL_VERSION))));
-		KRK_INFO(klib::kFormat::ToString("Vendor: %s",        REINTERPRET(const char*, glGetString(GL_VENDOR))));
-		KRK_INFO(klib::kFormat::ToString("Hardware: %s",      REINTERPRET(const char*, glGetString(GL_RENDERER))));
-		KRK_INFO(klib::kFormat::ToString("GLFW Version: %s",  glfwGetVersionString()));
-		KRK_INFO(klib::kFormat::ToString("ImGui Version: %s", IMGUI_VERSION));
+		KRK_INFO(klib::kString::ToString("Version: %s",       s_GlVersion));
+		KRK_INFO(klib::kString::ToString("Vendor: %s",        s_GlVendor));
+		KRK_INFO(klib::kString::ToString("Hardware: %s",      s_GlRenderer));
+		KRK_INFO(klib::kString::ToString("GLFW Version: %s",  s_GlfwVersion));
+		KRK_INFO(klib::kString::ToString("ImGui Version: %s", s_ImGuiVersion));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const kmaths::Vector4f& colour)

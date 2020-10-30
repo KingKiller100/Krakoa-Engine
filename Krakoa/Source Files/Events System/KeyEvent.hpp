@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.hpp"
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 namespace krakoa::events
 {
@@ -32,7 +32,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Key Pressed Event: %d (%d Repeats)", keycode, repeatCount);
+			return klib::kString::ToString("Key Pressed Event: %d (%d Repeats)", keycode, repeatCount);
 		}
 
 		EVENT_CLASS_TYPE(KEY_PRESSED)
@@ -50,7 +50,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Key Typed Event: %d", keycode);
+			return klib::kString::ToString("Key Typed Event: %d", keycode);
 		}
 
 		EVENT_CLASS_TYPE(KEY_TYPED)
@@ -65,7 +65,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kFormat::ToString("Key Released: %d", keycode);
+			return klib::kString::ToString("Key Released: %d", keycode);
 		}
 		
 		EVENT_CLASS_TYPE(KEY_RELEASED)

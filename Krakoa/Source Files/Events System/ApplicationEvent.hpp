@@ -3,7 +3,7 @@
 #include "Event.hpp"
 
 #include <Maths/Vectors/Vector2.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <string>
 
@@ -51,7 +51,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return kFormat::ToString("Window Resize Event: (%.2f, %.2f)", GetWidth(), GetHeight());
+			return kString::ToString("Window Resize Event: (%u, %u)", GetWidth(), GetHeight());
 		}
 
 		EVENT_CLASS_TYPE(WINDOW_RESIZE)
@@ -112,7 +112,7 @@ namespace krakoa::events
 		}
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return kFormat::ToString("Window Moved Event: New Position - (%.2f, %.2f)", GetX(), GetY());
+			return kString::ToString("Window Moved Event: New Position - (%.2f, %.2f)", GetX(), GetY());
 		}
 
 		EVENT_CLASS_TYPE(WINDOW_MOVED)

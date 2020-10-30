@@ -5,7 +5,7 @@
 #include "../Core/Logging/CoreLogger.hpp"
 
 #include <HelperMacros.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <atomic>
 #include <thread>
@@ -88,11 +88,11 @@ namespace patterns
 			auto* node = nextFree.load();
 			while (node && !nextFree.compare_exchange_weak(node, node->next, std::memory_order_seq_cst))
 			{
-				const auto msg = klib::kFormat::ToString("Thread {0} failed to allocate", threadID);
+				const auto msg = klib::kString::ToString("Thread {0} failed to allocate", threadID);
 				KRK_DBUG(msg);
 			}
 
-			KRK_DBUG(klib::kFormat::ToString("Thread {0} successfully allocatedd", threadID));
+			KRK_DBUG(klib::kString::ToString("Thread {0} successfully allocatedd", threadID));
 
 			if (nextFree == nullptr)
 				throw std::bad_alloc();
@@ -111,11 +111,11 @@ namespace patterns
 			node->next = nextFree;
 			while (!nextFree.compare_exchange_weak(node->next, node, std::memory_order_seq_cst))
 			{
-				const auto msg = klib::kFormat::ToString("Thread {0} failed to deallocate", threadID);
+				const auto msg = klib::kString::ToString("Thread {0} failed to deallocate", threadID);
 				KRK_DBUG(msg);
 			}
 
-			KRK_DBUG(klib::kFormat::ToString("Thread {0} successfully deallocatedd", threadID));
+			KRK_DBUG(klib::kString::ToString("Thread {0} successfully deallocatedd", threadID));
 
 			size--;
 		}

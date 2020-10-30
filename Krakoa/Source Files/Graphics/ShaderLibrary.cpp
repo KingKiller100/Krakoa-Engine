@@ -6,7 +6,7 @@
 #include "../Instrumentor.hpp"
 #include "../Core/Logging/CoreLogger.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 #include <Utility/String/kStringManipulation.hpp>
 
 namespace krakoa::graphics
@@ -20,7 +20,7 @@ namespace krakoa::graphics
 	USE_RESULT std::weak_ptr<iShader> ShaderLibrary::Get(const std::string & name) const
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_FATAL(Exists(name), klib::kFormat::ToString("Trying to retrieve shader that does not currently exist:\n%s", name.data()));
+		KRK_FATAL(Exists(name), klib::kString::ToString("Trying to retrieve shader that does not currently exist:\n%s", name.data()));
 		return shadersUMap.at(name);
 	}
 
@@ -28,7 +28,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		static auto no_name_shader_count = 0ull;
-		const auto& name = klib::kFormat::ToString("Shader {0}", no_name_shader_count++);
+		const auto& name = klib::kString::ToString("Shader {0}", no_name_shader_count++);
 		const auto shader = iShader::Create(name, filepath);
 		return Add(name, shader);
 	}
@@ -61,7 +61,7 @@ namespace krakoa::graphics
 	std::shared_ptr<iShader> ShaderLibrary::Add(const std::string& name, iShader* shader)
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_FATAL(!Exists(name), klib::kFormat::ToString("Trying to add shader to library that already exists:\n%s", name.data()));
+		KRK_FATAL(!Exists(name), klib::kString::ToString("Trying to add shader to library that already exists:\n%s", name.data()));
 		const auto shaderS_Ptr = std::shared_ptr<iShader>(shader);
 		shadersUMap.insert(std::make_pair(name, shaderS_Ptr));
 		return shaderS_Ptr;

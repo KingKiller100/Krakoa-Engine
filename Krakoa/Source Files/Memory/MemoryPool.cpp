@@ -7,7 +7,7 @@
 #include "../Core/Logging/MemoryLogger.hpp"
 
 #include <Maths/kAlgorithms.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 namespace memory
 {
@@ -315,7 +315,7 @@ namespace memory
 	{
 		std::string status;
 
-		status += klib::kFormat::ToString(R"(
+		status += klib::kString::ToString(R"(
 Type: {0}
 Bytes: {1}
 Capacity: {2}

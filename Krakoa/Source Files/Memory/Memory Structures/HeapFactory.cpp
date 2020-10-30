@@ -11,7 +11,6 @@
 #include <Maths/kAlgorithms.hpp>
 
 #include <Utility/File System/kFileSystem.hpp>
-#include <Utility/String/kStringManipulation.hpp>
 
 #include <iostream>
 
@@ -223,7 +222,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 			CAST(size_t, kmaths::BytesUnits::GIGA));
 
 
-		MEM_INFO(klib::kFormat::ToString(
+		MEM_INFO(klib::kString::ToString(
 			R"(
 Total Heap Bytes:
 Gigabytes: {0:3}
@@ -239,7 +238,7 @@ kilo,
 
 	void HeapFactory::LogTotalAllocations(const size_t* bytes) noexcept
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 
 		MEM_INFO(ToString("\nTotal Heap Allocations At Program Shut Down: {0}",
 			*bytes));

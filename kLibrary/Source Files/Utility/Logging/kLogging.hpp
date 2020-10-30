@@ -3,7 +3,6 @@
 #include "kLogLevel.hpp"
 #include "kLogEntry.hpp"
 #include "kLogMessage.hpp"
-#include "../../Type Traits/String.hpp"
 
 #include <unordered_map>
 #include <deque>

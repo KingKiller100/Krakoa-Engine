@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../../../Maths/Length_Type.hpp"
-#include "../../Format/kFormatToString.hpp"
+#include "../../String/kToString.hpp"
 
 #include <stdexcept>
 
@@ -32,7 +32,7 @@ namespace klib::kDebug
 	public:
 		template<typename T>
 		NoRealRootError(const T value, const size_t root)
-			: MathsError(kFormat::ToString("ERROR: Value \"{0:2}\" has no {1}{2} root",
+			: MathsError(kString::ToString("ERROR: Value \"{0:2}\" has no {1}{2} root",
 				value,
 				root,
 				root == 1 ? "st"

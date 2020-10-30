@@ -1,6 +1,6 @@
 ﻿#include "pch.hpp"
 #include "kDateTime.hpp"
-#include "../Format/kFormatToString.hpp"
+#include "../String/kToString.hpp"
 #include "../Debug Helper/Exceptions/CalenderExceptions.hpp"
 #include <Windows.h>
 
@@ -79,7 +79,7 @@ namespace klib::kCalendar
 		separatorStr += (separator);
 
 		std::string str(
-			kFormat::ToString("{0}{1}{2}{1}{3}"
+			kString::ToString("{0}{1}{2}{1}{3}"
 			, GetDay()
 			, separatorStr
 			, GetMonthIndex()
@@ -101,7 +101,7 @@ namespace klib::kCalendar
 		case DateTextLength::FULL:
 		{
 			const auto d_o_t_wStr = GetDayOfWeekStr();
-			str = kFormat::ToString("{0} {1} {2} {3}"
+			str = kString::ToString("{0} {1} {2} {3}"
 			, d_o_t_wStr
 			, dayStr
 			, monthStr
@@ -110,7 +110,7 @@ namespace klib::kCalendar
 			break;
 			
 		case DateTextLength::SHORT:
-			str = kFormat::ToString("{0} {1} {2}"
+			str = kString::ToString("{0} {1} {2}"
 				, monthStr
 				, dayStr
 				, yearStr
@@ -138,7 +138,7 @@ namespace klib::kCalendar
 				: day == 3 ? "rd"
 				: "th";
 		};
-		const auto str = kFormat::ToString("{0}{1}"
+		const auto str = kString::ToString("{0}{1}"
 			, day
 			, dateSuffix());
 		return str;
@@ -156,7 +156,7 @@ namespace klib::kCalendar
 
 	std::string Date::GetYearStr() const
 	{
-		const auto str = kFormat::ToString("{0}", year);
+		const auto str = kString::ToString("{0}", year);
 		return str;
 	}
 
@@ -273,8 +273,8 @@ namespace klib::kCalendar
 			if (!str.empty())
 				str.push_back(':');
 			str.append(i >= CAST(HHMMSSMS_t, TimeComponent::MILLIS)
-				? kFormat::ToString("{0:3}", milliseconds)
-				: kFormat::ToString("{0:2}", times[i]));
+				? kString::ToString("{0:3}", milliseconds)
+				: kString::ToString("{0:2}", times[i]));
 		}
 		
 		return str;

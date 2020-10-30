@@ -7,7 +7,7 @@ namespace kmaths
 {
 	enum class BytesUnits : size_t
 	{
-		BYTE = 1,
+		BYTE = sizeof(std::byte),
 		KILO = std::kilo::num,
 		KIBI = 1024,
 		MEGA = std::mega::num,

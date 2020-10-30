@@ -12,7 +12,7 @@
 // Renderer
 #include "../../Platform/OpenGL/OpenGLContext.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -25,7 +25,7 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		KRK_ERRR(kFormat::ToString("GLFW ERROR \n               [CODE]: %d\n               [DESC]: %s", errorCode, description));
+		KRK_ERRR(kString::ToString("GLFW ERROR \n               [CODE]: %d\n               [DESC]: %s", errorCode, description));
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -55,8 +55,8 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_NORM(kFormat::ToString("Creating Window %s with dimensions (%d, %d)",
-			data.title.c_str(),
+		KRK_NORM(kString::ToString("Creating Window %s with dimensions (%d, %d)",
+			data.title,
 			data.dimensions.X(),
 			data.dimensions.Y()));
 

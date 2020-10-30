@@ -112,7 +112,7 @@ namespace kTest::performance
 		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
 		const auto fullPath = path / filename;
 
-		kFileSystem::OutputToFile(fullPath.string(), results);
+		kFileSystem::WriteFile(fullPath.string(), results);
 		results.clear();
 	}
 

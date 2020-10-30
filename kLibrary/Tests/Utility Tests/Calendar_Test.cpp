@@ -304,7 +304,7 @@ namespace kTest::utility
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
 			const auto result = klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::SLASH));
-			const auto expected = klib::kFormat::ToString(L"%02d/%02d/%02d", localTime.wDay, localTime.wMonth, localTime.wYear);
+			const auto expected = klib::kString::ToString(L"%02d/%02d/%02d", localTime.wDay, localTime.wMonth, localTime.wYear);
 			VERIFY(result == expected)
 		}
 
@@ -312,7 +312,7 @@ namespace kTest::utility
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
 			const auto result = GetDateInNumericalFormat(Date::DASH);
-			const auto expected = klib::kFormat::ToString("%02d-%02d-%02d", localTime.wDay, localTime.wMonth, localTime.wYear);
+			const auto expected = klib::kString::ToString("%02d-%02d-%02d", localTime.wDay, localTime.wMonth, localTime.wYear);
 			VERIFY(result == expected)
 		}
 
@@ -320,7 +320,7 @@ namespace kTest::utility
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
 			const auto result = GetDateInNumericalFormat(Date::SLASH, CalendarInfoSource::SYSTEM);
-			const auto expected = klib::kFormat::ToString("%02d/%02d/%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
+			const auto expected = klib::kString::ToString("%02d/%02d/%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}
 
@@ -329,7 +329,7 @@ namespace kTest::utility
 			::GetSystemTime(&systemTime);
 			const auto result
 				= klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::DASH, CalendarInfoSource::SYSTEM));
-			const auto expected = klib::kFormat::ToString(L"%02d-%02d-%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
+			const auto expected = klib::kString::ToString(L"%02d-%02d-%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}
 

@@ -5,14 +5,14 @@
 
 #include "Components/Transform.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 namespace krakoa
 {
 	static unsigned stored_ids = 0;
 
 	Entity::Entity()
-		: name(klib::kFormat::ToString("Entity{0}", stored_ids)),
+		: name(klib::kString::ToString("Entity{0}", stored_ids)),
 		id(stored_ids++),
 		selected(false),
 		active(true),
@@ -28,7 +28,7 @@ namespace krakoa
 	{}
 
 	Entity::Entity(const Entity& other)
-		: name(klib::kFormat::ToString("Entity{0}", other.id)),
+		: name(klib::kString::ToString("Entity{0}", other.id)),
 		id(other.id),
 		components(other.components),
 		selected(false),
@@ -47,7 +47,7 @@ namespace krakoa
 
 	Entity& Entity::operator=(const Entity& other)
 	{
-		name = klib::kFormat::ToString("Entity{0)", stored_ids++);
+		name = klib::kString::ToString("Entity{0)", stored_ids++);
 		components = other.components;
 		selected = false;
 		active = other.active;
@@ -98,14 +98,14 @@ namespace krakoa
 
 	void Entity::Update(const float dt)
 	{
-		//KRK_DBUG("Entiy \"" + name + "\" Update Called");
+		KRK_DBUG("Entiy \"" + name + "\" Update Called");
 
 		for (auto& component : components)
 		{
 			if (!component.second->IsActive())
 				continue;
 
-			//KRK_DBUG(klib::kFormat::ToString("Component \"{0}\" Update Called", component.first));
+			KRK_DBUG(klib::kString::ToString("Component \"{0}\" Update Called", component.first));
 
 			component.second->Update(dt);
 		}

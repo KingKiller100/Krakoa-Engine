@@ -1,10 +1,10 @@
 #include "pch.hpp"
 #include "FileSystem_Test.hpp"
 
+#ifdef TESTING_ENABLED
 #include "../../Source Files/Utility/File System/kFileSystem.hpp"
 
 
-#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 
@@ -61,7 +61,7 @@ namespace kTest::utility
 #endif
 
 		auto content = std::string();
-		OutputToFile((exeDir + "FS_File_Test").c_str(), content.c_str());
+		WriteFile((exeDir + "FS_File_Test").c_str(), content.c_str());
 
 		const auto good = CheckFileExists((exeDir + "FS_File_Test").c_str());
 		VERIFY(good == true);
@@ -94,10 +94,10 @@ namespace kTest::utility
 		const auto isDirDeleted = DeleteDirectory((exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
 		VERIFY(isDirDeleted == true);
 
-		OutputToFile((exeDir + "Create Directory Test\\Test.txt").c_str(), "Success\n");
+		WriteFile((exeDir + "Create Directory Test\\Test.txt").c_str(), "Success\n");
 		VERIFY(CheckFileExists((exeDir + "Create Directory Test\\Test.txt").c_str()) == true);
 
-		const auto fileData = klib::kFileSystem::ParseFileData((exeDir + "Create Directory Test\\Test.txt").c_str());
+		const auto fileData = klib::kFileSystem::ReadFile((exeDir + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(fileData.front().compare("Success") == 0);
 
 		const auto isFileDeleted = RemoveFile((exeDir + "Create Directory Test\\Test.txt").c_str());

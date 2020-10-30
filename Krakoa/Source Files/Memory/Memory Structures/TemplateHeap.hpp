@@ -2,7 +2,7 @@
 
 #include "Heap.hpp"
 
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <string>
 
@@ -27,7 +27,7 @@ namespace memory
 	template<typename T>
 	static std::string GetTemplateHeapStatus(const Heap* pHeap)
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 
 		const auto name = pHeap->GetName();
 		const size_t count = pHeap->WalkTheHeap();

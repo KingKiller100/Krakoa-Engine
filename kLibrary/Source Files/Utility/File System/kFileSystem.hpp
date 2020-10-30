@@ -2,8 +2,8 @@
 
 #include "../../HelperMacros.hpp"
 
+#include "../String/kStringConverter.hpp"
 #include "../String/kStringManipulation.hpp"
-#include "../String/kUTFStringConverter.hpp"
 
 #include <cstdio>
 #include <filesystem>
@@ -67,7 +67,7 @@ namespace klib::kFileSystem
 	/**
 	 * \brief
 	 *		Outputs a file to the specified directory and fills it with the given data
-	 * \param fullFilePath
+	 * \param filePath
 	 *		The full file directory with the final filename and file extension
 	 * \param content
 	 *		The data to fill the file with.
@@ -75,14 +75,20 @@ namespace klib::kFileSystem
 	 *		File mode i.e. out/append/binary/etc...
 	 */
 	template<class CharType = char>
-	constexpr bool OutputToFile(const kString::StringWriter<CharType>& fullFilePath, 
+	constexpr bool WriteFile(const kString::StringWriter<CharType>& filePath, 
 		const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
-		FileWriter<CharType> outFile(fullFilePath, mode);
+		FileWriter<CharType> outFile(filePath, mode);
 
 		if (outFile.is_open())
 		{
-			outFile << content.data();
+			if (mode & std::ios::binary)
+				outFile.write(
+					reinterpret_cast<const CharType*>(content.data())
+					, content.size());
+			else
+				outFile << content.data();
+			
 			outFile.close();
 			return true;
 		}
@@ -90,22 +96,25 @@ namespace klib::kFileSystem
 #if defined(_DEBUG) || defined(KLIB_DEBUG)
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			const auto failMsg = fullFilePath + "Cannot create/open file ";
+			const auto failMsg = filePath + "Cannot create/open file: ";
 			OutputDebugStringA(failMsg.c_str());
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
-			const auto failMsg = fullFilePath + L"Cannot create/open file ";
+			const auto failMsg = filePath + L"Cannot create/open file: ";
 			OutputDebugStringW(failMsg.c_str());
 		}
 		else
 		{
-			const auto wFileName = kString::Convert<wchar_t>(fullFilePath);
-			const auto failMsg = kString::StringWriter<wchar_t>(L"Cannot create/open file ") + wFileName;
+			const auto wFileName = kString::Convert<wchar_t>(filePath);
+			const auto failMsg = L"Cannot create/open file: " + wFileName;
 			OutputDebugStringW(failMsg.c_str());
 		}
+		
+		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath) );
 #endif // DEBUG
 
+		
 		return false;
 	}
 
@@ -283,7 +292,7 @@ namespace klib::kFileSystem
 	 *		A vector of every line of data in the file, as a string
 	 */
 	template<class CharType = char>
-	USE_RESULT constexpr auto ParseFileData(const kString::StringReader<CharType>& fullFilePath)
+	USE_RESULT constexpr auto ReadFile(const kString::StringReader<CharType>& fullFilePath)
 	{
 		using Char = ONLY_TYPE(CharType);
 

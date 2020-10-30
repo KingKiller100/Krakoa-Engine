@@ -7,7 +7,7 @@
 #include "../../Core/Logging/MemoryLogger.hpp"
 
 #include <Maths/BytesUnits.hpp>
-#include <Utility/Format/kFormatToString.hpp>
+#include <Utility/String/kToString.hpp>
 
 
 namespace memory
@@ -77,7 +77,7 @@ namespace memory
 
 	bool AllocHeader::VerifyHeader(AllocHeader* pHeader, bool enableAssert)
 	{
-		using namespace klib::kFormat;
+		using namespace klib::kString;
 
 		if (!VerifyLinkedList(pHeader))
 		{

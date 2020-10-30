@@ -9,13 +9,13 @@
 #include "kiLogDestination.hpp"
 
 #include "../../Type Traits/ToImpl.hpp"
-#include "../Format/kFormatToString.hpp"
+#include "../String/kToString.hpp"
 #include "../File System/kFileSystem.hpp"
 
 
 namespace klib::kLogs
 {
-	using namespace kFormat;
+	using namespace kString;
 	using namespace kCalendar;
 	using namespace type_trait;
 

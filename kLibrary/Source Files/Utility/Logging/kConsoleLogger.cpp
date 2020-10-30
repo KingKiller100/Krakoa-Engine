@@ -4,7 +4,7 @@
 #include "kLogEntry.hpp"
 
 #include "../Calendar/kCalendar.hpp"
-#include "../Format/kFormatToString.hpp"
+#include "../String/kToString.hpp"
 
 #include <Windows.h>
 #include <unordered_map>
@@ -12,7 +12,7 @@
 
 namespace klib
 {
-	using namespace kFormat;
+	using namespace kString;
 	using namespace kCalendar;
 
 	namespace kLogs
@@ -113,7 +113,7 @@ namespace klib
 				);
 			}
 
-			logLine.push_back(type_trait::s_NewLine<char>);
+			logLine.push_back('\n');
 
 			return logLine;
 		}

@@ -86,7 +86,7 @@ namespace klib {
 
 			if (auto pfSymPos = format.find(printfSymbol); pfSymPos != npos)
 			{
-				return stringify::Sprintf<CharType>(format, stringify::Identity<CharType>(arg), stringify::Identity<CharType>(argPack)...);
+				return stringify::Sprintf<CharType>(format, arg, argPack...);
 			}
 
 			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { stringify::IdentityPtr<CharType, T>(arg)
@@ -291,7 +291,8 @@ namespace klib {
 		template<class CharType, typename T>
 		constexpr std::basic_string<CharType> ToString(T&& object)
 		{
-			const auto s = ToString("{0}", object);
+			const auto fmt = kString::Convert<CharType>("{0}");
+			const auto s = ToString(fmt, object);
 			return s;
 		}
 	}

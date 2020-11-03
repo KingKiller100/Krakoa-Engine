@@ -283,7 +283,7 @@ namespace kTest::maths
 			}
 			catch (const klib::kDebug::MathsError & e)
 			{
-				constexpr auto msg = "ERROR: Division by zero has occured!";
+				constexpr auto msg = "ERROR: Division by zero has occurred!";
 				const auto result = std::strcmp(e.what(), msg) == 0;
 				VERIFY(result == true);
 			}
@@ -304,7 +304,7 @@ namespace kTest::maths
 			}
 			catch (const klib::kDebug::DivByZeroError & e)
 			{
-				constexpr auto msg = "ERROR: Division by zero has occured!";
+				constexpr auto msg = "ERROR: Division by zero has occurred!";
 				const auto result = std::strcmp(e.what(), msg) == 0;
 				VERIFY(result == true);
 			}

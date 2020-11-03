@@ -2,7 +2,7 @@
 
 #include "../HelperMacros.hpp"
 
-#include "../Utility/Format/kFormatToString.hpp"
+#include "../Utility/String/kToString.hpp"
 
 #include "../Type Traits/Constexpr.hpp"
 
@@ -46,7 +46,7 @@ namespace kTest
 	if ((test) == false)\
 	{\
 		this->success = false; \
-		this->failureData.append(klib::kFormat::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
+		this->failureData.append(klib::kString::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 	}\
 
 	// Verify result of a test if result is available at compile time

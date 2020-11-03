@@ -44,6 +44,7 @@ namespace kTest::utility
 		const auto testStr5 = ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
 		const auto testStr7 = ToString("%s", o);
+		const auto testStr8 = stringify::Sprintf("%s", std::string("STL strings can be handled by klib Sprintf"));
 
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
@@ -52,6 +53,7 @@ namespace kTest::utility
 		VERIFY(testStr5 == "signed (-50) or unsigned integers (200), ");
 		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
 		VERIFY(testStr7 == "Bitches ain't shit but hoes and tricks");
+		VERIFY(testStr8 == "STL strings can be handled by klib Sprintf");
 
 		return success;
 	}

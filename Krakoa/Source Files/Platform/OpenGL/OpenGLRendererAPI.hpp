@@ -15,6 +15,7 @@ namespace krakoa::graphics
 		void SetViewport(const int x, const int y, const int width, const int height) const noexcept override;
 
 	private:
+		void InitRendererInfo() noexcept;
 		void OutputRenderingArchitecture() override;
 	};
 

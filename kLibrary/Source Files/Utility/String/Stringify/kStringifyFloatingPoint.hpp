@@ -41,8 +41,7 @@ namespace klib::kString::stringify
 			throw std::runtime_error(err);
 		}
 
-		kString::StringWriter<CharType> str(kString::Convert<CharType>(buff));
-		//HandleDecimalPrecision(str, precision, CharType('0'));
+		StringWriter<CharType> str(kString::Convert<CharType>(buff));
 #endif 
 
 		return str;

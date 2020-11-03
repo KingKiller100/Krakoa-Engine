@@ -79,7 +79,7 @@ namespace klib::kCalendar
 		separatorStr += (separator);
 
 		std::string str(
-			kString::ToString("{0}{1}{2}{1}{3}"
+			kString::ToString("{0:2}{1}{2:2}{1}{3:4}"
 				, GetDay()
 				, separatorStr
 				, GetMonthIndex()

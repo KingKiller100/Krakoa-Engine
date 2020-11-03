@@ -12,14 +12,15 @@
 
 namespace krakoa::graphics
 {
-	static const std::string_view s_GlVersion = REINTERPRET(const char*, glGetString(GL_VERSION));
-	static const std::string_view s_GlVendor = REINTERPRET(const char*, glGetString(GL_VENDOR));
-	static const std::string_view s_GlRenderer = REINTERPRET(const char*, glGetString(GL_RENDERER));
-	static const std::string_view s_GlfwVersion = glfwGetVersionString();
-	static const std::string_view s_ImGuiVersion = IMGUI_VERSION;
+	static std::string_view s_GlVersion ;
+	static std::string_view s_GlVendor;
+	static std::string_view s_GlRenderer;
+	static std::string_view s_GlfwVersion;
+	static std::string_view s_ImGuiVersion;
 	
 	void OpenGLRendererAPI::Initialize()
 	{
+		InitRendererInfo();
 		OutputRenderingArchitecture();
 
 		KRK_PROFILE_FUNCTION();
@@ -56,6 +57,16 @@ namespace krakoa::graphics
 			nullptr);
 
 	}
+
+	void OpenGLRendererAPI::InitRendererInfo() noexcept
+	{
+		s_GlVersion = REINTERPRET(const char*, glGetString(GL_VERSION));
+		s_GlVendor = REINTERPRET(const char*, glGetString(GL_VENDOR));
+		s_GlRenderer = REINTERPRET(const char*, glGetString(GL_RENDERER));
+		s_GlfwVersion = glfwGetVersionString();
+		s_ImGuiVersion = IMGUI_VERSION;
+	}
+
 
 	void OpenGLRendererAPI::OutputRenderingArchitecture()
 	{

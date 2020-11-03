@@ -26,7 +26,7 @@ namespace klib::kString::stringify
 		constexpr auto hexMap = s_GeneralHexMap<CharType>;
 		
 		if (precision == nPrecision)
-			precision = sizeof(size_t) * 2;
+			precision = sizeof(uintptr_t) * 2;
 		
 		kString::StringWriter<CharType> address;
 		auto asUint = reinterpret_cast<uintptr_t>(ptr);

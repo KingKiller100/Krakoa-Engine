@@ -24,7 +24,7 @@ namespace krakoa::graphics
 		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
 		const auto shaderData = klib::kFileSystem::ReadFile(path);
 
-		KRK_FATAL(!shaderData.empty(), klib::kString::ToString("Shader file is empty: %s", path.data()));
+		KRK_ASSERT(!shaderData.empty(), klib::kString::ToString("Shader file is empty: %s", path.data()));
 
 		std::unordered_map<uint32_t, std::string> sources;
 		decltype(sources)::value_type::second_type* currentSource = nullptr;
@@ -50,7 +50,7 @@ namespace krakoa::graphics
 				}
 			}
 
-			KRK_FATAL(currentSource != nullptr, "Invalid: Shader type must be declared before actual shader data.");
+			KRK_ASSERT(currentSource != nullptr, "Invalid: Shader type must be declared before actual shader data.");
 			
 			currentSource->append(line + '\n');
 		}
@@ -98,7 +98,7 @@ namespace krakoa::graphics
 				// We don't need the shader anymore.
 				glDeleteShader(shaderIDs[i]);
 
-				KRK_FATAL(false, klib::kString::ToString("%s Shader Compilation Error: \n%s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), infoLog));
+				KRK_ASSERT(false, klib::kString::ToString("%s Shader Compilation Error: \n%s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), infoLog));
 				delete[] infoLog;
 				return;
 			}
@@ -129,7 +129,7 @@ namespace krakoa::graphics
 				glDeleteShader(id);
 
 
-			KRK_FATAL(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
+			KRK_ASSERT(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
 			delete[] infoLog;
 			return;
 		}
@@ -172,7 +172,7 @@ namespace krakoa::graphics
 			glDeleteShader(fragmentShader);
 
 
-			KRK_FATAL(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
+			KRK_ASSERT(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
 			delete[] infoLog;
 			return;
 		}

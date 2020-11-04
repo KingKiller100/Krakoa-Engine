@@ -10,7 +10,7 @@ namespace krakoa::graphics
 
 		void Clear() override;
 		void DrawIndexed(const iVertexArray& vertexArray, uint32_t count = 0) override;
-		void SetClearColour(const kmaths::Vector4f& colour) override;
+		void SetClearColour(const Colour& colour) override;
 
 		void SetViewport(const int x, const int y, const int width, const int height) const noexcept override;
 

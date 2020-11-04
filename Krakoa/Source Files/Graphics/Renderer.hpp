@@ -26,9 +26,9 @@ namespace krakoa::graphics
 		static void Update();
 		
 		static void Clear();
-		static void SetClearColour(const kmaths::Vector4f& colour);
+		static void SetClearColour(const Colour& colour);
 
-		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
+		static inline iRendererAPI::ApiType GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
 
 	private:
 		static const kmaths::Matrix4x4f* camera_VPMat;

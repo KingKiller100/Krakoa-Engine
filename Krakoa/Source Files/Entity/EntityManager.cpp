@@ -119,7 +119,7 @@ namespace krakoa
 					}*/
 				break;
 			default: // case of an unknown geometry type
-				KRK_FATAL(false, "Failed to draw unknown geometry type");
+				KRK_ASSERT(false, "Failed to draw unknown geometry type");
 				break;
 			}
 		}
@@ -160,7 +160,7 @@ namespace krakoa
 		});
 
 		if (iter == entities.end())
-			KRK_FATAL(false, klib::kString::ToString("Entity \"{0}\" does not exist", name));
+			KRK_ASSERT(false, klib::kString::ToString("Entity \"{0}\" does not exist", name));
 
 		return **iter;
 	}
@@ -175,7 +175,7 @@ namespace krakoa
 		});
 
 		if (iter == entities.end())
-			KRK_FATAL(false, klib::kString::ToString("Entity ID \"{0}\" does not exist", id));
+			KRK_ASSERT(false, klib::kString::ToString("Entity ID \"{0}\" does not exist", id));
 
 		return **iter;
 	}

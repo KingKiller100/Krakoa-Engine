@@ -39,6 +39,8 @@ namespace klib {
 				if (fmt[openerPos + 1] == openerSymbol ||
 					fmt[openerPos + 1] == CharType(' ') ||
 					fmt[openerPos + 1] == CharType('\t') ||
+					fmt[openerPos + 1] == CharType('\n') ||
+					fmt[openerPos + 1] == CharType('\r') ||
 					fmt[openerPos + 1] == nullTerminator)
 				{
 					openerPos += 2;
@@ -82,7 +84,7 @@ namespace klib {
 			static constexpr auto closerSymbol = CharType('}');
 			static constexpr auto precisionSymbol = CharType(':');
 			static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
-			static constexpr auto npos = std::basic_string<CharType>::npos;
+			static constexpr auto npos = std::basic_string_view<CharType>::npos;
 
 			if (auto pfSymPos = format.find(printfSymbol); pfSymPos != npos)
 			{

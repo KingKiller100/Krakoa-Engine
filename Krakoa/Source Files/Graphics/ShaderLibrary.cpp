@@ -20,7 +20,7 @@ namespace krakoa::graphics
 	USE_RESULT std::weak_ptr<iShader> ShaderLibrary::Get(const std::string & name) const
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_FATAL(Exists(name), klib::kString::ToString("Trying to retrieve shader that does not currently exist:\n%s", name.data()));
+		KRK_ASSERT(Exists(name), klib::kString::ToString("Trying to retrieve shader that does not currently exist:\n%s", name.data()));
 		return shadersUMap.at(name);
 	}
 
@@ -61,7 +61,7 @@ namespace krakoa::graphics
 	std::shared_ptr<iShader> ShaderLibrary::Add(const std::string& name, iShader* shader)
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_FATAL(!Exists(name), klib::kString::ToString("Trying to add shader to library that already exists:\n%s", name.data()));
+		KRK_ASSERT(!Exists(name), klib::kString::ToString("Trying to add shader to library that already exists:\n%s", name.data()));
 		const auto shaderS_Ptr = std::shared_ptr<iShader>(shader);
 		shadersUMap.insert(std::make_pair(name, shaderS_Ptr));
 		return shaderS_Ptr;

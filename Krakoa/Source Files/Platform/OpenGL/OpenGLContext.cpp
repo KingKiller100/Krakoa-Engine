@@ -18,7 +18,7 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 		glfwMakeContextCurrent(windowHandle);
 		const auto gladStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		KRK_FATAL(gladStatus, "FAILED: Unable to initialize GLAD");
+		KRK_ASSERT(gladStatus, "FAILED: Unable to initialize GLAD");
 	}
 
 	void OpenGLContext::SwapBuffers()

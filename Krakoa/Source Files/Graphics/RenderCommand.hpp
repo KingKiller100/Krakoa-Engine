@@ -22,7 +22,7 @@ namespace krakoa::graphics
 			rendererAPI->Clear(); 
 		}
 
-		inline static void SetClearColour(const kmaths::Vector4f& colour) 
+		inline static void SetClearColour(const Colour& colour) 
 		{
 			rendererAPI->SetClearColour(colour);
 		}

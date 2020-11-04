@@ -18,6 +18,7 @@ namespace krakoa
 		dir += "Logs\\";
 		
 		pClientLogger = std::make_unique<Logging>(dir, name, name);
+		pClientLogger->ToggleConsoleEnabled();
 		pClientLogger->OutputInitialized("Welcome client!");
 	}
 

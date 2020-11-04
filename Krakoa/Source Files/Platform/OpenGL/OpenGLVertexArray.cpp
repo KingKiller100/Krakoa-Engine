@@ -25,7 +25,7 @@ namespace krakoa::graphics
 			case ShaderDataType::BOOL:      return GL_BOOL;
 			default:
 			{
-				KRK_FATAL(false, "Unknown ShaderDataType");
+				KRK_ASSERT(false, "Unknown ShaderDataType");
 				return 0;
 			}
 		}
@@ -60,7 +60,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 	
-		KRK_FATAL(!vertexBuffer->GetLayout().GetElements().empty(), "Vertex buffer has no layout");
+		KRK_ASSERT(!vertexBuffer->GetLayout().GetElements().empty(), "Vertex buffer has no layout");
 
 		Bind();
 		vertexBuffer->Bind();

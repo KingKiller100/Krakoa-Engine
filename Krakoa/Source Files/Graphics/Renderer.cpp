@@ -46,7 +46,7 @@ namespace krakoa::graphics
 	void Renderer::Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform)
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_FATAL(!vertexArray.GetVertexBuffers().empty(), "No vertex buffer attached to this vertex array!");
+		KRK_ASSERT(!vertexArray.GetVertexBuffers().empty(), "No vertex buffer attached to this vertex array!");
 
 		shader.Bind();
 		shader.SetMat4x4("u_VpMat", *camera_VPMat);
@@ -60,7 +60,7 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 		
 #ifdef _DEBUG
-		SetClearColour({ 0.85f, 0.35f, 0.f, 1.f }); // Orange background colour
+		SetClearColour(colours::Orange); 
 #else
 		SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
 #endif // DEBUG
@@ -74,7 +74,7 @@ namespace krakoa::graphics
 		RenderCommand::Clear();
 	}
 
-	void Renderer::SetClearColour(const kmaths::Vector4f& colour)
+	void Renderer::SetClearColour(const Colour& colour)
 	{
 		KRK_PROFILE_FUNCTION();
 		RenderCommand::SetClearColour(colour);

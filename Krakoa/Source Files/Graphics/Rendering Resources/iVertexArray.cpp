@@ -14,9 +14,9 @@ namespace krakoa::graphics
 	iVertexArray * iVertexArray::Create()
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLVertexArray(); break;
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexArray(); break;
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 	}
 

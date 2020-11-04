@@ -33,7 +33,7 @@ namespace krakoa::graphics
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(KRK_TRUE);
 		buffer = stbi_load(path.data(), &width, &height, &channels, 4);
-		KRK_FATAL(buffer != nullptr, "Failed to load image");
+		KRK_ASSERT(buffer != nullptr, "Failed to load image");
 
 		dimensions = kmaths::Vector2u(width, height);
 
@@ -57,7 +57,7 @@ namespace krakoa::graphics
 			fileFormat = GL_RGBA;
 		}
 
-		KRK_FATAL(internalFormat && fileFormat, "Texture Format give is not supported by Krakoa");
+		KRK_ASSERT(internalFormat && fileFormat, "Texture Format give is not supported by Krakoa");
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, fileFormat, GL_UNSIGNED_BYTE, buffer);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -110,7 +110,7 @@ namespace krakoa::graphics
 
 		const auto bytes_per_pixel = fileFormat == GL_RGBA ? 4 : 3;
 		const auto textureSize = GetWidth() * GetHeight() * bytes_per_pixel;
-		KRK_FATAL(size == textureSize, "Texture data must be entire texture");
+		KRK_ASSERT(size == textureSize, "Texture data must be entire texture");
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, GetWidth(), GetHeight(), 0, fileFormat, GL_UNSIGNED_BYTE, data);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

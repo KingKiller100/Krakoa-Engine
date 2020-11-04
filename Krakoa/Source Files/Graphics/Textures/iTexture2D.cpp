@@ -13,9 +13,9 @@ namespace krakoa::graphics
 	iTexture2D * iTexture2D::Create(const uint32_t width, const uint32_t height, const bool cache)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLTexture2D(width, height, cache);
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLTexture2D(width, height, cache);
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 
 		return nullptr;
@@ -26,9 +26,9 @@ namespace krakoa::graphics
 		const auto formattedPath = klib::kString::Replace(path, '/', '\\');
 
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLTexture2D(formattedPath, cache);
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLTexture2D(formattedPath, cache);
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 
 		return nullptr;

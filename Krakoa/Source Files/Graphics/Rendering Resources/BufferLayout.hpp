@@ -33,7 +33,7 @@ namespace krakoa::graphics
 		case krakoa::graphics::ShaderDataType::BOOL:      return 1;
 		default:
 		{
-			KRK_FATAL(false, "Unknown ShaderDataType");
+			KRK_ASSERT(false, "Unknown ShaderDataType");
 			return 0;
 		}
 		}
@@ -58,7 +58,7 @@ namespace krakoa::graphics
 		case krakoa::graphics::ShaderDataType::BOOL:      size = sizeof(bool) ; break;
 		default:
 		{
-			KRK_FATAL(false, "Unknown ShaderDataType");
+			KRK_ASSERT(false, "Unknown ShaderDataType");
 			return 0;
 		}
 		}

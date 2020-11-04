@@ -63,7 +63,7 @@ namespace krakoa
 		if (!isInitialized)
 		{
 			glfwSetErrorCallback(GLFWErrorCallback);
-			KRK_FATAL(glfwInit(), "FAILED: Unable to initialize GLFW");
+			KRK_ASSERT(glfwInit(), "FAILED: Unable to initialize GLFW");
 			isInitialized = true;
 		}
 
@@ -77,7 +77,7 @@ namespace krakoa
 #endif
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
-		KRK_FATAL(window, "Window pointer not created");
+		KRK_ASSERT(window, "Window pointer not created");
 
 		pRenderContext = std::make_unique<graphics::OpenGLContext>(window);
 		pRenderContext->Init();

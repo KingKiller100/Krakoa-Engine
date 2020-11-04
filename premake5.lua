@@ -69,7 +69,7 @@ project "Krakoa"
 
     defines
 	{
-        "KLIB_SHORTHAND_NAMESPACE",
+        "KLIB_SHORT_NAMESPACE",
         "_CRT_SECURE_NO_WARNINGS"
 	}
 

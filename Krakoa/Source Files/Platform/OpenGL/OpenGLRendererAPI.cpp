@@ -3,6 +3,7 @@
 
 #include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
+#include "../../Graphics/Colour.hpp"
 
 #include <Utility/String/kToString.hpp>
 
@@ -22,7 +23,7 @@ namespace krakoa::graphics
 	{
 		InitRendererInfo();
 		OutputRenderingArchitecture();
-
+		
 		KRK_PROFILE_FUNCTION();
 
 		glEnable(GL_BLEND);
@@ -32,7 +33,7 @@ namespace krakoa::graphics
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 		{
-			const auto msgType = klib::kString::ToString("OpenGL %s:",
+			const auto msgType = klib::kString::ToString("OpenGL {0}:",
 				type == GL_DEBUG_TYPE_ERROR
 				? "ERROR"
 				: "CALLBACK");
@@ -81,15 +82,17 @@ namespace krakoa::graphics
 		KRK_INFO(klib::kString::ToString("ImGui Version: %s", s_ImGuiVersion));
 	}
 
-	void OpenGLRendererAPI::SetClearColour(const kmaths::Vector4f& colour)
+	void OpenGLRendererAPI::SetClearColour(const Colour& colour)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto r = colour.X();
-		const auto g = colour.Y();
-		const auto b = colour.Z();
-		const auto a = colour.W();
+		const auto c = colour.ToFloats<float>();
 
+		const auto r = c[0];
+		const auto g = c[1];
+		const auto b = c[2];
+		const auto a = c[3];
+		
 		glClearColor(r, g, b, a);
 	}
 

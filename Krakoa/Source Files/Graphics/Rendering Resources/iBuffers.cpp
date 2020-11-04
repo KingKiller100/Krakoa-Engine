@@ -14,9 +14,9 @@ namespace krakoa::graphics
 	iVertexBuffer * iVertexBuffer::Create(uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLVertexBuffer(size);
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexBuffer(size);
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}
@@ -24,9 +24,9 @@ namespace krakoa::graphics
 	iVertexBuffer * iVertexBuffer::Create(float * vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLVertexBuffer(vertices, size);
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexBuffer(vertices, size);
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}
@@ -37,9 +37,9 @@ namespace krakoa::graphics
 	iIndexBuffer * iIndexBuffer::Create(uint32_t * indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLIndexBuffer(indices, count);
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLIndexBuffer(indices, count);
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}

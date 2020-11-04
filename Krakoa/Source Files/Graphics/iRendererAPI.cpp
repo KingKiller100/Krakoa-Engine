@@ -4,5 +4,5 @@
 
 namespace krakoa::graphics
 {
-	iRendererAPI::API iRendererAPI::api = iRendererAPI::API::OPENGL;
+	iRendererAPI::ApiType iRendererAPI::api = iRendererAPI::ApiType::OPENGL;
 }

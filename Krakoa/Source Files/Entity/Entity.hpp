@@ -58,7 +58,7 @@ namespace krakoa
 		>>
 		ComponentType& AddComponent(Args&& ...params)
 		{
-			KRK_FATAL(
+			KRK_ASSERT(
 				!HasComponent<ComponentType>(), // Assert a brand new component being added
 				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", ComponentType::GetStaticType())
 			);
@@ -89,7 +89,7 @@ namespace krakoa
 		template<typename ComponentType, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, ComponentType>>>
 		USE_RESULT ComponentType& GetComponent() const
 		{
-			KRK_FATAL(
+			KRK_ASSERT(
 				HasComponent<ComponentType>(), // Assert component already a part of entity
 				klib::kString::ToString("Attempt to get a component not a part of this entity - {0}", ComponentType::GetStaticType())
 			);

@@ -22,9 +22,9 @@ namespace krakoa::graphics
 		const auto path = currentDir + formattedPath.data();
 
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::API::NONE:   KRK_FATAL(false, "RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLShader(name, path);
-		default:                        KRK_FATAL(false, "Unknown RendererAPI type!");
+		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLShader(name, path);
+		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
 		}
 
 		return nullptr;

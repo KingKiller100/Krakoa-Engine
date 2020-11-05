@@ -38,7 +38,7 @@ namespace klib::kString::stringify
 		static_assert(std::is_same_v<CharType, typename T::value_type>,
 			"Must be a string type that contains the same character types as CharType "
 			"i.e. std::string -> char, std::u16string -> char16_t");
-		return &str;
+		return std::addressof(str);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ namespace klib::kString::stringify
 		>
 		IdentityPtr(const T& obj)
 	{
-		return &obj;
+		return std::addressof(obj);
 	}
 
 	// Cast non-characters pointer as void pointer
@@ -82,7 +82,7 @@ namespace klib::kString::stringify
 		>
 		IdentityPtr(const T& obj)
 	{
-		return (const void* const*)&obj;
+		return (const void* const*)std::addressof(obj);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ namespace klib::kString::stringify
 		, const T*>
 		IdentityPtr(const T& obj)
 	{
-		return &obj;
+		return std::addressof(obj);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ namespace klib::kString::stringify
 		, const T*>
 		Identity(const T(&obj)[Size])
 	{
-		return &(obj[0]);
+		return std::addressof(obj[0]);
 	}
 
 	template<typename CharType, typename T, size_t Size>
@@ -140,7 +140,7 @@ namespace klib::kString::stringify
 		IdentityPtr(const T(&obj)[Size])
 	{
 		auto ptr = Identity<CharType, T, Size>(obj);
-		return &ptr;
+		return std::addressof(ptr);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +191,6 @@ namespace klib::kString::stringify
 		IdentityPtr(const T& obj)
 	{
 		const std::basic_string<CharType>& string = GetObjectString<CharType>(obj);
-		return &string;
+		return std::addressof(string);
 	}
 }

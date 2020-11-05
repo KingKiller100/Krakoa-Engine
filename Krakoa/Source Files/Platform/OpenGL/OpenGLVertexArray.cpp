@@ -10,6 +10,7 @@ namespace krakoa::graphics
 {
 	GLenum ShaderDataTypeToRenderAPIBaseType(graphics::ShaderDataType type)
 	{
+		KRK_PROFILE_FUNCTION();
 		switch (type) {
 			case ShaderDataType::INT:       return GL_INT;
 			case ShaderDataType::INT2:      return GL_INT;
@@ -33,13 +34,14 @@ namespace krakoa::graphics
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
-		glGenVertexArrays(1, &rendererID);
+		KRK_PROFILE_FUNCTION();
+		glGenVertexArrays(1, &rendererID.GetID());
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
 		KRK_PROFILE_FUNCTION();
-		glDeleteVertexArrays(1, &rendererID);
+		glDeleteVertexArrays(1, &rendererID.GetID());
 	}
 
 	void OpenGLVertexArray::Bind() const noexcept
@@ -95,11 +97,13 @@ namespace krakoa::graphics
 
 	const std::vector<std::shared_ptr<iVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return vertexBuffers;
 	}
 
 	const std::unique_ptr<iIndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		return pIndexBuffer;
 	}
 

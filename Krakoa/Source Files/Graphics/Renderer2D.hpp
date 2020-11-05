@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Colour.hpp"
+#include "Helpers/Colour.hpp"
 #include "Renderer2DStatistics.hpp"
 
 #include "Textures/iTexture.hpp"

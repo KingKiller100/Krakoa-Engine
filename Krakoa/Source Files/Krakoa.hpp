@@ -26,7 +26,7 @@
 #include "Camera/OrthographicCameraController.hpp"
 
 // Colours
-#include "Graphics/Colour.hpp"
+#include "Graphics/Helpers/Colour.hpp"
 
 // Rendering
 #include "Graphics/Renderer.hpp"

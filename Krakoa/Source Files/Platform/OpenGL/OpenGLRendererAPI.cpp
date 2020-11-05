@@ -3,7 +3,7 @@
 
 #include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
-#include "../../Graphics/Colour.hpp"
+#include "../../Graphics/Helpers/Colour.hpp"
 
 #include <Utility/String/kToString.hpp>
 

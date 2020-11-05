@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "../../Graphics/Helpers/AssetID.hpp"
 #include "../../Graphics/Textures/iTexture2D.hpp"
 
 namespace krakoa::graphics
@@ -20,17 +21,16 @@ namespace krakoa::graphics
 
 		void SetData(const void* data, const uint32_t size) override;
 
-
 		bool operator ==(const iTexture& other) const noexcept override;
 
 
-		uint32_t GetAssetID() const noexcept override;
+		AssetID GetAssetID() const noexcept override;
 
 	private:
 		std::string path;
 		kmaths::Vector2u dimensions;
 
-		uint32_t rendererID;
+		AssetID rendererID;
 		unsigned char* buffer;
 
 		uint32_t internalFormat;

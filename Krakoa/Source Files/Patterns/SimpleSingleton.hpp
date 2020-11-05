@@ -4,8 +4,14 @@
 
 namespace patterns
 {
+	class iSingleton
+	{
+	public:
+		virtual ~iSingleton() = default;
+	};
+	
 	template <class T>
-	class SimpleSingleton
+	class SimpleSingleton : iSingleton
 	{
 	protected:
 		struct Token {};

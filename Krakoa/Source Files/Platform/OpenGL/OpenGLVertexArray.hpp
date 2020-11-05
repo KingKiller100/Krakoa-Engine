@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include "../../Graphics/Helpers/AssetID.hpp"
 #include "../../Graphics/Rendering Resources/iVertexArray.hpp"
 
 #include <vector>
+
 
 namespace krakoa::graphics
 {
@@ -21,7 +23,7 @@ namespace krakoa::graphics
 		const std::unique_ptr<iIndexBuffer>& GetIndexBuffer() const noexcept override;
 
 	private:
-		uint32_t rendererID;
+		AssetID rendererID;
 
 		std::vector<std::shared_ptr<iVertexBuffer>> vertexBuffers;
 		std::unique_ptr<iIndexBuffer> pIndexBuffer;

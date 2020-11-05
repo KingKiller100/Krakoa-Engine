@@ -1,8 +1,11 @@
 #pragma once
 
+#include "../Helpers/AssetID.hpp"
+
 #include <Maths/Vectors/Vector2.hpp>
 
 #include <cstdint>
+
 
 namespace krakoa::graphics
 {
@@ -18,7 +21,7 @@ namespace krakoa::graphics
 
 		virtual void SetData(const void* data, const uint32_t size) = 0;
 
-		virtual uint32_t GetAssetID() const noexcept = 0;
+		virtual AssetID GetAssetID() const noexcept = 0;
 
 		virtual bool operator==(const iTexture& other) const noexcept = 0;
 	};

@@ -56,8 +56,7 @@ namespace klib
 
 			USE_RESULT DDMMYYYY_t GetDay() const;
 			USE_RESULT std::string GetDayStr() const;
-			USE_RESULT DDMMYYYY_t GetMonthIndex() const;
-			USE_RESULT MonthOfTheYear GetMonth() const;
+			USE_RESULT DDMMYYYY_t GetMonth() const;
 			USE_RESULT std::string GetMonthStr() const;
 			USE_RESULT DDMMYYYY_t GetYear() const;
 			USE_RESULT std::string GetYearStr() const;

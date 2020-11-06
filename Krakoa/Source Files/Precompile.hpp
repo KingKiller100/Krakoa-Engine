@@ -10,7 +10,6 @@
 #include <array>
 #include <map>
 #include <string>
-#include <sstream>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -39,4 +38,3 @@
 
 // KRAKOA Lib
 #include "Instrumentor.hpp"
-#include "Core/Logging/CoreLogger.hpp"

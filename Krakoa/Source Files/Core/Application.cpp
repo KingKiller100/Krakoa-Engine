@@ -16,10 +16,7 @@
 #include "../Graphics/ShaderLibrary.hpp"
 
 #include <Utility/Debug Helper/kDebugger.hpp>
-#include <Utility/Calendar/kCalendar.hpp>
 #include <Utility/Logging/kLogging.hpp>
-
-#include "Types/TypeToString.hpp"
 
 namespace krakoa
 {

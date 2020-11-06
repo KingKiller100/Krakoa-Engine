@@ -73,6 +73,91 @@ namespace klib::kCalendar
 		CheckDate();
 	}
 
+	std::string Date::ToString(const std::string_view& format) const
+	{
+		using TokenT = char;
+
+		constexpr auto noMatchToken = type_trait::s_NullTerminator<char>;
+		constexpr std::array<TokenT, 3> tokens{ 'd', 'm', 'y' };
+
+		std::string output;
+		output.reserve(format.size());
+
+		size_t index = 0;
+		for (auto letter = format.front();
+			letter != type_trait::s_NullTerminator<char>;
+			letter = format[++index])
+		{
+			TokenT match(noMatchToken);
+			std::for_each(tokens.begin(), tokens.end(), [&](const TokenT pair)
+				{
+					if (pair == letter)
+						match = pair;
+				});
+
+			if (match == type_trait::s_NullTerminator<char>)
+			{
+				output.push_back(letter);
+				continue;
+			}
+
+			const auto first = format.find_first_of(match, index);
+			auto last = format.find_first_not_of(match, first);
+
+			if (last == std::string::npos)
+				last = format.size();
+
+			const auto count = last - first;
+			std::string toAdd;
+			switch (std::tolower(match))
+			{
+			case 'd':
+			{
+				if (count >= 5)
+					toAdd = kString::ToString("{0}", GetDayOfWeekStr());
+				else if (count == 4)
+					toAdd = kString::ToString("{0}", GetDayOfWeekStr().substr(0, 3));
+				else if (count == 3)
+					toAdd = kString::ToString("{0}", GetDayStr());
+				else if (count == 2)
+					toAdd = kString::ToString("{0:2}", GetDay());
+				else
+					toAdd = kString::ToString("{0}", GetDay());
+			}
+			break;
+			case 'm':
+			{
+				if (count >= 4)
+					toAdd = kString::ToString("{0}", GetMonthStr());
+				else if (count == 3)
+					toAdd = kString::ToString("{0}", GetMonthStr().substr(0, 3));
+				else if (count == 2)
+					toAdd = kString::ToString("{0:2}", GetMonth());
+				else
+					toAdd = kString::ToString("{0}", GetMonth());
+			}
+			break;
+			case 'y':
+			{
+				if (count <= 2)
+					toAdd = GetYearStr().substr(2);
+				else
+					toAdd = GetYearStr();
+			}
+			break;
+			default:
+				throw std::runtime_error("Bad format");
+				break;
+			}
+			output.append(toAdd);
+			index += count - 1;
+
+			if (index >= format.size() - 1)
+				break;
+		}
+		return output;
+	}
+
 	std::string Date::ToString(DateNumericalSeparator separator) const
 	{
 		std::string separatorStr;
@@ -82,7 +167,7 @@ namespace klib::kCalendar
 			kString::ToString("{0:2}{1}{2:2}{1}{3:4}"
 				, GetDay()
 				, separatorStr
-				, GetMonthIndex()
+				, GetMonth()
 				, GetYear()));
 
 		return str;
@@ -144,7 +229,7 @@ namespace klib::kCalendar
 		return str;
 	}
 
-	Date::DDMMYYYY_t Date::GetMonthIndex() const
+	Date::DDMMYYYY_t Date::GetMonth() const
 	{
 		return static_cast<DDMMYYYY_t>(month) + 1;
 	}
@@ -163,11 +248,6 @@ namespace klib::kCalendar
 	Date::DaysOfTheWeek Date::GetDayOfWeek() const
 	{
 		return dayOfWeek;
-	}
-
-	Date::MonthOfTheYear Date::GetMonth() const
-	{
-		return month;
 	}
 
 	Date::DDMMYYYY_t Date::GetYear() const

@@ -17,6 +17,8 @@ namespace kTest::utility
 		bool GetTimeTextTest();
 		bool DayOfTheWeekTest();
 
+		bool ToStringTest();
+		
 		bool GetTimeComponentTest();
 		bool GetDateInTextFormatTest();
 		bool GetDateInNumericalFormatTest();

@@ -47,6 +47,7 @@ namespace kTest::utility
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(MonthTest());
+		VERIFY_MULTI(ToStringTest());
 		VERIFY_MULTI(CreateTimeTest());
 		VERIFY_MULTI(GetTimeTextTest());
 		VERIFY_MULTI(DayOfTheWeekTest());
@@ -55,6 +56,54 @@ namespace kTest::utility
 		VERIFY_MULTI(GetDateInNumericalFormatTest());
 		VERIFY_MULTI_END();
 	}
+
+	auto DateTextFunc(const SYSTEMTIME dateTime, Date::DateTextLength format = Date::DateTextLength::FULL) -> decltype(auto)
+	{
+		constexpr std::array<const char*, 12> months = {
+			"January", "February", "March",
+			"April", "May", "June",
+			"July", "August", "September",
+			"October", "November", "December"
+		};
+
+		constexpr  std::array<const char*, 7> days = {
+			"Sunday", "Monday", "Tuesday", "Wednesday",
+		"Thursday", "Friday", "Saturday"
+		};
+
+		const std::string day = days[dateTime.wDayOfWeek];
+		std::string month = months[dateTime.wMonth - 1];
+
+		const auto dateSuffix = [&]()
+		{
+			return (dateTime.wDay == 1 || dateTime.wDay == 21 || dateTime.wDay == 31) ? "st"
+				: (dateTime.wDay == 2 || dateTime.wDay == 22) ? "nd"
+				: dateTime.wDay == 3 ? "rd"
+				: "th";
+		};
+
+		std::string dateStr;
+		if (format == Date::FULL)
+		{
+			dateStr = MakeString<char>("%s %d%s %s %04d",
+				day.data(),
+				dateTime.wDay,
+				dateSuffix(),
+				month.data(),
+				dateTime.wYear);
+		}
+		else
+		{
+
+			dateStr = MakeString<char>("%s %d%s %d",
+				month.data(),
+				dateTime.wDay,
+				dateSuffix(),
+				dateTime.wYear);
+		}
+
+		return dateStr;
+	};
 
 	bool CalendarTester::MonthTest()
 	{
@@ -156,6 +205,29 @@ namespace kTest::utility
 		return success;
 	}
 
+	bool CalendarTester::ToStringTest()
+	{
+		{
+			const Date date(Date::MONDAY, 2, Date::JAN, 1998);
+			const auto result = date.ToString("dd/mm/yy");
+			SYSTEMTIME localTime;
+			::GetLocalTime(&localTime);
+			const auto expected = "02/01/98";
+			VERIFY(expected == result);
+		}
+		
+		{
+			const Date date(Date::MONDAY, 12, Date::MAY, 2004);
+			const auto result = date.ToString("dddd, ddd mmmmm yyyy");
+			SYSTEMTIME localTime;
+			::GetLocalTime(&localTime);
+			const auto expected = "Mon, 12th May 2004";
+			VERIFY(expected == result);
+		}
+		
+		return success;
+	}
+
 	bool CalendarTester::GetTimeComponentTest()
 	{
 		{
@@ -193,54 +265,6 @@ namespace kTest::utility
 
 		return success;
 	}
-
-	auto DateTextFunc(const SYSTEMTIME dateTime, Date::DateTextLength format = Date::DateTextLength::FULL) -> decltype(auto)
-	{
-		constexpr std::array<const char*, 12> months = {
-			"January", "February", "March",
-			"April", "May", "June",
-			"July", "August", "September",
-			"October", "November", "December"
-		};
-
-		constexpr  std::array<const char*, 7> days = {
-			"Sunday", "Monday", "Tuesday", "Wednesday",
-		"Thursday", "Friday", "Saturday"
-		};
-
-		const std::string day = days[dateTime.wDayOfWeek];
-		std::string month = months[dateTime.wMonth - 1];
-
-		const auto dateSuffix = [&]()
-			{
-				return (dateTime.wDay == 1 || dateTime.wDay == 21 || dateTime.wDay == 31) ? "st"
-					: (dateTime.wDay == 2 || dateTime.wDay == 22) ? "nd"
-					: dateTime.wDay == 3 ? "rd"
-					: "th";
-			};
-
-		std::string dateStr;
-		if (format == Date::FULL)
-		{
-			dateStr = MakeString<char>("%s %d%s %s %04d",
-				day.data(),
-				dateTime.wDay,
-				dateSuffix(),
-				month.data(),
-				dateTime.wYear);
-		}
-		else
-		{
-			
-			dateStr = MakeString<char>("%s %d%s %d",
-				month.data(),
-				dateTime.wDay,
-				dateSuffix(),
-				dateTime.wYear);
-		}
-
-		return dateStr;
-	};
 
 
 

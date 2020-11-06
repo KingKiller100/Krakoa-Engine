@@ -109,7 +109,9 @@ namespace klib::kCalendar
 
 			const auto count = last - first;
 			std::string toAdd;
-			switch (std::tolower(match))
+			toAdd.reserve(count);
+
+			switch (kString::ToLower(match))
 			{
 			case 'd':
 			{
@@ -149,7 +151,7 @@ namespace klib::kCalendar
 				throw std::runtime_error("Bad format");
 				break;
 			}
-			output.append(toAdd);
+			output.append(std::move(toAdd));
 			index += count - 1;
 
 			if (index >= format.size() - 1)

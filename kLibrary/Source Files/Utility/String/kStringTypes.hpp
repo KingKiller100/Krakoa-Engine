@@ -25,7 +25,19 @@ namespace klib::kString
 	}
 
 	template<class Char = char>
+	USE_RESULT constexpr StringWriter<Char> ToWriter(const StringReader<Char>& string) noexcept
+	{
+		return StringWriter<Char>(string);
+	}
+
+	template<class Char = char>
 	USE_RESULT constexpr StringReader<Char> ToReader(const Char* string) noexcept
+	{
+		return StringReader<Char>(string);
+	}
+
+	template<class Char = char>
+	USE_RESULT constexpr StringReader<Char> ToReader(const StringWriter<Char>& string) noexcept
 	{
 		return StringReader<Char>(string);
 	}

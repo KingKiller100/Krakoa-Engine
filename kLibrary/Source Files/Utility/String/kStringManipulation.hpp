@@ -39,7 +39,8 @@ namespace klib::kString
 	}
 
 	template<class Char = char>
-	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const Char* tokens, const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
+	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const Char* tokens,
+		const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 	{
 		using StrW = StringWriter<Char>;
 
@@ -63,59 +64,62 @@ namespace klib::kString
 	}
 
 	template<class Char = char>
-	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const StringReader<Char>& tokens, const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
+	USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const StringReader<Char>& tokens,
+		const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 	{
 		return Split(str, tokens.data(), preserveToken, preserveEmpty);
 	}
 
-	template<class Char = char>
-	USE_RESULT constexpr Char* ToUpper(const Char* input)
+	template<class CharT, class =
+		std::enable_if_t<
+		type_trait::Is_CharType_V<CharT>
+		>>
+		USE_RESULT constexpr CharT ToUpper(CharT c)
 	{
-		using StrR = StringReader<Char>;
-		StrR in(input);
-		Char* output = new Char[in.length() + 1]{};
+		if (c >= CharT('a') && c <= CharT('z'))
+			c -= 32;
+		return c;
+	}
 
-		for (auto i = 0; i < in.length(); ++i)
-		{
-			Char c = in[i];
-			if (c >= Char('a') && c <= Char('z'))
-				output[i] = CAST(Char, c - 32);
-			else
-				output[i] = c;
-		}
+	template<class CharT, class =
+		std::enable_if_t<
+		type_trait::Is_CharType_V<CharT>
+		>>
+		USE_RESULT constexpr CharT ToLower(CharT c)
+	{
+		if (c >= CharT('A') && c <= CharT('Z'))
+			c += 32;
+		return c;
+	}
 
+	template<class Stringish
+		, class = std::enable_if_t<
+		type_trait::Is_StringType_V<Stringish>
+		|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
+			&& (std::is_pointer_v<Stringish>
+				|| std::is_array_v<ONLY_TYPE(Stringish)[]>
+				))
+		>>
+		USE_RESULT constexpr auto ToUpper(const Stringish& input)
+	{
+		auto output = ToWriter( input );
+		for (auto c : output)
+			c = ToUpper(c);
 		return output;
 	}
 
-	template<class Char = char>
-	USE_RESULT constexpr Char* ToLower(const Char* input)
+	template<class Stringish
+		, class = std::enable_if_t<
+		type_trait::Is_StringType_V<Stringish>
+		|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
+			&& std::is_pointer_v<Stringish>)
+		>>
+		USE_RESULT constexpr auto ToLower(const Stringish& input)
 	{
-		using StrR = StringReader<Char>;
-		StrR in(input);
-		Char* output = new Char[in.length() + 1]{};
-
-		for (auto i = 0; i < in.length(); ++i)
-		{
-			Char c = in[i];
-			if (c >= Char('A') && c <= Char('Z'))
-				output[i] = CAST(Char, c + 32);
-			else
-				output[i] = c;
-		}
-
+		auto output = ToWriter(input);
+		for (auto c : output)
+			c = ToLower(c);
 		return output;
-	}
-
-	template<class T, class = std::enable_if_t<type_trait::Is_StringType_V< T >>>
-	USE_RESULT constexpr StringWriter<typename T::value_type > ToUpper(const T& input)
-	{
-		return ToUpper(input.data());
-	}
-
-	template<class T, class = std::enable_if_t<type_trait::Is_StringType_V< T >>>
-	USE_RESULT constexpr StringWriter<typename T::value_type > ToLower(const T& input)
-	{
-		return ToLower<typename T::value_type>(input.data());
 	}
 
 	template<typename StringType, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>>
@@ -168,10 +172,12 @@ namespace klib::kString
 	template<class Integer, typename StringType
 		, typename = std::enable_if_t<
 		type_trait::Is_StringType_V<StringType>
-		&& std::is_integral_v<Integer>
 		>>
 		constexpr Integer StrTo(StringType string)
 	{
+		static_assert(std::is_integral_v<Integer>, "Can only be used with integer types "
+			"(char, int, long, unsigned short, etc..");
+
 		using CharType = typename StringType::value_type;
 
 		const auto CrashFunc = [](const std::string& errMsg) { throw std::runtime_error(errMsg); };

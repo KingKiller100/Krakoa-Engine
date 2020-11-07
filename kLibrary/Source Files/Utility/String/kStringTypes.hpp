@@ -18,28 +18,28 @@ namespace klib::kString
 
 	// --------------------------------------------------------------------------------------
 
-	template<class Char = char>
+	template<class Char>
 	USE_RESULT constexpr StringWriter<Char> ToWriter(const Char* string) noexcept
 	{
 		return StringWriter<Char>(string);
 	}
 
-	template<class Char = char>
-	USE_RESULT constexpr StringWriter<Char> ToWriter(const StringReader<Char>& string) noexcept
+	template<class StringT, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>>>
+	USE_RESULT constexpr StringWriter<typename StringT::value_type> ToWriter(const StringT& string) noexcept
 	{
-		return StringWriter<Char>(string);
+		return StringWriter<typename StringT::value_type>(string);
 	}
 
-	template<class Char = char>
+	template<class Char>
 	USE_RESULT constexpr StringReader<Char> ToReader(const Char* string) noexcept
 	{
 		return StringReader<Char>(string);
 	}
 
-	template<class Char = char>
-	USE_RESULT constexpr StringReader<Char> ToReader(const StringWriter<Char>& string) noexcept
+	template<class StringT, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>>>
+	USE_RESULT constexpr StringReader<typename StringT::value_type> ToReader(const StringT& string) noexcept
 	{
-		return StringReader<Char>(string);
+		return StringReader<typename StringT::value_type>(string);
 	}
 	
 }

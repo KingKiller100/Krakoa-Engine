@@ -11,34 +11,34 @@ namespace klib::kCalendar
 {
 	using namespace kString;
 
-	static std::unordered_map<CalendarInfoSource, Date> dates = {
-		 { CalendarInfoSource::LOCAL, Date(CalendarInfoSource::LOCAL) },
-		 { CalendarInfoSource::SYSTEM, Date(CalendarInfoSource::SYSTEM) }
+	static std::unordered_map<CalendarSourceType, Date> dates = {
+		 { CalendarSourceType::LOCAL, Date(CalendarSourceType::LOCAL) },
+		 { CalendarSourceType::SYSTEM, Date(CalendarSourceType::SYSTEM) }
 	};
-	static std::unordered_map<CalendarInfoSource, Time> times = {
-		 { CalendarInfoSource::LOCAL, Time(CalendarInfoSource::LOCAL) },
-		 { CalendarInfoSource::SYSTEM, Time(CalendarInfoSource::SYSTEM) }
+	static std::unordered_map<CalendarSourceType, Time> times = {
+		 { CalendarSourceType::LOCAL, Time(CalendarSourceType::LOCAL) },
+		 { CalendarSourceType::SYSTEM, Time(CalendarSourceType::SYSTEM) }
 	};
 
-	unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSource source)
+	unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarSourceType source)
 	{
 		const auto now = Time(source);
 		return now.GetComponent(timeComponent);
 	}
 
-	std::string GetTimeText(CalendarInfoSource calendarInfo)  noexcept
+	std::string GetTimeText(CalendarSourceType calendarInfo)  noexcept
 	{
 		const auto now = Time(calendarInfo);
 		return now.ToString(Time::TimeComponent::MILLIS);
 	}
 
-	std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSource source) noexcept
+	std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarSourceType source) noexcept
 	{
 		const auto date = Date(source);
 		return date.ToString(format);
 	}
 
-	std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarInfoSource source) noexcept
+	std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarSourceType source) noexcept
 	{
 		const auto date = Date(source);
 		return date.ToString(separator);
@@ -71,14 +71,14 @@ namespace klib::kCalendar
 
 	std::string GetLocalStartTimeStr() noexcept
 	{
-		static const auto& info = times.at(CalendarInfoSource::LOCAL);
+		static const auto& info = times.at(CalendarSourceType::LOCAL);
 		static const auto str =  info.ToString(Time::TimeComponent::MILLIS);
 		return str;
 	}
 
 	std::string GetSystemStartTimeStr() noexcept
 	{
-		static const auto& info = times.at(CalendarInfoSource::SYSTEM);
+		static const auto& info = times.at(CalendarSourceType::SYSTEM);
 		static const auto str = info.ToString(Time::TimeComponent::MILLIS);
 		return str;
 	}
@@ -88,7 +88,7 @@ namespace klib::kCalendar
 		static std::string local;
 		if (local.empty())
 		{
-			static const auto& info = dates.at(CalendarInfoSource::LOCAL);
+			static const auto& info = dates.at(CalendarSourceType::LOCAL);
 			local = info.ToString(separator);
 			return local;
 		}
@@ -112,7 +112,7 @@ namespace klib::kCalendar
 		static std::string system;
 		if (system.empty())
 		{
-			static const auto& info = dates.at(CalendarInfoSource::SYSTEM);
+			static const auto& info = dates.at(CalendarSourceType::SYSTEM);
 			system = info.ToString(separator);
 			return system;
 		}

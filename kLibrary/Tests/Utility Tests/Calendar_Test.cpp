@@ -157,7 +157,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetTimeText(CalendarInfoSource::SYSTEM);
+			const auto result = GetTimeText(CalendarSourceType::SYSTEM);
 			const auto expected = MakeString("%02d:%02d:%02d:%03d", 
 				systemTime.wHour, 
 				systemTime.wMinute, 
@@ -169,7 +169,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = klib::kString::Convert<wchar_t>(GetTimeText(CalendarInfoSource::SYSTEM));
+			const auto result = klib::kString::Convert<wchar_t>(GetTimeText(CalendarSourceType::SYSTEM));
 			const auto expected = MakeString(L"%02d:%02d:%02d:%03d", 
 				systemTime.wHour, 
 				systemTime.wMinute, 
@@ -210,8 +210,6 @@ namespace kTest::utility
 		{
 			const Date date(Date::MONDAY, 2, Date::JAN, 1998);
 			const auto result = date.ToString("dd/mm/yy");
-			SYSTEMTIME localTime;
-			::GetLocalTime(&localTime);
 			const auto expected = "02/01/98";
 			VERIFY(expected == result);
 		}
@@ -219,9 +217,35 @@ namespace kTest::utility
 		{
 			const Date date(Date::MONDAY, 12, Date::MAY, 2004);
 			const auto result = date.ToString("dddd, ddd mmmmm yyyy");
-			SYSTEMTIME localTime;
-			::GetLocalTime(&localTime);
 			const auto expected = "Mon, 12th May 2004";
+			VERIFY(expected == result);
+		}
+		
+		{
+			const Date date(Date::FRIDAY, 21);
+			const auto result = date.ToString("ddddd, ddd");
+			const auto expected = "Friday, 21st";
+			VERIFY(expected == result);
+		}
+
+		{
+			const Time t(12, 5, 20);
+			const auto result = t.ToString("hh:mm:ss");
+			const auto expected = "12:05:20";
+			VERIFY(expected == result);
+		}
+
+		{
+			const Time t(23, 10, 50);
+			const auto result = t.ToString("hh:mm");
+			const auto expected = "23:10";
+			VERIFY(expected == result);
+		}
+
+		{
+			const Time t(23, 10, 50);
+			const auto result = t.ToString("ss");
+			const auto expected = "50";
 			VERIFY(expected == result);
 		}
 		
@@ -289,7 +313,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInTextFormat(Date::SHORT, CalendarInfoSource::SYSTEM);
+			const auto result = GetDateInTextFormat(Date::SHORT, CalendarSourceType::SYSTEM);
 			const auto expected = DateTextFunc(systemTime, Date::DateTextLength::SHORT);
 			VERIFY(result == expected);
 		}
@@ -313,7 +337,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInTextFormat(Date::SHORT, CalendarInfoSource::SYSTEM);
+			const auto result = GetDateInTextFormat(Date::SHORT, CalendarSourceType::SYSTEM);
 			const auto expected = DateTextFunc(systemTime, Date::SHORT);
 			VERIFY(result == expected);
 		}
@@ -343,7 +367,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInNumericalFormat(Date::SLASH, CalendarInfoSource::SYSTEM);
+			const auto result = GetDateInNumericalFormat(Date::SLASH, CalendarSourceType::SYSTEM);
 			const auto expected = klib::kString::ToString("%02d/%02d/%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}
@@ -352,7 +376,7 @@ namespace kTest::utility
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
 			const auto result
-				= klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::DASH, CalendarInfoSource::SYSTEM));
+				= klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::DASH, CalendarSourceType::SYSTEM));
 			const auto expected = klib::kString::ToString(L"%02d-%02d-%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}

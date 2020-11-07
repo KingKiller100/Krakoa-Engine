@@ -72,6 +72,13 @@ namespace kTest::utility
 		}
 
 		{
+			constexpr auto character = u8'X';
+			constexpr auto res = klib::kString::ToLower(character);
+			constexpr auto expected = u8'x';
+			VERIFY_COMPILE_TIME(expected == res);
+		}
+
+		{
 			constexpr std::wstring_view text = L"EXAMPLE TEXT";
 			const auto res = klib::kString::ToLower(text);
 			constexpr std::wstring_view expected = L"example text";
@@ -101,6 +108,13 @@ namespace kTest::utility
 			constexpr char text[] = "example text 345";
 			const auto res = klib::kString::ToUpper(text);
 			constexpr std::string_view expected = "EXAMPLE TEXT 345";
+			VERIFY(expected == res);
+		}
+
+		{
+			constexpr auto character = u8'u';
+			constexpr auto res = klib::kString::ToUpper(character);
+			constexpr auto expected = u8'U';
 			VERIFY(expected == res);
 		}
 

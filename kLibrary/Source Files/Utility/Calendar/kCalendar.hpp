@@ -7,16 +7,14 @@ namespace klib
 {
 	namespace kCalendar
 	{
-
-		// ASCII
 		std::string GetLocalStartDateStr(const Date::DateNumericalSeparator separator) noexcept;
 		std::string GetSystemStartDateStr(const Date::DateNumericalSeparator separator) noexcept;
-		std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSource source = CalendarInfoSource::LOCAL) noexcept;
-		std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarInfoSource source = CalendarInfoSource::LOCAL) noexcept;
+		std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarSourceType source = CalendarSourceType::LOCAL) noexcept;
+		std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarSourceType source = CalendarSourceType::LOCAL) noexcept;
 
 
-		unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSource source = CalendarInfoSource::LOCAL);
-		std::string GetTimeText(CalendarInfoSource calendarInfo = CalendarInfoSource::LOCAL) noexcept;
+		unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarSourceType source = CalendarSourceType::LOCAL);
+		std::string GetTimeText(CalendarSourceType calendarInfo = CalendarSourceType::LOCAL) noexcept;
 		std::string CreateTime(uint8_t hours, uint8_t minutes) noexcept;
 		std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds) noexcept;
 		std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds) noexcept;

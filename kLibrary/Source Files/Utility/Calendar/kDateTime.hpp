@@ -5,11 +5,14 @@
 
 #include "../../HelperMacros.hpp"
 
+
+struct _SYSTEMTIME;
+
 namespace klib
 {
 	namespace kCalendar
 	{
-		enum class CalendarInfoSource
+		enum class CalendarSourceType
 		{
 			SYSTEM, LOCAL,
 		};
@@ -47,7 +50,7 @@ namespace klib
 			};
 			
 		public:
-			explicit Date(CalendarInfoSource sourceInfo);
+			explicit Date(CalendarSourceType sourceType);
 			Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d = 1, const MonthOfTheYear m = JAN, const DDMMYYYY_t y = 1900);
 
 			USE_RESULT std::string ToString(const std::string_view& format) const;
@@ -65,12 +68,13 @@ namespace klib
 
 		private:
 			void CheckDate() const;
+			Date(const _SYSTEMTIME& dateSource);
 			
 		private:
-			DDMMYYYY_t day;
-			MonthOfTheYear month;
-			DDMMYYYY_t year;
-			DaysOfTheWeek dayOfWeek;
+			const DDMMYYYY_t day;
+			const MonthOfTheYear monthIndex;
+			const DDMMYYYY_t year;
+			const DaysOfTheWeek dayOfWeek;
 		};
 
 		class Time
@@ -88,12 +92,13 @@ namespace klib
 			};
 			
 		public:
-			explicit Time(CalendarInfoSource sourceInfo);
+			explicit Time(CalendarSourceType sourceType);
 			Time(const HHMMSSMS_t h, const HHMMSSMS_t m, const HHMMSSMS_t s,
 				const HHMMSSMS_t ms = 0);
 
 			USE_RESULT HHMMSSMS_t GetComponent(const TimeComponent timeComponent) const;
 			USE_RESULT std::string ToString(const TimeComponent accuracy = MILLIS) const;
+			USE_RESULT std::string ToString(const std::string_view& format) const;
 
 			USE_RESULT HHMMSSMS_t GetHours() const;
 			USE_RESULT HHMMSSMS_t GetMinutes() const;
@@ -103,11 +108,13 @@ namespace klib
 		private:
 			void CheckTime() const;
 
+			explicit Time(const _SYSTEMTIME& timeSource);
+			
 		private:
-			HHMMSSMS_t hours;
-			HHMMSSMS_t minutes;
-			HHMMSSMS_t seconds;
-			HHMMSSMS_t milliseconds;
+			const HHMMSSMS_t hours;
+			const HHMMSSMS_t minutes;
+			const HHMMSSMS_t seconds;
+			const HHMMSSMS_t milliseconds;
 		};
 	}
 

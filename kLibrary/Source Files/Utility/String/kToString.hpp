@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kSprintf.hpp"
+#include "Stringify/kFormatMarkers.hpp"
 #include "Stringify/kStringIdentity.hpp"
 #include "Stringify/kStringifyBool.hpp"
 #include "Stringify/kStringifyFloatingPoint.hpp"
@@ -12,27 +13,26 @@
 
 #include <any>
 #include <array>
-#include <deque>
 #include <string>
 #include <variant>
+
 
 namespace klib {
 	namespace kString
 	{
-		using IdentifierPair = std::pair<std::uint16_t, std::string>;
-		using IDPairQueue = std::deque<std::pair<std::uint16_t, std::string>>;
-
 		template<typename CharType, std::size_t Size>
-		IDPairQueue CreateIdentifiers(std::basic_string<CharType>& fmt, std::array<std::any, Size>& elems)
+		secret::helper::FormatMarkerQueue CreateIdentifiers(const std::basic_string<CharType>& fmt, std::array<std::any, Size>& elems)
 		{
+			using namespace secret::helper;
+			
 			static constexpr auto openerSymbol = CharType('{');
 			static constexpr auto closerSymbol = CharType('}');
 			static constexpr auto precisionSymbol = CharType(':');
 			static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
 			static constexpr auto npos = std::basic_string<CharType>::npos;
 
-			IDPairQueue identifiers;
-			for (auto openerPos = fmt.find_first_of(openerSymbol);
+			FormatMarkerQueue identifiers;
+			for (FormatMarker::PositionType openerPos = fmt.find_first_of(openerSymbol);
 				openerPos != npos;
 				openerPos = fmt.find_first_of(openerSymbol, openerPos + 1))
 			{
@@ -54,7 +54,7 @@ namespace klib {
 
 				const auto relativeColonPos = bracketContents.find_first_of(precisionSymbol);
 				const auto optionIndex = bracketContents.substr(0, relativeColonPos);
-				const auto idx = kString::StrTo<IdentifierPair::first_type>(optionIndex);
+				const auto idx = kString::StrTo<FormatMarker::IndexType>(optionIndex);
 				if (elems.size() <= idx)
 				{
 					const auto convertedFmt = kString::Convert<char>(fmt);
@@ -63,9 +63,9 @@ namespace klib {
 					throw std::out_of_range(errMsg);
 				}
 
-				const auto type = elems[idx].type().name();
+				const FormatMarker::NameType type = elems[idx].type().name();
 
-				identifiers.push_back(std::make_pair(idx, type));
+				identifiers.push_back(FormatMarker(idx, openerPos, type));
 			}
 			identifiers.shrink_to_fit();
 
@@ -76,7 +76,7 @@ namespace klib {
 		template<class CharType, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharType> ToString(const std::basic_string_view<CharType>& format, T arg, Ts ...argPack)
 		{
-			using namespace kString;
+			using namespace secret::helper;
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 
 			static constexpr auto printfSymbol = CharType('%');
@@ -95,16 +95,18 @@ namespace klib {
 				, stringify::IdentityPtr<CharType, Ts>(argPack)... };
 
 			std::basic_string<CharType> fmt(format);
-			IDPairQueue identifiers = CreateIdentifiers(fmt, elems);
+			FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
 
 			std::basic_string<CharType> finalString;
-			for (const auto& id : identifiers)
+			size_t prevIndex = 0;
+			for (const auto& marker : markers)
 			{
-				const auto& val = elems[id.first];
-				const auto& type = id.second;
-				const auto inputPos = fmt.find_first_of(closerSymbol) + 1;
-				auto currentSection = fmt.substr(0, inputPos);
-				auto replacePos = currentSection.find_first_of(openerSymbol);
+				const auto& val = elems[marker.objIndex];
+				const auto& type = marker.type;
+				const auto inputPos = fmt.find_first_of(closerSymbol, prevIndex) + 1;
+				const auto endPos = inputPos - prevIndex;
+				auto currentSection = fmt.substr(prevIndex, endPos);
+				auto replacePos = marker.position - prevIndex;
 				auto colonPos = currentSection.find(precisionSymbol, replacePos);
 				size_t padding = stringify::nPrecision;
 
@@ -264,12 +266,12 @@ namespace klib {
 					throw std::runtime_error("Type entered not recognised/supported");
 				}
 
-				fmt.erase(0, inputPos);
-				identifiers.pop_front();
+				prevIndex = inputPos;
+				markers.pop_front();
 			}
 
-			if (!fmt.empty())
-				finalString.append(fmt);
+			if (fmt.size() - 1 >= prevIndex)
+				finalString.append(fmt.substr(prevIndex));
 
 			return finalString;
 		}

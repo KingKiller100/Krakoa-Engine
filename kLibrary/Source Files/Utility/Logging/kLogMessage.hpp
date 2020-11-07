@@ -12,9 +12,9 @@ namespace klib::kLogs
 	struct LogMessage
 	{
 		LogMessage(const char* text, const char* file = __FILE__,
-			const std::int32_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
+			const std::int32_t line = __LINE__, CalendarSourceType calendarInfoSource = CalendarSourceType::LOCAL);
 		LogMessage(const std::string& text, const std::string_view& file = __FILE__,
-			const std::int32_t line = __LINE__, CalendarInfoSource calendarInfoSource = CalendarInfoSource::LOCAL);
+			const std::int32_t line = __LINE__, CalendarSourceType calendarInfoSource = CalendarSourceType::LOCAL);
 		LogMessage(const std::string& text, const LogMessage& other);
 		
 		const Time time;

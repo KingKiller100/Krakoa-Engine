@@ -243,9 +243,9 @@ namespace kTest::utility
 		}
 
 		{
-			const Time t(23, 10, 50);
-			const auto result = t.ToString("ss");
-			const auto expected = "50";
+			const Time t(23, 10, 50, 34);
+			const auto result = t.ToString("uuu");
+			const auto expected = "034";
 			VERIFY(expected == result);
 		}
 		

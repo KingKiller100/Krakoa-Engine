@@ -60,7 +60,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		kString::StringWriter<CharType> StringUnsignedIntegral(const Unsigned_t val, size_t minDigits)
+		StringWriter<CharType> StringUnsignedIntegral(const Unsigned_t val, size_t minDigits)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
@@ -74,5 +74,17 @@ namespace klib::kString::stringify
 		PrependPadding(str, minDigits, CharType('0'));
 
 		return str;
+	}
+
+
+	template<class CharType, typename Integral_t
+		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
+	>>
+		StringWriter<CharType> StringIntegral(const Integral_t val, size_t minDigits)
+	{
+		if constexpr (std::is_unsigned_v<Integral_t>)
+			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits);
+		else
+			return StringSignedIntegral<CharType, Integral_t>(val, minDigits);
 	}
 }

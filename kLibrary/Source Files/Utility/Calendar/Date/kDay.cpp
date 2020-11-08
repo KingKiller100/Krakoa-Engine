@@ -9,27 +9,41 @@ namespace klib::kCalendar
 {
 	bool Date::Day::Verify() const
 	{
-		return day <= 31;
+		return day > 0 && day <= 31;
 	}
 
-	std::string Date::Day::ToString(const std::string_view& format)
+	std::string Date::Day::ToString(const std::string_view& format) const
 	{
-		return operator()(format, 'd', [&](size_t count, std::string& finalString)
-			{
-				std::string toAppend;
-				toAppend.reserve(count);
-				if (count >= 5)
-					toAppend = kString::ToString("{0}", GetDayOfTheWeekStr());
-				else if (count == 4)
-					toAppend = kString::ToString("{0}", GetDayOfTheWeekStr().substr(0, 3));
-				else if (count == 3)
-					toAppend = kString::ToString("{0}", GetDayStr());
-				else if (count == 2)
-					toAppend = kString::ToString("{0:2}", GetDay());
-				else
-					toAppend = kString::ToString("{0}", GetDay());
-				finalString.append(std::move(toAppend));
-			});
+		std::string output;
+
+		const auto noMatchFunc = [&](char notToken)
+		{
+			output.push_back(notToken);
+		};
+		
+		const auto matchFunc = [&](size_t count)
+		{
+			std::string toAppend;
+			toAppend.reserve(9);
+			if (count >= 5)
+				toAppend = kString::ToString("{0}", GetDayOfTheWeekStr());
+			else if (count == 4)
+				toAppend = kString::ToString("{0}", GetDayOfTheWeekStr().substr(0, 3));
+			else if (count == 3)
+				toAppend = kString::ToString("{0}", GetDayStr());
+			else if (count == 2)
+				toAppend = kString::ToString("{0:2}", GetDay());
+			else
+				toAppend = kString::ToString("{0}", GetDay());
+			toAppend.shrink_to_fit();
+			output.append(std::move(toAppend));
+		};
+
+		ToStringImpl(format, 'd'
+			, noMatchFunc
+			, matchFunc);
+
+		return output;
 	}
 
 	std::string Date::Day::GetDayStr() const

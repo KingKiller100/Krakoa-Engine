@@ -3,9 +3,11 @@
 
 namespace klib::kCalendar
 {
-	class ComponentToStringImpl
+	class CalendarComponentToStringImpl
 	{
 	protected:
-		std::string operator()(const std::string_view& format, char token, const std::function<void(size_t, std::string&)>& matchingTokenFunc) const;
+		void ToStringImpl(const std::string_view& format, char token 
+			, const std::function<void(char)>& noMatchingTokenFunc
+			, const std::function<void(size_t)>& matchingTokenFunc) const;
 	};
 }

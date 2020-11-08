@@ -9,7 +9,7 @@
 
 namespace klib::kCalendar
 {
-	class Date::Day : ComponentToStringImpl
+	class Date::Day : private CalendarComponentToStringImpl
 	{
 	public:
 		enum DayOfTheWeek : unsigned char
@@ -20,7 +20,7 @@ namespace klib::kCalendar
 		};
 
 	public:
-		constexpr Day(size_t day, DayOfTheWeek dotw = MONDAY)
+		constexpr Day(std::uint16_t day, DayOfTheWeek dotw = MONDAY)
 			: day(day), dayOfTheWeek(dotw)
 		{}
 		
@@ -48,21 +48,28 @@ namespace klib::kCalendar
 
 		bool Verify() const;
 		
-		USE_RESULT std::string ToString(const std::string_view& format);
+		USE_RESULT std::string ToString(const std::string_view& format) const;
 
+		template<typename TargetType>
+		constexpr operator TargetType() const
+		{
+			return day;
+		}
+
+		
 	private:
 		USE_RESULT std::string GetDayStr() const;
 		USE_RESULT std::string GetDayOfTheWeekStr() const;
 		
 	private:
-		const size_t day;
+		const std::uint16_t day;
 		const DayOfTheWeek dayOfTheWeek;
 	};
 
 
 	constexpr Date::Day operator"" _d(unsigned long long day)
 	{
-		return Date::Day(static_cast<size_t>(day));
+		return Date::Day(static_cast<std::uint16_t>(day));
 	}
 }
 

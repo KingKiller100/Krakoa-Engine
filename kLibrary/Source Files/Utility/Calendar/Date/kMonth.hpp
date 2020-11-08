@@ -1,20 +1,21 @@
 ﻿#pragma once
 #include "kDate.hpp"
+#include "../kComponentToStringImpl.hpp"
+#include "kDay.hpp"
+
 #include <array>
 #include <string>
 
-#include "../kComponentToStringImpl.hpp"
-
 namespace klib::kCalendar
 {
-	class Date::Month : ComponentToStringImpl
+	class Date::Month : private CalendarComponentToStringImpl
 	{
 	public:
 		enum MonthOfTheYear : unsigned char
 		{
 			JAN = 0, FEB, MAR,
 			APR, MAY, JUN,
-			JUL, AUG, SEPT,
+			JUL, AUG, SEP,
 			OCT, NOV, DEC,
 		};
 
@@ -28,6 +29,11 @@ namespace klib::kCalendar
 		USE_RESULT constexpr MonthOfTheYear GetMonth() const
 		{
 			return moty;
+		}
+
+		USE_RESULT constexpr std::uint16_t GetMonthNumber() const
+		{
+			return static_cast<std::uint16_t>(moty) + 1;
 		}
 
 
@@ -44,12 +50,18 @@ namespace klib::kCalendar
 		}
 
 		USE_RESULT std::string ToString(const std::string_view& format) const;
-		USE_RESULT bool Verify() const;
+		USE_RESULT bool Verify(const Day& day, const bool isLeapYear) const;
 
 	private:
 		USE_RESULT std::string GetMonthStr() const;
 
+
 	private:
-		MonthOfTheYear moty;
+		const MonthOfTheYear moty;
 	};
+
+	constexpr Date::Month operator"" _m(unsigned long long month)
+	{
+		return Date::Month(static_cast<Date::Month::MonthOfTheYear>(month % 12));
+	}
 }

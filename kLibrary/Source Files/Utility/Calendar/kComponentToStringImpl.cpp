@@ -7,12 +7,10 @@
 
 namespace klib::kCalendar
 {
-		std::string ComponentToStringImpl::operator()(const std::string_view& format, char token
-			, const std::function<void(size_t, std::string&)>& matchingTokenFunc) const
+		void CalendarComponentToStringImpl::ToStringImpl(const std::string_view& format, char token
+			, const std::function<void(char)>& noMatchingTokenFunc
+			, const std::function<void(size_t)>& matchingTokenFunc) const
 		{
-			std::string output;
-			output.reserve(format.size());
-
 			size_t index = 0;
 			for (auto letter = format.front();
 				letter != type_trait::s_NullTerminator<char>;
@@ -22,7 +20,7 @@ namespace klib::kCalendar
 
 				if (letter != token)
 				{
-					output.push_back(letter);
+					noMatchingTokenFunc(letter);
 					continue;
 				}
 
@@ -34,15 +32,13 @@ namespace klib::kCalendar
 
 				const auto count = last - first;
 
-				matchingTokenFunc(count, output);
+				matchingTokenFunc(count);
 				
 				index += count - 1;
 
 				if (index >= format.size() - 1)
 					break;
 			}
-
-			return output;
 		}
 
 }

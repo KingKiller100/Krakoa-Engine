@@ -1,30 +1,85 @@
 ﻿#include "pch.hpp"
 #include "kCalenderInfoSourceWindows.hpp"
 
+#include "../../../Debug Helper/Exceptions/CalenderExceptions.hpp"
+
 #ifdef _WIN64
 
-namespace klib::kCalendar::secret::helper::windows
+namespace klib::kCalendar::windows
 {
-	SYSTEMTIME& GetLocalDateAndTime() noexcept
+	CalendarInfoSourceWindows::CalendarInfoSourceWindows()
 	{
-		static SYSTEMTIME kCalendar_Local_DateTime;
-		GetLocalTime(&kCalendar_Local_DateTime);
-		return kCalendar_Local_DateTime;
+		CalendarInfoSourceWindows::Refresh(CalendarInfoSourceType::LOCAL);
 	}
 
-	SYSTEMTIME& GetSystemDateAndTime() noexcept
+	CalendarInfoSourceWindows::~CalendarInfoSourceWindows()
+		= default;
+
+	void CalendarInfoSourceWindows::Refresh(CalendarInfoSourceType type)
 	{
-		static SYSTEMTIME kCalendar_System_DateTime;
-		GetSystemTime(&kCalendar_System_DateTime);
-		return kCalendar_System_DateTime;
+		switch (type)
+		{
+		case CalendarInfoSourceType::SYSTEM:
+			RefreshSystem();
+			break;
+		case CalendarInfoSourceType::LOCAL:
+			RefreshLocal();
+			break;
+		default:
+			throw kDebug::CalendarError("Unknown calendar source");
+			break;
+		}
 	}
 
-	SYSTEMTIME& GetDateAndTime(CalendarInfoSourceType type)
+	std::uint16_t CalendarInfoSourceWindows::GetDay() const
 	{
-		return type == CalendarInfoSourceType::LOCAL
-			? GetLocalDateAndTime()
-			: GetSystemDateAndTime();
+		return dateTime.wDay;
 	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetDayOfTheWeekIndex() const
+	{
+		return dateTime.wDayOfWeek;
+	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetMonth() const
+	{
+		return dateTime.wMonth;
+	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetYear() const
+	{
+		return dateTime.wYear;
+	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetHour() const
+	{
+		return dateTime.wHour;
+	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetMinute() const
+	{
+		return dateTime.wMinute;
+	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetSecond() const
+	{
+		return dateTime.wSecond;
+	}
+
+	std::uint16_t CalendarInfoSourceWindows::GetMillisecond() const
+	{
+		return dateTime.wMilliseconds;
+	}
+
+	void CalendarInfoSourceWindows::RefreshLocal() noexcept
+	{
+		GetLocalTime(&dateTime);
+	}
+
+	void CalendarInfoSourceWindows::RefreshSystem() noexcept
+	{
+		GetSystemTime(&dateTime);
+	}
+
 }
-
 #endif

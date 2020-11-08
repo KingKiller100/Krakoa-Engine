@@ -11,6 +11,8 @@
 #include "../../Type Traits/StringTraits.hpp"
 #include "../../Utility/String/kStringConverter.hpp"
 
+#include "../../Maths/kAlgorithms.hpp"
+
 #include <any>
 #include <array>
 #include <string>
@@ -292,12 +294,21 @@ namespace klib {
 			return text;
 		}
 
-		template<class CharType, typename T>
-		constexpr std::basic_string<CharType> ToString(T&& object)
+		template<class CharType, typename T, typename ...Ts>
+		constexpr std::basic_string<CharType> ToString(const T& arg, const  Ts& ...argPack)
 		{
-			const auto fmt = kString::Convert<CharType>("{0}");
-			const auto s = ToString(fmt, object);
-			return s;
+			const auto count = kmaths::Count(arg, argPack...);
+			std::basic_string<CharType> format;
+
+			for (auto i = 0; i < count; ++i)
+			{
+				format.push_back(CharType('{'));
+				format.append(stringify::StringIntegral<CharType>(i, 1));
+				format.push_back(CharType('}'));
+			}
+			
+			const auto output = ToString(format, arg, argPack...);
+			return output;
 		}
 	}
 

@@ -3,15 +3,14 @@
 
 #include "../../String/kToString.hpp"
 
-
 namespace klib::kCalendar
 {
-	std::string Date::Year::GetYearStr() const
+	std::string Year::GetYearStr() const
 	{
 		return kString::ToString<char>(year);
 	}
 
-	std::string Date::Year::ToString(const std::string_view& format) const
+	std::string Year::ToString(const std::string_view& format) const
 	{
 		std::string output;
 
@@ -30,7 +29,7 @@ namespace klib::kCalendar
 			output.append(toAppend);
 		};
 
-		ToStringImpl(format, 'm', noMatchFunc, matchFunc);
+		ToStringImpl(format, 'y', noMatchFunc, matchFunc);
 		return output;
 	}
 }

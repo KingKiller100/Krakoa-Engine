@@ -1,4 +1,8 @@
 #pragma once
+#include "kDay.hpp"
+#include "kMonth.hpp"
+#include "kYear.hpp"
+
 #include "../../../HelperMacros.hpp"
 
 struct _SYSTEMTIME;
@@ -11,12 +15,7 @@ namespace klib
 
 		class Date
 		{
-			using DDMMYYYY_t = std::uint16_t;
 		public:
-			class Day;
-			class Month;
-			class Year;
-
 			
 			enum DateTextLength : uint8_t
 			{
@@ -32,30 +31,27 @@ namespace klib
 
 		public:
 			explicit Date(CalendarInfoSourceType sourceType);
-			Date(const DaysOfTheWeek dayOfTheWeek, const DDMMYYYY_t d = 1, const MonthOfTheYear m = JAN, const DDMMYYYY_t y = 1900);
+			Date(const Day::DayOfTheWeek dayOfTheWeek, const std::uint16_t d = 1, const Month::MonthOfTheYear m = kCalendar::Month::JAN, const std::uint16_t y = 1900);
 
 			USE_RESULT std::string ToString(const std::string_view& format) const;
 			USE_RESULT std::string ToString(DateNumericalSeparator separator = DateNumericalSeparator::SLASH) const;
 			USE_RESULT std::string ToString(DateTextLength format) const;
 
-			USE_RESULT DDMMYYYY_t GetDay() const;
-			USE_RESULT std::string GetDayStr() const;
-			USE_RESULT DDMMYYYY_t GetMonth() const;
-			USE_RESULT std::string GetMonthStr() const;
-			USE_RESULT DDMMYYYY_t GetYear() const;
-			USE_RESULT std::string GetYearStr() const;
-			USE_RESULT DaysOfTheWeek GetDayOfWeek() const;
-			USE_RESULT std::string GetDayOfWeekStr() const;
+			USE_RESULT const Day& GetDay() const;
+			USE_RESULT Day& GetDay();
+			USE_RESULT const Month& GetMonth() const;
+			USE_RESULT Month& GetMonth();
+			USE_RESULT const Year& GetYear() const;
+			USE_RESULT Year& GetYear();
 
 		private:
 			void CheckDate() const;
 			Date(const _SYSTEMTIME& dateSource);
 
 		private:
-			const DDMMYYYY_t day;
-			const MonthOfTheYear monthIndex;
-			const DDMMYYYY_t year;
-			const DaysOfTheWeek dayOfWeek;
+			const Day day;
+			const Month monthIndex;
+			const Year year;
 		};
 
 

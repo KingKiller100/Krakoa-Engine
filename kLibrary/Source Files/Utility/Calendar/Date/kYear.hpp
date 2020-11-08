@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include "kDate.hpp"
-#include <cstdint>
-
 #include "../kComponentToStringImpl.hpp"
 
+#include "../../../HelperMacros.hpp"
+
+#include <cstdint>
 
 namespace klib::kCalendar
-{
-	class Date::Year : private CalendarComponentToStringImpl
+{	
+	class Year : private CalendarComponentToStringImpl
 	{
 	public:
 		constexpr explicit Year(const std::uint16_t year)
@@ -28,6 +28,12 @@ namespace klib::kCalendar
 			return isLeapYear;
 		}
 
+		template<typename TargetType>
+		constexpr operator TargetType() const
+		{
+			return GetYear();
+		}
+		
 		USE_RESULT std::string GetYearStr() const;
 		USE_RESULT std::string ToString(const std::string_view& format) const;
 		
@@ -36,8 +42,8 @@ namespace klib::kCalendar
 		bool isLeapYear;
 	};
 
-	constexpr Date::Year operator"" _y(unsigned long long year)
+	constexpr Year operator"" _y(unsigned long long year)
 	{
-		return Date::Year(static_cast<std::uint16_t>(year));
+		return Year(static_cast<std::uint16_t>(year));
 	}
 }

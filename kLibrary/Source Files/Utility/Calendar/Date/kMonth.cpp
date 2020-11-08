@@ -5,7 +5,7 @@
 
 namespace klib::kCalendar
 {
-	std::string Date::Month::ToString(const std::string_view& format) const
+	std::string Month::ToString(const std::string_view& format) const
 	{
 		std::string output;
 
@@ -32,7 +32,7 @@ namespace klib::kCalendar
 		return output;
 	}
 
-	bool Date::Month::Verify(const Day& day, const bool isLeapYear) const
+	bool Month::Verify(const Day& day, const bool isLeapYear) const
 	{
 		switch (moty)
 		{
@@ -52,7 +52,7 @@ namespace klib::kCalendar
 		}
 	}
 
-	std::string Date::Month::GetMonthStr() const
+	std::string Month::GetMonthStr() const
 	{
 		return MonthToString(moty);
 	}

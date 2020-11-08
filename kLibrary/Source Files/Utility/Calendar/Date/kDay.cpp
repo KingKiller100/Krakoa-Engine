@@ -7,12 +7,12 @@
 
 namespace klib::kCalendar
 {
-	bool Date::Day::Verify() const
+	bool Day::Verify() const
 	{
 		return day > 0 && day <= 31;
 	}
 
-	std::string Date::Day::ToString(const std::string_view& format) const
+	std::string Day::ToString(const std::string_view& format) const
 	{
 		std::string output;
 
@@ -46,7 +46,7 @@ namespace klib::kCalendar
 		return output;
 	}
 
-	std::string Date::Day::GetDayStr() const
+	std::string Day::GetDayStr() const
 	{
 		const auto dateSuffix = [&]()
 		{
@@ -61,7 +61,7 @@ namespace klib::kCalendar
 		return str;
 	}
 
-	std::string Date::Day::GetDayOfTheWeekStr() const
+	std::string Day::GetDayOfTheWeekStr() const
 	{
 		return DayOfTheWeekToString(dayOfTheWeek);
 	}

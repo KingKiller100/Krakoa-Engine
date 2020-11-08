@@ -1,15 +1,14 @@
 ﻿#pragma once
 
-#include "kDate.hpp"
-
 #include "../kComponentToStringImpl.hpp"
+#include "../../../HelperMacros.hpp"
 
 #include <array>
 #include <string>
 
 namespace klib::kCalendar
 {
-	class Date::Day : private CalendarComponentToStringImpl
+	class Day : private CalendarComponentToStringImpl
 	{
 	public:
 		enum DayOfTheWeek : unsigned char
@@ -53,7 +52,7 @@ namespace klib::kCalendar
 		template<typename TargetType>
 		constexpr operator TargetType() const
 		{
-			return day;
+			return GetDay();
 		}
 
 		
@@ -67,9 +66,9 @@ namespace klib::kCalendar
 	};
 
 
-	constexpr Date::Day operator"" _d(unsigned long long day)
+	constexpr Day operator"" _d(unsigned long long day)
 	{
-		return Date::Day(static_cast<std::uint16_t>(day));
+		return Day(static_cast<std::uint16_t>(day));
 	}
 }
 

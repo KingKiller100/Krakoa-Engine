@@ -21,12 +21,12 @@ namespace klib::kCalendar
 			output.push_back(noToken);
 		};
 
-		const auto matchFunc = [&](size_t count)
+		const auto matchFunc = [&](size_t count, char)
 		{
 			output.append(ToStringUsingTokenCount(count));
 		};
 
-		ToStringImpl(format, 'm', noMatchFunc, matchFunc);
+		ToStringImpl(format, { FormatToken }, noMatchFunc, matchFunc);
 		return output;
 	}
 

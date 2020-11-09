@@ -36,12 +36,12 @@ namespace klib::kCalendar
 			output.push_back(noToken);
 		};
 
-		const auto matchFunc = [&](size_t count)
+		const auto matchFunc = [&](size_t count, char)
 		{
 			output.append(ToStringUsingTokenCount(count));
 		};
 
-		ToStringImpl(format, 'y', noMatchFunc, matchFunc);
+		ToStringImpl(format, { FormatToken }, noMatchFunc, matchFunc);
 		return output;
 	}
 
@@ -50,6 +50,6 @@ namespace klib::kCalendar
 		if (count <= 2)
 			return GetYearStr().substr(2);
 
-		return  GetYearStr();
+		return GetYearStr();
 	}
 }

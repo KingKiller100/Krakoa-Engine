@@ -7,19 +7,18 @@
 
 namespace klib::kCalendar
 {
-	class Minute final : private TimeComponentBase, CalendarComponentToStringImpl
+	class Minute final : private TimeComponentBase, CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "m";
+		static constexpr auto FormatToken = 'm';
 		static constexpr double FromMinor = 60;
 		static constexpr auto ToMajor = 1.0 / 60;
 
 	public:
 		constexpr explicit Minute(const std::uint16_t minute)
 			: minute(minute)
-		{
-			Verify();
-		}
+		{}
 
 		USE_RESULT constexpr std::uint16_t GetMinute() const
 		{

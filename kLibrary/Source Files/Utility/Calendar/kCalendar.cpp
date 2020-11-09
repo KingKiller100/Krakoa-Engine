@@ -1,6 +1,5 @@
 #include "pch.hpp"
 #include "kCalendar.hpp"
-#include "kTime.hpp"
 
 #include "../String/kToString.hpp"
 #include "../String/kStringManipulation.hpp"
@@ -12,15 +11,15 @@ namespace klib::kCalendar
 	using namespace kString;
 
 	static std::unordered_map<CalendarInfoSourceType, Date> dates = {
-		 { CalendarInfoSourceType ::LOCAL, Date(CalendarInfoSourceType ::LOCAL) },
-		 { CalendarInfoSourceType ::SYSTEM, Date(CalendarInfoSourceType ::SYSTEM) }
+		 { CalendarInfoSourceType::LOCAL, Date(CalendarInfoSourceType::LOCAL) },
+		 { CalendarInfoSourceType::SYSTEM, Date(CalendarInfoSourceType::SYSTEM) }
 	};
-	static std::unordered_map<CalendarInfoSourceType , Time> times = {
-		 { CalendarInfoSourceType ::LOCAL, Time(CalendarInfoSourceType ::LOCAL) },
-		 { CalendarInfoSourceType ::SYSTEM, Time(CalendarInfoSourceType ::SYSTEM) }
+	static std::unordered_map<CalendarInfoSourceType, Time> times = {
+		 { CalendarInfoSourceType::LOCAL, Time(CalendarInfoSourceType::LOCAL) },
+		 { CalendarInfoSourceType::SYSTEM, Time(CalendarInfoSourceType::SYSTEM) }
 	};
 
-	unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSourceType  source)
+	std::uint16_t GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSourceType  source)
 	{
 		const auto now = Time(source);
 		return now.GetComponent(timeComponent);
@@ -71,14 +70,14 @@ namespace klib::kCalendar
 
 	std::string GetLocalStartTimeStr() noexcept
 	{
-		static const auto& info = times.at(CalendarInfoSourceType ::LOCAL);
-		static const auto str =  info.ToString(Time::TimeComponent::MILLIS);
+		static const auto& info = times.at(CalendarInfoSourceType::LOCAL);
+		static const auto str = info.ToString(Time::TimeComponent::MILLIS);
 		return str;
 	}
 
 	std::string GetSystemStartTimeStr() noexcept
 	{
-		static const auto& info = times.at(CalendarInfoSourceType ::SYSTEM);
+		static const auto& info = times.at(CalendarInfoSourceType::SYSTEM);
 		static const auto str = info.ToString(Time::TimeComponent::MILLIS);
 		return str;
 	}
@@ -88,7 +87,7 @@ namespace klib::kCalendar
 		static std::string local;
 		if (local.empty())
 		{
-			static const auto& info = dates.at(CalendarInfoSourceType ::LOCAL);
+			static const auto& info = dates.at(CalendarInfoSourceType::LOCAL);
 			local = info.ToString(separator);
 			return local;
 		}
@@ -112,7 +111,7 @@ namespace klib::kCalendar
 		static std::string system;
 		if (system.empty())
 		{
-			static const auto& info = dates.at(CalendarInfoSourceType ::SYSTEM);
+			static const auto& info = dates.at(CalendarInfoSourceType::SYSTEM);
 			system = info.ToString(separator);
 			return system;
 		}

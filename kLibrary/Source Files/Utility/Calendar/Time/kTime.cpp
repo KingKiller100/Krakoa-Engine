@@ -1,10 +1,9 @@
 ﻿#include "pch.hpp"
 #include "kTime.hpp"
+#include "../kiCalendarInfoSource.hpp"
 #include "../../String/kToString.hpp"
 #include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
-#include <Windows.h>
 
-#include "../kiCalendarInfoSource.hpp"
 
 namespace klib::kCalendar
 {
@@ -22,66 +21,67 @@ namespace klib::kCalendar
 
 	// TIME ////////////////////////////////////////////////////////////
 
-	Time::Time(const _SYSTEMTIME& timeSource)
-		: hours(timeSource.wHour)
-		, minutes(timeSource.wMinute)
-		, seconds(timeSource.wSecond)
-		, milliseconds(timeSource.wMilliseconds)
-	{}
-
 	Time::Time(CalendarInfoSourceType sourceType)
 		: Time(GetInfoSource(sourceType))
 	{}
 
-	Time::Time(const Hour::CycleType cycle, const Hour h, const Minute m, const Second s,
-		const Millisecond ms)
-		: hours(h)
-		, minutes(m)
-		, seconds(s)
-		, milliseconds(ms)
+	Time::Time(const iCalendarInfoSource& source)
+		: Time(Hour::CycleType::CYCLE_24
+			, source.GetHour()
+			, source.GetMinute()
+			, source.GetSecond()
+			, source.GetMillisecond())
+	{}
+
+	Time::Time(const Hour::CycleType cycle, const std::uint16_t h, const std::uint16_t m, const std::uint16_t s,
+		const std::uint16_t ms)
+		: hour(h, cycle)
+		, minute(m)
+		, second(s)
+		, millisecond(ms)
 	{
 		CheckTime();
 	}
 
-	void Time::CheckTime() const
-	{
-		if (hours.Verify())
-			kDebug::CalendarError("Invalid Hours");
-
-		if (minutes.Verify())
-			kDebug::CalendarError("Invalid Minutes");
-
-		if (seconds.Verify())
-			kDebug::CalendarError("Invalid Seconds");
-
-		if (milliseconds.Verify())
-			kDebug::CalendarError("Invalid Milliseconds");
-	}
-
-	Time::HHMMSSMS_t Time::GetComponent(const TimeComponent timeComponent) const
+	std::uint16_t Time::GetComponent(const TimeComponent timeComponent) const
 	{
 		switch (timeComponent) {
-		case TimeComponent::HOURS:		return hours;
-		case TimeComponent::MINS:		return minutes;
-		case TimeComponent::SECS:		return seconds;
-		case TimeComponent::MILLIS:		return milliseconds;
+		case TimeComponent::HOURS:		return hour;
+		case TimeComponent::MINS:		return minute;
+		case TimeComponent::SECS:		return second;
+		case TimeComponent::MILLIS:		return millisecond;
 		default: throw kDebug::CalendarError("Unknown time component");
 		}
+	}
+
+	void Time::CheckTime() const
+	{
+		if (!hour.Verify())
+			kDebug::CalendarError("Invalid Hours");
+
+		if (!minute.Verify())
+			kDebug::CalendarError("Invalid Minutes");
+
+		if (!second.Verify())
+			kDebug::CalendarError("Invalid Seconds");
+
+		if (!millisecond.Verify())
+			kDebug::CalendarError("Invalid Milliseconds");
 	}
 
 	std::string Time::ToString(const TimeComponent accuracy) const
 	{
 		std::string str;
-		HHMMSSMS_t times[] = { hours, minutes, seconds };
+		std::uint16_t times[] = { hour, minute, second };
 
-		for (auto i = CAST(HHMMSSMS_t, TimeComponent::HOURS);
-			i <= CAST(HHMMSSMS_t, accuracy);
+		for (auto i = CAST(std::uint16_t, TimeComponent::HOURS);
+			i <= CAST(std::uint16_t, accuracy);
 			++i)
 		{
 			if (!str.empty())
 				str.push_back(':');
-			str.append(i >= CAST(HHMMSSMS_t, TimeComponent::MILLIS)
-				? kString::ToString("{0:3}", milliseconds)
+			str.append(i >= CAST(std::uint16_t, TimeComponent::MILLIS)
+				? kString::ToString("{0:3}", millisecond)
 				: kString::ToString("{0:2}", times[i]));
 		}
 
@@ -90,88 +90,83 @@ namespace klib::kCalendar
 
 	std::string Time::ToString(const std::string_view& format) const
 	{
-		using TokenT = char;
-
 		constexpr auto noMatchToken = type_trait::s_NullTerminator<char>;
-		constexpr std::array<TokenT, 4> tokens{ 'h', 'm', 's', 'u' };
+
+		const std::set<char> tokens{ Hour::FormatToken, Minute::FormatToken, Second::FormatToken, Millisecond::FormatToken };
 
 		std::string output;
-		output.reserve(format.size());
 
-		size_t index = 0;
-		for (auto letter = format.front();
-			letter != type_trait::s_NullTerminator<char>;
-			letter = format[++index])
+		const auto noMatchFunc = [&](char noToken)
 		{
-			TokenT match(noMatchToken);
-			std::for_each(tokens.begin(), tokens.end(), [&](const TokenT pair)
-				{
-					if (pair == letter)
-						match = pair;
-				});
+			output.push_back(noToken);
+		};
 
-			if (match == type_trait::s_NullTerminator<char>)
+		const auto matchFunc = [&](size_t count, char token)
+		{
+			switch (kString::ToLower(token))
 			{
-				output.push_back(letter);
-				continue;
-			}
-
-			const auto first = format.find_first_of(match, index);
-			auto last = format.find_first_not_of(match, first);
-
-			if (last == std::string::npos)
-				last = format.size();
-
-			const auto count = last - first;
-			const auto numberFormat = "{0:" + kString::ToString<char>("{0}", count) + "}";
-
-			std::string toAdd;
-			toAdd.reserve(count);
-
-			switch (kString::ToLower(match))
-			{
-			case 'h':
-				toAdd = kString::ToString(numberFormat, GetHours());
+			case Hour::FormatToken:
+				output.append(hour.ToStringUsingTokenCount(count));
 				break;
-			case 'm':
-				toAdd = kString::ToString(numberFormat, GetMinutes());
+
+			case Minute::FormatToken:
+				output.append(minute.ToStringUsingTokenCount(count));
 				break;
-			case 's':
-				toAdd = kString::ToString(numberFormat, GetSeconds());
+
+			case Second::FormatToken:
+				output.append(second.ToStringUsingTokenCount(count));
 				break;
-			case 'u':
-				toAdd = kString::ToString(numberFormat, GetMilliseconds());
+
+			case Millisecond::FormatToken:
+				output.append(millisecond.ToStringUsingTokenCount(count));
 				break;
+
 			default:
-				throw kDebug::CalendarError("Bad format for time");
-				break;
+				throw kDebug::CalendarError("Bad format for date");
 			}
-			output.append(std::move(toAdd));
-			index += count - 1;
+		};
 
-			if (index >= format.size() - 1)
-				break;
-		}
+		ToStringImpl(format, tokens, noMatchFunc, matchFunc);
 		return output;
 	}
 
-	Time::HHMMSSMS_t Time::GetHours() const
+	Hour& Time::GetHour()
 	{
-		return hours;
+		return hour;
 	}
 
-	Time::HHMMSSMS_t Time::GetMinutes() const
+	const Hour& Time::GetHour() const
 	{
-		return minutes;
+		return hour;
 	}
 
-	Time::HHMMSSMS_t Time::GetSeconds() const
+	Minute& Time::GetMinute()
 	{
-		return seconds;
+		return minute;
 	}
 
-	Time::HHMMSSMS_t Time::GetMilliseconds() const
+	const Minute& Time::GetMinute() const
 	{
-		return milliseconds;
+		return minute;
+	}
+
+	Second& Time::GetSecond()
+	{
+		return second;
+	}
+
+	const Second& Time::GetSecond() const
+	{
+		return second;
+	}
+
+	Millisecond& Time::GetMillisecond()
+	{
+		return millisecond;
+	}
+
+	const Millisecond& Time::GetMillisecond() const
+	{
+		return millisecond;
 	}
 }

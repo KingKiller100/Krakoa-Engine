@@ -9,7 +9,7 @@
 
 namespace klib::kCalendar
 {
-	class Month final : private CalendarComponentToStringImpl
+	class Month final : private CalendarComponentToStringImplExtended
 	{
 	public:
 		enum MonthOfTheYear : unsigned char
@@ -20,6 +20,7 @@ namespace klib::kCalendar
 			OCT, NOV, DEC,
 		};
 
+		static constexpr auto FormatToken = 'm';
 		static constexpr size_t MonthsInYear = 12;
 		
 	public:
@@ -63,13 +64,13 @@ namespace klib::kCalendar
 
 		USE_RESULT static Month MonthFromDays(const std::uint16_t days);
 		
-		USE_RESULT std::string GetMonthStr() const;
 		USE_RESULT std::string ToString(const std::string_view& format) const;
 		USE_RESULT bool Verify(const Day& day, const Year year) const;
 
 		friend class Date;
 		
 	protected:
+		USE_RESULT std::string GetMonthStr() const;
 		USE_RESULT std::string ToStringUsingTokenCount( const size_t count ) const override;
 		
 	private:

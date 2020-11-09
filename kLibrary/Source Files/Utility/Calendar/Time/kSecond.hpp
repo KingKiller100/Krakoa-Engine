@@ -7,19 +7,18 @@
 
 namespace klib::kCalendar
 {
-	class Second final : private TimeComponentBase, CalendarComponentToStringImpl
+	class Second final : private TimeComponentBase, CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "s";
+		static constexpr auto FormatToken = 's';
 		static constexpr size_t FromMinor = 1000;
 		static constexpr auto ToMajor = 1.0 / 60;
 		
 	public:
 		constexpr explicit Second(const std::uint16_t second)
 			: second( second )
-		{
-			Verify();
-		}
+		{}
 
 		USE_RESULT constexpr std::uint16_t GetSecond() const
 		{

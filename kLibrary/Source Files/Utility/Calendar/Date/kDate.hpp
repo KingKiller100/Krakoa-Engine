@@ -7,8 +7,6 @@
 
 #include "../kCalenderInfoSourceType.hpp"
 
-struct _SYSTEMTIME;
-
 namespace klib
 {
 	namespace kCalendar
@@ -18,7 +16,7 @@ namespace klib
 			class iCalendarInfoSource;
 		}
 		
-		class Date
+		class Date : private CalendarComponentToStringImpl
 		{
 		public:
 			enum DateTextLength : uint8_t
@@ -39,7 +37,7 @@ namespace klib
 
 			USE_RESULT std::string ToString(const std::string_view& format) const;
 			USE_RESULT std::string ToString(DateNumericalSeparator separator = DateNumericalSeparator::SLASH) const;
-			USE_RESULT std::string ToString(DateTextLength textLentgh) const;
+			USE_RESULT std::string ToString(DateTextLength textLength) const;
 
 			USE_RESULT const Day& GetDay() const;
 			USE_RESULT Day GetDay();

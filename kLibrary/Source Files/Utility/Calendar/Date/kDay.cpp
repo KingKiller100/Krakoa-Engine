@@ -19,16 +19,30 @@ namespace klib::kCalendar
 			output.push_back(notToken);
 		};
 
-		const auto matchFunc = [&](size_t count)
+		const auto matchFunc = [&](size_t count, char)
 		{
 			output.append(ToStringUsingTokenCount(count));
 		};
 
-		ToStringImpl(format, 'd'
+		ToStringImpl(format, { FormatToken }
 			, noMatchFunc
 			, matchFunc);
 
 		return output;
+	}
+
+	std::string Day::ToStringUsingTokenCount(const size_t count) const
+	{
+		if (count >= 5)
+			return kString::ToString("{0}", GetDayOfTheWeekStr());
+		if (count == 4)
+			return  kString::ToString("{0}", GetDayOfTheWeekStr().substr(0, 3));
+		if (count == 3)
+			return  kString::ToString("{0}", GetDayStr());
+		if (count == 2)
+			return  kString::ToString("{0:2}", GetDay());
+
+		return  kString::ToString("{0}", GetDay());
 	}
 
 	std::string Day::GetDayStr() const
@@ -50,19 +64,5 @@ namespace klib::kCalendar
 	std::string Day::GetDayOfTheWeekStr() const
 	{
 		return DayOfTheWeekToString(dayOfTheWeek);
-	}
-
-	std::string Day::ToStringUsingTokenCount(const size_t count) const
-	{
-		if (count >= 5)
-			return kString::ToString("{0}", GetDayOfTheWeekStr());
-		if (count == 4)
-			return  kString::ToString("{0}", GetDayOfTheWeekStr().substr(0, 3));
-		if (count == 3)
-			return  kString::ToString("{0}", GetDayStr());
-		if (count == 2)
-			return  kString::ToString("{0:2}", GetDay());
-
-		return  kString::ToString("{0}", GetDay());
 	}
 }

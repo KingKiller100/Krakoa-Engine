@@ -8,7 +8,7 @@
 
 namespace klib::kCalendar
 {
-	class Day : private CalendarComponentToStringImpl
+	class Day : private CalendarComponentToStringImplExtended
 	{
 	public:
 		enum DayOfTheWeek : unsigned char
@@ -18,7 +18,7 @@ namespace klib::kCalendar
 			SATURDAY,
 		};
 
-		
+		static constexpr auto FormatToken = 'd';
 
 		static constexpr size_t TotalDaysInMonths[] =
 		{ 0, 31, 59, 90, 120, 151,
@@ -39,7 +39,7 @@ namespace klib::kCalendar
 		
 		~Day() noexcept = default;
 
-		USE_RESULT constexpr size_t GetDay() const noexcept
+		USE_RESULT constexpr std::uint16_t GetDay() const noexcept
 		{
 			return day;
 		}

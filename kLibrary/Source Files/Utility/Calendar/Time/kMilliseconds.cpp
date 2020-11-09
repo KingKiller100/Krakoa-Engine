@@ -13,19 +13,23 @@ namespace klib::kCalendar
 			output.push_back(noToken);
 		};
 
-		const auto matchFunc = [&](size_t count)
+		const auto matchFunc = [&](size_t count, char)
 		{
 			output.append(ToStringUsingTokenCount(count));
 		};
 
-		ToStringImpl(format, 'u', noMatchFunc, matchFunc);
+		ToStringImpl(format, { FormatToken }, noMatchFunc, matchFunc);
 		return output;
 	}
 
 	std::string Millisecond::ToStringUsingTokenCount(const size_t count) const
 	{
 		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
-		const auto milliStr = kString::ToString(numberFormat, GetMillisecond());
+		const auto milliStr = (count < 3)
+			? kString::ToString(numberFormat, GetMillisecond())
+			: (count == 3)
+			? kString::ToString("{0}{1}", GetMillisecond(), Units)
+			: kString::ToString("{0:2}{1}", GetMillisecond(), Units);
 		return milliStr;
 	}
 

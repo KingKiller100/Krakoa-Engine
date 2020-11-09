@@ -7,10 +7,11 @@
 
 namespace klib::kCalendar
 {
-	class Millisecond final : private TimeComponentBase, CalendarComponentToStringImpl
+	class Millisecond final : private TimeComponentBase, CalendarComponentToStringImplExtended
 	{
 	public:
-		static constexpr std::string_view Units = "s";
+		static constexpr std::string_view Units = "ms";
+		static constexpr auto FormatToken = 'u';
 		static constexpr size_t FromMinor = 1'000'000;
 		static constexpr auto ToMajor = 1.0 / 1000;
 

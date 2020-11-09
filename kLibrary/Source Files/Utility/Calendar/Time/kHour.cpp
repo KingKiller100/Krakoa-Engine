@@ -14,19 +14,25 @@ namespace klib::kCalendar
 			output.push_back(noToken);
 		};
 
-		const auto matchFunc = [&](size_t count)
+		const auto matchFunc = [&](size_t count, char)
 		{
 			output.append(ToStringUsingTokenCount(count));
 		};
 
-		ToStringImpl(format, 'h', noMatchFunc, matchFunc);
+		ToStringImpl(format, { FormatToken }, noMatchFunc, matchFunc);
 		return output;
 	}
 
 	std::string Hour::ToStringUsingTokenCount(const size_t count) const
 	{
 		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
-		const auto hourStr = kString::ToString(numberFormat, GetHour());
+
+		const std::string hourStr = (count < 3)
+			? kString::ToString(numberFormat, GetHour())
+			: (count == 3)
+			? kString::ToString("{0}{1}", GetHour(), Units)
+			: kString::ToString("{0:2}{1}", GetHour(), Units);
+
 		return hourStr;
 	}
 
@@ -46,7 +52,7 @@ namespace klib::kCalendar
 		{
 		case CYCLE_12: hour %= 12;
 		case CYCLE_24: hour %= 24;
-		default: ;
+		default:;
 		}
 	}
 }

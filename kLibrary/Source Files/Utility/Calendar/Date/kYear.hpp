@@ -10,9 +10,10 @@
 
 namespace klib::kCalendar
 {	
-	class Year final : private CalendarComponentToStringImpl
+	class Year final : private CalendarComponentToStringImplExtended
 	{
 	public:
+		static constexpr auto FormatToken = 'y';
 		static constexpr size_t LeapYearFrequency = 4;
 		
 		static constexpr size_t YearsInDecade = 10;

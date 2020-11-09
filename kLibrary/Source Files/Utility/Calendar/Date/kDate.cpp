@@ -2,16 +2,14 @@
 
 #include "kDate.hpp"
 
-#include <algorithm>
-
 #include "../kiCalendarInfoSource.hpp"
+
+#include "../../String/kToString.hpp"
+#include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
 
 #include "../../../Type Traits/StringTraits.hpp"
 
-#include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
-
-
-#include "../../String/kToString.hpp"
+#include <set>
 
 namespace klib::kCalendar
 {
@@ -51,6 +49,30 @@ namespace klib::kCalendar
 		CheckDate();
 	}
 
+	void Date::CheckDate() const
+	{
+		if (!day.Verify())
+			throw kDebug::CalendarError();
+
+		if (!month.Verify(day, year))
+			throw kDebug::InvalidMonthError();
+	}
+
+	const Day& Date::GetDay() const
+	{
+		return day;
+	}
+
+	const Month& Date::GetMonth() const
+	{
+		return month;
+	}
+
+	const Year& Date::GetYear() const
+	{
+		return year;
+	}
+
 	Day Date::GetDay()
 	{
 		return day;
@@ -68,66 +90,39 @@ namespace klib::kCalendar
 
 	std::string Date::ToString(const std::string_view& format) const
 	{
-		using TokenT = char;
-
 		constexpr auto noMatchToken = type_trait::s_NullTerminator<char>;
-		constexpr std::array<TokenT, 3> tokens{ 'd', 'm', 'y' };
+		
+		const std::set<char> tokens{ Day::FormatToken, Month::FormatToken, Year::FormatToken };
 
 		std::string output;
-		output.reserve(format.size());
 
-		size_t index = 0;
-		for (auto letter = format.front();
-			letter != type_trait::s_NullTerminator<char>;
-			letter = format[++index])
+		const auto noMatchFunc = [&](char noToken)
 		{
-			TokenT match(noMatchToken);
-			std::for_each(tokens.begin(), tokens.end(), [&](const TokenT pair)
+			output.push_back(noToken);
+		};
+
+		const auto matchFunc = [&](size_t count, char token)
+		{
+			switch (kString::ToLower(token))
 			{
-				if (pair == letter)
-					match = pair;
-			});
-
-			if (match == type_trait::s_NullTerminator<char>)
-			{
-				output.push_back(letter);
-				continue;
-			}
-
-			const auto first = format.find_first_of(match, index);
-			auto last = format.find_first_not_of(match, first);
-
-			if (last == std::string::npos)
-				last = format.size();
-
-			const auto count = last - first;
-			std::string toAdd;
-			toAdd.reserve(count);
-
-			switch (kString::ToLower(match))
-			{
-			case 'd':
-				toAdd = day.ToStringUsingTokenCount(count);
+			case Day::FormatToken:
+				output.append(day.ToStringUsingTokenCount(count));
 				break;
 
-			case 'm':
-				toAdd = month.ToStringUsingTokenCount(count);
+			case Month::FormatToken:
+				output.append(month.ToStringUsingTokenCount(count));
 				break;
 
-			case 'y':
-				toAdd = year.ToStringUsingTokenCount(count);
+			case Year::FormatToken:
+				output.append(year.ToStringUsingTokenCount(count));
 				break;
-				
+
 			default:
 				throw kDebug::CalendarError("Bad format for date");
-				break;
 			}
-			output.append(std::move(toAdd));
-			index += count - 1;
+		};
 
-			if (index >= format.size() - 1)
-				break;
-		}
+		ToStringImpl(format, tokens, noMatchFunc, matchFunc);
 		return output;
 	}
 
@@ -138,15 +133,15 @@ namespace klib::kCalendar
 
 		std::string str(
 			kString::ToString("{0:2}{1}{2:2}{1}{3:4}"
-				, GetDay()
+				, static_cast<std::uint16_t>(GetDay())
 				, separatorStr
-				, GetMonth()
-				, GetYear()));
+				, static_cast<std::uint16_t>(GetMonth())
+				, static_cast<std::uint16_t>(GetYear())));
 
 		return str;
 	}
 
-	std::string Date::ToString(DateTextLength textLentgh) const
+	std::string Date::ToString(DateTextLength textLength) const
 	{
 		const auto dayStr = day.GetDayStr();
 		const auto monthStr = month.GetMonthStr();
@@ -154,7 +149,7 @@ namespace klib::kCalendar
 
 		std::string str;
 
-		switch (textLentgh)
+		switch (textLength)
 		{
 		case DateTextLength::FULL:
 		{
@@ -180,30 +175,6 @@ namespace klib::kCalendar
 		}
 
 		return str;
-	}
-
-	const Day& Date::GetDay() const
-	{
-		return day;
-	}
-
-	const Month& Date::GetMonth() const
-	{
-		return month;
-	}
-
-	const Year& Date::GetYear() const
-	{
-		return year;
-	}
-
-	void Date::CheckDate() const
-	{
-		if (day.Verify())
-			throw kDebug::CalendarError();
-
-		if (month.Verify( day, year ))
-			throw kDebug::InvalidMonthError();
 	}
 
 }

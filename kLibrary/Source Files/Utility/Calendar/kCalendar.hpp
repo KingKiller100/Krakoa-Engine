@@ -1,9 +1,10 @@
 #pragma once
 
-#include "kTime.hpp"
-#include <string>
-
 #include "Date/kDate.hpp"
+
+#include "Time/kTime.hpp"
+
+#include <string>
 
 namespace klib
 {
@@ -15,7 +16,7 @@ namespace klib
 		std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarInfoSourceType  source = CalendarInfoSourceType::LOCAL) noexcept;
 
 
-		unsigned short GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSourceType source = CalendarInfoSourceType::LOCAL);
+		std::uint16_t GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSourceType source = CalendarInfoSourceType::LOCAL);
 		std::string GetTimeText(CalendarInfoSourceType calendarInfo = CalendarInfoSourceType::LOCAL) noexcept;
 		std::string CreateTime(uint8_t hours, uint8_t minutes) noexcept;
 		std::string CreateTime(uint8_t hours, uint8_t minutes, uint8_t seconds) noexcept;

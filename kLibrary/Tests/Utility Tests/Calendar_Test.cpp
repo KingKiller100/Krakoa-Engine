@@ -46,7 +46,13 @@ namespace kTest::utility
 	void CalendarTester::Test()
 	{
 		VERIFY_MULTI_INIT();
+		VERIFY_MULTI(DayTest());
 		VERIFY_MULTI(MonthTest());
+		VERIFY_MULTI(YearTest());
+		VERIFY_MULTI(MillisecondTest());
+		VERIFY_MULTI(SecondTest());
+		VERIFY_MULTI(MinuteTest());
+		VERIFY_MULTI(HourTest());
 		VERIFY_MULTI(ToStringTest());
 		VERIFY_MULTI(CreateTimeTest());
 		VERIFY_MULTI(GetTimeTextTest());
@@ -55,6 +61,132 @@ namespace kTest::utility
 		VERIFY_MULTI(GetDateInTextFormatTest());
 		VERIFY_MULTI(GetDateInNumericalFormatTest());
 		VERIFY_MULTI_END();
+	}
+
+	bool CalendarTester::DayTest()
+	{
+		{
+			constexpr Day day(16, Day::WEDNESDAY);
+			VERIFY_COMPILE_TIME(day.GetDay() == 16);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::WEDNESDAY);
+			VERIFY(day.Verify());
+			VERIFY(day.ToString("d") == "16"
+				&& day.ToString("dd") == "16");
+			VERIFY(day.ToString("ddd") == "16th");
+			VERIFY(day.ToString("dddd") == "Wed");
+			VERIFY(day.ToString("ddddd") == "Wednesday");
+		}
+		
+		{
+			constexpr Day day(9, Day::MONDAY);
+			VERIFY_COMPILE_TIME(day.GetDay() == 9);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
+			VERIFY(day.Verify());
+			VERIFY(day.ToString("d") == "9"
+				&& day.ToString("dd") == "09");
+			VERIFY(day.ToString("ddd") == "9th");
+			VERIFY(day.ToString("dddd") == "Mon");
+			VERIFY(day.ToString("ddddd") == "Monday");
+		}
+		
+		{
+			constexpr Day day(32, Day::THURSDAY);
+			VERIFY_COMPILE_TIME(day.GetDay() == 32);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::THURSDAY);
+			VERIFY(!day.Verify());
+			VERIFY(day.ToString("d") == "32"
+				&& day.ToString("dd") == "32");
+			VERIFY(day.ToString("ddd") == "32nd");
+			VERIFY(day.ToString("dddd") == "Thu");
+			VERIFY(day.ToString("ddddd") == "Thursday");
+		}
+
+		return success;
+	}
+
+	bool CalendarTester::YearTest()
+	{
+		{
+			constexpr Year year(2004);
+			VERIFY_COMPILE_TIME(year.IsLeapYear());
+			VERIFY_COMPILE_TIME(year.GetYear() == 2004);
+			VERIFY_COMPILE_TIME(year.TotalDays() == 366);
+			VERIFY(year.ToString("y") == "04"
+				&& year.ToString("yy") == "04");
+			VERIFY(year.ToString("yyy") == "2004");
+			VERIFY(year.ToString("yyyy") == "2004");
+		}
+
+		{
+			constexpr Year year(1862);
+			VERIFY_COMPILE_TIME(!year.IsLeapYear());
+			VERIFY_COMPILE_TIME(year.GetYear() == 1862);
+			VERIFY_COMPILE_TIME(year.TotalDays() == 365);
+			VERIFY(year.ToString("y") == "62"
+				&& year.ToString("yy") == "62");
+			VERIFY(year.ToString("yyy") == "1862");
+			VERIFY(year.ToString("yyyy") == "1862");
+		}
+
+		return success;
+	}
+
+	bool CalendarTester::MonthTest()
+	{
+		{
+			constexpr Month month(Month::MAR);
+			constexpr Day day(7);
+			VERIFY_COMPILE_TIME(month.GetMonthNumber() == 3);
+			VERIFY_COMPILE_TIME(month.GetMonth() == Month::MAR);
+			VERIFY(month.Verify(day));
+			VERIFY(month.ToString("d") == "16"
+				&& month.ToString("dd") == "16");
+			VERIFY(month.ToString("ddd") == "16th");
+			VERIFY(month.ToString("dddd") == "Wed");
+			VERIFY(month.ToString("ddddd") == "Wednesday");
+		}
+
+		{
+			constexpr Day day(9, Day::MONDAY);
+			VERIFY_COMPILE_TIME(day.GetDay() == 9);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
+			VERIFY(day.Verify());
+			VERIFY(day.ToString("d") == "9"
+				&& day.ToString("dd") == "09");
+			VERIFY(day.ToString("ddd") == "9th");
+			VERIFY(day.ToString("dddd") == "Mon");
+			VERIFY(day.ToString("ddddd") == "Monday");
+		}
+
+		{
+			constexpr Day day(32, Day::THURSDAY);
+			VERIFY_COMPILE_TIME(day.GetDay() == 32);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::THURSDAY);
+			VERIFY(!day.Verify());
+			VERIFY(day.ToString("d") == "32"
+				&& day.ToString("dd") == "32");
+			VERIFY(day.ToString("ddd") == "32nd");
+			VERIFY(day.ToString("dddd") == "Thu");
+			VERIFY(day.ToString("ddddd") == "Thursday");
+		}
+
+		return success;
+	}
+
+	bool CalendarTester::MillisecondTest()
+	{
+	}
+
+	bool CalendarTester::SecondTest()
+	{
+	}
+
+	bool CalendarTester::MinuteTest()
+	{
+	}
+
+	bool CalendarTester::HourTest()
+	{
 	}
 
 	auto DateTextFunc(const SYSTEMTIME dateTime, Date::DateTextLength format = Date::DateTextLength::FULL) -> decltype(auto)
@@ -103,29 +235,6 @@ namespace kTest::utility
 		}
 
 		return dateStr;
-	};
-
-	bool CalendarTester::MonthTest()
-	{
-		{
-			const Date date(Date::DaysOfTheWeek::FRIDAY, 1, Date::MAR, 2020);
-			const auto result = date.GetMonthStr();
-			VERIFY(result.compare("March") == 0);
-		}
-
-		{
-			const Date date(Date::DaysOfTheWeek::FRIDAY, 1, Date::JUN, 2020);
-			const auto result = date.GetMonthStr();
-			VERIFY(result.compare("June") == 0);
-		}
-
-		{
-			const Date date(Date::DaysOfTheWeek::FRIDAY, 1, Date::DEC, 2020);
-			const auto result = date.GetMonthStr();
-			VERIFY(result.compare("December") == 0);
-		}
-
-		return success;
 	}
 
 	bool CalendarTester::GetTimeTextTest()
@@ -134,51 +243,51 @@ namespace kTest::utility
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
 			const auto result = GetTimeText();
-			const auto expected = MakeString("%02d:%02d:%02d:%03d", 
-				localTime.wHour, 
-				localTime.wMinute, 
-				localTime.wSecond, 
+			const auto expected = MakeString("%02d:%02d:%02d:%03d",
+				localTime.wHour,
+				localTime.wMinute,
+				localTime.wSecond,
 				localTime.wMilliseconds);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
 			const auto result = klib::kString::Convert<wchar_t>(GetTimeText());
-			const auto expected = MakeString(L"%02d:%02d:%02d:%03d", 
-				localTime.wHour, 
-				localTime.wMinute, 
-				localTime.wSecond, 
+			const auto expected = MakeString(L"%02d:%02d:%02d:%03d",
+				localTime.wHour,
+				localTime.wMinute,
+				localTime.wSecond,
 				localTime.wMilliseconds);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
 			const auto result = GetTimeText(CalendarSourceType::SYSTEM);
-			const auto expected = MakeString("%02d:%02d:%02d:%03d", 
-				systemTime.wHour, 
-				systemTime.wMinute, 
-				systemTime.wSecond, 
-				systemTime.wMilliseconds);
-			VERIFY(result == expected);
-		}
-		
-		{
-			SYSTEMTIME systemTime;
-			::GetSystemTime(&systemTime);
-			const auto result = klib::kString::Convert<wchar_t>(GetTimeText(CalendarSourceType::SYSTEM));
-			const auto expected = MakeString(L"%02d:%02d:%02d:%03d", 
-				systemTime.wHour, 
-				systemTime.wMinute, 
-				systemTime.wSecond, 
+			const auto expected = MakeString("%02d:%02d:%02d:%03d",
+				systemTime.wHour,
+				systemTime.wMinute,
+				systemTime.wSecond,
 				systemTime.wMilliseconds);
 			VERIFY(result == expected);
 		}
 
-		
+		{
+			SYSTEMTIME systemTime;
+			::GetSystemTime(&systemTime);
+			const auto result = klib::kString::Convert<wchar_t>(GetTimeText(CalendarSourceType::SYSTEM));
+			const auto expected = MakeString(L"%02d:%02d:%02d:%03d",
+				systemTime.wHour,
+				systemTime.wMinute,
+				systemTime.wSecond,
+				systemTime.wMilliseconds);
+			VERIFY(result == expected);
+		}
+
+
 		return success;
 	}
 
@@ -213,14 +322,14 @@ namespace kTest::utility
 			const auto expected = "02/01/98";
 			VERIFY(expected == result);
 		}
-		
+
 		{
 			const Date date(Date::MONDAY, 12, Date::MAY, 2004);
 			const auto result = date.ToString("dddd, ddd mmmmm yyyy");
 			const auto expected = "Mon, 12th May 2004";
 			VERIFY(expected == result);
 		}
-		
+
 		{
 			const Date date(Date::FRIDAY, 21);
 			const auto result = date.ToString("ddddd, ddd");
@@ -248,7 +357,7 @@ namespace kTest::utility
 			const auto expected = "034";
 			VERIFY(expected == result);
 		}
-		
+
 		return success;
 	}
 
@@ -392,25 +501,25 @@ namespace kTest::utility
 			constexpr const auto* const expected = "12:30:25";
 			VERIFY(result == expected);
 		}
-		
+
 		{
-			const auto result= CreateTime(16, 18, 0, 567);
+			const auto result = CreateTime(16, 18, 0, 567);
 			constexpr const auto* const expected = "16:18:00:567";
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			const auto result = CreateTime(6, 2, 8, 24);
 			constexpr const auto* const expected = "06:02:08:024";
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			const auto result = CreateTime(6, 20);
 			constexpr const auto* const expected = "06:20";
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			const auto result = CreateTime(24, 60, 60);
 
@@ -420,7 +529,7 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
-		
+
 		return success;
 	}
 }

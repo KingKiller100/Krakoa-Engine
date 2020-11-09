@@ -4,7 +4,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class CalendarTester : public Tester
+	class CalendarTester final : public Tester
 	{
 	public:
 		CalendarTester();
@@ -13,7 +13,14 @@ namespace kTest::utility
 	private:
 		void Test() override;
 
+		bool DayTest();
 		bool MonthTest();
+		bool YearTest();
+		bool MillisecondTest();
+		bool SecondTest();
+		bool MinuteTest();
+		bool HourTest();
+		
 		bool GetTimeTextTest();
 		bool DayOfTheWeekTest();
 

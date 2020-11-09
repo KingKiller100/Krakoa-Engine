@@ -7,7 +7,7 @@
 
 namespace klib::kCalendar
 {
-	class Hour final : private TimeComponentBase, CalendarComponentToStringImpl
+	class Hour final : private TimeComponentBase, CalendarComponentToStringImplExtended
 	{
 	public:
 		enum CycleType : unsigned char
@@ -16,17 +16,16 @@ namespace klib::kCalendar
 			CYCLE_24,
 		};
 		
-		static constexpr std::string_view Units = "s";
+		static constexpr std::string_view Units = "h";
+		static constexpr auto FormatToken = 'h';
 		static constexpr size_t FromMinor = 60;
 		static constexpr auto ToMajor = 1.0 / 24;
 
 	public:
-		constexpr explicit Hour(const std::uint16_t Hour, const CycleType cycleType = CYCLE_24)
+		constexpr explicit Hour(const std::uint16_t Hour, const CycleType cycleType)
 			: hour(Hour)
-			, cycleType( cycleType )
-		{
-			Verify();
-		}
+			, cycleType(cycleType)
+		{}
 
 		USE_RESULT constexpr std::uint16_t GetHour() const
 		{
@@ -60,6 +59,6 @@ namespace klib::kCalendar
 
 	constexpr Hour operator"" _hh(unsigned long long hours)
 	{
-		return Hour(static_cast<std::uint16_t>(hours));
+		return Hour(static_cast<std::uint16_t>(hours), Hour::CYCLE_24);
 	}
 }

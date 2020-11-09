@@ -5,6 +5,21 @@
 
 namespace klib::kCalendar
 {
+	Year Year::FromDays( const std::uint16_t days )
+	{
+		const auto noOfLeaps = (days / 4) / daysInYear;
+		const auto years = days / daysInYear;
+		const auto remainingDays = days % daysInYear;
+		const auto year = (years - noOfLeaps / daysInYear) + (remainingDays / daysInYear);
+		return Year(year);
+	}
+
+	Year Year::FromMonths( const std::uint16_t months )
+	{
+		const auto year = months / 12;
+		return Year(year);
+	}
+
 	std::string Year::GetYearStr() const
 	{
 		return kString::ToString<char>(year);
@@ -21,15 +36,18 @@ namespace klib::kCalendar
 
 		const auto matchFunc = [&](size_t count)
 		{
-			std::string toAppend;
-			if (count <= 2)
-				toAppend = GetYearStr().substr(2);
-			else
-				toAppend = GetYearStr();
-			output.append(toAppend);
+			output.append(ToStringUsingTokenCount( count ));
 		};
 
 		ToStringImpl(format, 'y', noMatchFunc, matchFunc);
 		return output;
+	}
+
+	std::string Year::ToStringUsingTokenCount(const size_t count) const
+	{
+		if (count <= 2)
+			return GetYearStr().substr(2);
+
+		return  GetYearStr();
 	}
 }

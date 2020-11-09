@@ -5,18 +5,22 @@
 
 #include "../../../HelperMacros.hpp"
 
+#include "../kCalenderInfoSourceType.hpp"
+
 struct _SYSTEMTIME;
 
 namespace klib
 {
 	namespace kCalendar
 	{
-		enum class CalendarInfoSourceType;
-
+		namespace secret::helper
+		{
+			class iCalendarInfoSource;
+		}
+		
 		class Date
 		{
 		public:
-			
 			enum DateTextLength : uint8_t
 			{
 				FULL,
@@ -35,26 +39,27 @@ namespace klib
 
 			USE_RESULT std::string ToString(const std::string_view& format) const;
 			USE_RESULT std::string ToString(DateNumericalSeparator separator = DateNumericalSeparator::SLASH) const;
-			USE_RESULT std::string ToString(DateTextLength format) const;
+			USE_RESULT std::string ToString(DateTextLength textLentgh) const;
 
 			USE_RESULT const Day& GetDay() const;
-			USE_RESULT Day& GetDay();
+			USE_RESULT Day GetDay();
 			USE_RESULT const Month& GetMonth() const;
 			USE_RESULT Month& GetMonth();
 			USE_RESULT const Year& GetYear() const;
 			USE_RESULT Year& GetYear();
-
+			
 		private:
 			void CheckDate() const;
-			Date(const _SYSTEMTIME& dateSource);
+			explicit Date(const secret::helper::iCalendarInfoSource& source);
 
 		private:
-			const Day day;
-			const Month monthIndex;
-			const Year year;
+			Day day;
+			Month month;
+			Year year;
 		};
-
-
-
 	}
+
+#ifdef KLIB_SHORT_NAMESPACE
+	using namespace kCalendar;
+#endif
 }

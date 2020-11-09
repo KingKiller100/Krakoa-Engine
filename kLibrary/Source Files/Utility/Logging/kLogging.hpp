@@ -9,8 +9,6 @@
 #include <string>
 #include <cstdint>
 
-
-
 namespace klib
 {
 	namespace kLogs

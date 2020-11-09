@@ -45,7 +45,9 @@ namespace klib::kCalendar
 			return kCalendar_DaysOfTheWeek[day];
 		}
 
-		bool Verify() const;
+		static std::string_view GetDaySuffix(const std::uint16_t day);
+		
+		USE_RESULT bool Verify() const;
 		
 		USE_RESULT std::string ToString(const std::string_view& format) const;
 
@@ -55,10 +57,12 @@ namespace klib::kCalendar
 			return GetDay();
 		}
 
+		friend class Date;
 		
 	private:
 		USE_RESULT std::string GetDayStr() const;
 		USE_RESULT std::string GetDayOfTheWeekStr() const;
+		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
 		
 	private:
 		const std::uint16_t day;

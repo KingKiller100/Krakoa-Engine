@@ -1,15 +1,21 @@
 ﻿#pragma once
 
-#include "../kComponentToStringImpl.hpp"
-
 #include "../../../HelperMacros.hpp"
+
+#include "../kComponentToStringImpl.hpp"
 
 #include <cstdint>
 
 namespace klib::kCalendar
 {	
-	class Year : private CalendarComponentToStringImpl
+	class Year final : private CalendarComponentToStringImpl
 	{
+		static constexpr auto daysInYear = 365;
+		static constexpr auto daysInLeapYear = 366;
+		static constexpr auto leapYearFrequency = 4;
+		
+		static constexpr auto MonthsInYear = 12;
+		
 	public:
 		constexpr explicit Year(const std::uint16_t year)
 			: year(year)
@@ -33,13 +39,21 @@ namespace klib::kCalendar
 		{
 			return GetYear();
 		}
+
+		static Year FromDays(const std::uint16_t days);
+		static Year FromMonths(const std::uint16_t months);
 		
 		USE_RESULT std::string GetYearStr() const;
 		USE_RESULT std::string ToString(const std::string_view& format) const;
+
+		friend class Date;
+
+	protected:
+		USE_RESULT std::string ToStringUsingTokenCount( const size_t count ) const override;
 		
 	private:
 		const std::uint16_t year;
-		bool isLeapYear;
+		const bool isLeapYear;
 	};
 
 	constexpr Year operator"" _y(unsigned long long year)

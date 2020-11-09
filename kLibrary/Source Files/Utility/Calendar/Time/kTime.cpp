@@ -1,5 +1,5 @@
 ﻿#include "pch.hpp"
-#include "kDateTime.hpp"
+#include "kTime.hpp"
 #include "../String/kToString.hpp"
 #include "../Debug Helper/Exceptions/CalenderExceptions.hpp"
 #include <Windows.h>

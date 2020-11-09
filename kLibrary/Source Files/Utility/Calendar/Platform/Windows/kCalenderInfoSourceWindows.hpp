@@ -6,7 +6,7 @@
 
 #	include <Windows.h>
 
-namespace klib::kCalendar::windows
+namespace klib::kCalendar::secret::helper::windows
 {
 	class CalendarInfoSourceWindows : public iCalendarInfoSource
 	{
@@ -25,8 +25,8 @@ namespace klib::kCalendar::windows
 		USE_RESULT std::uint16_t GetMillisecond() const override;
 
 	private:
-		void RefreshLocal() noexcept;
-		void RefreshSystem() noexcept;
+		void RefreshLocalInfo() noexcept;
+		void RefreshSystemInfo() noexcept;
 		
 	private:
 		SYSTEMTIME dateTime;

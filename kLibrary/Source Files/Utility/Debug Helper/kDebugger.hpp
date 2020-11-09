@@ -8,5 +8,9 @@ namespace klib
 
 		void BreakPointHere() noexcept;
 	}
+
+#ifdef KLIB_SHORT_NAMESPACE
+	using namespace kDebug;
+#endif
 }
 

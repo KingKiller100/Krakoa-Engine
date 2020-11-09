@@ -5,7 +5,7 @@
 
 #ifdef _WIN64
 
-namespace klib::kCalendar::windows
+namespace klib::kCalendar::secret::helper::windows
 {
 	CalendarInfoSourceWindows::CalendarInfoSourceWindows()
 	{
@@ -20,15 +20,25 @@ namespace klib::kCalendar::windows
 		switch (type)
 		{
 		case CalendarInfoSourceType::SYSTEM:
-			RefreshSystem();
+			RefreshSystemInfo();
 			break;
 		case CalendarInfoSourceType::LOCAL:
-			RefreshLocal();
+			RefreshLocalInfo();
 			break;
 		default:
 			throw kDebug::CalendarError("Unknown calendar source");
 			break;
 		}
+	}
+
+	void CalendarInfoSourceWindows::RefreshLocalInfo() noexcept
+	{
+		GetLocalTime(&dateTime);
+	}
+
+	void CalendarInfoSourceWindows::RefreshSystemInfo() noexcept
+	{
+		GetSystemTime(&dateTime);
 	}
 
 	std::uint16_t CalendarInfoSourceWindows::GetDay() const
@@ -69,16 +79,6 @@ namespace klib::kCalendar::windows
 	std::uint16_t CalendarInfoSourceWindows::GetMillisecond() const
 	{
 		return dateTime.wMilliseconds;
-	}
-
-	void CalendarInfoSourceWindows::RefreshLocal() noexcept
-	{
-		GetLocalTime(&dateTime);
-	}
-
-	void CalendarInfoSourceWindows::RefreshSystem() noexcept
-	{
-		GetSystemTime(&dateTime);
 	}
 
 }

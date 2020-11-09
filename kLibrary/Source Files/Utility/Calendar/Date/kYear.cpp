@@ -1,22 +1,24 @@
 ﻿#include "pch.hpp"
 #include "kYear.hpp"
 
+#include "kMonth.hpp"
 #include "../../String/kToString.hpp"
 
 namespace klib::kCalendar
 {
-	Year Year::FromDays( const std::uint16_t days )
+	Year Year::FromDays(const std::uint16_t days)
 	{
-		const auto noOfLeaps = (days / 4) / daysInYear;
-		const auto years = days / daysInYear;
-		const auto remainingDays = days % daysInYear;
-		const auto year = (years - noOfLeaps / daysInYear) + (remainingDays / daysInYear);
+		const auto noOfLeaps = (days / 4) / Day::DaysInYear;
+		const auto years = days / Day::DaysInYear;
+		const auto remainingDays = days % Day::DaysInYear;
+		const auto year = (years - noOfLeaps / Day::DaysInYear)
+			+ (remainingDays / Day::DaysInYear);
 		return Year(year);
 	}
 
-	Year Year::FromMonths( const std::uint16_t months )
+	Year Year::FromMonths(const std::uint16_t months)
 	{
-		const auto year = months / 12;
+		const auto year = months / Month::MonthsInYear;
 		return Year(year);
 	}
 
@@ -36,7 +38,7 @@ namespace klib::kCalendar
 
 		const auto matchFunc = [&](size_t count)
 		{
-			output.append(ToStringUsingTokenCount( count ));
+			output.append(ToStringUsingTokenCount(count));
 		};
 
 		ToStringImpl(format, 'y', noMatchFunc, matchFunc);

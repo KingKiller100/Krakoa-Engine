@@ -18,6 +18,20 @@ namespace klib::kCalendar
 			SATURDAY,
 		};
 
+		
+
+		static constexpr size_t TotalDaysInMonths[] =
+		{ 0, 31, 59, 90, 120, 151,
+			181, 212, 243, 273, 304, 334, 365 };
+
+		static constexpr size_t TotalDaysInMonthsLeap[] =
+		{ 0, 31, 60, 91, 121, 152,
+			182, 213, 244, 274, 305, 335, 366 };
+		
+		static constexpr size_t DaysInWeek = 7;
+		static constexpr size_t DaysInYear = 365;
+		static constexpr size_t DaysInLeapYear = 366;
+		
 	public:
 		constexpr Day(std::uint16_t day, DayOfTheWeek dotw = MONDAY)
 			: day(day), dayOfTheWeek(dotw)
@@ -37,7 +51,7 @@ namespace klib::kCalendar
 
 		USE_RESULT static constexpr auto DayOfTheWeekToString(DayOfTheWeek day)
 		{
-			constexpr std::array<const char*, 7> kCalendar_DaysOfTheWeek = {
+			constexpr std::array<const char*,DaysInWeek> kCalendar_DaysOfTheWeek = {
 				"Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday"
 			};

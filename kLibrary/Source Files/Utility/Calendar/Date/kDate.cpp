@@ -182,6 +182,21 @@ namespace klib::kCalendar
 		return str;
 	}
 
+	const Day& Date::GetDay() const
+	{
+		return day;
+	}
+
+	const Month& Date::GetMonth() const
+	{
+		return month;
+	}
+
+	const Year& Date::GetYear() const
+	{
+		return year;
+	}
+
 	void Date::CheckDate() const
 	{
 		if (day.Verify())

@@ -6,20 +6,25 @@
 
 #include <cstdint>
 
+#include "kDay.hpp"
+
 namespace klib::kCalendar
 {	
 	class Year final : private CalendarComponentToStringImpl
 	{
-		static constexpr auto daysInYear = 365;
-		static constexpr auto daysInLeapYear = 366;
-		static constexpr auto leapYearFrequency = 4;
+	public:
+		static constexpr size_t LeapYearFrequency = 4;
 		
-		static constexpr auto MonthsInYear = 12;
+		static constexpr size_t YearsInDecade = 10;
+		static constexpr size_t YearsInCentury = 100;
+		static constexpr size_t YearsInMillennium = 1000;
 		
 	public:
 		constexpr explicit Year(const std::uint16_t year)
 			: year(year)
-		, isLeapYear(year % 4 == 0)
+		, isLeapYear((year % 4 == 0 // Year divisible by 4
+		&& year % 100 != 0) // but not divisible by 100
+		|| year % 400 == 0) // Unless it's divisible by 400
 		{}
 
 		~Year() noexcept = default;
@@ -34,6 +39,13 @@ namespace klib::kCalendar
 			return isLeapYear;
 		}
 
+		USE_RESULT constexpr std::uint16_t TotalDays() const
+		{
+			return isLeapYear
+				? Day::DaysInLeapYear
+				: Day::DaysInYear;
+		}
+		
 		template<typename TargetType>
 		constexpr operator TargetType() const
 		{

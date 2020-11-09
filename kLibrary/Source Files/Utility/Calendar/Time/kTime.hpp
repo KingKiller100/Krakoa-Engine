@@ -1,21 +1,29 @@
 ﻿#pragma once
 
+#include "../../../HelperMacros.hpp"
+
+#include "../kCalenderInfoSourceType.hpp"
+
 #include <cstdint>
 #include <string>
 
-#include "../../HelperMacros.hpp"
 
-
-struct _SYSTEMTIME;
+#include "kHour.hpp"
+#include "kMinute.hpp"
+#include "kSecond.hpp"
+#include "kMilliseconds.hpp"
 
 namespace klib
 {
 	namespace kCalendar
 	{
+		namespace secret::helper
+		{
+			class iCalendarInfoSource;
+		}
+		
 		class Time
 		{
-			using HHMMSSMS_t = std::uint16_t;
-
 		public:
 			enum TimeComponent : uint8_t
 			{
@@ -23,33 +31,33 @@ namespace klib
 				MINS,
 				SECS,
 				MILLIS,
-				COMPONENT_END_MARKER
+				END_MARKER
 			};
 			
 		public:
-			explicit Time(CalendarSourceType sourceType);
-			Time(const HHMMSSMS_t h, const HHMMSSMS_t m, const HHMMSSMS_t s,
-				const HHMMSSMS_t ms = 0);
+			explicit Time(CalendarInfoSourceType sourceType);
+			Time(const Hour::CycleType cycle, const Hour h, const Minute m, const Second s,
+				const Millisecond ms = Millisecond(0));
 
-			USE_RESULT HHMMSSMS_t GetComponent(const TimeComponent timeComponent) const;
+			USE_RESULT std::uint16_t GetComponent(const TimeComponent timeComponent) const;
 			USE_RESULT std::string ToString(const TimeComponent accuracy = MILLIS) const;
 			USE_RESULT std::string ToString(const std::string_view& format) const;
 
-			USE_RESULT HHMMSSMS_t GetHours() const;
-			USE_RESULT HHMMSSMS_t GetMinutes() const;
-			USE_RESULT HHMMSSMS_t GetSeconds() const;
-			USE_RESULT HHMMSSMS_t GetMilliseconds() const;
+			USE_RESULT const Hour& GetHours() const;
+			USE_RESULT const Minute& GetMinutes() const;
+			USE_RESULT const Second& GetSeconds() const;
+			USE_RESULT const Millisecond& GetMilliseconds() const;
 			
 		private:
 			void CheckTime() const;
 
-			explicit Time(const _SYSTEMTIME& timeSource);
+			explicit Time(const secret::helper::iCalendarInfoSource& timeSource);
 			
 		private:
-			const HHMMSSMS_t hours;
-			const HHMMSSMS_t minutes;
-			const HHMMSSMS_t seconds;
-			const HHMMSSMS_t milliseconds;
+			Hour hours;
+			Minute minutes;
+			Second seconds;
+			Millisecond milliseconds;
 		};
 	}
 

@@ -1,13 +1,23 @@
 ﻿#include "pch.hpp"
 #include "kTime.hpp"
-#include "../String/kToString.hpp"
-#include "../Debug Helper/Exceptions/CalenderExceptions.hpp"
+#include "../../String/kToString.hpp"
+#include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
 #include <Windows.h>
+
+#include "../kiCalendarInfoSource.hpp"
 
 namespace klib::kCalendar
 {
 	namespace
 	{
+		using namespace secret::helper;
+
+		iCalendarInfoSource& GetInfoSource(CalendarInfoSourceType type)
+		{
+			static iCalendarInfoSource& calendar_info = GetCalendarInfoSource();
+			calendar_info.Refresh(type);
+			return calendar_info;
+		}
 	}
 
 	// TIME ////////////////////////////////////////////////////////////
@@ -19,11 +29,12 @@ namespace klib::kCalendar
 		, milliseconds(timeSource.wMilliseconds)
 	{}
 
-	Time::Time(CalendarSourceType sourceType)
-		: Time(GetDateAndTime(sourceType))
+	Time::Time(CalendarInfoSourceType sourceType)
+		: Time(GetInfoSource(sourceType))
 	{}
 
-	Time::Time(const HHMMSSMS_t h, const HHMMSSMS_t m, const HHMMSSMS_t s, const HHMMSSMS_t ms)
+	Time::Time(const Hour::CycleType cycle, const Hour h, const Minute m, const Second s,
+		const Millisecond ms)
 		: hours(h)
 		, minutes(m)
 		, seconds(s)
@@ -34,16 +45,16 @@ namespace klib::kCalendar
 
 	void Time::CheckTime() const
 	{
-		if (hours > 23)
+		if (hours.Verify())
 			kDebug::CalendarError("Invalid Hours");
 
-		if (minutes > 59)
+		if (minutes.Verify())
 			kDebug::CalendarError("Invalid Minutes");
 
-		if (seconds > 59)
+		if (seconds.Verify())
 			kDebug::CalendarError("Invalid Seconds");
 
-		if (milliseconds > 999)
+		if (milliseconds.Verify())
 			kDebug::CalendarError("Invalid Milliseconds");
 	}
 

@@ -4,48 +4,41 @@
 #include "../Secret/kComponentToStringImpl.hpp"
 #include "../../../HelperMacros.hpp"
 
+#include <chrono>
 #include <string>
 
 namespace klib::kCalendar
 {
-	class Minute final : private TimeComponentBase, CalendarComponentToStringImplExtended
+	class Minute final : private TimeComponentBase<std::chrono::minutes>, CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "m";
-		static constexpr auto FormatToken = 'm';
-		static constexpr double FromMinor = 60;
-		static constexpr auto ToMajor = 1.0 / 60;
+		static constexpr char FormatToken = 'm';
 
 	public:
 		constexpr explicit Minute(const std::uint16_t minute)
-			: minute(minute)
+			: TimeComponentBase( minute )
 		{}
 
-		USE_RESULT constexpr std::uint16_t GetMinute() const
+		USE_RESULT constexpr bool Verify() const
 		{
-			return minute;
+			return VerifyImpl(60);
 		}
 
-		template<typename TargetType>
-		constexpr operator TargetType() const
+		USE_RESULT constexpr void Limit()
 		{
-			return static_cast<TargetType>(GetMinute());
+			LimitImpl(60);
 		}
-
+		
 		USE_RESULT std::string ToString(const std::string_view& format = "m") const;
 
 		friend class Time;
 
 	protected:
 		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
-		USE_RESULT bool Verify() const override;
-
-		void Limit() override;
-	private:
-		std::uint16_t minute;
 	};
 
-	constexpr Minute operator"" _ss(unsigned long long mins)
+	constexpr Minute operator ""_mm(unsigned long long mins)
 	{
 		return Minute(static_cast<std::uint16_t>(mins));
 	}

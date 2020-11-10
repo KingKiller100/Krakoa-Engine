@@ -3,48 +3,42 @@
 #include "kTimeComponentBase.hpp"
 #include "../Secret/kComponentToStringImpl.hpp"
 
+#include <chrono>
 #include <string>
 
 namespace klib::kCalendar
 {
-	class Millisecond final : private TimeComponentBase, CalendarComponentToStringImplExtended
+	class Millisecond final : private TimeComponentBase<std::chrono::milliseconds>
+		, CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "ms";
-		static constexpr auto FormatToken = 'u';
-		static constexpr size_t FromMinor = 1'000'000;
-		static constexpr auto ToMajor = 1.0 / 1000;
-
+		static constexpr auto FormatToken = 'c';
+		
 	public:
-		constexpr explicit Millisecond(const std::uint16_t mills)
-			: millisecond(mills)
+		constexpr Millisecond(const std::uint16_t& mills)
+			: TimeComponentBase(mills)
 		{}
 
-		USE_RESULT constexpr std::uint16_t GetMillisecond() const
+		USE_RESULT std::string ToString(const std::string_view& format = "c") const;
+
+		USE_RESULT constexpr bool Verify() const
 		{
-			return millisecond;
+			return VerifyImpl(UnderlyingT::period::den);
 		}
 
-		template<typename TargetType>
-		constexpr operator TargetType() const
+		USE_RESULT constexpr void Limit()
 		{
-			return static_cast<TargetType>(GetMillisecond());
+			LimitImpl(UnderlyingT::period::den);
 		}
-
-		USE_RESULT std::string ToString(const std::string_view& format = "u") const;
-
+		
 		friend class Time;
 
 	protected:
 		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
-		USE_RESULT bool Verify() const override;
-		void Limit() override;
-
-	private:
-		std::uint16_t millisecond;
 	};
 
-	constexpr Millisecond operator"" _uu(unsigned long long millisecond)
+	constexpr Millisecond operator"" _ms(unsigned long long millisecond)
 	{
 		return Millisecond(static_cast<std::uint16_t>(millisecond));
 	}

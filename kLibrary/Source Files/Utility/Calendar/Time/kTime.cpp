@@ -1,6 +1,6 @@
 ﻿#include "pch.hpp"
 #include "kTime.hpp"
-#include "../kiCalendarInfoSource.hpp"
+#include "../Secret/kiCalendarInfoSource.hpp"
 #include "../../String/kToString.hpp"
 #include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
 
@@ -57,16 +57,16 @@ namespace klib::kCalendar
 	void Time::CheckTime() const
 	{
 		if (!hour.Verify())
-			kDebug::CalendarError("Invalid Hours");
+			throw kDebug::CalendarError("Invalid Hours");
 
 		if (!minute.Verify())
-			kDebug::CalendarError("Invalid Minutes");
+			throw kDebug::CalendarError("Invalid Minutes");
 
 		if (!second.Verify())
-			kDebug::CalendarError("Invalid Seconds");
+			throw kDebug::CalendarError("Invalid Seconds");
 
 		if (!millisecond.Verify())
-			kDebug::CalendarError("Invalid Milliseconds");
+			throw kDebug::CalendarError("Invalid Milliseconds");
 	}
 
 	std::string Time::ToString(const TimeComponent accuracy) const

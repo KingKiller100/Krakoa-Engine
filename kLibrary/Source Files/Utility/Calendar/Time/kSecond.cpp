@@ -27,20 +27,10 @@ namespace klib::kCalendar
 	{
 		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
 		const auto secStr = (count < 3)
-			? kString::ToString(numberFormat, GetSecond())
+			? kString::ToString(numberFormat, GetValue())
 			: (count == 3)
-			? kString::ToString("{0}{1}", GetSecond(), Units)
-			: kString::ToString("{0:2}{1}", GetSecond(), Units);
+			? kString::ToString("{0}{1}", GetValue(), Units)
+			: kString::ToString("{0:2}{1}", GetValue(), Units);
 		return secStr;
-	}
-
-	bool Second::Verify() const
-	{
-		return second < 60;
-	}
-
-	void Second::Limit()
-	{
-		second %= 60;
 	}
 }

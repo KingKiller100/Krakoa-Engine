@@ -28,21 +28,11 @@ namespace klib::kCalendar
 		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
 
 		const auto minStr = (count < 3)
-			? kString::ToString(numberFormat, GetMinute())
+			? kString::ToString(numberFormat, GetValue())
 			: (count == 3)
-			? kString::ToString("{0}{1}", GetMinute(), Units)
-			: kString::ToString("{0:2}{1}", GetMinute(), Units);
+			? kString::ToString("{0}{1}", GetValue(), Units)
+			: kString::ToString("{0:2}{1}", GetValue(), Units);
 		
 		return minStr;
-	}
-
-	bool Minute::Verify() const
-	{
-		return minute < 60;
-	}
-
-	void Minute::Limit()
-	{
-		minute %= 60;
 	}
 }

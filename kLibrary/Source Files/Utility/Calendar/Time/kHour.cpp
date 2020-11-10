@@ -28,31 +28,11 @@ namespace klib::kCalendar
 		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
 
 		const std::string hourStr = (count < 3)
-			? kString::ToString(numberFormat, GetHour())
+			? kString::ToString(numberFormat, GetValue())
 			: (count == 3)
-			? kString::ToString("{0}{1}", GetHour(), Units)
-			: kString::ToString("{0:2}{1}", GetHour(), Units);
+			? kString::ToString("{0}{1}", GetValue(), Units)
+			: kString::ToString("{0:2}{1}", GetValue(), Units);
 
 		return hourStr;
-	}
-
-	bool Hour::Verify() const
-	{
-		switch (cycleType)
-		{
-		case CYCLE_12: return hour < 12;
-		case CYCLE_24: return hour < 24;
-		default: return false;
-		}
-	}
-
-	void Hour::Limit()
-	{
-		switch (cycleType)
-		{
-		case CYCLE_12: hour %= 12;
-		case CYCLE_24: hour %= 24;
-		default:;
-		}
 	}
 }

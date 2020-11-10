@@ -39,7 +39,9 @@ namespace klib::kProfiler
 		{
 			result.end = timer.Now<TimeUnits>();
 			result.start = timer.GetStartTime<TimeUnits>();
-			result.threadID = (uint32_t)std::hash<std::thread::id>{}(std::this_thread::get_id());
+			result.threadID = static_cast<uint32_t>(
+				std::hash<std::thread::id>{}
+			( std::this_thread::get_id() ));
 
 			callback(result);
 

@@ -25,21 +25,11 @@ namespace klib::kCalendar
 	std::string Millisecond::ToStringUsingTokenCount(const size_t count) const
 	{
 		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
-		const auto milliStr = (count < 3)
-			? kString::ToString(numberFormat, GetMillisecond())
-			: (count == 3)
-			? kString::ToString("{0}{1}", GetMillisecond(), Units)
-			: kString::ToString("{0:2}{1}", GetMillisecond(), Units);
+		const auto milliStr = (count < 4)
+			? kString::ToString(numberFormat, GetValue())
+			: (count == 4)
+			? kString::ToString("{0}{1}", GetValue(), Units)
+			: kString::ToString("{0:3}{1}", GetValue(), Units);
 		return milliStr;
-	}
-
-	bool Millisecond::Verify() const
-	{
-		return millisecond < 1000;
-	}
-
-	void Millisecond::Limit()
-	{
-		millisecond %= 1000;
 	}
 }

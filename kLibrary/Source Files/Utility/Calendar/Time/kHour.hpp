@@ -4,44 +4,42 @@
 
 #include "kTimeComponentBase.hpp"
 
+#include <chrono>
 #include <string>
 
 namespace klib::kCalendar
 {
-	class Hour final : private TimeComponentBase, CalendarComponentToStringImplExtended
+	class Hour final : private TimeComponentBase<std::chrono::hours>, CalendarComponentToStringImplExtended
 	{
 	public:
-		enum CycleType : unsigned char
+		enum CycleType : std::uint8_t
 		{
-			CYCLE_12,
-			CYCLE_24,
+			CYCLE_12 = 12,
+			CYCLE_24 = 24,
 		};
 		
 		static constexpr std::string_view Units = "h";
 		static constexpr auto FormatToken = 'h';
-		static constexpr size_t FromMinor = 60;
-		static constexpr auto ToMajor = 1.0 / 24;
 
 	public:
-		constexpr explicit Hour(const std::uint16_t Hour, const CycleType cycleType)
-			: hour(Hour)
+		constexpr explicit Hour(const std::uint16_t hour, const CycleType cycleType)
+			: TimeComponentBase(hour)
 			, cycleType(cycleType)
 		{}
-
-		USE_RESULT constexpr std::uint16_t GetHour() const
-		{
-			return hour;
-		}
 
 		USE_RESULT constexpr CycleType GetCycleType() const
 		{
 			return cycleType;
 		}
 
-		template<typename TargetType>
-		constexpr operator TargetType() const
+		USE_RESULT constexpr bool Verify() const
 		{
-			return static_cast<TargetType>(GetHour());
+			return VerifyImpl(cycleType);
+		}
+
+		USE_RESULT constexpr void Limit()
+		{
+			LimitImpl(cycleType);
 		}
 
 		USE_RESULT std::string ToString(const std::string_view& format = "h") const;
@@ -50,15 +48,12 @@ namespace klib::kCalendar
 
 	protected:
 		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
-		USE_RESULT bool Verify() const override;
-
-		void Limit() override;
+		
 	private:
-		std::uint16_t hour;
 		CycleType cycleType;
 	};
 
-	constexpr Hour operator"" _hh(unsigned long long hours)
+	constexpr Hour operator ""_hh(unsigned long long hours)
 	{
 		return Hour(static_cast<std::uint16_t>(hours), Hour::CYCLE_24);
 	}

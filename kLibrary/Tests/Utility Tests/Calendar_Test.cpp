@@ -222,6 +222,44 @@ namespace kTest::utility
 
 	bool CalendarTester::MillisecondTest()
 	{
+		{
+			const Millisecond millis(300);
+			VERIFY_COMPILE_TIME(millis.GetMillisecond() == 300);
+			VERIFY(millis.Verify());
+			VERIFY(millis.ToString("u") == "300");
+			VERIFY(millis.ToString("uu") == "300");
+			VERIFY(millis.ToString("uuu") == "300ms");
+			VERIFY(millis.ToString("uuuu") == "300ms");
+			VERIFY(millis.ToString("uuuuu") == "300ms");
+		}
+		
+		{
+			constexpr  Millisecond millis { 3 };
+			VERIFY_COMPILE_TIME(millis.GetMillisecond() == 3);
+			VERIFY(millis.Verify());
+			VERIFY(millis.ToString("u") == "3");
+			VERIFY(millis.ToString("uu") == "03");
+			VERIFY(millis.ToString("uuu") == "003");
+			VERIFY(millis.ToString("uuuu") == "3ms");
+			VERIFY(millis.ToString("uuuuu") == "003ms");
+		}
+		
+		{
+			const Millisecond millis(75);
+			VERIFY_COMPILE_TIME(millis.GetMillisecond() == 75);
+			VERIFY(millis.Verify());
+			VERIFY(millis.ToString("u") == "75");
+			VERIFY(millis.ToString("uu") == "75");
+			VERIFY(millis.ToString("uuu") == "075");
+			VERIFY(millis.ToString("uuuu") == "75ms");
+			VERIFY(millis.ToString("uuuuu") == "075ms");
+		}
+		
+		using namespace std::chrono_literals;
+		constexpr auto duration = TimeConverter<std::chrono::seconds>(5000ms);
+		constexpr std::chrono::seconds secs(duration);
+		secs.count()
+		return success;
 	}
 
 	bool CalendarTester::SecondTest()

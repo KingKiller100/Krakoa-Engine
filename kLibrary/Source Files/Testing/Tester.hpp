@@ -51,7 +51,7 @@ namespace kTest
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	// Verify result of a test if result is available at compile time
-#	define VERIFY_COMPILE_TIME(test) this->success = klib::type_trait::Compile_Time_Test<(test)>::value;
+#	define VERIFY_COMPILE_TIME(test) this->success = klib::type_trait::Compile_Time_Test< test >::value;
 #else
 #	define VERIFY_COMPILE_TIME(test) VERIFY(test)
 #endif

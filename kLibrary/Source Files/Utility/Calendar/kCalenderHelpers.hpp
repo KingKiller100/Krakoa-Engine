@@ -13,8 +13,9 @@ namespace klib::kCalendar
 		const auto noOfLeaps = days / Year::LeapYearFrequency / Day::DaysInYear;
 		const auto years = days / Day::DaysInYear;
 		const auto remainingDays = days % Day::DaysInYear;
-		const auto year = ((years - noOfLeaps) / Day::DaysInYear)
-			+ (static_cast<double>(remainingDays) / Day::DaysInYear);
+		const auto year = years
+			- static_cast<double>(noOfLeaps) / Day::DaysInYear
+			+ static_cast<double>(remainingDays) / Day::DaysInYear;
 		return year;
 	}
 
@@ -26,19 +27,20 @@ namespace klib::kCalendar
 
 	USE_RESULT constexpr double MonthsFromDays(const size_t days)
 	{
-		const auto months = YearsFromDays(days) * Month::MonthsInYear;
+		constexpr auto divider = 30.4167;
+		const auto months = days / divider;
 		return months;
 	}
 
 	// Time
 	template<typename DestTimeT, typename SourceTimeT, typename = std::enable_if_t<
 		!std::is_arithmetic_v<DestTimeT>
-	>>
-	USE_RESULT constexpr DestTimeT TimeConverter(const TimeComponentBase<SourceTimeT>& source)
+		>>
+		USE_RESULT constexpr DestTimeT TimeConverter(const TimeComponentBase<SourceTimeT>& source)
 	{
 		using namespace std::chrono;
 		using DestUnderlyingT = typename DestTimeT::UnderlyingT;
-		
+
 		const auto val =
 			duration_cast<DestUnderlyingT>(source.GetUnderlying());
 		const DestTimeT dest = DestTimeT(val.count());

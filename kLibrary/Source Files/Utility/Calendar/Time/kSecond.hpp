@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../kComponentToStringImpl.hpp"
+#include "../Secret/kComponentToStringImpl.hpp"
 #include "kTimeComponentBase.hpp"
 
 #include <string>

@@ -1,12 +1,13 @@
 ﻿#pragma once
 
-#include "../../../HelperMacros.hpp"
+#include "kDay.hpp"
+#include "kMonth.hpp"
 
-#include "../kComponentToStringImpl.hpp"
+#include "../Secret/kComponentToStringImpl.hpp"
+#include "../../../HelperMacros.hpp"
 
 #include <cstdint>
 
-#include "kDay.hpp"
 
 namespace klib::kCalendar
 {	
@@ -52,9 +53,6 @@ namespace klib::kCalendar
 		{
 			return GetYear();
 		}
-
-		static Year FromDays(const std::uint16_t days);
-		static Year FromMonths(const std::uint16_t months);
 		
 		USE_RESULT std::string GetYearStr() const;
 		USE_RESULT std::string ToString(const std::string_view& format) const;

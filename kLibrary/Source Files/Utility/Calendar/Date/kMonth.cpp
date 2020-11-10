@@ -6,12 +6,6 @@
 
 namespace klib::kCalendar
 {
-	Month Month::MonthFromDays(const std::uint16_t days)
-	{
-		const auto monthIndex = (days / MonthsInYear) % MonthsInYear;
-		return Month(static_cast<MonthOfTheYear>(monthIndex));
-	}
-
 	std::string Month::ToString(const std::string_view& format) const
 	{
 		std::string output;
@@ -30,7 +24,19 @@ namespace klib::kCalendar
 		return output;
 	}
 
-	bool Month::Verify(const Day& day, const Year year) const
+	std::string Month::ToStringUsingTokenCount(const size_t count) const
+	{
+		if (count >= 4)
+			return kString::ToString<char>(GetMonthStr());
+		if (count == 3)
+			return  kString::ToString<char>(GetMonthStr().substr(0, 3));
+		if (count == 2)
+			return kString::ToString("{0:2}", GetMonthNumber());
+
+		return  kString::ToString<char>(GetMonthNumber());
+	}
+
+	bool Month::Verify(const Day& day, const Year& year) const
 	{
 		switch (moty)
 		{
@@ -58,17 +64,5 @@ namespace klib::kCalendar
 	std::string Month::GetMonthStr() const
 	{
 		return MonthToString(moty);
-	}
-
-	std::string Month::ToStringUsingTokenCount(const size_t count) const
-	{
-		if (count >= 4)
-			return kString::ToString("{0}", GetMonthStr());
-		if (count == 3)
-			return  kString::ToString("{0}", GetMonthStr().substr(0, 3));
-		if (count == 2)
-			return kString::ToString("{0:2}", GetMonthNumber());
-
-		return  kString::ToString("{0}", GetMonthNumber());
 	}
 }

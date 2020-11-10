@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../kComponentToStringImpl.hpp"
 #include "kTimeComponentBase.hpp"
+#include "../Secret/kComponentToStringImpl.hpp"
 
 #include <string>
 

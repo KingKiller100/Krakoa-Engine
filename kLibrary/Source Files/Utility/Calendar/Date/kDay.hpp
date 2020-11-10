@@ -1,10 +1,11 @@
 ﻿#pragma once
 
-#include "../kComponentToStringImpl.hpp"
+#include "../Secret/kComponentToStringImpl.hpp"
 #include "../../../HelperMacros.hpp"
 
 #include <array>
 #include <string>
+
 
 namespace klib::kCalendar
 {

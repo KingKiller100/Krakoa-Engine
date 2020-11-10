@@ -1,6 +1,9 @@
 ﻿#pragma once
+
 #include "../../kCalenderInfoSourceType.hpp"
-#include "../../kiCalendarInfoSource.hpp"
+#include "../../Secret/kiCalendarInfoSource.hpp"
+#include "../../../../HelperMacros.hpp"
+
 
 #if defined(_WIN64) || defined(_WIN32)
 

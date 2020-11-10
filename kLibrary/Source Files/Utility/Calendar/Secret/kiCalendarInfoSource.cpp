@@ -1,13 +1,12 @@
 ﻿#include "pch.hpp"
 #include "kiCalendarInfoSource.hpp"
 
-#include "Platform/Windows/kCalenderInfoSourceWindows.hpp"
-
-#include "../Debug Helper/Exceptions/CalenderExceptions.hpp"
-
-#include "../../Platform/Platform.hpp"
+#include "../Platform/Windows/kCalenderInfoSourceWindows.hpp"
+#include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
+#include "../../../Platform/Platform.hpp"
 
 #include <memory>
+
 
 
 namespace klib::kCalendar::secret::helper

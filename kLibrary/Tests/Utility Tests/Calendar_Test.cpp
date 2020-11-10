@@ -2,8 +2,10 @@
 #include "Calendar_Test.hpp"
 
 #include "../../Source Files/Utility/Calendar/kCalendar.hpp"
+#include "../../Source Files/Utility/Calendar/kCalenderHelpers.hpp"
 
 #include <Windows.h>
+
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -78,15 +80,15 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Day day(9, Day::MONDAY);
+			constexpr Day day(9, Day::SATURDAY);
 			VERIFY_COMPILE_TIME(day.GetDay() == 9);
-			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::SATURDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "9"
 				&& day.ToString("dd") == "09");
 			VERIFY(day.ToString("ddd") == "9th");
-			VERIFY(day.ToString("dddd") == "Mon");
-			VERIFY(day.ToString("ddddd") == "Monday");
+			VERIFY(day.ToString("dddd") == "Sat");
+			VERIFY(day.ToString("ddddd") == "Saturday");
 		}
 		
 		{
@@ -100,7 +102,19 @@ namespace kTest::utility
 			VERIFY(day.ToString("dddd") == "Thu");
 			VERIFY(day.ToString("ddddd") == "Thursday");
 		}
-
+		
+		{
+			constexpr auto day = 30_d;
+			VERIFY_COMPILE_TIME(day.GetDay() == 30);
+			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
+			VERIFY(day.Verify());
+			VERIFY(day.ToString("d") == "30"
+				&& day.ToString("dd") == "30");
+			VERIFY(day.ToString("ddd") == "30th");
+			VERIFY(day.ToString("dddd") == "Mon");
+			VERIFY(day.ToString("ddddd") == "Monday");
+		}
+		
 		return success;
 	}
 
@@ -128,6 +142,32 @@ namespace kTest::utility
 			VERIFY(year.ToString("yyyy") == "1862");
 		}
 
+		{
+			constexpr auto year = 2000_y;
+			VERIFY_COMPILE_TIME(year.IsLeapYear());
+			VERIFY_COMPILE_TIME(year.GetYear() == 2000);
+			VERIFY_COMPILE_TIME(year.TotalDays() == 366);
+			VERIFY(year.ToString("y") == "00"
+				&& year.ToString("yy") == "00");
+			VERIFY(year.ToString("yyy") == "2000");
+			VERIFY(year.ToString("yyyy") == "2000");
+		}
+
+		{
+			constexpr auto yearsFromDays = static_cast<float>(YearsFromDays(1000));
+			VERIFY_COMPILE_TIME(yearsFromDays == 2.739726f)
+		}
+
+		{
+			constexpr auto yearsFromDays = YearsFromDays(1'460);
+			VERIFY_COMPILE_TIME(yearsFromDays == 4)
+		}
+
+		{
+			constexpr auto yearsFromMonths = YearsFromMonths(240);
+			VERIFY_COMPILE_TIME(yearsFromMonths == 20);
+		}
+
 		return success;
 	}
 
@@ -135,39 +175,46 @@ namespace kTest::utility
 	{
 		{
 			constexpr Month month(Month::MAR);
-			constexpr Day day(7);
+			constexpr Day day(4);
+			constexpr Year year(1998);
 			VERIFY_COMPILE_TIME(month.GetMonthNumber() == 3);
 			VERIFY_COMPILE_TIME(month.GetMonth() == Month::MAR);
-			VERIFY(month.Verify(day));
-			VERIFY(month.ToString("d") == "16"
-				&& month.ToString("dd") == "16");
-			VERIFY(month.ToString("ddd") == "16th");
-			VERIFY(month.ToString("dddd") == "Wed");
-			VERIFY(month.ToString("ddddd") == "Wednesday");
+			VERIFY(month.Verify(day, year));
+			VERIFY(month.ToString("m") == "3");
+			VERIFY(month.ToString("mm") == "03");
+			VERIFY(month.ToString("mmm") == "Mar");
+			VERIFY(month.ToString("mmmm") == "March");
 		}
 
 		{
-			constexpr Day day(9, Day::MONDAY);
-			VERIFY_COMPILE_TIME(day.GetDay() == 9);
-			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
-			VERIFY(day.Verify());
-			VERIFY(day.ToString("d") == "9"
-				&& day.ToString("dd") == "09");
-			VERIFY(day.ToString("ddd") == "9th");
-			VERIFY(day.ToString("dddd") == "Mon");
-			VERIFY(day.ToString("ddddd") == "Monday");
+			constexpr Month month(Month::DEC);
+			constexpr Day day(20);
+			constexpr Year year(1999);
+			VERIFY_COMPILE_TIME(month.GetMonthNumber() == 12);
+			VERIFY_COMPILE_TIME(month.GetMonth() == Month::DEC);
+			VERIFY(month.Verify(day, year));
+			VERIFY(month.ToString("m") == "12"
+				&& month.ToString("mm") == "12");
+			VERIFY(month.ToString("mmm") == "Dec");
+			VERIFY(month.ToString("mmmm") == "December");
 		}
 
 		{
-			constexpr Day day(32, Day::THURSDAY);
-			VERIFY_COMPILE_TIME(day.GetDay() == 32);
-			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::THURSDAY);
-			VERIFY(!day.Verify());
-			VERIFY(day.ToString("d") == "32"
-				&& day.ToString("dd") == "32");
-			VERIFY(day.ToString("ddd") == "32nd");
-			VERIFY(day.ToString("dddd") == "Thu");
-			VERIFY(day.ToString("ddddd") == "Thursday");
+			constexpr auto month = 2_m;
+			constexpr auto day = 29_d;
+			constexpr auto year = 1999_y;
+			VERIFY_COMPILE_TIME(month.GetMonthNumber() == 2);
+			VERIFY_COMPILE_TIME(month.GetMonth() == Month::FEB);
+			VERIFY(!month.Verify(day, year));
+			VERIFY(month.ToString("m") == "2"
+				&& month.ToString("mm") == "02");
+			VERIFY(month.ToString("mmm") == "Feb");
+			VERIFY(month.ToString("mmmm") == "February");
+		}
+
+		{
+			constexpr auto monthFromDays = static_cast<float>(MonthsFromDays(5110));
+			VERIFY_COMPILE_TIME(monthFromDays == 168);
 		}
 
 		return success;
@@ -266,7 +313,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetTimeText(CalendarSourceType::SYSTEM);
+			const auto result = GetTimeText(CalendarInfoSourceType::SYSTEM);
 			const auto expected = MakeString("%02d:%02d:%02d:%03d",
 				systemTime.wHour,
 				systemTime.wMinute,
@@ -278,7 +325,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = klib::kString::Convert<wchar_t>(GetTimeText(CalendarSourceType::SYSTEM));
+			const auto result = klib::kString::Convert<wchar_t>(GetTimeText(CalendarInfoSourceType::SYSTEM));
 			const auto expected = MakeString(L"%02d:%02d:%02d:%03d",
 				systemTime.wHour,
 				systemTime.wMinute,
@@ -294,7 +341,7 @@ namespace kTest::utility
 	bool CalendarTester::DayOfTheWeekTest()
 	{
 		{
-			Date date = Date(Date::DaysOfTheWeek::TUESDAY);
+			Date date = Date(Day::DaysOfTheWeek::TUESDAY);
 			const auto result = date.GetDayOfWeekStr();
 			VERIFY(result == "Tuesday");
 		}
@@ -422,7 +469,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInTextFormat(Date::SHORT, CalendarSourceType::SYSTEM);
+			const auto result = GetDateInTextFormat(Date::SHORT, CalendarInfoSourceType::SYSTEM);
 			const auto expected = DateTextFunc(systemTime, Date::DateTextLength::SHORT);
 			VERIFY(result == expected);
 		}
@@ -446,7 +493,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInTextFormat(Date::SHORT, CalendarSourceType::SYSTEM);
+			const auto result = GetDateInTextFormat(Date::SHORT, CalendarInfoSourceType::SYSTEM);
 			const auto expected = DateTextFunc(systemTime, Date::SHORT);
 			VERIFY(result == expected);
 		}
@@ -476,7 +523,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
-			const auto result = GetDateInNumericalFormat(Date::SLASH, CalendarSourceType::SYSTEM);
+			const auto result = GetDateInNumericalFormat(Date::SLASH, CalendarInfoSourceType::SYSTEM);
 			const auto expected = klib::kString::ToString("%02d/%02d/%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}
@@ -485,7 +532,7 @@ namespace kTest::utility
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
 			const auto result
-				= klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::DASH, CalendarSourceType::SYSTEM));
+				= klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::DASH, CalendarInfoSourceType::SYSTEM));
 			const auto expected = klib::kString::ToString(L"%02d-%02d-%02d", systemTime.wDay, systemTime.wMonth, systemTime.wYear);
 			VERIFY(result == expected)
 		}

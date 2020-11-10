@@ -1,9 +1,9 @@
 ﻿#include "pch.hpp"
 #include "kComponentToStringImpl.hpp"
 
-#include "../../Type Traits/StringTraits.hpp"
+#include "../../../Type Traits/StringTraits.hpp"
 
-#include "../String/kToString.hpp"
+#include "../../String/kToString.hpp"
 
 namespace klib::kCalendar
 {

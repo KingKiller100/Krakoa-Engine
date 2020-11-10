@@ -1,11 +1,9 @@
 ﻿#pragma once
 
+#include "../../../HelperMacros.hpp"
 #include <cstdint>
 
-#include "../../HelperMacros.hpp"
-
 namespace klib::kCalendar
-
 {
 	enum class CalendarInfoSourceType;
 

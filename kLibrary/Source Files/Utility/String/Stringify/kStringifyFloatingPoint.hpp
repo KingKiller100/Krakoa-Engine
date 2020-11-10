@@ -4,7 +4,9 @@
 #include <stdexcept>
 #include <typeinfo>
 
+#include "kSprintf.hpp"
 #include "kStringifyHelper.hpp"
+#include "kStringifyInteger.hpp"
 #include "../kStringConverter.hpp"
 
 namespace klib::kString::stringify
@@ -17,17 +19,18 @@ namespace klib::kString::stringify
 	{
 		if (precision == nPrecision)
 			precision = 6;
+		
+#if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
+		const std::string format = "%." + StringIntegral<char>(precision, 1) + "f";
+		const auto temp = stringify::SprintfWrapper(format, val);
+		const auto conv = kString::Convert<CharType>(temp);
+		const StringWriter<CharType> str(conv);
+#else
 
 		constexpr auto maxsize = std::numeric_limits<T>::max_exponent10 + 1;
 		char buff[maxsize]{};
 		char* const end = std::end(buff);
 		
-#if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
-		const std::string format = "%." + std::to_string(precision) + "f";
-		const auto length = _snprintf(buff, maxsize, format.data(), val);
-		const auto conv = kString::Convert<CharType>(buff);
-		const kString::StringWriter<CharType> str(conv, conv + length);
-#else
 		const std::to_chars_result res = std::to_chars(buff, end, val, fmt, static_cast<int>(precision));
 
 		if (res.ec != std::errc{})
@@ -41,7 +44,7 @@ namespace klib::kString::stringify
 			throw std::runtime_error(err);
 		}
 
-		StringWriter<CharType> str(kString::Convert<CharType>(buff));
+		const StringWriter<CharType> str(kString::Convert<CharType>(buff));
 #endif 
 
 		return str;

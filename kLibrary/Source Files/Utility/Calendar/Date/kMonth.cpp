@@ -41,8 +41,8 @@ namespace klib::kCalendar
 		switch (moty)
 		{
 		case FEB: return year.IsLeapYear()
-			? day.GetDay() <= 29
-			: day.GetDay() <= 28;
+			? day.GetValue() <= 29
+			: day.GetValue() <= 28;
 
 		case JAN:
 		case MAR:
@@ -50,12 +50,12 @@ namespace klib::kCalendar
 		case JUL:
 		case AUG:
 		case OCT:
-		case DEC: return day.GetDay() <= 31;
+		case DEC: return day.GetValue() <= 31;
 
 		case APR:
 		case JUN:
 		case SEP:
-		case NOV: return day.GetDay() <= 30;
+		case NOV: return day.GetValue() <= 30;
 
 		default: return false;
 		}

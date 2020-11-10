@@ -26,15 +26,15 @@ namespace klib::kCalendar
 	{}
 
 	Time::Time(const iCalendarInfoSource& source)
-		: Time(Hour::CycleType::CYCLE_24
-			, source.GetHour()
+		: Time(source.GetHour()
 			, source.GetMinute()
 			, source.GetSecond()
-			, source.GetMillisecond())
+			, source.GetMillisecond()
+			, Hour::CYCLE_24)
 	{}
 
-	Time::Time(const Hour::CycleType cycle, const std::uint16_t h, const std::uint16_t m, const std::uint16_t s,
-		const std::uint16_t ms)
+	Time::Time(const std::uint16_t h, const std::uint16_t m, const std::uint16_t s,
+		const std::uint16_t ms, const Hour::CycleType cycle)
 		: hour(h, cycle)
 		, minute(m)
 		, second(s)
@@ -46,10 +46,10 @@ namespace klib::kCalendar
 	std::uint16_t Time::GetComponent(const TimeComponent timeComponent) const
 	{
 		switch (timeComponent) {
-		case TimeComponent::HOURS:		return hour;
-		case TimeComponent::MINS:		return minute;
-		case TimeComponent::SECS:		return second;
-		case TimeComponent::MILLIS:		return millisecond;
+		case TimeComponent::HOURS:		return static_cast<std::uint16_t>(hour);
+		case TimeComponent::MINS:		return static_cast<std::uint16_t>(minute);
+		case TimeComponent::SECS:		return static_cast<std::uint16_t>(second);
+		case TimeComponent::MILLIS:		return static_cast<std::uint16_t>(millisecond);
 		default: throw kDebug::CalendarError("Unknown time component");
 		}
 	}
@@ -81,7 +81,7 @@ namespace klib::kCalendar
 			if (!str.empty())
 				str.push_back(':');
 			str.append(i >= CAST(std::uint16_t, TimeComponent::MILLIS)
-				? kString::ToString("{0:3}", millisecond)
+				? kString::ToString("{0:3}", millisecond.GetValue())
 				: kString::ToString("{0:2}", times[i]));
 		}
 

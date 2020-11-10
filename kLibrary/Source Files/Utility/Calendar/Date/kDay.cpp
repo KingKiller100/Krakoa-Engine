@@ -40,9 +40,9 @@ namespace klib::kCalendar
 		if (count == 3)
 			return  kString::ToString("{0}", GetDayStr());
 		if (count == 2)
-			return  kString::ToString("{0:2}", GetDay());
+			return  kString::ToString("{0:2}", GetValue());
 
-		return  kString::ToString("{0}", GetDay());
+		return  kString::ToString("{0}", GetValue());
 	}
 
 	std::string Day::GetDayStr() const
@@ -55,10 +55,13 @@ namespace klib::kCalendar
 
 	std::string_view Day::GetDaySuffix(const std::uint16_t day)
 	{
-		return (day == 1 || day == 21 || day == 31) ? "st"
-			: (day == 2 || day == 22) ? "nd"
-			: day == 3 ? "rd"
-			: "th";
+		const auto remaining = day % 10;
+		switch ( remaining ) {
+		case 1: return "st";
+		case 2: return "nd";
+		case 3: return "rd";
+		default: return "th";
+		}
 	}
 
 	std::string Day::GetDayOfTheWeekStr() const

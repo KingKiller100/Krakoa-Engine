@@ -49,8 +49,8 @@ namespace kTest::utility
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(DayTest());
-		VERIFY_MULTI(MonthTest());
 		VERIFY_MULTI(YearTest());
+		VERIFY_MULTI(MonthTest());
 		VERIFY_MULTI(MillisecondTest());
 		VERIFY_MULTI(SecondTest());
 		VERIFY_MULTI(MinuteTest());
@@ -69,7 +69,7 @@ namespace kTest::utility
 	{
 		{
 			constexpr Day day(16, Day::WEDNESDAY);
-			VERIFY_COMPILE_TIME(day.GetDay() == 16);
+			VERIFY_COMPILE_TIME(day.GetValue() == 16);
 			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::WEDNESDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "16"
@@ -81,7 +81,7 @@ namespace kTest::utility
 		
 		{
 			constexpr Day day(9, Day::SATURDAY);
-			VERIFY_COMPILE_TIME(day.GetDay() == 9);
+			VERIFY_COMPILE_TIME(day.GetValue() == 9);
 			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::SATURDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "9"
@@ -93,7 +93,7 @@ namespace kTest::utility
 		
 		{
 			constexpr Day day(32, Day::THURSDAY);
-			VERIFY_COMPILE_TIME(day.GetDay() == 32);
+			VERIFY_COMPILE_TIME(day.GetValue() == 32);
 			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::THURSDAY);
 			VERIFY(!day.Verify());
 			VERIFY(day.ToString("d") == "32"
@@ -105,7 +105,7 @@ namespace kTest::utility
 		
 		{
 			constexpr auto day = 30_d;
-			VERIFY_COMPILE_TIME(day.GetDay() == 30);
+			VERIFY_COMPILE_TIME(day.GetValue() == 30);
 			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "30"
@@ -123,7 +123,7 @@ namespace kTest::utility
 		{
 			constexpr Year year(2004);
 			VERIFY_COMPILE_TIME(year.IsLeapYear());
-			VERIFY_COMPILE_TIME(year.GetYear() == 2004);
+			VERIFY_COMPILE_TIME(year.GetValue() == 2004);
 			VERIFY_COMPILE_TIME(year.TotalDays() == 366);
 			VERIFY(year.ToString("y") == "04"
 				&& year.ToString("yy") == "04");
@@ -134,7 +134,7 @@ namespace kTest::utility
 		{
 			constexpr Year year(1862);
 			VERIFY_COMPILE_TIME(!year.IsLeapYear());
-			VERIFY_COMPILE_TIME(year.GetYear() == 1862);
+			VERIFY_COMPILE_TIME(year.GetValue() == 1862);
 			VERIFY_COMPILE_TIME(year.TotalDays() == 365);
 			VERIFY(year.ToString("y") == "62"
 				&& year.ToString("yy") == "62");
@@ -145,7 +145,7 @@ namespace kTest::utility
 		{
 			constexpr auto year = 2000_y;
 			VERIFY_COMPILE_TIME(year.IsLeapYear());
-			VERIFY_COMPILE_TIME(year.GetYear() == 2000);
+			VERIFY_COMPILE_TIME(year.GetValue() == 2000);
 			VERIFY_COMPILE_TIME(year.TotalDays() == 366);
 			VERIFY(year.ToString("y") == "00"
 				&& year.ToString("yy") == "00");
@@ -224,54 +224,107 @@ namespace kTest::utility
 	{
 		{
 			const Millisecond millis(300);
-			VERIFY_COMPILE_TIME(millis.GetMillisecond() == 300);
+			VERIFY_COMPILE_TIME(millis.GetValue() == 300);
 			VERIFY(millis.Verify());
-			VERIFY(millis.ToString("u") == "300");
-			VERIFY(millis.ToString("uu") == "300");
-			VERIFY(millis.ToString("uuu") == "300ms");
-			VERIFY(millis.ToString("uuuu") == "300ms");
-			VERIFY(millis.ToString("uuuuu") == "300ms");
+			VERIFY(millis.ToString("c") == "300");
+			VERIFY(millis.ToString("cc") == "300");
+			VERIFY(millis.ToString("ccc") == "300");
+			VERIFY(millis.ToString("cccc") == "300ms");
+			VERIFY(millis.ToString("ccccc") == "300ms");
 		}
 		
 		{
-			constexpr  Millisecond millis { 3 };
-			VERIFY_COMPILE_TIME(millis.GetMillisecond() == 3);
+			const Millisecond millis { 3 };
+			VERIFY_COMPILE_TIME(millis.GetValue() == 3);
 			VERIFY(millis.Verify());
-			VERIFY(millis.ToString("u") == "3");
-			VERIFY(millis.ToString("uu") == "03");
-			VERIFY(millis.ToString("uuu") == "003");
-			VERIFY(millis.ToString("uuuu") == "3ms");
-			VERIFY(millis.ToString("uuuuu") == "003ms");
+			VERIFY(millis.ToString("c") == "3");
+			VERIFY(millis.ToString("cc") == "03");
+			VERIFY(millis.ToString("ccc") == "003");
+			VERIFY(millis.ToString("cccc") == "3ms");
+			VERIFY(millis.ToString("ccccc") == "003ms");
 		}
 		
 		{
 			const Millisecond millis(75);
-			VERIFY_COMPILE_TIME(millis.GetMillisecond() == 75);
+			VERIFY_COMPILE_TIME(millis.GetValue() == 75);
 			VERIFY(millis.Verify());
-			VERIFY(millis.ToString("u") == "75");
-			VERIFY(millis.ToString("uu") == "75");
-			VERIFY(millis.ToString("uuu") == "075");
-			VERIFY(millis.ToString("uuuu") == "75ms");
-			VERIFY(millis.ToString("uuuuu") == "075ms");
+			VERIFY(millis.ToString("c") == "75");
+			VERIFY(millis.ToString("cc") == "75");
+			VERIFY(millis.ToString("ccc") == "075");
+			VERIFY(millis.ToString("cccc") == "75ms");
+			VERIFY(millis.ToString("ccccc") == "075ms");
 		}
-		
-		using namespace std::chrono_literals;
-		constexpr auto duration = TimeConverter<std::chrono::seconds>(5000ms);
-		constexpr std::chrono::seconds secs(duration);
-		secs.count()
+
+		{
+			using namespace std::chrono;
+			using namespace std::chrono_literals;
+			const auto result = TimeConverter<Second>(500'000_ms);
+			constexpr auto expected = duration_cast<seconds>(500'000ms);
+			VERIFY(expected.count() == result.GetValue());
+		}
+
+		{
+			using namespace std::chrono;
+			using namespace std::chrono_literals;
+			const auto result = TimeConverter<Minute>(500'000_ms);
+			constexpr auto expected = duration_cast<minutes>(500'000ms);
+			VERIFY(expected.count() == result.GetValue());
+		}
+
+		{
+			using namespace std::chrono;
+			using namespace std::chrono_literals;
+			const auto result = TimeConverter<Hour>(500'000_ms);
+			constexpr auto expected = duration_cast<hours>(500'000ms);
+			VERIFY(expected.count() == result.GetValue());
+		}
+
 		return success;
 	}
 
 	bool CalendarTester::SecondTest()
 	{
+		{
+			const Second sec(30);
+			VERIFY_COMPILE_TIME(sec.GetValue() == 30);
+			VERIFY(sec.Verify());
+			VERIFY(sec.ToString("s") == "30");
+			VERIFY(sec.ToString("ss") == "30");
+			VERIFY(sec.ToString("sss") == "30s");
+			VERIFY(sec.ToString("ssss") == "30s");
+		}
+		
+		{
+			const Second sec(4);
+			VERIFY_COMPILE_TIME(sec.GetValue() == 4);
+			VERIFY(sec.Verify());
+			VERIFY(sec.ToString("s") == "4");
+			VERIFY(sec.ToString("ss") == "04");
+			VERIFY(sec.ToString("sss") == "4s");
+			VERIFY(sec.ToString("ssss") == "04s");
+		}
+		
+		{
+			const auto sec(100_ss);
+			VERIFY_COMPILE_TIME(sec.GetValue() == 100);
+			VERIFY(!sec.Verify());
+			VERIFY(sec.ToString("s") == "100");
+			VERIFY(sec.ToString("ss") == "100");
+			VERIFY(sec.ToString("sss") == "100s");
+			VERIFY(sec.ToString("ssss") == "100s");
+		}
+		
+		return success;
 	}
 
 	bool CalendarTester::MinuteTest()
 	{
+		return success;
 	}
 
 	bool CalendarTester::HourTest()
 	{
+		return success;
 	}
 
 	auto DateTextFunc(const SYSTEMTIME dateTime, Date::DateTextLength format = Date::DateTextLength::FULL) -> decltype(auto)
@@ -379,21 +432,21 @@ namespace kTest::utility
 	bool CalendarTester::DayOfTheWeekTest()
 	{
 		{
-			Date date = Date(Day::DaysOfTheWeek::TUESDAY);
-			const auto result = date.GetDayOfWeekStr();
-			VERIFY(result == "Tuesday");
+			constexpr auto dotw = Day::TUESDAY;
+			constexpr auto result = Day::DayOfTheWeekToString(dotw);
+			VERIFY_COMPILE_TIME(result == "Tuesday");
 		}
 
 		{
-			Date date = Date(Date::DaysOfTheWeek::FRIDAY);
-			const auto result = date.GetDayOfWeekStr();
-			VERIFY(result == "Friday");
+			constexpr auto dotw = Day::FRIDAY;
+			constexpr auto result = Day::DayOfTheWeekToString(dotw);
+			VERIFY_COMPILE_TIME(result == "Friday");
 		}
 
 		{
-			Date date = Date(Date::DaysOfTheWeek::SUNDAY);
-			const auto result = date.GetDayOfWeekStr();
-			VERIFY(result == "Sunday");
+			constexpr auto dotw = Day::SUNDAY;
+			constexpr auto result = Day::DayOfTheWeekToString(dotw);
+			VERIFY_COMPILE_TIME(result == "Sunday");
 		}
 
 		return success;
@@ -402,44 +455,44 @@ namespace kTest::utility
 	bool CalendarTester::ToStringTest()
 	{
 		{
-			const Date date(Date::MONDAY, 2, Date::JAN, 1998);
+			const Date date(Day::MONDAY, 1, Month::JAN, 1998);
 			const auto result = date.ToString("dd/mm/yy");
-			const auto expected = "02/01/98";
+			const char expected[] = "01/01/98";
 			VERIFY(expected == result);
 		}
 
 		{
-			const Date date(Date::MONDAY, 12, Date::MAY, 2004);
-			const auto result = date.ToString("dddd, ddd mmmmm yyyy");
-			const auto expected = "Mon, 12th May 2004";
+			const Date date(Day::WEDNESDAY, 1, Month::APR, 2004);
+			const auto result = date.ToString("dddd, ddd mmmm yyyy");
+			const char expected[] = "Wed, 1st Apr 2004";
 			VERIFY(expected == result);
 		}
 
 		{
-			const Date date(Date::FRIDAY, 21);
+			const Date date(Day::SATURDAY, 18, Month::JUL, 3005);
 			const auto result = date.ToString("ddddd, ddd");
-			const auto expected = "Friday, 21st";
+			const char expected[] = "Saturday, 18th";
 			VERIFY(expected == result);
 		}
 
 		{
 			const Time t(12, 5, 20);
 			const auto result = t.ToString("hh:mm:ss");
-			const auto expected = "12:05:20";
+			const char expected[] = "12:05:20";
 			VERIFY(expected == result);
 		}
 
 		{
 			const Time t(23, 10, 50);
 			const auto result = t.ToString("hh:mm");
-			const auto expected = "23:10";
+			const char expected[] = "23:10";
 			VERIFY(expected == result);
 		}
 
 		{
 			const Time t(23, 10, 50, 34);
-			const auto result = t.ToString("uuu");
-			const auto expected = "034";
+			const auto result = t.ToString("ccc");
+			const char expected[] = "034";
 			VERIFY(expected == result);
 		}
 

@@ -33,7 +33,7 @@ namespace klib
 
 		public:
 			explicit Date(CalendarInfoSourceType sourceType);
-			Date(const Day::DayOfTheWeek dayOfTheWeek, const std::uint16_t d = 1, const Month::MonthOfTheYear m = kCalendar::Month::JAN, const std::uint16_t y = 1900);
+			explicit Date(const Day::DayOfTheWeek dayOfTheWeek, const std::uint16_t d = 1, const Month::MonthOfTheYear m = kCalendar::Month::JAN, const std::uint16_t y = 1900);
 
 			USE_RESULT std::string ToString(const std::string_view& format) const;
 			USE_RESULT std::string ToString(DateNumericalSeparator separator = DateNumericalSeparator::SLASH) const;

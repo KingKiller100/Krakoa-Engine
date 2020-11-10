@@ -8,14 +8,15 @@
 
 namespace klib::kCalendar
 {
-	class Second final : private TimeComponentBase<std::chrono::seconds>, CalendarComponentToStringImplExtended
+	class Second final : public TimeComponentBase<std::chrono::seconds>
+	, private CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "s";
 		static constexpr auto FormatToken = 's';
 		
 	public:
-		constexpr Second(const std::uint16_t second)
+		constexpr Second(const RepT second)
 			: TimeComponentBase( second )
 		{}
 
@@ -39,6 +40,6 @@ namespace klib::kCalendar
 
 	constexpr Second operator"" _ss(unsigned long long second)
 	{
-		return Second(static_cast<std::uint16_t>(second));
+		return Second(static_cast<Second::RepT>(second));
 	}
 }

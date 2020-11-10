@@ -15,7 +15,7 @@ namespace klib::kDebug
 		
 		auto exceptionLog = kLogs::Logging(currentDir, "AssertOnFailCondition", "ASSERT");
 		exceptionLog.ToggleConsoleEnabled();
-		exceptionLog.OutputToFatalFile({report.data(), file, line, kCalendar::CalendarSourceType::LOCAL});
+		exceptionLog.OutputToFatalFile({report.data(), file, line, kCalendar::CalendarInfoSourceType::LOCAL});
 	}
 
 	AssertOnFailedConditionException::~AssertOnFailedConditionException() throw()

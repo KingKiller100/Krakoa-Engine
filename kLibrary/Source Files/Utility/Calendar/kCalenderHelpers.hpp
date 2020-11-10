@@ -23,7 +23,7 @@ namespace klib::kCalendar
 		const auto year = static_cast<double>(months) / Month::MonthsInYear;
 		return year;
 	}
-	
+
 	USE_RESULT constexpr double MonthsFromDays(const size_t days)
 	{
 		const auto months = YearsFromDays(days) * Month::MonthsInYear;
@@ -31,10 +31,14 @@ namespace klib::kCalendar
 	}
 
 	// Time
-	template<typename DestTime, typename SourceTime> // To be used with std::chrono::duration types 
-	USE_RESULT constexpr DestTime TimeConverter(const SourceTime source)
+	template<typename DestTime, typename SourceTime>
+	USE_RESULT constexpr DestTime TimeConverter(const TimeComponentBase<SourceTime>& source)
 	{
-		const auto dest = std::chrono::duration_cast<DestTime>(source);
+		using namespace std::chrono;
+		const auto val =
+			duration_cast<typename DestTime::UnderlyingT>
+			(source.GetUnderlying());
+		const DestTime dest = DestTime(val.count());
 		return dest;
 	}
 }

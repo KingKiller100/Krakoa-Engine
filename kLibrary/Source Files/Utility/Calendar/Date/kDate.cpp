@@ -2,7 +2,7 @@
 
 #include "kDate.hpp"
 
-#include "../kiCalendarInfoSource.hpp"
+#include "../Secret/kiCalendarInfoSource.hpp"
 
 #include "../../String/kToString.hpp"
 #include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
@@ -10,6 +10,7 @@
 #include "../../../Type Traits/StringTraits.hpp"
 
 #include <set>
+
 
 namespace klib::kCalendar
 {
@@ -34,7 +35,7 @@ namespace klib::kCalendar
 	Date::Date(const iCalendarInfoSource& source)
 		: Date(
 			static_cast<Day::DayOfTheWeek>(source.GetDayOfTheWeekIndex())
-			, day.GetDay()
+			, source.GetDay()
 			, static_cast<Month::MonthOfTheYear>(source.GetMonth())
 			, source.GetYear()
 		)

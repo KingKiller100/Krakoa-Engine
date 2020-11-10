@@ -31,7 +31,7 @@ namespace klib::kCalendar
 
 		~Year() noexcept = default;
 
-		USE_RESULT constexpr std::uint16_t GetYear() const
+		USE_RESULT constexpr std::uint16_t GetValue() const
 		{
 			return year;
 		}
@@ -51,7 +51,7 @@ namespace klib::kCalendar
 		template<typename TargetType>
 		constexpr operator TargetType() const
 		{
-			return GetYear();
+			return GetValue();
 		}
 		
 		USE_RESULT std::string GetYearStr() const;

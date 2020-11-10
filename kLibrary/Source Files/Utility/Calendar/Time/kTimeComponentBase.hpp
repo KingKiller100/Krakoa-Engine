@@ -15,12 +15,17 @@ namespace klib::kCalendar
 			: value(val)
 		{}
 
-		USE_RESULT constexpr const RepT& GetValue() const
+		USE_RESULT constexpr const UnderlyingT& GetUnderlying() const
 		{
-			return value.count();
+			return value;
 		}
 
-		USE_RESULT constexpr RepT& GetValue()
+		USE_RESULT constexpr UnderlyingT& GetUnderlying()
+		{
+			return value;
+		}
+		
+		USE_RESULT constexpr RepT GetValue() const
 		{
 			return value.count();
 		}
@@ -39,10 +44,10 @@ namespace klib::kCalendar
 		
 		constexpr void LimitImpl(const RepT& limit)
 		{
-			GetValue() %= UnderlyingT::period::num;
+			value %= UnderlyingT::period::num;
 		}
 
 	protected:
-		const UnderlyingT value;
+		UnderlyingT value;
 	};
 }

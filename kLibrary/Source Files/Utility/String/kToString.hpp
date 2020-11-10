@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kSprintf.hpp"
+#include "Stringify/kSprintf.hpp"
 #include "Stringify/kFormatMarkers.hpp"
 #include "Stringify/kStringIdentity.hpp"
 #include "Stringify/kStringifyBool.hpp"
@@ -90,7 +90,7 @@ namespace klib {
 
 			if (auto pfSymPos = format.find(printfSymbol); pfSymPos != npos)
 			{
-				return stringify::Sprintf<CharType>(format, arg, argPack...);
+				return stringify::SprintfWrapper<CharType>(format, arg, argPack...);
 			}
 
 			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { stringify::IdentityPtr<CharType, T>(arg)

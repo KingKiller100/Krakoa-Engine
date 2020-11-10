@@ -40,7 +40,7 @@ namespace klib::kCalendar
 		
 		~Day() noexcept = default;
 
-		USE_RESULT constexpr std::uint16_t GetDay() const noexcept
+		USE_RESULT constexpr std::uint16_t GetValue() const noexcept
 		{
 			return day;
 		}
@@ -69,7 +69,7 @@ namespace klib::kCalendar
 		template<typename TargetType>
 		constexpr operator TargetType() const
 		{
-			return GetDay();
+			return GetValue();
 		}
 
 		friend class Date;

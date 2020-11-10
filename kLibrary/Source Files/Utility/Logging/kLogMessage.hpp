@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "../Calendar/kTime.hpp"
+#include "../Calendar/Time/kTime.hpp"
+#include "../Calendar/Date/kDate.hpp"
 #include <string>
 #include <cstdint>
-
 
 namespace klib::kLogs
 {
@@ -12,9 +12,9 @@ namespace klib::kLogs
 	struct LogMessage
 	{
 		LogMessage(const char* text, const char* file = __FILE__,
-			const std::int32_t line = __LINE__, CalendarSourceType calendarInfoSource = CalendarSourceType::LOCAL);
+			const std::int32_t line = __LINE__, CalendarInfoSourceType calendarInfoSource = CalendarInfoSourceType::LOCAL);
 		LogMessage(const std::string& text, const std::string_view& file = __FILE__,
-			const std::int32_t line = __LINE__, CalendarSourceType calendarInfoSource = CalendarSourceType::LOCAL);
+			const std::int32_t line = __LINE__, CalendarInfoSourceType calendarInfoSource = CalendarInfoSourceType::LOCAL);
 		LogMessage(const std::string& text, const LogMessage& other);
 		
 		const Time time;

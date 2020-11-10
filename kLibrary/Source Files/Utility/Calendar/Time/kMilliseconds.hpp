@@ -8,15 +8,15 @@
 
 namespace klib::kCalendar
 {
-	class Millisecond final : private TimeComponentBase<std::chrono::milliseconds>
-		, CalendarComponentToStringImplExtended
+	class Millisecond final : public TimeComponentBase<std::chrono::milliseconds>
+		, private CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "ms";
 		static constexpr auto FormatToken = 'c';
 		
 	public:
-		constexpr Millisecond(const std::uint16_t& mills)
+		constexpr Millisecond(const RepT mills)
 			: TimeComponentBase(mills)
 		{}
 
@@ -40,6 +40,6 @@ namespace klib::kCalendar
 
 	constexpr Millisecond operator"" _ms(unsigned long long millisecond)
 	{
-		return Millisecond(static_cast<std::uint16_t>(millisecond));
+		return Millisecond(static_cast<Millisecond::RepT>(millisecond));
 	}
 }

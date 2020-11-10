@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "kStringConverter.hpp"
-#include "Stringify/kStringIdentity.hpp"
-#include "../../HelperMacros.hpp"
+#include "../kStringConverter.hpp"
+#include "kStringIdentity.hpp"
+#include "../../../HelperMacros.hpp"
 
 #include <cstdio>
 #include <string>
@@ -17,7 +17,7 @@
 namespace klib::kString::stringify
 {
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> Sprintf(const std::basic_string_view<CharType>& format, T arg1, Ts ...argPack)
+	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string_view<CharType>& format, T arg1, Ts ...argPack)
 	{
 		using SignedSize_t = std::make_signed_t<size_t>;
 		
@@ -43,7 +43,7 @@ namespace klib::kString::stringify
 		else
 		{
 			const auto fmt = kString::Convert<wchar_t>(format);
-			const auto str = Sprintf<wchar_t>(fmt, arg1, argPack...);
+			const auto str = SprintfWrapper<wchar_t>(fmt, arg1, argPack...);
 			const auto text = kString::Convert<CharType>(str);
 			return text;
 		}
@@ -55,17 +55,17 @@ namespace klib::kString::stringify
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> Sprintf(const CharType* format, T arg, Ts ...argPack)
+	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const CharType* format, T arg, Ts ...argPack)
 	{
 		const std::basic_string_view<CharType> fmt(format);
-		return Sprintf<CharType>(fmt, arg, argPack...);
+		return SprintfWrapper<CharType>(fmt, arg, argPack...);
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> Sprintf(const std::basic_string<CharType>& format, T arg, Ts ...argPack)
+	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string<CharType>& format, T arg, Ts ...argPack)
 	{
 		const std::basic_string_view<CharType> fmt(format);
-		return Sprintf<CharType>(fmt, arg, argPack...);
+		return SprintfWrapper<CharType>(fmt, arg, argPack...);
 	}
 	
 }

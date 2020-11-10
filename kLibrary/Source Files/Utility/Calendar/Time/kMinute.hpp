@@ -9,14 +9,15 @@
 
 namespace klib::kCalendar
 {
-	class Minute final : private TimeComponentBase<std::chrono::minutes>, CalendarComponentToStringImplExtended
+	class Minute final : public TimeComponentBase<std::chrono::minutes>
+		, private CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "m";
 		static constexpr char FormatToken = 'm';
 
 	public:
-		constexpr explicit Minute(const std::uint16_t minute)
+		constexpr explicit Minute(const RepT minute)
 			: TimeComponentBase( minute )
 		{}
 
@@ -40,7 +41,7 @@ namespace klib::kCalendar
 
 	constexpr Minute operator ""_mm(unsigned long long mins)
 	{
-		return Minute(static_cast<std::uint16_t>(mins));
+		return Minute(static_cast<Minute::RepT>(mins));
 	}
 }
 

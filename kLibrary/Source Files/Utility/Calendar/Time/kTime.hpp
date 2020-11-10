@@ -36,8 +36,8 @@ namespace klib
 			
 		public:
 			explicit Time(CalendarInfoSourceType sourceType);
-			Time(const Hour::CycleType cycle, const std::uint16_t h, const std::uint16_t m, const std::uint16_t s,
-				const std::uint16_t ms = 0);
+			explicit Time(const std::uint16_t h, const std::uint16_t m, const std::uint16_t s,
+				const std::uint16_t ms = 0, const Hour::CycleType cycle = Hour::CYCLE_24);
 
 			USE_RESULT std::uint16_t GetComponent(const TimeComponent timeComponent) const;
 			USE_RESULT std::string ToString(const TimeComponent accuracy = MILLIS) const;

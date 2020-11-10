@@ -33,7 +33,7 @@ namespace klib::kCalendar
 
 		~Month() = default;
 
-		USE_RESULT constexpr MonthOfTheYear GetMonth() const
+		USE_RESULT constexpr MonthOfTheYear GetValue() const
 		{
 			return moty;
 		}

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../HelperMacros.hpp"
+#include "../../../HelperMacros.hpp"
 #include <string>
 
 namespace klib::kLogs
@@ -8,10 +8,10 @@ namespace klib::kLogs
 	class LogEntry;
 	class LogDescriptor;
 
-	class iLogDestination
+	class iLoggerDestination
 	{
 	public:
-		virtual ~iLogDestination() = default;
+		virtual ~iLoggerDestination() = default;
 
 		/**
 		 * \brief

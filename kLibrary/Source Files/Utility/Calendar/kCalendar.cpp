@@ -25,7 +25,7 @@ namespace klib::kCalendar
 		return now.GetComponent(timeComponent);
 	}
 
-	std::string GetTimeText(CalendarInfoSourceType  calendarInfo)  noexcept
+	std::string GetTimeText(CalendarInfoSourceType calendarInfo)  noexcept
 	{
 		const auto now = Time(calendarInfo);
 		return now.ToString(Time::TimeComponent::MILLIS);

@@ -1,12 +1,20 @@
 #pragma once
 
-#include <cstddef>
-
 #include "kStringifyHelper.hpp"
 #include "../kStringManipulation.hpp"
 
+#include <cstddef>
+
 namespace klib::kString::stringify
 {
+	template<class CharType>
+	constexpr std::array<CharType, 16> s_GeneralHexMap = {
+		static_cast<CharType>('0'), static_cast<CharType>('1'), static_cast<CharType>('2'), static_cast<CharType>('3'),
+		static_cast<CharType>('4'), static_cast<CharType>('5'), static_cast<CharType>('6'), static_cast<CharType>('7'),
+		static_cast<CharType>('8'), static_cast<CharType>('9'), static_cast<CharType>('a'), static_cast<CharType>('b'),
+		static_cast<CharType>('c'), static_cast<CharType>('d'), static_cast<CharType>('e'), static_cast<CharType>('f'),
+	};
+	
 	/// Digits of largest conceivable number for any integral type
 	/// plus a null terminator + possible minus symbol
 	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
@@ -87,4 +95,50 @@ namespace klib::kString::stringify
 		else
 			return StringSignedIntegral<CharType, Integral_t>(val, minDigits);
 	}
+
+	template<class CharType, typename Integral_t, typename = std::enable_if_t < 
+		std::is_integral_v<Integral_t>
+	>>
+	StringWriter<CharType> StringIntegralHex(const Integral_t val, size_t padding)
+	{
+		static constexpr auto& hexMap = s_GeneralHexMap<CharType>;
+
+		if (padding == nPrecision)
+			padding = sizeof(uintptr_t) * 2;
+
+		StringWriter<CharType> address;
+
+		auto asUint = static_cast<size_t>(val);
+
+		while (asUint > 0)
+		{
+			const auto index = asUint % hexMap.size();
+			address.insert(address.begin(), hexMap.at(index));
+			asUint /= hexMap.size();
+		}
+
+		PrependPadding(address, padding, CharType('0'));
+
+		return address;
+	}
+
+	template<class CharType, typename Integral_t, typename = std::enable_if_t <
+		std::is_integral_v<Integral_t>
+		>>
+		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t padding)
+	{
+		StringWriter<CharType> binary;
+		binary.reserve(std::numeric_limits<Integral_t>::digits);
+		
+		while(val > 0)
+		{
+			const auto binVal = val % 2;
+			binary.push_back(CharType('0') + binVal);
+			val >>= 1;
+		}
+
+		return binary;
+	}
+
+	
 }

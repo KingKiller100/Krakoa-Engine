@@ -185,13 +185,13 @@ namespace klib::kString
 		return count;
 	}
 
-	template<class Integer, typename StringType
+	template<class Integer_t, typename StringType
 		, typename = std::enable_if_t<
 		type_trait::Is_StringType_V<StringType>
 		>>
-		constexpr Integer StrTo(StringType string)
+		constexpr Integer_t StrTo(StringType string)
 	{
-		static_assert(std::is_integral_v<Integer>, "Can only be used with integer types "
+		static_assert(std::is_integral_v<Integer_t>, "Can only be used with integer types "
 			"(char, int, long, unsigned short, etc..");
 
 		using CharType = typename StringType::value_type;
@@ -206,17 +206,17 @@ namespace klib::kString
 		if (Contains(string, CharType('.')))
 			CrashFunc("string must contain only one integer number");
 
-		const auto isNeg = std::is_signed_v<Integer>
+		const auto isNeg = std::is_signed_v<Integer_t>
 			&& string[0] == CharType('-');
 
 		if (isNeg)
 			string.erase(string.begin(), string.begin() + 1);
 
-		Integer result = 0;
+		Integer_t result = 0;
 		size_t size = string.size();
 		auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
 
-		if (size > std::numeric_limits<Integer>::digits10)
+		if (size > std::numeric_limits<Integer_t>::digits10)
 		{
 			const std::string type = typeid(result).name();
 			const auto msg = "String contains more digits than largest number of type: "
@@ -233,7 +233,7 @@ namespace klib::kString
 			const auto digit = static_cast<size_t>(digitChr - CharType('0'));
 			const auto asInt = digit * magnitude;
 
-			result += static_cast<Integer>(asInt);
+			result += static_cast<Integer_t>(asInt);
 			magnitude /= 10;
 		}
 

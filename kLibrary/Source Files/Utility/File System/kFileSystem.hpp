@@ -432,26 +432,26 @@ namespace klib::kFileSystem
 	}
 
 	template<class CharType = char>
-	USE_RESULT constexpr kString::StringWriter<CharType> GetFileName(const kString::StringWriter<CharType>& path) noexcept
+	USE_RESULT constexpr kString::StringWriter<CharType> GetFileName(const kString::StringReader<CharType>& path) noexcept
 	{
 		using Char = std::decay_t<std::remove_pointer_t<CharType>>;
-		const auto text = kString::Replace<Char>(path, Char('/'), pathSeparator<Char>);
-		const auto filename = text.substr(text.find_last_of(pathSeparator<Char>) + 1);
+		const auto p = kString::Replace<Char>(path, Char('/'), pathSeparator<Char>);
+		const auto filename = p.substr(p.find_last_of(pathSeparator<Char>) + 1);
 		return filename;
 	}
 
-	template<class Char = char>
-	USE_RESULT constexpr kString::StringWriter<Char> GetFileNameWithoutExtension(const kString::StringWriter<Char>& path) noexcept
+	template<class CharType = char>
+	USE_RESULT constexpr kString::StringWriter<CharType> GetFileNameWithoutExtension(const kString::StringReader<CharType>& path) noexcept
 	{
-		kString::StringWriter<Char> filename = GetFileName<ONLY_TYPE(Char)>(path);
+		kString::StringWriter<CharType> filename = GetFileName<ONLY_TYPE(CharType)>(path);
 		filename = filename.erase(filename.find_first_of('.'));
 		return filename;
 	}
 
-	template<class Char = char>
-	USE_RESULT constexpr kString::StringWriter<Char> GetExtension(const kString::StringWriter<Char>& path)
+	template<class CharType = char>
+	USE_RESULT constexpr kString::StringWriter<CharType> GetExtension(const kString::StringReader<CharType>& path)
 	{
-		kString::StringWriter<Char> extension = GetFileName<ONLY_TYPE(Char)>(path);
+		kString::StringWriter<CharType> extension = GetFileName<ONLY_TYPE(CharType)>(path);
 		const size_t dotPos = extension.find_first_of('.');
 		const auto start = extension.cbegin();
 		const auto end = start + dotPos;

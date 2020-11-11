@@ -1,14 +1,16 @@
 ﻿#pragma once
 
-#include "kiLogDestination.hpp"
+#include "kiLoggerDestination.hpp"
 
-#include "../EnumHelper/EnumHelper.hpp"
+#include "../../EnumHelper/EnumHelper.hpp"
 
 namespace klib
 {
 	namespace kLogs
 	{
+		class LogLevel;
 		struct LogMessage;
+		
 		ENUM_CLASS(ConsoleColour, unsigned short,
 		           NAVY_BLUE = 1,
 		           DARK_GREEN,
@@ -28,7 +30,7 @@ namespace klib
 		           RED_BG_WHITE_TEXT = 79
 		);
 		
-		class ConsoleLogger final : public iLogDestination
+		class ConsoleLogger final : public iLoggerDestination
 		{
 		public:
 			ConsoleLogger(const std::string& newName);

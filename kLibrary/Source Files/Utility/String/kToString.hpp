@@ -112,7 +112,7 @@ namespace klib {
 
 				if (colonPos != npos)
 				{
-					padding = std::stoll(Convert<char>(currentSection.substr(colonPos + 1, inputPos - 1)));
+					padding = StrTo<long long>(Convert<char>(currentSection.substr(colonPos + 1, inputPos - 1)));
 				}
 
 				currentSection.erase(replacePos);

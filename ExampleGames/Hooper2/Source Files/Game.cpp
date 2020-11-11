@@ -15,7 +15,7 @@ public:
 		SET_LOG_MIN(LOG_LVL_DBUG);
 	}
 
-	~Hooper2Game()
+	~Hooper2Game() override
 		= default;
 
 	void Initialize() override

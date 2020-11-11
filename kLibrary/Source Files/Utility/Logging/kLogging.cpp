@@ -1,16 +1,13 @@
 #include "pch.hpp"
 #include "kLogging.hpp"
 
-
 #include "kLogMessage.hpp"
-#include "kFileLogger.hpp"
-#include "kConsoleLogger.hpp"
+#include "Destinations/kFileLogger.hpp"
+#include "Destinations/kConsoleLogger.hpp"
 #include "kLogDescriptor.hpp"
-#include "kiLogDestination.hpp"
 
 #include "../../Type Traits/ToImpl.hpp"
 #include "../String/kToString.hpp"
-#include "../File System/kFileSystem.hpp"
 
 
 namespace klib::kLogs
@@ -21,14 +18,16 @@ namespace klib::kLogs
 
 	const LogEntry kLogs_Empty("NO ENTRIES! CACHE IS EMPTY", LogDescriptor("Empty"));
 
-	Logging::Logging(const std::string_view& directory, const std::string_view& filename, const std::string_view& name)
+	Logging::Logging(const std::string_view& directory, const std::string_view& filename
+		, const std::string_view& extension
+		, const std::string_view& name)
 		: minimumLoggingLevel(LogLevel::DBUG),
 		name(name),
 		isEnabled(false),
 		cacheMode(false),
 		constantFlushing(false)
 	{
-		Initialize(directory, filename);
+		Initialize(directory, filename, extension);
 	}
 
 	Logging::~Logging()
@@ -37,9 +36,9 @@ namespace klib::kLogs
 			FinalOutput();
 	}
 
-	void Logging::Initialize(const std::string_view& directory, const std::string_view& filename)
+	void Logging::Initialize(const std::string_view& directory, const std::string_view& filename, const std::string_view& extension)
 	{
-		destinations[DestionationType::FILE].reset(new FileLogger(name, directory, filename));
+		destinations[DestionationType::FILE].reset(new FileLogger(name, directory, filename, extension));
 		destinations[DestionationType::CONSOLE].reset(new ConsoleLogger(name));
 		
 		ToggleLoggingEnabled();
@@ -113,10 +112,10 @@ namespace klib::kLogs
 			Flush();
 	}
 
-	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & fname)
+	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & filename)
 	{
 		ChangeOutputDirectory(dir);
-		ChangeFilename(fname);
+		ChangeFilename(filename);
 	}
 
 	void Logging::ChangeOutputDirectory(const std::string_view& directory)
@@ -125,10 +124,9 @@ namespace klib::kLogs
 		fLogger.SetDirectory(directory);
 	}
 
-	void Logging::ChangeFilename(const std::string_view& fname)
+	void Logging::ChangeFilename(const std::string_view& filename)
 	{
 		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
-		const auto filename = kFileSystem::AppendFileExtension(fname, ".log");
 		fLogger.SetFileName(filename);
 	}
 	

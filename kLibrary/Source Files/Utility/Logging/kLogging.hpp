@@ -13,7 +13,7 @@ namespace klib
 {
 	namespace kLogs
 	{
-		class iLogDestination;
+		class iLoggerDestination;
 		
 		class Logging
 		{
@@ -24,10 +24,11 @@ namespace klib
 		public:
 			using LogEntries = std::deque<LogEntry>;
 			using LogDestinationsMap = std::unordered_map<DestionationType::enum_t
-			, std::unique_ptr<iLogDestination>>;
+			, std::unique_ptr<iLoggerDestination>>;
 
 		public:
 			Logging(const std::string_view& directory, const std::string_view& filename
+				, const std::string_view& extension = ".log"
 				, const std::string_view& name = "Logger");
 
 			~Logging();
@@ -83,10 +84,10 @@ namespace klib
 			 *		Change the directory the log file outputs to
 			 * \param dir
 			 *		STL string view representing the new directory
-			 * \param fname
+			 * \param filename
 			 *		STL string view representing the new filename
 			 */
-			void ChangeOutputPath(const std::string_view& dir, const std::string_view& fname);
+			void ChangeOutputPath(const std::string_view& dir, const std::string_view& filename);
 
 			/**
 			 * \brief
@@ -99,10 +100,10 @@ namespace klib
 			/**
 			 * \brief
 			 *		Change name of log filename
-			 * \param fname
+			 * \param filename
 			 *		STL string view representing filename
 			 */
-			void ChangeFilename(const std::string_view& fname);
+			void ChangeFilename(const std::string_view& filename);
 
 			/**
 			 * \brief
@@ -216,7 +217,7 @@ namespace klib
 			bool ErasePrevious(size_t count);
 
 		private:
-			void Initialize(const std::string_view& directory, const std::string_view& filename);
+			void Initialize(const std::string_view& directory, const std::string_view& filename, const std::string_view& extension);
 
 			/**
 			 * \brief

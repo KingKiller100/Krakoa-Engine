@@ -1,26 +1,27 @@
 ﻿#include "pch.hpp"
 #include "kFileLogger.hpp"
 
-#include "kLogEntry.hpp"
+#include "../kLogEntry.hpp"
 
-#include "../Calendar/kCalendar.hpp"
-#include "../String/kToString.hpp"
-#include "../File System/kFileSystem.hpp"
-
-#include <iostream>
+#include "../../Calendar/kCalendar.hpp"
+#include "../../String/kToString.hpp"
+#include "../../File System/kFileSystem.hpp"
 
 namespace klib
 {
 	using namespace kString;
 	using namespace kCalendar;
 	using namespace kFileSystem;
-	
+
 	namespace kLogs
 	{
-		FileLogger::FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName)
+		FileLogger::FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName
+			, const std::string_view& ext)
 			: name(newName)
 			, directory(dir)
-			, filename(AppendFileExtension(fName, ".log"))
+			, extension(ext)
+			, filename(AppendFileExtension(fName, extension))
+
 		{}
 
 		FileLogger::~FileLogger() noexcept
@@ -44,8 +45,18 @@ namespace klib
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
 			Close(true);
-			filename = AppendFileExtension(newFilename, ".log");
+			filename = GetFileNameWithoutExtension(newFilename);
 			Open();
+		}
+
+		std::string_view FileLogger::GetExtension() const
+		{
+			return extension;
+		}
+
+		void FileLogger::SetExtension(const std::string_view& newExtension)
+		{
+			extension = kFileSystem::GetExtension(newExtension);
 		}
 
 		std::string_view FileLogger::GetDirectory() const
@@ -62,7 +73,13 @@ namespace klib
 
 		std::string FileLogger::GetPath() const
 		{
-			return directory + filename;
+			return directory + filename + extension;
+		}
+
+		void FileLogger::SetPath(const std::filesystem::path& path)
+		{
+			directory = path.parent_path().string();
+			filename = path.filename().string();
 		}
 
 		void FileLogger::OutputInitialized(const std::string_view& openingMsg)
@@ -70,20 +87,19 @@ namespace klib
 			if (!IsOpen())
 			{
 				const auto msg = ToString("{0}: file logger not open", name);
-				std::cout << msg << std::endl;
 				throw std::runtime_error(msg);
 			}
-		
+
 			const std::string spacing(5, ' ');
 			const std::string padding(73, '*');
 			constexpr auto nl = "\n";
-			
+
 			std::string opener = padding + nl;
 			opener += spacing + "File logger activated: ";
 			opener += spacing + GetDateInTextFormat(Date::DateTextLength::SHORT) + spacing + GetTimeText() + nl;
 			opener += openingMsg;
 			opener += nl + padding + nl;
-			
+
 			Flush(opener);
 		}
 
@@ -92,7 +108,7 @@ namespace klib
 			if (!IsOpen())
 			{
 				const auto path = GetPath();
-				CreateNewDirectories(directory.c_str());
+				CreateNewDirectories(directory);
 				fileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
 			}
 
@@ -110,7 +126,7 @@ namespace klib
 				return;
 
 			const auto logLine = CreateLogText(entry);
-			
+
 			Flush(logLine);
 		}
 
@@ -161,11 +177,11 @@ namespace klib
 			if (outputClosingMsg)
 			{
 				static constexpr char msg[] = "File Logging Concluded";
-				
+
 				const std::string padding(72, '*');
 				const std::string spacing(25, ' ');
 				const auto logMsg = spacing + msg + spacing;
-				
+
 				Flush(padding);
 				Flush(logMsg);
 				Flush(padding);
@@ -178,7 +194,7 @@ namespace klib
 		{
 			if (!IsOpen())
 				return;
-			
+
 			fileStream << msg;
 			fileStream.flush();
 		}

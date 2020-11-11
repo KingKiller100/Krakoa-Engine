@@ -1,10 +1,11 @@
 ﻿#include <pch.hpp>
-#include "kLogLevel.hpp"
 #include "kConsoleLogger.hpp"
-#include "kLogEntry.hpp"
 
-#include "../Calendar/kCalendar.hpp"
-#include "../String/kToString.hpp"
+#include "../kLogLevel.hpp"
+#include "../kLogEntry.hpp"
+
+#include "../../Calendar/kCalendar.hpp"
+#include "../../String/kToString.hpp"
 
 #include <Windows.h>
 #include <unordered_map>

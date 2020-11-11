@@ -71,13 +71,13 @@ namespace kTest::performance
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
 	{
-		const klib::kTime::HighAccuracyTimer runTimeTimer("Test Run Time");
+		const klib::kStopwatch::HighAccuracyStopwatch runTimeTimer("Test Run Time");
 
 		std::cout << "\tNow Testing: " << test->GetName() << " ";
 
 		test->Run();
 
-		std::cout << "Runtime: " << runTimeTimer.GetLifeTime<klib::kTime::units::Secs>() << "s (seconds)\n";
+		std::cout << "Runtime: " << runTimeTimer.GetLifeTime<klib::kStopwatch::units::Secs>() << "s (seconds)\n";
 
 	}
 

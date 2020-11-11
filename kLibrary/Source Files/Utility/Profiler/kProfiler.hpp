@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Timer/kTimer.hpp"
+#include "../Stopwatch/kStopwatch.hpp"
 
 #include <functional>
 #include <string>
@@ -15,7 +15,7 @@ namespace klib::kProfiler
 		uint32_t threadID;
 	};
 
-	template<typename TimeUnits = kTime::units::Millis, typename ProfilerFunc = std::function<void(const ProfilerResult&)>>
+	template<typename TimeUnits = kStopwatch::units::Millis, typename ProfilerFunc = std::function<void(const ProfilerResult&)>>
 	class Profiler
 	{
 	private:
@@ -24,7 +24,7 @@ namespace klib::kProfiler
 	public:
 		Profiler(const std::string_view& name, Func&& cb)
 			: result({ name.data(), 0, 0, 0 }), isRunning(true),
-			callback(std::forward<Func&&>(cb)),
+			callback(std::forward<Func>(cb)),
 			timer("Profiler")
 		{}
 
@@ -53,6 +53,6 @@ namespace klib::kProfiler
 		bool isRunning;
 		Func callback;
 
-		kTime::Timer<int64_t> timer;
+		kStopwatch::Stopwatch<int64_t> timer;
 	};
 }

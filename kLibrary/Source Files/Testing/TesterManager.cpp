@@ -12,7 +12,7 @@
 #include "../../Tests/Maths Tests/Quaternion_Test.hpp"
 
 // Utility
-#include "../../Tests/Utility Tests/Timer_Test.hpp"
+#include "../../Tests/Utility Tests/Stopwatch_Test.hpp"
 #include "../../Tests/Utility Tests/Logging_Test.hpp"
 #include "../../Tests/Utility Tests/Calendar_Test.hpp"
 #include "../../Tests/Utility Tests/DebugHelp_Test.hpp"
@@ -32,9 +32,10 @@
 #include "../Utility/File System/kFileSystem.hpp"
 
 // Times the length of the test
-#include "../Utility/Timer/kTimer.hpp"
+#include "../Utility/Stopwatch/kStopwatch.hpp"
 
 #include <iostream>
+
 
 
 #ifdef TESTING_ENABLED
@@ -100,7 +101,7 @@ namespace kTest
 		Add(new utility::DebugHelpTester());
 		Add(new utility::LoggingTester());
 		Add(new utility::StringViewTester());
-		Add(new utility::TimerTester());
+		Add(new utility::StopWatchTester());
 	}
 
 	void TesterManager::InitializeTemplateTests()
@@ -129,11 +130,11 @@ namespace kTest
 		using namespace klib::kString;
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-		const klib::kTime::HighAccuracyTimer timer("Test Run Time");
+		const klib::kStopwatch::HighAccuracyStopwatch timer("Test Run Time");
 
 		std::cout << "Now running: " << test.GetName();
 		const auto pass = test.Run();
-		const auto testTime = timer.GetLifeTime<klib::kTime::units::Micros>();
+		const auto testTime = timer.GetLifeTime<klib::kStopwatch::units::Micros>();
 		if (!pass)
 			success = false;
 
@@ -180,14 +181,14 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		klib::kTime::HighAccuracyTimer totalRunTimeTimer("Total Test Run Time");
+		klib::kStopwatch::HighAccuracyStopwatch totalRunTimeTimer("Total Test Run Time");
 
 		for (const auto& test : testsUSet)
 		{
 			Run(*test);
 		}
 
-		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kTime::units::Secs>();
+		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kStopwatch::units::Secs>();
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned, 1000.0 * remainder);

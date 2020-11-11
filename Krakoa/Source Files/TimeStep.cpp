@@ -1,19 +1,14 @@
 ﻿#include "Precompile.hpp"
 #include "TimeStep.hpp"
 
-#include <Utility/Timer/kTimer.hpp>
+#include <Utility/Stopwatch/kStopwatch.hpp>
 #include <Maths/kAlgorithms.hpp>
 
 namespace krakoa::time
 {
-	klib::kTime::HighAccuracyTimerf timer("Time Step Timer");
+	klib::kStopwatch::HighAccuracyTimerf timer("Time Step Timer");
 
 	constexpr auto thousandth = 1.f / 1000;
-
-	TimeStep::TimeStep() noexcept
-		: targetIncrement(0.f),
-		isTimeIncrementFixed(false)
-	{}
 
 	TimeStep::TimeStep(const float targetTimeIncrement) noexcept
 		: targetIncrement(1.f / targetTimeIncrement),
@@ -29,7 +24,7 @@ namespace krakoa::time
 	float TimeStep::CalculateLifeTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		return timer.GetLifeTime<klib::kTime::units::Millis>() * thousandth;
+		return timer.GetLifeTime<klib::kStopwatch::units::Millis>() * thousandth;
 	}
 
 	float TimeStep::GetDeltaTime() const noexcept
@@ -43,8 +38,8 @@ namespace krakoa::time
 		KRK_PROFILE_FUNCTION();
 
 		if (isTimeIncrementFixed)
-			return kmaths::Min(timer.GetDeltaTime<klib::kTime::units::Millis>() * thousandth, targetIncrement);
+			return kmaths::Min(timer.GetDeltaTime<klib::kStopwatch::units::Millis>() * thousandth, targetIncrement);
 		else
-			return timer.GetDeltaTime<klib::kTime::units::Millis>() * thousandth;
+			return timer.GetDeltaTime<klib::kStopwatch::units::Millis>() * thousandth;
 	}
 }

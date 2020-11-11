@@ -159,7 +159,7 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto yearsFromDays = YearsFromDays(1'460);
+			constexpr auto yearsFromDays = YearsFromDays(1'461);
 			VERIFY_COMPILE_TIME(yearsFromDays == 4)
 		}
 
@@ -213,8 +213,11 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto monthFromDays = static_cast<float>(MonthsFromDays(51110));
-			VERIFY_COMPILE_TIME(monthFromDays == 167.9998f);
+			constexpr auto daysCount = 5150;
+			constexpr auto monthFromDays = static_cast<float>(MonthsFromDays(daysCount));
+			constexpr auto divider = 30.4167;
+			constexpr float expected = daysCount / divider;
+			VERIFY_COMPILE_TIME(monthFromDays == expected);
 		}
 
 		return success;

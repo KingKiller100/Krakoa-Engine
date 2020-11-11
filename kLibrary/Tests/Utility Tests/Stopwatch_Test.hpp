@@ -4,11 +4,11 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class TimerTester : public Tester
+	class StopWatchTester : public Tester
 	{
 	public:
-		TimerTester();
-		~TimerTester() override;
+		StopWatchTester();
+		~StopWatchTester() override;
 		
 	private:
 		void Test() override;

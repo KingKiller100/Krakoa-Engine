@@ -1,25 +1,26 @@
 #include "pch.hpp"
-#include "../Utility Tests/Timer_Test.hpp"
+#include "../Utility Tests/Stopwatch_Test.hpp"
 
 #include "../../Source Files/Maths/kAlgorithms.hpp"
-#include "../../Source Files/Utility/Timer/kTimer.hpp"
+#include "../../Source Files/Utility/Stopwatch/kStopwatch.hpp"
 #include "../../Source Files/Utility/String/kToString.hpp"
 
 #include <thread>
 
+
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	TimerTester::TimerTester()
-		: Tester("Timer Test")
+	StopWatchTester::StopWatchTester()
+		: Tester("Stopwatch Test")
 	{	}
 
-	TimerTester::~TimerTester()
+	StopWatchTester::~StopWatchTester()
 		= default;
 
-	void TimerTester::Test()
+	void StopWatchTester::Test()
 	{
-		std::string s;
+		std::string outputStr;
 
 		const auto maxCount = 99999;
 		int nums[maxCount];
@@ -29,17 +30,17 @@ namespace kTest::utility
 
 		const auto loops = kmaths::Min(size, maxCount);
 
-		klib::kTime::HighAccuracyTimer testTime("Test Timer");
+		klib::kStopwatch::HighAccuracyStopwatch testTime("Stopwatch Timer");
 
 		for (auto i = 0; i < loops; i++)
 		{
-			const auto dt = testTime.GetDeltaTime<klib::kTime::units::Micros>();
+			const auto dt = testTime.GetDeltaTime<klib::kStopwatch::units::Micros>();
 			nums[i] = i;
 			VERIFY(nums[i] == i && dt != 0);
-			s = klib::kString::ToString("Test Time %d : %fus (Microseconds)\n", i, dt);
+			outputStr = klib::kString::stringify::SprintfWrapper("Test Time %d : %fus (Microseconds)\n", i, dt);
 		}
 
-		const auto lifetime = testTime.GetLifeTime<klib::kTime::units::Micros>();
+		const auto lifetime = testTime.GetLifeTime<klib::kStopwatch::units::Micros>();
 		const auto lifetimeInSeconds = lifetime / 1000000;
 	}
 }

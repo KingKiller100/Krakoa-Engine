@@ -27,7 +27,7 @@ namespace klib::kFileSystem
 
 	// STL filesystem::path
 	using Path = std::filesystem::path;
-	
+
 	// STL basic_ifstream
 	template<class Char>
 	using FileReader = std::basic_ifstream<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>>;
@@ -63,7 +63,7 @@ namespace klib::kFileSystem
 	{
 		inline bool update_cwd = true;
 	}
-	
+
 	/**
 	 * \brief
 	 *		Outputs a file to the specified directory and fills it with the given data
@@ -75,7 +75,7 @@ namespace klib::kFileSystem
 	 *		File mode i.e. out/append/binary/etc...
 	 */
 	template<class CharType = char>
-	constexpr bool WriteFile(const kString::StringWriter<CharType>& filePath, 
+	constexpr bool WriteFile(const kString::StringWriter<CharType>& filePath,
 		const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
 		FileWriter<CharType> outFile(filePath, mode);
@@ -88,11 +88,11 @@ namespace klib::kFileSystem
 					, content.size());
 			else
 				outFile << content.data();
-			
+
 			outFile.close();
 			return true;
 		}
-		
+
 #if defined(_DEBUG) || defined(KLIB_DEBUG)
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
@@ -110,11 +110,11 @@ namespace klib::kFileSystem
 			const auto failMsg = L"Cannot create/open file: " + wFileName;
 			OutputDebugStringW(failMsg.c_str());
 		}
-		
-		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath) );
+
+		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath));
 #endif // DEBUG
 
-		
+
 		return false;
 	}
 
@@ -146,7 +146,7 @@ namespace klib::kFileSystem
 	inline bool CreateNewDirectories(const Path& directory)
 	{
 		using Char = wchar_t;
-		
+
 		Path dir(directory);
 
 		if (dir.wstring().back() != pathSeparator<Char>)
@@ -156,7 +156,7 @@ namespace klib::kFileSystem
 
 		if (!isDirCreated)
 			isDirCreated = std::filesystem::exists(dir);
-		
+
 		return isDirCreated;
 	}
 
@@ -331,8 +331,8 @@ namespace klib::kFileSystem
 
 		if (cwdFullPath.empty() || secret::helper::update_cwd)
 		{
-			Char* cwdBuffer;
-			DWORD length(0);
+			Char* cwdBuffer = nullptr;
+			DWORD length = 0;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetCurrentDirectoryA(0, nullptr);
@@ -382,9 +382,9 @@ namespace klib::kFileSystem
 		std::filesystem::current_path(path);
 
 		// Flag to notify current working directory to update
-		secret::helper::update_cwd = true; 
-		
-		return true;
+		secret::helper::update_cwd = true;
+
+		return std::filesystem::current_path() == path;
 	}
 
 	/**
@@ -405,7 +405,7 @@ namespace klib::kFileSystem
 			constexpr DWORD bufferSize = 1024 * 2;
 			Char* exeBuffer = new Char[bufferSize]{};
 
-			DWORD length;
+			DWORD length = 0;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);

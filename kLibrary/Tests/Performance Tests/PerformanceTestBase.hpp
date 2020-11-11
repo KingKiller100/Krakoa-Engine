@@ -42,7 +42,7 @@ namespace kTest::performance
 	private:
 		void Output() noexcept;
 		void AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept;
-		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) noexcept;
+		void SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) const noexcept;
 
 	protected:
 		std::string name;
@@ -56,6 +56,6 @@ namespace kTest::performance
 			profilerResults.push_back(res);\
 		}\
 
-#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<klib::kTime::units::Micros> (profilee, REPORT_BACK_FUNC);
+#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<klib::kStopwatch::units::Micros> (profilee, REPORT_BACK_FUNC);
 
 #endif

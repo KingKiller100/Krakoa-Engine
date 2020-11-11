@@ -93,7 +93,7 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr char32_t* text = U"EXAMPLE TEXT";
+			constexpr const char32_t* text = U"EXAMPLE TEXT";
 			const auto res = klib::kString::ToLower(text);
 			constexpr std::u32string_view expected = U"example text";
 			VERIFY(expected == res);
@@ -133,7 +133,7 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr char32_t* text = U"example text";
+			constexpr const char32_t* text = U"example text";
 			const auto res = klib::kString::ToUpper(text);
 			constexpr std::u32string_view expected = U"EXAMPLE TEXT";
 			VERIFY(expected == res);

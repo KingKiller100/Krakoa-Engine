@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "../../../Maths/Length_Type.hpp"
 #include "../../String/kToString.hpp"
 
 #include <stdexcept>
+
 
 namespace klib::kDebug
 {
@@ -35,9 +35,9 @@ namespace klib::kDebug
 			: MathsError(kString::ToString("ERROR: Value \"{0:2}\" has no {1}{2} root",
 				value,
 				root,
-				root == 1 ? "st"
-				: root == 2 ? "nd"
-				: root == 3 ? "rd"
+				(root % 10) == 1 ? "st"
+				: (root % 10) == 2 ? "nd"
+				: (root % 10) == 3 ? "rd"
 				: "th"))
 		{}
 

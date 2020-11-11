@@ -119,7 +119,7 @@ namespace krakoa::graphics
 			return alpha;
 		}
 
-		void Colour::SetHSL(HSL hsl) noexcept
+		void SetHSL(HSL hsl) noexcept
 		{
 			const auto flHue6 = hsl.hue / 60.f;
 			const auto flChroma = (1.f - kmaths::Abs(2 * hsl.lightness - 1.f)) * hsl.saturation;

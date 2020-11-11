@@ -115,31 +115,32 @@ namespace kTest::performance
 				const auto count = values.second.count;
 				const long double avg = CAST(long double, totalTime) / count;
 
-				const auto currentlowest = avg < minTime ? avg : minTime;
+				const auto currentLowest = avg < minTime ? avg : minTime;
 
-				if (currentlowest < minTime)
+				if (currentLowest < minTime)
 				{
 					winner = values.first;
-					minTime = currentlowest;
+					minTime = currentLowest;
 				}
 
 				maxTime = avg > maxTime ? avg : maxTime;
 			}
 
 			const auto difference = maxTime - minTime;
-			const auto percentage = (CAST(long double, difference) / minTime) * 100;
+			const auto percentage = (difference / minTime) * 100;
 			const auto percentagef = CAST(float, percentage);
 
 			SendResult(subTestName, winner, percentagef, fastest, slowest);
 		}
 	}
 
-	void PerformanceTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) noexcept
+	void PerformanceTestBase::SendResult(const std::string_view& subTestName, const std::string_view& result
+		, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) const noexcept
 	{
 		using namespace klib;
 
-		const auto fastestName = fastest.name;
-		const auto slowestName = slowest.name;
+		const auto& fastestName = fastest.name;
+		const auto& slowestName = slowest.name;
 
 		const auto output = klib::kString::ToString(R"(%s: 
 	%s is the fastest on average by %.3f%%

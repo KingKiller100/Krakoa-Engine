@@ -11,8 +11,6 @@
 #include "../../Type Traits/StringTraits.hpp"
 #include "../../Utility/String/kStringConverter.hpp"
 
-#include "../../Maths/kAlgorithms.hpp"
-
 #include <any>
 #include <array>
 #include <string>
@@ -26,7 +24,7 @@ namespace klib {
 		secret::helper::FormatMarkerQueue CreateIdentifiers(const std::basic_string<CharType>& fmt, std::array<std::any, Size>& elems)
 		{
 			using namespace secret::helper;
-			
+
 			static constexpr auto openerSymbol = CharType('{');
 			static constexpr auto closerSymbol = CharType('}');
 			static constexpr auto precisionSymbol = CharType(':');
@@ -297,7 +295,8 @@ namespace klib {
 		template<class CharType, typename T, typename ...Ts>
 		constexpr std::basic_string<CharType> ToString(const T& arg, const  Ts& ...argPack)
 		{
-			const auto count = kmaths::Count(arg, argPack...);
+			using DataTypes = std::variant<std::monostate, T, Ts...>;
+			constexpr auto count = std::variant_size_v<DataTypes> - 1;
 			std::basic_string<CharType> format;
 
 			for (auto i = 0; i < count; ++i)
@@ -306,7 +305,7 @@ namespace klib {
 				format.append(stringify::StringIntegral<CharType>(i, 1));
 				format.push_back(CharType('}'));
 			}
-			
+
 			const auto output = ToString(format, arg, argPack...);
 			return output;
 		}

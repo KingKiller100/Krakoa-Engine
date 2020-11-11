@@ -4,15 +4,14 @@
 
 #define _USE_MATH_DEFINES
 #include <corecrt_math_defines.h>
+#include <type_traits>
+#include <limits>
 
 
 namespace kmaths
 {
-
 	namespace constants
 	{
-
-
 		using AccuracyType = long double;
 
 		constexpr AccuracyType GAMMA = 0.57721566490153l; // Euler's gamma constant
@@ -48,8 +47,8 @@ namespace kmaths
 		template<typename T, typename ...Ts>
 		constexpr size_t Count(const T& arg, const Ts& ...args)
 		{
-			const size_t count(
-				secret::helper::GetCountImpl(arg, args...));
+			using namespace secret::helper;
+			const auto count(GetCountImpl(arg, args...));
 			return count;
 		}
 
@@ -103,15 +102,20 @@ namespace kmaths
 			return One<ONLY_TYPE(T)>();
 		}
 
-		template<class T>
-		USE_RESULT constexpr bool ApproximatelyOne(T&& value) noexcept
+		template<class T1, typename T2>
+		USE_RESULT constexpr bool Approximately(T1 value, T2 target) noexcept
 		{
-			constexpr auto epsilon = Epsilon<T>();
-			constexpr auto one = One<T>();
-			constexpr auto lb = one - epsilon;
-			constexpr auto ub = one + epsilon;
+			constexpr auto epsilon = Epsilon<T1>();
+			constexpr auto lb = target - epsilon;
+			constexpr auto ub = target + epsilon;
 
 			return (value >= lb) && (value <= ub);
+		}
+
+		template<class T>
+		USE_RESULT constexpr bool ApproximatelyOne(T value) noexcept
+		{
+			return Approximately(value, One<T>());
 		}
 
 		template<class T>

@@ -192,12 +192,12 @@ namespace kmaths
 
 
 	// Sign///////////////////////////////////////////////////////////////////
-	template<typename T>
+	template<typename T> // Unsigned
 	USE_RESULT constexpr uint8_t Sign_Impl(const T x, std::false_type) noexcept
 	{
 		return (T(0) < x);
 	}
-	template<typename T>
+	template<typename T> // Signed
 	USE_RESULT constexpr int8_t Sign_Impl(const T x, std::true_type) noexcept
 	{
 		return (T(0) < x) - (x < T(0));
@@ -414,6 +414,33 @@ namespace kmaths
 		return (sine / cosine);
 	}
 
+	template<typename T>
+	USE_RESULT constexpr T PowerOfImpl(T base, Big_Int_Type power) noexcept
+	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return CAST(T, pow(base, power));
+#else
+
+		if (power == 0)
+			return constants::One<T>();
+		if (power == 1)
+			return base;
+		if (power == 2)
+			return Square(base);
+		if (power == 3)
+			return Cube(base);
+
+		const T temp = PowerOfImpl(base, power >> 1);
+
+		if (power % 2 == 0)
+			return temp * temp;
+		else if (IsNegative(power))
+			return (temp * temp) / base;
+		else
+			return base * temp * temp;
+#endif // MSVC_PLATFORM_TOOLSET > 142
+	}
+	
 	// Continued Fractions Without Tears, Ian Richards 1981
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr Fraction RealToFraction(T x, const uint8_t dpAccuracy = 10) noexcept
@@ -452,6 +479,25 @@ namespace kmaths
 		return { 0, 1, isNegative, false };
 	}
 
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints = Max_Decimal_Precision_V<T>) noexcept
+	{
+		using namespace constants;
+
+		const auto isNegative = IsNegative(value);
+		if (isNegative)
+			value = -value;
+
+		const auto accuracy = PowerOfImpl<AccuracyType>(CAST(AccuracyType, 10), decimalPoints);
+		const auto accuracyInverse = constants::OneOver<AccuracyType>(accuracy);
+		const auto dpShifts = constants::ZeroPointFive<AccuracyType>() * accuracyInverse;
+
+		const auto valuePlusDpsByAcc = (CAST(constants::AccuracyType, value) + dpShifts) * accuracy;
+		const auto sigFigs = Floor(valuePlusDpsByAcc); // significant figures
+		const T roundedValue = CAST(T, sigFigs * accuracyInverse);
+		return isNegative ? -roundedValue : roundedValue;
+	}
+
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T HandleFloatingPointError(T x) noexcept
@@ -483,34 +529,6 @@ namespace kmaths
 			return x0;
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T PowerOfImpl(T base, Big_Int_Type power) noexcept
-	{
-#if MSVC_PLATFORM_TOOLSET > 142
-		return CAST(T, pow(base, power));
-#else
-
-		if (power == 0)
-			return constants::One<T>();
-		if (power == 1)
-			return base;
-		if (power == 2)
-			return Square(base);
-		if (power == 3)
-			return Cube(base);
-
-		T temp = T();
-
-		temp = PowerOfImpl(base, power >> 1);
-
-		if (power % 2 == 0)
-			return temp * temp;
-		else if (IsNegative(power))
-			return (temp * temp) / base;
-		else
-			return base * temp * temp;
-#endif // MSVC_PLATFORM_TOOLSET > 142
-	}
 
 	template<typename T>
 	USE_RESULT constexpr T PowerOf10(T power) noexcept(std::is_arithmetic_v<T>)
@@ -522,25 +540,6 @@ namespace kmaths
 				return 0;
 		}
 		return PowerOfImpl<T>(ten, power);
-	}
-
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T Round(T value, const uint8_t decimalPoints = Max_Decimal_Precision_V<T>) noexcept
-	{
-		using namespace constants;
-
-		const auto isNegative = IsNegative(value);
-		if (isNegative)
-			value = -value;
-
-		const auto accuracy = PowerOfImpl<AccuracyType>(CAST(AccuracyType, 10), decimalPoints);
-		const auto accuracyInverse = constants::OneOver<AccuracyType>(accuracy);
-		const auto dpShifts = constants::ZeroPointFive<AccuracyType>() * accuracyInverse;
-
-		const auto valuePlusDpsByAcc = (CAST(constants::AccuracyType, value) + dpShifts) * accuracy;
-		const auto sigFigs = Floor(valuePlusDpsByAcc); // significant figures
-		const T roundedValue = CAST(T, sigFigs * accuracyInverse);
-		return isNegative ? -roundedValue : roundedValue;
 	}
 
 	template<typename T, class = std::enable_if_t<

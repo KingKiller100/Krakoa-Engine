@@ -214,9 +214,9 @@ namespace kTest::utility
 
 		{
 			constexpr auto daysCount = 5150;
-			constexpr auto monthFromDays = static_cast<float>(MonthsFromDays(daysCount));
+			constexpr auto monthFromDays = MonthsFromDays(daysCount);
 			constexpr auto divider = 30.4167;
-			constexpr float expected = daysCount / divider;
+			constexpr auto expected = daysCount / divider;
 			VERIFY_COMPILE_TIME(monthFromDays == expected);
 		}
 

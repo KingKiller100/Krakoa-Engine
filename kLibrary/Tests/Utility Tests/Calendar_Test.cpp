@@ -261,7 +261,8 @@ namespace kTest::utility
 		{
 			using namespace std::chrono;
 			using namespace std::chrono_literals;
-			const auto result = TimeConverter<Second>(500'000_ms);
+			const auto millis = 500'000_ms;
+			const auto result = TimeConverter<Second, Millisecond>(millis);
 			constexpr auto expected = duration_cast<seconds>(500'000ms);
 			VERIFY(expected.count() == result.GetValue());
 		}

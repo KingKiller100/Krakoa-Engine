@@ -34,12 +34,13 @@ namespace klib::kCalendar
 
 	// Time
 	template<typename DestTimeT, typename SourceTimeT, typename = std::enable_if_t<
-		!std::is_arithmetic_v<DestTimeT>
+		std::_Is_specialization_v<typename DestTimeT::Self_t, TimeComponentBase>
+		&& std::_Is_specialization_v<typename SourceTimeT::Self_t, TimeComponentBase>
 		>>
-		USE_RESULT constexpr DestTimeT TimeConverter(const TimeComponentBase<SourceTimeT>& source)
+		USE_RESULT constexpr DestTimeT TimeConverter(const SourceTimeT& source)
 	{
 		using namespace std::chrono;
-		using DestUnderlyingT = typename DestTimeT::UnderlyingT;
+		using DestUnderlyingT = typename DestTimeT::Underlying_t;
 
 		const auto val =
 			duration_cast<DestUnderlyingT>(source.GetUnderlying());

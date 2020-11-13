@@ -77,7 +77,7 @@ namespace krakoa
 #endif
 
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
-		KRK_ASSERT(window, "Window pointer not created");
+		KRK_ASSERT(window != nullptr, "Window pointer not created");
 
 		pRenderContext = std::make_unique<graphics::OpenGLContext>(window);
 		pRenderContext->Init();

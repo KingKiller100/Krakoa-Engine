@@ -26,7 +26,7 @@ namespace patterns
 
 		static constexpr T& Reference()
 		{
-			KRK_ASSERT(instance, "Refernce to uninitialized singleton");
+			KRK_ASSERT(instance != nullptr, "Reference to uninitialized singleton");
 			return *instance;
 		}
 
@@ -40,7 +40,8 @@ namespace patterns
 
 		template<class ThisOrDerivedType = T, typename ...Args, typename = std::enable_if_t<
 			std::is_base_of_v<T, ThisOrDerivedType>
-			&& std::is_constructible_v<ThisOrDerivedType, Token, Args...>>>
+			&& std::is_constructible_v<ThisOrDerivedType, Token, Args...>
+		>>
 		static constexpr void Create(Args&& ...params)
 		{
 			if (!instance)

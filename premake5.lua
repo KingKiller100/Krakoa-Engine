@@ -20,7 +20,7 @@ workspace "KrakoaEngine"
     -- Include Libraries
     IncludeDir = {}
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
-    IncludeDir["KLIB"] = "kLibrary/Include Files/"
+    IncludeDir["KLIB"] = "../kLibrary/Source Files/"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
     IncludeDir["ImGUI"] = "Krakoa/Vendors/imgui/"
     IncludeDir["STBI"] = "Krakoa/Vendors/STB Image/"
@@ -29,7 +29,7 @@ group "Dependencies"
     include "Krakoa/Vendors/GLFW"
     include "Krakoa/Vendors/GLAD"
     include "Krakoa/Vendors/imgui"
-    include "kLibrary/"
+    include "../kLibrary/"
 group ""
 
 group "Engine" 
@@ -59,8 +59,7 @@ project "Krakoa"
 
     includedirs
     {
-        -- "%{IncludeDir.KLIB}",
-        "kLibrary/Source Files/",
+        "%{IncludeDir.KLIB}",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGUI}",
@@ -79,7 +78,7 @@ project "Krakoa"
         "GLFW",
         "GLAD",
         "ImGui",
-        "opengl32.lib"
+        "opengl32.lib",
     }
 
     filter "system:Windows"
@@ -162,7 +161,7 @@ project "Hooper2"
 
     includedirs
     {
-        "kLibrary/Source Files",
+        "%{IncludeDir.KLIB}",
         "Krakoa/Source Files",
         "Krakoa/Vendors/",
     }

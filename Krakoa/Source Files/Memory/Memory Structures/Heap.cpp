@@ -116,7 +116,8 @@ namespace memory
 
 	std::string Heap::GetStatus() const
 	{
-		MEM_FATAL(vftbl->getStatusFunc, "Heap's vftbl is empty");
+		MEM_FATAL(vftbl->getStatusFunc != nullptr
+			, "Heap's vftbl is empty");
 		return vftbl->getStatusFunc(this);
 	}
 }

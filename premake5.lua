@@ -168,6 +168,7 @@ project "Hooper2"
 
     links
     {
+        "kLibrary",
         "Krakoa"
     }
 

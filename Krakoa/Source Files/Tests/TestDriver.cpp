@@ -1,12 +1,12 @@
 ﻿#include "Precompile.hpp"
 #include "TestDriver.hpp"
 
-#include <Testing/Tester.hpp>
+#ifdef KRAKOA_TEST
+#include <Testing/TesterBase.hpp>
 #include <Testing/TesterManager.hpp>
 
 #include "SetUpTests.hpp"
 
-#ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
 	auto& testMan = kTest::TesterManager::Get();
@@ -14,9 +14,9 @@ namespace krakoa::tests
 	void TestDriver::Initialize()
 	{
 		testMan.Initialize();
-		testMan.InitializeMathsTests();
-		testMan.InitializeUtilityTests();
-		testMan.InitializeTemplateTests();
+		testMan.InitializeMaths();
+		testMan.InitializeUtility();
+		testMan.InitializeTemplates();
 		
 		SetUpTests();
 	}
@@ -25,7 +25,7 @@ namespace krakoa::tests
 	{
 		testMan.Shutdown();
 	}
-	void TestDriver::AddTest(kTest::Tester* test)
+	void TestDriver::AddTest(kTest::TesterBase* test)
 	{
 		testMan.Add(test);
 	}

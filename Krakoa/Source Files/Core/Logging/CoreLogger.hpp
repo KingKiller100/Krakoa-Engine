@@ -54,6 +54,6 @@ namespace krakoa
 #ifdef KRAKOA_DEBUG
 #	include <Utility/Debug Helper/kAssert.hpp>
 #	define KRK_ASSERT(condition, msg)                                kAssert(condition, msg)
-#else								                                
-#	define KRK_ASSERT(condition, msg)                                if ( !(condition) ) { ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(klib::kLogs::LogMessage(msg, __FILE__, __LINE__)); throw std::exception(); }
+#else
+#	define KRK_ASSERT(condition, msg)                                if ( !(condition) ) { ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(klib::kLogs::LogMessage(msg, SOURCE_INFO())); throw std::exception(); }
 #endif // !KRAKOA_RELEASE

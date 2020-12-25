@@ -5,7 +5,7 @@ namespace krakoa::time
 	class TimeStep
 	{
 	public:
-		TimeStep(const float targetTimeIncrement=1.f) noexcept;
+		TimeStep(const float targetMilliseconds = 1.f) noexcept;
 
 		float GetLifeTime() const noexcept;
 		float GetDeltaTime() const noexcept;

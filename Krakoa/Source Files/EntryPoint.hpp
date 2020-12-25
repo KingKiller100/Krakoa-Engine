@@ -9,6 +9,7 @@
 extern void krakoa::CreateApplication();
 #endif
 
+#include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
 #include "Memory/Memory Structures/HeapFactory.hpp"
 
 
@@ -16,6 +17,7 @@ inline void Launch();
 
 int main(int argc, char** argv)
 {
+	klib::kLocale::SetLocale("");
 	memory::HeapFactory::Initialize();
 	Launch();
 	memory::HeapFactory::ReportMemoryLeaks();
@@ -26,6 +28,8 @@ int main(int argc, char** argv)
 
 inline void Launch()
 {
+	klib::kCalendar::UsePlatformCalendarInfoSource();
+	
 #ifdef KRAKOA_TEST
 	krakoa::tests::TestDriver::Initialize();
 	krakoa::tests::TestDriver::RunAll();

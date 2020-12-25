@@ -9,7 +9,7 @@
 namespace krakoa::tests
 {
 	MemPoolerTester::MemPoolerTester()
-		: Tester("MemPooler Test")
+		: TesterBase("MemPooler Test")
 	{}
 
 	MemPoolerTester::~MemPoolerTester()
@@ -41,10 +41,9 @@ namespace krakoa::tests
 
 		auto status = Testclass::GetStatus();
 
-		delete list[list.size() - 1];
+		delete list.back();
 
 		status = Testclass::GetStatus();
-
 	}
 }
 #endif

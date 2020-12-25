@@ -5,7 +5,7 @@
 #ifdef KRAKOA_TEST
 namespace kTest
 {
-	class Tester;
+	class TesterBase;
 }
 
 namespace krakoa::tests
@@ -16,7 +16,7 @@ namespace krakoa::tests
 	public:
 		static void Initialize();
 		static void ShutDown();
-		static void AddTest(kTest::Tester* test);
+		static void AddTest(kTest::TesterBase* test);
 		static void RunAll();
 		static void RunPerformanceTests();
 		static void ClearAll();

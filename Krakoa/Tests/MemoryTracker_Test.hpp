@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include <Testing/Tester.hpp>
+#include <Testing/TesterBase.hpp>
 
 #ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
-	class MemoryTrackerTester final : public kTest::Tester
+	class MemoryTrackerTester final : public kTest::TesterBase
 	{
 	public:
 		MemoryTrackerTester() noexcept;

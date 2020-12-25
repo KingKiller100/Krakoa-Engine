@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include <Testing/Tester.hpp>
+#include <Testing/TesterBase.hpp>
 
 #ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
-	class MemPoolerTester final : public kTest::Tester
+	class MemPoolerTester final : public kTest::TesterBase
 	{
 	public:
 		MemPoolerTester();

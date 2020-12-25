@@ -6,7 +6,7 @@
 #include "../Source Files/Core/Logging/MemoryLogger.hpp"
 #include "../Source Files/Memory/Memory Structures/MemoryTypeSizes.hpp"
 
-#include <Utility/String/kStringManipulation.hpp>
+#include <Utility/String/kStringTricks.hpp>
 
 #include <functional>
 
@@ -14,7 +14,7 @@
 namespace krakoa::tests
 {
 	MemoryTrackerTester::MemoryTrackerTester() noexcept
-		: Tester("Memory Tracker Test")
+		: TesterBase("Memory Tracker Test")
 	{}
 
 	MemoryTrackerTester::~MemoryTrackerTester()

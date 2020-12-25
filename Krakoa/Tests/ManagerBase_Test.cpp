@@ -4,15 +4,13 @@
 #include "../Source Files/Patterns/ManagerBase.hpp"
 #include "../Source Files/Memory/Memory Structures/MemoryTypeSizes.hpp"
 
-#include <Utility/String/kStringManipulation.hpp>
-
-
+#include <Utility/String/kStringTricks.hpp>
 
 #ifdef KRAKOA_TEST
 namespace krakoa::tests
 {
 	ManagerBaseTester::ManagerBaseTester() noexcept
-		: Tester("ManagerBase Test")
+		: TesterBase("ManagerBase Test")
 	{}
 
 	ManagerBaseTester::~ManagerBaseTester()

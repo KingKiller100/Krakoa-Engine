@@ -17,7 +17,9 @@ namespace krakoa
 		std::string dir(klib::kFileSystem::GetExeDirectory());
 		dir += "Logs\\";
 		
-		pClientLogger = std::make_unique<Logging>(dir, name, name);
+		constexpr auto extension = ".log";
+
+		pClientLogger = std::make_unique<Logging>(dir, name, extension, name);
 		pClientLogger->ToggleConsoleEnabled();
 		pClientLogger->OutputInitialized("Welcome client!");
 	}

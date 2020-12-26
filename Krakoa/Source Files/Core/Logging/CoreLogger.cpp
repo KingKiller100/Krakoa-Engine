@@ -19,8 +19,9 @@ namespace krakoa
 		
 		constexpr auto name = "Krakoa";
 		constexpr auto filename = "Krakoa Engine";
-		
-		pCoreLogger = std::make_unique<Logging>(dir, filename, name);
+		constexpr auto extension = ".log";
+
+		pCoreLogger = std::make_unique<Logging>(dir, filename, extension, name);
 		pCoreLogger->OutputInitialized(initMsg);
 	}
 

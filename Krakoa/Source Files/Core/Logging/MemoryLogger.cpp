@@ -18,8 +18,9 @@ namespace memory
 		dir += "Logs\\";
 		constexpr auto filename = "Memory";
 		constexpr auto name = filename;
+		constexpr auto extension = ".log";
 		
-		pMemoryLogger = std::make_unique<Logging>(dir, filename, name);
+		pMemoryLogger = std::make_unique<Logging>(dir, filename, extension, name);
 		pMemoryLogger->ToggleConsoleEnabled();
 		pMemoryLogger->OutputInitialized(openingMsg);
 	}

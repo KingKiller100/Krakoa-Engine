@@ -88,10 +88,10 @@ namespace memory
 		auto& pool = subPoolList[index];
 		pool = SubPool(capacity);
 		pool.pStartAddress = malloc(capacity);
-		MEM_ASSERT(pool.pStartAddress == nullptr, "Start adress is null");
-		
+		MEM_ASSERT(pool.pStartAddress != nullptr, "Start address is null");
 		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pStartAddress);
 		memset(pool.pStartAddress, 0, capacity);
+		
 
 		usedIndex[index] = true;
 	}

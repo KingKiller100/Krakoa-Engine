@@ -15,9 +15,9 @@ namespace krakoa::graphics
 		BOOL
 	};
 
-	static uint32_t GetComponentCount(ShaderDataType type);
+	extern uint32_t GetComponentCount(ShaderDataType type);
 
-	static uint32_t ShaderDataTypeBytes(ShaderDataType type);
+	extern uint32_t ShaderDataTypeBytes(ShaderDataType type);
 
 	struct BufferElement
 	{

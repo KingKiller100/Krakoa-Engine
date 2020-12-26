@@ -9,6 +9,8 @@
 #include <Maths/BytesUnits.hpp>
 #include <Utility/String/kToString.hpp>
 
+#include "../../Debug/Debug.hpp"
+
 
 namespace memory
 {
@@ -83,7 +85,7 @@ namespace memory
 		{
 			if (enableAssert)
 			{
-				MEM_FATAL(false, ToString("CORRUPTED HEAP - Incorrect signature"
+				MEM_FATAL(ToString("CORRUPTED HEAP - Incorrect signature"
 					" on a heap - memory Address: {0}\n",
 					pHeader));
 			}
@@ -97,8 +99,7 @@ namespace memory
 		{
 			if (enableAssert)
 			{
-				MEM_FATAL(false,
-					ToString("CORRUPTED HEAP - Incorrect end marker on"
+				MEM_FATAL(ToString("CORRUPTED HEAP - Incorrect end marker on"
 						" a heap - memory address: {0}\n",
 						pHeader));
 			}
@@ -114,7 +115,7 @@ namespace memory
 			CAST(kmaths::Byte_Type*, pData)
 			- AllocHeaderSize);
 
-		MEM_ASSERT(VerifyHeader(pHeader));
+		MEM_ASSERT(VerifyHeader(pHeader), "AllocHeader failed verification");
 		return pHeader;
 	}
 

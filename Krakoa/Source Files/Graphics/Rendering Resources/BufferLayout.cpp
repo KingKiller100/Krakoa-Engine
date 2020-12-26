@@ -22,7 +22,7 @@ namespace krakoa::graphics
 		case ShaderDataType::BOOL: return 1;
 		default:
 			{
-				KRK_FATAL_COND(false, "Unknown ShaderDataType");
+				KRK_FATAL("Unknown ShaderDataType");
 				return 0;
 			}
 		}
@@ -53,7 +53,7 @@ namespace krakoa::graphics
 		case ShaderDataType::NONE:
 		default:
 			{
-				KRK_FATAL_COND(false, "Unknown ShaderDataType");
+				KRK_FATAL("Unknown ShaderDataType");
 				return 0;
 			}
 		}

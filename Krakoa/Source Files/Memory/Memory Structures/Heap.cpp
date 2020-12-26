@@ -7,6 +7,8 @@
 
 #include <Maths/BytesUnits.hpp>
 
+#include "../../Debug/Debug.hpp"
+
 namespace memory
 {
 	void Heap::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
@@ -116,7 +118,7 @@ namespace memory
 
 	std::string Heap::GetStatus() const
 	{
-		MEM_FATAL(vftbl->getStatusFunc != nullptr
+		MEM_ASSERT(vftbl->getStatusFunc != nullptr
 			, "Heap's vftbl is empty");
 		return vftbl->getStatusFunc(this);
 	}

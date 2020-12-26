@@ -161,7 +161,7 @@ namespace krakoa
 				return entity->GetName() == name;
 			});
 
-		KRK_FATAL_COND(iter == entities.end(),
+		KRK_ASSERT(iter == entities.end(),
 			klib::ToString("Entity \"{0}\" does not exist", name));
 
 		return **iter;
@@ -176,7 +176,7 @@ namespace krakoa
 				return entity->GetID() == id;
 			});
 
-		KRK_FATAL_COND(iter == entities.end(),
+		KRK_ASSERT(iter == entities.end(),
 			klib::ToString("Entity ID \"{0}\" does not exist", id));
 
 		return **iter;

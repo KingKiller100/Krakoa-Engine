@@ -24,7 +24,7 @@ namespace krakoa
 		pCoreLogger->OutputInitialized(initMsg);
 	}
 
-	Logging& CoreLogger::GetCoreLogger()
+	Logging& CoreLogger::GetLogger()
 	{
 		return *pCoreLogger;
 	}

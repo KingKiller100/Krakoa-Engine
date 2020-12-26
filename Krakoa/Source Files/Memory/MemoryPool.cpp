@@ -9,6 +9,8 @@
 #include <Maths/kAlgorithms.hpp>
 #include <Utility/String/kToString.hpp>
 
+#include "../Debug/Debug.hpp"
+
 namespace memory
 {
 	void* exampleDeadBlock = nullptr;
@@ -86,10 +88,11 @@ namespace memory
 		auto& pool = subPoolList[index];
 		pool = SubPool(capacity);
 		pool.pStartAddress = malloc(capacity);
+		MEM_ASSERT(pool.pStartAddress == nullptr, "Start adress is null");
+		
 		pool.pNextFree = CAST(kmaths::Byte_Type*, pool.pStartAddress);
 		memset(pool.pStartAddress, 0, capacity);
 
-		MEM_ASSERT(pool.pStartAddress);
 		usedIndex[index] = true;
 	}
 

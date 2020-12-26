@@ -14,6 +14,8 @@
 
 #include <iostream>
 
+#include "../../Debug/Debug.hpp"
+
 namespace memory
 {
 	Heap* HeapFactory::defaultHeap = nullptr;
@@ -117,7 +119,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 	std::string HeapFactory::WalkTheHeap(const size_t index)
 	{
-		MEM_FATAL(index < heaps.size(), "Index greater than current size of the HeapFactory");
+		MEM_ASSERT(index < heaps.size(), "Index greater than current size of the HeapFactory");
 
 		const auto& heap = heaps[index];
 

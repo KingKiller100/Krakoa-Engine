@@ -1,13 +1,15 @@
 ﻿#include "Precompile.hpp"
 #include "OpenGLShader.hpp"
 
+#include "../../Debug/Debug.hpp"
+#include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
 #include <GLAD/glad.h>
-#include "../../Instrumentor.hpp"
+
 
 namespace krakoa::graphics
 {
@@ -24,7 +26,7 @@ namespace krakoa::graphics
 		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
 		const auto shaderData = klib::kFileSystem::ReadFile(path);
 
-		KRK_ASSERT(!shaderData.empty(), klib::kString::ToString("Shader file is empty: %s", path.data()));
+		KRK_ASSERT(!shaderData.empty(), klib::kString::ToString("Shader file is empty: {0{", path));
 
 		std::unordered_map<uint32_t, std::string> sources;
 		decltype(sources)::value_type::second_type* currentSource = nullptr;
@@ -172,7 +174,7 @@ namespace krakoa::graphics
 			glDeleteShader(fragmentShader);
 
 
-			KRK_ASSERT(false, klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
+			KRK_FATAL(klib::kString::ToString("Shader Linking Error: \n%s", infoLog));
 			delete[] infoLog;
 			return;
 		}

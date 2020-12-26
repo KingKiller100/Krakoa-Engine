@@ -1,11 +1,13 @@
 #include "Precompile.hpp"
 #include "OpenGLContext.hpp"
 
+#include "../../Debug/Debug.hpp"
 #include "../../Instrumentor.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
+
 
 namespace krakoa::graphics
 {

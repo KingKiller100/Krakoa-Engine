@@ -16,6 +16,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "../../Debug/Debug.hpp"
+
 namespace krakoa
 {
 	using namespace klib;
@@ -25,7 +27,11 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		KRK_ERRR(kString::ToString("GLFW ERROR \n               [CODE]: %d\n               [DESC]: %s", errorCode, description));
+		const auto msg = 
+			ToString("[CODE]: {0}\n               [DESC]: {1}"
+				, errorCode
+				, description);
+		KRK_BANNER(msg, "GLFW_ERROR", "*", "*", 30);
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -55,7 +61,7 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_NORM(kString::ToString("Creating Window %s with dimensions (%d, %d)",
+		KRK_NORM(kString::ToString("Creating Window {0} with dimensions ({0}, {1})",
 			data.title,
 			data.dimensions.X(),
 			data.dimensions.Y()));

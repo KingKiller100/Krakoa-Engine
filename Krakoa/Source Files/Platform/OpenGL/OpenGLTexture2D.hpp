@@ -8,7 +8,7 @@ namespace krakoa::graphics
 	class OpenGLTexture2D : public iTexture2D
 	{
 	public:
-		OpenGLTexture2D(const uint32_t width, const uint32_t height, const bool cache = false);
+		OpenGLTexture2D(const uint32_t width, const uint32_t height);
 		OpenGLTexture2D(const std::string_view& path, const bool cache = false);
 		~OpenGLTexture2D();
 

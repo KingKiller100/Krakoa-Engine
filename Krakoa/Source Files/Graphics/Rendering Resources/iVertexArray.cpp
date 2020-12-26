@@ -16,9 +16,10 @@ namespace krakoa::graphics
 	{
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::ApiType::NONE:   KRK_ERRR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexArray(); break;
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexArray();
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
+		return nullptr;
 	}
 
 

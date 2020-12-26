@@ -6,6 +6,8 @@
 
 #include <GLAD/glad.h>
 
+#include "../../Debug/Debug.hpp"
+
 namespace krakoa::graphics
 {
 	GLenum ShaderDataTypeToRenderAPIBaseType(graphics::ShaderDataType type)

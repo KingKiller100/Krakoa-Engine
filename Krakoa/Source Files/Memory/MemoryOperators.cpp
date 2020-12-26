@@ -6,7 +6,7 @@
 #include "Memory Structures/MemoryTypeSizes.hpp"
 #include "Memory Structures/HeapFactory.hpp"
 
-#include "../Core/Logging/MemoryLogger.hpp"
+#include "../Debug/Debug.hpp"
 
 void* operator new [](const size_t bytes, memory::Heap* pHeap)
 {
@@ -26,7 +26,8 @@ void* operator new [](const size_t bytes)
 void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads Control Blocks
 {
 #ifndef  KRAKOA_RELEASE
-	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1));
+	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1),
+		"Illegal amount of bytes requested");
 
 	const size_t requestedBytes = memory::AllocHeaderSize + bytes + memory::SignatureSize; // Alignment in memory
 	auto* pBlock = CAST(kmaths::Byte_Type*, malloc(requestedBytes)); // memory::MemoryPool::Reference().Allocate(requestedBytes);

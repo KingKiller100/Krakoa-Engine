@@ -30,7 +30,8 @@ namespace patterns
 
 		USE_RESULT static constexpr T& Reference()
 		{
-			KRK_FATAL_COND(instance != nullptr, "Reference to uninitialized singleton");
+			KRK_ASSERT(instance != nullptr, 
+				"Reference to uninitialized singleton");
 			return *instance;
 		}
 

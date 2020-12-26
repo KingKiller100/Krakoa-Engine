@@ -5,9 +5,9 @@
 
 namespace krakoa::debug
 {
-	void FatalError(const std::string& msg, const klib::SourceInfo& sourceInfo)
+	void FatalError(const std::string& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger)
 	{
-		CoreLogger::GetCoreLogger().AddFatal({
+		logger.AddFatal({
 			msg
 			, sourceInfo
 			, klib::CalendarInfoSourceType::LOCAL

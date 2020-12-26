@@ -8,10 +8,16 @@
 
 #include <GLAD/glad.h>
 
+#include "../../Debug/Debug.hpp"
+
 namespace krakoa::graphics
 {
-	OpenGLTexture2D::OpenGLTexture2D(const uint32_t width, const uint32_t height, const bool cache)
-		: path("N/A"), dimensions(kmaths::Vector2u(width, height)), internalFormat(GL_RGBA8), fileFormat(GL_RGBA)
+	OpenGLTexture2D::OpenGLTexture2D(const uint32_t width, const uint32_t height)
+		: path("N/A")
+		, dimensions(kmaths::Vector2u(width, height))
+		, buffer(nullptr)
+		, internalFormat(GL_RGBA8)
+		, fileFormat(GL_RGBA)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -115,7 +121,7 @@ namespace krakoa::graphics
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	bool OpenGLTexture2D::operator==(const iTexture & other) const noexcept
+	bool OpenGLTexture2D::operator==(const iTexture& other) const noexcept
 	{
 		return rendererID == other.GetAssetID();
 	}

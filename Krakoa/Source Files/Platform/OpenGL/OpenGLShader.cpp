@@ -4,7 +4,7 @@
 #include "../../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
-#include <Utility/File System/kFileSystem.hpp>
+#include <Utility/FileSystem/kFileSystem.hpp>
 
 #include <GLAD/glad.h>
 #include "../../Instrumentor.hpp"

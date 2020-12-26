@@ -7,7 +7,7 @@
 #include "../Core/Logging/CoreLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
-#include <Utility/String/kStringManipulation.hpp>
+#include <Utility/String/kStringTricks.hpp>
 
 namespace krakoa::graphics
 {

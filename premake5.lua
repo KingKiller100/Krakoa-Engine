@@ -96,6 +96,7 @@ project "Krakoa"
     filter "configurations:Debug"
         defines 
         {
+            "KLIB_SHORT_NAMESPACE",
             "KRAKOA_DEBUG",
             "KLIB_DEBUG"
         }
@@ -172,11 +173,19 @@ project "Hooper2"
         "Krakoa"
     }
 
+    defines
+    {
+        "KLIB_LIB",
+        "KLIB_SHORT_NAMESPACE",
+        "_CRT_SECURE_NO_WARNINGS"
+    }
+
     filter "system:Windows"
         systemversion "latest"
         
         defines
         {
+            "KLIB_WINDOWS_OS",
             "KRAKOA_OS_WINDOWS"
         }
 

@@ -6,7 +6,7 @@
 #include "../../Core/Logging/CoreLogger.hpp"
 #include "../../Platform/OpenGL/OpenGLShader.hpp"
 
-#include <Utility/File System/kFileSystem.hpp>
+#include <Utility/FileSystem/kFileSystem.hpp>
 
 namespace krakoa::graphics
 {

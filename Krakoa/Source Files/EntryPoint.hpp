@@ -18,6 +18,8 @@ inline void Launch();
 int main(int argc, char** argv)
 {
 	klib::kLocale::SetLocale("");
+	klib::kCalendar::UsePlatformCalendarInfoSource();
+	
 	memory::HeapFactory::Initialize();
 	Launch();
 	memory::HeapFactory::ReportMemoryLeaks();
@@ -28,7 +30,6 @@ int main(int argc, char** argv)
 
 inline void Launch()
 {
-	klib::kCalendar::UsePlatformCalendarInfoSource();
 	
 #ifdef KRAKOA_TEST
 	krakoa::tests::TestDriver::Initialize();

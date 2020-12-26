@@ -26,7 +26,7 @@ namespace krakoa::graphics
 
 	namespace
 	{
-		constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f, kmaths::Theta_Type::DEGREES);
+		constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f, kmaths::Theta::DEGREES);
 	}
 	
 	_2D::PrimitivesData *pData = nullptr;

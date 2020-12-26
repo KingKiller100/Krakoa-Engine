@@ -6,11 +6,11 @@
 
 #include "../../Core/Logging/MemoryLogger.hpp"
 
-#include <Maths/Constants.hpp>
+#include <Maths/kMathsConstants.hpp>
 #include <Maths/BytesUnits.hpp>
 #include <Maths/kAlgorithms.hpp>
 
-#include <Utility/File System/kFileSystem.hpp>
+#include <Utility/FileSystem/kFileSystem.hpp>
 
 #include <iostream>
 
@@ -54,7 +54,7 @@ namespace memory
 
 		if (kFileSystem::CheckFileExists(path.string()))
 		{
-			kFileSystem::RemoveFile(path);
+			kFileSystem::Remove(path);
 		}
 
 		MEM_INIT_LOGS(R"(

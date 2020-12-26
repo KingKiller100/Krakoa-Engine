@@ -6,7 +6,7 @@
 #include "../../Platform//OpenGL/OpenGLTexture2D.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 
-#include <Utility/String/kStringManipulation.hpp>
+#include <Utility/String/kStringTricks.hpp>
 
 namespace krakoa::graphics
 {

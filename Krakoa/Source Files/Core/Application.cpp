@@ -15,13 +15,11 @@
 #include "../Graphics/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
 
-#include <Utility/Debug Helper/kDebugger.hpp>
+#include <Utility/Debug/kDebugger.hpp>
 #include <Utility/Logging/kLogging.hpp>
 
 namespace krakoa
-{
-	using namespace klib;
-	
+{	
 	Application::Application(Token&)
 		: isRunning(true),
 		timeStep(/*120*/),
@@ -29,8 +27,6 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		klib::kDebug::CheckRemoteDebuggerAttached("DebugPlease");
-		
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NORM);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");

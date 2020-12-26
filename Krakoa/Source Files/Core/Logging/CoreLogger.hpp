@@ -52,7 +52,6 @@ namespace krakoa
 #define KRK_LOG_CLEAR()                                             ::krakoa::CoreLogger::GetCoreLogger().ClearCache();
 
 #ifdef KRAKOA_DEBUG
-#	include <Utility/Debug Helper/kAssert.hpp>
 #	define KRK_ASSERT(condition, msg)                                kAssert(condition, msg)
 #else
 #	define KRK_ASSERT(condition, msg)                                if ( !(condition) ) { ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(klib::kLogs::LogMessage(msg, SOURCE_INFO())); throw std::exception(); }

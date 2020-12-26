@@ -32,7 +32,6 @@ ExampleGames/Hooper2/*.json
 *.userprefs
 
 # Build results
-[Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/

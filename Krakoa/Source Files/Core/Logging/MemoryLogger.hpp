@@ -4,8 +4,6 @@
 
 #include <Utility/Logging/kLogging.hpp>
 
-#include <stdexcept>
-
 namespace memory
 {
 	class MemoryLogger
@@ -37,7 +35,7 @@ namespace memory
 #define MEM_NORM(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::NORM, ::klib::kLogs::LogMessage(msg));
 #define MEM_INFO(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::INFO, ::klib::kLogs::LogMessage(msg));
 #define MEM_WARN(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::WARN, ::klib::kLogs::LogMessage(msg));
-#define MEM_ERRR(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::ERRR, ::klib::kLogs::LogMessage(msg,  __FILE__, __LINE__));
+#define MEM_ERRR(msg)                                               ::memory::MemoryLogger::GetLogger().AddEntry(::klib::kLogs::LogLevel::ERRR, ::klib::kLogs::LogMessage(msg, SOURCE_INFO()));
 #define MEM_BANNER(msg, descriptor, frontPad, backPad, count)       ::memory::MemoryLogger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define MEM_LOG_SUSPEND()                                           ::memory::MemoryLogger::GetLogger().SuspendFileLogging();
 #define MEM_LOG_RESUME()                                            ::memory::MemoryLogger::GetLogger().ResumeFileLogging();
@@ -46,22 +44,3 @@ namespace memory
 #define MEM_LOG_ERASE_PREV(numOfPrevEntries)                        ::memory::MemoryLogger::GetLogger().ErasePrevious(numOfPrevEntries);
 #define MEM_LOG_CLEAR()                                             ::memory::MemoryLogger::GetLogger().ClearCache();
 
-
-#ifdef KRAKOA_DEBUG
-#	include <Utility/Debug Helper/kAssert.hpp>
-#	include <cassert>
-
-#	define MEM_FATAL(condition, msg)                        kAssert((condition), msg);
-#	define MEM_ASSERT(condition)                            assert( (condition) );
-
-#else
-#	include <cassert>
-
-#	define MEM_FATAL(condition, msg)                        if ( !(condition) )\
-	{\
-		::memory::MemoryLogger::GetLogger().OutputToFatalFile(::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));\
-		std::runtime_error(msg);\
-	}\
-	
-#	define MEM_ASSERT(condition)                            assert( (condition) );
-#endif // !KRAKOA_RELEASE

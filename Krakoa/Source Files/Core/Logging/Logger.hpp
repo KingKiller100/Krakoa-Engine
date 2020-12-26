@@ -42,7 +42,7 @@ namespace krakoa
 #define NORM(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_NORM, ::klib::kLogs::LogMessage(msg));
 #define INFO(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_INFO, ::klib::kLogs::LogMessage(msg));
 #define WARN(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_WARN, ::klib::kLogs::LogMessage(msg));
-#define ERRR(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_ERRR, ::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));
+#define ERRR(msg)                                               ::krakoa::Logger::GetLogger().AddEntry(LOG_LVL_ERRR, ::klib::kLogs::LogMessage(msg, SOURCE_INFO()));
 #define BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::Logger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define LOG_SUSPEND()                                           ::krakoa::Logger::GetLogger().SuspendFileLogging();
 #define LOG_RESUME()                                            ::krakoa::Logger::GetLogger().ResumeFileLogging();
@@ -50,11 +50,3 @@ namespace krakoa
 #define LOG_GET_LAST()                                          ::krakoa::Logger::GetLogger().GetLastCachedEntry();
 #define LOG_ERASE_PREV(numOfPrevEntries)                        ::krakoa::Logger::GetLogger().ErasePrevious(numOfPrevEntries);
 #define LOG_CLEAR()                                             ::krakoa::Logger::GetLogger().ClearCache();
-
-
-#ifdef KRAKOA_DEBUG
-#	include <Utility/Debug Helper/kAssert.hpp>
-#	define FATAL(condition, msg)                                kAssert((condition), msg);
-#else
-#	define FATAL(condition, msg)                                if ( !(condition) ) ::krakoa::Logger::GetLogger().OutputToFatalFile(::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));
-#endif // !KRAKOA_RELEASE

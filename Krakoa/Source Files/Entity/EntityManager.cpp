@@ -7,6 +7,8 @@
 #include "Components/Transform.hpp"
 #include "Components/Appearance.hpp"
 
+#include "../Debug/Debug.hpp"
+
 namespace krakoa
 {
 	EntityManager::EntityManager(Token)
@@ -46,9 +48,9 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		entities.erase(std::find_if(entities.begin(), entities.end(), [&name](const Solo_Ptr<Entity>& entity)
-		{
-			return entity->GetName() == name;
-		}));
+			{
+				return entity->GetName() == name;
+			}));
 	}
 
 	void EntityManager::Remove(const unsigned id)
@@ -56,9 +58,9 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		entities.erase(std::find_if(entities.begin(), entities.end(), [id](const Solo_Ptr<Entity>& entity)
-		{
-			return entity->GetID() == id;
-		}));
+			{
+				return entity->GetID() == id;
+			}));
 	}
 
 	void EntityManager::Update(const float dt)
@@ -119,7 +121,7 @@ namespace krakoa
 					}*/
 				break;
 			default: // case of an unknown geometry type
-				KRK_ASSERT(false, "Failed to draw unknown geometry type");
+				KRK_FATAL("Failed to draw unknown geometry type");
 				break;
 			}
 		}
@@ -131,9 +133,9 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto iter = std::find_if(entities.begin(), entities.end(), [&name](const Solo_Ptr<Entity>& entity)
-		{
-			return entity->GetName() == name;
-		});
+			{
+				return entity->GetName() == name;
+			});
 
 		return iter != entities.end();
 	}
@@ -143,9 +145,9 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto iter = std::find_if(entities.begin(), entities.end(), [&id](const Solo_Ptr<Entity>& entity)
-		{
-			return entity->GetID() == id;
-		});
+			{
+				return entity->GetID() == id;
+			});
 
 		return iter != entities.end();
 	}
@@ -155,12 +157,12 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto iter = std::find_if(entities.begin(), entities.end(), [&name](const Solo_Ptr<Entity>& entity)
-		{
-			return entity->GetName() == name;
-		});
+			{
+				return entity->GetName() == name;
+			});
 
-		if (iter == entities.end())
-			KRK_ASSERT(false, klib::kString::ToString("Entity \"{0}\" does not exist", name));
+		KRK_FATAL_COND(iter == entities.end(),
+			klib::ToString("Entity \"{0}\" does not exist", name));
 
 		return **iter;
 	}
@@ -170,12 +172,12 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto iter = std::find_if(entities.begin(), entities.end(), [id](const Solo_Ptr<Entity>& entity)
-		{
-			return entity->GetID() == id;
-		});
+			{
+				return entity->GetID() == id;
+			});
 
-		if (iter == entities.end())
-			KRK_ASSERT(false, klib::kString::ToString("Entity ID \"{0}\" does not exist", id));
+		KRK_FATAL_COND(iter == entities.end(),
+			klib::ToString("Entity ID \"{0}\" does not exist", id));
 
 		return **iter;
 	}
@@ -193,9 +195,9 @@ namespace krakoa
 			return;
 
 		std::sort(entities.begin(), entities.end(), [](const Solo_Ptr<Entity>& e1, const Solo_Ptr<Entity>& e2)
-		{
-			return e1->IsActive() == true
-				&& e2->IsActive() == false;
-		});
+			{
+				return e1->IsActive() == true
+					&& e2->IsActive() == false;
+			});
 	}
 }

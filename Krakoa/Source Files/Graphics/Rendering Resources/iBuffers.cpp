@@ -1,10 +1,10 @@
 ﻿#include "Precompile.hpp"
 #include "iBuffers.hpp"
 
-#include "../../Core/Logging/CoreLogger.hpp"
-
+#include "../../Debug/Debug.hpp"
 #include "../../Platform/OpenGL/OpenGLBuffers.hpp"
 #include "../Renderer.hpp"
+
 
 namespace krakoa::graphics
 {
@@ -14,9 +14,9 @@ namespace krakoa::graphics
 	iVertexBuffer * iVertexBuffer::Create(uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::NONE:   KRK_ERRR("RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexBuffer(size);
-		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
+		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}
@@ -24,9 +24,9 @@ namespace krakoa::graphics
 	iVertexBuffer * iVertexBuffer::Create(float * vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::NONE:   KRK_ERRR("RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexBuffer(vertices, size);
-		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
+		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}
@@ -37,9 +37,9 @@ namespace krakoa::graphics
 	iIndexBuffer * iIndexBuffer::Create(uint32_t * indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::NONE:   KRK_ERRR("RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::ApiType::OPENGL: return new OpenGLIndexBuffer(indices, count);
-		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
+		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 		return nullptr;
 	}

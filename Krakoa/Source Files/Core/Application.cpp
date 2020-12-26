@@ -11,6 +11,7 @@
 #include "../Layers/FPS/FPSLayer.hpp"
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
+#include "../Debug/Debug.hpp"
 #include "../Graphics/Renderer.hpp"
 #include "../Graphics/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
@@ -29,8 +30,7 @@ namespace krakoa
 
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NORM);
-		KRK_ASSERT(!instance, "Instance of the application already exists!");
-		//KRK_BANNER( "ENTRY", "WELCOME TO THE KRAKOA ENGINE", "*", "*", 20);
+		KRK_FATAL_COND(!instance, "Instance of the application already exists!");
 
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());

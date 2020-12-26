@@ -3,10 +3,12 @@
 
 #include "../Renderer.hpp"
 
+#include "../../Debug/Debug.hpp"
 #include "../../Core/Logging/CoreLogger.hpp"
 #include "../../Platform/OpenGL/OpenGLShader.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
+
 
 namespace krakoa::graphics
 {
@@ -22,9 +24,9 @@ namespace krakoa::graphics
 		const auto path = currentDir + formattedPath.data();
 
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ASSERT(false, "RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::ApiType::NONE:   KRK_ERRR("RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::ApiType::OPENGL: return new OpenGLShader(name, path);
-		default:                        KRK_ASSERT(false, "Unknown RendererAPI type!");
+		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 
 		return nullptr;

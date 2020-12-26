@@ -42,7 +42,7 @@ namespace krakoa
 #define KRK_NORM(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_NORM, ::klib::kLogs::LogMessage(msg));
 #define KRK_INFO(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_INFO, ::klib::kLogs::LogMessage(msg));
 #define KRK_WARN(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_WARN, ::klib::kLogs::LogMessage(msg));
-#define KRK_ERRR(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_ERRR, ::klib::kLogs::LogMessage(msg, __FILE__, __LINE__));
+#define KRK_ERRR(msg)                                               ::krakoa::CoreLogger::GetCoreLogger().AddEntry(KRK_LOG_LVL_ERRR, ::klib::kLogs::LogMessage(msg, SOURCE_INFO()));
 #define KRK_BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::CoreLogger::GetCoreLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define KRK_SUSPEND()                                               ::krakoa::CoreLogger::GetCoreLogger().SuspendFileLogging();
 #define KRK_RESUME()                                                ::krakoa::CoreLogger::GetCoreLogger().ResumeFileLogging();
@@ -51,8 +51,3 @@ namespace krakoa
 #define KRK_LOG_ERASE_PREV(numOfPrevEntries)                        ::krakoa::CoreLogger::GetCoreLogger().ErasePrevious(numOfPrevEntries)
 #define KRK_LOG_CLEAR()                                             ::krakoa::CoreLogger::GetCoreLogger().ClearCache();
 
-#ifdef KRAKOA_DEBUG
-#	define KRK_ASSERT(condition, msg)                                kAssert(condition, msg)
-#else
-#	define KRK_ASSERT(condition, msg)                                if ( !(condition) ) { ::krakoa::CoreLogger::GetCoreLogger().OutputToFatalFile(klib::kLogs::LogMessage(msg, SOURCE_INFO())); throw std::exception(); }
-#endif // !KRAKOA_RELEASE

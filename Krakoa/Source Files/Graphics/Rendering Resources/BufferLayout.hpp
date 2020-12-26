@@ -2,7 +2,6 @@
 
 #include "../../Core/Logging/CoreLogger.hpp"
 
-
 #include <string>
 #include <vector>
 
@@ -16,55 +15,9 @@ namespace krakoa::graphics
 		BOOL
 	};
 
-	static uint32_t GetComponentCount(ShaderDataType type)
-	{
-		switch (type) {
-		case krakoa::graphics::ShaderDataType::INT:	      return 1;
-		case krakoa::graphics::ShaderDataType::INT2:      return 2;
-		case krakoa::graphics::ShaderDataType::INT3:      return 3;
-		case krakoa::graphics::ShaderDataType::INT4:      return 4;
-		case krakoa::graphics::ShaderDataType::FLOAT:     return 1;
-		case krakoa::graphics::ShaderDataType::FLOAT2:    return 2;
-		case krakoa::graphics::ShaderDataType::FLOAT3:    return 3;
-		case krakoa::graphics::ShaderDataType::FLOAT4:    return 4;
-		case krakoa::graphics::ShaderDataType::MAT2:      return 2 * 2;
-		case krakoa::graphics::ShaderDataType::MAT3:      return 3 * 3;
-		case krakoa::graphics::ShaderDataType::MAT4:      return 4 * 4;
-		case krakoa::graphics::ShaderDataType::BOOL:      return 1;
-		default:
-		{
-			KRK_ASSERT(false, "Unknown ShaderDataType");
-			return 0;
-		}
-		}
-	}
+	static uint32_t GetComponentCount(ShaderDataType type);
 
-	static uint32_t ShaderDataTypeBytes(ShaderDataType type)
-	{
-		uint32_t size = 0;
-
-		switch (type) {
-		case krakoa::graphics::ShaderDataType::INT:	      size = sizeof(int)  ; break;
-		case krakoa::graphics::ShaderDataType::INT2:      size = sizeof(int)  ; break;
-		case krakoa::graphics::ShaderDataType::INT3:      size = sizeof(int)  ; break;
-		case krakoa::graphics::ShaderDataType::INT4:      size = sizeof(int)  ; break;
-		case krakoa::graphics::ShaderDataType::FLOAT:     size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::FLOAT2:    size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::FLOAT3:    size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::FLOAT4:    size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::MAT2:      size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::MAT3:      size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::MAT4:      size = sizeof(float); break;
-		case krakoa::graphics::ShaderDataType::BOOL:      size = sizeof(bool) ; break;
-		default:
-		{
-			KRK_ASSERT(false, "Unknown ShaderDataType");
-			return 0;
-		}
-		}
-
-		return size * GetComponentCount(type);
-	}
+	static uint32_t ShaderDataTypeBytes(ShaderDataType type);
 
 	struct BufferElement
 	{
@@ -74,13 +27,7 @@ namespace krakoa::graphics
 		ptrdiff_t offset;
 		bool normalized;
 
-		BufferElement(ShaderDataType type, const std::string_view name, bool normalized = false)
-			: name(name),
-			type(type),
-			bytes(ShaderDataTypeBytes(type)),
-			offset(0),
-			normalized(normalized)
-		{}
+		BufferElement(ShaderDataType type, const std::string_view& name, bool normalized = false);
 	};
 
 	class BufferLayout

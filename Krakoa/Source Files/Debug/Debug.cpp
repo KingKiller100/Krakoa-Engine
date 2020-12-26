@@ -3,18 +3,14 @@
 
 #include "../Core/Logging/CoreLogger.hpp"
 
-#include <Utility/Debug/kAssert.hpp>
-
 namespace krakoa::debug
 {
-	void FatalError(const std::string_view& msg, const klib::SourceInfo& sourceInfo)
+	void FatalError(const std::string& msg, const klib::SourceInfo& sourceInfo)
 	{
-		CoreLogger::GetCoreLogger().OutputToFatalFile({
+		CoreLogger::GetCoreLogger().AddFatal({
 			msg
 			, sourceInfo
 			, klib::CalendarInfoSourceType::LOCAL
-		});
-
-		throw std::exception();
+			});
 	}
 }

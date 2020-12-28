@@ -4,7 +4,7 @@
 #include "Rendering Resources/iShader.hpp"
 
 #include "../Instrumentor.hpp"
-#include "../Core/Logging/CoreLogger.hpp"
+#include "../Logging/CoreLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
 #include <Utility/String/kStringTricks.hpp>

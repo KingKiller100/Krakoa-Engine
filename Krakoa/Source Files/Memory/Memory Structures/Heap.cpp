@@ -3,7 +3,7 @@
 
 #include "AllocHeader.hpp"
 
-#include "../../Core/Logging/MemoryLogger.hpp"
+#include "../../Logging/MemoryLogger.hpp"
 
 #include <Maths/BytesUnits.hpp>
 

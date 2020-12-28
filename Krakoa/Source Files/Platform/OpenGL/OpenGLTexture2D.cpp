@@ -2,7 +2,7 @@
 #include "OpenGLTexture2D.hpp"
 
 #include "../../Instrumentor.hpp"
-#include "../../Core/Logging/CoreLogger.hpp"
+#include "../../Logging/CoreLogger.hpp"
 
 #include <stb_image.hpp>
 

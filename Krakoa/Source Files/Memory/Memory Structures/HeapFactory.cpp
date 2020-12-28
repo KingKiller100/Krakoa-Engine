@@ -4,7 +4,7 @@
 #include "DefaultHeap.hpp"
 #include "AllocHeader.hpp"
 
-#include "../../Core/Logging/MemoryLogger.hpp"
+#include "../../Logging/MemoryLogger.hpp"
 
 #include <Maths/kMathsConstants.hpp>
 #include <Maths/BytesUnits.hpp>

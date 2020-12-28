@@ -4,7 +4,7 @@
 #include "Heap.hpp"
 #include "MemoryTypeSizes.hpp"
 
-#include "../../Core/Logging/MemoryLogger.hpp"
+#include "../../Logging/MemoryLogger.hpp"
 
 #include <Maths/BytesUnits.hpp>
 #include <Utility/String/kToString.hpp>

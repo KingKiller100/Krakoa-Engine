@@ -4,7 +4,7 @@
 #include "MemoryErrors.hpp"
 #include "Memory Structures/MemoryTypeSizes.hpp"
 
-#include "../Core/Logging/MemoryLogger.hpp"
+#include "../Logging/MemoryLogger.hpp"
 
 #include <Maths/kAlgorithms.hpp>
 #include <Utility/String/kToString.hpp>

@@ -3,7 +3,7 @@
 #include "Components/ComponentBase.hpp"
 
 #include "../Patterns/MemPooler.hpp"
-#include "../Core/Logging/CoreLogger.hpp"
+#include "../Logging/CoreLogger.hpp"
 
 #include <HelperMacros.hpp>
 

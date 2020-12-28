@@ -1,7 +1,7 @@
 #include "Precompile.hpp"
 #include "Application.hpp"
 
-#include "Logging/CoreLogger.hpp"
+#include "../Logging/CoreLogger.hpp"
 
 #include "../Instrumentor.hpp"
 
@@ -28,6 +28,8 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
+		debug::RaiseNotice("Test", SOURCE_INFO());
+		
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NORM);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");

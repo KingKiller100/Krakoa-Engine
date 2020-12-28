@@ -3,7 +3,7 @@
 
 #include "../Source Files/PointerTypes.hpp"
 #include "../Source Files/Patterns/MemoryTracker.hpp"
-#include "../Source Files/Core/Logging/MemoryLogger.hpp"
+#include "../Source Files/Logging/MemoryLogger.hpp"
 #include "../Source Files/Memory/Memory Structures/MemoryTypeSizes.hpp"
 
 #include <Utility/String/kStringTricks.hpp>

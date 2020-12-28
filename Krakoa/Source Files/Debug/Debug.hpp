@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Core/Logging/CoreLogger.hpp"
-#include "../Core/Logging/MemoryLogger.hpp"
+#include "../Logging/CoreLogger.hpp"
+#include "../Logging/MemoryLogger.hpp"
 
 #include <Utility/Debug/kAssert.hpp>
 #include <Utility/Debug/kDebugger.hpp>
@@ -9,6 +9,7 @@
 
 namespace krakoa::debug
 {
+	void RaiseNotice(const std::string_view& msg, const klib::SourceInfo& sourceInfo);
 	void RaiseException(const std::string& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger);
 }
 

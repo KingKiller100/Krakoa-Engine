@@ -14,7 +14,7 @@
 
 // Core
 #include "Core/Application.hpp"
-#include "Core/Logging/Logger.hpp"
+#include "Logging/Logger.hpp"
 
 // Input
 #include "Input/KeyCode.hpp"

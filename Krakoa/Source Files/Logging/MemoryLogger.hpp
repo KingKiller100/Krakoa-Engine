@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../PointerTypes.hpp"
+#include "../PointerTypes.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
 

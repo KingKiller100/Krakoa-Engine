@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../EngineMacros.hpp"
+#include "../EngineMacros.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
 

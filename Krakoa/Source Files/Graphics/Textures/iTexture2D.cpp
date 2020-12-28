@@ -4,7 +4,7 @@
 #include "../Renderer.hpp"
 
 #include "../../Debug/Debug.hpp"
-#include "../../Core/Logging/CoreLogger.hpp"
+#include "../../Logging/CoreLogger.hpp"
 #include "../../Platform//OpenGL/OpenGLTexture2D.hpp"
 
 #include <Utility/String/kStringTricks.hpp>

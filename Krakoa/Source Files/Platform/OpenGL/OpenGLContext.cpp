@@ -3,7 +3,7 @@
 
 #include "../../Debug/Debug.hpp"
 #include "../../Instrumentor.hpp"
-#include "../../Core/Logging/CoreLogger.hpp"
+#include "../../Logging/CoreLogger.hpp"
 
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>

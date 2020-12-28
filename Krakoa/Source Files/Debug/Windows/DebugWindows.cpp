@@ -14,25 +14,41 @@
 namespace krakoa::debug::windows
 {
 	ENUM_CLASS(MessageBoxResponse, long,
-		MSG_OKAY = 1,
-		MSG_CANCEL,
-		MSG_ABORT,
-		MSG_RETRY,
-		MSG_IGNORE,
-		MSG_YES,
-		MSG_NO,
-		MSG_TRY_AGAIN = 10,
-		MSG_CONTINUE
+		MSGBOX_OKAY = 1,
+		MSGBOX_CANCEL,
+		MSGBOX_ABORT,
+		MSGBOX_RETRY,
+		MSGBOX_IGNORE,
+		MSGBOX_YES,
+		MSGBOX_NO,
+		MSGBOX_TRY_AGAIN = 10,
+		MSGBOX_CONTINUE
 	);
 
 	void RaiseNoticeImpl(const std::string_view& msg, const klib::SourceInfo& sourceInfo)
 	{
-		const auto caption = klib::ToString("{0}\n Source: {1}", msg, sourceInfo);
+		const auto caption = klib::ToString("Description: {0}\n"
+			"Click \"OK\" to continue.\n"
+			"Click \"Cancel\" to close application.\n"
+			"[File]: {1} [{2}]\n"
+			"[Function]: {3}\n"
+			, msg
+			, sourceInfo.file
+			, sourceInfo.line
+			, sourceInfo.func
+		);
 
-		const auto ret = MessageBoxA(nullptr, caption.data(), "ERROR OCCURRED", MB_COMPOSITE);
+		const auto ret = MessageBoxA(nullptr
+			, caption.data()
+			, "Krakoa Debug Error"
+			, MB_OKCANCEL | MB_ICONERROR);
+		
 		const auto response = static_cast<MessageBoxResponse>(ret);
-		const auto valueStr = response.ToString();
-		std::cout << valueStr;
+		
+		std::cout << response.ToString();
+
+		if (response == MessageBoxResponse::MSGBOX_CANCEL)
+			exit(1);
 	}
 }
 

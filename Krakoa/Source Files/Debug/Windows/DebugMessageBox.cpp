@@ -1,13 +1,13 @@
 ﻿#include "Precompile.hpp"
-#include "DebugWindows.hpp"
+#include "DebugMessageBox.hpp"
 
-#include <iostream>
+#if KRAKOA_OS_WINDOWS
 
 #include <Utility/Enum/kEnum.hpp>
 #include <Utility/String/kToString.hpp>
 #include <Utility/Debug/Source/kSourceInfoToString.hpp>
 
-#if KRAKOA_OS_WINDOWS
+// #include <iostream>
 
 #include <Windows.h>
 
@@ -25,11 +25,9 @@ namespace krakoa::debug::windows
 		MSGBOX_CONTINUE
 	);
 
-	void RaiseNoticeImpl(const std::string_view& msg, const klib::SourceInfo& sourceInfo)
+	void RaiseMessageBox_Windows(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept
 	{
-		const auto caption = klib::ToString("Description: {0}\n"
-			"Click \"OK\" to continue.\n"
-			"Click \"Cancel\" to close application.\n"
+		const auto caption = klib::ToString("[Description] {0}"
 			"[File]: {1} [{2}]\n"
 			"[Function]: {3}\n"
 			, msg
@@ -40,12 +38,12 @@ namespace krakoa::debug::windows
 
 		const auto ret = MessageBoxA(nullptr
 			, caption.data()
-			, "Krakoa Debug Error"
-			, MB_OKCANCEL | MB_ICONERROR);
+			, title.data()
+			, optionsMask);
 		
 		const auto response = static_cast<MessageBoxResponse>(ret);
 		
-		std::cout << response.ToString();
+		// std::cout << response.ToString();
 
 		if (response == MessageBoxResponse::MSGBOX_CANCEL)
 			exit(1);

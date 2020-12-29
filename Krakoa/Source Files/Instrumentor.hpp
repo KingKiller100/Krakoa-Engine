@@ -26,6 +26,7 @@ namespace krakoa
 
 		void WriteProfile(const ProfilerResult<std::time_t>& result);
 
+	private:
 		void WriteHeader();
 
 		void WriteFooter();

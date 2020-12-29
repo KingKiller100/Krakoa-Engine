@@ -30,7 +30,7 @@ namespace krakoa::graphics
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::ApiType::NONE:   KRK_ERRR("RedererAPI::NONE not supported yet!"); break;
 		case iRendererAPI::ApiType::OPENGL: return new OpenGLTexture2D(formattedPath, cache);
-		default:                            KRK_FALSE("Unknown RendererAPI type!");
+		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 
 		return nullptr;

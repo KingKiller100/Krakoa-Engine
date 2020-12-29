@@ -16,7 +16,6 @@
 #include "../Graphics/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
 
-#include <Utility/Debug/kDebugger.hpp>
 #include <Utility/Logging/kLogging.hpp>
 
 namespace krakoa
@@ -29,7 +28,7 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 		
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
-		KRK_SET_LOG_MIN(KRK_LOG_LVL_NORM);
+		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBUG);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
 
 		// Initialize Window

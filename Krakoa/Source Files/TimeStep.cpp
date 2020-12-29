@@ -22,7 +22,7 @@ namespace krakoa::time
 	float TimeStep::CalculateLifeTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		return timer.GetLifeTime<klib::kStopwatch::units::Millis>();
+		return timer.GetLifeTime<klib::kStopwatch::units::Secs>();
 	}
 
 	float TimeStep::GetDeltaTime() const noexcept
@@ -35,7 +35,7 @@ namespace krakoa::time
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto elapsed = timer.GetElapsedTime<klib::kStopwatch::units::Millis>();
+		const auto elapsed = timer.GetElapsedTime<klib::kStopwatch::units::Secs>();
 		
 		if (isTimeIncrementFixed)
 			return kmaths::Min(elapsed, targetIncrement);

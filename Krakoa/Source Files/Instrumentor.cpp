@@ -16,6 +16,8 @@ namespace krakoa
 
 	void Instrumentor::BeginSession(const std::string& name, const std::string& filepath)
 	{
+		const auto locker = std::unique_lock(mutexLock);
+		
 		const auto path = klib::kFileSystem::AppendFileExtension(filepath, "json");
 		if (activeSession) { EndSession(); }
 		activeSession = true;
@@ -26,6 +28,8 @@ namespace krakoa
 
 	void Instrumentor::EndSession()
 	{
+		const auto locker = std::unique_lock(mutexLock);
+		
 		if (!activeSession) { return; }
 		activeSession = false;
 		WriteFooter();
@@ -35,12 +39,12 @@ namespace krakoa
 
 	void Instrumentor::WriteProfile(const ProfilerResult<std::time_t>& result)
 	{
-		std::lock_guard<std::mutex> lock(mutexLock);
+		const auto locker = std::unique_lock(mutexLock);
 
 		if (profileCount++ > 0) { outputStream << ","; }
 
 		std::string name = result.name;
-		std::replace(name.begin(), name.end(), '"', '\'');
+		std::replace(name.begin(), name.end(), '\"', '\'');
 
 		outputStream << "{";
 		outputStream << "\"cat\":\"function\",";

@@ -61,7 +61,7 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_NORM(kString::ToString("Creating Window {0} with dimensions ({0}, {1})",
+		KRK_NORM(kString::ToString("Creating Window {0} with dimensions ({1}, {2})",
 			data.title,
 			data.dimensions.X(),
 			data.dimensions.Y()));
@@ -82,7 +82,7 @@ namespace krakoa
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 #endif
 
-		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.c_str(), nullptr, nullptr);
+		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.data(), nullptr, nullptr);
 		KRK_ASSERT(window != nullptr, "Window pointer not created");
 
 		pRenderContext = std::make_unique<graphics::OpenGLContext>(window);

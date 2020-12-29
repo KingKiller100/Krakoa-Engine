@@ -9,8 +9,9 @@
 extern void krakoa::CreateApplication();
 #endif
 
-#include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
 #include "Memory/Memory Structures/HeapFactory.hpp"
+#include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
+#include <Utility/Debug/kDebugger.hpp>
 
 
 inline void Launch();
@@ -30,6 +31,7 @@ int main(int argc, char** argv)
 
 inline void Launch()
 {
+	klib::kDebug::IsDebuggerAttached("DebugPlease");
 	
 #ifdef KRAKOA_TEST
 	krakoa::tests::TestDriver::Initialize();

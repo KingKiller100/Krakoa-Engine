@@ -27,8 +27,6 @@ namespace krakoa
 		isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();
-
-		debug::RaiseNotice("Test", SOURCE_INFO());
 		
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NORM);

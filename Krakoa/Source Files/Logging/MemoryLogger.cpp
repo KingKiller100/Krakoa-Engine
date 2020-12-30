@@ -22,7 +22,7 @@ namespace memory
 		
 		pMemoryLogger = std::make_unique<Logging>(dir, filename, extension, name);
 		pMemoryLogger->ToggleConsoleEnabled();
-		pMemoryLogger->OutputInitialized(openingMsg);
+		pMemoryLogger->AddRaw(openingMsg);
 	}
 
 	Logging & MemoryLogger::GetLogger()

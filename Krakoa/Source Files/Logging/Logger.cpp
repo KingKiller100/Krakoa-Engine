@@ -21,7 +21,11 @@ namespace krakoa
 
 		pClientLogger = std::make_unique<Logging>(dir, name, extension, name);
 		pClientLogger->ToggleConsoleEnabled();
-		pClientLogger->OutputInitialized("Welcome client!");
+		
+		const auto padding = std::string(72, '*');
+		pClientLogger->AddRaw(padding);
+		pClientLogger->AddRaw("Welcome client!");
+		pClientLogger->AddRaw(padding);
 	}
 
 	Logging & Logger::GetLogger()

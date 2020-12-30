@@ -59,8 +59,7 @@ namespace memory
 			kFileSystem::Remove(path);
 		}
 
-		MEM_INIT_LOGS(R"(
-   Definitions:
+		MEM_INIT_LOGS(R"(Definitions:
    Object - "Structured piece of data in memory"
    Block -  "Allocated space of an object in memory 
    including AllocHeader & end marker"
@@ -83,7 +82,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 			totalBytes += heap->GetTotalAllocatedBytes();
 			totalAllocations += heap->WalkTheHeap();
-			MEM_INFO(heap->GetStatus());
+			MEM_INF(heap->GetStatus());
 
 			heap->DeleteLeaks();
 			free(heap);
@@ -92,7 +91,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 		totalBytes += defaultHeap->GetTotalAllocatedBytes();
 		totalAllocations += defaultHeap->WalkTheHeap();
-		MEM_INFO(defaultHeap->GetStatus());
+		MEM_INF(defaultHeap->GetStatus());
 
 		LogTotalBytes(&totalBytes);
 		LogTotalAllocations(&totalAllocations);
@@ -124,14 +123,14 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		const auto& heap = heaps[index];
 
 		const auto name = klib::kString::ToWriter(heap->GetName());
-		MEM_INFO("Walking Heap: " + name);
+		MEM_INF("Walking Heap: " + name);
 
 		return heaps[index]->GetStatus();
 	}
 
 	std::string HeapFactory::WalkTheDefaultHeap()
 	{
-		MEM_INFO("Walking Heap: Default");
+		MEM_INF("Walking Heap: Default");
 
 		return defaultHeap->GetStatus();
 	}
@@ -224,7 +223,7 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 			CAST(size_t, kmaths::BytesUnits::GIGA));
 
 
-		MEM_INFO(klib::kString::ToString(
+		MEM_INF(klib::kString::ToString(
 			R"(
 Total Heap Bytes:
 Gigabytes: {0:3}
@@ -242,7 +241,7 @@ kilo,
 	{
 		using namespace klib::kString;
 
-		MEM_INFO(ToString("\nTotal Heap Allocations At Program Shut Down: {0}",
+		MEM_INF(ToString("\nTotal Heap Allocations At Program Shut Down: {0}",
 			*bytes));
 	}
 

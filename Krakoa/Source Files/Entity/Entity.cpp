@@ -98,14 +98,14 @@ namespace krakoa
 
 	void Entity::Update(const float dt)
 	{
-		KRK_DBUG("Entity \"" + name + "\" Update Called");
+		KRK_DBG("Entity \"" + name + "\" Update Called");
 
 		for (auto& component : components)
 		{
 			if (!component.second->IsActive())
 				continue;
 
-			KRK_DBUG(klib::kString::ToString("\tComponent \"{0}\" Update Called", component.first));
+			KRK_DBG(klib::kString::ToString("\tComponent \"{0}\" Update Called", component.first));
 
 			component.second->Update(dt);
 		}

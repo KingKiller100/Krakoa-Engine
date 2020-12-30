@@ -312,7 +312,7 @@ namespace krakoa::graphics
 		}
 
 		location = glGetUniformLocation(rendererID, name.data());
-		if (location < 0) KRK_INFO(klib::kString::ToString("uniform %s does not exist inside this shader", name));
+		if (location < 0) KRK_INF(klib::kString::ToString("uniform %s does not exist inside this shader", name));
 		uniformLocationUMap.insert(std::make_pair(name, location));
 		return location;
 	}

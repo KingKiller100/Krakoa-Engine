@@ -46,7 +46,7 @@ namespace krakoa::graphics
 
 				if (isError)
 				{
-					KRK_ERRR(klib::kString::ToString(msgFormat,
+					KRK_ERR(klib::kString::ToString(msgFormat,
 						"ERROR",
 						type,
 						severity,
@@ -54,7 +54,7 @@ namespace krakoa::graphics
 				}
 				else
 				{
-					KRK_DBUG(klib::kString::ToString(msgFormat,
+					KRK_DBG(klib::kString::ToString(msgFormat,
 						"CALLBACK",
 						type,
 						severity,
@@ -80,12 +80,12 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		// Rendering hardware info
-		KRK_INFO("API: OpenGL");
-		KRK_INFO(klib::kString::ToString("Version: {0}", rendererInfo.glVersion));
-		KRK_INFO(klib::kString::ToString("Vendor: {0}", rendererInfo.glVendor));
-		KRK_INFO(klib::kString::ToString("Hardware: {0}", rendererInfo.glRenderer));
-		KRK_INFO(klib::kString::ToString("GLFW Version: {0}", rendererInfo.glfwVersion));
-		KRK_INFO(klib::kString::ToString("ImGui Version: {0}", rendererInfo.imGuiVersion));
+		KRK_INF("API: OpenGL");
+		KRK_INF(klib::kString::ToString("Version: {0}", rendererInfo.glVersion));
+		KRK_INF(klib::kString::ToString("Vendor: {0}", rendererInfo.glVendor));
+		KRK_INF(klib::kString::ToString("Hardware: {0}", rendererInfo.glRenderer));
+		KRK_INF(klib::kString::ToString("GLFW Version: {0}", rendererInfo.glfwVersion));
+		KRK_INF(klib::kString::ToString("ImGui Version: {0}", rendererInfo.imGuiVersion));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const Colour& colour)

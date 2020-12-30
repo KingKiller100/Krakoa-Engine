@@ -12,7 +12,7 @@ public:
 	{
 		INIT_LOGS("Hooper2");
 		TOGGLE_SUBSYSTEM_LOGGING();
-		SET_LOG_MIN(LOG_LVL_DBUG);
+		SET_LOG_MIN(LOG_LVL_DBG);
 	}
 
 	~Hooper2Game() override

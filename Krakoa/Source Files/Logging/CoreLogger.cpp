@@ -2,6 +2,7 @@
 #include "CoreLogger.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
+#include <Utility/Calendar/kCalendar.hpp>
 
 namespace krakoa
 {
@@ -22,7 +23,18 @@ namespace krakoa
 		constexpr auto extension = ".log";
 
 		pCoreLogger = std::make_unique<Logging>(dir, filename, extension, name);
-		pCoreLogger->OutputInitialized(initMsg);
+		const auto padding = std::string(72, '*');
+		const auto spacing = std::string(12, ' ');
+		
+		const GregorianCalendar now(CalendarInfoSourceType::LOCAL);
+		const auto timeStr = now.GetTime().ToString(Time::MILLIS);
+		const auto dateStr = now.GetDate().ToString("mmm ddd yyyy");
+		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
+		
+		pCoreLogger->AddRaw(padding);
+		pCoreLogger->AddRaw(stamp);
+		pCoreLogger->AddRaw(initMsg);
+		pCoreLogger->AddRaw(padding);
 	}
 
 	Logging& CoreLogger::GetLogger()

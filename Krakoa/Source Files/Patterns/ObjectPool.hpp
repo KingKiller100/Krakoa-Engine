@@ -89,10 +89,10 @@ namespace patterns
 			while (node && !nextFree.compare_exchange_weak(node, node->next, std::memory_order_seq_cst))
 			{
 				const auto msg = klib::kString::ToString("Thread {0} failed to allocate", threadID);
-				KRK_DBUG(msg);
+				KRK_DBG(msg);
 			}
 
-			KRK_DBUG(klib::kString::ToString("Thread {0} successfully allocatedd", threadID));
+			KRK_DBG(klib::kString::ToString("Thread {0} successfully allocatedd", threadID));
 
 			if (nextFree == nullptr)
 				throw std::bad_alloc();
@@ -112,10 +112,10 @@ namespace patterns
 			while (!nextFree.compare_exchange_weak(node->next, node, std::memory_order_seq_cst))
 			{
 				const auto msg = klib::kString::ToString("Thread {0} failed to deallocate", threadID);
-				KRK_DBUG(msg);
+				KRK_DBG(msg);
 			}
 
-			KRK_DBUG(klib::kString::ToString("Thread {0} successfully deallocatedd", threadID));
+			KRK_DBG(klib::kString::ToString("Thread {0} successfully deallocatedd", threadID));
 
 			size--;
 		}

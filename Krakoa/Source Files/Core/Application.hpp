@@ -38,6 +38,7 @@ namespace krakoa
 		virtual void Initialize();
 		virtual void ShutDown();
 		void Run() const;
+		void Close() noexcept;
 		USE_RESULT bool IsRunning() const;
 
 		iWindow& GetWindow() const;
@@ -67,4 +68,5 @@ namespace krakoa
 	};
 
 	void CreateApplication();
+	Application& GetApp();
 }

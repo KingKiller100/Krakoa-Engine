@@ -28,7 +28,7 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 		
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
-		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBG);
+		KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
 
 		// Initialize Window
@@ -102,6 +102,11 @@ namespace krakoa
 		return false;
 	}
 
+	Application& GetApp()
+	{
+		return Application::Reference();
+	}
+
 	void Application::PushLayer(LayerBase* layer)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -152,7 +157,12 @@ namespace krakoa
 
 		pWindow->OnUpdate();
 	}
-	
+
+	void Application::Close() noexcept
+	{
+		isRunning = false;
+	}
+
 	bool Application::IsRunning() const
 	{
 		return isRunning;

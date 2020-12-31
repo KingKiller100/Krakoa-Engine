@@ -9,14 +9,4 @@ namespace krakoa::graphics
 
 	AssetID::~AssetID() noexcept
 		= default;
-
-	bool AssetID::operator==(const AssetID& other) const
-	{
-		return id == other.id;
-	}
-
-	bool AssetID::operator!=(const AssetID& other) const
-	{
-		return !(*this == other);
-	}
 }

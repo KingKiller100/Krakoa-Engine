@@ -1,16 +1,30 @@
 ﻿#include "Precompile.hpp"
 #include "TimeStep.hpp"
 
-#include <Utility/Stopwatch/kStopwatch.hpp>
 #include <Maths/kMathsFundamentals.hpp>
 
 namespace krakoa::time
 {
-	klib::kStopwatch::AccurateStopwatch timer;
+	using namespace klib::kStopwatch;
+
+	namespace
+	{
+		float CalculateDeltaTime(AccurateStopwatch* sw, float target, bool isFixed) noexcept
+		{
+			KRK_PROFILE_FUNCTION();
+
+			const auto elapsed = sw->GetElapsedTime<units::Secs>();
+
+			if (isFixed)
+				return kmaths::Min(elapsed, target);
+			else
+				return elapsed;
+		}
+	}
 
 	TimeStep::TimeStep(const float targetMilliseconds) noexcept
 		: targetIncrement(1.f / targetMilliseconds),
-		isTimeIncrementFixed(true)
+		isFixedIncrement(true)
 	{}
 
 	float TimeStep::GetLifeTime() const noexcept
@@ -22,24 +36,14 @@ namespace krakoa::time
 	float TimeStep::CalculateLifeTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		return timer.GetLifeTime<klib::kStopwatch::units::Secs>();
+		return stopwatch.GetLifeTime<units::Secs>();
 	}
 
 	float TimeStep::GetDeltaTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		return CalculateDeltaTime();
-	}
-
-	float TimeStep::CalculateDeltaTime() const noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-
-		const auto elapsed = timer.GetElapsedTime<klib::kStopwatch::units::Secs>();
-		
-		if (isTimeIncrementFixed)
-			return kmaths::Min(elapsed, targetIncrement);
-		else
-			return elapsed;
+		return CalculateDeltaTime(const_cast<AccurateStopwatch*>(std::addressof(stopwatch))
+			, targetIncrement
+			, isFixedIncrement);
 	}
 }

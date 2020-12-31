@@ -123,7 +123,7 @@ namespace krakoa::graphics
 		{
 			const auto flHue6 = hsl.hue / 60.f;
 			const auto flChroma = (1.f - kmaths::Abs(2 * hsl.lightness - 1.f)) * hsl.saturation;
-			const auto flX = flChroma * (1.f - kmaths::Abs(kmaths::FloatingPointRemainder(flHue6, 2.f) - 1.f));
+			const auto flX = flChroma * (1.f - kmaths::Abs(kmaths::FloatRemainder(flHue6, 2.f) - 1.f));
 
 			float flR1 = 0, flG1 = 0, flB1 = 0;
 			if (flHue6 < 1)
@@ -182,7 +182,7 @@ namespace krakoa::graphics
 			if (flChroma == 0)
 				hue = 0;
 			else if (r > g && r > b)
-				hue = kmaths::FloatingPointRemainder((g - b) / flChroma, 6.f) * 60.f;
+				hue = kmaths::FloatRemainder((g - b) / flChroma, 6.f) * 60.f;
 			else if (g > r && g > b)
 				hue = ((b - r) / flChroma + 2) * 60.f;
 			else if (b > r && b > g)
@@ -292,15 +292,15 @@ namespace krakoa::graphics
 		constexpr Colour& operator=(const Colour& other) noexcept
 			= default;
 
-		template<class float_t>
-		USE_RESULT constexpr kmaths::Vector4<float_t> ToFloats() const noexcept
+		template<class Float_t>
+		USE_RESULT constexpr kmaths::Vector4<Float_t> ToFloats() const noexcept
 		{
-			static_assert(std::is_floating_point_v<float_t>, "Type must be a floating point data type");
+			static_assert(std::is_floating_point_v<Float_t>, "Type must be a floating point data type");
 			
-			const auto r = kmaths::constants::Divide<float_t>(red, MaxColourValue);
-			const auto g = kmaths::constants::Divide<float_t>(green, MaxColourValue);
-			const auto b = kmaths::constants::Divide<float_t>(blue, MaxColourValue);
-			const auto a = kmaths::constants::Divide<float_t>(alpha, MaxColourValue);
+			const auto r = kmaths::constants::Divide<Float_t>(red, MaxColourValue);
+			const auto g = kmaths::constants::Divide<Float_t>(green, MaxColourValue);
+			const auto b = kmaths::constants::Divide<Float_t>(blue, MaxColourValue);
+			const auto a = kmaths::constants::Divide<Float_t>(alpha, MaxColourValue);
 			return { r, g, b, a };
 		}
 

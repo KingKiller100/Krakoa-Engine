@@ -26,17 +26,17 @@ namespace krakoa::components
 
 		~Transform() noexcept override;
 
-		CONST_GETTER_CONSTEXPR(kmaths::Vector3f, GetPosition, position)
-		SETTER_CONSTEXPR(kmaths::Vector3f, SetPosition, position)
+		USE_RESULT constexpr const kmaths::Vector3f& GetPosition() const noexcept { return position; }
+		constexpr void SetPosition(const kmaths::Vector3f& value) noexcept { (position) = value; }
 
-		CONST_GETTER_CONSTEXPR(kmaths::Vector3f, GetScale, scale)
-		SETTER_CONSTEXPR(kmaths::Vector3f, SetScale, scale)
+		USE_RESULT constexpr const kmaths::Vector3f& GetScale() const noexcept { return scale; }
+		constexpr void SetScale(const kmaths::Vector3f& value) noexcept { (scale) = value; }
 		void SetScale(const kmaths::Vector2f& value);
 
-		CONST_GETTER_CONSTEXPR(kmaths::Vector3f, GetRotationAxes, rotationAxes)
-		SETTER_CONSTEXPR(kmaths::Vector3f, SetRotationAxes, rotationAxes);
+		USE_RESULT constexpr const kmaths::Vector3f& GetRotationAxes() const noexcept { return rotationAxes; }
+		constexpr void SetRotationAxes(const kmaths::Vector3f& value) noexcept { (rotationAxes) = value; };
 
-		CONST_GETTER_CONSTEXPR(float, GetRotation, radians)
+		USE_RESULT constexpr const float& GetRotation() const noexcept { return radians; }
 		constexpr void SetRotation(const float value) noexcept { (radians) = value; }
 
 		USE_RESULT constexpr kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept

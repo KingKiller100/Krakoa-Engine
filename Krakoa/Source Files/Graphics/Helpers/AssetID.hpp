@@ -11,8 +11,8 @@ namespace krakoa::graphics
 		AssetID(const std::uint32_t id = 0) noexcept;
 		~AssetID() noexcept;
 
-		GETTER_CONSTEXPR(std::uint32_t, GetID, id);
-		CONST_GETTER_CONSTEXPR(std::uint32_t, GetID, id);
+		USE_RESULT constexpr std::uint32_t& GetID() noexcept { return id; };
+		USE_RESULT constexpr const std::uint32_t& GetID() const noexcept { return id; };
 		
 		template<class ReturnT>
 		constexpr operator ReturnT() const

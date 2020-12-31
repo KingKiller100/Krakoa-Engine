@@ -21,7 +21,7 @@ void Renderer2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
 
-	const auto pWinTexture = krakoa::graphics::iTexture2D::Create("Assets/Win.png");
+	auto* const pWinTexture = krakoa::graphics::iTexture2D::Create("Assets/Win.png");
 
 	pSubTexture.reset(
 		krakoa::graphics::SubTexture2D::Create(
@@ -81,7 +81,6 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		appearance.SetColour(geometryColour);
 	}
 
-
 	{
 		KRK_PROFILE_SCOPE("Updating texture entity");
 
@@ -135,7 +134,7 @@ void Renderer2DLayer::SetUpEntities() const
 	auto& entityManager = krakoa::EntityManager::Reference();
 	
 	{
-		KRK_PROFILE_SCOPE("Set Up coloured entity");
+		KRK_PROFILE_SCOPE("Create coloured entity");
 
 		auto& colourEntity = entityManager.Add("Colour");
 		
@@ -153,7 +152,7 @@ void Renderer2DLayer::SetUpEntities() const
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Set Up cyan entity");
+		KRK_PROFILE_SCOPE("Create cyan entity");
 
 		auto& colourEntity = entityManager.Add("Cyan");
 		colourEntity.AddComponent<krakoa::components::Transform>(
@@ -170,7 +169,7 @@ void Renderer2DLayer::SetUpEntities() const
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Set Up magenta entity");
+		KRK_PROFILE_SCOPE("Create magenta entity");
 
 		auto& colourEntity = entityManager.Add("Magenta");
 		colourEntity.AddComponent<krakoa::components::Transform>(
@@ -187,7 +186,7 @@ void Renderer2DLayer::SetUpEntities() const
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Set Up yellow entity");
+		KRK_PROFILE_SCOPE("Create yellow entity");
 
 		auto& yellowEntity = entityManager.Add("Yellow");
 		yellowEntity.AddComponent<krakoa::components::Transform>(
@@ -204,7 +203,7 @@ void Renderer2DLayer::SetUpEntities() const
 	}
 
 	{
-		KRK_PROFILE_SCOPE("Set Up textured entity");
+		KRK_PROFILE_SCOPE("Create textured entity");
 
 		auto& texturedEntity = entityManager.Add("Textured");
 		auto& transform = texturedEntity.AddComponent<krakoa::components::Transform>();

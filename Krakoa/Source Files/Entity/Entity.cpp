@@ -9,7 +9,10 @@
 
 namespace krakoa
 {
-	static unsigned stored_ids = 0;
+	namespace
+	{
+		size_t stored_ids = 0;
+	}
 
 	Entity::Entity()
 		: name(klib::kString::ToString("Entity{0}", stored_ids)),
@@ -27,14 +30,14 @@ namespace krakoa
 		manager(EntityManager::Pointer())
 	{}
 
-	Entity::Entity(const Entity& other)
-		: name(klib::kString::ToString("Entity{0}", other.id)),
-		id(other.id),
-		components(other.components),
-		selected(false),
-		active(true),
-		manager(EntityManager::Pointer())
-	{}
+	// Entity::Entity(const Entity& other)
+	// 	: name(klib::kString::ToString("Entity{0}", other.id)),
+	// 	id(other.id),
+	// 	components(other.components),
+	// 	selected(false),
+	// 	active(true),
+	// 	manager(EntityManager::Pointer())
+	// {}
 
 	Entity::Entity(Entity&& other) noexcept
 		: name(std::move(other.name)),
@@ -45,22 +48,26 @@ namespace krakoa
 		manager(EntityManager::Pointer())
 	{}
 
-	Entity& Entity::operator=(const Entity& other)
-	{
-		name = klib::kString::ToString("Entity{0)", stored_ids++);
-		components = other.components;
-		selected = false;
-		active = other.active;
-		manager = EntityManager::Pointer();
-		return *this;
-	}
+	// Entity& Entity::operator=(const Entity& other)
+	// {
+	// 	name = klib::kString::ToString("Entity{0)", stored_ids++);
+	// 	for (auto i = 0; i < other.components.size(); ++i)
+	// 	{
+	// 		components[i] = *other.components[i]
+	// 	}
+	// 	components = std::copy(other.components.begin(), other.components.end(), components);
+	// 	selected = false;
+	// 	active = other.active;
+	// 	manager = EntityManager::Pointer();
+	// 	return *this;
+	// }
 
 	Entity& Entity::operator=(Entity&& other) noexcept
 	{
 		name = std::move(other.name);
 		const auto* idPtr = &id;
 		delete idPtr;
-		idPtr = new unsigned(std::move(other.id));
+		idPtr = new size_t(std::move(other.id));
 		components = std::move(other.components);
 		selected = false;
 		active = other.active;
@@ -70,6 +77,26 @@ namespace krakoa
 
 	Entity::~Entity() noexcept
 		= default;
+
+	const std::string& Entity::GetName() const noexcept
+	{
+		return name;
+	}
+
+	void Entity::SetName(const std::string& value) noexcept
+	{
+		(name) = value;
+	}
+
+	size_t Entity::GetID() const noexcept
+	{
+		return id;
+	}
+
+	const bool& Entity::IsSelected() const noexcept
+	{
+		return selected;
+	}
 
 	void Entity::Select() noexcept
 	{
@@ -102,23 +129,21 @@ namespace krakoa
 
 		for (auto& component : components)
 		{
-			if (!component.second->IsActive())
+			if (component == nullptr || !component->IsActive())
 				continue;
 
-			KRK_DBG(klib::kString::ToString("\tComponent \"{0}\" Update Called", component.first));
+			KRK_DBG(klib::kString::ToString("\tComponent \"{0}\" Update Called", component->GetType()));
 
-			component.second->Update(dt);
+			component->Update(dt);
 		}
 	}
 
 	void Entity::RemoveAllComponents() noexcept
 	{
-		for(auto& component : components)
+		for (auto& component : components)
 		{
-			delete component.second;
-			component.second = nullptr;
+			if (component)
+				component.reset(nullptr);
 		}
-
-		components.clear();
 	}
 }

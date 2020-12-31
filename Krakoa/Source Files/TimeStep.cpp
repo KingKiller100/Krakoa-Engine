@@ -13,8 +13,12 @@ namespace krakoa::time
 		{
 			KRK_PROFILE_FUNCTION();
 
+			sw->Stop();
+			
 			const auto elapsed = sw->GetElapsedTime<units::Secs>();
 
+			sw->Restart();
+			
 			if (isFixed)
 				return kmaths::Min(elapsed, target);
 			else

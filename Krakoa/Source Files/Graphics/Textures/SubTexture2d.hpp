@@ -41,9 +41,9 @@ namespace krakoa::graphics
 		USE_RESULT const kmaths::Vector2f* GetTexCoord() const noexcept;
 
 		void SetTexture(iTexture2D* tex) noexcept;
-		SETTER(std::shared_ptr<iTexture2D>, SetTexture, texture)
+		void SetTexture(const std::shared_ptr<iTexture2D>& value) noexcept { (texture) = value; }
 
-		CONST_GETTER(TexCoordData, GetTexCoordData, texCoordData)
+		USE_RESULT const TexCoordData& GetTexCoordData() const noexcept { return texCoordData; }
 
 		USE_RESULT GeometryType GetGeometryType() const noexcept;
 		

@@ -19,17 +19,17 @@ namespace krakoa::components
 
 		~Appearance2D() noexcept override;
 
-		CONST_GETTER(graphics::SubTexture2D, GetSubTexture, subTexture)
-		CONST_GETTER(Multi_Ptr<graphics::iTexture2D>, GetTexture, subTexture.GetTexture())
+		USE_RESULT const graphics::SubTexture2D& GetSubTexture() const noexcept { return subTexture; }
+		USE_RESULT const Multi_Ptr<graphics::iTexture2D>& GetTexture() const noexcept { return subTexture.GetTexture(); }
 		
 		void SetTexture(graphics::iTexture2D* texture) ;
 		void SetTexture(const Multi_Ptr<graphics::iTexture2D>& texture) ;
 		
-		SETTER_CONSTEXPR(graphics::Colour, SetColour, colour)
-		CONST_GETTER_CONSTEXPR(graphics::Colour, GetColour, colour)
+		constexpr void SetColour(const graphics::Colour& value) noexcept { (colour) = value; }
+		USE_RESULT constexpr const graphics::Colour& GetColour() const noexcept { return colour; }
 		
-		SETTER_CONSTEXPR(float, SetTilingFactor, tilingFactor)
-		CONST_GETTER_CONSTEXPR(float, GetTilingFactor, tilingFactor)
+		constexpr void SetTilingFactor(const float& value) noexcept { (tilingFactor) = value; }
+		USE_RESULT constexpr const float& GetTilingFactor() const noexcept { return tilingFactor; }
 		
 		USE_RESULT graphics::GeometryType GetGeometryType() const;
 		

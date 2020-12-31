@@ -6,21 +6,27 @@
 
 namespace util
 {
-	namespace secret::helper
+	template<typename T>
+	struct UniqueIdentifier
 	{
-		inline auto MakeUniqueID()
+	protected:
+		using ID_t = std::uint64_t;
+
+	private:
+		static auto MakeUniqueID()
 		{
-			static std::uint64_t id = 0;
+			static ID_t id = 0;
 			return id++;
 		}
-	}
 
-	template<typename T>
-	static std::uint64_t GetUniqueID()
-	{
-		KRK_PROFILE_FUNCTION();
-		static const auto id = secret::helper::MakeUniqueID();
-		return id;
-	}
+	protected:
+		template<typename T>
+		static ID_t GetUniqueID()
+		{
+			KRK_PROFILE_FUNCTION();
+			static const auto id = MakeUniqueID();
+			return id;
+		}
+	};
 }
 

@@ -20,7 +20,7 @@ workspace "KrakoaEngine"
     -- Include Libraries
     IncludeDir = {}
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
-    IncludeDir["KLIB"] = "../kLibrary/Source Files/"
+    IncludeDir["KLIB"] = "../kLibrary/Source/"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
     IncludeDir["ImGUI"] = "Krakoa/Vendors/imgui/"
     IncludeDir["STBI"] = "Krakoa/Vendors/STB Image/"
@@ -46,12 +46,12 @@ project "Krakoa"
     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
 
     pchheader "Precompile.hpp"
-    pchsource "Krakoa/Source Files/Precompile.cpp"
+    pchsource "Krakoa/Source/Precompile.cpp"
 
     files
     {
-        "%{prj.name}/Source Files/**.hpp",
-        "%{prj.name}/Source Files/**.cpp",
+        "%{prj.name}/Source/**.hpp",
+        "%{prj.name}/Source/**.cpp",
         "%{prj.name}/Vendors/STB Image/**.hpp",
         "%{prj.name}/Vendors/STB Image/**.cpp",
         "%{prj.name}/cpp.hint"
@@ -102,7 +102,7 @@ project "Krakoa"
         }
         removefiles
         {
-            "%{prj.name}/Source Files/**/*test*",
+            "%{prj.name}/Source/**/*test*",
             "%{prj.name}/Tests/**"
         }
         symbols "On"
@@ -126,7 +126,7 @@ project "Krakoa"
         optimize "Full"
         removefiles
         {
-            "%{prj.name}/Source Files/**/*test*",
+            "%{prj.name}/Source/**/*test*",
             "%{prj.name}/Tests/**"
         }
         runtime "Release"
@@ -136,7 +136,7 @@ project "Krakoa"
         optimize "Speed"
         removefiles
         {
-            "%{prj.name}/Source Files/**/*test*",
+            "%{prj.name}/Source/**/*test*",
             "%{prj.name}/Tests/**"
         }
         runtime "Release"
@@ -156,14 +156,14 @@ project "Hooper2"
     
     files
     {
-        "ExampleGames/%{prj.name}/Source Files/**.hpp",
-        "ExampleGames/%{prj.name}/Source Files/**.cpp",
+        "ExampleGames/%{prj.name}/Source/**.hpp",
+        "ExampleGames/%{prj.name}/Source/**.cpp",
     }
 
     includedirs
     {
         "%{IncludeDir.KLIB}",
-        "Krakoa/Source Files",
+        "Krakoa/Source",
         "Krakoa/Vendors/",
     }
 

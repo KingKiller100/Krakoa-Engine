@@ -41,6 +41,7 @@ namespace krakoa
 
 	void Application::ShutDown()
 	{
+		KRK_BANNER("Shutting down", "SHUTDOWN", "*", "*", 10)
 		graphics::Renderer::ShutDown();
 
 		auto* inputPtr = input::InputManager::Pointer();
@@ -49,6 +50,7 @@ namespace krakoa
 			delete inputPtr;
 			inputPtr = nullptr;
 		}
+
 	}
 
 	void Application::Initialize()
@@ -72,6 +74,12 @@ namespace krakoa
 		// Initialize Entity Manager
 		EntityManager::Create();
 		entityManager.reset(EntityManager::Pointer());
+
+
+		graphics::FrameBufferSpecification fbSpec;
+		fbSpec.width = 1024;
+		fbSpec.height = 640;
+		frameBuffer.reset(graphics::iFrameBuffer::Create(fbSpec));
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -127,7 +135,6 @@ namespace krakoa
 
 	void Application::Run() const
 	{
-		graphics::Renderer::Update();
 
 		const auto deltaTime = timeStep.GetDeltaTime();
 
@@ -144,6 +151,7 @@ namespace krakoa
 
 		frameBuffer->Bind();
 
+		graphics::Renderer::Update();
 		// Draw
 		entityManager->Draw();
 

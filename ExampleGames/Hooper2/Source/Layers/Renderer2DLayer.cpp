@@ -36,15 +36,6 @@ void Renderer2DLayer::OnAttach()
 			})
 	);
 
-	FrameBufferSpecification fbSpec;
-	fbSpec.width = 1024;
-	fbSpec.height = 640;
-
-	auto& app = krakoa::GetApp();
-	auto& fb =
-		app.GetFB();
-	fb .reset(iFrameBuffer::Create(fbSpec));
-
 	SetUpEntities();
 }
 

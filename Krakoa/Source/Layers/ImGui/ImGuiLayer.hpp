@@ -3,6 +3,10 @@
 #include "../../EventsSystem/Event.hpp"
 
 #include "../LayerBase.hpp"
+#include "../../Core/PointerTypes.hpp"
+
+#include "../../Graphics/Framebuffers/iFrameBuffer.hpp"
+
 
 namespace krakoa
 {
@@ -24,7 +28,12 @@ namespace krakoa
 
 		void ToggleVisibility() noexcept;
 
+		bool GetBlockEventsStatus() const noexcept;
+		void BlockEvents();
+		void UnblockEvents();
+		
 	private:
 		bool isShowing;
+		bool blockEvents;
 	};
 }

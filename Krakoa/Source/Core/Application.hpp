@@ -25,6 +25,7 @@
 #include "../Entity/EntityManager.hpp"
 
 #include <memory>
+#include "../Graphics/Framebuffers/iFrameBuffer.hpp"
 
 
 namespace krakoa
@@ -43,6 +44,8 @@ namespace krakoa
 
 		iWindow& GetWindow() const;
 
+		auto& GetFB() { return frameBuffer; }
+		
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);
@@ -61,6 +64,8 @@ namespace krakoa
 
 		Solo_Ptr<EntityManager> entityManager;
 		
+		Multi_Ptr<graphics::iFrameBuffer> frameBuffer;
+
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;
@@ -69,4 +74,5 @@ namespace krakoa
 
 	void CreateApplication();
 	Application& GetApp();
+	iWindow& GetWindow();
 }

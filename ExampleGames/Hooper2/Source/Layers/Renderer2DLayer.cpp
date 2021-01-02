@@ -1,17 +1,20 @@
 ﻿#include "Renderer2DLayer.hpp"
 
-#include <imgui/imgui.h>
+#include <ImGui/imgui.h>
 
 #include <Graphics/2D/Textures/iTexture2D.hpp>
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
+#include <utility>
+
+using namespace krakoa::graphics;
 
 Renderer2DLayer::Renderer2DLayer() noexcept
 	: LayerBase("Renderer"),
 	cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
-		/ CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
-		true), // Aspect ratio from window size
-	position({ 0.f, 0.f })
+	                 / CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
+	                 true) // Aspect ratio from window size
+	, position({ 0.f, 0.f })
 {
 	cameraController.SetRotationSpeed(180.f);
 	cameraController.SetTranslationSpeed(5.f);
@@ -21,10 +24,10 @@ void Renderer2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
 
-	auto* const pWinTexture = krakoa::graphics::iTexture2D::Create("Assets/Win.png");
+	auto* const pWinTexture = iTexture2D::Create("Assets/Win.png");
 
 	pSubTexture.reset(
-		krakoa::graphics::SubTexture2D::Create(
+		SubTexture2D::Create(
 			pWinTexture,
 			{
 				{ 0, 0 },
@@ -32,6 +35,15 @@ void Renderer2DLayer::OnAttach()
 			{ {0,0}, {1,0}, {1,1}, {0,1} }
 			})
 	);
+
+	FrameBufferSpecification fbSpec;
+	fbSpec.width = 1024;
+	fbSpec.height = 640;
+
+	auto& app = krakoa::GetApp();
+	auto& fb =
+		app.GetFB();
+	fb .reset(iFrameBuffer::Create(fbSpec));
 
 	SetUpEntities();
 }
@@ -69,7 +81,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 {
 	KRK_PROFILE_FUNCTION();
 
-	krakoa::graphics::Renderer2D::BeginScene(cameraController.GetCamera());
+	Renderer2D::BeginScene(cameraController.GetCamera());
 
 	{
 		KRK_PROFILE_SCOPE("Updating colour entity");
@@ -77,7 +89,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		auto& colourEntity = krakoa::EntityManager::Reference().GetEntity("Colour");
 
 		auto& appearance = colourEntity.GetComponent<krakoa::components::Appearance2D>();
-		
+
 		appearance.SetColour(geometryColour);
 	}
 
@@ -93,6 +105,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 		appearance.SetColour(geometryColour);
 	}
 
+	krakoa::GetApp().GetFB()->Unbind();
 }
 
 void Renderer2DLayer::OnRender()
@@ -132,12 +145,12 @@ void Renderer2DLayer::SetUpEntities() const
 	constexpr auto rotScale = kmaths::Vector2f(0.25f);
 
 	auto& entityManager = krakoa::EntityManager::Reference();
-	
+
 	{
 		KRK_PROFILE_SCOPE("Create coloured entity");
 
 		auto& colourEntity = entityManager.Add("Colour");
-		
+
 		colourEntity.AddComponent<krakoa::components::Transform>(
 			kmaths::Vector3f(-0.5f, 0.f, -0.75f),
 			0.f,
@@ -146,7 +159,7 @@ void Renderer2DLayer::SetUpEntities() const
 			);
 
 		colourEntity.AddComponent <krakoa::components::Appearance2D>(
-			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
 			geometryColour
 			);
 	}
@@ -163,8 +176,8 @@ void Renderer2DLayer::SetUpEntities() const
 			);
 
 		colourEntity.AddComponent <krakoa::components::Appearance2D>(
-			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
-			krakoa::graphics::colours::Cyan
+			SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			colours::Cyan
 			);
 	}
 
@@ -180,8 +193,8 @@ void Renderer2DLayer::SetUpEntities() const
 			);
 
 		colourEntity.AddComponent <krakoa::components::Appearance2D>(
-			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
-			krakoa::graphics::colours::Magenta
+			SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			colours::Magenta
 			);
 	}
 
@@ -197,8 +210,8 @@ void Renderer2DLayer::SetUpEntities() const
 			);
 
 		yellowEntity.AddComponent <krakoa::components::Appearance2D>(
-			krakoa::graphics::SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
-			krakoa::graphics::colours::Yellow
+			SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+			colours::Yellow
 			);
 	}
 

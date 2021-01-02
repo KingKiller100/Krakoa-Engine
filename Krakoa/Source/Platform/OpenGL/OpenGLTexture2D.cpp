@@ -22,7 +22,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		glGenTextures(1, &rendererID.GetID());
+		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -47,7 +47,7 @@ namespace krakoa::graphics
 
 		dimensions = kmaths::Vector2u(width, height);
 
-		glGenTextures(1, &rendererID.GetID());
+		glGenTextures(1, &rendererID);
 		glBindTexture(GL_TEXTURE_2D, rendererID);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -80,7 +80,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		glDeleteTextures(1, &(rendererID.GetID()));
+		glDeleteTextures(1, &rendererID);
 	}
 
 	uint32_t OpenGLTexture2D::GetWidth() const noexcept

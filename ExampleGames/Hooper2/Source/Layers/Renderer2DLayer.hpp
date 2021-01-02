@@ -5,6 +5,8 @@
 #include <Graphics/2D/Textures/SubTexture2d.hpp>
 #include <Camera/OrthographicCameraController.hpp>
 
+#include <Graphics/Framebuffers/iFrameBuffer.hpp>
+
 #include <Maths/Vectors/Vector4.hpp>
 
 class Renderer2DLayer : public krakoa::LayerBase
@@ -32,7 +34,7 @@ private:
 	krakoa::Solo_Ptr<krakoa::graphics::SubTexture2D> pSubTexture;
 
 	krakoa::OrthographicCameraController cameraController;
-
+	
 	kmaths::Vector4f geometryColour;
 	kmaths::Vector3f position;
 	float rotation = 0.f;

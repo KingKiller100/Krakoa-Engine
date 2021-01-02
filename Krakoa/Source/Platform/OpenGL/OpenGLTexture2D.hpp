@@ -30,7 +30,7 @@ namespace krakoa::graphics
 		std::string path;
 		kmaths::Vector2u dimensions;
 
-		AssetID rendererID;
+		std::uint32_t rendererID;
 		unsigned char* buffer;
 
 		uint32_t internalFormat;

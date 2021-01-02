@@ -6,6 +6,20 @@ namespace krakoa::graphics
 {
 	class OpenGLFrameBuffer final : public iFrameBuffer
 	{
+		union DepthStencilAttachment
+		{
+			std::uint32_t buffer;
+
+			struct Parts
+			{
+				std::uint8_t depthA : 8;
+				std::uint8_t depthB :8;
+				std::uint8_t depthC : 8;
+				std::uint8_t stencil : 8;
+			} parts;
+			
+		};
+		
 	public:
 		OpenGLFrameBuffer(const FrameBufferSpecification& spec);
 
@@ -20,11 +34,12 @@ namespace krakoa::graphics
 		void Refresh();
 
 	private:
-		void Clear() noexcept;
+		void Clear() const noexcept;
 		
 	private:
 		std::uint32_t rendererID;
-		std::uint32_t colourAttachment, depthAttachment;
+		std::uint32_t colourAttachment;
+		std::uint32_t dsAttachment;
 		FrameBufferSpecification spec;
 	};
 }

@@ -17,9 +17,10 @@
 namespace krakoa
 {
 	ImGuiLayer::ImGuiLayer()
-		: LayerBase("ImGuiLayer"),
-		isShowing(false)
-	{	}
+		: LayerBase("ImGuiLayer")
+		, isShowing(false)
+		, blockEvents(true)
+	{}
 
 	ImGuiLayer::~ImGuiLayer()
 		= default;
@@ -129,18 +130,34 @@ namespace krakoa
 
 				if (ImGui::MenuItem("Exit"))
 					GetApp().Close();
-				
+
 				ImGui::EndMenu();
 			}
 
 			ImGui::EndMenuBar();
 		}
 
+		{
+			ImGui::Begin("Editor");
+			const auto texID = GetApp().GetFB()->GetColourAttachmentAssetID();
+			ImGui::Image((void*)texID, ImVec2{ 320.f, 180.f });
+			ImGui::End();
+		}
+
 		ImGui::End();
 	}
 
 	void ImGuiLayer::OnEvent(events::Event& e)
-	{}
+	{
+		if (!blockEvents)
+			return;
+
+		ImGuiIO& io = ImGui::GetIO();
+		auto handled = e.isHandled() | e.IsInCategory(events::E_C_MOUSE) & io.WantCaptureMouse;
+		handled |= e.isHandled() | e.IsInCategory(events::E_C_KEYBOARD) & io.WantCaptureKeyboard;
+
+		e.SetHandled(handled);
+	}
 
 	void ImGuiLayer::BeginDraw()
 	{

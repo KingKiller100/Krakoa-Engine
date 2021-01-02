@@ -57,7 +57,6 @@ namespace krakoa
 
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
-		//pImGuiLayer->ToggleVisibility();
 		PushOverlay(pImGuiLayer);
 
 		PushOverlay(new FPSLayer());
@@ -102,11 +101,6 @@ namespace krakoa
 		return false;
 	}
 
-	Application& GetApp()
-	{
-		return Application::Reference();
-	}
-
 	void Application::PushLayer(LayerBase* layer)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -148,8 +142,12 @@ namespace krakoa
 			layerStack.OnUpdate(deltaTime);
 		}
 
+		frameBuffer->Bind();
+
 		// Draw
 		entityManager->Draw();
+
+		frameBuffer->Unbind();
 		
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();
@@ -171,5 +169,15 @@ namespace krakoa
 	iWindow& Application::GetWindow() const
 	{
 		return *pWindow;
+	}
+
+	Application& GetApp()
+	{
+		return Application::Reference();
+	}
+
+	iWindow& GetWindow()
+	{
+		return GetApp().GetWindow();
 	}
 }

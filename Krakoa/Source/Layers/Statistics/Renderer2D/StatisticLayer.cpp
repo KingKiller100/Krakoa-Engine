@@ -19,7 +19,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		
-#if ENABLE_STATISTICS
+#if KRK_ENABLE_STATISTICS
 		const auto& stats = graphics::Renderer2D::GetStats();
 
 		//constexpr auto size = sizeof(stats);
@@ -46,7 +46,7 @@ namespace krakoa
 		ImGui::Text("Triangle Indices Count: %zu", stats.TotalTriangleIndexCount());
 		
 		ImGui::End();
-#endif //ENABLE_STATISTICS
+#endif //KRK_ENABLE_STATISTICS
 	}
 }
 

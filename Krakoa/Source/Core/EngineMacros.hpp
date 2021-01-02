@@ -30,6 +30,12 @@
 #define KRK_BIND2(func) std::bind((&func), this, PL_HOLDER(1), PL_HOLDER(2))
 
 #ifndef KRAKOA_PROFILE
-#	define ENABLE_STATISTICS KRK_TRUE
+#	ifndef KRK_ENABLE_STATISTICS
+#		define KRK_ENABLE_STATISTICS KRK_TRUE
+#	endif
+#endif
+
+#ifndef KRK_ENABLE_ASSERT
+# define KRK_ENABLE_ASSERT KRK_TRUE
 #endif
 

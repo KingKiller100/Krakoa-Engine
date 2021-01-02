@@ -92,13 +92,15 @@ project "Krakoa"
             "KLIB_LIB",
 			"GLFW_INCLUDE_NONE"
         }
-
-    filter "configurations:Debug"
+        
+        filter "configurations:Debug"
         defines 
         {
             "KLIB_SHORT_NAMESPACE",
+            "KRK_ENABLE_ASSERT",
             "KRAKOA_DEBUG",
-            "KLIB_DEBUG"
+            "KLIB_DEBUG",
+            "KLOG_OPT_DBG_STR"
         }
         removefiles
         {

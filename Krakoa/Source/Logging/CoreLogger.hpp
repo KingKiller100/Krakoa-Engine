@@ -3,6 +3,7 @@
 #include "../Core/EngineMacros.hpp"
 #include "../Core/PointerTypes.hpp"
 
+#define KLOG_OPT_DBG_STR 1
 #include <Utility/Logging/kLogging.hpp>
 
 #include <memory>

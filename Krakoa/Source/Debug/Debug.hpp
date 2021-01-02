@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Core/EngineMacros.hpp"
+
 #include "../Logging/CoreLogger.hpp"
 #include "../Logging/MemoryLogger.hpp"
 
@@ -13,7 +15,7 @@ namespace krakoa::debug
 	void RaiseException(const std::string& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger);
 }
 
-#if defined(KRAKOA_DEBUG) || defined(KRAKOA_TEST)
+#if KRK_ENABLE_ASSERT
 #	define KRK_ASSERT(cond, msg) if ( !(cond) ) { ::krakoa::debug::RaiseNotice(msg, SOURCE_INFO()); }
 
 #	define MEM_ASSERT(cond, msg) kAssertCB(cond, msg, [](const std::string& m, const klib::SourceInfo& s)\

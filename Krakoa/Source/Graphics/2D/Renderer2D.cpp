@@ -193,7 +193,7 @@ namespace krakoa::graphics
 
 		RestartBatch();
 
-#if ENABLE_STATISTICS
+#if KRK_ENABLE_STATISTICS
 		stats.Reset();
 #endif
 	}
@@ -246,7 +246,7 @@ namespace krakoa::graphics
 	{
 		pData->quad.pVertexArray->Bind();
 		RenderCommand::DrawIndexed(*pData->quad.pVertexArray, pData->quad.indexCount);
-#if ENABLE_STATISTICS
+#if KRK_ENABLE_STATISTICS
 		stats.quadDrawCallsCount++;
 #endif
 	}
@@ -255,7 +255,7 @@ namespace krakoa::graphics
 	{
 		pData->triangle.pVertexArray->Bind();
 		RenderCommand::DrawIndexed(*pData->triangle.pVertexArray, pData->triangle.indexCount);
-#if ENABLE_STATISTICS
+#if KRK_ENABLE_STATISTICS
 		stats.triangleDrawCallsCount++;
 #endif
 	}
@@ -418,7 +418,7 @@ namespace krakoa::graphics
 
 		triangle.IncrementIndexCount();
 
-#if ENABLE_STATISTICS
+#if KRK_ENABLE_STATISTICS
 		stats.triangleCount++;
 #endif
 	}
@@ -463,7 +463,7 @@ namespace krakoa::graphics
 
 		quad.IncrementIndexCount();
 
-#if ENABLE_STATISTICS
+#if KRK_ENABLE_STATISTICS
 		stats.quadCount++;
 #endif
 	}

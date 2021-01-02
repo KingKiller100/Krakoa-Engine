@@ -2,6 +2,8 @@
 
 #include <HelperMacros.hpp>
 
+#include <Maths/Vectors/Vector2.hpp>
+
 #include <cstdint>
 
 namespace krakoa::graphics
@@ -22,6 +24,7 @@ namespace krakoa::graphics
 		virtual void Unbind() = 0;
 		
 		virtual void Resize(std::uint32_t width, std::uint32_t height) = 0;
+		virtual void Resize(const kmaths::Vector2u& dimensions) = 0;
 
 		USE_RESULT virtual std::uint32_t GetColourAttachmentAssetID() const = 0;
 

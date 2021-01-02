@@ -30,7 +30,7 @@ namespace krakoa
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
-
+		//timeStep.SetSpeedMultiplier(5);
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
 		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
@@ -136,7 +136,6 @@ namespace krakoa
 
 	void Application::Run() const
 	{
-
 		const auto deltaTime = timeStep.GetDeltaTime();
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))

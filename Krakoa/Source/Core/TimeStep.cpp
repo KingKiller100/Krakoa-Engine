@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "TimeStep.hpp"
-#include "../Debug/Instrumentor.hpp"
+
+#include "../Debug/Instrumentor.hpp"
 
 #include <Maths/kMathsFundamentals.hpp>
 

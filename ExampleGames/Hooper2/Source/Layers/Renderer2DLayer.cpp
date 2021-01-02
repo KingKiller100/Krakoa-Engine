@@ -60,10 +60,10 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 		position.X() -= moveSpeed * deltaTime;
 
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_UP))
-		position.Y() += moveSpeed * deltaTime;
+		position.Y() -= moveSpeed * deltaTime;
 
 	if (krakoa::input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-		position.Y() -= moveSpeed * deltaTime;
+		position.Y() += moveSpeed * deltaTime;
 
 	rotation -= 5 * moveSpeed * deltaTime;
 }

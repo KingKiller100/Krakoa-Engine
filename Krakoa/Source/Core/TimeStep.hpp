@@ -12,13 +12,16 @@ namespace krakoa::time
 		USE_RESULT float GetLifeTime() const noexcept;
 		USE_RESULT float GetDeltaTime() const noexcept;
 
+		void SetSpeedMultiplier(float speed) noexcept;
+		
 	private:
 		USE_RESULT float CalculateLifeTime() const noexcept;
 
 	private:
 		float targetIncrement;
-
+		float speedMultiplier;
 		bool isFixedIncrement;
+
 		klib::kStopwatch::AccurateStopwatch stopwatch;
 	};
 }

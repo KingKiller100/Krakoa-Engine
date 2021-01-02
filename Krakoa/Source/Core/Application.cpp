@@ -22,7 +22,7 @@ namespace krakoa
 {	
 	Application::Application(Token&)
 		: isRunning(true),
-		timeStep(/*120*/),
+		timeStep (/*120*/),
 		isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -41,7 +41,7 @@ namespace krakoa
 
 	void Application::ShutDown()
 	{
-		KRK_BANNER("Shutting down", "SHUTDOWN", "*", "*", 10)
+		KRK_BANNER("Shut Down", "Closing App", "*", "*", 10)
 		graphics::Renderer::ShutDown();
 
 		auto* inputPtr = input::InputManager::Pointer();
@@ -51,6 +51,7 @@ namespace krakoa
 			inputPtr = nullptr;
 		}
 
+		KRK_LOG_END();
 	}
 
 	void Application::Initialize()

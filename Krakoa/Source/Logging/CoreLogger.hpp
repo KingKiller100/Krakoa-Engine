@@ -17,7 +17,8 @@ namespace krakoa
 		// Engine side
 		static void CoreInit(const std::string_view& initMsg);
 		static klib::kLogs::Logging& GetLogger();
-
+		static void ShutDown();
+		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pCoreLogger;
 	};
@@ -49,7 +50,7 @@ namespace krakoa
 #define KRK_BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::CoreLogger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define KRK_SUSPEND()                                               ::krakoa::CoreLogger::GetLogger().SuspendFileLogging();
 #define KRK_RESUME()                                                ::krakoa::CoreLogger::GetLogger().ResumeFileLogging();
-#define KRK_LOG_END()                                               ::krakoa::CoreLogger::GetLogger().FinalOutput();
+#define KRK_LOG_END()                                               ::krakoa::CoreLogger::ShutDown();
 #define KRK_LOG_GET_LAST()                                          ::krakoa::CoreLogger::GetLogger().GetLastCachedEntry()
 #define KRK_LOG_ERASE_PREV(numOfPrevEntries)                        ::krakoa::CoreLogger::GetLogger().ErasePrevious(numOfPrevEntries)
 #define KRK_LOG_CLEAR()                                             ::krakoa::CoreLogger::GetLogger().ClearCache();

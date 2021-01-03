@@ -11,7 +11,7 @@ namespace krakoa::time
 
 	namespace
 	{
-		float CalculateDeltaTime(AccurateStopwatch* sw, float target, bool isFixed, float multiplier) noexcept
+		void CalculateDeltaTime(AccurateStopwatch* sw, float target, bool isFixed, float multiplier, float* step) noexcept
 		{
 			KRK_PROFILE_FUNCTION();
 
@@ -19,17 +19,18 @@ namespace krakoa::time
 
 			const auto elapsed = sw->GetElapsedTime<units::Secs>();
 
-			sw->Restart();
-
 			if (isFixed)
-				return kmaths::Min(elapsed, target) * multiplier;
+				*step =  kmaths::Min(elapsed, target) * multiplier;
 			else
-				return elapsed * multiplier;
+				*step = elapsed * multiplier;
+
+			sw->Restart();
 		}
 	}
 
 	TimeStep::TimeStep(const float targetMilliseconds) noexcept
-		: targetIncrement(1.f / targetMilliseconds)
+		: step(0)
+		, targetIncrement(1.f / targetMilliseconds)
 		, speedMultiplier(1.f)
 		, isFixedIncrement(true)
 	{}
@@ -46,13 +47,15 @@ namespace krakoa::time
 		return stopwatch.GetLifeTime<units::Secs>();
 	}
 
-	float TimeStep::GetDeltaTime() const noexcept
+	float TimeStep::GetStep() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		return CalculateDeltaTime(const_cast<AccurateStopwatch*>(std::addressof(stopwatch))
+		CalculateDeltaTime(const_cast<AccurateStopwatch*>(std::addressof(stopwatch))
 			, targetIncrement
 			, isFixedIncrement
-			, speedMultiplier);
+			, speedMultiplier
+			, (float*)&step);
+		return step;
 	}
 
 	void TimeStep::SetSpeedMultiplier(float speed) noexcept

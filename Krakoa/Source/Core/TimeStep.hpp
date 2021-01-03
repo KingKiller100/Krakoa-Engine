@@ -10,7 +10,7 @@ namespace krakoa::time
 		TimeStep(const float targetMilliseconds = 1.f) noexcept;
 
 		USE_RESULT float GetLifeTime() const noexcept;
-		USE_RESULT float GetDeltaTime() const noexcept;
+		USE_RESULT float GetStep() const noexcept;
 
 		void SetSpeedMultiplier(float speed) noexcept;
 		
@@ -18,6 +18,7 @@ namespace krakoa::time
 		USE_RESULT float CalculateLifeTime() const noexcept;
 
 	private:
+		float step;
 		float targetIncrement;
 		float speedMultiplier;
 		bool isFixedIncrement;

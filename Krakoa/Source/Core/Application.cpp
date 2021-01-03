@@ -136,7 +136,7 @@ namespace krakoa
 
 	void Application::Run() const
 	{
-		const auto deltaTime = timeStep.GetDeltaTime();
+		const auto deltaTime = timeStep.GetStep();
 
 		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
 			pImGuiLayer->ToggleVisibility();

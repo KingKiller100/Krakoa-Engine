@@ -10,7 +10,7 @@
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/String/Tricks/kStringOperators.hpp>
 
-using namespace klib::kString::operators;
+using namespace klib::operators;
 
 namespace krakoa::graphics
 {
@@ -21,7 +21,7 @@ namespace krakoa::graphics
 	{
 		const auto cwd = klib::GetCurrentWorkingDirectory();
 		
-		const auto formattedPath = klib::kString::Replace(cwd + shaderFilePath, '/', '\\');
+		const auto formattedPath = klib::Replace(cwd + shaderFilePath, '/', '\\');
 
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::ApiType::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;

@@ -45,7 +45,7 @@ namespace krakoa
 #define KRK_DBG(msg)                                                ::krakoa::CoreLogger::GetLogger().AddEntry(KRK_LOG_LVL_DBG, ::klib::kLogs::LogMessage(msg));
 #define KRK_NRM(msg)                                                ::krakoa::CoreLogger::GetLogger().AddEntry(KRK_LOG_LVL_NRM, ::klib::kLogs::LogMessage(msg));
 #define KRK_INF(msg)                                                ::krakoa::CoreLogger::GetLogger().AddEntry(KRK_LOG_LVL_INF, ::klib::kLogs::LogMessage(msg));
-#define KRK_WRN(msg)                                                ::krakoa::CoreLogger::GetLogger().AddEntry(KRK_LOG_LVL_WRN, ::klib::kLogs::LogMessage(msg));
+#define KRK_WRN(msg)                                                ::krakoa::CoreLogger::GetLogger().AddEntry(KRK_LOG_LVL_WRN, ::klib::kLogs::LogMessage(msg, SOURCE_INFO()));
 #define KRK_ERR(msg)                                                ::krakoa::CoreLogger::GetLogger().AddEntry(KRK_LOG_LVL_ERR, ::klib::kLogs::LogMessage(msg, SOURCE_INFO()));
 #define KRK_BANNER(msg, descriptor, frontPad, backPad, count)       ::krakoa::CoreLogger::GetLogger().AddBanner(msg, descriptor, frontPad, backPad, count);
 #define KRK_SUSPEND()                                               ::krakoa::CoreLogger::GetLogger().SuspendFileLogging();

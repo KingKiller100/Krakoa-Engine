@@ -43,7 +43,7 @@ namespace krakoa::graphics
 		void UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m);
 		void UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m);
 
-		int32_t GetUniformLocation(const std::string_view& name);
+		int32_t GetUniformLocation(const std::string_view& uniformName);
 
 	private:
 		uint32_t rendererID;

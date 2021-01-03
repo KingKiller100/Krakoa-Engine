@@ -20,7 +20,7 @@
 
 namespace krakoa
 {	
-	Application::Application(Token&)
+	Application::Application(Token&, const std::string_view& appName)
 		: isRunning(true),
 		timeStep (/*120*/),
 		isMinimized(false)
@@ -32,7 +32,7 @@ namespace krakoa
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
 		//timeStep.SetSpeedMultiplier(5);
 		// Initialize Window
-		pWindow = std::unique_ptr<iWindow>(iWindow::Create());
+		pWindow = std::unique_ptr<iWindow>(iWindow::Create(WindowProperties(appName)));
 		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
 	}
 

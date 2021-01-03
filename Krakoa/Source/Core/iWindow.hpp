@@ -17,7 +17,7 @@ namespace krakoa
 		std::string title;
 		Vector2u dimensions;
 
-		WindowProperties(const std::string&& title = "Krakoa Engine",
+		WindowProperties(const std::string_view& title,
 			const Vector2u& dimensions = Vector2u(1024, 640))
 			: title(title), dimensions(dimensions)
 		{}
@@ -44,6 +44,6 @@ namespace krakoa
 
 		virtual std::any GetNativeWindow() const noexcept = 0;
 
-		static iWindow* Create(const WindowProperties& props = WindowProperties());
+		static iWindow* Create(const WindowProperties& props);
 	};
 }

@@ -33,7 +33,7 @@ namespace krakoa
 	class KRAKOA_API Application : public patterns::ManagerBase<Application>
 	{
 	public:
-		Application(Token&);
+		Application(Token&, const std::string_view& appName = "Krakoa Engine");
 		virtual ~Application();
 
 		virtual void Initialize();

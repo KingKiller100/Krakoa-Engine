@@ -142,6 +142,84 @@ project "Krakoa"
             "%{prj.name}/Tests/**"
         }
         runtime "Release"
+
+project "Keditor"
+    location "Keditor"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++latest"
+    characterset ("default")
+    staticruntime "On"
+
+    targetdir ("bin/".. OutputDir .. "/%{prj.name}")
+    objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
+    
+    files
+    {
+        "%{prj.name}/Source/**.hpp",
+        "%{prj.name}/Source/**.cpp",
+    }
+
+    includedirs
+    {
+        "%{IncludeDir.KLIB}",
+        "Krakoa/Source",
+        "Krakoa/Vendors/",
+    }
+
+    links
+    {
+        "kLibrary",
+        "Krakoa"
+    }
+
+    defines
+    {
+        "KLIB_LIB",
+        "KLIB_SHORT_NAMESPACE",
+        "_CRT_SECURE_NO_WARNINGS"
+    }
+
+    filter "system:Windows"
+        systemversion "latest"
+        
+        defines
+        {
+            "KLIB_WINDOWS_OS",
+            "KRAKOA_OS_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines 
+        {
+            "KRAKOA_DEBUG",
+            "KLIB_DEBUG"
+        }
+        symbols "On"
+        runtime "Debug"
+
+    filter "configurations:Test"
+        targetdir ("bin/" .. OutputDir ..  "/Component Tests")
+        targetname ("Test")
+        defines 
+        {
+            "KRAKOA_TEST",
+            "KLIB_TEST"
+        }
+        symbols "On"
+        runtime "Debug"
+
+    filter "configurations:Release"
+        defines "KRAKOA_RELEASE"
+        optimize "Full"
+        runtime "Release"
+
+    filter "configurations:Profile"
+        defines "KRAKOA_PROFILE"
+        optimize "Speed"
+        runtime "Release"
+        
+        
 group ""
 
 group "Games"

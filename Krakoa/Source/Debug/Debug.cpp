@@ -13,15 +13,15 @@ namespace krakoa::debug
 {
 	void RaiseNotice(const std::string_view& msg, const klib::SourceInfo& sourceInfo)
 	{
+		KRK_WRN(msg);
+
 		const auto errorMsg = klib::kString::ToString("{0}\n"
 			"Click \"OK\" to continue.\n"
-			"Click \"Cancel\" to close application.\n"
+			"Click \"Cancel\" to close application."
 			, msg);
-
-		KRK_ERR(errorMsg);
 		
 #if KRAKOA_OS_WINDOWS
-		windows::RaiseMessageBox_Windows("Krakoa Debug Error", errorMsg, sourceInfo, MB_OKCANCEL | MB_ICONERROR);
+		windows::RaiseMessageBox_Windows("Krakoa Debug Error", errorMsg, sourceInfo, MB_ABORTRETRYIGNORE | MB_ICONERROR);
 #endif
 	}
 

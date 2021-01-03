@@ -1,4 +1,4 @@
-﻿#include "Renderer2DLayer.hpp"
+﻿#include "Keditor2DLayer.hpp"
 
 #include <ImGui/imgui.h>
 
@@ -9,7 +9,7 @@
 
 using namespace krakoa::graphics;
 
-Renderer2DLayer::Renderer2DLayer() noexcept
+Keditor2DLayer::Keditor2DLayer() noexcept
 	: LayerBase("Renderer"),
 	cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
 	                 / CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
@@ -20,7 +20,7 @@ Renderer2DLayer::Renderer2DLayer() noexcept
 	cameraController.SetTranslationSpeed(5.f);
 }
 
-void Renderer2DLayer::OnAttach()
+void Keditor2DLayer::OnAttach()
 {
 	KRK_PROFILE_FUNCTION();
 
@@ -39,12 +39,12 @@ void Renderer2DLayer::OnAttach()
 	SetUpEntities();
 }
 
-void Renderer2DLayer::OnDetach()
+void Keditor2DLayer::OnDetach()
 {
 	KRK_PROFILE_FUNCTION();
 }
 
-void Renderer2DLayer::OnUpdate(float deltaTime)
+void Keditor2DLayer::OnUpdate(float deltaTime)
 {
 	KRK_PROFILE_FUNCTION();
 
@@ -68,7 +68,7 @@ void Renderer2DLayer::OnUpdate(float deltaTime)
 	rotation -= 5 * moveSpeed * deltaTime;
 }
 
-void Renderer2DLayer::SendRendererCommands() noexcept
+void Keditor2DLayer::SendRendererCommands() noexcept
 {
 	KRK_PROFILE_FUNCTION();
 
@@ -99,7 +99,7 @@ void Renderer2DLayer::SendRendererCommands() noexcept
 	krakoa::GetApp().GetFB()->Unbind();
 }
 
-void Renderer2DLayer::OnRender()
+void Keditor2DLayer::OnRender()
 {
 	KRK_PROFILE_FUNCTION();
 
@@ -110,7 +110,7 @@ void Renderer2DLayer::OnRender()
 	RenderZoomControls();
 }
 
-void Renderer2DLayer::RenderZoomControls() noexcept
+void Keditor2DLayer::RenderZoomControls() noexcept
 {
 	static constexpr kmaths::Vector2f in(0.f, 1.f);
 	static constexpr kmaths::Vector2f out(0.f, -1.f);
@@ -131,7 +131,7 @@ void Renderer2DLayer::RenderZoomControls() noexcept
 	ImGui::End();
 }
 
-void Renderer2DLayer::SetUpEntities() const
+void Keditor2DLayer::SetUpEntities() const
 {
 	constexpr auto rotScale = kmaths::Vector2f(0.25f);
 
@@ -217,7 +217,7 @@ void Renderer2DLayer::SetUpEntities() const
 	}
 }
 
-void Renderer2DLayer::OnEvent(krakoa::events::Event& e)
+void Keditor2DLayer::OnEvent(krakoa::events::Event& e)
 {
 	KRK_PROFILE_FUNCTION();
 	cameraController.OnEvent(e);

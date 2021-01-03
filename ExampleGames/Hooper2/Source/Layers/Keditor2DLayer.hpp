@@ -9,10 +9,10 @@
 
 #include <Maths/Vectors/Vector4.hpp>
 
-class Renderer2DLayer : public krakoa::LayerBase
+class Keditor2DLayer : public krakoa::LayerBase
 {
 public:
-	Renderer2DLayer() noexcept;
+	Keditor2DLayer() noexcept;
 
 	void OnAttach() override;
 

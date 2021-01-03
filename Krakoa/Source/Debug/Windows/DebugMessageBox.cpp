@@ -6,6 +6,7 @@
 #include <Utility/Enum/kEnum.hpp>
 #include <Utility/String/kToString.hpp>
 #include <Utility/Debug/Source/kSourceInfoToString.hpp>
+#include <Utility/Debug/kDebugger.hpp>
 
 // #include <iostream>
 
@@ -27,9 +28,10 @@ namespace krakoa::debug::windows
 
 	void RaiseMessageBox_Windows(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept
 	{
-		const auto caption = klib::ToString("[Description] {0}"
-			"[File]: {1} [{2}]\n"
-			"[Function]: {3}\n"
+		const auto caption = klib::ToString("[Desc] {0}\n"
+			"[File]: {1}\n"
+			"[Line]: {2}\n"
+			"[Func]: {3}\n"
 			, msg
 			, sourceInfo.file
 			, sourceInfo.line
@@ -45,8 +47,16 @@ namespace krakoa::debug::windows
 		
 		// std::cout << response.ToString();
 
-		if (response == MessageBoxResponse::MSGBOX_CANCEL)
+		if (response == MessageBoxResponse::MSGBOX_CANCEL
+			|| response == MessageBoxResponse::MSGBOX_ABORT)
+		{
 			exit(1);
+		}
+		else if (response.Compare(MessageBoxResponse::MSGBOX_TRY_AGAIN)
+			|| response == MessageBoxResponse::MSGBOX_RETRY)
+		{
+			klib::BreakPoint();
+		}
 	}
 }
 

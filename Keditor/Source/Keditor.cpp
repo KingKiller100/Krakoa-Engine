@@ -4,18 +4,18 @@
 #include "Layers/Keditor2DLayer.hpp"
 
 
-class Hooper2Game : public krakoa::Application
+class Keditor : public krakoa::Application
 {
 public:
-	Hooper2Game(Token&& t)
-		: Application(t)
+	Keditor(Token&& t)
+		: Application(t, "Keditor")
 	{
 		INIT_LOGS("Hooper2");
 		TOGGLE_SUBSYSTEM_LOGGING();
 		SET_LOG_MIN(LOG_LVL_DBG);
 	}
 
-	~Hooper2Game() override
+	~Keditor() override
 		= default;
 
 	void Initialize() override
@@ -34,5 +34,5 @@ public:
 
 void krakoa::CreateApplication()
 {
-	Application::Create<Hooper2Game>();
+	Application::Create<Keditor>();
 }

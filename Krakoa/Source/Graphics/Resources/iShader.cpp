@@ -8,7 +8,9 @@
 #include "../../Platform/OpenGL/OpenGLShader.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
+#include <Utility/String/Tricks/kStringOperators.hpp>
 
+using namespace klib::kString::operators;
 
 namespace krakoa::graphics
 {
@@ -17,15 +19,13 @@ namespace krakoa::graphics
 
 	iShader * iShader::Create(const std::string_view& name, const std::string_view & shaderFilePath)
 	{
-		const std::string currentDir(klib::kFileSystem::GetExeDirectory());
-
-		const auto formattedPath = klib::kString::Replace(shaderFilePath, '/', '\\');
-
-		const auto path = currentDir + formattedPath.data();
+		const auto cwd = klib::GetCurrentWorkingDirectory();
+		
+		const auto formattedPath = klib::kString::Replace(cwd + shaderFilePath, '/', '\\');
 
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::ApiType::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::ApiType::OPENGL: return new OpenGLShader(name, path);
+		case iRendererAPI::ApiType::OPENGL: return new OpenGLShader(name, formattedPath);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 

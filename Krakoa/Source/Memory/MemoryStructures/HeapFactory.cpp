@@ -64,7 +64,6 @@ namespace memory
    Block -  "Allocated space of an object in memory 
    including AllocHeader & end marker"
 )");
-		MEM_SET_FLUSHING(true);
 
 #ifdef KRAKOA_RELEASE
 MEM_TOGGLE_LOGGING(); // Disable memory logging

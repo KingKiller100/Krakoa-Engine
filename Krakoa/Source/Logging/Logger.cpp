@@ -20,7 +20,7 @@ namespace krakoa
 		constexpr auto extension = ".log";
 
 		pClientLogger = std::make_unique<Logging>(dir, name, extension, name);
-		pClientLogger->ToggleConsoleEnabled();
+		pClientLogger->GetFile().Open();
 		
 		const auto padding = std::string(72, '*');
 		pClientLogger->AddRaw(padding);
@@ -31,5 +31,23 @@ namespace krakoa
 	Logging & Logger::GetLogger()
 	{
 		return *pClientLogger;
+	}
+
+	void Logger::ToggleConsoleLogging()
+	{
+		auto& console = pClientLogger->GetConsole();
+		if (console.IsOpen())
+			console.Close(false);
+		else
+			console.Open();
+	}
+
+	void Logger::ToggleFileLogging()
+	{
+		auto& file = pClientLogger->GetFile();
+		if (file.IsOpen())
+			file.Close(false);
+		else
+			file.Open();
 	}
 }

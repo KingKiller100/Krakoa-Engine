@@ -30,6 +30,8 @@ namespace krakoa
 		const auto timeStr = now.GetTime().ToString(Time::MILLIS);
 		const auto dateStr = now.GetDate().ToString("mmm ddd yyyy");
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
+		
+		pCoreLogger->SetCacheMode(false);
 
 		pCoreLogger->AddRaw(padding);
 		pCoreLogger->AddRaw(stamp);

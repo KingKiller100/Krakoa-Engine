@@ -11,7 +11,7 @@ public:
 		: Application(t, "Keditor")
 	{
 		INIT_LOGS("Hooper2");
-		TOGGLE_SUBSYSTEM_LOGGING();
+		TOGGLE_CONSOLE_LOGGING();
 		SET_LOG_MIN(LOG_LVL_DBG);
 	}
 

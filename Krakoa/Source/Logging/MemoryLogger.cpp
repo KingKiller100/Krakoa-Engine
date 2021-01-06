@@ -21,7 +21,7 @@ namespace memory
 		constexpr auto extension = ".log";
 		
 		pMemoryLogger = std::make_unique<Logging>(dir, filename, extension, name);
-		pMemoryLogger->ToggleConsoleEnabled();
+		pMemoryLogger->GetFile().Open();
 		pMemoryLogger->AddRaw(openingMsg);
 	}
 

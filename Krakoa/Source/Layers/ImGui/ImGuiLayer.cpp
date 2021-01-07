@@ -140,7 +140,7 @@ namespace krakoa
 		{
 			ImGui::Begin("Editor");
 			const size_t texID = GetApp().GetFB()->GetColourAttachmentAssetID();
-			ImGui::Image((void*)texID, ImVec2{ 320.f, 180.f });
+			ImGui::Image((void*)texID, { 320.f, 180.f }, {0, 1.f}, {1, 0});
 			ImGui::End();
 		}
 

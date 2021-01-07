@@ -8,33 +8,36 @@
 
 #include <Maths/Vectors/Vector4.hpp>
 
-class Keditor2DLayer : public krakoa::LayerBase
+namespace krakoa
 {
-public:
-	Keditor2DLayer() noexcept;
+	class Keditor2DLayer : public LayerBase
+	{
+	public:
+		Keditor2DLayer() noexcept;
 
-	void OnAttach() override;
+		void OnAttach() override;
 
-	void OnDetach() override;
+		void OnDetach() override;
 
-	void OnUpdate(float deltaTime) override;
+		void OnUpdate(float deltaTime) override;
 
-	void OnRender() override;
+		void OnRender() override;
 
-	void OnEvent(krakoa::events::Event& e) override;
+		void OnEvent(events::Event& e) override;
 
-private:
-	void SendRendererCommands() noexcept;
-	void RenderZoomControls() noexcept;
+	private:
+		void SendRendererCommands() noexcept;
+		void RenderZoomControls() noexcept;
 
-	void SetUpEntities() const;
+		void SetUpEntities() const;
 
-private:
-	krakoa::Solo_Ptr<krakoa::graphics::SubTexture2D> pSubTexture;
+	private:
+		Solo_Ptr<graphics::SubTexture2D> pSubTexture;
 
-	krakoa::OrthographicCameraController cameraController;
-	
-	kmaths::Vector4f geometryColour;
-	kmaths::Vector3f position;
-	float rotation = 0.f;
-};
+		OrthographicCameraController cameraController;
+
+		kmaths::Vector4f geometryColour;
+		kmaths::Vector3f position;
+		float degreesRotation = 0.f;
+	};
+}

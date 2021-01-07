@@ -24,9 +24,9 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
+		KRK_ASSERT(klib::CheckFileExists(path), klib::ToString("Shader file does not exist: {0}", path))
 		const auto shaderData = klib::kFileSystem::ReadFile(path);
-
-		KRK_ASSERT(!shaderData.empty(), klib::kString::ToString("Shader file is empty: {0}", path));
+		KRK_ASSERT(!shaderData.empty(), klib::ToString("Shader file is empty: {0}", path));
 
 		std::unordered_map<uint32_t, std::string> sources;
 		decltype(sources)::value_type::second_type* currentSource = nullptr;

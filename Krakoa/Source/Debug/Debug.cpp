@@ -15,9 +15,10 @@ namespace krakoa::debug
 	{
 		KRK_WRN(msg);
 
-		const auto errorMsg = klib::kString::ToString("{0}\n"
-			"Click \"OK\" to continue.\n"
-			"Click \"Cancel\" to close application."
+		const auto errorMsg = klib::kString::ToString("{0}"
+			"\nClick \"Abort\" to close application."
+			"\nClick \"Retry\" to break."
+			"\nClick \"Ignore\" to continue."
 			, msg);
 		
 #if KRAKOA_OS_WINDOWS

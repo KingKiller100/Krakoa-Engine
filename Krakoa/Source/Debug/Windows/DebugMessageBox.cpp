@@ -28,10 +28,10 @@ namespace krakoa::debug::windows
 
 	void RaiseMessageBox_Windows(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept
 	{
-		const auto caption = klib::ToString("[Desc] {0}\n"
-			"[File]: {1}\n"
-			"[Line]: {2}\n"
-			"[Func]: {3}\n"
+		const auto caption = klib::ToString("[Desc] {0}"
+			"\n[File]: {1}"
+			"\n[Line]: {2}"
+			"\n[Func]: {3}"
 			, msg
 			, sourceInfo.file
 			, sourceInfo.line

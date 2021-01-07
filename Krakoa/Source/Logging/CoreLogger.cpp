@@ -22,7 +22,6 @@ namespace krakoa
 		constexpr auto filename = "Krakoa Engine";
 		constexpr auto extension = ".log";
 
-		pCoreLogger = std::make_unique<Logging>(dir, filename, extension, name);
 		const auto padding = std::string(72, '*');
 		const auto spacing = std::string(12, ' ');
 
@@ -31,19 +30,17 @@ namespace krakoa
 		const auto dateStr = now.GetDate().ToString("mmm ddd yyyy");
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
 		
+		pCoreLogger = std::make_unique<Logging>(dir, filename, extension, name);
 		pCoreLogger->SetCacheMode(false);
-
+		
+		pCoreLogger->GetConsole().SetDebugStringOutput(true);
+		
 		pCoreLogger->AddRaw(padding);
 		pCoreLogger->AddRaw(stamp);
 		pCoreLogger->AddRaw(initMsg);
 		pCoreLogger->AddRaw(padding);
 		
 		pCoreLogger->AddRaw();
-	}
-
-	Logging& CoreLogger::GetLogger()
-	{
-		return *pCoreLogger;
 	}
 
 	void CoreLogger::ShutDown()
@@ -54,5 +51,10 @@ namespace krakoa
 ************************************************************************)"
 );
 		pCoreLogger->FinalOutput(false);
+	}
+
+	Logging& CoreLogger::GetLogger()
+	{
+		return *pCoreLogger;
 	}
 }

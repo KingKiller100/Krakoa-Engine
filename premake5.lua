@@ -1,6 +1,6 @@
 workspace "KrakoaEngine"
     architecture "x86_64"
-    startproject "Hooper2"
+    startproject "Keditor"
 
     configurations
     {

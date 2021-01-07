@@ -96,7 +96,7 @@ void Keditor2DLayer::SendRendererCommands() noexcept
 		appearance.SetColour(geometryColour);
 	}
 
-	krakoa::GetApp().GetFB()->Unbind();
+	krakoa::GetApp().GetFrameBuffer()->Unbind();
 }
 
 void Keditor2DLayer::OnRender()

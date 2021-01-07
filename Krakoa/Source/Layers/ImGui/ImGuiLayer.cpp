@@ -119,7 +119,6 @@ namespace krakoa
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
-
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -138,10 +137,21 @@ namespace krakoa
 		}
 
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 			ImGui::Begin("Editor");
-			const size_t texID = GetApp().GetFB()->GetColourAttachmentAssetID();
-			ImGui::Image((void*)texID, { 320.f, 180.f }, {0, 1.f}, {1, 0});
+
+			auto& frameBuffer = GetApp().GetFrameBuffer();
+			const auto vp = ImGui::GetContentRegionAvail();
+			if (vp.x != viewportSize.x || vp.y != viewportSize.y)
+			{
+				viewportSize = { static_cast<std::uint32_t>(vp.x), static_cast<std::uint32_t>(vp.y) };
+				frameBuffer->Resize(viewportSize);
+			}
+			const size_t texID = frameBuffer->GetColourAttachmentAssetID();
+			ImGui::Image((void*)texID, vp, { 0, 1.f }, { 1, 0 });
+
 			ImGui::End();
+			ImGui::PopStyleVar();
 		}
 
 		ImGui::End();

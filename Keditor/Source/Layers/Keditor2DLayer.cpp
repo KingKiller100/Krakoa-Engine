@@ -98,7 +98,7 @@ namespace krakoa
 			appearance.SetColour(geometryColour);
 		}
 
-		GetApp().GetFB()->Unbind();
+		GetApp().GetFrameBuffer()->Unbind();
 	}
 
 	void Keditor2DLayer::OnRender()
@@ -223,6 +223,8 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		cameraController.OnEvent(e);
+		const auto& spec = GetApp().GetFrameBuffer()->GetSpec();
+		cameraController.Resize((float)spec.width, (float)spec.height);
 	}
 }
 	

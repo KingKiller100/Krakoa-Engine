@@ -30,6 +30,9 @@ namespace krakoa
 		void SetRotationSpeed(const float rotSpeed) noexcept;
 		void SetTranslationSpeed(const float transSpeed) noexcept;
 
+		void Resize(float width, float height);
+		void Resize(kmaths::Vector2f dimensions);
+		
 		const Bounds& GetBounds() const;
 
 	private:

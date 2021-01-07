@@ -24,7 +24,7 @@ namespace krakoa::graphics
 		virtual void Unbind() = 0;
 		
 		virtual void Resize(std::uint32_t width, std::uint32_t height) = 0;
-		virtual void Resize(const kmaths::Vector2u& dimensions) = 0;
+		virtual void Resize(const kmaths::Vector2<std::uint32_t>& dimensions) = 0;
 
 		USE_RESULT virtual std::uint32_t GetColourAttachmentAssetID() const = 0;
 

@@ -35,5 +35,7 @@ namespace krakoa
 	private:
 		bool isShowing;
 		bool blockEvents;
+
+		kmaths::Vector2<std::uint32_t> viewportSize;
 	};
 }

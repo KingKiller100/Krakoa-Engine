@@ -4,17 +4,15 @@
 #include "DefaultHeap.hpp"
 #include "AllocHeader.hpp"
 
+#include "../MemoryDebug.hpp"
 #include "../../Logging/MemoryLogger.hpp"
 
-#include <Maths/kMathsConstants.hpp>
 #include <Maths/BytesUnits.hpp>
 #include <Maths/kAlgorithms.hpp>
 
 #include <Utility/FileSystem/kFileSystem.hpp>
 
 #include <iostream>
-
-#include "../../Debug/Debug.hpp"
 
 namespace memory
 {

@@ -6,7 +6,7 @@
 #include "MemoryStructures/MemoryTypeSizes.hpp"
 #include "MemoryStructures/HeapFactory.hpp"
 
-#include "../Debug/Debug.hpp"
+#include "MemoryDebug.hpp"
 
 void* operator new [](const size_t bytes, memory::Heap* pHeap)
 {

@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include "../../Entity/Components/Appearance.hpp"
+#include "../../Entity/Components/Appearance.hpp"
+
 #include "../../Graphics/Framebuffers/iFrameBuffer.hpp"
 
 namespace krakoa::graphics
@@ -26,7 +29,7 @@ namespace krakoa::graphics
 		~OpenGLFrameBuffer() noexcept override;
 		void Bind() override;
 		void Unbind() override;
-		void Resize(const kmaths::Vector2u& dimensions) override;
+		void Resize(const kmaths::Vector2<std::uint32_t>& dimensions) override;
 		void Resize(std::uint32_t width, std::uint32_t height) override;
 		USE_RESULT std::uint32_t GetColourAttachmentAssetID() const override;
 		USE_RESULT const FrameBufferSpecification& GetSpec() const override;

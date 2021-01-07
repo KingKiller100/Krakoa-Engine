@@ -8,6 +8,10 @@
 
 #include <glad/glad.h>
 
+
+#include "../../Entity/Components/Appearance.hpp"
+#include "../../Entity/Components/Appearance.hpp"
+
 namespace krakoa::graphics
 {
 	namespace
@@ -54,11 +58,11 @@ namespace krakoa::graphics
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourAttachment, 0);
 
-		// glGenTextures(1, &dsAttachment);
-		// glBindTexture(GL_TEXTURE_2D, dsAttachment);
-		// glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, spec.width, spec.height);
+		glGenTextures(1, &dsAttachment);
+		glBindTexture(GL_TEXTURE_2D, dsAttachment);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, spec.width, spec.height);
 
-		// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, dsAttachment, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, dsAttachment, 0);
 
 		const auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 
@@ -91,7 +95,7 @@ namespace krakoa::graphics
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void OpenGLFrameBuffer::Resize(const kmaths::Vector2u& dimensions)
+	void OpenGLFrameBuffer::Resize(const kmaths::Vector2<std::uint32_t>& dimensions)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -102,7 +106,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		static constexpr char warningFormat[] = "Bad resize dimensions: ({0}, {1})";
+		static constexpr char warningFormat[] = "Bad dimensions given Frame Buffer: ({0}, {1})";
 
 		const auto noDimensions = width == 0 || height == 0;
 		const auto badDimensions = width > g_MaxFrameBufferSize || height == g_MaxFrameBufferSize;
@@ -116,7 +120,7 @@ namespace krakoa::graphics
 
 		spec.width = width;
 		spec.height = height;
-
+
 		Refresh();
 	}
 

@@ -1,7 +1,9 @@
 ﻿#include "Precompile.hpp"
-#include "Debug.hpp"
 
+#include "DebugCore.hpp"
 #include "Windows/DebugMessageBox.hpp"
+
+#include "../Logging/CoreLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
 

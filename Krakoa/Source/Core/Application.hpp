@@ -44,7 +44,7 @@ namespace krakoa
 
 		iWindow& GetWindow() const;
 
-		auto& GetFB() { return frameBuffer; }
+		auto& GetFrameBuffer() { return frameBuffer; }
 		
 	protected:
 		void PushLayer(LayerBase* layer);

@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryPool.hpp"
 
+#include "MemoryDebug.hpp"
 #include "MemoryErrors.hpp"
 #include "MemoryStructures/MemoryTypeSizes.hpp"
 
@@ -9,7 +10,6 @@
 #include <Maths/kAlgorithms.hpp>
 #include <Utility/String/kToString.hpp>
 
-#include "../Debug/Debug.hpp"
 
 namespace memory
 {

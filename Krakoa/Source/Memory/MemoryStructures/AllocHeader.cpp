@@ -4,13 +4,12 @@
 #include "Heap.hpp"
 #include "MemoryTypeSizes.hpp"
 
+#include "../MemoryDebug.hpp"
+
 #include "../../Logging/MemoryLogger.hpp"
 
 #include <Maths/BytesUnits.hpp>
 #include <Utility/String/kToString.hpp>
-
-#include "../../Debug/Debug.hpp"
-
 
 namespace memory
 {

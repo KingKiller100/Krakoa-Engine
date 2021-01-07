@@ -3,11 +3,10 @@
 
 #include "AllocHeader.hpp"
 
+#include "../MemoryDebug.hpp"
 #include "../../Logging/MemoryLogger.hpp"
 
 #include <Maths/BytesUnits.hpp>
-
-#include "../../Debug/Debug.hpp"
 
 namespace memory
 {
@@ -118,8 +117,8 @@ namespace memory
 
 	std::string Heap::GetStatus() const
 	{
-		MEM_ASSERT(vftbl->getStatusFunc != nullptr
-			, "Heap's vftbl is empty");
+		MEM_ASSERT(vftbl->getStatusFunc != nullptr,
+			"Heap's vftbl is empty");
 		return vftbl->getStatusFunc(this);
 	}
 }

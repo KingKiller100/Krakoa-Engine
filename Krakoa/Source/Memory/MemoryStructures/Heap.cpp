@@ -10,6 +10,8 @@
 
 namespace memory
 {
+	size_t Heap::s_TotalLifetimeAllocations = 0;
+	
 	void Heap::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
 	{
 		name = n;
@@ -85,6 +87,11 @@ namespace memory
 		}
 
 		return count;
+	}
+
+	size_t Heap::GetLastBookmark() const
+	{
+		return pPrevAddress->bookmark;
 	}
 
 	void Heap::DeleteLeaks()

@@ -64,7 +64,7 @@ namespace memory
 )");
 
 #ifdef KRAKOA_RELEASE
-MEM_TOGGLE_LOGGING(); // Disable memory logging
+		MEM_TOGGLE_LOGGING(); // Disable memory logging
 #endif
 	}
 
@@ -88,10 +88,11 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 
 		totalBytes += defaultHeap->GetTotalAllocatedBytes();
 		totalAllocations += defaultHeap->WalkTheHeap();
-		MEM_INF(defaultHeap->GetStatus());
+		const auto status = defaultHeap->GetStatus();
+		MEM_INF(status);
 
-		LogTotalBytes(&totalBytes);
-		LogTotalAllocations(&totalAllocations);
+		LogTotalBytes(totalBytes);
+		LogTotalAllocations(totalAllocations, defaultHeap->GetLastBookmark());
 	}
 
 	Heap* HeapFactory::GetDefaultHeap() noexcept
@@ -208,19 +209,20 @@ MEM_TOGGLE_LOGGING(); // Disable memory logging
 		return nullptr;
 	}
 
-	void HeapFactory::LogTotalBytes(const size_t *bytes) noexcept
+	void HeapFactory::LogTotalBytes(const size_t bytes) noexcept
 	{
 		using namespace  kmaths::constants;
 
-		const auto kilo = Divide<float>(*bytes,
+		const auto totalDeallocations = Heap::s_TotalLifetimeAllocations - bytes;
+		const auto kilo = Divide<float>(bytes,
 			CAST(size_t, kmaths::BytesUnits::KILO));
-		const auto mega = Divide<float>(*bytes,
+		const auto mega = Divide<float>(bytes,
 			CAST(size_t, kmaths::BytesUnits::MEGA));
-		const auto giga = Divide<float>(*bytes,
+		const auto giga = Divide<float>(bytes,
 			CAST(size_t, kmaths::BytesUnits::GIGA));
 
 
-		MEM_INF(klib::kString::ToString(
+		MEM_INF(klib::ToString(
 			R"(
 Total Heap Bytes:
 Gigabytes: {0:3}
@@ -231,15 +233,24 @@ Bytes:     {3:3}
 giga,
 mega,
 kilo,
-*bytes))
+bytes));
+
+		MEM_INF(klib::ToString("LifeTime Heap Bytes Allocations: {0}"
+			, Heap::s_TotalLifetimeAllocations));
+
+		MEM_INF(klib::ToString("Lifetime Heap Bytes Deallocations: {0}"
+			, totalDeallocations));
 	}
 
-	void HeapFactory::LogTotalAllocations(const size_t* bytes) noexcept
+	void HeapFactory::LogTotalAllocations(const size_t active, const size_t total) noexcept
 	{
 		using namespace klib::kString;
 
-		MEM_INF(ToString("\nTotal Heap Allocations At Program Shut Down: {0}",
-			*bytes));
+		MEM_INF(ToString("Total Active Heap Allocations: {0}"
+			, active));
+
+		MEM_INF(ToString("Total Lifetime Heap Allocations: {0}"
+			, total));
 	}
 
 	HeapFactory::HeapFactory(Token)

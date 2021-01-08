@@ -6,6 +6,7 @@
 
 namespace memory
 {
+
 	struct Heap_VFTBL;
 	struct AllocHeader;
 
@@ -25,10 +26,10 @@ namespace memory
 
 		~Heap() noexcept = default;
 
-		void Initialize(const char* n, Heap_VFTBL * heapVTBL) noexcept;
+		void Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept;
 
 		bool AddToParent(Heap* pParent);
-		
+
 		template<size_t N>
 		void SetName(const char(&n)[N]) noexcept
 		{
@@ -45,6 +46,8 @@ namespace memory
 		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
 		USE_RESULT size_t WalkTheHeap() const;
+		USE_RESULT size_t GetLastBookmark() const;
+
 		void DeleteLeaks();
 
 		void SetPrevAddress(AllocHeader* prev) noexcept;
@@ -55,6 +58,8 @@ namespace memory
 		Heap(const Heap&) = delete;
 		Heap& operator=(const Heap&) = delete;
 
+	public:
+		static size_t s_TotalLifetimeAllocations;
 	protected:
 		const char* name;
 		size_t totalBytes;

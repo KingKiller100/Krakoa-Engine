@@ -43,21 +43,28 @@ count
 			pCurrentHeader = pCurrentHeader->pPrev;
 		}
 
+		size_t currentIndex = 0;
+		
 		do {
 			const auto bytes = pCurrentHeader->bytes;
-			const auto blockBytes = pCurrentHeader->bytes + ControlBlockSize;
-
+			const auto blockBytes = bytes + ControlBlockSize;
+			const auto bookmark = pCurrentHeader->bookmark;
+			
 			report.append(ToString(R"(
-Heap: "Default" Index: {0}
+Heap: "Default" 
+Index: {0}
 Object Bytes: {1}
 Block Bytes: {2}
+Bookmark: {3}
 )",
-index,
-bytes,
-blockBytes));
+currentIndex
+, bytes
+, blockBytes
+, bookmark
+));
 
 			pCurrentHeader = pCurrentHeader->pNext;
-		} while (index--);
+		} while (++currentIndex < index);
 
 		return report;
 	}

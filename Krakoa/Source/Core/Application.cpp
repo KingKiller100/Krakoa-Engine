@@ -19,14 +19,14 @@
 #include <Utility/Logging/kLogging.hpp>
 
 namespace krakoa
-{	
+{
 	Application::Application(Token&, const std::string_view& appName)
 		: isRunning(true),
-		timeStep (/*120*/),
+		timeStep(/*120*/),
 		isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
@@ -41,7 +41,7 @@ namespace krakoa
 
 	void Application::ShutDown()
 	{
-		KRK_BANNER("Shut Down", "Closing App", "*", "*", 10)
+		KRK_BANNER("Shut Down", "Closing App", "*", "*", 10);
 		graphics::Renderer::ShutDown();
 
 		auto* inputPtr = input::InputManager::Pointer();
@@ -100,7 +100,7 @@ namespace krakoa
 		return true;
 	}
 
-	bool Application::OnWindowResize(events::WindowResizeEvent & e) noexcept
+	bool Application::OnWindowResize(events::WindowResizeEvent& e) noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
@@ -138,7 +138,7 @@ namespace krakoa
 	{
 		const auto deltaTime = timeStep.GetStep();
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_I))
+		if (input::InputManager::IsKeyPressed(input::KEY_V))
 			pImGuiLayer->ToggleVisibility();
 
 		// Update
@@ -156,7 +156,7 @@ namespace krakoa
 		entityManager->Draw();
 
 		frameBuffer->Unbind();
-		
+
 		pImGuiLayer->BeginDraw();
 		layerStack.OnRender();
 		pImGuiLayer->EndDraw();

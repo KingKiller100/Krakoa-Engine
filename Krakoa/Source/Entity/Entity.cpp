@@ -3,7 +3,7 @@
 
 #include "EntityManager.hpp"
 
-#include "Components/Transform.hpp"
+#include "Components/TransformComponent.hpp"
 
 #include <Utility/String/kToString.hpp>
 

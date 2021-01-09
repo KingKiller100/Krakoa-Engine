@@ -47,7 +47,7 @@ namespace krakoa
 		Entity* owner;
 	};
 
-#define STATIC_GET_COMPONENT_TYPE(self) static const char* GetStaticType()\
+#define STATIC_GET_COMPONENT_NAME(self) static const char* GetStaticType()\
 	{\
 	KRK_PROFILE_FUNCTION();\
 	return typeid(self).name();\

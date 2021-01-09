@@ -8,13 +8,13 @@
 
 namespace krakoa::components
 {
-	class Transform final : public ComponentBase
+	class TransformComponent final : public ComponentBase
 	{
 	public:
-		constexpr Transform() noexcept
+		constexpr TransformComponent() noexcept
 			= default;
 		
-		constexpr Transform(const kmaths::Vector3f& position, 
+		constexpr TransformComponent(const kmaths::Vector3f& position, 
 			const float radians, 
 			const kmaths::Vector3f& rotationAxes, 
 			const kmaths::Vector3f& scale) noexcept
@@ -24,7 +24,7 @@ namespace krakoa::components
 			scale(scale)
 		{}
 
-		~Transform() noexcept override;
+		~TransformComponent() noexcept override;
 
 		USE_RESULT constexpr const kmaths::Vector3f& GetPosition() const noexcept { return position; }
 		constexpr void SetPosition(const kmaths::Vector3f& value) noexcept { (position) = value; }
@@ -46,7 +46,7 @@ namespace krakoa::components
 			return kmaths::TRS(position, radians, rotationAxes, scale);
 		}
 
-		STATIC_GET_COMPONENT_TYPE(Transform)
+		STATIC_GET_COMPONENT_NAME(TransformComponent)
 		USE_RESULT const char* GetType() const noexcept override;
 		
 	private:

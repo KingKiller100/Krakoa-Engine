@@ -55,14 +55,14 @@ namespace krakoa
 
 			auto& colourEntity = entityManager.Add("Colour");
 
-			colourEntity.AddComponent<components::Transform>(
+			colourEntity.AddComponent<components::TransformComponent>(
 				Vector3f(-0.5f, 0.f, -0.75f),
 				0.f,
 				Vector3f(0, 0, 1),
 				Vector3f(0.2f, 0.2f, 1.f)
 				);
 
-			colourEntity.AddComponent <components::Appearance2D>(
+			colourEntity.AddComponent <components::Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
 				geometryColour
 				);
@@ -72,14 +72,14 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create cyan entity");
 
 			auto& cyanEntity = entityManager.Add("Cyan");
-			cyanEntity.AddComponent<components::Transform>(
+			cyanEntity.AddComponent<components::TransformComponent>(
 				Vector3f(0.5f, 0.f, -0.75f),
 				0.f,
 				Vector3f(0, 0, 1),
 				Vector3f(0.2f, 0.2f, 1.f)
 				);
 
-			cyanEntity.AddComponent<components::Appearance2D>(
+			cyanEntity.AddComponent<components::Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
 				colours::Cyan
 				);
@@ -89,14 +89,14 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create magenta entity");
 
 			auto& magentaEntity = entityManager.Add("Magenta");
-			magentaEntity.AddComponent<components::Transform>(
+			magentaEntity.AddComponent<components::TransformComponent>(
 				Vector3f(0.f, 0.5f, -0.75f),
 				0.f,
 				Vector3f(0, 0, 1),
 				Vector3f(0.2f, 0.2f, 1.f)
 				);
 
-			magentaEntity.AddComponent <components::Appearance2D>(
+			magentaEntity.AddComponent <components::Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
 				colours::Magenta
 				);
@@ -106,14 +106,14 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create yellow entity");
 
 			auto& yellowEntity = entityManager.Add("Yellow");
-			yellowEntity.AddComponent<components::Transform>(
+			yellowEntity.AddComponent<components::TransformComponent>(
 				Vector3f(0.f, -0.5f, -0.75f),
 				0.f,
 				Vector3f(0, 0, 1),
 				Vector3f(0.2f, 0.2f, 1.f)
 				);
 
-			yellowEntity.AddComponent <components::Appearance2D>(
+			yellowEntity.AddComponent <components::Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
 				colours::Yellow
 				);
@@ -123,10 +123,10 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create textured entity");
 
 			auto& texturedEntity = entityManager.Add("Textured");
-			auto& transform = texturedEntity.AddComponent<components::Transform>();
+			auto& transform = texturedEntity.AddComponent<components::TransformComponent>();
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
-			texturedEntity.AddComponent <components::Appearance2D>(*pSubTexture, geometryColour, 3.f);
+			texturedEntity.AddComponent <components::Appearance2DComponent>(*pSubTexture, geometryColour, 3.f);
 		}
 	}
 
@@ -150,16 +150,16 @@ namespace krakoa
 		const auto& spec = application.GetFrameBuffer()->GetSpec();
 		cameraController.Resize((float)spec.width, (float)spec.height);
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
+		if (input::InputManager::IsKeyPressed(input::KEY_RIGHT))
 			position.X() += moveSpeed * deltaTime;
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
+		if (input::InputManager::IsKeyPressed(input::KEY_LEFT))
 			position.X() -= moveSpeed * deltaTime;
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_UP))
+		if (input::InputManager::IsKeyPressed(input::KEY_UP))
 			position.Y() += moveSpeed * deltaTime;
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
+		if (input::InputManager::IsKeyPressed(input::KEY_DOWN))
 			position.Y() -= moveSpeed * deltaTime;
 
 		degreesRotation -= 5 * moveSpeed * deltaTime;
@@ -178,7 +178,7 @@ namespace krakoa
 
 			auto& colourEntity = entityMan.GetEntity("Colour");
 
-			auto& appearance = colourEntity.GetComponent<components::Appearance2D>();
+			auto& appearance = colourEntity.GetComponent<components::Appearance2DComponent>();
 
 			appearance.SetColour(geometryColour);
 		}
@@ -187,8 +187,8 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Updating texture entity");
 
 			auto& textureEntity = entityMan.GetEntity("Textured");
-			auto& appearance = textureEntity.GetComponent<components::Appearance2D>();
-			auto& transform = textureEntity.GetComponent<components::Transform>();
+			auto& appearance = textureEntity.GetComponent<components::Appearance2DComponent>();
+			auto& transform = textureEntity.GetComponent<components::TransformComponent>();
 
 			transform.SetPosition(position);
 			transform.SetRotation(ToRadians(degreesRotation));

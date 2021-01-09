@@ -58,5 +58,5 @@
 // Entities & Components
 #include "Entity/Entity.hpp"
 #include "Entity/EntityManager.hpp"
-#include "Entity/Components/Transform.hpp"
-#include "Entity/Components/Appearance.hpp"
+#include "Entity/Components/TransformComponent.hpp"
+#include "Entity/Components/AppearanceComponent.hpp"

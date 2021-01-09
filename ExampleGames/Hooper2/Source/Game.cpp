@@ -1,9 +1,6 @@
 #include <Krakoa.hpp>
 #include <Core/EntryPoint.hpp>
 
-#include "Layers/Keditor2DLayer.hpp"
-
-
 class Hooper2Game : public krakoa::Application
 {
 public:
@@ -21,8 +18,6 @@ public:
 	void Initialize() override
 	{
 		Application::Initialize();
-
-		PushLayer(new Keditor2DLayer());
 	}
 
 	void ShutDown() override

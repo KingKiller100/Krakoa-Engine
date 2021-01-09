@@ -25,14 +25,14 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_W))
+		if (input::InputManager::IsKeyPressed(input::KEY_W))
 			position.Y() += camTranslationSpeed * zoomLevel * deltaTime;
-		else if (input::InputManager::IsKeyPressed(KRK_KEY_S))
+		else if (input::InputManager::IsKeyPressed(input::KEY_S))
 			position.Y() -= camTranslationSpeed * zoomLevel * deltaTime;
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_A))
+		if (input::InputManager::IsKeyPressed(input::KEY_A))
 			position.X() -= camTranslationSpeed * zoomLevel * deltaTime;
-		else if (input::InputManager::IsKeyPressed(KRK_KEY_D))
+		else if (input::InputManager::IsKeyPressed(input::KEY_D))
 			position.X() += camTranslationSpeed * zoomLevel * deltaTime;
 
 		camera.SetPosition(position);
@@ -40,9 +40,9 @@ namespace krakoa
 		if (!isRotationAllowed)
 			return;
 
-		if (input::InputManager::IsKeyPressed(KRK_KEY_Q))
+		if (input::InputManager::IsKeyPressed(input::KEY_Q))
 			rotationZ += camRotationSpeed * deltaTime;
-		else if (input::InputManager::IsKeyPressed(KRK_KEY_E))
+		else if (input::InputManager::IsKeyPressed(input::KEY_E))
 			rotationZ -= camRotationSpeed * deltaTime;
 
 		camera.SetRotation(rotationZ);

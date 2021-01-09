@@ -4,8 +4,8 @@
 #include "Entity.hpp"
 #include "../Graphics/2D/Renderer2D.hpp"
 
-#include "Components/Transform.hpp"
-#include "Components/Appearance.hpp"
+#include "Components/TransformComponent.hpp"
+#include "Components/AppearanceComponent.hpp"
 
 #include "../Debug/Debug.hpp"
 
@@ -82,12 +82,12 @@ namespace krakoa
 
 		for (auto& entity : entities)
 		{
-			if (!entity->HasComponent<components::Appearance2D>()
-				|| !entity->HasComponent<components::Transform>())
+			if (!entity->HasComponent<components::Appearance2DComponent>()
+				|| !entity->HasComponent<components::TransformComponent>())
 				continue;
 
-			const auto& appearance = entity->GetComponent<components::Appearance2D>();
-			const auto& transform = entity->GetComponent<components::Transform>();
+			const auto& appearance = entity->GetComponent<components::Appearance2DComponent>();
+			const auto& transform = entity->GetComponent<components::TransformComponent>();
 
 			switch (appearance.GetGeometryType()) {
 			case graphics::GeometryType::QUAD:

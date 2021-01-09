@@ -21,15 +21,15 @@ namespace krakoa::input
 		Create<WindowsInputManager>();
 	}
 
-	bool WindowsInputManager::IsKeyPressedImpl(int keycode) const noexcept
+	bool WindowsInputManager::IsKeyPressedImpl(KeyCode keycode) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
-		const auto state = glfwGetKey(window, keycode);
+		const auto state = glfwGetKey(window, static_cast<int>(keycode));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInputManager::IsMouseButtonPressedImpl(const MouseInputType button) const noexcept
+	bool WindowsInputManager::IsMouseButtonPressedImpl(MouseCode button) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());

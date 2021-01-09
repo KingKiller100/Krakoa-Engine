@@ -39,6 +39,9 @@ namespace krakoa
 			owner = entity;
 		}
 
+		constexpr ComponentBase(const ComponentBase&) = delete;
+		constexpr ComponentBase& operator=(const ComponentBase&) = delete;
+		
 	protected:
 		bool active;
 		Entity* owner;

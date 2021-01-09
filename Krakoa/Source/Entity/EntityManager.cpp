@@ -152,7 +152,7 @@ namespace krakoa
 		return iter != entities.end();
 	}
 
-	Entity& EntityManager::GetEntity(const std::string_view& name)
+	Entity& EntityManager::GetEntity(const std::string_view& name) const
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -167,7 +167,7 @@ namespace krakoa
 		return **iter;
 	}
 
-	Entity& EntityManager::GetEntity(const unsigned id)
+	Entity& EntityManager::GetEntity(const unsigned id) const
 	{
 		KRK_PROFILE_FUNCTION();
 

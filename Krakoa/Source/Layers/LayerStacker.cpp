@@ -104,7 +104,7 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto beg = begin();
-		for (auto layer_iter = end();
+		for (auto layer_iter = end() - 1;
 			layer_iter != beg; 
 			--layer_iter)
 		{

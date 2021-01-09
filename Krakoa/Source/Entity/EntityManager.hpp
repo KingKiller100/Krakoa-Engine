@@ -30,8 +30,8 @@ namespace krakoa
 		USE_RESULT bool Find(const std::string_view& name);
 		USE_RESULT bool Find(const unsigned id);
 
-		USE_RESULT Entity& GetEntity(const std::string_view& name);
-		USE_RESULT Entity& GetEntity(const unsigned id);
+		USE_RESULT Entity& GetEntity(const std::string_view& name) const;
+		USE_RESULT Entity& GetEntity(const unsigned id) const;
 
 		USE_RESULT const std::vector<Solo_Ptr<Entity>>& GetEntities() const;
 

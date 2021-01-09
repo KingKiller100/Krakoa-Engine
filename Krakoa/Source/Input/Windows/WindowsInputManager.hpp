@@ -11,9 +11,9 @@ namespace krakoa::input
 		~WindowsInputManager();
 
 	protected:
-		USE_RESULT bool IsKeyPressedImpl(const int keycode) const noexcept override;
+		USE_RESULT bool IsKeyPressedImpl(KeyCode keycode) const noexcept override;
 
-		USE_RESULT bool IsMouseButtonPressedImpl(const MouseInputType button) const noexcept override;
+		USE_RESULT bool IsMouseButtonPressedImpl(MouseCode button) const noexcept override;
 		USE_RESULT kmaths::Vector2f GetMousePositionImpl() const noexcept override;
 		USE_RESULT float GetMousePosXImpl() const noexcept override;
 		USE_RESULT float GetMousePosYImpl() const noexcept override;

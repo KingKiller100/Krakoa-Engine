@@ -10,6 +10,8 @@
 
 namespace krakoa
 {
+	class Application;
+	
 	class Keditor2DLayer : public LayerBase
 	{
 	public:
@@ -32,6 +34,8 @@ namespace krakoa
 		void SetUpEntities() const;
 
 	private:
+		Application& application;
+
 		Solo_Ptr<graphics::SubTexture2D> pSubTexture;
 
 		OrthographicCameraController cameraController;
@@ -39,5 +43,8 @@ namespace krakoa
 		kmaths::Vector4f geometryColour;
 		kmaths::Vector3f position;
 		float degreesRotation = 0.f;
+
+		bool isWindowFocused;
+		bool isWindowHovered;
 	};
 }

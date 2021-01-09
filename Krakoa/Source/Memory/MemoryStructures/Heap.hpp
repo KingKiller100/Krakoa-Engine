@@ -59,7 +59,7 @@ namespace memory
 		Heap& operator=(const Heap&) = delete;
 
 	public:
-		static size_t s_TotalLifetimeAllocations;
+		static size_t s_TotalLifetimeBytesAllocated;
 	protected:
 		const char* name;
 		size_t totalBytes;

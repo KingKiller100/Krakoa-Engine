@@ -179,6 +179,16 @@ namespace krakoa
 		return *pWindow;
 	}
 
+	Multi_Ptr<graphics::iFrameBuffer>& Application::GetFrameBuffer()
+	{
+		return frameBuffer;
+	}
+
+	ImGuiLayer& Application::GetImGuiLayer() const
+	{
+		return *pImGuiLayer;
+	}
+
 	Application& GetApp()
 	{
 		return Application::Reference();

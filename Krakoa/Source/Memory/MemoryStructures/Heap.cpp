@@ -10,7 +10,7 @@
 
 namespace memory
 {
-	size_t Heap::s_TotalLifetimeAllocations = 0;
+	size_t Heap::s_TotalLifetimeBytesAllocated = 0;
 	
 	void Heap::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
 	{

@@ -213,7 +213,7 @@ namespace memory
 	{
 		using namespace  kmaths::constants;
 
-		const auto totalDeallocations = Heap::s_TotalLifetimeAllocations - bytes;
+		const auto totalDeallocations = Heap::s_TotalLifetimeBytesAllocated - bytes;
 		const auto kilo = Divide<float>(bytes,
 			CAST(size_t, kmaths::BytesUnits::KILO));
 		const auto mega = Divide<float>(bytes,
@@ -236,7 +236,7 @@ kilo,
 bytes));
 
 		MEM_INF(klib::ToString("LifeTime Heap Bytes Allocations: {0}"
-			, Heap::s_TotalLifetimeAllocations));
+			, Heap::s_TotalLifetimeBytesAllocated));
 
 		MEM_INF(klib::ToString("Lifetime Heap Bytes Deallocations: {0}"
 			, totalDeallocations));

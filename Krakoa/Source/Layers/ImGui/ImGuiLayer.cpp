@@ -19,7 +19,7 @@ namespace krakoa
 	ImGuiLayer::ImGuiLayer()
 		: LayerBase("ImGuiLayer")
 		, isShowing(false)
-		, blockEvents(true)
+		, isBlockingEvents(true)
 	{}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -67,7 +67,8 @@ namespace krakoa
 	}
 
 	void ImGuiLayer::OnUpdate(float deltaTime)
-	{}
+	{
+	}
 
 	void ImGuiLayer::OnRender()
 	{
@@ -159,7 +160,7 @@ namespace krakoa
 
 	void ImGuiLayer::OnEvent(events::Event& e)
 	{
-		if (!blockEvents)
+		if (!isBlockingEvents)
 			return;
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -207,6 +208,21 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		isShowing = !isShowing;
+	}
+
+	bool ImGuiLayer::GetBlockEventsStatus() const noexcept
+	{
+		return isBlockingEvents;
+	}
+
+	void ImGuiLayer::BlockEvents()
+	{
+		isBlockingEvents = true;
+	}
+
+	void ImGuiLayer::UnblockEvents()
+	{
+		isBlockingEvents = false;
 	}
 }
 

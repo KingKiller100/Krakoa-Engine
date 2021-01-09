@@ -44,8 +44,8 @@ namespace krakoa
 
 		iWindow& GetWindow() const;
 
-		auto& GetFrameBuffer() { return frameBuffer; }
-		
+		Multi_Ptr<graphics::iFrameBuffer>& GetFrameBuffer();
+		ImGuiLayer& GetImGuiLayer() const;
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);

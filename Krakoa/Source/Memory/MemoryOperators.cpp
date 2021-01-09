@@ -29,8 +29,8 @@ void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads Control Bloc
 	MEM_ASSERT((bytes != 0) || bytes < CAST(size_t, -1),
 		"Illegal amount of bytes requested");
 
-	if (memory::Heap::s_TotalLifetimeAllocations < static_cast<size_t>(-1))
-		memory::Heap::s_TotalLifetimeAllocations += bytes;
+	if (memory::Heap::s_TotalLifetimeBytesAllocated < static_cast<size_t>(-1))
+		memory::Heap::s_TotalLifetimeBytesAllocated += bytes;
 
 	const size_t requestedBytes = memory::AllocHeaderSize + bytes + memory::SignatureSize; // Alignment in memory
 	auto* pBlock = CAST(kmaths::Byte_Type*, malloc(requestedBytes)); // memory::MemoryPool::Reference().Allocate(requestedBytes);

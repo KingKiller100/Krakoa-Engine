@@ -31,6 +31,9 @@
 // Colours
 #include "Graphics/Helpers/Colour.hpp"
 
+// Frame Buffer
+#include "Graphics/Framebuffers/iFrameBuffer.hpp"
+
 // Rendering
 #include "Graphics/Renderer.hpp"
 #include "Graphics/2D/Renderer2D.hpp"

@@ -12,11 +12,14 @@ namespace krakoa
 	using namespace graphics;
 
 	Keditor2DLayer::Keditor2DLayer() noexcept
-		: LayerBase("Renderer"),
-		cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
+		: LayerBase("Renderer")
+		, application(GetApp())
+		, cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
 			/ CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
 			true) // Aspect ratio from window size
 		, position({ 0.f, 0.f })
+		, isWindowFocused(false)
+		, isWindowHovered(false)
 	{
 		cameraController.SetRotationSpeed(180.f);
 		cameraController.SetTranslationSpeed(5.f);
@@ -39,98 +42,6 @@ namespace krakoa
 		);
 
 		SetUpEntities();
-	}
-
-	void Keditor2DLayer::OnDetach()
-	{
-		KRK_PROFILE_FUNCTION();
-	}
-
-	void Keditor2DLayer::OnUpdate(float deltaTime)
-	{
-		KRK_PROFILE_FUNCTION();
-
-		constexpr float moveSpeed = 2.f;
-
-		cameraController.OnUpdate(deltaTime);
-		SendRendererCommands();
-
-		if (input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
-			position.X() += moveSpeed * deltaTime;
-
-		if (input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
-			position.X() -= moveSpeed * deltaTime;
-
-		if (input::InputManager::IsKeyPressed(KRK_KEY_UP))
-			position.Y() += moveSpeed * deltaTime;
-
-		if (input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
-			position.Y() -= moveSpeed * deltaTime;
-
-		degreesRotation -= 5 * moveSpeed * deltaTime;
-	}
-
-	void Keditor2DLayer::SendRendererCommands() noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-
-		Renderer2D::BeginScene(cameraController.GetCamera());
-
-		{
-			KRK_PROFILE_SCOPE("Updating colour entity");
-
-			auto& colourEntity = EntityManager::Reference().GetEntity("Colour");
-
-			auto& appearance = colourEntity.GetComponent<components::Appearance2D>();
-
-			appearance.SetColour(geometryColour);
-		}
-
-		{
-			KRK_PROFILE_SCOPE("Updating texture entity");
-
-			auto& textureEntity = EntityManager::Reference().GetEntity("Textured");
-			auto& appearance = textureEntity.GetComponent<components::Appearance2D>();
-			auto& transform = textureEntity.GetComponent<components::Transform>();
-
-			transform.SetPosition(position);
-			transform.SetRotation(ToRadians(degreesRotation));
-			appearance.SetColour(geometryColour);
-		}
-
-		GetApp().GetFrameBuffer()->Unbind();
-	}
-
-	void Keditor2DLayer::OnRender()
-	{
-		KRK_PROFILE_FUNCTION();
-
-		ImGui::Begin("Geometry Colour Settings");
-		ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData(), ImGuiColorEditFlags_None);
-		ImGui::End();
-
-		RenderZoomControls();
-	}
-
-	void Keditor2DLayer::RenderZoomControls() noexcept
-	{
-		static constexpr Vector2f in(0.f, 1.f);
-		static constexpr Vector2f out(0.f, -1.f);
-
-		ImGui::Begin("Zoom Controls");
-
-		if (ImGui::ArrowButton("Zoom In", ImGuiDir_Up))
-		{
-			auto zoomInEvent = events::MouseScrolledEvent(in);
-			cameraController.OnEvent(zoomInEvent);
-		}
-		else if (ImGui::ArrowButton("Zoom Out", ImGuiDir_Down))
-		{
-			auto zoomOutEvent = events::MouseScrolledEvent(out);
-			cameraController.OnEvent(zoomOutEvent);
-		}
-
-		ImGui::End();
 	}
 
 	void Keditor2DLayer::SetUpEntities() const
@@ -219,12 +130,113 @@ namespace krakoa
 		}
 	}
 
+	void Keditor2DLayer::OnDetach()
+	{
+		KRK_PROFILE_FUNCTION();
+	}
+
+	void Keditor2DLayer::OnUpdate(float deltaTime)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		constexpr float moveSpeed = 2.f;
+
+		if (isWindowFocused)
+			cameraController.OnUpdate(deltaTime);
+
+		SendRendererCommands();
+
+		if (input::InputManager::IsKeyPressed(KRK_KEY_RIGHT))
+			position.X() += moveSpeed * deltaTime;
+
+		if (input::InputManager::IsKeyPressed(KRK_KEY_LEFT))
+			position.X() -= moveSpeed * deltaTime;
+
+		if (input::InputManager::IsKeyPressed(KRK_KEY_UP))
+			position.Y() += moveSpeed * deltaTime;
+
+		if (input::InputManager::IsKeyPressed(KRK_KEY_DOWN))
+			position.Y() -= moveSpeed * deltaTime;
+
+		degreesRotation -= 5 * moveSpeed * deltaTime;
+	}
+
+	void Keditor2DLayer::SendRendererCommands() noexcept
+	{
+		KRK_PROFILE_FUNCTION();
+
+		Renderer2D::BeginScene(cameraController.GetCamera());
+
+		{
+			KRK_PROFILE_SCOPE("Updating colour entity");
+
+			auto& colourEntity = EntityManager::Reference().GetEntity("Colour");
+
+			auto& appearance = colourEntity.GetComponent<components::Appearance2D>();
+
+			appearance.SetColour(geometryColour);
+		}
+
+		{
+			KRK_PROFILE_SCOPE("Updating texture entity");
+
+			auto& textureEntity = EntityManager::Reference().GetEntity("Textured");
+			auto& appearance = textureEntity.GetComponent<components::Appearance2D>();
+			auto& transform = textureEntity.GetComponent<components::Transform>();
+
+			transform.SetPosition(position);
+			transform.SetRotation(ToRadians(degreesRotation));
+			appearance.SetColour(geometryColour);
+		}
+
+		application.GetFrameBuffer()->Unbind();
+	}
+
+	void Keditor2DLayer::OnRender()
+	{
+		KRK_PROFILE_FUNCTION();
+
+		ImGui::Begin("Geometry Colour Settings");
+		ImGui::ColorEdit4("Geometry Colour", geometryColour.GetPointerToData(), ImGuiColorEditFlags_None);
+		ImGui::End();
+
+		RenderZoomControls();
+
+		isWindowFocused = ImGui::IsWindowFocused();
+		isWindowHovered = ImGui::IsWindowHovered();
+
+		if (isWindowFocused || isWindowHovered)
+			application.GetImGuiLayer().BlockEvents();
+		else
+			application.GetImGuiLayer().UnblockEvents();
+	}
+
+	void Keditor2DLayer::RenderZoomControls() noexcept
+	{
+		static constexpr Vector2f in(0.f, 1.f);
+		static constexpr Vector2f out(0.f, -1.f);
+
+		ImGui::Begin("Zoom Controls");
+
+		if (ImGui::ArrowButton("Zoom In", ImGuiDir_Up))
+		{
+			auto zoomInEvent = events::MouseScrolledEvent(in);
+			cameraController.OnEvent(zoomInEvent);
+		}
+		else if (ImGui::ArrowButton("Zoom Out", ImGuiDir_Down))
+		{
+			auto zoomOutEvent = events::MouseScrolledEvent(out);
+			cameraController.OnEvent(zoomOutEvent);
+		}
+
+		ImGui::End();
+	}
+
 	void Keditor2DLayer::OnEvent(events::Event& e)
 	{
 		KRK_PROFILE_FUNCTION();
 		cameraController.OnEvent(e);
-		const auto& spec = GetApp().GetFrameBuffer()->GetSpec();
+		const auto& spec = application.GetFrameBuffer()->GetSpec();
 		cameraController.Resize((float)spec.width, (float)spec.height);
 	}
 }
-	

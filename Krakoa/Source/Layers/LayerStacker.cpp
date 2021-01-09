@@ -103,9 +103,11 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		for (auto layer_iter = end(); layer_iter != begin();)
+		const auto beg = begin();
+		for (auto layer_iter = end();
+			layer_iter != beg; 
+			--layer_iter)
 		{
-			--layer_iter;
 			(*layer_iter)->OnEvent(e);
 			if (e.isHandled())
 				break;

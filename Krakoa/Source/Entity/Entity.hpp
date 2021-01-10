@@ -1,17 +1,16 @@
 #pragma once
 
-#include "Components/ComponentBase.hpp"
+#include "Components/ComponentWrapper.hpp"
 
 #include "../Patterns/MemPooler.hpp"
 #include "../Debug/Debug.hpp"
 #include "../Util/UniqueID.hpp"
 
 #include <HelperMacros.hpp>
-
-#include <string>
-#include <array>
+#include <Utility/String/kToString.hpp>
 
 
+#include <unordered_map>
 
 namespace krakoa
 {
@@ -21,7 +20,6 @@ namespace krakoa
 	{
 	public:
 		Entity();
-		Entity(const std::string_view& name);
 
 		// Entity(const Entity& other);
 		// Entity& operator=(const Entity& other);
@@ -30,11 +28,6 @@ namespace krakoa
 		Entity& operator=(Entity&& other) noexcept;
 
 		~Entity() noexcept;
-
-		USE_RESULT const std::string& GetName() const noexcept;
-		void SetName(const std::string& value) noexcept;
-
-		USE_RESULT size_t GetID() const noexcept;
 
 		USE_RESULT const bool& IsSelected() const noexcept;
 		void Select() noexcept;
@@ -48,16 +41,7 @@ namespace krakoa
 
 		void RemoveAllComponents() noexcept;
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
-		USE_RESULT bool HasComponent() const noexcept
-		{
-			return components[GetUniqueID<Component>()] != nullptr;
-		}
-
-		template<typename Component, typename ...Args, typename = std::enable_if_t<
-			std::is_base_of_v<ComponentBase, Component>
-		&& std::is_constructible_v<Component, Args...>
-		>>
+		template<typename Component, typename ...Args>
 		Component& AddComponent(Args&& ...params)
 		{
 			KRK_ASSERT(
@@ -65,42 +49,46 @@ namespace krakoa
 				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", Component::GetStaticType())
 			);
 
-			Component* component = new Component(std::forward<Args>(params)...);
-			components[GetUniqueID<Component>()].reset(component);
-			component->SetOwner(this);
-			component->Initialize();
-			return dynamic_cast<Component&>(*component);
+			const auto uid = GetUniqueID<Component>();
+			auto component = Make_Solo<ComponentWrapper>(this, std::forward<Args>(params)...);
+			
+			auto& pair = components.insert(std::make_pair(uid, component));
+			return (*pair.first).template GetComponent<Component>();
 		}
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
+		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentWrapper, Component>>>
 		bool RemoveComponent() noexcept
 		{
 			if (HasComponent<Component>())
 			{
-				components[GetUniqueID<Component>()] = nullptr;
+				const auto uid = GetUniqueID<Component>();
+				components.erase(uid);
 				return true;
 			}
 
 			return false;
 		}
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentBase, Component>>>
+		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentWrapper, Component>>>
 		USE_RESULT Component& GetComponent() const
 		{
 			KRK_ASSERT(
 				HasComponent<Component>(), // Assert component already a part of entity
-				klib::kString::ToString("Attempt to get a component not a part of this entity - {0}", Component::GetStaticType())
+				klib::ToString("Attempt to get a component not a part of this entity - {0}", Component::GetStaticType())
 			);
 
-			Component* component = dynamic_cast<Component*>(components[GetUniqueID<Component>()].get());
+			const auto uid = GetUniqueID<Component>();
+			return components.at(uid).template GetComponent<Component>();
+		}
 
-			return *component;
+		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentWrapper, Component>>>
+		USE_RESULT bool HasComponent() const noexcept
+		{
+			return components.find(GetUniqueID<Component>()) != components.end();
 		}
 
 	private:
-		std::string name;
-		const size_t id;
-		std::array<Solo_Ptr<ComponentBase>, sizeof(ID_t) * CHAR_BIT> components{};
+		std::unordered_map<ID_t, ComponentWrapper> components;
 
 		bool selected;
 		bool active;

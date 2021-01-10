@@ -9,23 +9,9 @@
 
 namespace krakoa
 {
-	namespace
-	{
-		size_t stored_ids = 0;
-	}
 
 	Entity::Entity()
-		: name(klib::kString::ToString("Entity{0}", stored_ids)),
-		id(stored_ids++),
-		selected(false),
-		active(true),
-		manager(EntityManager::Pointer())
-	{}
-
-	Entity::Entity(const std::string_view& name)
-		: name(name),
-		id(stored_ids++),
-		selected(false),
+		: selected(false),
 		active(true),
 		manager(EntityManager::Pointer())
 	{}
@@ -40,9 +26,7 @@ namespace krakoa
 	// {}
 
 	Entity::Entity(Entity&& other) noexcept
-		: name(std::move(other.name)),
-		id(std::move(other.id)),
-		components(std::move(other.components)),
+		: components(std::move(other.components)),
 		selected(false),
 		active(other.active),
 		manager(EntityManager::Pointer())
@@ -50,7 +34,7 @@ namespace krakoa
 
 	// Entity& Entity::operator=(const Entity& other)
 	// {
-	// 	name = klib::kString::ToString("Entity{0)", stored_ids++);
+	// 	name = klib::kString::ToString("Entity{0)", s_EntityUIDs++);
 	// 	for (auto i = 0; i < other.components.size(); ++i)
 	// 	{
 	// 		components[i] = *other.components[i]
@@ -64,10 +48,6 @@ namespace krakoa
 
 	Entity& Entity::operator=(Entity&& other) noexcept
 	{
-		name = std::move(other.name);
-		const auto* idPtr = &id;
-		delete idPtr;
-		idPtr = new size_t(std::move(other.id));
 		components = std::move(other.components);
 		selected = false;
 		active = other.active;
@@ -77,21 +57,6 @@ namespace krakoa
 
 	Entity::~Entity() noexcept
 		= default;
-
-	const std::string& Entity::GetName() const noexcept
-	{
-		return name;
-	}
-
-	void Entity::SetName(const std::string& value) noexcept
-	{
-		(name) = value;
-	}
-
-	size_t Entity::GetID() const noexcept
-	{
-		return id;
-	}
 
 	const bool& Entity::IsSelected() const noexcept
 	{
@@ -125,25 +90,20 @@ namespace krakoa
 
 	void Entity::Update(const float dt)
 	{
-		KRK_DBG("Entity \"" + name + "\" Update Called");
+		KRK_DBG("Entity Update Called");
 
-		for (auto& component : components)
+		for (auto& componentPair : components)
 		{
-			if (component == nullptr || !component->IsActive())
+			auto& component = componentPair.second;
+			if (!component.IsActive())
 				continue;
 
-			KRK_DBG(klib::kString::ToString("\tComponent \"{0}\" Update Called", component->GetType()));
-
-			component->Update(dt);
+			// component.Update(dt);
 		}
 	}
 
 	void Entity::RemoveAllComponents() noexcept
 	{
-		for (auto& component : components)
-		{
-			if (component)
-				component.reset(nullptr);
-		}
+		components.clear();
 	}
 }

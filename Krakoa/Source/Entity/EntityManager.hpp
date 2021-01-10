@@ -4,7 +4,7 @@
 #include "../Patterns/ManagerBase.hpp"
 
 #include <string>
-#include <vector>
+#include <map>
 
 
 namespace krakoa
@@ -13,6 +13,9 @@ namespace krakoa
 
 	class EntityManager final : public patterns::ManagerBase<EntityManager>
 	{
+	public:
+		using EntityUID = std::uint64_t;
+		
 	public:
 		EntityManager(Token);
 		~EntityManager();
@@ -35,11 +38,14 @@ namespace krakoa
 
 		USE_RESULT const std::vector<Solo_Ptr<Entity>>& GetEntities() const;
 
-
 	private:
 		void SortEntities();
 
+		EntityUID GenerateNewID();
+
 	private:
-		std::vector<Solo_Ptr<Entity>> entities;
+		std::map<EntityUID, Solo_Ptr<Entity>> entities;
+		EntityUID nextFreeID;
+		
 	};
 }

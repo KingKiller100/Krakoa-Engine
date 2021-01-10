@@ -18,10 +18,10 @@ namespace krakoa::graphics
 
 	public:
 		inline static constexpr auto Length = 4;
-		inline static constexpr auto Bytes = Length * sizeof(uint8_t);
+		inline static constexpr auto Bytes = Length * sizeof(std::uint8_t);
 
-		inline static constexpr uint8_t MinColourValue = 0;
-		inline static constexpr uint8_t MaxColourValue = 255;
+		inline static constexpr std::uint8_t MinColourValue = 0;
+		inline static constexpr std::uint8_t MaxColourValue = 255;
 
 	public:
 		constexpr Colour() noexcept
@@ -217,16 +217,19 @@ namespace krakoa::graphics
 
 		USE_RESULT constexpr Colour Inverse() const noexcept
 		{
-			return Colour(CAST(uint8_t, MaxColourValue - red), CAST(uint8_t, MaxColourValue - green), CAST(uint8_t, MaxColourValue - blue), alpha);
+			return Colour(CAST(uint8_t, MaxColourValue - red)
+				, CAST(uint8_t, MaxColourValue - green)
+				, CAST(uint8_t, MaxColourValue - blue)
+				, alpha);
 		}
 
 		// Operators
 		USE_RESULT constexpr Colour operator+(const Colour& c) const noexcept
 		{
-			const auto r = kmaths::Clamp<uint8_t>((red + c.red), MinColourValue, MaxColourValue);
-			const auto g = kmaths::Clamp<uint8_t>((green + c.green), MinColourValue, MaxColourValue);
-			const auto b = kmaths::Clamp<uint8_t>((blue + c.blue), MinColourValue, MaxColourValue);
-			const auto a = kmaths::Clamp<uint8_t>((alpha + c.alpha), MinColourValue, MaxColourValue);
+			const auto r = kmaths::Clamp<std::uint8_t>((red + c.red), MinColourValue, MaxColourValue);
+			const auto g = kmaths::Clamp<std::uint8_t>((green + c.green), MinColourValue, MaxColourValue);
+			const auto b = kmaths::Clamp<std::uint8_t>((blue + c.blue), MinColourValue, MaxColourValue);
+			const auto a = kmaths::Clamp<std::uint8_t>((alpha + c.alpha), MinColourValue, MaxColourValue);
 
 			return { r, g, b, a };
 		}
@@ -305,7 +308,7 @@ namespace krakoa::graphics
 		}
 
 	private:
-		USE_RESULT constexpr uint8_t FloatToColour(float c) const
+		USE_RESULT constexpr std::uint8_t FloatToColour(float c) const
 		{
 			c = kmaths::Clamp<float>(c, MinColourValue, 1.f);
 
@@ -314,10 +317,10 @@ namespace krakoa::graphics
 
 
 	private:
-		uint8_t red = MinColourValue;
-		uint8_t green = MinColourValue;
-		uint8_t blue = MinColourValue;
-		uint8_t alpha = MaxColourValue;
+		std::uint8_t red = MinColourValue;
+		std::uint8_t green = MinColourValue;
+		std::uint8_t blue = MinColourValue;
+		std::uint8_t alpha = MaxColourValue;
 	};
 
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>

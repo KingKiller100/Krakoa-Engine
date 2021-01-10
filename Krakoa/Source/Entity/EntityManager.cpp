@@ -12,7 +12,6 @@
 namespace krakoa
 {
 	EntityManager::EntityManager(Token)
-		: entities()
 	{}
 
 	EntityManager::~EntityManager()
@@ -29,16 +28,16 @@ namespace krakoa
 
 	Entity& EntityManager::Add()
 	{
-		entities.emplace_back(Make_Solo<Entity>());
-		const auto& entity = entities.back();
+		const auto& entity =
+			entities.insert(std::make_pair(nextFreeID, Make_Solo<Entity>()));
 		SortEntities();
 		return *entity;
 	}
 
 	Entity& EntityManager::Add(const std::string_view& name)
 	{
-		entities.emplace_back(Make_Solo<Entity>(name));
-		const auto& entity = entities.back();
+		const auto& entity =
+			entities.emplace_back(Make_Solo<Entity>(name));
 		SortEntities();
 		return *entity;
 	}
@@ -199,5 +198,17 @@ namespace krakoa
 				return e1->IsActive() == true
 					&& e2->IsActive() == false;
 			});
+	}
+
+	EntityManager::EntityUID EntityManager::GenerateNewID()
+	{
+		for (const auto& entity : entities)
+		{
+			if (entity.first == nextFreeID)
+				++nextFreeID;
+			else 
+				break;
+		}
+		return nextFreeID;
 	}
 }

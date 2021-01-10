@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "ComponentBase.hpp"
 
 #include "../../Core/PointerTypes.hpp"
 
@@ -9,15 +8,14 @@
 
 namespace krakoa::components
 {
-	
-	class Appearance2DComponent final : public ComponentBase
+	class Appearance2DComponent 
 	{
 	public:
 		Appearance2DComponent(const graphics::SubTexture2D& subTexture, const graphics::Colour colour = graphics::colours::White, const float tilingFactor = 1.f);
 		Appearance2DComponent(graphics::iTexture2D* texture, const graphics::SubTexture2D::TexCoordData& texCoordData, const graphics::Colour colour = graphics::colours::White, const float tilingFactor = 1.f);
 		Appearance2DComponent(const Multi_Ptr<graphics::iTexture2D>& texture, const graphics::SubTexture2D::TexCoordData& texCoordData, const graphics::Colour colour = graphics::colours::White, const float tilingFactor = 1.f);
 
-		~Appearance2DComponent() noexcept override;
+		~Appearance2DComponent() noexcept;
 
 		USE_RESULT const graphics::SubTexture2D& GetSubTexture() const noexcept { return subTexture; }
 		USE_RESULT const Multi_Ptr<graphics::iTexture2D>& GetTexture() const noexcept { return subTexture.GetTexture(); }
@@ -33,8 +31,7 @@ namespace krakoa::components
 		
 		USE_RESULT graphics::GeometryType GetGeometryType() const;
 		
-		USE_RESULT const char* GetType() const noexcept override;
-		STATIC_GET_COMPONENT_NAME(Appearance2DComponent)
+		USE_RESULT const char* GetType() const noexcept;
 		
 	private:
 		graphics::SubTexture2D subTexture;

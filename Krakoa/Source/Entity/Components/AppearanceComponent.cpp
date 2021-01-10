@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "AppearanceComponent.hpp"
 
+#include <Template/kTypeName.hpp>
+
 namespace krakoa::components
 {
 	Appearance2DComponent::Appearance2DComponent(const graphics::SubTexture2D& subTexture, const graphics::Colour colour, const float tilingFactor)
@@ -43,6 +45,6 @@ namespace krakoa::components
 
 	const char* Appearance2DComponent::GetType() const noexcept
 	{
-		return GetStaticType();
+		return klib::GetTypeName<Appearance2DComponent>();
 	}
 }

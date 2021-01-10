@@ -15,7 +15,7 @@ namespace patterns
 	class SimpleSingleton : iSingleton
 	{
 	public:
-		using Underlying_t = T;
+		using Type = T;
 		
 	protected:
 		struct Token {};

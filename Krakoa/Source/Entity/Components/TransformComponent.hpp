@@ -1,58 +1,44 @@
 ﻿#pragma once
 
-#include "ComponentBase.hpp"
-
 #include <Maths/Vectors/PredefinedVectors.hpp>
 #include <Maths/Matrices/TransformMatrix.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 namespace krakoa::components
 {
-	class TransformComponent final : public ComponentBase
+	class TransformComponent
 	{
 	public:
-		constexpr TransformComponent() noexcept
-			= default;
-		
-		constexpr TransformComponent(const kmaths::Vector3f& position, 
-			const float radians, 
-			const kmaths::Vector3f& rotationAxes, 
-			const kmaths::Vector3f& scale) noexcept
-			: position(position),
-			rotationAxes(rotationAxes),
-			radians(radians),
-			scale(scale)
-		{}
+		TransformComponent() noexcept;
 
-		~TransformComponent() noexcept override;
+		TransformComponent(const kmaths::Vector3f& position,
+		                   const float radians,
+		                   const kmaths::Vector3f& rotationAxes,
+		                   const kmaths::Vector3f& scale) noexcept;
 
-		USE_RESULT constexpr const kmaths::Vector3f& GetPosition() const noexcept { return position; }
-		constexpr void SetPosition(const kmaths::Vector3f& value) noexcept { (position) = value; }
+		~TransformComponent() noexcept;
 
-		USE_RESULT constexpr const kmaths::Vector3f& GetScale() const noexcept { return scale; }
-		constexpr void SetScale(const kmaths::Vector3f& value) noexcept { (scale) = value; }
+		USE_RESULT const kmaths::Vector3f& GetPosition() const noexcept;
+		void SetPosition(const kmaths::Vector3f& value) noexcept;
+
+		USE_RESULT const kmaths::Vector3f& GetScale() const noexcept;
+		void SetScale(const kmaths::Vector3f& value) noexcept;
 		void SetScale(const kmaths::Vector2f& value);
 
-		USE_RESULT constexpr const kmaths::Vector3f& GetRotationAxes() const noexcept { return rotationAxes; }
-		constexpr void SetRotationAxes(const kmaths::Vector3f& value) noexcept { (rotationAxes) = value; };
+		USE_RESULT const kmaths::Vector3f& GetRotationAxes() const noexcept;
+		void SetRotationAxes(const kmaths::Vector3f& value) noexcept;;
 
-		USE_RESULT constexpr const float& GetRotation() const noexcept { return radians; }
-		constexpr void SetRotation(const float value) noexcept { (radians) = value; }
+		USE_RESULT const float& GetRotation() const noexcept;
+		void SetRotation(const float value) noexcept;
 
-		USE_RESULT constexpr kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept
-		{
-			KRK_PROFILE_FUNCTION();
+		USE_RESULT kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept;
 
-			return kmaths::TRS(position, radians, rotationAxes, scale);
-		}
-
-		STATIC_GET_COMPONENT_NAME(TransformComponent)
-		USE_RESULT const char* GetType() const noexcept override;
+		USE_RESULT const char* GetType() const noexcept;
 		
 	private:
-		kmaths::Vector3f position{};
-		kmaths::Vector3f rotationAxes{ 0.f, 0.f, 1.f };
-		float radians = 0.f;
-		kmaths::Vector3f scale{ 1.f, 1.f, 1.f };
+		kmaths::Vector3f position;
+		kmaths::Vector3f rotationAxes;
+		float radians;
+		kmaths::Vector3f scale;
 	};
 }

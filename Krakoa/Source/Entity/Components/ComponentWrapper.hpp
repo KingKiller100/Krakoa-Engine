@@ -1,24 +1,24 @@
 #pragma once
 
+#include "../EntityUID.hpp"
+
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Core/EngineMacros.hpp"
 #include "../../Core/PointerTypes.hpp"
 
 namespace krakoa
 {
-	class Entity;
-
 	class ComponentWrapper
 	{
 	public:
 		template<typename Component, typename ...Args, typename = std::enable_if_t<
 			std::is_constructible_v<Component, Args...>
 			>>
-			ComponentWrapper(Entity* entity, Args&& ...params)
+			ComponentWrapper(EntityUID entityUId, Args&& ...params)
 			: active(true)
-			, owner(nullptr)
+			, owner(entityUId)
 		{
-			SetComponent<Component, Args...>(entity, params);
+			SetComponent<Component, Args...>(entityUId, params);
 		}
 
 		~ComponentWrapper() noexcept;
@@ -29,7 +29,7 @@ namespace krakoa
 
 		void Deactivate() noexcept;
 
-		void SetOwner(Entity* entity);
+		void SetOwner(EntityUID entityUId);
 
 		template<typename Component>
 		Component& GetComponent()
@@ -50,7 +50,7 @@ namespace krakoa
 		template<typename Component, typename ...Args, typename = std::enable_if_t<
 			std::is_constructible_v<Component, Args...>
 			>>
-			void SetComponent(Entity* entity, Args&& ...params)
+			void SetComponent(EntityUID entity, Args&& ...params)
 		{
 			KRK_PROFILE_FUNCTION();
 			Component* comp = new Component(std::forward<Args>(params)...);
@@ -64,6 +64,6 @@ namespace krakoa
 	private:
 		Solo_Ptr<void> component;
 		bool active;
-		Entity* owner;
+		EntityUID owner;
 	};
 }

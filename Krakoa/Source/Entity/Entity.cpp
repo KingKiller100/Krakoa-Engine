@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "Entity.hpp"
 
-#include "EntityManager.hpp"
+#include "EntityComponentSystem.hpp"
 
 #include "Components/TransformComponent.hpp"
 
@@ -13,7 +13,7 @@ namespace krakoa
 	Entity::Entity()
 		: selected(false),
 		active(true),
-		manager(EntityManager::Pointer())
+		manager(EntityComponentSystem::Pointer())
 	{}
 
 	// Entity::Entity(const Entity& other)
@@ -22,14 +22,14 @@ namespace krakoa
 	// 	components(other.components),
 	// 	selected(false),
 	// 	active(true),
-	// 	manager(EntityManager::Pointer())
+	// 	manager(EntityComponentSystem::Pointer())
 	// {}
 
 	Entity::Entity(Entity&& other) noexcept
 		: components(std::move(other.components)),
 		selected(false),
 		active(other.active),
-		manager(EntityManager::Pointer())
+		manager(EntityComponentSystem::Pointer())
 	{}
 
 	// Entity& Entity::operator=(const Entity& other)
@@ -42,7 +42,7 @@ namespace krakoa
 	// 	components = std::copy(other.components.begin(), other.components.end(), components);
 	// 	selected = false;
 	// 	active = other.active;
-	// 	manager = EntityManager::Pointer();
+	// 	manager = EntityComponentSystem::Pointer();
 	// 	return *this;
 	// }
 
@@ -51,7 +51,7 @@ namespace krakoa
 		components = std::move(other.components);
 		selected = false;
 		active = other.active;
-		manager = EntityManager::Pointer();
+		manager = EntityComponentSystem::Pointer();
 		return *this;
 	}
 

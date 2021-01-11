@@ -48,7 +48,7 @@ namespace krakoa
 	{
 		constexpr auto rotScale = Vector2f(0.25f);
 
-		auto& entityManager = EntityManager::Reference();
+		auto& entityManager = EntityComponentSystem::Reference();
 
 		{
 			KRK_PROFILE_SCOPE("Create coloured entity");
@@ -171,7 +171,7 @@ namespace krakoa
 
 		Renderer2D::BeginScene(cameraController.GetCamera());
 
-		const auto& entityMan = EntityManager::Reference();
+		const auto& entityMan = EntityComponentSystem::Reference();
 
 		{
 			KRK_PROFILE_SCOPE("Updating colour entity");

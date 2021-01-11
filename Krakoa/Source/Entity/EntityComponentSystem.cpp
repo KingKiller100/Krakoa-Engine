@@ -1,48 +1,51 @@
 ﻿#include "Precompile.hpp"
-#include "EntityManager.hpp"
+#include "EntityComponentSystem.hpp"
 
 #include "Entity.hpp"
 #include "../Graphics/2D/Renderer2D.hpp"
+#include "../Debug/Debug.hpp"
+
+#include "../Logging/MemoryLogger.hpp"
 
 #include "Components/TransformComponent.hpp"
 #include "Components/AppearanceComponent.hpp"
 
-#include "../Debug/Debug.hpp"
 
 namespace krakoa
 {
-	EntityManager::EntityManager(Token)
+	EntityComponentSystem::EntityComponentSystem(Token)
+		: nextFreeID(0)
 	{}
 
-	EntityManager::~EntityManager()
+	EntityComponentSystem::~EntityComponentSystem()
 	{
 		const auto status = Entity::GetStatus();
+		MEM_INF(status);
 		RemoveAll();
 		Entity::TerminatePool();
 	}
 
-	void EntityManager::RemoveAll() noexcept
+	void EntityComponentSystem::RemoveAll() noexcept
 	{
-		entities.clear();
+		nameMap.clear();
+		componentMap.clear();
 	}
 
-	Entity& EntityManager::Add()
+	Entity& EntityComponentSystem::Add(const std::string& name)
 	{
-		const auto& entity =
-			entities.insert(std::make_pair(nextFreeID, Make_Solo<Entity>()));
-		SortEntities();
-		return *entity;
-	}
+		if (HasName(name))
+			return GetEntity(name);
 
-	Entity& EntityManager::Add(const std::string_view& name)
-	{
+		const auto entity_uid = GenerateNewID();
+		AddName(name, entity_uid);
+
 		const auto& entity =
 			entities.emplace_back(Make_Solo<Entity>(name));
 		SortEntities();
 		return *entity;
 	}
 
-	void EntityManager::Remove(const std::string_view& name)
+	void EntityComponentSystem::Remove(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -52,7 +55,7 @@ namespace krakoa
 			}));
 	}
 
-	void EntityManager::Remove(const unsigned id)
+	void EntityComponentSystem::Remove(EntityComponentSystem::EntityUID id)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -62,7 +65,7 @@ namespace krakoa
 			}));
 	}
 
-	void EntityManager::Update(const float dt)
+	void EntityComponentSystem::Update(const float dt)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -75,7 +78,7 @@ namespace krakoa
 		}
 	}
 
-	void EntityManager::Draw()
+	void EntityComponentSystem::Draw()
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -127,7 +130,7 @@ namespace krakoa
 		graphics::Renderer2D::EndScene();
 	}
 
-	bool EntityManager::Find(const std::string_view& name)
+	bool EntityComponentSystem::Find(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -139,7 +142,7 @@ namespace krakoa
 		return iter != entities.end();
 	}
 
-	bool EntityManager::Find(const unsigned id)
+	bool EntityComponentSystem::Find(EntityComponentSystem::EntityUID id)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -151,7 +154,7 @@ namespace krakoa
 		return iter != entities.end();
 	}
 
-	Entity& EntityManager::GetEntity(const std::string_view& name) const
+	Entity& EntityComponentSystem::GetEntity(const std::string_view& name) const
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -166,7 +169,7 @@ namespace krakoa
 		return **iter;
 	}
 
-	Entity& EntityManager::GetEntity(const unsigned id) const
+	Entity& EntityComponentSystem::GetEntity(EntityComponentSystem::EntityUID id) const
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -181,12 +184,12 @@ namespace krakoa
 		return **iter;
 	}
 
-	const std::vector<Solo_Ptr<Entity>>& EntityManager::GetEntities() const
+	const std::vector<Solo_Ptr<Entity>>& EntityComponentSystem::GetEntities() const
 	{
 		return entities;
 	}
 
-	void EntityManager::SortEntities()
+	void EntityComponentSystem::SortEntities()
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -200,15 +203,25 @@ namespace krakoa
 			});
 	}
 
-	EntityManager::EntityUID EntityManager::GenerateNewID()
+	EntityComponentSystem::EntityUID EntityComponentSystem::GenerateNewID()
 	{
 		for (const auto& entity : entities)
 		{
 			if (entity.first == nextFreeID)
 				++nextFreeID;
-			else 
+			else
 				break;
 		}
 		return nextFreeID;
+	}
+
+	void EntityComponentSystem::AddName(const std::string& name, EntityUID id)
+	{
+		nameMap[name] = { id, Make_Solo<Entity>() };
+	}
+
+	bool EntityComponentSystem::HasName(const std::string& name) const
+	{
+		return nameMap.find(name) != nameMap.end();
 	}
 }

@@ -22,7 +22,7 @@
 #include "../Layers/ImGui/ImGuiLayer.hpp"
 #include "../Layers/LayerStacker.hpp"
 
-#include "../Entity/EntityManager.hpp"
+#include "../Entity/EntityComponentSystem.hpp"
 
 #include <memory>
 #include "../Graphics/Framebuffers/iFrameBuffer.hpp"
@@ -62,7 +62,7 @@ namespace krakoa
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
 
-		Solo_Ptr<EntityManager> entityManager;
+		Solo_Ptr<EntityComponentSystem> entityManager;
 		
 		Multi_Ptr<graphics::iFrameBuffer> frameBuffer;
 

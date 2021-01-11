@@ -73,8 +73,8 @@ namespace krakoa
 		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
 		// Initialize Entity Manager
-		EntityManager::Create();
-		entityManager.reset(EntityManager::Pointer());
+		EntityComponentSystem::Create();
+		entityManager.reset(EntityComponentSystem::Pointer());
 
 
 		graphics::FrameBufferSpecification fbSpec;

@@ -21,7 +21,7 @@ namespace krakoa
 		active = false;
 	}
 
-	void ComponentWrapper::SetOwner(Entity* entity)
+	void ComponentWrapper::SetOwner(EntityUID entity)
 	{
 		KRK_PROFILE_FUNCTION();
 		owner = entity;

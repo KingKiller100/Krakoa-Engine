@@ -14,7 +14,7 @@
 
 namespace krakoa
 {
-	class EntityManager;
+	class EntityComponentSystem;
 	
 	class Entity : public patterns::MemPooler<Entity, 10000>, util::TypeUniqueIdentifier<Entity>
 	{
@@ -93,6 +93,6 @@ namespace krakoa
 		bool selected;
 		bool active;
 
-		EntityManager* manager;
+		EntityComponentSystem* manager;
 	};
 }

@@ -14,10 +14,10 @@ namespace krakoa
 	public:
 		ComponentWrapper(UID compUid, EntityUID entityUId);
 
-		ComponentWrapper(const ComponentWrapper& other) noexcept;
+		ComponentWrapper(const ComponentWrapper& other) noexcept = delete;
 		ComponentWrapper(ComponentWrapper&& other) noexcept;
 
-		ComponentWrapper& operator=(const ComponentWrapper& other) noexcept;
+		ComponentWrapper& operator=(const ComponentWrapper& other) noexcept = delete;
 		ComponentWrapper& operator=(ComponentWrapper&& other) noexcept;
 
 		~ComponentWrapper() noexcept;
@@ -37,7 +37,7 @@ namespace krakoa
 		Component& GetComponent()
 		{
 			KRK_PROFILE_FUNCTION();
-			auto*& comp = (Component*&)component.get();
+			auto* comp = (Component*)component.get();
 			return *comp;
 		}
 

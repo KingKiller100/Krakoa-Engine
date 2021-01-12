@@ -6,46 +6,36 @@
 namespace krakoa
 {
 
-	Entity::Entity(UID uid)
-		: id(uid)
+	Entity::Entity()
+		: manager(EntityComponentSystem::Pointer())
+		, id(manager->Add())
 		, selected(false)
 		, active(true)
-		, manager(EntityComponentSystem::Pointer())
 	{}
 
-	// Entity::Entity(const Entity& other)
-	// 	: name(klib::kString::ToString("Entity{0}", other.id)),
-	// 	id(other.id),
-	// 	components(other.components),
-	// 	selected(false),
-	// 	active(true),
-	// 	manager(EntityComponentSystem::Pointer())
-	// {}
+	Entity::Entity(const Entity& other)
+		: manager(EntityComponentSystem::Pointer()),
+		id(other.id),
+		selected(false),
+		active(true)
+	{}
 
 	Entity::Entity(Entity&& other) noexcept
-		: components(std::move(other.components)),
+		: manager(EntityComponentSystem::Pointer()),
 		selected(false),
-		active(other.active),
-		manager(EntityComponentSystem::Pointer())
+		active(other.active)
 	{}
 
-	// Entity& Entity::operator=(const Entity& other)
-	// {
-	// 	name = klib::kString::ToString("Entity{0)", s_EntityUIDs++);
-	// 	for (auto i = 0; i < other.components.size(); ++i)
-	// 	{
-	// 		components[i] = *other.components[i]
-	// 	}
-	// 	components = std::copy(other.components.begin(), other.components.end(), components);
-	// 	selected = false;
-	// 	active = other.active;
-	// 	manager = EntityComponentSystem::Pointer();
-	// 	return *this;
-	// }
+	Entity& Entity::operator=(const Entity& other)
+	{
+		selected = false;
+		active = other.active;
+		manager = EntityComponentSystem::Pointer();
+		return *this;
+	}
 
 	Entity& Entity::operator=(Entity&& other) noexcept
 	{
-		components = std::move(other.components);
 		selected = false;
 		active = other.active;
 		manager = EntityComponentSystem::Pointer();
@@ -90,22 +80,8 @@ namespace krakoa
 		return id;
 	}
 
-	void Entity::Update(const float dt)
+	void Entity::RemoveAllComponents() const noexcept
 	{
-		KRK_DBG("Entity Update Called");
-
-		for (auto& componentPair : components)
-		{
-			auto& component = componentPair.second;
-			if (!component.IsActive())
-				continue;
-
-			// component.Update(dt);
-		}
-	}
-
-	void Entity::RemoveAllComponents() noexcept
-	{
-		components.clear();
+		manager->RemoveAllComponents(id);
 	}
 }

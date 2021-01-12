@@ -21,14 +21,14 @@ namespace krakoa
 
 		USE_RESULT EntityUID Add();
 		
-		void Remove(EntityUID id);
-		void RemoveAll() noexcept;
+		void RemoveEntity(EntityUID id);
+		void RemoveAllEntities() noexcept;
 
 		USE_RESULT bool HasEntity(EntityUID id) const;
 
 		USE_RESULT EntityUID GetEntity(EntityUID name) const;
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentWrapper, Component>>>
+		template<typename Component>
 		bool RemoveComponent(EntityUID id) noexcept
 		{
 			if (!HasComponent<Component>(id))
@@ -57,23 +57,35 @@ namespace krakoa
 		Component& RegisterComponent(EntityUID entity, Args&& ...params)
 		{
 			ComponentUID uid = GetUniqueID<Component>();
+			
 			auto componentWrapper = ComponentWrapper(uid, entity);
 			componentWrapper.SetComponent<Component, Args...>(entity, std::forward<Args>(params)...);
+			componentWrapper.SetOwner(entity);
+			
 			std::vector<ComponentWrapper>& compVec = componentMap[uid];
-			compVec.emplace_back(componentWrapper);
+			compVec.emplace_back(std::move(componentWrapper));
 			auto& entComps = entities.at(entity);
 			entComps.insert(std::make_pair(uid, &componentWrapper));
 			return componentWrapper.GetComponent<Component>();
 		}
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentWrapper, Component>>>
+		template<typename Component>
+		USE_RESULT Component& GetComponent(EntityUID id) noexcept
+		{
+			ComponentUID uid = GetUniqueID<Component>();
+			const auto& compVec = entities.at(id);
+			auto& comp = compVec.at(uid);
+			return comp->GetComponent<Component>();
+		}
+		
+		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
 		{
 			const auto uid = GetUniqueID<Component>();
 			return componentMap.find(uid) != componentMap.end();
 		}
 
-		template<typename Component, typename = std::enable_if_t<std::is_base_of_v<ComponentWrapper, Component>>>
+		template<typename Component>
 		USE_RESULT bool HasComponent(EntityUID id) const noexcept
 		{
 			if (!HasEntity(id))

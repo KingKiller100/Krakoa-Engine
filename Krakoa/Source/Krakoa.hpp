@@ -56,7 +56,8 @@
 #include "Layers/ImGui/ImGuiLayer.hpp"
 
 // Entities & Components
-#include "Entity/Entity.hpp"
-#include "Entity/EntityComponentSystem.hpp"
-#include "Entity/Components/TransformComponent.hpp"
-#include "Entity/Components/AppearanceComponent.hpp"
+#include "Scene/Scene.hpp"
+#include "Scene/Entity/Entity.hpp"
+#include "Scene/Entity/EntityComponentSystem.hpp"
+#include "Scene/Entity/Components/TransformComponent.hpp"
+#include "Scene/Entity/Components/AppearanceComponent.hpp"

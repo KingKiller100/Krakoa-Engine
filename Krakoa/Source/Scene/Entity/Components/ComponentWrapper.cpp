@@ -1,8 +1,6 @@
 ﻿#include "Precompile.hpp"
 #include "ComponentWrapper.hpp"
 
-
-
 namespace krakoa
 {
 	ComponentWrapper::ComponentWrapper(UID compUid, EntityUID entityUId)
@@ -11,23 +9,17 @@ namespace krakoa
 		, uid(compUid)
 	{	}
 
-	ComponentWrapper::ComponentWrapper(const ComponentWrapper& other) noexcept
-		= default;
-
 	ComponentWrapper::ComponentWrapper(ComponentWrapper&& other) noexcept
 		: uid(std::move(other.GetUID()))
 	{
 		*this = std::move(other);
 	}
 
-	ComponentWrapper& ComponentWrapper::operator=(const ComponentWrapper& other) noexcept
-		= default;
-
 	ComponentWrapper& ComponentWrapper::operator=(ComponentWrapper&& other) noexcept
 	{
 		if (this != &other)
 		{
-			component .swap(other.component);
+			component.swap(other.component);
 			other.component.release();
 
 			active = std::move(other.active);

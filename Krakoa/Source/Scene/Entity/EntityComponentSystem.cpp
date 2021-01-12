@@ -16,13 +16,13 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		RemoveAll();
+		RemoveAllEntities();
 		/*const auto status = Entity::GetStatus();
 		MEM_INF(status);
 		Entity::TerminatePool();*/
 	}
 
-	void EntityComponentSystem::RemoveAll() noexcept
+	void EntityComponentSystem::RemoveAllEntities() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -43,7 +43,7 @@ namespace krakoa
 		return insertion_pair.first->first;
 	}
 
-	void EntityComponentSystem::Remove(EntityUID id)
+	void EntityComponentSystem::RemoveEntity(EntityUID id)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -51,9 +51,9 @@ namespace krakoa
 			return;
 
 		const auto& entity = entities.at(id);
-		for (auto&& pair : componentMap)
+
+		for (auto& [compID, compVec] : componentMap)
 		{
-			auto& compVec = pair.second;
 			size_t index = 0;
 
 			for (auto&& component : compVec)
@@ -68,6 +68,7 @@ namespace krakoa
 		}
 
 		entities.erase(id);
+		nextFreeID = id;
 	}
 
 	bool EntityComponentSystem::HasEntity(EntityUID id) const

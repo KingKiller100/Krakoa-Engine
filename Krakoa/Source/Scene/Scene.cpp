@@ -16,7 +16,10 @@ namespace krakoa::scene
 
 	void Scene::OnUpdate(float time)
 	{
-		auto entity = ecs->Add();
+		const auto entity = ecs->Add();
 		ecs->RegisterComponent<TagComponent>(entity, std::string_view());
+		const auto compExists = ecs->HasComponent<TagComponent>();
+		const auto enttCompExists = ecs->HasComponent<TagComponent>(entity);
+		const auto& comp = ecs->GetComponent<TagComponent>(entity);
 	}
 }

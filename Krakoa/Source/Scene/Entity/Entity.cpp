@@ -5,7 +5,6 @@
 
 namespace krakoa
 {
-
 	Entity::Entity()
 		: manager(EntityComponentSystem::Pointer())
 		, id(manager->Add())
@@ -43,7 +42,9 @@ namespace krakoa
 	}
 
 	Entity::~Entity() noexcept
-		= default;
+	{
+		manager->RemoveEntity(id);
+	}
 
 	const bool& Entity::IsSelected() const noexcept
 	{
@@ -83,5 +84,15 @@ namespace krakoa
 	void Entity::RemoveAllComponents() const noexcept
 	{
 		manager->RemoveAllComponents(id);
+	}
+
+	bool Entity::operator==(const Entity& other) const noexcept
+	{
+		return other.GetID() == GetID();
+	}
+
+	bool Entity::operator!=(const Entity& other) const noexcept
+	{
+		return !(other == *this);
 	}
 }

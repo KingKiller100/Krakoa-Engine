@@ -3,7 +3,7 @@
 
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Debug/Debug.hpp"
-#include "../../Logging/MemoryLogger.hpp"
+// #include "../../Logging/MemoryLogger.hpp"
 
 
 namespace krakoa
@@ -36,11 +36,10 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto entity_uid = GenerateNewID();
-		const auto& insertion_pair =
-			entities.insert(
-				std::make_pair(entity_uid, std::unordered_map<ComponentUID, ComponentWrapper*>())
-			);
-		return insertion_pair.first->first;
+		entities.insert(
+			std::make_pair(entity_uid, std::unordered_map<ComponentUID, ComponentWrapper*>())
+		);
+		return entity_uid;
 	}
 
 	void EntityComponentSystem::RemoveEntity(EntityUID id)
@@ -50,25 +49,27 @@ namespace krakoa
 		if (!HasEntity(id))
 			return;
 
-		const auto& entity = entities.at(id);
+		auto& entCompMap = entities.at(id);
+		const auto compSize = entCompMap.size();
 
-		for (auto& [compID, compVec] : componentMap)
+		for (auto i = 0; i < compSize; ++i)
 		{
-			size_t index = 0;
+			const auto entComps = entCompMap.begin();
+			auto& compList = componentMap.at(entComps->first);
 
-			for (auto&& component : compVec)
-			{
-				if (component.GetOwner() == id)
-					break;
-				++index;
-			}
+			auto iter = std::find_if(compList.begin(), compList.end()
+				, [id](const ComponentWrapper& comp)
+				{
+					return comp.GetOwner() == id;
+				});
 
-			if (index < compVec.size())
-				compVec.erase(compVec.begin() + index);
+			entCompMap.erase(entComps->first);
+			compList.erase(iter);
 		}
-
 		entities.erase(id);
-		nextFreeID = id;
+
+		if (id < nextFreeID)
+			nextFreeID = id;
 	}
 
 	bool EntityComponentSystem::HasEntity(EntityUID id) const
@@ -96,18 +97,17 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		for (const auto& entity : entities)
+		while (entities.find(nextFreeID) != entities.end())
 		{
-			if (entity.first <= nextFreeID)
-				++nextFreeID;
-			else
-				break;
+			++nextFreeID;
 		}
+
 		return nextFreeID;
 	}
 
 	bool EntityComponentSystem::RemoveAllComponents(EntityUID id) noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		if (!HasEntity(id))
 			return false;
 
@@ -131,56 +131,4 @@ namespace krakoa
 
 		return true;
 	}
-
-	// void EntityComponentSystem::Draw()
-	// {
-	// 	KRK_PROFILE_FUNCTION();
-	//
-	// 	for (auto& entity : entities)
-	// 	{
-	// 		if (!entity->HasComponent<components::Appearance2DComponent>()
-	// 			|| !entity->HasComponent<components::TransformComponent>())
-	// 			continue;
-	//
-	// 		const auto& appearance = entity->GetComponent<components::Appearance2DComponent>();
-	// 		const auto& transform = entity->GetComponent<components::TransformComponent>();
-	//
-	// 		switch (appearance.GetGeometryType()) {
-	// 		case graphics::GeometryType::QUAD:
-	// 		{
-	// 			graphics::Renderer2D::DrawQuad(appearance.GetSubTexture(),
-	// 				transform.GetPosition(),
-	// 				transform.GetScale(),
-	// 				transform.GetRotation(),
-	// 				appearance.GetColour(),
-	// 				appearance.GetTilingFactor());
-	// 		}
-	// 		break;
-	// 		case graphics::GeometryType::TRIANGLE:
-	// 		{
-	// 			graphics::Renderer2D::DrawTriangle(appearance.GetSubTexture(),
-	// 				transform.GetPosition(),
-	// 				transform.GetScale(),
-	// 				transform.GetRotation(),
-	// 				appearance.GetColour(),
-	// 				appearance.GetTilingFactor());
-	// 		}
-	// 		break;
-	// 		case graphics::GeometryType::CIRCLE:
-	// 			/*	{
-	// 					graphics::Renderer2D::DrawQuad(appearance.GetSubTexture(),
-	// 						transform.GetPosition(),
-	// 						transform.GetScale(),
-	// 						transform.GetRotation(),
-	// 						appearance.GetColour(),
-	// 						appearance.GetTilingFactor());
-	// 				}*/
-	// 			break;
-	// 		default: // case of an unknown geometry type
-	// 			KRK_FATAL("Failed to draw unknown geometry type");
-	// 			break;
-	// 		}
-	// 	}
-	// 	graphics::Renderer2D::EndScene();
-	// }
 }

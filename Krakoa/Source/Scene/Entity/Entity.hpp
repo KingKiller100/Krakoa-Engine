@@ -10,9 +10,7 @@
 #include <Utility/String/kToString.hpp>
 
 namespace krakoa
-{
-	class EntityComponentSystem;
-	
+{	
 	class Entity //: public patterns::MemPooler<Entity, 10000>
 	{
 		using UID = EntityUID;
@@ -62,7 +60,7 @@ namespace krakoa
 		{
 			KRK_ASSERT(
 				HasComponent<Component>(), // Assert component already a part of entity
-				klib::ToString("Attempt to get a component not a part of this entity - {0}", Component::GetStaticType())
+				klib::ToString("Attempt to get a component not a part of this entity - {0}", typeid(Component).name())
 			);
 
 			return manager->GetComponent<Component>(id);
@@ -73,6 +71,9 @@ namespace krakoa
 		{
 			return manager->HasComponent<Component>(id);
 		}
+
+		bool operator==(const Entity& other) const noexcept;
+		bool operator!=(const Entity& other) const noexcept;
 
 	private:
 		EntityComponentSystem* manager;

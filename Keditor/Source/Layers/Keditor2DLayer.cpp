@@ -12,7 +12,7 @@ namespace krakoa
 	using namespace graphics;
 
 	Keditor2DLayer::Keditor2DLayer() noexcept
-		: LayerBase("Renderer")
+		: LayerBase("Keditor2D")
 		, application(GetApp())
 		, cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
 			/ CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
@@ -41,6 +41,8 @@ namespace krakoa
 				})
 		);
 
+		scene.reset(new scene::Scene("Keditor"));
+		
 		SetUpEntities();
 	}
 
@@ -48,12 +50,10 @@ namespace krakoa
 	{
 		constexpr auto rotScale = Vector2f(0.25f);
 
-		auto& entityManager = EntityComponentSystem::Reference();
-
 		{
 			KRK_PROFILE_SCOPE("Create coloured entity");
 
-			auto& colourEntity = entityManager.Add("Colour");
+			auto& colourEntity = scene->AddEntity("Colour");
 
 			colourEntity.AddComponent<components::TransformComponent>(
 				Vector3f(-0.5f, 0.f, -0.75f),
@@ -71,7 +71,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create cyan entity");
 
-			auto& cyanEntity = entityManager.Add("Cyan");
+			auto& cyanEntity = scene->AddEntity("Cyan");
 			cyanEntity.AddComponent<components::TransformComponent>(
 				Vector3f(0.5f, 0.f, -0.75f),
 				0.f,
@@ -88,7 +88,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create magenta entity");
 
-			auto& magentaEntity = entityManager.Add("Magenta");
+			auto& magentaEntity = scene->AddEntity("Magenta");
 			magentaEntity.AddComponent<components::TransformComponent>(
 				Vector3f(0.f, 0.5f, -0.75f),
 				0.f,
@@ -105,7 +105,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create yellow entity");
 
-			auto& yellowEntity = entityManager.Add("Yellow");
+			auto& yellowEntity = scene->AddEntity("Yellow");
 			yellowEntity.AddComponent<components::TransformComponent>(
 				Vector3f(0.f, -0.5f, -0.75f),
 				0.f,
@@ -122,7 +122,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create textured entity");
 
-			auto& texturedEntity = entityManager.Add("Textured");
+			auto& texturedEntity = scene->AddEntity("Textured");
 			auto& transform = texturedEntity.AddComponent<components::TransformComponent>();
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
@@ -163,6 +163,8 @@ namespace krakoa
 			position.Y() -= moveSpeed * deltaTime;
 
 		degreesRotation -= 5 * moveSpeed * deltaTime;
+
+		scene->OnUpdate(deltaTime);
 	}
 
 	void Keditor2DLayer::SendRendererCommands() noexcept
@@ -171,12 +173,10 @@ namespace krakoa
 
 		Renderer2D::BeginScene(cameraController.GetCamera());
 
-		const auto& entityMan = EntityComponentSystem::Reference();
-
 		{
 			KRK_PROFILE_SCOPE("Updating colour entity");
 
-			auto& colourEntity = entityMan.GetEntity("Colour");
+			auto& colourEntity = scene->GetEntity("Colour");
 
 			auto& appearance = colourEntity.GetComponent<components::Appearance2DComponent>();
 
@@ -186,7 +186,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Updating texture entity");
 
-			auto& textureEntity = entityMan.GetEntity("Textured");
+			auto& textureEntity = scene->GetEntity("Textured");
 			auto& appearance = textureEntity.GetComponent<components::Appearance2DComponent>();
 			auto& transform = textureEntity.GetComponent<components::TransformComponent>();
 

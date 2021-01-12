@@ -8,6 +8,8 @@
 
 #include <Maths/Vectors/Vector4.hpp>
 
+#include "Scene/Scene.hpp"
+
 namespace krakoa
 {
 	class Application;
@@ -37,6 +39,8 @@ namespace krakoa
 	private:
 		Application& application;
 
+		Solo_Ptr<scene::Scene> scene;
+		
 		Solo_Ptr<graphics::SubTexture2D> pSubTexture;
 
 		OrthographicCameraController cameraController;

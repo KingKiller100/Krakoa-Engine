@@ -50,13 +50,12 @@ namespace krakoa
 		}
 
 		template<typename Component, typename ...Args>
-		void SetComponent(EntityUID entity, Args&& ...params)
+		void SetComponent(Args&& ...params)
 		{
 			KRK_PROFILE_FUNCTION();
 			
 			auto* comp = new Component(std::forward<Args>(params)...);
 			component.reset((uintptr_t*)comp);
-			SetOwner(entity);
 		}
 
 	private:

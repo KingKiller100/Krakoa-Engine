@@ -8,10 +8,6 @@
 
 #include <glad/glad.h>
 
-
-#include "../../Entity/Components/AppearanceComponent.hpp"
-#include "../../Entity/Components/AppearanceComponent.hpp"
-
 namespace krakoa::graphics
 {
 	namespace

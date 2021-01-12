@@ -22,7 +22,7 @@
 #include "../Layers/ImGui/ImGuiLayer.hpp"
 #include "../Layers/LayerStacker.hpp"
 
-#include "../Entity/EntityComponentSystem.hpp"
+#include "../Scene/Entity/EntityComponentSystem.hpp"
 
 #include <memory>
 #include "../Graphics/Framebuffers/iFrameBuffer.hpp"

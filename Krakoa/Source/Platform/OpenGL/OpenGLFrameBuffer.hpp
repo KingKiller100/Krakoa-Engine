@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include "../../Entity/Components/AppearanceComponent.hpp"
-#include "../../Entity/Components/AppearanceComponent.hpp"
-
 #include "../../Graphics/Framebuffers/iFrameBuffer.hpp"
 
 namespace krakoa::graphics

@@ -20,7 +20,7 @@ namespace krakoa
 		~EntityComponentSystem();
 
 		USE_RESULT EntityUID Add();
-		
+
 		void RemoveEntity(EntityUID id);
 		void RemoveAllEntities() noexcept;
 
@@ -36,7 +36,7 @@ namespace krakoa
 
 			const auto compUid = GetUniqueID<Component>();
 			auto& entComps = entities.at(id);
-			
+
 			std::vector<ComponentWrapper>& compVec = componentMap.at(compUid);
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
@@ -44,7 +44,7 @@ namespace krakoa
 				{
 					return id == comp.GetOwner();
 				});
-			
+
 			entComps.erase(compUid);
 			compVec.erase(iter);
 
@@ -57,16 +57,14 @@ namespace krakoa
 		Component& RegisterComponent(EntityUID entity, Args&& ...params)
 		{
 			ComponentUID uid = GetUniqueID<Component>();
-			
-			auto componentWrapper = ComponentWrapper(uid, entity);
-			componentWrapper.SetComponent<Component, Args...>(entity, std::forward<Args>(params)...);
-			componentWrapper.SetOwner(entity);
-			
+
 			std::vector<ComponentWrapper>& compVec = componentMap[uid];
-			compVec.emplace_back(std::move(componentWrapper));
+			compVec.emplace_back(uid, entity);
+			auto& cw = compVec.back();
+			cw.SetComponent<Component, Args...>(std::forward<Args>(params)...);
 			auto& entComps = entities.at(entity);
-			entComps.insert(std::make_pair(uid, &componentWrapper));
-			return componentWrapper.GetComponent<Component>();
+			entComps.insert(std::make_pair(uid, &cw));
+			return cw.GetComponent<Component>();
 		}
 
 		template<typename Component>
@@ -77,7 +75,7 @@ namespace krakoa
 			auto& comp = compVec.at(uid);
 			return comp->GetComponent<Component>();
 		}
-		
+
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
 		{
@@ -110,7 +108,7 @@ namespace krakoa
 
 	private:
 		EntityUID GenerateNewID();
-		
+
 	private:
 		std::map<EntityUID, std::unordered_map<ComponentUID, ComponentWrapper*>> entities;
 		std::unordered_map<ComponentUID, std::vector<ComponentWrapper>> componentMap;

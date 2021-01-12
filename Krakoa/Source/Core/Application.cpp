@@ -27,7 +27,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_INIT_LOGS("WELCOME TO THE KRAKOA ENGINE");
+		KRK_INIT_LOGS(                    "WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
 		//timeStep.SetSpeedMultiplier(5);
@@ -142,7 +142,7 @@ namespace krakoa
 			pImGuiLayer->ToggleVisibility();
 
 		// Update
-		entityManager->Update(deltaTime);
+		// entityManager->Update(deltaTime);
 
 		if (!isMinimized)
 		{
@@ -153,7 +153,7 @@ namespace krakoa
 
 		graphics::Renderer::Update();
 		// Draw
-		entityManager->Draw();
+		// entityManager->Draw();
 
 		frameBuffer->Unbind();
 

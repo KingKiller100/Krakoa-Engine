@@ -1,7 +1,7 @@
 ﻿#include  "Precompile.hpp"
 #include "TransformComponent.hpp"
 
-#include "../../Debug/Instrumentor.hpp"
+#include "../../../Debug/Instrumentor.hpp"
 #include <Template/kTypeName.hpp>
 
 namespace krakoa::components

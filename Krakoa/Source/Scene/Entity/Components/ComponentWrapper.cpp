@@ -19,8 +19,8 @@ namespace krakoa
 	{
 		if (this != &other)
 		{
-			component.swap(other.component);
-			other.component.release();
+			component = std::move(other.component);
+			other.component = nullptr;
 
 			active = std::move(other.active);
 			owner = std::move(other.owner);

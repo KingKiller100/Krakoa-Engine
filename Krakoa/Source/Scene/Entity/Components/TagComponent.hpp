@@ -8,6 +8,8 @@ namespace krakoa
 	{
 	public:
 		TagComponent(const std::string_view& tag);
+		TagComponent(const char* tag);
+		TagComponent(const std::string& tag);
 		~TagComponent() noexcept;
 
 		[[nodiscard]] const std::string& GetTag() const;

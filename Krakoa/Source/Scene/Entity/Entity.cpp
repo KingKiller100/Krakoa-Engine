@@ -3,17 +3,14 @@
 
 #include "EntityComponentSystem.hpp"
 
-#include "Components/TransformComponent.hpp"
-
-#include <Utility/String/kToString.hpp>
-
 namespace krakoa
 {
 
-	Entity::Entity()
-		: selected(false),
-		active(true),
-		manager(EntityComponentSystem::Pointer())
+	Entity::Entity(UID uid)
+		: id(uid)
+		, selected(false)
+		, active(true)
+		, manager(EntityComponentSystem::Pointer())
 	{}
 
 	// Entity::Entity(const Entity& other)
@@ -86,6 +83,11 @@ namespace krakoa
 	void Entity::Deactivate()
 	{
 		active = false;
+	}
+
+	EntityUID Entity::GetID() const
+	{
+		return id;
 	}
 
 	void Entity::Update(const float dt)

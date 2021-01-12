@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ECS_UID.hpp"
 #include "Components/ComponentWrapper.hpp"
 
 #include "../Patterns/MemPooler.hpp"
@@ -12,14 +13,17 @@
 
 #include <unordered_map>
 
+
 namespace krakoa
 {
 	class EntityComponentSystem;
 	
 	class Entity : public patterns::MemPooler<Entity, 10000>, util::TypeUniqueIdentifier<Entity>
 	{
+		using UID = EntityUID;
+		
 	public:
-		Entity();
+		Entity(UID uid);
 
 		// Entity(const Entity& other);
 		// Entity& operator=(const Entity& other);
@@ -37,6 +41,8 @@ namespace krakoa
 		void Activate();
 		void Deactivate();
 
+		EntityUID GetID() const;
+		
 		void Update(const float dt);
 
 		void RemoveAllComponents() noexcept;
@@ -88,6 +94,7 @@ namespace krakoa
 		}
 
 	private:
+		UID id;
 		std::unordered_map<ID_t, ComponentWrapper> components;
 
 		bool selected;

@@ -9,6 +9,16 @@ namespace krakoa
 		:tagName(tag)
 	{}
 
+	TagComponent::TagComponent(const char* tag)
+		: tagName(tag)
+	{
+	}
+
+	TagComponent::TagComponent(const std::string& tag)
+		: tagName(tag)
+	{
+	}
+
 	TagComponent::~TagComponent() noexcept
 		= default;
 

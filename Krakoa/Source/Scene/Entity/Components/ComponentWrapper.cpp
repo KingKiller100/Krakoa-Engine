@@ -19,9 +19,6 @@ namespace krakoa
 	{
 		if (this != &other)
 		{
-			component = std::move(other.component);
-			other.component = nullptr;
-
 			active = std::move(other.active);
 			owner = std::move(other.owner);
 		}
@@ -61,14 +58,4 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 		owner = entity;
 	}
-
-	// void ComponentWrapper::ReleaseComponent()
-	// {
-	// 	KRK_PROFILE_FUNCTION();
-	// 	if (component)
-	// 	{
-	// 		free(component);
-	// 		component = nullptr;
-	// 	}
-	// }
 }

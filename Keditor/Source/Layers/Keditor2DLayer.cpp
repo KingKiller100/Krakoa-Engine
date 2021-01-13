@@ -128,6 +128,8 @@ namespace krakoa
 
 			texturedEntity.AddComponent <components::Appearance2DComponent>(*pSubTexture, geometryColour, 3.f);
 		}
+
+		scene->RemoveEntity("Yellow");
 	}
 
 	void Keditor2DLayer::OnDetach()

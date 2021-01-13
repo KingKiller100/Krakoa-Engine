@@ -12,7 +12,6 @@ namespace krakoa
 	{
 	public:
 		using UID = ComponentUID;
-		using Component_t = std::uintptr_t;
 	public:
 		ComponentWrapper(UID compUid, EntityUID entityUId);
 
@@ -35,35 +34,50 @@ namespace krakoa
 		EntityUID GetOwner() const;
 		void SetOwner(EntityUID entityUId);
 
-		template<typename Component>
-		Component& GetComponent()
-		{
-			KRK_PROFILE_FUNCTION();
-			auto* comp = (Component*)component.get();
-			return *comp;
-		}
-
-		template<typename Component>
-		const Component& GetComponent() const
-		{
-			KRK_PROFILE_FUNCTION();
-			auto* comp = (Component*)component.get();
-			return *comp;
-		}
-
-		template<typename Component, typename ...Args>
-		void SetComponent(Args&& ...params)
-		{
-			KRK_PROFILE_FUNCTION();
-			
-			auto* comp = new Component(std::forward<Args>(params)...);
-			component.reset((uintptr_t*)comp);
-		}
-
 	private:
-		Solo_Ptr<uintptr_t> component;
 		bool active;
 		EntityUID owner;
 		const UID uid;
 	};
+
+	template <typename Component>
+	class InternalComponent : public ComponentWrapper
+	{
+	public:
+		using Component_t = Component;
+
+	public:
+		InternalComponent(UID compUid, EntityUID entityUId)
+			: ComponentWrapper(compUid, entityUId)
+			, component(nullptr)
+		{}
+
+		~InternalComponent() noexcept
+			= default;
+
+		template<typename ...Args>
+		void Create(Args&&... params)
+		{
+			component.reset(new Component(std::forward<Args>(params)...));
+		}
+
+		Component& Ref()
+		{
+			return *component;
+		}
+
+		Component* Ptr()
+		{
+			return component.get();
+		}
+
+		const Component& Ref() const
+		{
+			return *component;
+		}
+
+	private:
+		Solo_Ptr<Component> component;
+	};
+
 }

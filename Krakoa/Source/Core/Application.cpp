@@ -27,8 +27,8 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_INIT_LOGS(                    "WELCOME TO THE KRAKOA ENGINE");
-		KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
+		KRK_INIT_LOGS("                    WELCOME TO THE KRAKOA ENGINE");
+		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBG);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
 		//timeStep.SetSpeedMultiplier(5);
 		// Initialize Window
@@ -141,17 +141,18 @@ namespace krakoa
 		if (input::InputManager::IsKeyPressed(input::KEY_V))
 			pImGuiLayer->ToggleVisibility();
 
-		// Update
-		// entityManager->Update(deltaTime);
-
 		if (!isMinimized)
 		{
 			layerStack.OnUpdate(deltaTime);
 		}
 
+		// Update
+		// entityManager->Update(deltaTime);
+
 		frameBuffer->Bind();
 
 		graphics::Renderer::Update();
+		
 		// Draw
 		// entityManager->Draw();
 

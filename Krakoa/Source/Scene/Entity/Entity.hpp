@@ -36,7 +36,7 @@ namespace krakoa
 
 		[[nodiscard]] EntityUID GetID() const;
 
-		void RemoveAllComponents() const noexcept;
+		void RemoveAllComponents() noexcept;
 
 		template<typename Component, typename ...Args>
 		Component& AddComponent(Args&& ...params)
@@ -46,12 +46,16 @@ namespace krakoa
 				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", typeid(Component).name())
 			);
 
-			return manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
+			Multi_Ptr<ComponentWrapper> comp = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
+			components.insert(std::make_pair(comp->GetUID(), comp));
+			return klib::ToImpl<InternalComponent<Component>>(comp).Ref();
 		}
 
 		template<typename Component>
 		bool RemoveComponent() noexcept
 		{
+			const ComponentUID uid = manager->GetUniqueID<Component>();
+			components.erase(uid);
 			return manager->RemoveComponent<Component>(id);
 		}
 
@@ -63,7 +67,9 @@ namespace krakoa
 				klib::ToString("Attempt to get a component not a part of this entity - {0}", typeid(Component).name())
 			);
 
-			return manager->GetComponent<Component>(id);
+			const ComponentUID uid = manager->GetUniqueID<Component>();
+			auto& comp = components.at(uid);
+			return klib::ToImpl<InternalComponent<Component>>(comp).Ref();
 		}
 
 		template<typename Component>
@@ -76,10 +82,12 @@ namespace krakoa
 		bool operator!=(const Entity& other) const noexcept;
 
 	private:
-		EntityComponentSystem* manager;
 
+		std::unordered_map<ComponentUID, Multi_Ptr<ComponentWrapper>> components;
+		
 		UID id;
 		bool selected;
 		bool active;
+		EntityComponentSystem* manager;
 	};
 }

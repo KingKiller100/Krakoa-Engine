@@ -8,6 +8,8 @@
 #include "../../Patterns/ManagerBase.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
+#include <Template/kToImpl.hpp>
+
 #include <map>
 #include <unordered_map>
 
@@ -27,61 +29,62 @@ namespace krakoa
 
 		USE_RESULT bool HasEntity(EntityUID id) const;
 
-		USE_RESULT EntityUID GetEntity(EntityUID name) const;
-
-		template<typename Component>
-		bool RemoveComponent(EntityUID id) noexcept
-		{
-			KRK_PROFILE_FUNCTION();
-			
-			if (!HasComponent<Component>(id))
-				return false;
-
-			const auto compUid = GetUniqueID<Component>();
-			auto& entComps = entities.at(id);
-
-			std::vector<ComponentWrapper>& compVec = componentMap.at(compUid);
-
-			const auto iter = std::find_if(compVec.begin(), compVec.end()
-				, [&id](ComponentWrapper& comp)
-				{
-					return id == comp.GetOwner();
-				});
-
-			entComps.erase(compUid);
-			compVec.erase(iter);
-
-			return true;
-		}
-
-		bool RemoveAllComponents(EntityUID id) noexcept;
-
 		template<typename Component, typename ...Args>
-		Component& RegisterComponent(EntityUID entity, Args&& ...params)
+		Multi_Ptr<ComponentWrapper> RegisterComponent(EntityUID entity, Args&& ...params)
 		{
 			KRK_PROFILE_FUNCTION();
 
+			using InternalComp_t = InternalComponent<Component>;
+			
 			ComponentUID uid = GetUniqueID<Component>();
-
+			Multi_Ptr<InternalComp_t> comp = Make_Multi<InternalComp_t>(uid, entity);
+			comp->Create(std::forward<Args>(params)...);
+			
 			auto& compVec = componentMap[uid];
-			compVec.emplace_back(uid, entity);
-			auto& cw = compVec.back();
-			cw.SetComponent<Component, Args...>(std::forward<Args>(params)...);
-			auto& entComps = entities.at(entity);
-			entComps.insert(std::make_pair(uid, (ComponentWrapper::Component_t*)&cw.GetComponent<Component>()));
-			return cw.GetComponent<Component>();
+			compVec.push_back(comp);
+			return compVec.back();
 		}
 
 		template<typename Component>
-		USE_RESULT Component& GetComponent(EntityUID id) noexcept
+		USE_RESULT Multi_Ptr<ComponentWrapper> GetComponent(EntityUID id) const noexcept
 		{
 			KRK_PROFILE_FUNCTION();
 
-			ComponentUID uid = GetUniqueID<Component>();
-			const auto& compVec = entities.at(id);
-			auto& comp = compVec.at(uid);
-			return *reinterpret_cast<Component*>(comp);
+			const auto uid = GetUniqueID<Component>();
+			const auto& compVec = componentMap.at(uid);
+			
+			auto iter = std::find_if(compVec.begin(), compVec.end()
+				, [id](const Multi_Ptr<ComponentWrapper>& cw)
+				{
+					return cw->GetOwner() == id;
+				});
+			
+			return iter != compVec.end() ? *iter : Multi_Ptr<ComponentWrapper>();
 		}
+
+		template<typename Component, typename ...Components>
+		USE_RESULT std::vector<EntityUID> GetEntitiesWithComponents() const noexcept
+		{
+			std::vector<EntityUID> list;
+			
+			for (auto id : entities)
+			{
+				if (!HasComponents<Component, Component...>(id))
+					continue;
+
+				list.push_back(id);
+			}
+			
+			return list;
+			
+		}
+
+		template<typename Component>
+		USE_RESULT std::vector<Multi_Ptr<ComponentWrapper>>& GetComponents() const noexcept
+		{
+			return componentMap.at(GetUniqueID<Component>());
+		}
+		
 
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
@@ -99,17 +102,76 @@ namespace krakoa
 			if (!HasEntity(id))
 				return false;
 
-			const auto& entComps = entities.at(id);
 			const auto uid = GetUniqueID<Component>();
-			return entComps.find(uid) != entComps.end();
+			const auto& compVec = componentMap.at(uid);
+
+			auto iter = std::find_if(compVec.begin(), compVec.end()
+				, [id](const Multi_Ptr<ComponentWrapper>& cw)
+				{
+					return cw->GetOwner() == id;
+				});
+
+			return iter != compVec.end();
 		}
 
+
+		template<typename Component, typename ...Components>
+		USE_RESULT bool HasComponents(EntityUID id) const noexcept
+		{
+			return HasComponentsImpl<void, Component, Components...>();
+		}
+		
+
+		template<typename Component>
+		bool RemoveComponent(EntityUID id) noexcept
+		{
+			KRK_PROFILE_FUNCTION();
+
+			if (!HasComponent<Component>(id))
+				return false;
+
+			const auto uid = GetUniqueID<Component>();
+			auto& entComps = entities.at(id);
+
+			std::vector<ComponentWrapper>& compVec = componentMap.at(uid);
+
+			const auto iter = std::find_if(compVec.begin(), compVec.end()
+				, [&id](const Multi_Ptr<ComponentWrapper>& comp)
+				{
+					return id == comp->GetOwner();
+				});
+
+			compVec.erase(iter);
+
+			return true;
+		}
+
+		bool RemoveAllComponents(EntityUID id) noexcept;
+
+
+		template<typename PlaceHolder, typename Component, typename ...Components>
+		USE_RESULT bool HasComponentsImpl(EntityUID id) const noexcept
+		{
+			if (HasComponent<Component>(id))
+				return HasComponentsImpl<PlaceHolder, Components...>(id);
+			else
+				return false;
+		}
+		
+		template<typename PlaceHolder>
+		USE_RESULT bool HasComponentsImpl(EntityUID id) const noexcept
+		{
+			return true;
+		}
+
+		friend class Entity;
+		
 	private:
 		EntityUID GenerateNewID();
 
 	private:
-		std::map<EntityUID, std::unordered_map<ComponentUID, ComponentWrapper::Component_t*>> entities;
-		std::unordered_map<ComponentUID, std::vector<ComponentWrapper>> componentMap;
+		std::vector<EntityUID> entities;
+		std::unordered_map<ComponentUID, std::vector<Multi_Ptr<ComponentWrapper>>> componentMap;
 		EntityUID nextFreeID;
 	};
 }

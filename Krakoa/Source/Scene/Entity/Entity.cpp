@@ -6,23 +6,23 @@
 namespace krakoa
 {
 	Entity::Entity()
-		: manager(EntityComponentSystem::Pointer())
-		, id(manager->Add())
+		: id(EntityComponentSystem::Pointer()->Add())
 		, selected(false)
 		, active(true)
+		, manager(EntityComponentSystem::Pointer())
 	{}
 
 	Entity::Entity(const Entity& other)
-		: manager(EntityComponentSystem::Pointer()),
-		id(other.id),
+		: id(other.id),
 		selected(false),
-		active(true)
+		active(true),
+		manager(EntityComponentSystem::Pointer())
 	{}
 
 	Entity::Entity(Entity&& other) noexcept
-		: manager(EntityComponentSystem::Pointer()),
-		selected(false),
-		active(other.active)
+		: selected(false),
+		active(other.active),
+		manager(EntityComponentSystem::Pointer())
 	{}
 
 	Entity& Entity::operator=(const Entity& other)
@@ -81,8 +81,9 @@ namespace krakoa
 		return id;
 	}
 
-	void Entity::RemoveAllComponents() const noexcept
+	void Entity::RemoveAllComponents() noexcept
 	{
+		components.clear();
 		manager->RemoveAllComponents(id);
 	}
 

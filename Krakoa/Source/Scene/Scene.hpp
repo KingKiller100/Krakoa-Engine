@@ -14,13 +14,17 @@ namespace krakoa::scene
 
 		Entity& AddEntity(const std::string& name);
 		Entity& GetEntity(const std::string& name);
+		Entity& GetEntity(EntityUID id);
+		
 		bool RemoveEntity(const std::string& name);
 		bool RemoveEntity(const Entity& entity);
 		
 		void OnUpdate(float time);
-
+		
 	private:
 		void Draw();
+
+
 		
 	private:
 		std::string name;

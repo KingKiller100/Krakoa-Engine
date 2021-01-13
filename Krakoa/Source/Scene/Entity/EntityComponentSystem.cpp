@@ -35,9 +35,7 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		const auto entity_uid = GenerateNewID();
-		entities.insert(
-			std::make_pair(entity_uid, std::unordered_map<ComponentUID, ComponentWrapper::Component_t*>())
-		);
+		entities.push_back(entity_uid);
 		return entity_uid;
 	}
 
@@ -48,60 +46,13 @@ namespace krakoa
 		if (!HasEntity(id))
 			return;
 
-		auto& entCompMap = entities.at(id);
-		const auto compSize = entCompMap.size();
+		const auto entityIter = std::find(entities.begin(), entities.end(), id);
+		entities.erase(entityIter);
 
-		for (auto i = 0; i < compSize; ++i)
-		{
-			const auto entComps = entCompMap.begin();
-			auto& compList = componentMap.at(entComps->first);
-
-			auto iter = std::find_if(compList.begin(), compList.end()
-				, [id](const ComponentWrapper& comp)
-				{
-					return comp.GetOwner() == id;
-				});
-
-			entCompMap.erase(entComps->first);
-			compList.erase(iter);
-		}
-		entities.erase(id);
+		RemoveAllComponents(id);
 
 		if (id < nextFreeID)
 			nextFreeID = id;
-	}
-
-	bool EntityComponentSystem::HasEntity(EntityUID id) const
-	{
-		KRK_PROFILE_FUNCTION();
-
-		const auto iter = entities.find(id);
-
-		return iter != entities.end();
-	}
-
-	EntityUID EntityComponentSystem::GetEntity(EntityUID id) const
-	{
-		KRK_PROFILE_FUNCTION();
-
-		const auto iter = entities.find(id);
-
-		KRK_ASSERT(iter != entities.end(),
-			klib::ToString("Entity ID \"{0}\" does not exist", id));
-
-		return iter->first;
-	}
-
-	EntityUID EntityComponentSystem::GenerateNewID()
-	{
-		KRK_PROFILE_FUNCTION();
-
-		while (entities.find(nextFreeID) != entities.end())
-		{
-			++nextFreeID;
-		}
-
-		return nextFreeID;
 	}
 
 	bool EntityComponentSystem::RemoveAllComponents(EntityUID id) noexcept
@@ -110,25 +61,45 @@ namespace krakoa
 		if (!HasEntity(id))
 			return false;
 
-		auto& entComps = entities.at(id);
-		if (entComps.empty())
-			return false;
+		const auto componentsCount = componentMap.size();
+		auto compIter = componentMap.begin();
 
-		entComps.clear();
-		
-		for (auto& comp : componentMap)
+		for (auto i = 0; i < componentsCount; ++i)
 		{
-			auto& compVec = comp.second;
+			auto& compVec = compIter->second;
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
-				, [&id](ComponentWrapper& comp)
+				, [id](const Multi_Ptr<ComponentWrapper>& comp)
 				{
-					return id == comp.GetOwner();
+					return id == comp->GetOwner();
 				});
 
 			compVec.erase(iter);
+			++compIter;
 		}
 
 		return true;
+	}
+
+	bool EntityComponentSystem::HasEntity(EntityUID id) const
+	{
+		KRK_PROFILE_FUNCTION();
+		return std::find(
+			entities.begin()
+			, entities.end()
+			, nextFreeID)
+			!= entities.end();
+	}
+
+	EntityUID EntityComponentSystem::GenerateNewID()
+	{
+		KRK_PROFILE_FUNCTION();
+
+		while (HasEntity(nextFreeID))
+		{
+			++nextFreeID;
+		}
+
+		return nextFreeID++;
 	}
 }

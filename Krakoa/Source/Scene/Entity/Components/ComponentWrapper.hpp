@@ -10,7 +10,9 @@ namespace krakoa
 {
 	class ComponentWrapper
 	{
+	public:
 		using UID = ComponentUID;
+		using Component_t = std::uintptr_t;
 	public:
 		ComponentWrapper(UID compUid, EntityUID entityUId);
 

@@ -6,6 +6,7 @@
 #include "../../Util/UniqueID.hpp"
 #include "../../Core/PointerTypes.hpp"
 #include "../../Patterns/ManagerBase.hpp"
+#include "../../Debug/Instrumentor.hpp"
 
 #include <map>
 #include <unordered_map>
@@ -31,6 +32,8 @@ namespace krakoa
 		template<typename Component>
 		bool RemoveComponent(EntityUID id) noexcept
 		{
+			KRK_PROFILE_FUNCTION();
+			
 			if (!HasComponent<Component>(id))
 				return false;
 
@@ -56,29 +59,34 @@ namespace krakoa
 		template<typename Component, typename ...Args>
 		Component& RegisterComponent(EntityUID entity, Args&& ...params)
 		{
+			KRK_PROFILE_FUNCTION();
+
 			ComponentUID uid = GetUniqueID<Component>();
 
-			std::vector<ComponentWrapper>& compVec = componentMap[uid];
+			auto& compVec = componentMap[uid];
 			compVec.emplace_back(uid, entity);
 			auto& cw = compVec.back();
 			cw.SetComponent<Component, Args...>(std::forward<Args>(params)...);
 			auto& entComps = entities.at(entity);
-			entComps.insert(std::make_pair(uid, &cw));
+			entComps.insert(std::make_pair(uid, (ComponentWrapper::Component_t*)&cw.GetComponent<Component>()));
 			return cw.GetComponent<Component>();
 		}
 
 		template<typename Component>
 		USE_RESULT Component& GetComponent(EntityUID id) noexcept
 		{
+			KRK_PROFILE_FUNCTION();
+
 			ComponentUID uid = GetUniqueID<Component>();
 			const auto& compVec = entities.at(id);
 			auto& comp = compVec.at(uid);
-			return comp->GetComponent<Component>();
+			return *reinterpret_cast<Component*>(comp);
 		}
 
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
 		{
+			KRK_PROFILE_FUNCTION();
 			const auto uid = GetUniqueID<Component>();
 			return componentMap.find(uid) != componentMap.end();
 		}
@@ -86,31 +94,21 @@ namespace krakoa
 		template<typename Component>
 		USE_RESULT bool HasComponent(EntityUID id) const noexcept
 		{
+			KRK_PROFILE_FUNCTION();
+			
 			if (!HasEntity(id))
 				return false;
 
 			const auto& entComps = entities.at(id);
 			const auto uid = GetUniqueID<Component>();
 			return entComps.find(uid) != entComps.end();
-			// for (const auto& pair : componentMap)
-			// {
-			// 	const auto iter = std::find_if(entComps.begin(), entComps.end()
-			// 		, [&pair](const ComponentWrapper* comp)
-			// 		{
-			// 			return pair.first == comp->GetUID();
-			// 		});
-			//
-			// 	if (iter != componentMap.end())
-			// 		return true;
-			// }
-			// return false;
 		}
 
 	private:
 		EntityUID GenerateNewID();
 
 	private:
-		std::map<EntityUID, std::unordered_map<ComponentUID, ComponentWrapper*>> entities;
+		std::map<EntityUID, std::unordered_map<ComponentUID, ComponentWrapper::Component_t*>> entities;
 		std::unordered_map<ComponentUID, std::vector<ComponentWrapper>> componentMap;
 		EntityUID nextFreeID;
 	};

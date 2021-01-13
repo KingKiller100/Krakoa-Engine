@@ -1,7 +1,6 @@
 ﻿#include "Precompile.hpp"
 #include "EntityComponentSystem.hpp"
 
-#include "../../Debug/Instrumentor.hpp"
 #include "../../Debug/Debug.hpp"
 // #include "../../Logging/MemoryLogger.hpp"
 
@@ -37,7 +36,7 @@ namespace krakoa
 
 		const auto entity_uid = GenerateNewID();
 		entities.insert(
-			std::make_pair(entity_uid, std::unordered_map<ComponentUID, ComponentWrapper*>())
+			std::make_pair(entity_uid, std::unordered_map<ComponentUID, ComponentWrapper::Component_t*>())
 		);
 		return entity_uid;
 	}
@@ -111,13 +110,15 @@ namespace krakoa
 		if (!HasEntity(id))
 			return false;
 
-
 		auto& entComps = entities.at(id);
-		const auto ecSize = entComps.size();
-		for (auto i = 0; i < ecSize; ++i)
+		if (entComps.empty())
+			return false;
+
+		entComps.clear();
+		
+		for (auto& comp : componentMap)
 		{
-			const auto uid = entComps.begin()->second->GetUID();
-			auto& compVec = componentMap.at(uid);
+			auto& compVec = comp.second;
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
 				, [&id](ComponentWrapper& comp)
@@ -125,7 +126,6 @@ namespace krakoa
 					return id == comp.GetOwner();
 				});
 
-			entComps.erase(uid);
 			compVec.erase(iter);
 		}
 

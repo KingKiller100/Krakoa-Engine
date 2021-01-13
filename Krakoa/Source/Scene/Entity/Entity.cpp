@@ -43,7 +43,7 @@ namespace krakoa
 
 	Entity::~Entity() noexcept
 	{
-		manager->RemoveEntity(id);
+		// manager->RemoveEntity(id);
 	}
 
 	const bool& Entity::IsSelected() const noexcept

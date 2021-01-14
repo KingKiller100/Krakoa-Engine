@@ -40,8 +40,8 @@ namespace krakoa::scene
 				return pair.second.GetID() == id;
 			})
 		);
-		
-		return iter->second;	
+
+		return iter->second;
 	}
 
 	bool Scene::RemoveEntity(const std::string& name)
@@ -50,14 +50,13 @@ namespace krakoa::scene
 		if (iter == entities.end())
 			return false;
 
-		ecs->RemoveEntity(iter->second.GetID());
+		// ecs->RemoveEntity(iter->second.GetID());
 		entities.erase(iter);
 		return true;
 	}
 
 	bool Scene::RemoveEntity(const Entity& entity)
 	{
-		ecs->RemoveEntity(entity.GetID());
 		entities.erase(std::find_if(entities.begin(), entities.end()
 			, [entity](const decltype(entities)::value_type& pair)
 			{
@@ -70,10 +69,6 @@ namespace krakoa::scene
 	void Scene::OnUpdate(float time)
 	{
 		Draw();
-		// ecs->RegisterComponent<TagComponent>(entity, std::string_view());
-		// const auto compExists = ecs->HasComponent<TagComponent>();
-		// const auto enttCompExists = ecs->HasComponent<TagComponent>(entity);
-		// const auto& comp = ecs->GetComponent<TagComponent>(entity);
 	}
 
 	void Scene::Draw()

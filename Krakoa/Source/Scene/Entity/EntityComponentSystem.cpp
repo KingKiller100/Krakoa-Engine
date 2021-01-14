@@ -46,10 +46,10 @@ namespace krakoa
 		if (!HasEntity(id))
 			return;
 
+		RemoveAllComponents(id);
+
 		const auto entityIter = std::find(entities.begin(), entities.end(), id);
 		entities.erase(entityIter);
-
-		RemoveAllComponents(id);
 
 		if (id < nextFreeID)
 			nextFreeID = id;
@@ -61,12 +61,11 @@ namespace krakoa
 		if (!HasEntity(id))
 			return false;
 
-		const auto componentsCount = componentMap.size();
 		auto compIter = componentMap.begin();
 
-		for (auto i = 0; i < componentsCount; ++i)
+		for (auto& pair : componentMap)
 		{
-			auto& compVec = compIter->second;
+			auto& compVec = pair.second;
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
 				, [id](const Multi_Ptr<ComponentWrapper>& comp)
@@ -75,7 +74,6 @@ namespace krakoa
 				});
 
 			compVec.erase(iter);
-			++compIter;
 		}
 
 		return true;

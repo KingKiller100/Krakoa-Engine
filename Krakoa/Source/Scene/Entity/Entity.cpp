@@ -43,6 +43,7 @@ namespace krakoa
 
 	Entity::~Entity() noexcept
 	{
+		components.clear();
 		manager->RemoveEntity(id);
 	}
 

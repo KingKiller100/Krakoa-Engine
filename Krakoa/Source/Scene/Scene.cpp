@@ -23,7 +23,7 @@ namespace krakoa::scene
 	Entity& Scene::AddEntity(const std::string& name)
 	{
 		auto& entity = entities[name];
-		entity.AddComponent<TagComponent>(name);
+		entity.AddComponent<components::TagComponent>(name);
 		return entity;
 	}
 

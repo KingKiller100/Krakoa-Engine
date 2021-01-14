@@ -42,7 +42,7 @@ namespace krakoa
 		);
 
 		scene.reset(new scene::Scene("Keditor"));
-		
+
 		SetUpEntities();
 	}
 
@@ -103,6 +103,14 @@ namespace krakoa
 		}
 
 		{
+			KRK_PROFILE_SCOPE("Remove an entity");
+			const std::string name("Dummy");
+			auto& dummyEntity = scene->AddEntity(name);
+			const auto& tag = dummyEntity.GetComponent<components::TagComponent>();
+			scene->RemoveEntity(tag.GetTag());
+		}
+		
+		{
 			KRK_PROFILE_SCOPE("Create yellow entity");
 
 			auto& yellowEntity = scene->AddEntity("Yellow");
@@ -129,7 +137,6 @@ namespace krakoa
 			texturedEntity.AddComponent <components::Appearance2DComponent>(*pSubTexture, geometryColour, 3.f);
 		}
 
-		scene->RemoveEntity("Yellow");
 	}
 
 	void Keditor2DLayer::OnDetach()

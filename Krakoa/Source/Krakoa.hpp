@@ -61,3 +61,4 @@
 #include "Scene/Entity/EntityComponentSystem.hpp"
 #include "Scene/Entity/Components/TransformComponent.hpp"
 #include "Scene/Entity/Components/AppearanceComponent.hpp"
+#include "Scene/Entity/Components/TagComponent.hpp"

@@ -61,8 +61,6 @@ namespace krakoa
 		if (!HasEntity(id))
 			return false;
 
-		auto compIter = componentMap.begin();
-
 		for (auto& pair : componentMap)
 		{
 			auto& compVec = pair.second;
@@ -73,7 +71,8 @@ namespace krakoa
 					return id == comp->GetOwner();
 				});
 
-			compVec.erase(iter);
+			if (iter != compVec.end())
+				compVec.erase(iter);
 		}
 
 		return true;

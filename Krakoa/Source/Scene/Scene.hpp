@@ -3,6 +3,7 @@
 #include "Entity/EntityComponentSystem.hpp"
 #include "Entity/Entity.hpp"
 #include <string>
+#include <map>
 
 namespace krakoa::scene
 {

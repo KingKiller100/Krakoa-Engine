@@ -87,7 +87,7 @@ namespace krakoa
 		return std::find(
 			entities.begin()
 			, entities.end()
-			, nextFreeID)
+			, id)
 			!= entities.end();
 	}
 

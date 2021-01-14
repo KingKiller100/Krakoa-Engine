@@ -34,11 +34,14 @@ namespace krakoa::scene
 
 	Entity& Scene::GetEntity(EntityUID id)
 	{
-		std::find_if(entities.begin(), entities.end(),
+		auto iter(std::find_if(entities.begin(), entities.end(),
 			[id](const decltype(entities)::value_type& pair)
 			{
 				return pair.second.GetID() == id;
-			});
+			})
+		);
+		
+		return iter->second;	
 	}
 
 	bool Scene::RemoveEntity(const std::string& name)
@@ -78,8 +81,8 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		const auto list
-		= ecs->GetEntitiesWithComponents<components::Appearance2DComponent, components::TransformComponent>();
-		
+			= ecs->GetEntitiesWithComponents<components::Appearance2DComponent, components::TransformComponent>();
+
 		for (const auto id : list)
 		{
 			const auto& entity = GetEntity(id);

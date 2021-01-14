@@ -8,15 +8,13 @@
 #include "../../Patterns/ManagerBase.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
-#include <Template/kToImpl.hpp>
-
-#include <map>
 #include <unordered_map>
+#include <vector>
 
 
 namespace krakoa
 {
-	class EntityComponentSystem final : public patterns::ManagerBase<EntityComponentSystem>, util::TypeUniqueIdentifier<EntityComponentSystem, std::uint32_t>
+	class EntityComponentSystem final : public patterns::ManagerBase<EntityComponentSystem>, util::TypeUniqueIdentifier<EntityComponentSystem, ComponentUID>
 	{
 	public:
 		EntityComponentSystem(Token);
@@ -35,14 +33,14 @@ namespace krakoa
 			KRK_PROFILE_FUNCTION();
 
 			using InternalComp_t = InternalComponent<Component>;
-			
+
 			ComponentUID uid = GetUniqueID<Component>();
 			Multi_Ptr<InternalComp_t> comp = Make_Multi<InternalComp_t>(uid, entity);
 			comp->Create(std::forward<Args>(params)...);
-			
+
 			auto& compVec = componentMap[uid];
 			compVec.push_back(comp);
-			return compVec.back();
+			return comp;
 		}
 
 		template<typename Component>
@@ -52,13 +50,13 @@ namespace krakoa
 
 			const auto uid = GetUniqueID<Component>();
 			const auto& compVec = componentMap.at(uid);
-			
+
 			auto iter = std::find_if(compVec.begin(), compVec.end()
 				, [id](const Multi_Ptr<ComponentWrapper>& cw)
 				{
 					return cw->GetOwner() == id;
 				});
-			
+
 			return iter != compVec.end() ? *iter : Multi_Ptr<ComponentWrapper>();
 		}
 
@@ -66,17 +64,17 @@ namespace krakoa
 		USE_RESULT std::vector<EntityUID> GetEntitiesWithComponents() const noexcept
 		{
 			std::vector<EntityUID> list;
-			
+
 			for (auto id : entities)
 			{
-				if (!HasComponents<Component, Component...>(id))
+				if (!HasComponents<Component, Components...>(id))
 					continue;
 
 				list.push_back(id);
 			}
-			
+
 			return list;
-			
+
 		}
 
 		template<typename Component>
@@ -84,7 +82,7 @@ namespace krakoa
 		{
 			return componentMap.at(GetUniqueID<Component>());
 		}
-		
+
 
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
@@ -98,13 +96,13 @@ namespace krakoa
 		USE_RESULT bool HasComponent(EntityUID id) const noexcept
 		{
 			KRK_PROFILE_FUNCTION();
-			
-			if (!HasEntity(id))
+
+			if (!HasEntity(id) || !HasComponent<Component>())
 				return false;
 
-			const auto uid = GetUniqueID<Component>();
+			const ComponentUID uid = GetUniqueID<Component>();
 			const auto& compVec = componentMap.at(uid);
-
+			
 			auto iter = std::find_if(compVec.begin(), compVec.end()
 				, [id](const Multi_Ptr<ComponentWrapper>& cw)
 				{
@@ -118,9 +116,9 @@ namespace krakoa
 		template<typename Component, typename ...Components>
 		USE_RESULT bool HasComponents(EntityUID id) const noexcept
 		{
-			return HasComponentsImpl<void, Component, Components...>();
+			return HasComponentsImpl<void, Component, Components...>(id);
 		}
-		
+
 
 		template<typename Component>
 		bool RemoveComponent(EntityUID id) noexcept
@@ -157,7 +155,7 @@ namespace krakoa
 			else
 				return false;
 		}
-		
+
 		template<typename PlaceHolder>
 		USE_RESULT bool HasComponentsImpl(EntityUID id) const noexcept
 		{
@@ -165,7 +163,7 @@ namespace krakoa
 		}
 
 		friend class Entity;
-		
+
 	private:
 		EntityUID GenerateNewID();
 

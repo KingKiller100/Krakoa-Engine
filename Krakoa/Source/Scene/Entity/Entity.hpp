@@ -3,11 +3,11 @@
 #include "ECS_UID.hpp"
 #include "EntityComponentSystem.hpp"
 
-// #include "../../Patterns/MemPooler.hpp"
 #include "../../Debug/Debug.hpp"
 
 #include <HelperMacros.hpp>
 #include <Utility/String/kToString.hpp>
+#include <Template/kToImpl.hpp>
 
 namespace krakoa
 {	

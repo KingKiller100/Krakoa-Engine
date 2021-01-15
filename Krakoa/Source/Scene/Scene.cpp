@@ -18,6 +18,7 @@ namespace krakoa::scene
 
 	Scene::~Scene()
 	{
+		entities.clear();
 	}
 
 	Entity& Scene::AddEntity(const std::string& name)
@@ -63,6 +64,10 @@ namespace krakoa::scene
 				return pair.second == entity;
 			}));
 		return true;
+	}
+
+	void Scene::OnLoad()
+	{
 	}
 
 

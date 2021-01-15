@@ -20,13 +20,12 @@ namespace krakoa::scene
 		bool RemoveEntity(const std::string& name);
 		bool RemoveEntity(const Entity& entity);
 		
+		void OnLoad();
 		void OnUpdate(float time);
 		
 	private:
 		void Draw();
 
-
-		
 	private:
 		std::string name;
 		std::map<std::string, Entity> entities;

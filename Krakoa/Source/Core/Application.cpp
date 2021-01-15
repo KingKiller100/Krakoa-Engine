@@ -72,10 +72,8 @@ namespace krakoa
 		graphics::ShaderLibrary::Create();
 		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
-		// Initialize Entity Manager
-		EntityComponentSystem::Create();
-		entityManager.reset(EntityComponentSystem::Pointer());
-
+		// Initialize Scene Manager
+		sceneManager = Make_Solo<scene::SceneManager>();
 
 		graphics::FrameBufferSpecification fbSpec;
 		fbSpec.width = 1024;
@@ -147,14 +145,14 @@ namespace krakoa
 		}
 
 		// Update
-		// entityManager->Update(deltaTime);
+		// sceneManager->Update(deltaTime);
 
 		frameBuffer->Bind();
 
 		graphics::Renderer::Update();
 		
 		// Draw
-		// entityManager->Draw();
+		sceneManager->OnUpdate(deltaTime);
 
 		frameBuffer->Unbind();
 
@@ -180,14 +178,19 @@ namespace krakoa
 		return *pWindow;
 	}
 
-	Multi_Ptr<graphics::iFrameBuffer>& Application::GetFrameBuffer()
+	graphics::iFrameBuffer& Application::GetFrameBuffer() const
 	{
-		return frameBuffer;
+		return *frameBuffer;
 	}
 
 	ImGuiLayer& Application::GetImGuiLayer() const
 	{
 		return *pImGuiLayer;
+	}
+
+	scene::SceneManager& Application::GetSceneManager() const
+	{
+		return *sceneManager;
 	}
 
 	Application& GetApp()

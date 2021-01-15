@@ -8,6 +8,9 @@
 
 #include <Maths/Vectors/Vector4.hpp>
 
+#include "Graphics/Helpers/Colour.hpp"
+
+
 #include "Scene/Scene.hpp"
 
 namespace krakoa
@@ -30,22 +33,20 @@ namespace krakoa
 		void OnEvent(events::Event& e) override;
 
 	private:
-		void SendRendererCommands() noexcept;
+		void UpdateColour() noexcept;
 		void RenderZoomControls() noexcept;
-		void RenderColourControls() noexcept;
+		void RenderColourControls() const noexcept;
 
-		void SetUpEntities() const;
+		void SetUpScene() const;
 
 	private:
 		Application& application;
-
-		Solo_Ptr<scene::Scene> scene;
 		
 		Solo_Ptr<graphics::SubTexture2D> pSubTexture;
 
 		OrthographicCameraController cameraController;
 
-		kmaths::Vector4f geometryColour;
+		graphics::Colour geometryColour;
 		kmaths::Vector3f position;
 
 		kmaths::Vector2<std::uint32_t> viewportSize;

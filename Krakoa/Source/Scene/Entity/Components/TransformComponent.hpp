@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <Maths/kMathsTheta.hpp>
 #include <Maths/Vectors/PredefinedVectors.hpp>
 #include <Maths/Matrices/TransformMatrix.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
@@ -28,7 +29,7 @@ namespace krakoa::components
 		USE_RESULT const kmaths::Vector3f& GetRotationAxes() const noexcept;
 		void SetRotationAxes(const kmaths::Vector3f& value) noexcept;;
 
-		USE_RESULT const float& GetRotation() const noexcept;
+		USE_RESULT float GetRotation(kmaths::Theta theta = kmaths::Theta::RADIANS) const noexcept;
 		void SetRotation(const float value) noexcept;
 
 		USE_RESULT kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept;

@@ -74,9 +74,9 @@ namespace krakoa::components
 		rotationAxes = value;
 	}
 
-	const float& TransformComponent::GetRotation() const noexcept
+	float TransformComponent::GetRotation(kmaths::Theta theta) const noexcept
 	{
-		return radians;
+		return theta == kmaths::Theta::RADIANS ? radians : kmaths::ToDegrees(radians);
 	}
 
 	void TransformComponent::SetRotation(const float value) noexcept

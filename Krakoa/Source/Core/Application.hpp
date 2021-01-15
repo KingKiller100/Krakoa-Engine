@@ -22,7 +22,7 @@
 #include "../Layers/ImGui/ImGuiLayer.hpp"
 #include "../Layers/LayerStacker.hpp"
 
-#include "../Scene/Entity/EntityComponentSystem.hpp"
+#include "../Scene/SceneManager.hpp"
 
 #include "../Graphics/Framebuffers/iFrameBuffer.hpp"
 
@@ -43,10 +43,12 @@ namespace krakoa
 		void Close() noexcept;
 		USE_RESULT bool IsRunning() const;
 
-		iWindow& GetWindow() const;
 
-		Multi_Ptr<graphics::iFrameBuffer>& GetFrameBuffer();
+		iWindow& GetWindow() const;
+		graphics::iFrameBuffer& GetFrameBuffer() const;
 		ImGuiLayer& GetImGuiLayer() const;
+		scene::SceneManager& GetSceneManager() const;
+		
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);
@@ -63,9 +65,9 @@ namespace krakoa
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
 
-		Solo_Ptr<EntityComponentSystem> entityManager;
+		Solo_Ptr<scene::SceneManager> sceneManager;
 		
-		Multi_Ptr<graphics::iFrameBuffer> frameBuffer;
+		Solo_Ptr<graphics::iFrameBuffer> frameBuffer;
 
 	private:
 		ImGuiLayer* pImGuiLayer;

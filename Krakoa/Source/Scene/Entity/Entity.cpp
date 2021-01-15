@@ -5,31 +5,31 @@
 
 namespace krakoa
 {
-	Entity::Entity()
-		: id(EntityComponentSystem::Pointer()->Add())
+	Entity::Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem)
+		: id(entityComponentSystem->Add())
 		, selected(false)
 		, active(true)
-		, manager(EntityComponentSystem::Pointer())
+		, manager(entityComponentSystem)
 	{}
 
 	Entity::Entity(const Entity& other)
 		: id(other.id),
 		selected(false),
 		active(true),
-		manager(EntityComponentSystem::Pointer())
+		manager(other.manager)
 	{}
 
 	Entity::Entity(Entity&& other) noexcept
 		: selected(false),
 		active(other.active),
-		manager(EntityComponentSystem::Pointer())
+		manager(other.manager)
 	{}
 
 	Entity& Entity::operator=(const Entity& other)
 	{
 		selected = false;
 		active = other.active;
-		manager = EntityComponentSystem::Pointer();
+		manager = other.manager;
 		return *this;
 	}
 
@@ -37,7 +37,7 @@ namespace krakoa
 	{
 		selected = false;
 		active = other.active;
-		manager = EntityComponentSystem::Pointer();
+		manager = other.manager;
 		return *this;
 	}
 

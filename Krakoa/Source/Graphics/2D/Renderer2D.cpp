@@ -260,6 +260,28 @@ namespace krakoa::graphics
 #endif
 	}
 
+	void Renderer2D::DrawTriangle(const components::Appearance2DComponent& appearance,
+		const components::TransformComponent& transform)
+	{
+		DrawTriangle(appearance.GetSubTexture(),
+			transform.GetPosition(),
+			transform.GetScale(),
+			transform.GetRotation(),
+			appearance.GetColour(),
+			appearance.GetTilingFactor());
+	}
+
+	void Renderer2D::DrawQuad(const components::Appearance2DComponent& appearance,
+		const components::TransformComponent& transform)
+	{
+		DrawQuad(appearance.GetSubTexture(),
+			transform.GetPosition(),
+			transform.GetScale(),
+			transform.GetRotation(),
+			appearance.GetColour(),
+			appearance.GetTilingFactor());
+	}
+
 	void Renderer2D::DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
 	                              const float radians, const Colour tintColour, const float tilingFactor)
 	{

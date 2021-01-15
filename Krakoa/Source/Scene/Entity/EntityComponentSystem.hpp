@@ -14,10 +14,10 @@
 
 namespace krakoa
 {
-	class EntityComponentSystem final : public patterns::ManagerBase<EntityComponentSystem>, util::TypeUniqueIdentifier<EntityComponentSystem, ComponentUID>
+	class EntityComponentSystem final : util::TypeUniqueIdentifier<EntityComponentSystem, ComponentUID>
 	{
 	public:
-		EntityComponentSystem(Token);
+		EntityComponentSystem();
 		~EntityComponentSystem();
 
 		USE_RESULT EntityUID Add();

@@ -11,12 +11,12 @@
 
 namespace krakoa
 {	
-	class Entity //: public patterns::MemPooler<Entity, 10000>
+	class Entity
 	{
 		using UID = EntityUID;
 		
 	public:
-		Entity();
+		Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem);
 
 		Entity(const Entity& other);
 		Entity& operator=(const Entity& other);
@@ -88,6 +88,6 @@ namespace krakoa
 		UID id;
 		bool selected;
 		bool active;
-		EntityComponentSystem* manager;
+		Multi_Ptr<EntityComponentSystem> manager;
 	};
 }

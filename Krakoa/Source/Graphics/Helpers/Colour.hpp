@@ -15,7 +15,7 @@ namespace krakoa::graphics
 		{
 			float hue = 0, saturation = 0, lightness = 0;
 		};
-
+		
 	public:
 		inline static constexpr auto Length = 4;
 		inline static constexpr auto Bytes = Length * sizeof(std::uint8_t);
@@ -307,6 +307,18 @@ namespace krakoa::graphics
 			return { r, g, b, a };
 		}
 
+
+		template<class T>
+		USE_RESULT constexpr auto ToArray() const noexcept
+		{
+			return std::array<T, 4>{
+				static_cast<T>(red)
+				, static_cast<T>(green)
+				, static_cast<T>(blue)
+				, static_cast<T>(alpha)
+			};
+		}
+		
 	private:
 		USE_RESULT constexpr std::uint8_t FloatToColour(float c) const
 		{

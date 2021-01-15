@@ -2,12 +2,11 @@
 #include "EntityComponentSystem.hpp"
 
 #include "../../Debug/Debug.hpp"
-// #include "../../Logging/MemoryLogger.hpp"
 
 
 namespace krakoa
 {
-	EntityComponentSystem::EntityComponentSystem(Token)
+	EntityComponentSystem::EntityComponentSystem()
 		: nextFreeID(0)
 	{}
 
@@ -16,9 +15,6 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		RemoveAllEntities();
-		/*const auto status = Entity::GetStatus();
-		MEM_INF(status);
-		Entity::TerminatePool();*/
 	}
 
 	void EntityComponentSystem::RemoveAllEntities() noexcept

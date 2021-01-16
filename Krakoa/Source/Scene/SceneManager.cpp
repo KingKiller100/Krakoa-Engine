@@ -5,14 +5,16 @@
 
 #include "../Graphics/2D/Renderer2D.hpp"
 
-
 #include "Entity/Components/AppearanceComponent.hpp"
+#include "Entity/Components/CameraComponent.hpp"
 #include "Entity/Components/TransformComponent.hpp"
 
 namespace krakoa::scene
 {
+	using namespace ecs::components;
+
 	SceneManager::SceneManager()
-		: entityComponentSystem(new EntityComponentSystem())
+		: entityComponentSystem(new ecs::EntityComponentSystem())
 	{
 	}
 
@@ -63,35 +65,60 @@ namespace krakoa::scene
 
 	void SceneManager::DrawEntities(const iScene& scene) const
 	{
-		const auto list
-			= entityComponentSystem->GetEntitiesWithComponents<components::Appearance2DComponent, components::TransformComponent>();
+		iCamera* camera = nullptr;
+		TransformComponent* cameraTransform = nullptr;
+		const auto cameraEntities
+			= entityComponentSystem->GetEntitiesWithComponents<CameraComponent, TransformComponent>();
 
-		for (const auto id : list)
+		for (const auto id : cameraEntities)
 		{
 			const auto& entity = scene.GetEntity(id);
 
-			const auto& appearance = entity.GetComponent<components::Appearance2DComponent>();
-			const auto& transform = entity.GetComponent<components::TransformComponent>();
+			const auto& cam = entity.GetComponent<CameraComponent>();
+			auto& tfm = entity.GetComponent<TransformComponent>();
+
+			if (!cam.IsPrimary())
+				continue;
+
+			camera = std::addressof(cam.GetCamera());
+			cameraTransform = std::addressof(tfm);
+			break;
+		}
+
+		if (!camera || !cameraTransform)
+			return;
+
+		const auto drawables
+			= entityComponentSystem->GetEntitiesWithComponents<Appearance2DComponent, TransformComponent>();
+
+		graphics::Renderer2D::BeginScene(*camera, cameraTransform->GetTransformationMatrix2D());
+
+		for (const auto id : drawables)
+		{
+			const auto& entity = scene.GetEntity(id);
+
+			const auto& appearance = entity.GetComponent<Appearance2DComponent>();
+			const auto& transform = entity.GetComponent<TransformComponent>();
 
 			switch (appearance.GetGeometryType()) {
 			case graphics::GeometryType::QUAD:
 				graphics::Renderer2D::DrawQuad(appearance, transform);
 				break;
-				
+
 			case graphics::GeometryType::TRIANGLE:
 				graphics::Renderer2D::DrawTriangle(appearance, transform);
 				break;
-				
+
 			case graphics::GeometryType::CIRCLE:
 				//	graphics::Renderer2D::DrawCircle(appearance, transform);
 				break;
-				
+
 			default: // case of an unknown geometry type
 				KRK_FATAL("Failed to draw unknown geometry type");
 				break;
 			}
 		}
-		
+
 		graphics::Renderer2D::EndScene();
 	}
 }

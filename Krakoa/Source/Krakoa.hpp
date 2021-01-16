@@ -55,10 +55,15 @@
 #include "Layers/LayerBase.hpp"
 #include "Layers/ImGui/ImGuiLayer.hpp"
 
-// Entities & Components
+// Scene
 #include "Scene/SceneManager.hpp"
+
+// Entity
 #include "Scene/Entity/Entity.hpp"
 #include "Scene/Entity/EntityComponentSystem.hpp"
+
+// Components
+#include "Scene/Entity/Components/TagComponent.hpp"
+#include "Scene/Entity/Components/CameraComponent.hpp"
 #include "Scene/Entity/Components/TransformComponent.hpp"
 #include "Scene/Entity/Components/AppearanceComponent.hpp"
-#include "Scene/Entity/Components/TagComponent.hpp"

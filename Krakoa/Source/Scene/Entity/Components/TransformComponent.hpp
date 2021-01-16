@@ -5,7 +5,7 @@
 #include <Maths/Matrices/TransformMatrix.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
-namespace krakoa::components
+namespace krakoa::scene::ecs::components
 {
 	class TransformComponent
 	{

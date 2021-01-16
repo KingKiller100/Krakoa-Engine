@@ -3,7 +3,7 @@
 
 #include <Template/kTypeName.hpp>
 
-namespace krakoa::components
+namespace krakoa::scene::ecs::components
 {
 	TagComponent::TagComponent(const std::string_view& tag)
 		:tagName(tag)

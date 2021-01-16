@@ -2,26 +2,24 @@
 
 #include "../ECS_UID.hpp"
 
-#include "../../../Debug/Instrumentor.hpp"
 #include "../../../Core/EngineMacros.hpp"
-#include "../../../Core/PointerTypes.hpp"
 
-namespace krakoa
+namespace krakoa::scene::ecs
 {
-	class ComponentWrapper
+	class ComponentWrapperBase
 	{
 	public:
 		using UID = ComponentUID;
 	public:
-		ComponentWrapper(UID compUid, EntityUID entityUId);
+		ComponentWrapperBase(UID compUid, EntityUID entityUId);
 
-		ComponentWrapper(const ComponentWrapper& other) noexcept = delete;
-		ComponentWrapper(ComponentWrapper&& other) noexcept;
+		ComponentWrapperBase(const ComponentWrapperBase& other) noexcept = delete;
+		ComponentWrapperBase& operator=(const ComponentWrapperBase& other) noexcept = delete;
 
-		ComponentWrapper& operator=(const ComponentWrapper& other) noexcept = delete;
-		ComponentWrapper& operator=(ComponentWrapper&& other) noexcept;
+		ComponentWrapperBase(ComponentWrapperBase&& other) noexcept;
+		ComponentWrapperBase& operator=(ComponentWrapperBase&& other) noexcept;
 
-		~ComponentWrapper() noexcept;
+		~ComponentWrapperBase() noexcept;
 
 		USE_RESULT bool IsActive() const;
 
@@ -29,9 +27,9 @@ namespace krakoa
 
 		void Deactivate() noexcept;
 
-		UID GetUID() const;
+		[[nodiscard]] UID GetUID() const;
 
-		EntityUID GetOwner() const;
+		[[nodiscard]] EntityUID GetOwner() const;
 		void SetOwner(EntityUID entityUId);
 
 	private:
@@ -41,43 +39,47 @@ namespace krakoa
 	};
 
 	template <typename Component>
-	class InternalComponent : public ComponentWrapper
+	class ComponentWrapper : public ComponentWrapperBase
 	{
 	public:
 		using Component_t = Component;
 
 	public:
-		InternalComponent(UID compUid, EntityUID entityUId)
-			: ComponentWrapper(compUid, entityUId)
-			, component(nullptr)
+		template<typename ...Args>
+		constexpr ComponentWrapper(UID compUid, EntityUID entityUId, Args&&... params)
+			: ComponentWrapperBase(compUid, entityUId)
+			, component(std::forward<Args>(params)...)
 		{}
 
-		~InternalComponent() noexcept
+		~ComponentWrapper() noexcept
 			= default;
 
-		template<typename ...Args>
-		void Create(Args&&... params)
+		constexpr Component& Ref()
 		{
-			component.reset(new Component(std::forward<Args>(params)...));
+			return component;
 		}
 
-		Component& Ref()
+		constexpr Component* Ptr()
 		{
-			return *component;
+			return std::addressof(component);
 		}
 
-		Component* Ptr()
+		constexpr const Component& Ref() const
 		{
-			return component.get();
+			return component;
 		}
 
-		const Component& Ref() const
+		constexpr operator Component&() const noexcept
 		{
-			return *component;
+			return Ref();
+		}
+
+		constexpr operator Component&() noexcept
+		{
+			return Ref();
 		}
 
 	private:
-		Solo_Ptr<Component> component;
+		Component component;
 	};
-
 }

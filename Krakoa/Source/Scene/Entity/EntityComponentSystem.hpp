@@ -5,14 +5,15 @@
 
 #include "../../Util/UniqueID.hpp"
 #include "../../Core/PointerTypes.hpp"
-#include "../../Patterns/ManagerBase.hpp"
+#include "../../Logging/CoreLogger.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
+#include <Template/kTypeName.hpp>
 #include <unordered_map>
 #include <vector>
 
 
-namespace krakoa
+namespace krakoa::scene::ecs
 {
 	class EntityComponentSystem final : util::TypeUniqueIdentifier<EntityComponentSystem, ComponentUID>
 	{
@@ -28,23 +29,25 @@ namespace krakoa
 		USE_RESULT bool HasEntity(EntityUID id) const;
 
 		template<typename Component, typename ...Args>
-		Multi_Ptr<ComponentWrapper> RegisterComponent(EntityUID entity, Args&& ...params)
+		Multi_Ptr<ComponentWrapperBase> RegisterComponent(EntityUID entity, Args&& ...params)
 		{
 			KRK_PROFILE_FUNCTION();
 
-			using InternalComp_t = InternalComponent<Component>;
+			using ComponentWrapper = ComponentWrapper<Component>;
 
+			KRK_DBG(klib::ToString("Registering component \"{0}\" to entity id \"{1}\""
+				, klib::GetTypeName<Component>()
+				, entity)
+			);
+			
 			ComponentUID uid = GetUniqueID<Component>();
-			Multi_Ptr<InternalComp_t> comp = Make_Multi<InternalComp_t>(uid, entity);
-			comp->Create(std::forward<Args>(params)...);
 
 			auto& compVec = componentMap[uid];
-			compVec.push_back(comp);
-			return comp;
+			return compVec.emplace_back(Make_Multi<ComponentWrapper>(uid, entity, std::forward<Args>(params)...));
 		}
 
 		template<typename Component>
-		USE_RESULT Multi_Ptr<ComponentWrapper> GetComponent(EntityUID id) const noexcept
+		USE_RESULT Multi_Ptr<ComponentWrapperBase> GetComponent(EntityUID id) const noexcept
 		{
 			KRK_PROFILE_FUNCTION();
 
@@ -52,12 +55,12 @@ namespace krakoa
 			const auto& compVec = componentMap.at(uid);
 
 			auto iter = std::find_if(compVec.begin(), compVec.end()
-				, [id](const Multi_Ptr<ComponentWrapper>& cw)
+				, [id](const Multi_Ptr<ComponentWrapperBase>& cw)
 				{
 					return cw->GetOwner() == id;
 				});
 
-			return iter != compVec.end() ? *iter : Multi_Ptr<ComponentWrapper>();
+			return iter != compVec.end() ? *iter : Multi_Ptr<ComponentWrapperBase>();
 		}
 
 		template<typename Component, typename ...Components>
@@ -74,15 +77,13 @@ namespace krakoa
 			}
 
 			return list;
-
 		}
 
 		template<typename Component>
-		USE_RESULT std::vector<Multi_Ptr<ComponentWrapper>>& GetComponents() const noexcept
+		USE_RESULT std::vector<Multi_Ptr<ComponentWrapperBase>>& GetComponents() const noexcept
 		{
 			return componentMap.at(GetUniqueID<Component>());
 		}
-
 
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
@@ -104,7 +105,7 @@ namespace krakoa
 			const auto& compVec = componentMap.at(uid);
 			
 			auto iter = std::find_if(compVec.begin(), compVec.end()
-				, [id](const Multi_Ptr<ComponentWrapper>& cw)
+				, [id](const Multi_Ptr<ComponentWrapperBase>& cw)
 				{
 					return cw->GetOwner() == id;
 				});
@@ -131,16 +132,21 @@ namespace krakoa
 			const auto uid = GetUniqueID<Component>();
 			auto& entComps = entities.at(id);
 
-			std::vector<ComponentWrapper>& compVec = componentMap.at(uid);
+			auto& compVec = componentMap.at(uid);
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
-				, [&id](const Multi_Ptr<ComponentWrapper>& comp)
+				, [&id](const Multi_Ptr<ComponentWrapperBase>& comp)
 				{
 					return id == comp->GetOwner();
 				});
 
 			compVec.erase(iter);
 
+			KRK_DBG(klib::ToString("Removing component \"{0}\" from entity id \"{1}\""
+				, klib::GetTypeName<Component>()
+				, id)
+			);
+			
 			return true;
 		}
 
@@ -169,7 +175,7 @@ namespace krakoa
 
 	private:
 		std::vector<EntityUID> entities;
-		std::unordered_map<ComponentUID, std::vector<Multi_Ptr<ComponentWrapper>>> componentMap;
+		std::unordered_map<ComponentUID, std::vector<Multi_Ptr<ComponentWrapperBase>>> componentMap;
 		EntityUID nextFreeID;
 	};
 }

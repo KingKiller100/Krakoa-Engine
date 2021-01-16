@@ -2,9 +2,13 @@
 #include "Scene.hpp"
 
 #include "Entity/Components/TagComponent.hpp"
+#include "../Debug/Debug.hpp"
+#include "../Debug/Instrumentor.hpp"
 
 namespace krakoa::scene
 {
+	using namespace ecs;
+	
 	Scene::Scene(const std::string_view& name, Multi_Ptr<EntityComponentSystem> ecs)
 		: name(name)
 		, entityComponentSystem(ecs)
@@ -12,24 +16,56 @@ namespace krakoa::scene
 
 	Scene::~Scene()
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		entities.clear();
 	}
 
-	Entity& Scene::AddEntity(const std::string& name)
+	Entity& Scene::AddEntity(const std::string& entityName)
 	{
-		auto pair = entities.emplace(name, entityComponentSystem);
+		KRK_PROFILE_FUNCTION();
+		
+		KRK_ASSERT(!HasEntity(entityName),
+			"Entity \"" + entityName + "\" already exists in scene \"" + name + "\"");
+
+		auto pair = entities.emplace(entityName, entityComponentSystem);
 		auto& entity = pair.first->second;
-		entity.AddComponent<components::TagComponent>(name);
+		entity.AddComponent<components::TagComponent>(entityName);
 		return entity;
 	}
 
-	const Entity& Scene::GetEntity(const std::string& name) const
+	bool Scene::HasEntity(const std::string& entityName) const
 	{
-		return entities.at(name);
+		return entities.find(entityName) != entities.end();
+	}
+
+	
+	bool Scene::HasEntity(const ecs::EntityUID eid) const
+	{
+		const auto iter = std::find_if(entities.begin(), entities.end(),
+			[eid](const decltype(entities)::value_type& pair)
+			{
+				return pair.second.GetID() == eid;
+			});
+
+		return iter != entities.end();
+	}
+
+
+	const Entity& Scene::GetEntity(const std::string& entityName) const
+	{
+		KRK_PROFILE_FUNCTION();
+
+		KRK_ASSERT(HasEntity(entityName),
+			"Entity \"" + entityName + "\" already exists in scene \"" + name + "\"");
+		
+		return entities.at(entityName);
 	}
 
 	const Entity& Scene::GetEntity(EntityUID id) const
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		const auto iter = std::find_if(entities.begin(), entities.end(),
 			[id](const decltype(entities)::value_type& pair)
 			{
@@ -39,19 +75,22 @@ namespace krakoa::scene
 		return iter->second;
 	}
 
-	bool Scene::RemoveEntity(const std::string& name)
+	bool Scene::RemoveEntity(const std::string& entityName)
 	{
-		const auto iter = entities.find(name);
+		KRK_PROFILE_FUNCTION();
+		
+		const auto iter = entities.find(entityName);
 		if (iter == entities.end())
 			return false;
 
-		// ecs->RemoveEntity(iter->second.GetID());
 		entities.erase(iter);
 		return true;
 	}
 
 	bool Scene::RemoveEntity(const Entity& entity)
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		entities.erase(std::find_if(entities.begin(), entities.end()
 			, [entity](const decltype(entities)::value_type& pair)
 			{
@@ -62,10 +101,12 @@ namespace krakoa::scene
 
 	void Scene::OnLoad()
 	{
+		KRK_PROFILE_FUNCTION();
 	}
 
 
 	void Scene::OnUpdate(float time)
 	{
+		KRK_PROFILE_FUNCTION();
 	}
 }

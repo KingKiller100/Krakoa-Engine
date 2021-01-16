@@ -1,13 +1,13 @@
 ﻿#pragma once
 
  #include "Entity/EntityComponentSystem.hpp"
-// #include "../Patterns/ManagerBase.hpp"
+
+#include "../Core/PointerTypes.hpp"
 
 #include <filesystem>
 #include <unordered_map>
 #include <string>
 
-#include "../Core/PointerTypes.hpp"
 
 namespace krakoa::scene
 {
@@ -42,6 +42,6 @@ namespace krakoa::scene
 		decltype(scenes)::key_type currentScene;
 		std::vector<PendingScene> pendingScenes;
 
-		Multi_Ptr<EntityComponentSystem> entityComponentSystem;
+		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
 	};
 }

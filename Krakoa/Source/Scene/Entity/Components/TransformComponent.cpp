@@ -4,7 +4,7 @@
 #include "../../../Debug/Instrumentor.hpp"
 #include <Template/kTypeName.hpp>
 
-namespace krakoa::components
+namespace krakoa::scene::ecs::components
 {
 	TransformComponent::TransformComponent() noexcept 
 		: rotationAxes(0.f, 0.f, 1.f),

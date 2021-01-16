@@ -9,13 +9,6 @@ namespace util
 	{
 	public:
 		using ID_t = Identifier_t;
-		
-	private:
-		static auto MakeUniqueID()
-		{
-			static ID_t id = 0;
-			return id++;
-		}
 
 	protected:
 		template<typename U>
@@ -23,6 +16,13 @@ namespace util
 		{
 			static const auto id = MakeUniqueID();
 			return id;
+		}
+		
+	private:
+		static auto MakeUniqueID()
+		{
+			static ID_t id = 0;
+			return id++;
 		}
 	};
 	

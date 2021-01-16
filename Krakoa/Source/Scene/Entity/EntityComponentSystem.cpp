@@ -1,10 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "EntityComponentSystem.hpp"
 
-#include "../../Debug/Debug.hpp"
-
-
-namespace krakoa
+namespace krakoa::scene::ecs
 {
 	EntityComponentSystem::EntityComponentSystem()
 		: nextFreeID(0)
@@ -21,6 +18,8 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
+		KRK_DBG("Removing all entities");
+		
 		entities.clear();
 		componentMap.clear();
 		nextFreeID = 0;
@@ -39,8 +38,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (!HasEntity(id))
-			return;
+		KRK_DBG(klib::ToString("Removing entity id \"{0}\"", id));
 
 		RemoveAllComponents(id);
 
@@ -54,15 +52,13 @@ namespace krakoa
 	bool EntityComponentSystem::RemoveAllComponents(EntityUID id) noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		if (!HasEntity(id))
-			return false;
 
 		for (auto& pair : componentMap)
 		{
 			auto& compVec = pair.second;
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
-				, [id](const Multi_Ptr<ComponentWrapper>& comp)
+				, [id](const Multi_Ptr<ComponentWrapperBase>& comp)
 				{
 					return id == comp->GetOwner();
 				});

@@ -13,6 +13,7 @@
 #include "../Resources/iVertexArray.hpp"
 
 #include "../../Debug/Instrumentor.hpp"
+#include "../../Camera/iCamera.hpp"
 #include "../../Camera/OrthographicCamera.hpp"
 
 #include <Maths/Quaternions/Quaternions.hpp>
@@ -20,15 +21,16 @@
 
 #include <array>
 
+using namespace krakoa::scene::ecs::components;
+
 namespace krakoa::graphics
 {
-
 	namespace
 	{
 		constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f, kmaths::Theta::DEGREES);
 	}
-	
-	_2D::PrimitivesData *pData = nullptr;
+
+	_2D::PrimitivesData* pData = nullptr;
 
 	const Statistics& Renderer2D::GetStats()
 	{
@@ -40,9 +42,9 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		pData = new _2D::PrimitivesData();
-		
+
 		constexpr auto sizeOfVertexData = sizeof(VertexData);
-		
+
 		// Triangle creation code
 		{
 			auto& triangle = pData->triangle;
@@ -159,7 +161,7 @@ namespace krakoa::graphics
 			{
 				samplers[i] = i;
 			}
-			
+
 			const auto mainShader = shaderLibrary.Load("MainShader", "Assets/Shaders/OpenGL/MainShader");
 			if (!mainShader.expired())
 			{
@@ -175,9 +177,31 @@ namespace krakoa::graphics
 	{
 		if (!pData)
 			return;
-		
+
 		delete pData;
 		pData = nullptr;
+	}
+
+	void Renderer2D::BeginScene(const iCamera& camera, const kmaths::TransformMatrix<float> transformMat)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		const auto viewMat = transformMat.Inverse();
+		const auto viewProjMat = camera.GetProjectionMatrix()  * viewMat ;
+
+		if (!pData->pMainShader.expired())
+		{
+			auto mainShader = pData->pMainShader.lock();
+			mainShader->Bind();
+			mainShader->SetMat4x4("u_VpMat", viewProjMat);
+		}
+
+		RestartBatch();
+
+#if KRK_ENABLE_STATISTICS
+		stats.Reset();
+#endif
+		
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
@@ -260,8 +284,8 @@ namespace krakoa::graphics
 #endif
 	}
 
-	void Renderer2D::DrawTriangle(const components::Appearance2DComponent& appearance,
-		const components::TransformComponent& transform)
+	void Renderer2D::DrawTriangle(const Appearance2DComponent& appearance,
+		const TransformComponent& transform)
 	{
 		DrawTriangle(appearance.GetSubTexture(),
 			transform.GetPosition(),
@@ -271,8 +295,8 @@ namespace krakoa::graphics
 			appearance.GetTilingFactor());
 	}
 
-	void Renderer2D::DrawQuad(const components::Appearance2DComponent& appearance,
-		const components::TransformComponent& transform)
+	void Renderer2D::DrawQuad(const Appearance2DComponent& appearance,
+		const TransformComponent& transform)
 	{
 		DrawQuad(appearance.GetSubTexture(),
 			transform.GetPosition(),
@@ -283,13 +307,13 @@ namespace krakoa::graphics
 	}
 
 	void Renderer2D::DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
-	                              const float radians, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		DrawTriangle(subTexture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawTriangle(const SubTexture2D& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-	                              const float radians, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -308,18 +332,18 @@ namespace krakoa::graphics
 			texIndex = UpdateTextureList(subTexture.GetTexture());
 			texCoords = subTexture.GetTexCoord();
 		}
-		
+
 		AddNewTriangle(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const SubTexture2D& subTexture, const kmaths::Vector2f& position, const kmaths::Vector2f& scale,
-	                          const float radians, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		DrawQuad(subTexture, kmaths::Vector3f(position), scale, radians, tintColour, tilingFactor);
 	}
 
 	void Renderer2D::DrawQuad(const SubTexture2D& subTexture, const kmaths::Vector3f& position, const kmaths::Vector2f& scale,
-	                          const float radians, const Colour tintColour, const float tilingFactor)
+		const float radians, const Colour tintColour, const float tilingFactor)
 	{
 		KRK_PROFILE_FUNCTION();
 

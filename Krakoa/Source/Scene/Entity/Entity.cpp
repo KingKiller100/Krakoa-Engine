@@ -3,7 +3,7 @@
 
 #include "EntityComponentSystem.hpp"
 
-namespace krakoa
+namespace krakoa::scene::ecs
 {
 	Entity::Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem)
 		: id(entityComponentSystem->Add())
@@ -20,8 +20,9 @@ namespace krakoa
 	{}
 
 	Entity::Entity(Entity&& other) noexcept
-		: selected(false),
-		active(other.active),
+		: id(std::move(other.id)),
+		selected(false),
+		active(std::move(other.active)),
 		manager(other.manager)
 	{}
 

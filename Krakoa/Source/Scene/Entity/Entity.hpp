@@ -6,15 +6,16 @@
 #include "../../Debug/Debug.hpp"
 
 #include <HelperMacros.hpp>
-#include <Utility/String/kToString.hpp>
 #include <Template/kToImpl.hpp>
+#include <Template/kTypeName.hpp>
+#include <Utility/String/kToString.hpp>
 
-namespace krakoa
-{	
+namespace krakoa::scene::ecs
+{
 	class Entity
 	{
 		using UID = EntityUID;
-		
+
 	public:
 		Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem);
 
@@ -43,17 +44,22 @@ namespace krakoa
 		{
 			KRK_ASSERT(
 				!HasComponent<Component>(), // Assert a brand new component being added
-				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", typeid(Component).name())
+				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", klib::GetTypeName<Component>())
 			);
 
-			Multi_Ptr<ComponentWrapper> comp = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
+			Multi_Ptr<ComponentWrapperBase> comp = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
 			components.insert(std::make_pair(comp->GetUID(), comp));
-			return klib::ToImpl<InternalComponent<Component>>(comp).Ref();
+			return klib::ToImpl<ComponentWrapper<Component>>(comp);
 		}
 
 		template<typename Component>
 		bool RemoveComponent() noexcept
 		{
+			KRK_ASSERT(
+				HasComponent<Component>(), // Assert component already a part of entity
+				klib::ToString("Attempt to remove a component from this entity - {0}", klib::GetTypeName<Component>())
+			);
+
 			const ComponentUID uid = manager->GetUniqueID<Component>();
 			components.erase(uid);
 			return manager->RemoveComponent<Component>(id);
@@ -64,18 +70,18 @@ namespace krakoa
 		{
 			KRK_ASSERT(
 				HasComponent<Component>(), // Assert component already a part of entity
-				klib::ToString("Attempt to get a component not a part of this entity - {0}", typeid(Component).name())
+				klib::ToString("Attempt to get a component not a part of this entity - {0}", klib::GetTypeName<Component>())
 			);
 
 			const ComponentUID uid = manager->GetUniqueID<Component>();
 			auto& comp = components.at(uid);
-			return klib::ToImpl<InternalComponent<Component>>(comp).Ref();
+			return klib::ToImpl<ComponentWrapper<Component>>(comp);
 		}
 
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
 		{
-			return manager->HasComponent<Component>(id);
+			return components.find(manager->GetUniqueID<Component>()) != components.end();
 		}
 
 		bool operator==(const Entity& other) const noexcept;
@@ -83,8 +89,8 @@ namespace krakoa
 
 	private:
 
-		std::unordered_map<ComponentUID, Multi_Ptr<ComponentWrapper>> components;
-		
+		std::unordered_map<ComponentUID, Multi_Ptr<ComponentWrapperBase>> components;
+
 		UID id;
 		bool selected;
 		bool active;

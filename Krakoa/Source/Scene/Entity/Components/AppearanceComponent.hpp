@@ -6,7 +6,7 @@
 #include "../../../Graphics/2D/Textures/iTexture2D.hpp"
 #include "../../../Graphics/2D/Textures/SubTexture2d.hpp"
 
-namespace krakoa::components
+namespace krakoa::scene::ecs::components
 {
 	class Appearance2DComponent 
 	{

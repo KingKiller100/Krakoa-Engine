@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace krakoa::components
+namespace krakoa::scene::ecs::components
 {
 	class TagComponent
 	{

@@ -34,8 +34,8 @@ namespace krakoa
 	void OrthographicCamera::UpdateViewProjectionMatrix() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		//vpMat = projectionMat * viewMat;
-		vpMat = viewMat * projectionMat;
+		// vpMat = projectionMat * viewMat; // Wrong way
+		vpMat = viewMat * projectionMat; // Correct way 
 	}
 
 	const kmaths::Vector3f& OrthographicCamera::GetPosition() const noexcept

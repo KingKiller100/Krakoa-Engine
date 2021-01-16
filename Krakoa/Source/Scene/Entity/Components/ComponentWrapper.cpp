@@ -1,21 +1,23 @@
 ﻿#include "Precompile.hpp"
 #include "ComponentWrapper.hpp"
 
-namespace krakoa
+#include "../../../Debug/Instrumentor.hpp"
+
+namespace krakoa::scene::ecs
 {
-	ComponentWrapper::ComponentWrapper(UID compUid, EntityUID entityUId)
+	ComponentWrapperBase::ComponentWrapperBase(UID compUid, EntityUID entityUId)
 		: active(true)
 		, owner(entityUId)
 		, uid(compUid)
 	{	}
 
-	ComponentWrapper::ComponentWrapper(ComponentWrapper&& other) noexcept
-		: uid(std::move(other.GetUID()))
+	ComponentWrapperBase::ComponentWrapperBase(ComponentWrapperBase&& other) noexcept
+		: uid(other.GetUID())
 	{
 		*this = std::move(other);
 	}
 
-	ComponentWrapper& ComponentWrapper::operator=(ComponentWrapper&& other) noexcept
+	ComponentWrapperBase& ComponentWrapperBase::operator=(ComponentWrapperBase&& other) noexcept
 	{
 		if (this != &other)
 		{
@@ -26,34 +28,34 @@ namespace krakoa
 		return *this;
 	}
 
-	ComponentWrapper::~ComponentWrapper() noexcept = default;
+	ComponentWrapperBase::~ComponentWrapperBase() noexcept = default;
 
-	bool ComponentWrapper::IsActive() const
+	bool ComponentWrapperBase::IsActive() const
 	{
 		return active;
 	}
 
-	void ComponentWrapper::Activate() noexcept
+	void ComponentWrapperBase::Activate() noexcept
 	{
 		active = true;
 	}
 
-	void ComponentWrapper::Deactivate() noexcept
+	void ComponentWrapperBase::Deactivate() noexcept
 	{
 		active = false;
 	}
 
-	ComponentWrapper::UID ComponentWrapper::GetUID() const
+	ComponentWrapperBase::UID ComponentWrapperBase::GetUID() const
 	{
 		return uid;
 	}
 
-	EntityUID ComponentWrapper::GetOwner() const
+	EntityUID ComponentWrapperBase::GetOwner() const
 	{
 		return owner;
 	}
 
-	void ComponentWrapper::SetOwner(EntityUID entity)
+	void ComponentWrapperBase::SetOwner(EntityUID entity)
 	{
 		KRK_PROFILE_FUNCTION();
 		owner = entity;

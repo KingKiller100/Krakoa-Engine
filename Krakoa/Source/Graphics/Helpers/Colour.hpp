@@ -9,13 +9,15 @@
 
 namespace krakoa::graphics
 {
+	using namespace kmaths;
+	
 	class Colour final
 	{
 		struct HSL
 		{
 			float hue = 0, saturation = 0, lightness = 0;
 		};
-		
+
 	public:
 		inline static constexpr auto Length = 4;
 		inline static constexpr auto Bytes = Length * sizeof(std::uint8_t);
@@ -72,26 +74,26 @@ namespace krakoa::graphics
 			: red(r), green(g), blue(b), alpha(a)
 		{}
 
-		constexpr Colour(const kmaths::Vector3f& rgb, const float a = 1.f) noexcept
+		constexpr Colour(const Vector3f& rgb, const float a = 1.f) noexcept
 			: red(FloatToColour(rgb[0])),
 			green(FloatToColour(rgb[1])),
 			blue(FloatToColour(rgb[2])),
 			alpha(FloatToColour(a))
 		{}
 
-		constexpr Colour(const kmaths::Vector4f& rgba) noexcept
+		constexpr Colour(const Vector4f& rgba) noexcept
 			: red(FloatToColour(rgba[0])),
 			green(FloatToColour(rgba[1])),
 			blue(FloatToColour(rgba[2])),
 			alpha(FloatToColour(rgba[3]))
 		{}
 
-		constexpr Colour(const kmaths::Vector3<uint8_t>& rgb, const uint8_t a = MaxColourValue) noexcept
+		constexpr Colour(const Vector3<uint8_t>& rgb, const uint8_t a = MaxColourValue) noexcept
 			: red(rgb[0]), green(rgb[1]),
 			blue(rgb[2]), alpha(a)
 		{}
 
-		constexpr Colour(const kmaths::Vector4<uint8_t>& rgba) noexcept
+		constexpr Colour(const Vector4<uint8_t>& rgba) noexcept
 			: red(rgba[0]), green(rgba[1]),
 			blue(rgba[2]), alpha(rgba[3])
 		{}
@@ -122,8 +124,8 @@ namespace krakoa::graphics
 		void SetHSL(HSL hsl) noexcept
 		{
 			const auto flHue6 = hsl.hue / 60.f;
-			const auto flChroma = (1.f - kmaths::Abs(2 * hsl.lightness - 1.f)) * hsl.saturation;
-			const auto flX = flChroma * (1.f - kmaths::Abs(kmaths::FloatRemainder(flHue6, 2.f) - 1.f));
+			const auto flChroma = (1.f - Abs(2 * hsl.lightness - 1.f)) * hsl.saturation;
+			const auto flX = flChroma * (1.f - Abs(FloatRemainder(flHue6, 2.f) - 1.f));
 
 			float flR1 = 0, flG1 = 0, flB1 = 0;
 			if (flHue6 < 1)
@@ -174,15 +176,15 @@ namespace krakoa::graphics
 			const float g = CAST(float, green) / MaxColourValue;
 			const float b = CAST(float, blue) / MaxColourValue;
 
-			const float maximum = kmaths::Max(kmaths::Max(r, g), b);
-			const float minimum = kmaths::Min(kmaths::Min(r, g), b);
+			const float maximum = Max(Max(r, g), b);
+			const float minimum = Min(Min(r, g), b);
 
 			const float flChroma = maximum - minimum;
 
 			if (flChroma == 0)
 				hue = 0;
 			else if (r > g && r > b)
-				hue = kmaths::FloatRemainder((g - b) / flChroma, 6.f) * 60.f;
+				hue = FloatRemainder((g - b) / flChroma, 6.f) * 60.f;
 			else if (g > r && g > b)
 				hue = ((b - r) / flChroma + 2) * 60.f;
 			else if (b > r && b > g)
@@ -191,28 +193,28 @@ namespace krakoa::graphics
 			lightness = (maximum + minimum) * 0.5f;
 
 			if (flChroma > 0)
-				saturation = flChroma / (1.f - kmaths::Abs(2.f * lightness - 1.f));
+				saturation = flChroma / (1.f - Abs(2.f * lightness - 1.f));
 
 			return { hue, saturation, lightness };
 		}
 
-		USE_RESULT constexpr kmaths::Vector3f GetRGB() const noexcept
+		USE_RESULT constexpr Vector3f GetRGB() const noexcept
 		{
 			constexpr auto multiplier = kmaths::constants::OneOver<float>(MaxColourValue);
 			const auto r = red * multiplier;
 			const auto g = green * multiplier;
 			const auto b = blue * multiplier;
 
-			return kmaths::Vector3f{ r, g, b };
+			return Vector3f{ r, g, b };
 		}
 
-		USE_RESULT constexpr kmaths::Vector4f GetRGBA() const noexcept
+		USE_RESULT constexpr Vector4f GetRGBA() const noexcept
 		{
 			constexpr auto multiplier = kmaths::constants::OneOver<float>(MaxColourValue);
 			const auto rgb = GetRGB();
 			const auto a = alpha * multiplier;
 
-			return kmaths::Vector4f{ rgb[0], rgb[1], rgb[2], a };
+			return Vector4f{ rgb[0], rgb[1], rgb[2], a };
 		}
 
 		USE_RESULT constexpr Colour Inverse() const noexcept
@@ -259,9 +261,9 @@ namespace krakoa::graphics
 		template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 		constexpr Colour operator*(const T scalar) noexcept
 		{
-			const auto r = kmaths::Clamp<uint8_t>((red * scalar), Colour::MinColourValue, Colour::MaxColourValue);
-			const auto g = kmaths::Clamp<uint8_t>((green * scalar), Colour::MinColourValue, Colour::MaxColourValue);
-			const auto b = kmaths::Clamp<uint8_t>((blue * scalar), Colour::MinColourValue, Colour::MaxColourValue);
+			const auto r = kmaths::Clamp<uint8_t>((red * scalar), MinColourValue, MaxColourValue);
+			const auto g = kmaths::Clamp<uint8_t>((green * scalar), MinColourValue, MaxColourValue);
+			const auto b = kmaths::Clamp<uint8_t>((blue * scalar), MinColourValue, MaxColourValue);
 
 			return { r, g, b, alpha };
 		}
@@ -296,29 +298,42 @@ namespace krakoa::graphics
 			= default;
 
 		template<class Float_t>
-		USE_RESULT constexpr kmaths::Vector4<Float_t> ToFloats() const noexcept
+		USE_RESULT constexpr Vector4<Float_t> ToFloats() const noexcept
 		{
 			static_assert(std::is_floating_point_v<Float_t>, "Type must be a floating point data type");
-			
-			const auto r = kmaths::constants::Divide<Float_t>(red, MaxColourValue);
-			const auto g = kmaths::constants::Divide<Float_t>(green, MaxColourValue);
-			const auto b = kmaths::constants::Divide<Float_t>(blue, MaxColourValue);
-			const auto a = kmaths::constants::Divide<Float_t>(alpha, MaxColourValue);
-			return { r, g, b, a };
+
+			const auto r = constants::Divide<Float_t>(red, MaxColourValue);
+			const auto g = constants::Divide<Float_t>(green, MaxColourValue);
+			const auto b = constants::Divide<Float_t>(blue, MaxColourValue);
+			const auto a = constants::Divide<Float_t>(alpha, MaxColourValue);
+			return Vector4<Float_t>{ r, g, b, a };
 		}
 
 
 		template<class T>
 		USE_RESULT constexpr auto ToArray() const noexcept
 		{
-			return std::array<T, 4>{
-				static_cast<T>(red)
-				, static_cast<T>(green)
-				, static_cast<T>(blue)
-				, static_cast<T>(alpha)
-			};
+			if _CONSTEXPR17(std::is_floating_point_v<T>)
+			{
+				const auto vec = ToFloats<T>();
+				return std::array<T, 4>{
+					vec[0]
+					, vec[1]
+					, vec[2]
+					, vec[3]
+				};
+			}
+			else
+			{
+				return std::array<T, 4>{
+					static_cast<T>(red)
+					, static_cast<T>(green)
+					, static_cast<T>(blue)
+					, static_cast<T>(alpha)
+				};
+			}
 		}
-		
+
 	private:
 		USE_RESULT constexpr std::uint8_t FloatToColour(float c) const
 		{
@@ -348,7 +363,7 @@ namespace krakoa::graphics
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	constexpr Colour operator/(const T scalar, const Colour& c) noexcept
 	{
-		const auto multiplier = kmaths::constants::OneOver<float>(scalar);
+		const auto multiplier = constants::OneOver<float>(scalar);
 
 		const auto r = kmaths::Clamp<uint8_t>((c.Red() / multiplier), Colour::MinColourValue, Colour::MaxColourValue);
 		const auto g = kmaths::Clamp<uint8_t>((c.Green() / multiplier), Colour::MinColourValue, Colour::MaxColourValue);
@@ -367,6 +382,6 @@ namespace krakoa::graphics
 		inline static constexpr Colour Yellow(Colour::MaxColourValue, Colour::MaxColourValue, Colour::MinColourValue);
 		inline static constexpr Colour White(Colour::MaxColourValue, Colour::MaxColourValue, Colour::MaxColourValue);
 		inline static constexpr Colour Black(Colour::MinColourValue, Colour::MinColourValue, Colour::MinColourValue);
-		inline static constexpr Colour Orange( 0.85f, 0.35f, 0.f, 1.f );
+		inline static constexpr Colour Orange(0.85f, 0.35f, 0.f, 1.f);
 	}
 }

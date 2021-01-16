@@ -46,7 +46,7 @@ namespace krakoa
 
 		OrthographicCameraController cameraController;
 
-		graphics::Colour geometryColour;
+		kmaths::Vector4f geometryColour;
 		kmaths::Vector3f position;
 
 		kmaths::Vector2<std::uint32_t> viewportSize;

@@ -284,14 +284,16 @@ namespace krakoa
 			isWindowHovered = ImGui::IsWindowHovered();
 
 			auto& frameBuffer = GetApp().GetFrameBuffer();
-			const Vector2u vp = ToVector<unsigned, 2>(ImGui::GetContentRegionAvail());
+			const Vector2u vp = ToVector<2>(ImGui::GetContentRegionAvail());
 			if (vp.x != viewportSize.x || vp.y != viewportSize.y)
 			{
-				viewportSize = { static_cast<std::uint32_t>(vp.x), static_cast<std::uint32_t>(vp.y) };
+				viewportSize = vp;
 				frameBuffer.Resize(viewportSize);
 			}
+			
 			const size_t texID = frameBuffer.GetColourAttachmentAssetID();
-			ImGui::Image((void*)texID, ImVec2(vp.x, vp.y), { 0, 1.f }, { 1, 0 });
+			ImGui::Image((void*)texID, ImVec2(static_cast<float>(viewportSize.x), static_cast<float>(viewportSize.y)), 
+				{ 0, 1.f }, { 1, 0 });
 
 			ImGui::End();
 			ImGui::PopStyleVar();
@@ -332,8 +334,8 @@ namespace krakoa
 	void Keditor2DLayer::RenderColourControls() const noexcept
 	{
 		ImGui::Begin("Geometry Colour Settings");
-		auto colourArray = geometryColour.ToArray<float>();
-		ImGui::ColorEdit4("Geometry Colour", colourArray._Elems, ImGuiColorEditFlags_None);
+		auto* colourArray = const_cast<float*>(geometryColour.GetPointerToData());
+		ImGui::ColorEdit4("Geometry Colour", colourArray, ImGuiColorEditFlags_None);
 		ImGui::End();
 	}
 

@@ -8,7 +8,7 @@
 #include "../../Logging/CoreLogger.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
-#include <Template/kTypeName.hpp>
+#include "../../Util/TypeName.hpp"
 #include <unordered_map>
 #include <vector>
 
@@ -36,10 +36,10 @@ namespace krakoa::scene::ecs
 			using ComponentWrapper = ComponentWrapper<Component>;
 
 			KRK_DBG(klib::ToString("Registering component \"{0}\" to entity id \"{1}\""
-				, klib::GetTypeName<Component>()
+				, util::GetTypeNameNoNamespace<Component>()
 				, entity)
 			);
-			
+
 			ComponentUID uid = GetUniqueID<Component>();
 
 			auto& compVec = componentMap[uid];
@@ -103,7 +103,7 @@ namespace krakoa::scene::ecs
 
 			const ComponentUID uid = GetUniqueID<Component>();
 			const auto& compVec = componentMap.at(uid);
-			
+
 			auto iter = std::find_if(compVec.begin(), compVec.end()
 				, [id](const Multi_Ptr<ComponentWrapperBase>& cw)
 				{
@@ -143,16 +143,16 @@ namespace krakoa::scene::ecs
 			compVec.erase(iter);
 
 			KRK_DBG(klib::ToString("Removing component \"{0}\" from entity id \"{1}\""
-				, klib::GetTypeName<Component>()
+				, util::GetTypeNameNoNamespace<Component>()
 				, id)
 			);
-			
+
 			return true;
 		}
 
 		bool RemoveAllComponents(EntityUID id) noexcept;
 
-
+	private:
 		template<typename PlaceHolder, typename Component, typename ...Components>
 		USE_RESULT bool HasComponentsImpl(EntityUID id) const noexcept
 		{

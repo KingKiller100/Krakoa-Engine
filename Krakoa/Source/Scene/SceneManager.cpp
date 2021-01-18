@@ -66,7 +66,8 @@ namespace krakoa::scene
 	void SceneManager::DrawEntities(const iScene& scene) const
 	{
 		iCamera* camera = nullptr;
-		TransformComponent* cameraTransform = nullptr;
+		kmaths::TransformMatrix<float> cameraTransform = kmaths::GetTransformIdentity<float>();
+		
 		const auto cameraEntities
 			= entityComponentSystem->GetEntitiesWithComponents<CameraComponent, TransformComponent>();
 
@@ -81,17 +82,17 @@ namespace krakoa::scene
 				continue;
 
 			camera = std::addressof(cam.GetCamera());
-			cameraTransform = std::addressof(tfm);
+			cameraTransform = tfm.GetTransformationMatrix2D();
 			break;
 		}
 
-		if (!camera || !cameraTransform)
+		if (!camera)
 			return;
 
 		const auto drawables
 			= entityComponentSystem->GetEntitiesWithComponents<Appearance2DComponent, TransformComponent>();
 
-		graphics::Renderer2D::BeginScene(*camera, cameraTransform->GetTransformationMatrix2D());
+		graphics::Renderer2D::BeginScene(*camera, cameraTransform);
 
 		for (const auto id : drawables)
 		{

@@ -15,8 +15,8 @@ namespace krakoa
 	Keditor2DLayer::Keditor2DLayer() noexcept
 		: LayerBase("Keditor2D")
 		, application(GetApp())
-		, cameraController(CAST(float, krakoa::Application::Reference().GetWindow().GetWidth()) // Aspect ratio from window size
-			/ CAST(float, krakoa::Application::Reference().GetWindow().GetHeight()),
+		, cameraController(CAST(float, application.GetWindow().GetWidth()) // Aspect ratio from window size
+			/ CAST(float, application.GetWindow().GetHeight()),
 			true) // Aspect ratio from window size
 		, position({ 0.f, 0.f })
 		, isWindowFocused(false)
@@ -55,10 +55,10 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create camera entity");
 			
 			auto& cameraEntity = scene.AddEntity("Camera");
-			const auto& appWindow = application.GetWindow();
-			const auto& bounds = (float)appWindow.GetWidth() / (float)appWindow.GetHeight();
-			const auto& camera = cameraEntity.AddComponent<CameraComponent>(
-				cameraController.GetCamera().GetProjectionMatrix(),
+
+			const auto bounds = cameraController.GetBounds().GetWidth() / cameraController.GetBounds().GetHeight();
+			cameraEntity.AddComponent<CameraComponent>(
+				bounds,
 				true
 				);
 			cameraEntity.AddComponent<TransformComponent>();

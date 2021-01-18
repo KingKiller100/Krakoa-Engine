@@ -182,7 +182,7 @@ namespace krakoa::graphics
 		pData = nullptr;
 	}
 
-	void Renderer2D::BeginScene(const iCamera& camera, const kmaths::TransformMatrix<float> transformMat)
+	void Renderer2D::BeginScene(const iCamera& camera, const kmaths::TransformMatrix<float>& transformMat)
 	{
 		KRK_PROFILE_FUNCTION();
 

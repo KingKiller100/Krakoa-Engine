@@ -28,7 +28,7 @@ namespace krakoa
 			static void Initialize(ShaderLibrary& shaderLibrary);
 			static void ShutDown();
 
-			static void BeginScene(const iCamera& camera, const kmaths::TransformMatrix<float> transformMat);
+			static void BeginScene(const iCamera& camera, const kmaths::TransformMatrix<float>& transformMat);
 			static void BeginScene(const OrthographicCamera& camera);
 			static void EndScene();
 

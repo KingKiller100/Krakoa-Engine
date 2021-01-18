@@ -11,7 +11,7 @@ namespace krakoa
 {
 	using namespace graphics;
 	using namespace scene::ecs::components;
-	
+
 	Keditor2DLayer::Keditor2DLayer() noexcept
 		: LayerBase("Keditor2D")
 		, application(GetApp())
@@ -53,7 +53,7 @@ namespace krakoa
 
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
-			
+
 			auto& cameraEntity = scene.AddEntity("Camera");
 
 			const auto bounds = cameraController.GetBounds().GetWidth() / cameraController.GetBounds().GetHeight();
@@ -63,7 +63,7 @@ namespace krakoa
 				);
 			cameraEntity.AddComponent<TransformComponent>();
 		}
-		
+
 		{
 			KRK_PROFILE_SCOPE("Create coloured entity");
 
@@ -296,7 +296,7 @@ namespace krakoa
 			auto& frameBuffer = GetApp().GetFrameBuffer();
 			const auto& spec = frameBuffer.GetSpec();
 			const size_t texID = frameBuffer.GetColourAttachmentAssetID();
-			
+
 			ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
 				{ 0, 1.f }, { 1, 0 });
 
@@ -320,14 +320,14 @@ namespace krakoa
 		auto& frameBuffer = application.GetFrameBuffer();
 		const auto& spec = frameBuffer.GetSpec();
 		const auto vp = ImGui::GetContentRegionAvail();
+		const Vector2u viewportSize = ToVector<2>(vp);
 
 		const bool negativeDimension = IsNegative(vp.x) || IsNegative(vp.y);
-		const bool newViewportValues = vp.x != spec.width || vp.y != spec.height;
+		const bool newViewportValues = viewportSize.x != spec.width || viewportSize.y != spec.height;
 		const auto updateViewport = !negativeDimension && newViewportValues;
 
 		if (updateViewport)
 		{
-			const Vector2u viewportSize = ToVector<2>(vp);
 			frameBuffer.Resize(viewportSize);
 			cameraController.Resize(viewportSize);
 		}

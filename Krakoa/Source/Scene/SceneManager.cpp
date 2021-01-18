@@ -34,7 +34,7 @@ namespace krakoa::scene
 
 	bool SceneManager::Remove(const std::string_view& name)
 	{
-		auto iter = scenes.find(name.data());
+		const auto iter = scenes.find(name.data());
 		if (iter == scenes.end())
 			return false;
 

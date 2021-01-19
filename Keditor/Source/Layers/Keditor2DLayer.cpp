@@ -221,8 +221,6 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		UpdateViewport();
-
 		auto dockSpaceOpen = true;
 
 		static bool opt_fullscreen_persistant = true;
@@ -292,6 +290,8 @@ namespace krakoa
 
 			isWindowFocused = ImGui::IsWindowFocused();
 			isWindowHovered = ImGui::IsWindowHovered();
+			
+			UpdateViewport();
 
 			auto& frameBuffer = GetApp().GetFrameBuffer();
 			const auto& spec = frameBuffer.GetSpec();

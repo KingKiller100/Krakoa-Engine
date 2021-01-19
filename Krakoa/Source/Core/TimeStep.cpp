@@ -35,6 +35,11 @@ namespace krakoa::time
 		, isFixedIncrement(true)
 	{}
 
+	TimeStep::~TimeStep() noexcept
+	{
+		stopwatch.Stop();
+	}
+
 	float TimeStep::GetLifeTime() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();

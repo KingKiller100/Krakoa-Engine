@@ -7,9 +7,9 @@
 namespace krakoa
 {
 	OrthographicCamera::OrthographicCamera(const float left, const float right, const float bottom, const float top) noexcept
-		: projectionMat(kmaths::Ortho_ZO(kmaths::ZAxisDirection::LEFT_HAND, left, right, bottom, top, -1.f, 1.f)),
-		viewMat(kmaths::GetTransformIdentity<float>()),
-		rotationZ(0.f)
+		: Camera(kmaths::Ortho_ZO(kmaths::ZAxisDirection::LEFT_HAND, left, right, bottom, top, -1.f, 1.f))
+		, viewMat(kmaths::GetTransformIdentity<float>())
+		, rotationZ(0.f)
 	{
 		KRK_PROFILE_FUNCTION();
 		UpdateViewProjectionMatrix();
@@ -25,8 +25,8 @@ namespace krakoa
 	void OrthographicCamera::RecalculateViewMatrix() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto transformMat = kmaths::Translate(position) *
-			kmaths::Rotate2D(kmaths::ToRadians(rotationZ)); // Z axis rotation
+		const auto transformMat
+			= kmaths::Translate(position) * kmaths::Rotate2D(kmaths::ToRadians(rotationZ)); // Z axis rotation
 		viewMat = transformMat.Inverse();
 		UpdateViewProjectionMatrix();
 	}

@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include <Utility/Profiler/kProfiler.hpp>
-#include <Utility/FileSystem/kFileSystem.hpp>
 
-#include <algorithm>
 #include <fstream>
 #include <mutex>
 #include <string>

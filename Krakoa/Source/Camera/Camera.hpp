@@ -11,7 +11,7 @@ namespace krakoa
 		
 		const kmaths::Matrix4x4f& GetProjectionMatrix() const noexcept override;
 
-	private:
+	protected:
 		kmaths::Matrix4x4f projectionMat;
 	};
 }

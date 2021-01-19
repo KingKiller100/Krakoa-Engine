@@ -20,17 +20,20 @@
 
 namespace krakoa
 {
+
 	Application::Application(Token&, const std::string_view& appName)
-		: isRunning(true),
-		timeStep(/*120*/),
-		isMinimized(false)
+		: isRunning(true)
+		, timeStep(/*120*/)
+		, isMinimized(false)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		KRK_INIT_LOGS("                    WELCOME TO THE KRAKOA ENGINE");
 		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBG);
 		KRK_ASSERT(!instance, "Instance of the application already exists!");
+
 		//timeStep.SetSpeedMultiplier(5);
+
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create(WindowProperties(appName)));
 		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
@@ -50,6 +53,10 @@ namespace krakoa
 			delete inputPtr;
 			inputPtr = nullptr;
 		}
+
+		KRK_NRM(klib::ToString("App Runtime: {0}{1}",
+			timeStep.GetLifeTime()
+			, klib::units::GetUnitsStr<klib::units::Secs>()));
 
 		KRK_LOG_END();
 	}
@@ -150,7 +157,7 @@ namespace krakoa
 		frameBuffer->Bind();
 
 		graphics::Renderer::Update();
-		
+
 		// Draw
 		sceneManager->OnUpdate(deltaTime);
 

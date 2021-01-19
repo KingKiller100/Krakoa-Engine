@@ -35,7 +35,7 @@ namespace krakoa
 		void RenderZoomControls() noexcept;
 		void RenderColourControls() const noexcept;
 
-		void SetUpScene() const;
+		void SetUpScene();
 
 	private:
 		Application& application;
@@ -47,6 +47,8 @@ namespace krakoa
 		kmaths::Vector4f geometryColour;
 		kmaths::Vector3f position;
 
+		scene::iScene* scene;
+		
 		float degreesRotation = 0.f;
 
 		bool isWindowFocused;

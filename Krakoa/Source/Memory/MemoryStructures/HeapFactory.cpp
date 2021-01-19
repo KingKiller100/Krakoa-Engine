@@ -179,10 +179,13 @@ namespace memory
 
 		auto bookmark = currentHeader->bookmark;
 
+		size_t totalBytes = 0;
 		while (kmaths::InRange(bookmark, minBookmark, maxBookmark + 1))
 		{
 			std::cout << "Heap: \"" << heap->GetName() << "\" id: " << bookmark << " "
 				<< "Bytes: " << currentHeader->bytes << "\n";
+			
+			totalBytes += currentHeader->bytes;
 
 			currentHeader = currentHeader->pNext;
 
@@ -191,6 +194,9 @@ namespace memory
 
 			bookmark = currentHeader->bookmark;
 		}
+
+		std::cout << "Heap: \"" << heap->GetName() << "\" "
+			<< "Total Bytes: " << totalBytes << "\n";
 	}
 
 	Heap* HeapFactory::FindHeap(const char* name)

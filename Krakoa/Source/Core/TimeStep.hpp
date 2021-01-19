@@ -8,7 +8,8 @@ namespace krakoa::time
 	{
 	public:
 		TimeStep(const float targetMilliseconds = 1.f) noexcept;
-
+		~TimeStep() noexcept;
+		
 		USE_RESULT float GetLifeTime() const noexcept;
 		USE_RESULT float GetStep() const noexcept;
 

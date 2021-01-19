@@ -1,6 +1,10 @@
 ﻿#include "Precompile.hpp"
 #include "Instrumentor.hpp"
 
+#include <Utility/FileSystem/kFileSystem.hpp>
+
+#include <algorithm>
+
 namespace krakoa
 {
 	Instrumentor& Instrumentor::Get()
@@ -17,9 +21,12 @@ namespace krakoa
 	void Instrumentor::BeginSession(const std::string& name, const std::string& filepath)
 	{
 		const auto locker = std::unique_lock(mutexLock);
-		
+
 		const auto path = klib::kFileSystem::AppendFileExtension(filepath, "json");
-		if (activeSession) { EndSession(); }
+		if (activeSession)
+		{
+			EndSession();
+		}
 		activeSession = true;
 		outputStream.open(path);
 		WriteHeader();
@@ -29,7 +36,7 @@ namespace krakoa
 	void Instrumentor::EndSession()
 	{
 		const auto locker = std::unique_lock(mutexLock);
-		
+
 		if (!activeSession) { return; }
 		activeSession = false;
 		WriteFooter();
@@ -68,9 +75,9 @@ namespace krakoa
 	}
 
 	Instrumentor::Instrumentor()
-		: sessionName("None"),
-		profileCount(0),
-		activeSession(false)
+		: sessionName("None")
+		, profileCount(0)
+		, activeSession(false)
 	{
 	}
 }

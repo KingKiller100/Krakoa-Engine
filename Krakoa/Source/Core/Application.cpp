@@ -18,6 +18,8 @@
 
 #include <Utility/Logging/kLogging.hpp>
 
+#include <chrono>
+
 namespace krakoa
 {
 
@@ -54,9 +56,13 @@ namespace krakoa
 			inputPtr = nullptr;
 		}
 
-		KRK_NRM(klib::ToString("App Runtime: {0}{1}",
-			timeStep.GetLifeTime()
-			, klib::units::GetUnitsStr<klib::units::Secs>()));
+		const auto appTimeSpan = timeStep.GetLifeTimeTimeSpan();
+
+		KRK_NRM(klib::ToString("Total Runtime: {0}h {1}m {2}s",
+			appTimeSpan.hours.count()
+			, appTimeSpan.minutes.count()
+			, appTimeSpan.seconds.count()
+		));
 
 		KRK_LOG_END();
 	}

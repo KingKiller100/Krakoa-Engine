@@ -14,6 +14,9 @@ namespace krakoa::time
 		USE_RESULT float GetStep() const noexcept;
 
 		void SetSpeedMultiplier(float speed) noexcept;
+
+		klib::TimeSpan GetLifeTimeTimeSpan() const;
+		klib::TimeSpan GetElapsedTimeTimeSpan() const;
 		
 	private:
 		USE_RESULT float CalculateLifeTime() const noexcept;

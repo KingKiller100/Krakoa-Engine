@@ -67,4 +67,14 @@ namespace krakoa::time
 	{
 		speedMultiplier = speed;
 	}
+
+	klib::TimeSpan TimeStep::GetLifeTimeTimeSpan() const
+	{
+		return stopwatch.GetTimeSpan();
+	}
+
+	klib::TimeSpan TimeStep::GetElapsedTimeTimeSpan() const
+	{
+		return stopwatch.GetElapsedTimeSpan();
+	}
 }

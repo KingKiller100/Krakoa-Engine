@@ -3,7 +3,7 @@
 
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
-#include "../../Logging/CoreLogger.hpp"
+#include "../../Logging/EngineLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>

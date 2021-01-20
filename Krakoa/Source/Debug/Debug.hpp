@@ -3,7 +3,7 @@
 #include "DebugCore.hpp"
 
 #include "../Core/EngineMacros.hpp"
-#include "../Logging/CoreLogger.hpp"
+#include "../Logging/EngineLogger.hpp"
 
 #include <Utility/Debug/kAssert.hpp>
 #include <Utility/Debug/kDebugger.hpp>

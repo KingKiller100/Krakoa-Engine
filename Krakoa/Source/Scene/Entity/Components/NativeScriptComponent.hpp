@@ -16,27 +16,26 @@ namespace krakoa::scene::ecs::components
 			{
 				owner = new Script();
 			};
-			
+
 			dtorFunc = [this]()
 			{
 				Script* script = (Script*)owner;
 				delete script;
 				owner = nullptr;
 			};
-			
-			
+
 			onCreateFunc = [](ScriptEntity* entity)
 			{
 				Script* script = (Script*)entity;
 				script->OnCreate();
 			};
-			
+
 			onDestroyFunc = [](ScriptEntity* entity)
 			{
 				Script* script = (Script*)entity;
 				script->OnDestroy();
 			};
-			
+
 			onUpdateFunc = [](ScriptEntity* entity, float time)
 			{
 				Script* script = (Script*)entity;
@@ -46,16 +45,18 @@ namespace krakoa::scene::ecs::components
 
 		bool IsActive() const;
 
-		void InvokeCreate();
+		void InvokeCreate(Entity* entity);
 		void InvokeDestroy();
 		void InvokeUpdate(float deltaTime);
+
+		void SetEntity(Entity* entity);
 		
 	private:
 		ScriptEntity* owner = nullptr;
 
 		std::function<void()> ctorFunc = nullptr;
 		std::function<void()> dtorFunc = nullptr;
-		
+
 		std::function<void(ScriptEntity*)> onCreateFunc = nullptr;
 		std::function<void(ScriptEntity*, float)> onUpdateFunc = nullptr;
 		std::function<void(ScriptEntity*)> onDestroyFunc = nullptr;

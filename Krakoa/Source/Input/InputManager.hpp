@@ -8,22 +8,21 @@
 
 namespace krakoa::input
 {
-
 	class InputManager : public patterns::ManagerBase<InputManager>
 	{
 	public:
-		InputManager(Token) {}
-		
-		static void Initialize() noexcept                                             { CreateImpl(); }
+		InputManager(Token);
+
+		static void Initialize() noexcept;
 
 		// Keys
-		static inline bool IsKeyPressed(KeyCode keycode) noexcept                   { return Reference().IsKeyPressedImpl(keycode); }
-		
+		static bool IsKeyPressed(KeyCode keycode) noexcept;
+
 		// Mouse
-		static inline float GetMousePosX() noexcept                                   { return Reference().GetMousePosXImpl(); }
-		static inline float GetMousePosY() noexcept                                   { return Reference().GetMousePosYImpl(); }
-		static inline kmaths::Vector2f GetMousePosition() noexcept                    { return Reference().GetMousePositionImpl(); }
-		static inline bool IsMouseButtonPressed(MouseCode button) noexcept       { return Reference().IsMouseButtonPressedImpl(button); }
+		static float GetMousePosX() noexcept;
+		static float GetMousePosY() noexcept;
+		static kmaths::Vector2f GetMousePosition() noexcept;
+		static bool IsMouseButtonPressed(MouseCode button) noexcept;
 
 	protected:
 		static void CreateImpl() noexcept;

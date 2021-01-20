@@ -61,14 +61,40 @@ namespace krakoa
 			public:
 				void OnCreate()
 				{
-					const auto& transform = GetComponent<TransformComponent>();
+					transform = &GetComponent<TransformComponent>();
 				}
 
 				void OnDestroy()
-				{}
+				{
+					
+				}
 
 				void OnUpdate(float deltaTime)
-				{}
+				{
+					constexpr auto up = Vector3f(0, 1, 0);
+					constexpr auto down = Vector3f(0, -1, 0);
+					constexpr auto left = Vector3f(-1, 0, 0);
+					constexpr auto right = Vector3f(1, 0, 0);
+
+					 KRK_DBG(klib::ToString<>("Delta Time: {0:3}", deltaTime));
+					
+					if (input::IsKeyPressed(input::KEY_W))
+					{
+						const auto& position = transform->GetPosition();
+						const auto movement = up * deltaTime;
+						transform->SetPosition(position + movement);
+					}
+					
+					if (input::IsKeyPressed(input::KEY_S))
+					{
+						const auto& position = transform->GetPosition();
+						const auto movement = down * deltaTime;
+						transform->SetPosition(position + movement);
+					}
+				}
+
+			private:
+				TransformComponent* transform = nullptr;
 			};
 			
 			auto& cameraEntity = scene->AddEntity("Camera");

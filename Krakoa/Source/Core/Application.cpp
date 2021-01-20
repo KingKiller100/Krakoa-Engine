@@ -1,7 +1,7 @@
 #include "Precompile.hpp"
 #include "Application.hpp"
 
-#include "../Logging/CoreLogger.hpp"
+#include "../Logging/EngineLogger.hpp"
 
 #include "../Debug/Instrumentor.hpp"
 

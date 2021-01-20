@@ -5,7 +5,7 @@
 
 #include "../../Util/UniqueID.hpp"
 #include "../../Core/PointerTypes.hpp"
-#include "../../Logging/CoreLogger.hpp"
+#include "../../Logging/EngineLogger.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
 #include "../../Util/TypeName.hpp"

@@ -1,5 +1,5 @@
 ﻿#include "Precompile.hpp"
-#include "CoreLogger.hpp"
+#include "EngineLogger.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/Calendar/kCalendar.hpp>
@@ -8,11 +8,11 @@ namespace krakoa
 {
 	using namespace klib::kLogs;
 
-	std::unique_ptr<Logging> CoreLogger::pCoreLogger;
+	std::unique_ptr<Logging> EngineLogger::pLogger;
 
-	void CoreLogger::CoreInit(const std::string_view& initMsg)
+	void EngineLogger::CoreInit(const std::string_view& initMsg)
 	{
-		if (pCoreLogger)
+		if (pLogger)
 			return;
 
 		std::string dir(klib::kFileSystem::GetExeDirectory());
@@ -30,31 +30,31 @@ namespace krakoa
 		const auto dateStr = now.GetDate().ToString("mmm ddd yyyy");
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
 		
-		pCoreLogger = std::make_unique<Logging>(dir, filename, extension, name);
-		pCoreLogger->SetCacheMode(false);
+		pLogger = std::make_unique<Logging>(dir, filename, extension, name);
+		pLogger->SetCacheMode(false);
 		
-		pCoreLogger->GetConsole().SetDebugStringOutput(true);
+		pLogger->GetConsole().SetDebugStringOutput(true);
 		
-		pCoreLogger->AddRaw(padding);
-		pCoreLogger->AddRaw(stamp);
-		pCoreLogger->AddRaw(initMsg);
-		pCoreLogger->AddRaw(padding);
+		pLogger->AddRaw(padding);
+		pLogger->AddRaw(stamp);
+		pLogger->AddRaw(initMsg);
+		pLogger->AddRaw(padding);
 		
-		pCoreLogger->AddRaw();
+		pLogger->AddRaw();
 	}
 
-	void CoreLogger::ShutDown()
+	void EngineLogger::ShutDown()
 	{
 		GetLogger().AddRaw(R"(
 ************************************************************************
                               Logging Concluded
 ************************************************************************)"
 );
-		pCoreLogger->FinalOutput(false);
+		pLogger->FinalOutput(false);
 	}
 
-	Logging& CoreLogger::GetLogger()
+	Logging& EngineLogger::GetLogger()
 	{
-		return *pCoreLogger;
+		return *pLogger;
 	}
 }

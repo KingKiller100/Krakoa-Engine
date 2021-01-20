@@ -20,6 +20,7 @@
 #include "Debug/Instrumentor.hpp"
 
 // Input
+#include "Input/Input.hpp"
 #include "Input/KeyCode.hpp"
 #include "Input/InputManager.hpp"
 #include "Input/MouseButtonCode.hpp"

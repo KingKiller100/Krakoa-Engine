@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Logging/CoreLogger.hpp"
+#include "../../Logging/EngineLogger.hpp"
 
 #include <string>
 #include <vector>

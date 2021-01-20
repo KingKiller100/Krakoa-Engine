@@ -9,9 +9,10 @@ namespace krakoa::scene::ecs::components
 		return owner != nullptr;
 	}
 
-	void NativeScriptComponent::InvokeCreate()
+	void NativeScriptComponent::InvokeCreate(Entity* entity)
 	{
 		ctorFunc();
+		SetEntity(entity);
 		onCreateFunc(owner);
 	}
 
@@ -24,5 +25,10 @@ namespace krakoa::scene::ecs::components
 	void NativeScriptComponent::InvokeUpdate(float deltaTime)
 	{
 		onUpdateFunc(owner, deltaTime);
+	}
+
+	void NativeScriptComponent::SetEntity(Entity* entity)
+	{
+		owner->SetEntity(entity);
 	}
 }

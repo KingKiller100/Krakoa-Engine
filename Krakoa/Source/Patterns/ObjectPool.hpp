@@ -2,7 +2,7 @@
 
 
 #include "../PointerTypes.hpp"
-#include "../Logging/CoreLogger.hpp"
+#include "../Logging/EngineLogger.hpp"
 
 #include <HelperMacros.hpp>
 #include <Utility/String/kToString.hpp>

@@ -3,7 +3,7 @@
 #include "DebugCore.hpp"
 #include "Windows/DebugMessageBox.hpp"
 
-#include "../Logging/CoreLogger.hpp"
+#include "../Logging/EngineLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
 

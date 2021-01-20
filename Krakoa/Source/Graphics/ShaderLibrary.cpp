@@ -3,7 +3,7 @@
 
 #include "Resources/iShader.hpp"
 
-#include "../Logging/CoreLogger.hpp"
+#include "../Logging/EngineLogger.hpp"
 #include "../Debug/Debug.hpp"
 #include "../Debug/Instrumentor.hpp"
 

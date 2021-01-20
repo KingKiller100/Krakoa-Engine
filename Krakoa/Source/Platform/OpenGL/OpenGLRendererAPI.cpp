@@ -2,7 +2,7 @@
 #include "OpenGLRendererAPI.hpp"
 
 #include "../../Debug/Instrumentor.hpp"
-#include "../../Logging/CoreLogger.hpp"
+#include "../../Logging/EngineLogger.hpp"
 #include "../../Graphics/Helpers/Colour.hpp"
 
 #include <Utility/String/kToString.hpp>

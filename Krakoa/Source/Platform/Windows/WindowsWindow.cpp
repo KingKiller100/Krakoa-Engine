@@ -1,7 +1,7 @@
 #include "Precompile.hpp"
 #include "WindowsWindow.hpp"
 
-#include "../../Logging/CoreLogger.hpp"
+#include "../../Logging/EngineLogger.hpp"
 
 #include "../../EventsSystem/ApplicationEvent.hpp"
 #include "../../EventsSystem/KeyEvent.hpp"

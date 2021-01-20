@@ -72,13 +72,13 @@ namespace krakoa::scene
 
 		for (const auto id : scriptEntities)
 		{
-			const auto& entity = scene.GetEntity(id);
+			auto& entity = scene.GetEntity(id);
 
 			auto& script = entity.GetComponent<NativeScriptComponent>();
 			
 			if (!script.IsActive())
 			{
-				script.InvokeCreate();
+				script.InvokeCreate(const_cast<ecs::Entity*>(std::addressof(entity)));
 			}
 
 			script.InvokeUpdate(deltaTime);

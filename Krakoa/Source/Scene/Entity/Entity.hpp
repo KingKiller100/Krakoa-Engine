@@ -10,6 +10,7 @@
 #include <Template/kTypeName.hpp>
 #include <Utility/String/kToString.hpp>
 
+
 namespace krakoa::scene::ecs
 {
 	class Entity
@@ -17,6 +18,8 @@ namespace krakoa::scene::ecs
 		using UID = EntityUID;
 
 	public:
+		Entity() = default;
+		Entity(UID id, Multi_Ptr<EntityComponentSystem> entityComponentSystem);
 		Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem);
 
 		Entity(const Entity& other);

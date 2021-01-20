@@ -5,9 +5,10 @@
 
 #include "../Graphics/2D/Renderer2D.hpp"
 
-#include "Entity/Components/AppearanceComponent.hpp"
 #include "Entity/Components/CameraComponent.hpp"
 #include "Entity/Components/TransformComponent.hpp"
+#include "Entity/Components/AppearanceComponent.hpp"
+#include "Entity/Components/NativeScriptComponent.hpp"
 
 namespace krakoa::scene
 {
@@ -60,10 +61,31 @@ namespace krakoa::scene
 	{
 		auto& scene = GetCurrentScene();
 		scene.OnUpdate(deltaTime);
-		DrawEntities(scene);
+		UpdateScriptEntities(scene, deltaTime);
+		RenderEntities(scene);
 	}
 
-	void SceneManager::DrawEntities(const iScene& scene) const
+	void SceneManager::UpdateScriptEntities(const iScene& scene, const float deltaTime) const
+	{
+		const auto scriptEntities
+			= entityComponentSystem->GetEntitiesWithComponents<NativeScriptComponent>();
+
+		for (const auto id : scriptEntities)
+		{
+			const auto& entity = scene.GetEntity(id);
+
+			auto& script = entity.GetComponent<NativeScriptComponent>();
+			
+			if (!script.IsActive())
+			{
+				script.InvokeCreate();
+			}
+
+			script.InvokeUpdate(deltaTime);
+		}
+	}
+
+	void SceneManager::RenderEntities(const iScene& scene) const
 	{
 		iCamera* camera = nullptr;
 		kmaths::TransformMatrix<float> cameraTransform = kmaths::GetTransformIdentity<float>();

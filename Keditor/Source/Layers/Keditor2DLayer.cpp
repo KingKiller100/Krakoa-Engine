@@ -55,7 +55,22 @@ namespace krakoa
 
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
-		
+
+			class CameraController : public scene::ecs::ScriptEntity
+			{
+			public:
+				void OnCreate()
+				{
+					const auto& transform = GetComponent<TransformComponent>();
+				}
+
+				void OnDestroy()
+				{}
+
+				void OnUpdate(float deltaTime)
+				{}
+			};
+			
 			auto& cameraEntity = scene->AddEntity("Camera");
 			
 			const auto bounds = cameraController.GetBounds().GetWidth() / cameraController.GetBounds().GetHeight();
@@ -64,6 +79,7 @@ namespace krakoa
 				true
 				);
 			cameraEntity.AddComponent<TransformComponent>();
+			cameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		}
 
 		{

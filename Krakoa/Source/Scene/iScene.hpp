@@ -1,8 +1,13 @@
 ﻿#pragma once
-#include "Entity/Entity.hpp"
+#include "Entity/ECS_UID.hpp"
 
 namespace krakoa::scene
 {
+	namespace ecs
+	{
+		class Entity;
+	}
+	
 	class iScene
 	{
 	public:

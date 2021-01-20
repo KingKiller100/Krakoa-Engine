@@ -63,6 +63,12 @@ namespace krakoa::scene::ecs
 			return iter != compVec.end() ? *iter : Multi_Ptr<ComponentWrapperBase>();
 		}
 
+		template<typename Component>
+		USE_RESULT std::vector<Multi_Ptr<ComponentWrapperBase>>& GetComponents() const noexcept
+		{
+			return componentMap.at(GetUniqueID<Component>());
+		}
+
 		template<typename Component, typename ...Components>
 		USE_RESULT std::vector<EntityUID> GetEntitiesWithComponents() const noexcept
 		{
@@ -77,12 +83,6 @@ namespace krakoa::scene::ecs
 			}
 
 			return list;
-		}
-
-		template<typename Component>
-		USE_RESULT std::vector<Multi_Ptr<ComponentWrapperBase>>& GetComponents() const noexcept
-		{
-			return componentMap.at(GetUniqueID<Component>());
 		}
 
 		template<typename Component>

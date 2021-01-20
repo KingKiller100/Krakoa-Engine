@@ -5,6 +5,13 @@
 
 namespace krakoa::scene::ecs
 {
+	Entity::Entity(UID id, Multi_Ptr<EntityComponentSystem> entityComponentSystem)
+		: id(id)
+		, selected(false)
+		, active(true)
+		, manager(entityComponentSystem)
+	{}
+
 	Entity::Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem)
 		: id(entityComponentSystem->Add())
 		, selected(false)

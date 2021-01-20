@@ -35,7 +35,8 @@ namespace krakoa::scene
 		void OnUpdate(const float deltaTime);
 
 	private:
-		void DrawEntities(const iScene& scene) const;
+		void UpdateScriptEntities(const iScene& scene, const float deltaTime) const;
+		void RenderEntities(const iScene& scene) const;
 		
 	private:
 		std::unordered_map<std::string, Solo_Ptr<iScene>> scenes;

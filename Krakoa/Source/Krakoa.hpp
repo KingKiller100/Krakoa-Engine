@@ -60,6 +60,7 @@
 
 // Entity
 #include "Scene/Entity/Entity.hpp"
+#include "Scene/Entity/ScriptEntity.hpp"
 #include "Scene/Entity/EntityComponentSystem.hpp"
 
 // Components
@@ -67,3 +68,4 @@
 #include "Scene/Entity/Components/CameraComponent.hpp"
 #include "Scene/Entity/Components/TransformComponent.hpp"
 #include "Scene/Entity/Components/AppearanceComponent.hpp"
+#include "Scene/Entity/Components/NativeScriptComponent.hpp"

@@ -3,16 +3,17 @@
 #ifdef KRAKOA_TEST
 #	include "Tests/TestDriver.hpp"
 #else
-#	include <memory>
 #	include "../Debug/Instrumentor.hpp"
 #	include "Application.hpp"
+#	include <memory>
+
 extern void krakoa::CreateApplication();
 #endif
 
 #include "../Memory/MemoryStructures/HeapFactory.hpp"
-#include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
-#include <Utility/Debug/kDebugger.hpp>
 
+#include <Utility/Debug/kDebugger.hpp>
+#include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
 
 inline void Launch();
 
@@ -38,6 +39,10 @@ inline void Launch()
 	krakoa::tests::TestDriver::RunAll();
 	krakoa::tests::TestDriver::ShutDown();
 #else
+
+	KRK_INIT_LOGS("");
+	KRK_SET_LOG_MIN(KRK_LOG_LVL_DBG);
+	
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 	krakoa::CreateApplication();
 	auto pApp = std::unique_ptr<krakoa::Application>(krakoa::Application::Pointer());

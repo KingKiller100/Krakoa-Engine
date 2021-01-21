@@ -81,8 +81,8 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND1(OrthographicCameraController::OnMouseScrolledEvent));
-		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(OrthographicCameraController::OnWindowResizeEvent));
+		dispatcher.Dispatch<events::MouseScrolledEvent>(KRK_BIND_FUNC(OrthographicCameraController::OnMouseScrolledEvent));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND_FUNC(OrthographicCameraController::OnWindowResizeEvent));
 	}
 
 	bool OrthographicCameraController::OnMouseScrolledEvent(const events::MouseScrolledEvent& e)

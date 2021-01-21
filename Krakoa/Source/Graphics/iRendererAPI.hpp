@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Resources/iVertexArray.hpp"
+#include <cstdint>
 
 namespace krakoa::graphics
 {
@@ -9,7 +10,7 @@ namespace krakoa::graphics
 	class iRendererAPI
 	{
 	public:
-		enum class ApiType : uint8_t
+		enum class API : std::uint8_t
 	{
 		NONE = 0,
 		OPENGL,
@@ -24,13 +25,13 @@ namespace krakoa::graphics
 		virtual void DrawIndexed(const iVertexArray& vertexArray, uint32_t count = 0) = 0;
 		virtual void SetClearColour(const Colour& colour)  = 0;
 
-		inline static ApiType GetAPI() noexcept { return api; }
+		inline static API GetAPI() noexcept { return api; }
 
 	private:
 		virtual void OutputRenderingArchitecture() = 0;
 
 	private:
-		static ApiType api;
+		static API api;
 	};
 
 

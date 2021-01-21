@@ -7,16 +7,19 @@
 #include "../../EventsSystem/KeyEvent.hpp"
 #include "../../EventsSystem/MouseEvent.hpp"
 
+#include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
-// Renderer
 #include "../../Platform/OpenGL/OpenGLContext.hpp"
 
 #include <Utility/String/kToString.hpp>
+#include <Platform/kPlatform.hpp>
 
 #include <GLFW/glfw3.h>
 
-#include "../../Debug/Debug.hpp"
+#include "../../Graphics/Renderer.hpp"
+#include "../../Graphics/iRendererAPI.hpp"
+
 
 namespace krakoa
 {
@@ -27,11 +30,11 @@ namespace krakoa
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
-		const auto msg = 
-			ToString("[CODE]: {0}\n               [DESC]: {1}"
+		const auto msg =
+			ToString("GLFW_ERROR: [{0}] {1}"
 				, errorCode
 				, description);
-		KRK_BANNER(msg, "GLFW_ERROR", "*", "*", 30);
+		KRK_ERR(msg);
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -53,6 +56,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		glfwDestroyWindow(window);
+		glfwTerminate();
 	}
 
 	void krakoa::WindowsWindow::Init(const WindowProperties& props)
@@ -74,15 +78,22 @@ namespace krakoa
 		}
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-#if defined(__APPLE__)
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-#endif
+		if (klib::GetPlatform() & klib::PlatformOS::APPLE)
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
-		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.data(), nullptr, nullptr);
+
+#if defined(KRAKOA_DEBUG)
+		if (graphics::Renderer::GetAPI() == graphics::iRendererAPI::API::OPENGL)
+			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
+		
+		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.data(),
+			nullptr, nullptr);
+		
 		KRK_ASSERT(window != nullptr, "Window pointer not created");
 
 		pRenderContext = std::make_unique<graphics::OpenGLContext>(window);

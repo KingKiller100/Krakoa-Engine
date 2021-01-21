@@ -21,14 +21,15 @@ namespace krakoa::graphics
 
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
-		static void Submit(iShader& shader, const iVertexArray& vertexArray, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>());
+		static void Submit(iShader& shader, const iVertexArray& vertexArray
+			, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>());
 
 		static void Update();
 		
 		static void Clear();
 		static void SetClearColour(const Colour& colour);
 
-		static inline iRendererAPI::ApiType GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
+		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
 
 	private:
 		static const kmaths::Matrix4x4f* camera_VPMat;

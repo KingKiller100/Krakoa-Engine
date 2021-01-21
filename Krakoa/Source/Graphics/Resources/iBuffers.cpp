@@ -14,8 +14,8 @@ namespace krakoa::graphics
 	iVertexBuffer * iVertexBuffer::Create(uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexBuffer(size);
+		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::API::OPENGL: return new OpenGLVertexBuffer(size);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 		return nullptr;
@@ -24,8 +24,8 @@ namespace krakoa::graphics
 	iVertexBuffer * iVertexBuffer::Create(float * vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::ApiType::OPENGL: return new OpenGLVertexBuffer(vertices, size);
+		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::API::OPENGL: return new OpenGLVertexBuffer(vertices, size);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 		return nullptr;
@@ -37,8 +37,8 @@ namespace krakoa::graphics
 	iIndexBuffer * iIndexBuffer::Create(uint32_t * indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::ApiType::OPENGL: return new OpenGLIndexBuffer(indices, count);
+		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::API::OPENGL: return new OpenGLIndexBuffer(indices, count);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 		return nullptr;

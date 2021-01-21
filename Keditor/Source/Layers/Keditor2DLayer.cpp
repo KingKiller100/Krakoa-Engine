@@ -76,7 +76,7 @@ namespace krakoa
 					constexpr auto left = Vector3f(-1, 0, 0);
 					constexpr auto right = Vector3f(1, 0, 0);
 
-					 KRK_DBG(klib::ToString<>("Delta Time: {0:3}", deltaTime));
+					 // KRK_DBG(klib::ToString<>("Delta Time: {0:3}", deltaTime));
 					
 					if (input::IsKeyPressed(input::KEY_W))
 					{

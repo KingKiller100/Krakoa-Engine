@@ -13,7 +13,6 @@
 
 // Core
 #include "Core/Application.hpp"
-#include "Logging/Logger.hpp"
 
 // Debug & Profiling
 #include "Debug/Debug.hpp"

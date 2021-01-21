@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include "../PointerTypes.hpp"
+#include "../Core/PointerTypes.hpp"
 #include "../Logging/EngineLogger.hpp"
 
 #include <HelperMacros.hpp>

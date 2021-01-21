@@ -22,12 +22,9 @@
 #define KRK_TRUE KLIB_TRUE
 #define KRK_FALSE KLIB_FALSE
 
-// Standard Placeholders
-#define PL_HOLDER(x) std::placeholders::_##x
-
 // Binding
-#define KRK_BIND1(func) std::bind((&func), this, PL_HOLDER(1))
-#define KRK_BIND2(func) std::bind((&func), this, PL_HOLDER(1), PL_HOLDER(2))
+#define KRK_BIND_FUNC(func) \
+	[this](auto&& ...params) -> decltype(auto) { return this->func(std::forward<decltype(params)>(params)...);} \
 
 #ifndef KRAKOA_PROFILE
 #	ifndef KRK_ENABLE_STATISTICS

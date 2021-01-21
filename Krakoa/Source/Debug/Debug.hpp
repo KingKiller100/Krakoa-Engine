@@ -16,10 +16,10 @@
 #	define KRK_BREAK_IF(cond) ((void)0)
 #	define KRK_ASSERT(cond, msg) kAssertCB(cond, msg, [](const std::string& m, const klib::SourceInfo& s)\
 {\
-	::krakoa::debug::RaiseException(m, s, krakoa::CoreLogger::GetLogger());\
+	::krakoa::debug::RaiseException(m, s, krakoa::EngineLogger::GetLogger());\
 })\
 
 #endif
 
-#define KRK_FATAL(msg) ::krakoa::debug::RaiseException(msg, SOURCE_INFO(), krakoa::CoreLogger::GetLogger())
+#define KRK_FATAL(msg) ::krakoa::debug::RaiseException(msg, SOURCE_INFO(), krakoa::EngineLogger::GetLogger())
 

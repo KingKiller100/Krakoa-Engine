@@ -81,11 +81,11 @@ namespace krakoa::graphics
 
 		// Rendering hardware info
 		KRK_INF("API: OpenGL");
-		KRK_INF(klib::kString::ToString("Version: {0}", rendererInfo.glVersion));
-		KRK_INF(klib::kString::ToString("Vendor: {0}", rendererInfo.glVendor));
-		KRK_INF(klib::kString::ToString("Hardware: {0}", rendererInfo.glRenderer));
-		KRK_INF(klib::kString::ToString("GLFW Version: {0}", rendererInfo.glfwVersion));
-		KRK_INF(klib::kString::ToString("ImGui Version: {0}", rendererInfo.imGuiVersion));
+		KRK_INF(klib::ToString("Version: {0}", rendererInfo.glVersion));
+		KRK_INF(klib::ToString("Vendor: {0}", rendererInfo.glVendor));
+		KRK_INF(klib::ToString("Hardware: {0}", rendererInfo.glRenderer));
+		KRK_INF(klib::ToString("GLFW Version: {0}", rendererInfo.glfwVersion));
+		KRK_INF(klib::ToString("ImGui Version: {0}", rendererInfo.imGuiVersion));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const Colour& colour)

@@ -30,15 +30,13 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_INIT_LOGS("                    WELCOME TO THE KRAKOA ENGINE");
-		KRK_SET_LOG_MIN(KRK_LOG_LVL_DBG);
-		KRK_ASSERT(!instance, "Instance of the application already exists!");
+		KRK_ASSERT(!instance, "Instance of application " + std::string(appName) + " already exists!");
 
 		//timeStep.SetSpeedMultiplier(5);
 
 		// Initialize Window
 		pWindow = std::unique_ptr<iWindow>(iWindow::Create(WindowProperties(appName)));
-		pWindow->SetEventCallback(KRK_BIND1(Application::OnEvent));
+		pWindow->SetEventCallback(KRK_BIND_FUNC(Application::OnEvent));
 	}
 
 	Application::~Application()
@@ -98,8 +96,8 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND1(Application::OnWindowClosed));
-		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND1(Application::OnWindowResize));
+		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND_FUNC(Application::OnWindowClosed));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND_FUNC(Application::OnWindowResize));
 
 		layerStack.OnEvent(e);
 	}

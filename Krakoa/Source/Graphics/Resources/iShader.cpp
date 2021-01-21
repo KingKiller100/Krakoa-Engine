@@ -24,8 +24,8 @@ namespace krakoa::graphics
 		const auto formattedPath = klib::Replace(cwd + shaderFilePath, '/', '\\');
 
 		switch (Renderer::GetAPI()) {
-		case iRendererAPI::ApiType::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::ApiType::OPENGL: return new OpenGLShader(name, formattedPath);
+		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
+		case iRendererAPI::API::OPENGL: return new OpenGLShader(name, formattedPath);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 

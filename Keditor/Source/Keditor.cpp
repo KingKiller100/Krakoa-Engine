@@ -10,11 +10,7 @@ namespace krakoa
 	public:
 		Keditor(Token&& t)
 			: Application(t, "Keditor")
-		{
-			INIT_LOGS("Keditor");
-			TOGGLE_CONSOLE_LOGGING();
-			SET_LOG_MIN(LOG_LVL_DBG);
-		}
+		{}
 
 		~Keditor() override
 			= default;

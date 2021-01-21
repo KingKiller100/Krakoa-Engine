@@ -222,81 +222,81 @@ project "Keditor"
         
 group ""
 
-group "Games"
-project "Hooper2"
-    location "ExampleGames/Hooper2/"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++latest"
-    characterset ("default")
-    staticruntime "On"
+-- group "Games"
+-- project "Hooper2"
+--     location "ExampleGames/Hooper2/"
+--     kind "ConsoleApp"
+--     language "C++"
+--     cppdialect "C++latest"
+--     characterset ("default")
+--     staticruntime "On"
 
-    targetdir ("bin/".. OutputDir .. "/Game/%{prj.name}")
-    objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
+--     targetdir ("bin/".. OutputDir .. "/Game/%{prj.name}")
+--     objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
     
-    files
-    {
-        "ExampleGames/%{prj.name}/Source/**.hpp",
-        "ExampleGames/%{prj.name}/Source/**.cpp",
-    }
+--     files
+--     {
+--         "ExampleGames/%{prj.name}/Source/**.hpp",
+--         "ExampleGames/%{prj.name}/Source/**.cpp",
+--     }
 
-    includedirs
-    {
-        "%{IncludeDir.KLIB}",
-        "Krakoa/Source",
-        "Krakoa/Vendors/",
-    }
+--     includedirs
+--     {
+--         "%{IncludeDir.KLIB}",
+--         "Krakoa/Source",
+--         "Krakoa/Vendors/",
+--     }
 
-    links
-    {
-        "kLibrary",
-        "Krakoa"
-    }
+--     links
+--     {
+--         "kLibrary",
+--         "Krakoa"
+--     }
 
-    defines
-    {
-        "KLIB_LIB",
-        "KLIB_SHORT_NAMESPACE",
-        "_CRT_SECURE_NO_WARNINGS"
-    }
+--     defines
+--     {
+--         "KLIB_LIB",
+--         "KLIB_SHORT_NAMESPACE",
+--         "_CRT_SECURE_NO_WARNINGS"
+--     }
 
-    filter "system:Windows"
-        systemversion "latest"
+--     filter "system:Windows"
+--         systemversion "latest"
         
-        defines
-        {
-            "KLIB_WINDOWS_OS",
-            "KRAKOA_OS_WINDOWS"
-        }
+--         defines
+--         {
+--             "KLIB_WINDOWS_OS",
+--             "KRAKOA_OS_WINDOWS"
+--         }
 
-    filter "configurations:Debug"
-        defines 
-        {
-            "KRAKOA_DEBUG",
-            "KLIB_DEBUG"
-        }
-        symbols "On"
-        runtime "Debug"
+--     filter "configurations:Debug"
+--         defines 
+--         {
+--             "KRAKOA_DEBUG",
+--             "KLIB_DEBUG"
+--         }
+--         symbols "On"
+--         runtime "Debug"
 
-    filter "configurations:Test"
-        targetdir ("bin/" .. OutputDir ..  "/Component Tests")
-        targetname ("Test")
-        defines 
-        {
-            "KRAKOA_TEST",
-            "KLIB_TEST"
-        }
-        symbols "On"
-        runtime "Debug"
+--     filter "configurations:Test"
+--         targetdir ("bin/" .. OutputDir ..  "/Component Tests")
+--         targetname ("Test")
+--         defines 
+--         {
+--             "KRAKOA_TEST",
+--             "KLIB_TEST"
+--         }
+--         symbols "On"
+--         runtime "Debug"
 
-    filter "configurations:Release"
-        defines "KRAKOA_RELEASE"
-        optimize "Full"
-        runtime "Release"
+--     filter "configurations:Release"
+--         defines "KRAKOA_RELEASE"
+--         optimize "Full"
+--         runtime "Release"
 
-    filter "configurations:Profile"
-        defines "KRAKOA_PROFILE"
-        optimize "Speed"
-        runtime "Release"
+--     filter "configurations:Profile"
+--         defines "KRAKOA_PROFILE"
+--         optimize "Speed"
+--         runtime "Release"
 
-group ""
+-- group ""

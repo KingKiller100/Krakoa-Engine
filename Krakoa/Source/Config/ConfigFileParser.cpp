@@ -10,13 +10,12 @@
 namespace krakoa::configuration
 {
 	ConfigFileParser::ConfigFileParser(const std::filesystem::path& path) noexcept
-		: filepath(path)
 	{
-		KRK_INF("Attempting to read config file: " + path.string());
+		KRK_DBG("Attempting to read config file: " + path.string());
 		
-		const auto success = Read(filepath);
+		const auto success = Read(path);
 
-		KRK_INF(klib::ToString("Parse successful: {0}", success));
+		KRK_DBG(klib::ToString("Parse successful: {0}", success));
 	}
 
 	ConfigFileParser::~ConfigFileParser() noexcept

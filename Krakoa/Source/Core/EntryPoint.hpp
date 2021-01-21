@@ -4,8 +4,11 @@
 #	include "Tests/TestDriver.hpp"
 #else
 #	include "../Debug/Instrumentor.hpp"
+#	include "../Config/GlobalConfig.hpp"
 #	include "Application.hpp"
+#	include "PointerTypes.hpp"
 #	include <memory>
+#	include <filesystem>
 
 extern void krakoa::CreateApplication();
 #endif
@@ -14,6 +17,7 @@ extern void krakoa::CreateApplication();
 
 #include <Utility/Debug/kDebugger.hpp>
 #include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
+#include <Utility/FileSystem/kFileSystem.hpp>
 
 inline void Launch();
 
@@ -32,6 +36,8 @@ int main(int argc, char** argv)
 
 inline void Launch()
 {
+	using namespace krakoa;
+	
 	klib::kDebug::IsDebuggerAttached("DebugPlease");
 	
 #ifdef KRAKOA_TEST
@@ -41,7 +47,13 @@ inline void Launch()
 #else
 
 	KRK_INIT_LOGS("");
-	KRK_SET_LOG_MIN(KRK_LOG_LVL_DBG);
+	KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
+	
+	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\Krakoa\\";
+	krakoa::configuration::GlobalConfig::Create(cwd);
+	auto globalConfig = krakoa::Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
+
+	const auto logLevelRaw = globalConfig->TryGet<std::string>("Logging", "Level", "NONE");
 	
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 	krakoa::CreateApplication();

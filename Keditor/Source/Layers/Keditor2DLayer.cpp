@@ -8,6 +8,8 @@
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
 
+
+#include "../Scripts/AnimateEntityScript.hpp"
 #include "../Scripts/ColourChangeScript.hpp"
 
 
@@ -162,9 +164,15 @@ namespace krakoa
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
 			texturedEntity.AddComponent<Appearance2DComponent>(*pSubTexture, colours::Invisible, 3.f);
-			texturedEntity.AddComponent<NativeScriptComponent>().Bind<ColourChangeScript>();
+			
+			auto& nsc = texturedEntity.AddComponent<NativeScriptComponent>();
+			nsc.Bind<ColourChangeScript>();
+			nsc.Bind<AnimateEntityScript>();
+			
+			auto& script = nsc.GetScript<AnimateEntityScript>();
+			script.SetMoveSpeed(2);
+			script.SetRotationSpeed(5);
 		}
-
 	}
 
 	void Keditor2DLayer::OnDetach()
@@ -176,26 +184,11 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		constexpr float moveSpeed = 2.f;
 
 		if (isWindowFocused)
 			cameraController.OnUpdate(deltaTime);
 
 		UpdateEntities();
-
-		if (input::InputManager::IsKeyPressed(input::KEY_RIGHT))
-			position.X() += moveSpeed * deltaTime;
-
-		if (input::InputManager::IsKeyPressed(input::KEY_LEFT))
-			position.X() -= moveSpeed * deltaTime;
-
-		if (input::InputManager::IsKeyPressed(input::KEY_UP))
-			position.Y() += moveSpeed * deltaTime;
-
-		if (input::InputManager::IsKeyPressed(input::KEY_DOWN))
-			position.Y() -= moveSpeed * deltaTime;
-
-		degreesRotation -= 5 * moveSpeed * deltaTime;
 	}
 
 	void Keditor2DLayer::UpdateEntities() const noexcept
@@ -217,15 +210,9 @@ namespace krakoa
 
 			const auto& textureEntity = scene->GetEntity("Textured");
 			auto& script = textureEntity.GetComponent<NativeScriptComponent>();
-			auto& appearance = textureEntity.GetComponent<Appearance2DComponent>();
-			auto& transform = textureEntity.GetComponent<TransformComponent>();
 
 			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
-			transform.SetPosition(position);
-			transform.SetRotation(ToRadians(degreesRotation));
 		}
-
-		application.GetFrameBuffer().Unbind();
 	}
 
 	void Keditor2DLayer::OnRender()

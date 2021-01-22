@@ -11,20 +11,20 @@ namespace krakoa::scene::ecs::components
 
 	void NativeScriptComponent::InvokeCreate(Entity* entity)
 	{
-		ctorFunc();
+		initScriptFunc();
 		SetEntity(entity);
-		onCreateFunc(owner);
+		owner->OnCreate();
 	}
 
 	void NativeScriptComponent::InvokeDestroy()
 	{
-		onDestroyFunc(owner);
-		dtorFunc();
+		owner->OnDestroy();
+		destroyScriptFunc();
 	}
 
 	void NativeScriptComponent::InvokeUpdate(float deltaTime)
 	{
-		onUpdateFunc(owner, deltaTime);
+		owner->OnUpdate(deltaTime);
 	}
 
 	void NativeScriptComponent::SetEntity(Entity* entity)

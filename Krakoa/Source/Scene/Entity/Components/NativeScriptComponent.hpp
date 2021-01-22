@@ -2,63 +2,56 @@
 
 #include "../ScriptEntity.hpp"
 
+#include <Template/kToImpl.hpp>
+
 #include <functional>
 
-namespace krakoa::scene::ecs::components
+namespace krakoa::scene
 {
-	struct NativeScriptComponent
+	class Scene;
+
+	namespace ecs::components
 	{
-	public:
-		template<typename Script>
-		void Bind()
+		class NativeScriptComponent
 		{
-			ctorFunc = [this]()
+		public:
+			template<typename Script>
+			Script& GetScript()
 			{
-				owner = new Script();
-			};
+				return klib::ToImpl<Script>(owner);
+			}
 
-			dtorFunc = [this]()
+			template<typename Script>
+			void Bind()
 			{
-				Script* script = (Script*)owner;
-				delete script;
-				owner = nullptr;
-			};
+				initScriptFunc = [this]()
+				{
+					owner = new Script();
+				};
 
-			onCreateFunc = [](ScriptEntity* entity)
-			{
-				Script* script = (Script*)entity;
-				script->OnCreate();
-			};
+				destroyScriptFunc = [this]()
+				{
+					delete owner;
+					owner = nullptr;
+				};
+			}
 
-			onDestroyFunc = [](ScriptEntity* entity)
-			{
-				Script* script = (Script*)entity;
-				script->OnDestroy();
-			};
+			friend class Scene;
 
-			onUpdateFunc = [](ScriptEntity* entity, float time)
-			{
-				Script* script = (Script*)entity;
-				script->OnUpdate(time);
-			};
-		}
+		private:
+			bool IsActive() const;
 
-		bool IsActive() const;
+			void InvokeCreate(Entity* entity);
+			void InvokeDestroy();
+			void InvokeUpdate(float deltaTime);
 
-		void InvokeCreate(Entity* entity);
-		void InvokeDestroy();
-		void InvokeUpdate(float deltaTime);
+			void SetEntity(Entity* entity);
 
-		void SetEntity(Entity* entity);
-		
-	private:
-		ScriptEntity* owner = nullptr;
+		private:
+			ScriptEntity* owner = nullptr;
 
-		std::function<void()> ctorFunc = nullptr;
-		std::function<void()> dtorFunc = nullptr;
-
-		std::function<void(ScriptEntity*)> onCreateFunc = nullptr;
-		std::function<void(ScriptEntity*, float)> onUpdateFunc = nullptr;
-		std::function<void(ScriptEntity*)> onDestroyFunc = nullptr;
-	};
+			std::function<void()> initScriptFunc = nullptr;
+			std::function<void()> destroyScriptFunc = nullptr;
+		};
+	}
 }

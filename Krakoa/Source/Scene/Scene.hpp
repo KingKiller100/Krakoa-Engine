@@ -29,9 +29,17 @@ namespace krakoa::scene
 		void OnLoad() override;
 		void OnUpdate(float time) override;
 
+		void SetRuntimeState(RuntimeState state) override;
+
+	protected:
+		[[nodiscard]] ecs::Entity& GetEntity(ecs::EntityUID id);
+
+		void UpdateScripts(float deltaTime);
+		
 	private:
 		std::string name;
 		std::map<std::string, ecs::Entity> entities;
 		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
+		RuntimeState runtimeState;
 	};
 }

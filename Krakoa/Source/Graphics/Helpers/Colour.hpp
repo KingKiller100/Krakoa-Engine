@@ -97,7 +97,7 @@ namespace krakoa::graphics
 			: red(rgba[0]), green(rgba[1]),
 			blue(rgba[2]), alpha(rgba[3])
 		{}
-
+		
 		~Colour() noexcept
 			= default;
 
@@ -383,5 +383,6 @@ namespace krakoa::graphics
 		inline static constexpr Colour White(Colour::MaxColourValue, Colour::MaxColourValue, Colour::MaxColourValue);
 		inline static constexpr Colour Black(Colour::MinColourValue, Colour::MinColourValue, Colour::MinColourValue);
 		inline static constexpr Colour Orange(0.85f, 0.35f, 0.f, 1.f);
+		inline static constexpr Colour Invisible(White.GetRGB(), 0);
 	}
 }

@@ -14,6 +14,7 @@ namespace krakoa::scene
 	Scene::Scene(const std::string_view& name, Multi_Ptr<EntityComponentSystem> ecs)
 		: name(name)
 		, entityComponentSystem(ecs)
+		, runtimeState(RuntimeState::STOP)
 	{}
 
 	Scene::~Scene()
@@ -77,6 +78,19 @@ namespace krakoa::scene
 		return iter->second;
 	}
 
+	ecs::Entity& Scene::GetEntity(ecs::EntityUID id)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		const auto iter = std::find_if(entities.begin(), entities.end(),
+			[id](const decltype(entities)::value_type& pair)
+			{
+				return pair.second.GetID() == id;
+			});
+
+		return iter->second;
+	}
+
 	bool Scene::RemoveEntity(const std::string& entityName)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -117,7 +131,7 @@ namespace krakoa::scene
 				}
 			}
 		}
-		
+
 		entities.erase(std::find_if(entities.begin(), entities.end()
 			, [entity](const decltype(entities)::value_type& pair)
 			{
@@ -131,9 +145,43 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 	}
 
-
-	void Scene::OnUpdate(float time)
+	void Scene::OnUpdate(float deltaTime)
 	{
 		KRK_PROFILE_FUNCTION();
+
+		UpdateScripts(deltaTime);
+	}
+
+	void Scene::UpdateScripts(float deltaTime)
+	{
+		const auto scriptEntities
+			= entityComponentSystem->GetEntitiesWithComponents<components::NativeScriptComponent>();
+
+		for (const auto id : scriptEntities)
+		{
+			auto& entity = GetEntity(id);
+
+			auto& script = entity.GetComponent<components::NativeScriptComponent>();
+
+			if (runtimeState == RuntimeState::RUNNING)
+			{
+				if (!script.IsActive())
+				{
+					script.InvokeCreate(std::addressof(entity));
+				}
+
+				script.InvokeUpdate(deltaTime);
+			}
+			else if (runtimeState == RuntimeState::STOP)
+			{
+				if (script.IsActive())
+					script.InvokeDestroy();
+			}
+		}
+	}
+
+	void Scene::SetRuntimeState(RuntimeState state)
+	{
+		runtimeState = state;
 	}
 }

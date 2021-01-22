@@ -16,8 +16,7 @@ namespace krakoa::scene
 
 	SceneManager::SceneManager()
 		: entityComponentSystem(new ecs::EntityComponentSystem())
-	{
-	}
+	{}
 
 	SceneManager::~SceneManager()
 	{
@@ -28,7 +27,7 @@ namespace krakoa::scene
 	void SceneManager::Add(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		auto* scene = new Scene(name, entityComponentSystem);
 		scenes[name.data()].reset(scene);
 		currentScene = name;
@@ -38,7 +37,7 @@ namespace krakoa::scene
 	bool SceneManager::Remove(const std::string_view& name)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		const auto iter = scenes.find(name.data());
 		if (iter == scenes.end())
 			return false;
@@ -51,6 +50,11 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 		scenes.clear();
+	}
+
+	void SceneManager::SetRuntimeState(RuntimeState state)
+	{
+		GetCurrentScene().SetRuntimeState(state);
 	}
 
 	iScene& SceneManager::GetCurrentScene()
@@ -68,39 +72,19 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 		auto& scene = GetCurrentScene();
+		
 		scene.OnUpdate(deltaTime);
-		UpdateScriptEntities(scene, deltaTime);
+		
 		RenderEntities(scene);
-	}
-
-	void SceneManager::UpdateScriptEntities(const iScene& scene, const float deltaTime) const
-	{
-		KRK_PROFILE_FUNCTION();
-		const auto scriptEntities
-			= entityComponentSystem->GetEntitiesWithComponents<NativeScriptComponent>();
-
-		for (const auto id : scriptEntities)
-		{
-			auto& entity = scene.GetEntity(id);
-
-			auto& script = entity.GetComponent<NativeScriptComponent>();
-			
-			if (!script.IsActive())
-			{
-				script.InvokeCreate(const_cast<ecs::Entity*>(std::addressof(entity)));
-			}
-
-			script.InvokeUpdate(deltaTime);
-		}
 	}
 
 	void SceneManager::RenderEntities(const iScene& scene) const
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		iCamera* camera = nullptr;
 		kmaths::TransformMatrix<float> cameraTransform = kmaths::GetTransformIdentity<float>();
-		
+
 		const auto cameraEntities
 			= entityComponentSystem->GetEntitiesWithComponents<CameraComponent, TransformComponent>();
 

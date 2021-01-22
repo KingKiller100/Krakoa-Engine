@@ -3,6 +3,9 @@
 
 namespace krakoa::scene::ecs
 {
+	ScriptEntity::~ScriptEntity()
+		= default;
+	
 	bool ScriptEntity::IsActive() const
 	{
 		return pEntity->IsActive();
@@ -22,4 +25,13 @@ namespace krakoa::scene::ecs
 	{
 		pEntity = e;
 	}
+
+	void ScriptEntity::OnCreate()
+	{}
+
+	void ScriptEntity::OnDestroy()
+	{}
+
+	void ScriptEntity::OnUpdate(float deltaTime)
+	{}
 }

@@ -11,6 +11,7 @@
 
 namespace krakoa::scene
 {
+	enum struct RuntimeState;
 	class iScene;
 	
 	struct PendingScene
@@ -29,13 +30,14 @@ namespace krakoa::scene
 		bool Remove(const std::string_view& name);
 		void RemoveAll();
 
+		void SetRuntimeState(RuntimeState state);
+		
 		iScene& GetCurrentScene();
 		
 		void LoadFromFile(const std::filesystem::path& path);
 		void OnUpdate(const float deltaTime);
 
 	private:
-		void UpdateScriptEntities(const iScene& scene, const float deltaTime) const;
 		void RenderEntities(const iScene& scene) const;
 		
 	private:

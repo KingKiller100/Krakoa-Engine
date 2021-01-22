@@ -3,9 +3,18 @@
 
 namespace krakoa::scene::ecs
 {
+	namespace components {
+		class NativeScriptComponent;
+	}
+
 	class ScriptEntity
 	{
 	public:
+		virtual ~ScriptEntity();
+		
+		friend class components::NativeScriptComponent;
+		
+	protected:
 		template<typename Component, typename ...Args>
 		auto& AddComponent(Args&& ...params) const
 		{
@@ -13,9 +22,9 @@ namespace krakoa::scene::ecs
 		}
 		
 		template<typename Component>
-		auto& GetComponent() const
+		Component* GetComponent() const
 		{
-			return pEntity->GetComponent<Component>();
+			return std::addressof(pEntity->GetComponent<Component>());
 		}
 		
 		template<typename Component>
@@ -37,6 +46,11 @@ namespace krakoa::scene::ecs
 		void Activate() const;
 
 		void SetEntity(Entity* e);
+
+		
+		virtual void OnCreate();
+		virtual void OnDestroy();
+		virtual void OnUpdate(float deltaTime);
 		
 	private:
 		Entity* pEntity = nullptr;

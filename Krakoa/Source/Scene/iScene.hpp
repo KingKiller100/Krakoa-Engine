@@ -7,6 +7,13 @@ namespace krakoa::scene
 	{
 		class Entity;
 	}
+
+	enum struct RuntimeState
+	{
+		RUNNING,
+		PAUSE,
+		STOP
+	};
 	
 	class iScene
 	{
@@ -26,5 +33,7 @@ namespace krakoa::scene
 
 		virtual void OnLoad() = 0;
 		virtual void OnUpdate(float time) = 0;
+
+		virtual void SetRuntimeState(RuntimeState state) = 0;
 	};
 }

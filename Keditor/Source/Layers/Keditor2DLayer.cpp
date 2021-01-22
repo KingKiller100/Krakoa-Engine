@@ -1,10 +1,14 @@
 ﻿#include "Keditor2DLayer.hpp"
 
+#include "../Scripts/CameraControllerScript.hpp"
+
 #include <ImGui/imgui.h>
 
 #include <Graphics/2D/Textures/iTexture2D.hpp>
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
+
+#include "../Scripts/ColourChangeScript.hpp"
 
 
 namespace krakoa
@@ -57,48 +61,7 @@ namespace krakoa
 
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
-
-			class CameraController : public scene::ecs::ScriptEntity
-			{
-			public:
-				void OnCreate()
-				{
-					transform = &GetComponent<TransformComponent>();
-				}
-
-				void OnDestroy()
-				{
-					
-				}
-
-				void OnUpdate(float deltaTime)
-				{
-					constexpr auto up = Vector3f(0, 1, 0);
-					constexpr auto down = Vector3f(0, -1, 0);
-					constexpr auto left = Vector3f(-1, 0, 0);
-					constexpr auto right = Vector3f(1, 0, 0);
-
-					 // KRK_DBG(klib::ToString<>("Delta Time: {0:3}", deltaTime));
-					
-					if (input::IsKeyPressed(input::KEY_W))
-					{
-						const auto& position = transform->GetPosition();
-						const auto movement = up * deltaTime;
-						transform->SetPosition(position + movement);
-					}
-					
-					if (input::IsKeyPressed(input::KEY_S))
-					{
-						const auto& position = transform->GetPosition();
-						const auto movement = down * deltaTime;
-						transform->SetPosition(position + movement);
-					}
-				}
-
-			private:
-				TransformComponent* transform = nullptr;
-			};
-			
+						
 			auto& cameraEntity = scene->AddEntity("Camera");
 			
 			const auto bounds = cameraController.GetBounds().GetWidth() / cameraController.GetBounds().GetHeight();
@@ -107,12 +70,12 @@ namespace krakoa
 				true
 				);
 			cameraEntity.AddComponent<TransformComponent>();
-			cameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+			cameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraControllerScript>();
 		}
 
 		{
 			KRK_PROFILE_SCOPE("Create coloured entity");
-
+			
 			auto& colourEntity = scene->AddEntity("Colour");
 
 			colourEntity.AddComponent<TransformComponent>(
@@ -124,8 +87,10 @@ namespace krakoa
 
 			colourEntity.AddComponent<Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
-				geometryColour
+				colours::Invisible
 				);
+
+			colourEntity.AddComponent<NativeScriptComponent>().Bind<ColourChangeScript>();
 		}
 
 		{
@@ -196,7 +161,8 @@ namespace krakoa
 			auto& transform = texturedEntity.AddComponent<TransformComponent>();
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
-			texturedEntity.AddComponent<Appearance2DComponent>(*pSubTexture, geometryColour, 3.f);
+			texturedEntity.AddComponent<Appearance2DComponent>(*pSubTexture, colours::Invisible, 3.f);
+			texturedEntity.AddComponent<NativeScriptComponent>().Bind<ColourChangeScript>();
 		}
 
 	}
@@ -241,21 +207,22 @@ namespace krakoa
 
 			const auto& colourEntity = scene->GetEntity("Colour");
 
-			auto& appearance = colourEntity.GetComponent<Appearance2DComponent>();
+			auto& script = colourEntity.GetComponent<NativeScriptComponent>();
 
-			appearance.SetColour(geometryColour);
+			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 		}
 
 		{
 			KRK_PROFILE_SCOPE("Updating texture entity");
 
 			const auto& textureEntity = scene->GetEntity("Textured");
+			auto& script = textureEntity.GetComponent<NativeScriptComponent>();
 			auto& appearance = textureEntity.GetComponent<Appearance2DComponent>();
 			auto& transform = textureEntity.GetComponent<TransformComponent>();
 
+			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 			transform.SetPosition(position);
 			transform.SetRotation(ToRadians(degreesRotation));
-			appearance.SetColour(geometryColour);
 		}
 
 		application.GetFrameBuffer().Unbind();

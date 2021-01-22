@@ -91,7 +91,6 @@ namespace krakoa::scene::ecs
 		bool operator!=(const Entity& other) const noexcept;
 
 	private:
-
 		std::unordered_map<ComponentUID, Multi_Ptr<ComponentWrapperBase>> components;
 
 		UID id;

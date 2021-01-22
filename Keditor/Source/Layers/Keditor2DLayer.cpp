@@ -1,5 +1,7 @@
 ﻿#include "Keditor2DLayer.hpp"
 
+#include "../Scripts/ColourChangeScript.hpp"
+#include "../Scripts/AnimateEntityScript.hpp"
 #include "../Scripts/CameraControllerScript.hpp"
 
 #include <ImGui/imgui.h>
@@ -9,8 +11,6 @@
 #include <Krakoa.hpp>
 
 
-#include "../Scripts/AnimateEntityScript.hpp"
-#include "../Scripts/ColourChangeScript.hpp"
 
 
 namespace krakoa
@@ -183,11 +183,11 @@ namespace krakoa
 		if (input::IsKeyPressed(input::KEY_P))
 		{
 			auto& sceneMan = application.GetSceneManager();
-			const auto newState = sceneMan.GetRuntimeState().Compare(scene::SceneRuntimeState::STOP
+			const auto newState = sceneMan.GetState().Compare(scene::SceneRuntimeState::STOP
 				, scene::SceneRuntimeState::RUNNING
 				, scene::SceneRuntimeState::STOP
 			);
-			sceneMan.SetRuntimeState(newState);
+			sceneMan.ChangeState(newState);
 		}
 
 		if (isWindowFocused)

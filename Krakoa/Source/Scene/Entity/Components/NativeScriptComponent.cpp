@@ -22,7 +22,7 @@ namespace krakoa::scene::ecs::components
 	{
 		for (const auto& func : initScriptFuncs)
 			func();
-		
+
 		SetEntity(entity);
 
 		for (const auto& [id, script] : scripts)
@@ -32,7 +32,14 @@ namespace krakoa::scene::ecs::components
 	void NativeScriptComponent::InvokeDestroy()
 	{
 		for (auto& [id, script] : scripts)
+		{
 			script->OnDestroy();
+		}
+
+		for (auto& [id, script] : scripts)
+		{
+			script.reset();
+		}
 	}
 
 	void NativeScriptComponent::InvokeUpdate(float deltaTime)

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include <Krakoa.hpp>
+#include <Scene/Entity/Components/TransformComponent.hpp>
+#include <Input/Input.hpp>
 
 #include <Maths/Vectors/Vector3.hpp>
 

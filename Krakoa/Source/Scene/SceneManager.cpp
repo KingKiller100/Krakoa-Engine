@@ -15,8 +15,15 @@ namespace krakoa::scene
 	using namespace ecs::components;
 
 	SceneManager::SceneManager()
-		: entityComponentSystem(new ecs::EntityComponentSystem())
-		, runtimeState(SceneRuntimeState::STOP)
+		: StateMachine(SceneRuntimeState::STOP, 
+			[](const SceneRuntimeState& current, const SceneRuntimeState& next)
+			{
+				const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
+					current
+					, next);
+				KRK_DBG(msg);
+			})
+		, entityComponentSystem(new ecs::EntityComponentSystem())
 	{}
 
 	SceneManager::~SceneManager()
@@ -31,7 +38,7 @@ namespace krakoa::scene
 
 		auto* scene = new Scene(name, entityComponentSystem);
 		scenes[name.data()].reset(scene);
-		scene->SetRuntimeState(std::addressof(runtimeState));
+		scene->SetRuntimeState((State_t*)std::addressof(GetState()));
 		currentScene = name;
 		scene->OnLoad();
 	}
@@ -52,16 +59,6 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 		scenes.clear();
-	}
-
-	SceneRuntimeState SceneManager::GetRuntimeState() const
-	{
-		return runtimeState;
-	}
-
-	void SceneManager::SetRuntimeState(SceneRuntimeState state)
-	{
-		runtimeState = state;
 	}
 
 	iScene& SceneManager::GetCurrentScene()

@@ -9,10 +9,11 @@
 #include <unordered_map>
 #include <string>
 
+#include "../Patterns/StateMachine.hpp"
+
 
 namespace krakoa::scene
 {
-	ENUM_STRUCT_FWD_DCL(SceneRuntimeState);
 	class iScene;
 	
 	struct PendingScene
@@ -21,7 +22,7 @@ namespace krakoa::scene
 		std::filesystem::path path;
 	};
 	
-	class SceneManager 
+	class SceneManager final : public patterns::StateMachine<SceneRuntimeState>
 	{
 	public:
 		SceneManager();
@@ -30,9 +31,6 @@ namespace krakoa::scene
 		void Add(const std::string_view& name);
 		bool Remove(const std::string_view& name);
 		void RemoveAll();
-
-		SceneRuntimeState GetRuntimeState() const;
-		void SetRuntimeState(SceneRuntimeState state);
 		
 		iScene& GetCurrentScene();
 		
@@ -48,6 +46,5 @@ namespace krakoa::scene
 		std::vector<PendingScene> pendingScenes;
 
 		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
-		SceneRuntimeState runtimeState;
 	};
 }

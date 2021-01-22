@@ -22,6 +22,8 @@ namespace memory
 		
 		pMemoryLogger = std::make_unique<Logging>(dir, filename, extension, name);
 		pMemoryLogger->GetFile().Open();
+		pMemoryLogger->GetFile().SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc]: &t", LogLevel::INF);
+		pMemoryLogger->GetFile().SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc]: &t", LogLevel::BNR);
 		pMemoryLogger->AddRaw(openingMsg);
 	}
 

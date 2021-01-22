@@ -8,9 +8,9 @@
 
 namespace krakoa
 {
-	std::unique_ptr<klib::Logging> EngineLogger::pLogger;
+	Solo_Ptr<klib::Logging> EngineLogger::pLogger;
 
-	void EngineLogger::SetLogLevelFromConfig()
+	void EngineLogger::SetMinimumLogLevelFromConfig()
 	{
 		const auto& globalConfig = configuration::GlobalConfig::Reference();
 		const auto logLevelRaw = globalConfig.Get<std::string>("Logging", "Level");
@@ -38,9 +38,9 @@ namespace krakoa
 		const auto dateStr = now.GetDate().ToString("mmm ddd yyyy");
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
 		
-		pLogger = std::make_unique<klib::Logging>(dir, filename, extension, name);
+		pLogger = Make_Solo<klib::Logging>(dir, filename, extension, name);
 
-		SetLogLevelFromConfig();
+		SetMinimumLogLevelFromConfig();
 		
 		pLogger->SetCacheMode(false);
 		pLogger->GetConsole().SetDebugStringOutput(true);

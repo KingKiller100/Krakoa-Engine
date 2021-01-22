@@ -6,6 +6,11 @@
 
 namespace krakoa::configuration
 {
+	namespace
+	{
+		constexpr auto g_CommentToken = '*';
+	}
+
 	ConfigFileParser::ConfigFileParser(const std::filesystem::path& path) noexcept
 	{
 		Read(path);
@@ -33,7 +38,12 @@ namespace krakoa::configuration
 
 		for (auto& line : lines)
 		{
-			if (line.empty() || line.front() == '*')
+			const auto commentPos = line.find(g_CommentToken);
+
+			if (commentPos != std::string::npos)
+				line.erase(commentPos);
+
+			if (klib::IsWhiteSpaceOrNull(line))
 				continue;
 
 			klib::Remove(line, ' ');
@@ -44,8 +54,8 @@ namespace krakoa::configuration
 				throw std::runtime_error("Bad line: \"" + line +
 					"\" source: \"" + path.string() + "\"");
 			}
-			
-			const auto key =  klib::ToLower(line.substr(0, colonPos));
+
+			const auto key = klib::ToLower(line.substr(0, colonPos));
 			const auto value = line.substr(colonPos + 1);
 
 			values.emplace(key, value);

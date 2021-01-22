@@ -49,6 +49,8 @@ namespace krakoa
 
 	void Keditor2DLayer::SetUpScene()
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		application.GetSceneManager().Add("Keditor2D");
 
 		scene = std::addressof(application.GetSceneManager().GetCurrentScene());
@@ -354,6 +356,8 @@ namespace krakoa
 
 	void Keditor2DLayer::UpdateViewport() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		auto& frameBuffer = application.GetFrameBuffer();
 		const auto& spec = frameBuffer.GetSpec();
 		const auto vp = ImGui::GetContentRegionAvail();
@@ -372,6 +376,8 @@ namespace krakoa
 
 	void Keditor2DLayer::RenderZoomControls() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		static constexpr Vector2f in(0.f, 1.f);
 		static constexpr Vector2f out(0.f, -1.f);
 
@@ -393,6 +399,8 @@ namespace krakoa
 
 	void Keditor2DLayer::RenderColourControls() const noexcept
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		ImGui::Begin("Geometry Colour Settings");
 		auto* colourArray = const_cast<float*>(geometryColour.GetPointerToData());
 		ImGui::ColorEdit4("Geometry Colour", colourArray, ImGuiColorEditFlags_None);

@@ -19,7 +19,7 @@ namespace krakoa
 		static void ShutDown();
 
 	private:
-		static void SetLogLevelFromConfig();
+		static void SetMinimumLogLevelFromConfig();
 		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pLogger;

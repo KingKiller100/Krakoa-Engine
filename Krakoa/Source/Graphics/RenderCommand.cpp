@@ -30,7 +30,9 @@ namespace krakoa::graphics
 	}
 
 	void RenderCommand::ShutDown()
-	{}
+	{
+		rendererAPI.reset();
+	}
 
 	void RenderCommand::OnWindowResize(const int x, const int y, const int width, const int height) noexcept
 	{

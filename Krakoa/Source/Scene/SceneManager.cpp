@@ -27,6 +27,8 @@ namespace krakoa::scene
 
 	void SceneManager::Add(const std::string_view& name)
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		auto* scene = new Scene(name, entityComponentSystem);
 		scenes[name.data()].reset(scene);
 		currentScene = name;
@@ -35,6 +37,8 @@ namespace krakoa::scene
 
 	bool SceneManager::Remove(const std::string_view& name)
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		const auto iter = scenes.find(name.data());
 		if (iter == scenes.end())
 			return false;
@@ -45,20 +49,24 @@ namespace krakoa::scene
 
 	void SceneManager::RemoveAll()
 	{
+		KRK_PROFILE_FUNCTION();
 		scenes.clear();
 	}
 
 	iScene& SceneManager::GetCurrentScene()
 	{
+		KRK_PROFILE_FUNCTION();
 		return *scenes.at(currentScene);
 	}
 
 	void SceneManager::LoadFromFile(const std::filesystem::path& path)
 	{
+		KRK_PROFILE_FUNCTION();
 	}
 
 	void SceneManager::OnUpdate(const float deltaTime)
 	{
+		KRK_PROFILE_FUNCTION();
 		auto& scene = GetCurrentScene();
 		scene.OnUpdate(deltaTime);
 		UpdateScriptEntities(scene, deltaTime);
@@ -67,6 +75,7 @@ namespace krakoa::scene
 
 	void SceneManager::UpdateScriptEntities(const iScene& scene, const float deltaTime) const
 	{
+		KRK_PROFILE_FUNCTION();
 		const auto scriptEntities
 			= entityComponentSystem->GetEntitiesWithComponents<NativeScriptComponent>();
 
@@ -87,6 +96,8 @@ namespace krakoa::scene
 
 	void SceneManager::RenderEntities(const iScene& scene) const
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		iCamera* camera = nullptr;
 		kmaths::TransformMatrix<float> cameraTransform = kmaths::GetTransformIdentity<float>();
 		

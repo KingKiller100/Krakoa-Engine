@@ -22,8 +22,8 @@ namespace krakoa::graphics
 		const auto api = iRendererAPI::API::FromString(klib::ToUpper(apiStr));
 
 		switch (api.ToEnum()) {
-		case iRendererAPI::API::OPENGL: rendererAPI.reset(new OpenGLRendererAPI()); break;
-		case iRendererAPI::API::NONE: 
+		case iRendererAPI::API::OPENGL: rendererAPI = Make_Solo<OpenGLRendererAPI>(); break;
+		case iRendererAPI::API::NONE:
 		default: KRK_FATAL("Rendering api must be set!"); // Temp 'til we figure out how to do headless mode
 			break;
 		}

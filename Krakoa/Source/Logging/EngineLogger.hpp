@@ -20,6 +20,7 @@ namespace krakoa
 
 	private:
 		static void SetMinimumLogLevelFromConfig();
+		static void RemoveOldFile(const std::filesystem::path& fileToDelete);
 		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pLogger;

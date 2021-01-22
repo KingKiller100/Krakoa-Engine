@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "SceneRuntimeState.hpp"
  #include "Entity/EntityComponentSystem.hpp"
 
 #include "../Core/PointerTypes.hpp"
@@ -11,7 +12,7 @@
 
 namespace krakoa::scene
 {
-	enum struct RuntimeState;
+	ENUM_STRUCT_FWD_DCL(SceneRuntimeState);
 	class iScene;
 	
 	struct PendingScene
@@ -30,7 +31,8 @@ namespace krakoa::scene
 		bool Remove(const std::string_view& name);
 		void RemoveAll();
 
-		void SetRuntimeState(RuntimeState state);
+		SceneRuntimeState GetRuntimeState() const;
+		void SetRuntimeState(SceneRuntimeState state);
 		
 		iScene& GetCurrentScene();
 		
@@ -46,5 +48,6 @@ namespace krakoa::scene
 		std::vector<PendingScene> pendingScenes;
 
 		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
+		SceneRuntimeState runtimeState;
 	};
 }

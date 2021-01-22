@@ -168,10 +168,6 @@ namespace krakoa
 			auto& nsc = texturedEntity.AddComponent<NativeScriptComponent>();
 			nsc.Bind<ColourChangeScript>();
 			nsc.Bind<AnimateEntityScript>();
-			
-			auto& script = nsc.GetScript<AnimateEntityScript>();
-			script.SetMoveSpeed(2);
-			script.SetRotationSpeed(5);
 		}
 	}
 
@@ -184,6 +180,15 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
+		if (input::IsKeyPressed(input::KEY_P))
+		{
+			auto& sceneMan = application.GetSceneManager();
+			const auto newState = sceneMan.GetRuntimeState().Compare(scene::SceneRuntimeState::STOP
+				, scene::SceneRuntimeState::RUNNING
+				, scene::SceneRuntimeState::STOP
+			);
+			sceneMan.SetRuntimeState(newState);
+		}
 
 		if (isWindowFocused)
 			cameraController.OnUpdate(deltaTime);
@@ -195,6 +200,9 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
+		if (scene->GetRuntimeState() == scene::SceneRuntimeState::STOP)
+			return;
+		
 		{
 			KRK_PROFILE_SCOPE("Updating colour entity");
 
@@ -202,6 +210,9 @@ namespace krakoa
 
 			auto& script = colourEntity.GetComponent<NativeScriptComponent>();
 
+			if (!script.IsActive())
+				return;
+			
 			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 		}
 
@@ -211,6 +222,9 @@ namespace krakoa
 			const auto& textureEntity = scene->GetEntity("Textured");
 			auto& script = textureEntity.GetComponent<NativeScriptComponent>();
 
+			if (!script.IsActive())
+				return;
+			
 			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 		}
 	}

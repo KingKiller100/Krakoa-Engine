@@ -1,11 +1,13 @@
 ﻿#include "Precompile.hpp"
 #include "Scene.hpp"
 
+#include "SceneRuntimeState.hpp"
+
 #include "Entity/Components/TagComponent.hpp"
+#include "Entity/Components/NativeScriptComponent.hpp"
+
 #include "../Debug/Debug.hpp"
 #include "../Debug/Instrumentor.hpp"
-
-#include "Entity/Components/NativeScriptComponent.hpp"
 
 namespace krakoa::scene
 {
@@ -14,7 +16,7 @@ namespace krakoa::scene
 	Scene::Scene(const std::string_view& name, Multi_Ptr<EntityComponentSystem> ecs)
 		: name(name)
 		, entityComponentSystem(ecs)
-		, runtimeState(RuntimeState::STOP)
+		, runtimeState(nullptr)
 	{}
 
 	Scene::~Scene()
@@ -152,6 +154,11 @@ namespace krakoa::scene
 		UpdateScripts(deltaTime);
 	}
 
+	SceneRuntimeState Scene::GetRuntimeState() const
+	{
+		return *runtimeState;
+	}
+
 	void Scene::UpdateScripts(float deltaTime)
 	{
 		const auto scriptEntities
@@ -163,7 +170,7 @@ namespace krakoa::scene
 
 			auto& script = entity.GetComponent<components::NativeScriptComponent>();
 
-			if (runtimeState == RuntimeState::RUNNING)
+			if (*runtimeState == SceneRuntimeState::RUNNING)
 			{
 				if (!script.IsActive())
 				{
@@ -172,7 +179,7 @@ namespace krakoa::scene
 
 				script.InvokeUpdate(deltaTime);
 			}
-			else if (runtimeState == RuntimeState::STOP)
+			else if (*runtimeState == SceneRuntimeState::STOP)
 			{
 				if (script.IsActive())
 					script.InvokeDestroy();
@@ -180,7 +187,7 @@ namespace krakoa::scene
 		}
 	}
 
-	void Scene::SetRuntimeState(RuntimeState state)
+	void Scene::SetRuntimeState(SceneRuntimeState* state)
 	{
 		runtimeState = state;
 	}

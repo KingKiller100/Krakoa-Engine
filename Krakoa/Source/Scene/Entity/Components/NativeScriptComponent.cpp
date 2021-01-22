@@ -6,15 +6,26 @@ namespace krakoa::scene::ecs::components
 {
 	bool NativeScriptComponent::IsActive() const
 	{
-		return !scripts.empty() && scripts.begin()->second != nullptr;
+		if (scripts.empty())
+			return false;
+
+		for (auto& script : scripts)
+		{
+			if (script.second == nullptr)
+				return false;
+		}
+
+		return true;
 	}
 
 	void NativeScriptComponent::InvokeCreate(Entity* entity)
 	{
-		initScriptFunc();
+		for (const auto& func : initScriptFuncs)
+			func();
+		
 		SetEntity(entity);
 
-		for (auto& [id, script] : scripts)
+		for (const auto& [id, script] : scripts)
 			script->OnCreate();
 	}
 
@@ -22,8 +33,6 @@ namespace krakoa::scene::ecs::components
 	{
 		for (auto& [id, script] : scripts)
 			script->OnDestroy();
-
-		destroyScriptFunc();
 	}
 
 	void NativeScriptComponent::InvokeUpdate(float deltaTime)

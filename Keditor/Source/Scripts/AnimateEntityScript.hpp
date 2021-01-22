@@ -1,14 +1,12 @@
 ﻿#pragma once
 
-#include "ColourChangeScript.hpp"
-
 #include <Krakoa.hpp>
 
 #include <Maths/Vectors/Vector3.hpp>
 
 namespace krakoa
 {
-	class AnimateEntityScript final : public ColourChangeScript
+	class AnimateEntityScript final : public scene::ecs::ScriptEntity
 	{
 	public:
 		void SetMoveSpeed(float speed)
@@ -63,14 +61,14 @@ namespace krakoa
 
 		void UpdateRotation(float deltaTime)
 		{
-			degreesRotation = rotSpeed * deltaTime;
+			degreesRotation += rotSpeed * deltaTime;
 			transform->SetRotation(kmaths::ToRadians(degreesRotation));
 		}
 		
 	private:
 		scene::ecs::components::TransformComponent* transform = nullptr;
-		float moveSpeed = 0;
-		float rotSpeed = 0;
+		float moveSpeed = 2.f;
+		float rotSpeed = 5.f;
 		float degreesRotation = 0;
 	};
 }

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "iScene.hpp"
+
 #include "Entity/Entity.hpp"
 
 #include <string>
 #include <map>
-
 
 namespace krakoa::scene
 {
@@ -29,17 +29,17 @@ namespace krakoa::scene
 		void OnLoad() override;
 		void OnUpdate(float time) override;
 
-		void SetRuntimeState(RuntimeState state) override;
+		SceneRuntimeState GetRuntimeState() const override;
+		void SetRuntimeState(SceneRuntimeState* state) override;
 
 	protected:
 		[[nodiscard]] ecs::Entity& GetEntity(ecs::EntityUID id);
-
 		void UpdateScripts(float deltaTime);
-		
+
 	private:
 		std::string name;
 		std::map<std::string, ecs::Entity> entities;
 		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
-		RuntimeState runtimeState;
+		SceneRuntimeState* runtimeState;
 	};
 }

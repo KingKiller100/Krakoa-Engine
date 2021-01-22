@@ -15,13 +15,12 @@ namespace krakoa::configuration
 
 		~ConfigFileParser() noexcept;
 
-		const ConfigFileParser::DataMap& Retrieve() const;
-		const std::unordered_map<std::string, std::string>::mapped_type& RetrieveValue(
+		const DataMap& Retrieve() const;
+		const DataMap::mapped_type& RetrieveValue(
 			const DataMap::key_type& key) const;
 
 	private:
-		bool Read(const std::filesystem::path& path);
-		bool SkipLine(const std::string& line);
+		void Read(const std::filesystem::path& path);
 		
 	private:
 		std::unordered_map<std::string, std::string> values;

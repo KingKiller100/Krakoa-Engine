@@ -1,39 +1,29 @@
 ﻿#pragma once
-#include "Resources/iVertexArray.hpp"
 #include "iRendererAPI.hpp"
+#include "Resources/iVertexArray.hpp"
+#include "../Core/PointerTypes.hpp"
 
 namespace krakoa::graphics
 {
 	class RenderCommand
 	{
 	public:
-		inline static void Initialize()
-		{
-			rendererAPI->Initialize();
-		}
+		static void Initialize();
+		static void ShutDown();
 
-		inline static void OnWindowResize(const int x, const int y, const int width, const int height) noexcept
-		{
-			rendererAPI->SetViewport(x, y, width, height);
-		}
+		static void OnWindowResize(const int x, const int y, const int width, const int height) noexcept;
 
-		inline static void Clear()
-		{
-			rendererAPI->Clear(); 
-		}
+		static void Clear();
 
-		inline static void SetClearColour(const Colour& colour) 
-		{
-			rendererAPI->SetClearColour(colour);
-		}
+		static void SetClearColour(const Colour& colour);
 
-		inline static void DrawIndexed(const iVertexArray& vertexArray, uint32_t count = 0)
-		{
-			rendererAPI->DrawIndexed(vertexArray, count);
-		}
+		static void DrawIndexed(const iVertexArray& vertexArray, uint32_t count = 0);
 
 	private:
-		static iRendererAPI* rendererAPI;
+		static void CreateApi();
+		
+	private:
+		static Solo_Ptr<iRendererAPI> rendererAPI;
 	};
 	 
 

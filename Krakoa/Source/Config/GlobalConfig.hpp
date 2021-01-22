@@ -7,8 +7,8 @@
 
 #include <Utility/String/kStringTricks.hpp>
 
-#include <string>
 #include <filesystem>
+#include <string>
 #include <unordered_map>
 
 namespace krakoa::configuration
@@ -19,13 +19,11 @@ namespace krakoa::configuration
 		GlobalConfig(Token, const std::filesystem::path& parentPath);
 		~GlobalConfig() noexcept;
 
-		void Initialize();
-
 		template<typename T>
-		T Get(const std::string& context, const std::string& key)
+		T Get(const std::string& context, const std::string& key) const
 		{
-			auto& parser = parsers[context.data()];
-			const auto& valueStr = parser->RetrieveValue(key.data());
+			auto& parser = parsers.at(klib::ToLower(context));
+			const auto& valueStr = parser->RetrieveValue(klib::ToLower(key));
 
 			if constexpr (klib::type_trait::Is_String_V<T>)
 			{
@@ -50,7 +48,7 @@ namespace krakoa::configuration
 		}
 
 		template<typename T>
-		T TryGet(const std::string& context, const std::string& key, T defaultValue)
+		T TryGet(const std::string& context, const std::string& key, T defaultValue) const
 		{
 			try
 			{
@@ -62,6 +60,8 @@ namespace krakoa::configuration
 			}
 		}
 
+	private:
+		void Initialize();
 
 	private:
 		std::filesystem::path root;

@@ -6,6 +6,7 @@ namespace krakoa::graphics
 	class OpenGLRendererAPI : public iRendererAPI
 	{
 	public:
+		~OpenGLRendererAPI() override;
 		void Initialize() override;
 
 		void Clear() override;

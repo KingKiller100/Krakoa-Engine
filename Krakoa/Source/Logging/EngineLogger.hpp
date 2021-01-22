@@ -17,6 +17,9 @@ namespace krakoa
 		static void CoreInit(const std::string_view& initMsg);
 		static klib::kLogs::Logging& GetLogger();
 		static void ShutDown();
+
+	private:
+		static void SetLogLevelFromConfig();
 		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pLogger;

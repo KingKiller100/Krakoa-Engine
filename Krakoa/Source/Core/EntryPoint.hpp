@@ -3,10 +3,12 @@
 #ifdef KRAKOA_TEST
 #	include "Tests/TestDriver.hpp"
 #else
-#	include "../Debug/Instrumentor.hpp"
-#	include "../Config/GlobalConfig.hpp"
 #	include "Application.hpp"
 #	include "PointerTypes.hpp"
+
+#	include "../Debug/Instrumentor.hpp"
+#	include "../Config/GlobalConfig.hpp"
+
 #	include <memory>
 #	include <filesystem>
 
@@ -25,36 +27,33 @@ int main(int argc, char** argv)
 {
 	klib::kLocale::SetLocale("");
 	klib::kCalendar::UsePlatformCalendarInfoSource();
-	
+
 	memory::HeapFactory::Initialize();
 	Launch();
 	memory::HeapFactory::ReportMemoryLeaks();
 	memory::HeapFactory::ShutDown();
-	
+
 	return EXIT_SUCCESS;
 }
 
 inline void Launch()
 {
 	using namespace krakoa;
-	
+
 	klib::kDebug::IsDebuggerAttached("DebugPlease");
-	
+
 #ifdef KRAKOA_TEST
 	krakoa::tests::TestDriver::Initialize();
 	krakoa::tests::TestDriver::RunAll();
 	krakoa::tests::TestDriver::ShutDown();
 #else
 
-	KRK_INIT_LOGS("");
-	KRK_SET_LOG_MIN(KRK_LOG_LVL_NRM);
-	
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\Krakoa\\";
-	krakoa::configuration::GlobalConfig::Create(cwd);
+	configuration::GlobalConfig::Create(cwd);
 	auto globalConfig = krakoa::Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
 
-	const auto logLevelRaw = globalConfig->TryGet<std::string>("Logging", "Level", "NONE");
-	
+	KRK_INIT_LOGS("");
+
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 	krakoa::CreateApplication();
 	auto pApp = std::unique_ptr<krakoa::Application>(krakoa::Application::Pointer());

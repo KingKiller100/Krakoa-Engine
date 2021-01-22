@@ -22,11 +22,16 @@ namespace krakoa::graphics
 			std::string_view glRenderer;
 			std::string_view glfwVersion;
 			std::string_view imGuiVersion;
-		} rendererInfo;
+		} g_RendererInfo;
 	}
+
+	OpenGLRendererAPI::~OpenGLRendererAPI()
+		= default;
 
 	void OpenGLRendererAPI::Initialize()
 	{
+		api = API::OPENGL;
+
 		InitRendererInfo();
 		OutputRenderingArchitecture();
 
@@ -67,11 +72,11 @@ namespace krakoa::graphics
 
 	void OpenGLRendererAPI::InitRendererInfo() noexcept
 	{
-		rendererInfo.glVersion = REINTERPRET(const char*, glGetString(GL_VERSION));
-		rendererInfo.glVendor = REINTERPRET(const char*, glGetString(GL_VENDOR));
-		rendererInfo.glRenderer = REINTERPRET(const char*, glGetString(GL_RENDERER));
-		rendererInfo.glfwVersion = glfwGetVersionString();
-		rendererInfo.imGuiVersion = IMGUI_VERSION;
+		g_RendererInfo.glVersion = REINTERPRET(const char*, glGetString(GL_VERSION));
+		g_RendererInfo.glVendor = REINTERPRET(const char*, glGetString(GL_VENDOR));
+		g_RendererInfo.glRenderer = REINTERPRET(const char*, glGetString(GL_RENDERER));
+		g_RendererInfo.glfwVersion = glfwGetVersionString();
+		g_RendererInfo.imGuiVersion = IMGUI_VERSION;
 	}
 
 
@@ -80,12 +85,12 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		// Rendering hardware info
-		KRK_INF("API: OpenGL");
-		KRK_INF(klib::ToString("Version: {0}", rendererInfo.glVersion));
-		KRK_INF(klib::ToString("Vendor: {0}", rendererInfo.glVendor));
-		KRK_INF(klib::ToString("Hardware: {0}", rendererInfo.glRenderer));
-		KRK_INF(klib::ToString("GLFW Version: {0}", rendererInfo.glfwVersion));
-		KRK_INF(klib::ToString("ImGui Version: {0}", rendererInfo.imGuiVersion));
+		KRK_INF(klib::ToString("API: {0}", api.ToString()));
+		KRK_INF(klib::ToString("Version: {0}", g_RendererInfo.glVersion));
+		KRK_INF(klib::ToString("Vendor: {0}", g_RendererInfo.glVendor));
+		KRK_INF(klib::ToString("Hardware: {0}", g_RendererInfo.glRenderer));
+		KRK_INF(klib::ToString("GLFW Version: {0}", g_RendererInfo.glfwVersion));
+		KRK_INF(klib::ToString("ImGui Version: {0}", g_RendererInfo.imGuiVersion));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const Colour& colour)

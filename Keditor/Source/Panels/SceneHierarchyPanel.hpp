@@ -9,11 +9,7 @@ namespace krakoa::panels
 	{
 	public:
 		SceneHierarchyPanel();
-		void SetContext();
 		void OnRender();
-		
-	private:
-		Multi_Ptr<scene::iScene> context;
 	};
 	
 }

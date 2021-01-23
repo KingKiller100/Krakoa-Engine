@@ -12,19 +12,7 @@ namespace krakoa::panels
 	using namespace scene::ecs::components;
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
-	{
-		SetContext();
-	}
-
-	void SceneHierarchyPanel::SetContext()
-	{
-		const auto& sceneMan = GetApp().GetSceneManager();
-
-		if (sceneMan.currentScene == sceneMan.scenes.end())
-			return;
-
-		context = sceneMan.currentScene->second;
-	}
+		= default;
 
 	void SceneHierarchyPanel::OnRender()
 	{
@@ -32,15 +20,16 @@ namespace krakoa::panels
 
 		const auto& sceneMan = GetApp().GetSceneManager();
 
-		if (sceneMan.currentScene != sceneMan.scenes.end())
+		if (sceneMan.HasActiveScene())
 		{
+			const auto& context = sceneMan.GetCurrentScene();
 			const auto& ecs = GetApp().GetSceneManager().entityComponentSystem;
 
 			const auto namedEntities = ecs->GetEntitiesWithComponents<TagComponent>();
 
 			for (auto id : namedEntities)
 			{
-				const auto& entity = context->GetEntity(id);
+				const auto& entity = context.GetEntity(id);
 				const auto& tag = entity.GetComponent<TagComponent>();
 				ImGui::Text("%s", tag.GetTag().data());
 			}

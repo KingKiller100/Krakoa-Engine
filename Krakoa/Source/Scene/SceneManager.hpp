@@ -38,14 +38,16 @@ namespace krakoa
 			bool Remove(const std::string_view& name);
 			void RemoveAll();
 
-			iScene& GetCurrentScene();
-			void SetCurrentScene(const std::string_view& name);
+			iScene& GetCurrentScene() const;
+			void SetCurrentScene(const std::string& name);
 
 			void LoadFromFile(const std::filesystem::path& path);
 			void OnUpdate(const float deltaTime);
 
-			friend class panels::SceneHierarchyPanel;
+			bool HasActiveScene() const;
 
+			friend class panels::SceneHierarchyPanel;
+			
 		private:
 			void RenderEntities(const iScene& scene) const;
 

@@ -62,15 +62,15 @@ namespace krakoa::scene
 		scenes.clear();
 	}
 
-	iScene& SceneManager::GetCurrentScene()
+	iScene& SceneManager::GetCurrentScene() const
 	{
 		KRK_PROFILE_FUNCTION();
 		return *currentScene->second;
 	}
 
-	void SceneManager::SetCurrentScene(const std::string_view& name)
+	void SceneManager::SetCurrentScene(const std::string& name)
 	{
-		
+		currentScene = scenes.find(name);
 	}
 
 	void SceneManager::LoadFromFile(const std::filesystem::path& path)
@@ -86,6 +86,11 @@ namespace krakoa::scene
 		scene.OnUpdate(deltaTime);
 
 		RenderEntities(scene);
+	}
+
+	bool SceneManager::HasActiveScene() const
+	{
+		return currentScene != scenes.end();
 	}
 
 	void SceneManager::RenderEntities(const iScene& scene) const

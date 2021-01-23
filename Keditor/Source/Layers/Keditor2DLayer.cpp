@@ -63,8 +63,6 @@ namespace krakoa
 		sceneMan.Add("Keditor2D");
 
 		scene = std::addressof(sceneMan.GetCurrentScene());
-
-		sceneHierarchyPanel.SetContext();
 		
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");

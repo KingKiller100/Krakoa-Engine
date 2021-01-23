@@ -4,12 +4,11 @@
  #include "Entity/EntityComponentSystem.hpp"
 
 #include "../Core/PointerTypes.hpp"
+#include "../Patterns/StateMachine.hpp"
 
 #include <filesystem>
 #include <unordered_map>
 #include <string>
-
-#include "../Patterns/StateMachine.hpp"
 
 
 namespace krakoa::scene

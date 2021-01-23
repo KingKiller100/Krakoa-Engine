@@ -17,6 +17,7 @@ namespace krakoa::input
 
 		// Keys
 		static bool IsKeyPressed(KeyCode keycode) noexcept;
+		static bool IsKeyReleased(KeyCode keycode) noexcept;
 
 		// Mouse
 		static float GetMousePosX() noexcept;
@@ -29,6 +30,7 @@ namespace krakoa::input
 
 		// Keys
 		USE_RESULT virtual bool IsKeyPressedImpl(KeyCode keycode) const noexcept = 0;
+		USE_RESULT virtual bool IsKeyReleasedImpl(KeyCode keycode) const noexcept = 0;
 
 		// Mouse
 		USE_RESULT virtual float GetMousePosXImpl() const noexcept = 0;

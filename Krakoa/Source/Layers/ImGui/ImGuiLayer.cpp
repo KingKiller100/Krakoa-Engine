@@ -81,8 +81,9 @@ namespace krakoa
 			return;
 
 		ImGuiIO& io = ImGui::GetIO();
-		auto handled = e.isHandled() | e.IsInCategory(events::E_C_MOUSE) & io.WantCaptureMouse;
-		handled |= e.isHandled() | e.IsInCategory(events::E_C_KEYBOARD) & io.WantCaptureKeyboard;
+		auto handled = e.isHandled();
+		handled |= e.IsInCategory(events::E_C_MOUSE) & io.WantCaptureMouse;
+		handled |= e.IsInCategory(events::E_C_KEYBOARD) & io.WantCaptureKeyboard;
 
 		e.SetHandled(handled);
 	}

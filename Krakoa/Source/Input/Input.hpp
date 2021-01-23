@@ -9,6 +9,7 @@ namespace krakoa::input
 {
 	// Keys
 	bool IsKeyPressed(KeyCode keycode) noexcept;
+	bool IsKeyReleased(KeyCode keycode) noexcept;
 
 	// Mouse
 	float GetMousePosX() noexcept;

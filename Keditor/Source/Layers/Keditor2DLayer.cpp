@@ -56,16 +56,16 @@ namespace krakoa
 	void Keditor2DLayer::SetUpScene()
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		application.GetSceneManager().Add("Keditor2D");
 
 		scene = std::addressof(application.GetSceneManager().GetCurrentScene());
 
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
-						
+
 			auto& cameraEntity = scene->AddEntity("Camera");
-			
+
 			const auto bounds = cameraController.GetBounds().GetWidth() / cameraController.GetBounds().GetHeight();
 			cameraEntity.AddComponent<CameraComponent>(
 				bounds,
@@ -77,7 +77,7 @@ namespace krakoa
 
 		{
 			KRK_PROFILE_SCOPE("Create coloured entity");
-			
+
 			auto& colourEntity = scene->AddEntity("Colour");
 
 			colourEntity.AddComponent<TransformComponent>(
@@ -164,7 +164,7 @@ namespace krakoa
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
 			texturedEntity.AddComponent<Appearance2DComponent>(*pSubTexture, colours::Invisible, 3.f);
-			
+
 			auto& nsc = texturedEntity.AddComponent<NativeScriptComponent>();
 			nsc.Bind<ColourChangeScript>();
 			nsc.Bind<AnimateEntityScript>();
@@ -180,14 +180,27 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (input::IsKeyPressed(input::KEY_P))
+		if (input::IsKeyPressed(input::KEY_LEFT_ALT))
 		{
 			auto& sceneMan = application.GetSceneManager();
-			const auto newState = sceneMan.GetState().Compare(scene::SceneRuntimeState::STOP
-				, scene::SceneRuntimeState::RUNNING
-				, scene::SceneRuntimeState::STOP
-			);
-			sceneMan.ChangeState(newState);
+			
+			if (input::IsKeyReleased(input::KEY_P))
+			{
+				const auto currentState = sceneMan.GetState();
+				if (currentState == scene::SceneRuntimeState::PLAY)
+				{
+					sceneMan.ChangeState(scene::SceneRuntimeState::PAUSE);
+				}
+				else
+				{
+					sceneMan.ChangeState(scene::SceneRuntimeState::PLAY);
+				}
+			}
+
+			if (input::IsKeyReleased(input::KEY_S))
+			{
+				application.GetSceneManager().ChangeState(scene::SceneRuntimeState::STOP);
+			}
 		}
 
 		if (isWindowFocused)
@@ -202,7 +215,7 @@ namespace krakoa
 
 		if (scene->GetRuntimeState() == scene::SceneRuntimeState::STOP)
 			return;
-		
+
 		{
 			KRK_PROFILE_SCOPE("Updating colour entity");
 
@@ -212,7 +225,7 @@ namespace krakoa
 
 			if (!script.IsActive())
 				return;
-			
+
 			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 		}
 
@@ -224,7 +237,7 @@ namespace krakoa
 
 			if (!script.IsActive())
 				return;
-			
+
 			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 		}
 	}
@@ -250,8 +263,8 @@ namespace krakoa
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
-			| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
-			| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+				| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+				| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
 
 		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
@@ -297,7 +310,7 @@ namespace krakoa
 
 			isWindowFocused = ImGui::IsWindowFocused();
 			isWindowHovered = ImGui::IsWindowHovered();
-			
+
 			UpdateViewport();
 
 			auto& frameBuffer = GetApp().GetFrameBuffer();
@@ -325,7 +338,7 @@ namespace krakoa
 	void Keditor2DLayer::UpdateViewport() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		auto& frameBuffer = application.GetFrameBuffer();
 		const auto& spec = frameBuffer.GetSpec();
 		const auto vp = ImGui::GetContentRegionAvail();
@@ -345,7 +358,7 @@ namespace krakoa
 	void Keditor2DLayer::RenderZoomControls() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		static constexpr Vector2f in(0.f, 1.f);
 		static constexpr Vector2f out(0.f, -1.f);
 
@@ -368,7 +381,7 @@ namespace krakoa
 	void Keditor2DLayer::RenderColourControls() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		ImGui::Begin("Geometry Colour Settings");
 		auto* colourArray = const_cast<float*>(geometryColour.GetPointerToData());
 		ImGui::ColorEdit4("Geometry Colour", colourArray, ImGuiColorEditFlags_None);

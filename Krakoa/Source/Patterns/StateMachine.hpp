@@ -24,6 +24,9 @@ namespace patterns
 
 		constexpr void ChangeState(const State_t& nextState)
 		{
+			if (nextState == currentState)
+				return;
+			
 			if (changeStateFunc != nullptr)
 				changeStateFunc(currentState, nextState);
 			currentState = nextState;

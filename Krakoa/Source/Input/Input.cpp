@@ -10,6 +10,11 @@ namespace krakoa::input
 		return InputManager::IsKeyPressed(keycode);
 	}
 
+	bool IsKeyReleased(KeyCode keycode) noexcept
+	{
+		return InputManager::IsKeyReleased(keycode);
+	}
+
 	float GetMousePosX() noexcept
 	{
 		return InputManager::GetMousePosX();

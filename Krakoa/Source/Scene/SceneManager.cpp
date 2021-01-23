@@ -16,12 +16,12 @@ namespace krakoa::scene
 
 	SceneManager::SceneManager()
 		: StateMachine(SceneRuntimeState::STOP, 
-			[](const SceneRuntimeState& current, const SceneRuntimeState& next)
+			[](const auto& current, const auto& next)
 			{
 				const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
 					current
 					, next);
-				KRK_DBG(msg);
+				KRK_INF(msg);
 			})
 		, entityComponentSystem(new ecs::EntityComponentSystem())
 	{}

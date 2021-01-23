@@ -12,6 +12,7 @@ namespace krakoa::input
 
 	protected:
 		USE_RESULT bool IsKeyPressedImpl(KeyCode keycode) const noexcept override;
+		USE_RESULT bool IsKeyReleasedImpl(KeyCode keycode) const noexcept override;
 
 		USE_RESULT bool IsMouseButtonPressedImpl(MouseCode button) const noexcept override;
 		USE_RESULT kmaths::Vector2f GetMousePositionImpl() const noexcept override;

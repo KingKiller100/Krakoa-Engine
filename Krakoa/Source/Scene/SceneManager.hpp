@@ -11,39 +11,50 @@
 #include <string>
 
 
-namespace krakoa::scene
+namespace krakoa
 {
-	class iScene;
-	
-	struct PendingScene
+	namespace panels
 	{
-		std::string name;
-		std::filesystem::path path;
-	};
+		class SceneHierarchyPanel;
+	}
 	
-	class SceneManager final : public patterns::StateMachine<SceneRuntimeState>
+	namespace scene
 	{
-	public:
-		SceneManager();
-		~SceneManager();
+		class iScene;
 
-		void Add(const std::string_view& name);
-		bool Remove(const std::string_view& name);
-		void RemoveAll();
-		
-		iScene& GetCurrentScene();
-		
-		void LoadFromFile(const std::filesystem::path& path);
-		void OnUpdate(const float deltaTime);
+		struct PendingScene
+		{
+			std::string name;
+			std::filesystem::path path;
+		};
 
-	private:
-		void RenderEntities(const iScene& scene) const;
-		
-	private:
-		std::unordered_map<std::string, Solo_Ptr<iScene>> scenes;
-		decltype(scenes)::key_type currentScene;
-		std::vector<PendingScene> pendingScenes;
+		class SceneManager final : public patterns::StateMachine<SceneRuntimeState>
+		{
+		public:
+			SceneManager();
+			~SceneManager();
 
-		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
-	};
+			void Add(const std::string& name);
+			bool Remove(const std::string_view& name);
+			void RemoveAll();
+
+			iScene& GetCurrentScene();
+			void SetCurrentScene(const std::string_view& name);
+
+			void LoadFromFile(const std::filesystem::path& path);
+			void OnUpdate(const float deltaTime);
+
+			friend class panels::SceneHierarchyPanel;
+
+		private:
+			void RenderEntities(const iScene& scene) const;
+
+		private:
+			std::unordered_map<std::string, Multi_Ptr<iScene>> scenes;
+			decltype(scenes)::iterator currentScene;
+			std::vector<PendingScene> pendingScenes;
+
+			Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
+		};
+	}
 }

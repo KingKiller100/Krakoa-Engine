@@ -1,8 +1,6 @@
 ﻿#include "Precompile.hpp"
 #include "TagComponent.hpp"
 
-#include <Template/kTypeName.hpp>
-
 namespace krakoa::scene::ecs::components
 {
 	TagComponent::TagComponent(const std::string_view& tag)
@@ -30,10 +28,5 @@ namespace krakoa::scene::ecs::components
 	void TagComponent::SetTag(const std::string_view& tag)
 	{
 		tagName = tag;
-	}
-
-	const char* TagComponent::GetType() const noexcept
-	{
-		return klib::GetTypeName<TagComponent>();
 	}
 }

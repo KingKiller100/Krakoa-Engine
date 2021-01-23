@@ -8,6 +8,9 @@
 
 #include <Maths/Vectors/Vector4.hpp>
 
+#include "../Panels/SceneHierarchyPanel.hpp"
+
+
 #include "Scene/Scene.hpp"
 
 namespace krakoa
@@ -55,5 +58,7 @@ namespace krakoa
 
 		bool isWindowFocused;
 		bool isWindowHovered;
+
+		panels::SceneHierarchyPanel sceneHierarchyPanel;
 	};
 }

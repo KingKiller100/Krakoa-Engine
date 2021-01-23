@@ -5,7 +5,12 @@ namespace krakoa::scene::ecs
 {
 	ScriptEntity::~ScriptEntity()
 		= default;
-	
+
+	EntityUID ScriptEntity::GetEntityID() const
+	{
+		return pEntity->GetID();
+	}
+
 	bool ScriptEntity::IsActive() const
 	{
 		return pEntity->IsActive();

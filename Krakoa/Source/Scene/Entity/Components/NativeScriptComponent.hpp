@@ -25,7 +25,8 @@ namespace krakoa::scene
 			{
 				KRK_ASSERT(!HadScript<Script>()
 					, klib::ToString("This script is already registered to this entity: {0}",
-						util::GetTypeNameNoNamespace<Script>()));
+						util::GetTypeNameNoNamespace<Script>())
+				);
 
 				scripts.emplace(GetUniqueID<Script>(), nullptr);
 

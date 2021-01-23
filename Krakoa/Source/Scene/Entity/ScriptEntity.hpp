@@ -13,7 +13,9 @@ namespace krakoa::scene::ecs
 		virtual ~ScriptEntity();
 		
 		friend class components::NativeScriptComponent;
-		
+
+		EntityUID GetEntityID() const;
+
 	protected:
 		template<typename Component, typename ...Args>
 		auto& AddComponent(Args&& ...params) const

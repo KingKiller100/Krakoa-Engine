@@ -57,10 +57,15 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		application.GetSceneManager().Add("Keditor2D");
+		auto& sceneMan =
+			application.GetSceneManager();
+		
+		sceneMan.Add("Keditor2D");
 
-		scene = std::addressof(application.GetSceneManager().GetCurrentScene());
+		scene = std::addressof(sceneMan.GetCurrentScene());
 
+		sceneHierarchyPanel.SetContext();
+		
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
 
@@ -309,6 +314,10 @@ namespace krakoa
 			ImGui::EndMenuBar();
 		}
 
+		{
+			sceneHierarchyPanel.OnRender();
+		}
+		
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 			ImGui::Begin("Editor");

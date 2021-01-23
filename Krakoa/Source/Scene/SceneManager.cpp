@@ -16,13 +16,14 @@ namespace krakoa::scene
 
 	SceneManager::SceneManager()
 		: StateMachine(SceneRuntimeState::STOP, 
-			[](const auto& current, const auto& next)
-			{
-				const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
-					current
-					, next);
-				KRK_INF(msg);
-			})
+		     [](const auto& current, const auto& next)
+		     {
+			 const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
+			 current
+			 , next);
+			 KRK_INF(msg);
+		     })
+		, currentScene(scenes.end())
 		, entityComponentSystem(new ecs::EntityComponentSystem())
 	{}
 
@@ -32,14 +33,14 @@ namespace krakoa::scene
 		entityComponentSystem->RemoveAllEntities();
 	}
 
-	void SceneManager::Add(const std::string_view& name)
+	void SceneManager::Add(const std::string& name)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		auto* scene = new Scene(name, entityComponentSystem);
-		scenes[name.data()].reset(scene);
+		scenes[name].reset(scene);
 		scene->SetRuntimeState((State_t*)std::addressof(GetState()));
-		currentScene = name;
+		currentScene = scenes.find(name);
 		scene->OnLoad();
 	}
 
@@ -64,7 +65,12 @@ namespace krakoa::scene
 	iScene& SceneManager::GetCurrentScene()
 	{
 		KRK_PROFILE_FUNCTION();
-		return *scenes.at(currentScene);
+		return *currentScene->second;
+	}
+
+	void SceneManager::SetCurrentScene(const std::string_view& name)
+	{
+		
 	}
 
 	void SceneManager::LoadFromFile(const std::filesystem::path& path)

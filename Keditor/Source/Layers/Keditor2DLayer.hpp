@@ -37,6 +37,8 @@ namespace krakoa
 
 		void SetUpScene();
 
+		void ToggleScenePlayState() const;
+		
 	private:
 		Application& application;
 		

@@ -180,34 +180,39 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (input::IsKeyPressed(input::KEY_LEFT_ALT))
-		{
-			auto& sceneMan = application.GetSceneManager();
-			
-			if (input::IsKeyReleased(input::KEY_P))
-			{
-				const auto currentState = sceneMan.GetState();
-				if (currentState == scene::SceneRuntimeState::PLAY)
-				{
-					sceneMan.ChangeState(scene::SceneRuntimeState::PAUSE);
-				}
-				else
-				{
-					sceneMan.ChangeState(scene::SceneRuntimeState::PLAY);
-				}
-			}
-
-			if (input::IsKeyReleased(input::KEY_S))
-			{
-				application.GetSceneManager().ChangeState(scene::SceneRuntimeState::STOP);
-			}
-		}
+		ToggleScenePlayState();
 
 		if (isWindowFocused)
 			cameraController.OnUpdate(deltaTime);
 
 		UpdateEntities();
 	}
+
+	void Keditor2DLayer::ToggleScenePlayState() const
+	{
+		if (input::IsKeyPressed(input::KEY_LEFT_ALT))
+		{
+			auto& sceneMan = application.GetSceneManager();
+
+			if (input::IsKeyReleased(input::KEY_P))
+			{
+				const auto currentState = sceneMan.GetState();
+
+				sceneMan.ChangeState(
+					currentState.Compare(
+						scene::SceneRuntimeState::PLAY
+						, scene::SceneRuntimeState::PAUSE
+						, scene::SceneRuntimeState::PLAY)
+				);
+			}
+
+			if (input::IsKeyReleased(input::KEY_S))
+			{
+				sceneMan.ChangeState(scene::SceneRuntimeState::STOP);
+			}
+		}
+	}
+
 
 	void Keditor2DLayer::UpdateEntities() const noexcept
 	{

@@ -59,11 +59,11 @@ namespace krakoa
 
 		auto& sceneMan =
 			application.GetSceneManager();
-		
+
 		sceneMan.Add("Keditor2D");
 
 		scene = std::addressof(sceneMan.GetCurrentScene());
-		
+
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
 
@@ -223,28 +223,21 @@ namespace krakoa
 			return;
 
 		{
-			KRK_PROFILE_SCOPE("Updating colour entity");
+			KRK_PROFILE_SCOPE("Updating entity's \"ColourChangeScript\" component");
 
-			const auto& colourEntity = scene->GetEntity("Colour");
+			scene->ForEach([&](const scene::ecs::Entity& entity)
+			{
+				if (!entity.HasComponent<NativeScriptComponent>())
+					return;
 
-			auto& script = colourEntity.GetComponent<NativeScriptComponent>();
+				auto& script = entity.GetComponent<NativeScriptComponent>();
 
-			if (!script.IsActive())
-				return;
+				if (!script.IsActive()
+					|| !script.HasScript<ColourChangeScript>())
+					return;
 
-			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
-		}
-
-		{
-			KRK_PROFILE_SCOPE("Updating texture entity");
-
-			const auto& textureEntity = scene->GetEntity("Textured");
-			auto& script = textureEntity.GetComponent<NativeScriptComponent>();
-
-			if (!script.IsActive())
-				return;
-
-			script.GetScript<ColourChangeScript>().SetColour(geometryColour);
+				script.GetScript<ColourChangeScript>().SetColour(geometryColour);
+			});
 		}
 	}
 
@@ -313,7 +306,7 @@ namespace krakoa
 		{
 			sceneHierarchyPanel.OnRender();
 		}
-		
+
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 			ImGui::Begin("Editor");

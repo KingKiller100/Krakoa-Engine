@@ -5,7 +5,7 @@
 #include "Entity/Entity.hpp"
 
 #include <string>
-#include <map>
+#include <vector>
 
 namespace krakoa::scene
 {
@@ -15,17 +15,17 @@ namespace krakoa::scene
 		Scene(const std::string_view& name, Multi_Ptr<ecs::EntityComponentSystem> ecs);
 		~Scene();
 
-		ecs::Entity& AddEntity(const std::string& entityName) override;
+		ecs::Entity& AddEntity(const std::string& tag) override;
 
-		const EntityMap& GetEntities() const override;
+		void ForEach(const EntityForEachFunc& func) const override;
 	
-		[[nodiscard]] const ecs::Entity& GetEntity(const std::string& entityName) const override;
+		[[nodiscard]] const ecs::Entity& GetEntity(const std::string& eName) const override;
 		[[nodiscard]] const ecs::Entity& GetEntity(ecs::EntityUID id) const override;
 
-		bool HasEntity(const std::string& entityName) const override;
+		bool HasEntity(const std::string& eName) const override;
 		bool HasEntity(const ecs::EntityUID eid) const override;
 		
-		bool RemoveEntity(const std::string& entityName) override;
+		bool RemoveEntity(const std::string& eName) override;
 		bool RemoveEntity(const ecs::Entity& entity) override;
 		
 		void OnLoad() override;
@@ -40,7 +40,7 @@ namespace krakoa::scene
 
 	private:
 		std::string name;
-		EntityMap entities;
+		std::vector<ecs::Entity> entities;
 		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
 		SceneRuntimeState* runtimeState;
 	};

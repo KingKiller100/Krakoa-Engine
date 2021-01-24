@@ -12,7 +12,7 @@ namespace krakoa::panels
 		void OnRender();
 
 	private:
-		void DrawEntityNode(const std::string& name, const scene::ecs::Entity& entity);
+		void DrawEntityNode(const scene::ecs::Entity& entity);
 		void DrawComponentNode(const scene::ecs::Entity& entity);
 		
 	private:

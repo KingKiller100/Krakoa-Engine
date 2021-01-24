@@ -1,6 +1,10 @@
 ﻿#include "Precompile.hpp"
 #include "EntityComponentSystem.hpp"
 
+#include "../../Debug/Debug.hpp"
+
+#include <Utility/String/kToString.hpp>
+
 namespace krakoa::scene::ecs
 {
 	EntityComponentSystem::EntityComponentSystem()
@@ -38,6 +42,9 @@ namespace krakoa::scene::ecs
 	{
 		KRK_PROFILE_FUNCTION();
 
+		if (id.IsNull())
+			return;
+		
 		KRK_DBG(klib::ToString("Removing entity id \"{0}\"", id));
 
 		RemoveAllComponents(id);
@@ -88,6 +95,9 @@ namespace krakoa::scene::ecs
 		{
 			++nextFreeID;
 		}
+
+		KRK_ASSERT(!nextFreeID.IsNull(),
+			"Invalid entity id generated");
 
 		return nextFreeID++;
 	}

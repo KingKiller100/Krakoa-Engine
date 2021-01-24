@@ -12,6 +12,7 @@
 namespace krakoa::scene
 {
 	using namespace ecs;
+	using namespace components;
 
 	Scene::Scene(const std::string_view& name, Multi_Ptr<EntityComponentSystem> ecs)
 		: name(name)
@@ -26,34 +27,41 @@ namespace krakoa::scene
 		entities.clear();
 	}
 
-	Entity& Scene::AddEntity(const std::string& entityName)
+	Entity& Scene::AddEntity(const std::string& tag)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_ASSERT(!HasEntity(entityName),
-			"Entity \"" + entityName + "\" already exists in scene \"" + name + "\"");
+		KRK_ASSERT(!HasEntity(tag),
+			"Entity \"" + tag + "\" already exists in scene \"" + name + "\"");
 
-		auto pair = entities.emplace(entityName, entityComponentSystem);
-		auto& entity = pair.first->second;
-		//entity.AddComponent<components::TagComponent>(entityName);
+		auto& entity = entities.emplace_back(entityComponentSystem);
+		entity.AddComponent<components::TagComponent>(tag);
 
 		KRK_DBG(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name
-			, entityName
+			, tag
 			, entity.GetID()
 		));
-		
+
 		return entity;
 	}
 
-	const Scene::EntityMap& Scene::GetEntities() const
+	void Scene::ForEach(const EntityForEachFunc& func) const
 	{
-		return entities;
+		for (const auto& entity : entities)
+		{
+			func(entity);
+		}
 	}
 
-	bool Scene::HasEntity(const std::string& entityName) const
+	bool Scene::HasEntity(const std::string& eName) const
 	{
-		return entities.find(entityName) != entities.end();
+		const auto iter = std::find_if(entities.begin(), entities.end(),
+			[&eName](const decltype(entities)::value_type& entity)
+			{
+				return entity.GetComponent<TagComponent>().GetTag() == eName;
+			});
+		return iter != entities.end();
 	}
 
 
@@ -61,25 +69,31 @@ namespace krakoa::scene
 	{
 		if (EntityUID{} == eid)
 			return false;
-		
+
 		const auto iter = std::find_if(entities.begin(), entities.end(),
-			[eid](const decltype(entities)::value_type& pair)
+			[&eid](const decltype(entities)::value_type& entity)
 			{
-				return pair.second.GetID() == eid;
+				return entity.GetID() == eid;
 			});
 
 		return iter != entities.end();
 	}
 
 
-	const Entity& Scene::GetEntity(const std::string& entityName) const
+	const Entity& Scene::GetEntity(const std::string& eName) const
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_ASSERT(HasEntity(entityName),
-			"Entity \"" + entityName + "\" already exists in scene \"" + name + "\"");
+		const auto iter = std::find_if(entities.begin(), entities.end(),
+			[&eName](const decltype(entities)::value_type& entity)
+			{
+				return entity.GetComponent<TagComponent>().GetTag() == eName;
+			});
 
-		return entities.at(entityName);
+		KRK_ASSERT(iter != entities.end(),
+			"Entity \"" + eName + "\" does not exists in scene \"" + name + "\"");
+
+		return *iter;
 	}
 
 	const Entity& Scene::GetEntity(EntityUID id) const
@@ -87,12 +101,16 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		const auto iter = std::find_if(entities.begin(), entities.end(),
-			[id](const decltype(entities)::value_type& pair)
+			[&id](const decltype(entities)::value_type& entity)
 			{
-				return pair.second.GetID() == id;
+				return entity.GetID() == id;
 			});
 
-		return iter->second;
+		KRK_ASSERT(iter != entities.end(),
+			klib::ToString("Entity \"{0}\" does not exists in scene \"" + name + "\"", id)
+		);
+
+		return *iter;
 	}
 
 	ecs::Entity& Scene::GetEntity(ecs::EntityUID id)
@@ -100,20 +118,24 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		const auto iter = std::find_if(entities.begin(), entities.end(),
-			[id](const decltype(entities)::value_type& pair)
+			[&id](const decltype(entities)::value_type& entity)
 			{
-				return pair.second.GetID() == id;
+				return entity.GetID() == id;
 			});
 
-		return iter->second;
+		KRK_ASSERT(iter != entities.end(),
+			klib::ToString("Entity \"{0}\" does not exists in scene \"" + name + "\"", id)
+		);
+
+		return *iter;
 	}
 
-	bool Scene::RemoveEntity(const std::string& entityName)
+	bool Scene::RemoveEntity(const std::string& eName)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		{
-			auto& entity = GetEntity(entityName);
+			auto& entity = GetEntity(eName);
 			if (entity.HasComponent<components::NativeScriptComponent>())
 			{
 				auto& script = entity.GetComponent<components::NativeScriptComponent>();
@@ -125,7 +147,12 @@ namespace krakoa::scene
 			}
 		}
 
-		const auto iter = entities.find(entityName);
+		const auto iter = std::find_if(entities.begin(), entities.end(),
+			[&eName](const decltype(entities)::value_type& entity)
+			{
+				return entity.GetComponent<TagComponent>().GetTag() == eName;
+			});
+
 		if (iter == entities.end())
 			return false;
 
@@ -149,11 +176,14 @@ namespace krakoa::scene
 			}
 		}
 
-		entities.erase(std::find_if(entities.begin(), entities.end()
-			, [entity](const decltype(entities)::value_type& pair)
-			{
-				return pair.second == entity;
-			}));
+		const auto iter = std::find(entities.begin(), entities.end(), entity);
+
+		KRK_ASSERT(iter != entities.end(),
+			klib::ToString("Entity \"{0}\" already exists in scene \"" + name + "\"", entity.GetID())
+		);
+
+		entities.erase(iter);
+		
 		return true;
 	}
 

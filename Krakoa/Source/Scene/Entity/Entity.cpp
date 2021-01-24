@@ -20,23 +20,26 @@ namespace krakoa::scene::ecs
 	{}
 
 	Entity::Entity(const Entity& other)
-		: id(other.id),
-		selected(false),
-		active(other.active),
-		manager(other.manager)
+		: id(other.id)
+		, selected(false)
+		, active(other.active)
+		, components(other.components)
+		, manager(other.manager)
 	{}
 
 	Entity::Entity(Entity&& other) noexcept
-		: id(std::move(other.id)),
-		selected(false),
-		active(std::move(other.active)),
-		manager(std::move(other.manager))
+		: id(std::move(other.id))
+		, selected(false)
+		, active(std::move(other.active))
+		, components(std::move(other.components))
+		, manager(std::move(other.manager))
 	{}
 
 	Entity& Entity::operator=(const Entity& other)
 	{
 		id = other.id;
 		selected = false;
+		components = other.components;
 		active = other.active;
 		manager = other.manager;
 		return *this;
@@ -46,6 +49,7 @@ namespace krakoa::scene::ecs
 	{
 		id = std::move(other.id);
 		selected = false;
+		components = std::move(other.components);
 		active = std::move(other.active);
 		manager = std::move(other.manager);
 		return *this;

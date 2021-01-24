@@ -41,12 +41,10 @@ namespace krakoa::panels
 
 			if (sceneMan.HasActiveScene())
 			{
-				std::uintptr_t index = 0;
-				const auto& entities = context.GetEntities();
-				for (const auto& [name, entity] : entities)
-				{
-					DrawEntityNode(name, entity);
-				}
+				context.ForEach([&](const scene::ecs::Entity& entity)
+					{
+						DrawEntityNode(entity);
+					});
 			}
 
 			if (ImGui::IsMouseDown(input::MOUSE_LEFT) && ImGui::IsWindowHovered())
@@ -57,8 +55,8 @@ namespace krakoa::panels
 
 
 		{
-			KRK_PROFILE_SCOPE("Properties Panel");
-			ImGui::Begin("Properties");
+			KRK_PROFILE_SCOPE("Components Panel");
+			ImGui::Begin("Components");
 
 			if (context.HasEntity(selectedEntityID))
 				DrawComponentNode(context.GetEntity(selectedEntityID));
@@ -67,7 +65,7 @@ namespace krakoa::panels
 		}
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(const std::string& name, const scene::ecs::Entity& entity)
+	void SceneHierarchyPanel::DrawEntityNode(const scene::ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -75,7 +73,9 @@ namespace krakoa::panels
 		const auto selected = selectedEntityID == eid ? ImGuiTreeNodeFlags_Selected : 0;
 		const ImGuiTreeNodeFlags flags = selected | ImGuiTreeNodeFlags_OpenOnArrow;
 
-		const bool opened = ImGui::TreeNodeEx((void*)eid, flags, "%s", name.data());
+		const auto& tag = entity.GetComponent<TagComponent>();
+
+		const bool opened = ImGui::TreeNodeEx((void*)eid, flags, "%s", tag.GetData());
 
 		if (ImGui::IsItemClicked(input::MOUSE_LEFT))
 		{
@@ -97,13 +97,18 @@ namespace krakoa::panels
 
 		if (entity.HasComponent<TagComponent>())
 		{
-			auto& tag = entity.GetComponent<TagComponent>();
-
-			char buffer[1 << 8];
-			std::strcpy(buffer, tag.GetData());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer) * sizeof(buffer[0])))
+			if (ImGui::TreeNodeEx((void*)util::GetTypeHash<TagComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
 			{
-				tag.SetTag(buffer);
+				auto& tag = entity.GetComponent<TagComponent>();
+
+				char buffer[1 << 8];
+				std::strcpy(buffer, tag.GetData());
+				if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+				{
+					tag.SetTag(buffer);
+				}
+				
+				ImGui::TreePop();
 			}
 		}
 

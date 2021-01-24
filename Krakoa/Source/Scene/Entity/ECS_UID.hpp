@@ -14,14 +14,58 @@ namespace krakoa::scene::ecs
 {
 	class EntityUID : klib::kTemplate::SimpleOperators<EntityUID>
 	{
-		static constexpr auto s_Null = std::numeric_limits<std::uint64_t>::max();
 	public:
 		using ID_t = std::uint64_t;
 
+		static constexpr auto s_Null = std::numeric_limits<ID_t>::max();
+
 	public:
-		constexpr EntityUID(std::uint64_t val = s_Null) noexcept
+		constexpr EntityUID(ID_t val = s_Null) noexcept
 			: id(val)
 		{}
+
+		constexpr EntityUID(const EntityUID&) = default;
+		constexpr EntityUID& operator=(const EntityUID&) = default;
+
+		constexpr EntityUID(EntityUID&& other) noexcept
+		{
+			*this = std::move(other);
+		}
+
+		constexpr EntityUID& operator=(EntityUID&& other) noexcept
+		{
+			if (std::addressof(other) != this)
+			{
+				id = std::move(other.id);
+				other.id = s_Null;
+			}
+
+			return *this;
+		}
+
+		~EntityUID() noexcept = default;
+		
+		void Nullify() noexcept;
+
+		bool IsNull() const noexcept;
+
+		ID_t GetValue() const;
+
+		template<typename T>
+		constexpr operator T() const noexcept
+		{
+			return static_cast<T>(GetValue());
+		}
+
+		template<typename T>
+		constexpr operator T* () const noexcept
+		{
+			return (T*)GetValue();
+		}
+
+		EntityUID Mask() const;
+
+		[[nodiscard]] std::string ToString() const noexcept;
 
 		ID_t operator++(int);
 
@@ -61,26 +105,8 @@ namespace krakoa::scene::ecs
 			return id > other.id;
 		}
 
-		ID_t GetValue() const;
-		
-		template<typename T>
-		constexpr operator T() const noexcept
-		{
-			return static_cast<T>(GetValue());
-		}
-		
-		template<typename T>
-		constexpr operator T*() const noexcept
-		{
-			return (T*)GetValue();
-		}
-		
-		EntityUID Mask() const;
-		
-		[[nodiscard]] std::string ToString() const noexcept;
-		
 	private:
-		std::uint64_t id;
+		ID_t id{ s_Null };
 	};
 
 

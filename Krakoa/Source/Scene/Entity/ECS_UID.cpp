@@ -25,6 +25,15 @@ namespace krakoa::scene::ecs
 		return --id;
 	}
 
+	void EntityUID::Nullify() noexcept
+	{
+		id = s_Null;
+	}
+
+	bool EntityUID::IsNull() const noexcept
+	{
+		return id == s_Null;
+	}
 
 	EntityUID::ID_t EntityUID::GetValue() const
 	{

@@ -23,7 +23,7 @@ namespace krakoa::scene
 			template<typename Script>
 			void Bind()
 			{
-				KRK_ASSERT(!HadScript<Script>()
+				KRK_ASSERT(!HasScript<Script>()
 					, klib::ToString("This script is already registered to this entity: \"{0}\"",
 						util::GetTypeNameNoNamespace<Script>())
 				);
@@ -34,7 +34,7 @@ namespace krakoa::scene
 					{
 						auto& script = scripts.at(GetUniqueID<Script>());
 
-					KRK_DBG(klib::ToString("Initialising script \"{0}\""
+						KRK_DBG(klib::ToString("Initialising script \"{0}\""
 							, util::GetTypeNameNoNamespace<Script>()
 						));
 
@@ -42,8 +42,10 @@ namespace krakoa::scene
 					});
 			}
 
-			template<typename Script>
-			Script& GetScript()
+			template<typename Script, class = std::enable_if_t<
+				std::is_base_of_v<ScriptEntity, Script>
+				>>
+				Script & GetScript() const
 			{
 				const auto uid = GetUniqueID<Script>();
 				auto& script = scripts.at(uid);
@@ -51,9 +53,15 @@ namespace krakoa::scene
 			}
 
 			template<typename Script>
-			bool IsScriptActive()
+			bool IsScriptActive() const
 			{
 				return !scripts.empty() && scripts.at(GetUniqueID<Script>()) != nullptr;
+			}
+
+			template<typename Script>
+			bool HasScript() const
+			{
+				return scripts.find(GetUniqueID<Script>()) != scripts.end();
 			}
 
 			bool IsActive() const;
@@ -66,13 +74,6 @@ namespace krakoa::scene
 			void InvokeUpdate(float deltaTime);
 
 			void SetEntity(Entity* entity);
-
-		private:
-			template<typename Script>
-			bool HadScript()
-			{
-				return scripts.find(GetUniqueID<Script>()) != scripts.end();
-			}
 
 		private:
 			std::unordered_map<ID_t, Solo_Ptr<ScriptEntity>> scripts;

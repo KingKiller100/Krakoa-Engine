@@ -46,6 +46,12 @@ namespace krakoa
 
 			bool HasActiveScene() const;
 
+			template<typename ...Components>
+			std::vector<ecs::EntityUID> GetEntitiesWithComponents()
+			{
+				return entityComponentSystem->GetEntitiesWithComponents<Components>();
+			}
+			
 			friend class panels::SceneHierarchyPanel;
 			
 		private:

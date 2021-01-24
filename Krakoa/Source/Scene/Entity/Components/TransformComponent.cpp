@@ -2,7 +2,7 @@
 #include "TransformComponent.hpp"
 
 #include "../../../Debug/Instrumentor.hpp"
-#include <Template/kTypeName.hpp>
+#include <Template/kTypeInfo.hpp>
 
 namespace krakoa::scene::ecs::components
 {

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/EngineMacros.hpp"
-#include <Template/kTypeName.hpp>
+#include <Template/kTypeInfo.hpp>
 #include <Utility/String/Tricks/kStringOperators.hpp>
 #include <string>
 
@@ -23,4 +22,11 @@ namespace util
 		const auto type = tn.substr(tn.find_last_of(Char_t(':')) + 1);
 		return structure + type;
 	}
+
+	template<typename T>
+	constexpr auto GetTypeHash() noexcept
+	{
+		return klib::GetTypeHashCode<T>();
+	}
+	
 }

@@ -70,5 +70,6 @@
 #include "Scene/Entity/Components/AppearanceComponent.hpp"
 #include "Scene/Entity/Components/NativeScriptComponent.hpp"
 
-#include "Util/TypeName.hpp"
+// Util
+#include "Util/TypeInfo.hpp"
 

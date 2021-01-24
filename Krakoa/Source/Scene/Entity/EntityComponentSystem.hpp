@@ -8,7 +8,7 @@
 #include "../../Logging/EngineLogger.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
-#include "../../Util/TypeName.hpp"
+#include "../../Util/TypeInfo.hpp"
 #include <unordered_map>
 #include <vector>
 

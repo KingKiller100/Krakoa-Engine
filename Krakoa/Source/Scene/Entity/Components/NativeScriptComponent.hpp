@@ -3,7 +3,7 @@
 #include "../ScriptEntity.hpp"
 
 #include "../../../Util/UniqueID.hpp"
-#include "../../../Util/TypeName.hpp"
+#include "../../../Util/TypeInfo.hpp"
 #include "../../../Debug/Debug.hpp"
 
 #include <Utility/String/kToString.hpp>

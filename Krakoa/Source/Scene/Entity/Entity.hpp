@@ -7,7 +7,7 @@
 
 #include <HelperMacros.hpp>
 #include <Template/kToImpl.hpp>
-#include <Template/kTypeName.hpp>
+#include <Template/kTypeInfo.hpp>
 #include <Utility/String/kToString.hpp>
 
 

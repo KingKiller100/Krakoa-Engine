@@ -11,6 +11,8 @@
 #include <Scene/Entity/Components/AppearanceComponent.hpp>
 #include <Scene/Entity/Components/NativeScriptComponent.hpp>
 
+#include <Util/TypeInfo.hpp>
+
 #include <Utility/Bits/kBitTricks.hpp>
 
 #include <ImGui/imgui.h>
@@ -22,7 +24,9 @@ namespace krakoa::panels
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 		: selectedEntityID(0)
-	{}
+	{
+		KRK_LOG("Editor", "Scene Hierarchy Created");
+	}
 
 	void SceneHierarchyPanel::OnRender()
 	{
@@ -49,6 +53,9 @@ namespace krakoa::panels
 
 			ImGui::End();
 		}
+
+		if (!context.HasEntity(selectedEntityID))
+			return;
 
 		{
 			KRK_PROFILE_SCOPE("Properties Panel");
@@ -103,16 +110,21 @@ namespace krakoa::panels
 
 		if (entity.HasComponent<TransformComponent>())
 		{
-			auto& transform = entity.GetComponent<TransformComponent>();
-			const auto& position = transform.GetPosition();
-			const auto& scale = transform.GetScale();
-			auto rotation = kmaths::ToDegrees(transform.GetRotation());
+			if (ImGui::TreeNodeEx((void*)util::GetTypeHash<TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			{
+				auto& transform = entity.GetComponent<TransformComponent>();
+				const auto& position = transform.GetPosition();
+				const auto& scale = transform.GetScale();
+				auto rotation = kmaths::ToDegrees(transform.GetRotation());
 
-			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
-			ImGui::DragFloat("Rotation", &rotation, 0.5f);
-			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
+				ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
+				ImGui::DragFloat("Rotation", &rotation, 0.5f);
+				ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
 
-			transform.SetRotation(kmaths::ToRadians(rotation));
+				transform.SetRotation(kmaths::ToRadians(rotation));
+
+				ImGui::TreePop();
+			}
 		}
 	}
 }

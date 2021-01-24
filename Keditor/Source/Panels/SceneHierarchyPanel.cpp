@@ -13,8 +13,6 @@
 
 #include <Util/TypeInfo.hpp>
 
-#include <Utility/Bits/kBitTricks.hpp>
-
 #include <ImGui/imgui.h>
 
 
@@ -25,7 +23,7 @@ namespace krakoa::panels
 	SceneHierarchyPanel::SceneHierarchyPanel()
 		: selectedEntityID(0)
 	{
-		KRK_LOG("Editor", "Scene Hierarchy Created");
+		KRK_LOG("Keditor", "Scene Hierarchy Created");
 	}
 
 	void SceneHierarchyPanel::OnRender()
@@ -51,17 +49,19 @@ namespace krakoa::panels
 				}
 			}
 
+			if (ImGui::IsMouseDown(input::MOUSE_LEFT) && ImGui::IsWindowHovered())
+				selectedEntityID = {};
+
 			ImGui::End();
 		}
 
-		if (!context.HasEntity(selectedEntityID))
-			return;
 
 		{
 			KRK_PROFILE_SCOPE("Properties Panel");
 			ImGui::Begin("Properties");
 
-			DrawComponentNode(context.GetEntity(selectedEntityID));
+			if (context.HasEntity(selectedEntityID))
+				DrawComponentNode(context.GetEntity(selectedEntityID));
 
 			ImGui::End();
 		}
@@ -85,9 +85,8 @@ namespace krakoa::panels
 		if (opened)
 		{
 			const ImGuiTreeNodeFlags subTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
-			auto maskedEID = eid;
-			klib::SetBit(maskedEID, (sizeof(eid) * 8) - 1);
-			ImGui::Text("id: %llu", eid);
+			auto maskedEID = eid.Mask();
+			ImGui::Text("id: %llu", eid.GetValue());
 			ImGui::TreePop();
 		}
 	}

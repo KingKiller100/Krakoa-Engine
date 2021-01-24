@@ -59,6 +59,9 @@ namespace krakoa::scene
 
 	bool Scene::HasEntity(const ecs::EntityUID eid) const
 	{
+		if (EntityUID{} == eid)
+			return false;
+		
 		const auto iter = std::find_if(entities.begin(), entities.end(),
 			[eid](const decltype(entities)::value_type& pair)
 			{

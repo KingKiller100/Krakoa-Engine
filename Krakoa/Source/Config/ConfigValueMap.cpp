@@ -12,11 +12,13 @@ namespace krakoa::configuration
 
 	ConfigValueMap::~ConfigValueMap() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		values.clear();
 	}
 
 	const ConfigValueMap::DataMap& ConfigValueMap::RetrieveMap() const
 	{
+		
 		return values;
 	}
 
@@ -28,6 +30,8 @@ namespace krakoa::configuration
 
 	ValueMap ConfigFileParser::ParseFile(const std::filesystem::path& path)
 	{
+		KRK_PROFILE_FUNCTION();
+		
 		ValueMap values;
 		
 		auto lines = klib::ReadFile(path.string());

@@ -50,13 +50,13 @@ inline void Launch()
 
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\Krakoa\\";
 	configuration::GlobalConfig::Create(cwd);
-	auto globalConfig = krakoa::Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
+	auto globalConfig = Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
 
 	KRK_INIT_LOGS("");
 
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
-	krakoa::CreateApplication();
-	auto pApp = std::unique_ptr<krakoa::Application>(krakoa::Application::Pointer());
+	CreateApplication();
+	auto pApp = Solo_Ptr<Application>(Application::Pointer());
 	pApp->Initialize();
 	KRK_PROFILE_SESSION_END();
 

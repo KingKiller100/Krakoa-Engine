@@ -1,10 +1,15 @@
 ﻿#include "SceneHierarchyPanel.hpp"
 
 #include <Core/Application.hpp>
+#include <Debug/Instrumentor.hpp>
 #include <Input/MouseButtonCode.hpp>
+
 #include <Scene/iScene.hpp>
 #include <Scene/Entity/Entity.hpp>
 #include <Scene/Entity/Components/TagComponent.hpp>
+#include <Scene/Entity/Components/TransformComponent.hpp>
+#include <Scene/Entity/Components/AppearanceComponent.hpp>
+#include <Scene/Entity/Components/NativeScriptComponent.hpp>
 
 #include <Utility/Bits/kBitTricks.hpp>
 
@@ -21,27 +26,44 @@ namespace krakoa::panels
 
 	void SceneHierarchyPanel::OnRender()
 	{
-		ImGui::Begin("Scene Hierarchy");
+		KRK_PROFILE_FUNCTION();
 
 		const auto& sceneMan = GetApp().GetSceneManager();
+		const auto& context = sceneMan.GetCurrentScene();
 
-		if (sceneMan.HasActiveScene())
 		{
-			const auto& context = sceneMan.GetCurrentScene();
+			KRK_PROFILE_SCOPE("Entities Panel");
 
-			std::uintptr_t index = 0;
-			const auto& entities = context.GetEntities();
-			for (const auto& [name, entity] : entities)
+			ImGui::Begin("Entities");
+
+
+			if (sceneMan.HasActiveScene())
 			{
-				DrawEntityNode(name, entity);
+				std::uintptr_t index = 0;
+				const auto& entities = context.GetEntities();
+				for (const auto& [name, entity] : entities)
+				{
+					DrawEntityNode(name, entity);
+				}
 			}
+
+			ImGui::End();
 		}
 
-		ImGui::End();
+		{
+			KRK_PROFILE_SCOPE("Properties Panel");
+			ImGui::Begin("Properties");
+
+			DrawComponentNode(context.GetEntity(selectedEntityID));
+
+			ImGui::End();
+		}
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(const std::string& name, const scene::ecs::Entity& entity)
 	{
+		KRK_PROFILE_FUNCTION();
+
 		const auto eid = entity.GetID();
 		const auto selected = selectedEntityID == eid ? ImGuiTreeNodeFlags_Selected : 0;
 		const ImGuiTreeNodeFlags flags = selected | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -65,6 +87,8 @@ namespace krakoa::panels
 
 	void SceneHierarchyPanel::DrawComponentNode(const scene::ecs::Entity& entity)
 	{
+		KRK_PROFILE_FUNCTION();
+
 		if (entity.HasComponent<TagComponent>())
 		{
 			auto& tag = entity.GetComponent<TagComponent>();
@@ -75,6 +99,18 @@ namespace krakoa::panels
 			{
 				tag.SetTag(buffer);
 			}
+		}
+
+		if (entity.HasComponent<TransformComponent>())
+		{
+			auto& transform = entity.GetComponent<TransformComponent>();
+			const auto& position = transform.GetPosition();
+			const auto& scale = transform.GetScale();
+			auto rotation = transform.GetRotation();
+			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.15f);
+			ImGui::DragFloat("Rotation", &rotation, 0.5f);
+			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.15f);
+			transform.SetRotation(rotation);
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../Debug/Instrumentor.hpp"
+
 #include <filesystem>
 #include <string>
 #include <unordered_map>
@@ -29,6 +31,8 @@ namespace krakoa::configuration
 		template<typename T>
 		T ReadAs(const std::string& key) const
 		{
+			KRK_PROFILE_FUNCTION();
+			
 			const auto& valueStr = RetrieveValue(klib::ToLower(key));
 
 			if constexpr (klib::type_trait::Is_String_V<T>)

@@ -12,11 +12,13 @@ namespace krakoa::configuration
 
 	GlobalConfig::~GlobalConfig() noexcept
 	{
+		KRK_PROFILE_FUNCTION();
 		configMap.clear();
 	}
 
 	void GlobalConfig::Initialize()
 	{
+		KRK_PROFILE_FUNCTION();
 		constexpr auto configFolder = "Config";
 		
 		const auto configPath = root / configFolder;
@@ -45,6 +47,7 @@ namespace krakoa::configuration
 
 	const ConfigValueMap& GlobalConfig::GetValueMap(const std::string& context) const
 	{
+		KRK_PROFILE_FUNCTION();
 		return *configMap.at(klib::ToLower(context));
 	}
 

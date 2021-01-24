@@ -39,4 +39,14 @@ namespace krakoa::scene::ecs::components
 	{
 		tagName = tag;
 	}
+
+	void TagComponent::Reserve(size_t size)
+	{
+		tagName.reserve(size);
+	}
+
+	void TagComponent::Resize(size_t size)
+	{
+		tagName.resize(size);
+	}
 }

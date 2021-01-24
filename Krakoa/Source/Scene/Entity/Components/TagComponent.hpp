@@ -19,6 +19,9 @@ namespace krakoa::scene::ecs::components
 		[[nodiscard]] char* GetData();
 		void SetTag(const std::string_view& tag);
 
+		void Reserve(size_t size);
+		void Resize(size_t size);
+
 	private:
 		std::string tagName;
 	};

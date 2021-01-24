@@ -5,6 +5,7 @@
 #include <fstream>
 #include <mutex>
 #include <string>
+#include <ctime>
 
 namespace krakoa
 {

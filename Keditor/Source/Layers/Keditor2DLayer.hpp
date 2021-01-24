@@ -59,6 +59,6 @@ namespace krakoa
 		bool isWindowFocused;
 		bool isWindowHovered;
 
-		panels::SceneHierarchyPanel sceneHierarchyPanel;
+		scene::panels::SceneHierarchyPanel sceneHierarchyPanel;
 	};
 }

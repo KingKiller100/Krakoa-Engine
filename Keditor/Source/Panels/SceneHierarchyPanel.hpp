@@ -3,7 +3,9 @@
 #include <Core/PointerTypes.hpp>
 #include <Scene/iScene.hpp>
 
-namespace krakoa::panels
+#include "iScenePanel.hpp"
+
+namespace krakoa::scene::panels
 {
 	class SceneHierarchyPanel
 	{
@@ -16,7 +18,8 @@ namespace krakoa::panels
 		void DrawComponentNode(const scene::ecs::Entity& entity);
 		
 	private:
-		scene::ecs::EntityUID selectedEntityID;
+		Multi_Ptr<ecs::EntityUID> selectedEntityID;
+		std::vector<Solo_Ptr<iScenePanel>> panels;
 	};
 	
 }

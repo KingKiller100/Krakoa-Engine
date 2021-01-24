@@ -62,4 +62,19 @@ namespace krakoa::panels
 			ImGui::TreePop();
 		}
 	}
+
+	void SceneHierarchyPanel::DrawComponentNode(const scene::ecs::Entity& entity)
+	{
+		if (entity.HasComponent<TagComponent>())
+		{
+			auto& tag = entity.GetComponent<TagComponent>();
+
+			char buffer[1 << 8];
+			std::strcpy(buffer, tag.GetData());
+			if (ImGui::InputText("Tag", buffer, sizeof(buffer) * sizeof(buffer[0])))
+			{
+				tag.SetTag(buffer);
+			}
+		}
+	}
 }

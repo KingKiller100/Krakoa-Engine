@@ -12,7 +12,7 @@ namespace krakoa::configuration
 
 	GlobalConfig::~GlobalConfig() noexcept
 	{
-		parsers.clear();
+		configMap.clear();
 	}
 
 	void GlobalConfig::Initialize()
@@ -39,7 +39,17 @@ namespace krakoa::configuration
 
 			const auto filename = klib::ToLower(path.stem().string());
 			
-			parsers.emplace(filename, Make_Solo<ConfigFileParser>(path));
+			configMap.emplace(filename, Make_Solo<ConfigValueMap>(path));
 		}
+	}
+
+	const ConfigValueMap& GlobalConfig::GetValueMap(const std::string& context) const
+	{
+		return *configMap.at(klib::ToLower(context));
+	}
+
+	GlobalConfig& GetGlobalConfig()
+	{
+		return GlobalConfig::Reference();
 	}
 }

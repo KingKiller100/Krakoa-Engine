@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ConfigFileParser.hpp"
+#include "ConfigValueMap.hpp"
 
 #include "../Patterns/ManagerBase.hpp"
 #include "../Core/PointerTypes.hpp"
@@ -15,6 +15,8 @@ namespace krakoa::configuration
 {
 	class GlobalConfig : public patterns::ManagerBase<GlobalConfig>
 	{
+		using ConfigMap = std::unordered_map<std::string, Solo_Ptr<ConfigValueMap>>;
+		
 	public:
 		GlobalConfig(Token, const std::filesystem::path& parentPath);
 		~GlobalConfig() noexcept;
@@ -22,31 +24,11 @@ namespace krakoa::configuration
 		template<typename T>
 		T Get(const std::string& context, const std::string& key) const
 		{
-			auto& parser = parsers.at(klib::ToLower(context));
-			const auto& valueStr = parser->RetrieveValue(klib::ToLower(key));
-
-			if constexpr (klib::type_trait::Is_String_V<T>)
-			{
-				return valueStr;
-			}
-			else if constexpr (klib::type_trait::Is_CString_V<T>)
-			{
-				return valueStr.data();
-			}
-			else
-			{
-				const auto value = klib::StrTo<T>(valueStr);
-				if constexpr (klib::type_trait::Is_Bool_V<T>)
-				{
-					return value != 0;
-				}
-				else
-				{
-					return value;
-				}
-			}
+			const auto& valueMap = GetValueMap(klib::ToLower(context));
+			const auto& value = valueMap.ReadAs<T>(key);
+			return value;
 		}
-
+		
 		template<typename T>
 		T TryGet(const std::string& context, const std::string& key, T defaultValue) const
 		{
@@ -60,11 +42,15 @@ namespace krakoa::configuration
 			}
 		}
 
+		const ConfigValueMap& GetValueMap(const std::string& context) const;
+		
 	private:
 		void Initialize();
 
 	private:
 		std::filesystem::path root;
-		std::unordered_map<std::string, Solo_Ptr<ConfigFileParser>> parsers;
+		ConfigMap configMap;
 	};
+
+	GlobalConfig& GetGlobalConfig();
 }

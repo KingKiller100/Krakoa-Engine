@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "ImGuiLayer.hpp"
 
-#include "../../Core/EngineMacros.hpp"
+#include "../../Config/GlobalConfig.hpp"
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Core/Application.hpp"
 
@@ -20,7 +20,10 @@ namespace krakoa
 		: LayerBase("ImGuiLayer")
 		, isShowing(false)
 		, isBlockingEvents(true)
-	{}
+		, demoWindowState(false)
+	{
+		SetDemoWindowStateFromConfig();
+	}
 
 	ImGuiLayer::~ImGuiLayer()
 		= default;
@@ -67,12 +70,14 @@ namespace krakoa
 	}
 
 	void ImGuiLayer::OnUpdate(float deltaTime)
-	{
-	}
+	{}
 
 	void ImGuiLayer::OnRender()
 	{
 		KRK_PROFILE_FUNCTION();
+
+		if (demoWindowState)
+			ImGui::ShowDemoWindow();
 	}
 
 	void ImGuiLayer::OnEvent(events::Event& e)
@@ -141,6 +146,12 @@ namespace krakoa
 	void ImGuiLayer::UnblockEvents()
 	{
 		isBlockingEvents = false;
+	}
+
+	void ImGuiLayer::SetDemoWindowStateFromConfig()
+	{
+		const auto& gConfig = configuration::GetGlobalConfig();
+		demoWindowState = gConfig.Get<bool>("ImGui", "DemoWindow");
 	}
 }
 

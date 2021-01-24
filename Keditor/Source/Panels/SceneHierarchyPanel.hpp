@@ -13,6 +13,7 @@ namespace krakoa::panels
 
 	private:
 		void DrawEntityNode(const std::string& name, const scene::ecs::Entity& entity);
+		void DrawComponentNode(const scene::ecs::Entity& entity);
 		
 	private:
 		scene::ecs::EntityUID selectedEntityID;

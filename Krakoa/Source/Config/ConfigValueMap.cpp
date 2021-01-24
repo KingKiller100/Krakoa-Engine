@@ -1,44 +1,40 @@
 ﻿#include "Precompile.hpp"
-#include "ConfigFileParser.hpp"
+#include "ConfigValueMap.hpp"
 
 #include <Utility/String/kStringTricks.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
 namespace krakoa::configuration
 {
-	namespace
-	{
-		constexpr auto g_CommentToken = '*';
-	}
+	ConfigValueMap::ConfigValueMap(const std::filesystem::path& path) noexcept
+		: values(ConfigFileParser::ParseFile(path))
+	{}
 
-	ConfigFileParser::ConfigFileParser(const std::filesystem::path& path) noexcept
-	{
-		Read(path);
-	}
-
-	ConfigFileParser::~ConfigFileParser() noexcept
+	ConfigValueMap::~ConfigValueMap() noexcept
 	{
 		values.clear();
 	}
 
-	const ConfigFileParser::DataMap& ConfigFileParser::Retrieve() const
+	const ConfigValueMap::DataMap& ConfigValueMap::RetrieveMap() const
 	{
 		return values;
 	}
 
-	const ConfigFileParser::DataMap::mapped_type& ConfigFileParser::RetrieveValue(
+	const ConfigValueMap::DataMap::mapped_type& ConfigValueMap::RetrieveValue(
 		const DataMap::key_type& key) const
 	{
-		return values.at(key);
+		return values.at(klib::ToLower(key.data()));
 	}
 
-	void ConfigFileParser::Read(const std::filesystem::path& path)
+	ValueMap ConfigFileParser::ParseFile(const std::filesystem::path& path)
 	{
+		ValueMap values;
+		
 		auto lines = klib::ReadFile(path.string());
 
 		for (auto& line : lines)
 		{
-			const auto commentPos = line.find(g_CommentToken);
+			const auto commentPos = line.find(s_CommentToken);
 
 			if (commentPos != std::string::npos)
 				line.erase(commentPos);
@@ -60,5 +56,7 @@ namespace krakoa::configuration
 
 			values.emplace(key, value);
 		}
+		
+		return values;
 	}
 }

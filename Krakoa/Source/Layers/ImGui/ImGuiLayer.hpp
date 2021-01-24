@@ -31,8 +31,12 @@ namespace krakoa
 		bool GetBlockEventsStatus() const noexcept;
 		void BlockEvents();
 		void UnblockEvents();
+
+	private:
+		void SetDemoWindowStateFromConfig();
 		
 	private:
+		bool demoWindowState;
 		bool isShowing;
 		bool isBlockingEvents;
 	};

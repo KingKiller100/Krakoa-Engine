@@ -106,11 +106,13 @@ namespace krakoa::panels
 			auto& transform = entity.GetComponent<TransformComponent>();
 			const auto& position = transform.GetPosition();
 			const auto& scale = transform.GetScale();
-			auto rotation = transform.GetRotation();
-			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.15f);
+			auto rotation = kmaths::ToDegrees(transform.GetRotation());
+
+			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
 			ImGui::DragFloat("Rotation", &rotation, 0.5f);
-			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.15f);
-			transform.SetRotation(rotation);
+			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
+
+			transform.SetRotation(kmaths::ToRadians(rotation));
 		}
 	}
 }

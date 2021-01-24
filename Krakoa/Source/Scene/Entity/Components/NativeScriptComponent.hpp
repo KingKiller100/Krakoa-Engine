@@ -17,14 +17,14 @@ namespace krakoa::scene
 
 	namespace ecs::components
 	{
-		class NativeScriptComponent : protected util::TypeUniqueIdentifier<NativeScriptComponent>
+		class NativeScriptComponent : protected util::TypeUniqueIdentifier<>
 		{
 		public:
 			template<typename Script>
 			void Bind()
 			{
 				KRK_ASSERT(!HadScript<Script>()
-					, klib::ToString("This script is already registered to this entity: {0}",
+					, klib::ToString("This script is already registered to this entity: \"{0}\"",
 						util::GetTypeNameNoNamespace<Script>())
 				);
 
@@ -34,7 +34,7 @@ namespace krakoa::scene
 					{
 						auto& script = scripts.at(GetUniqueID<Script>());
 
-					KRK_DBG(klib::ToString("Initialising script {0}"
+					KRK_DBG(klib::ToString("Initialising script \"{0}\""
 							, util::GetTypeNameNoNamespace<Script>()
 						));
 

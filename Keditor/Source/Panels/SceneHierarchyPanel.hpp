@@ -10,6 +10,12 @@ namespace krakoa::panels
 	public:
 		SceneHierarchyPanel();
 		void OnRender();
+
+	private:
+		void DrawEntityNode(const std::string& name, const scene::ecs::Entity& entity);
+		
+	private:
+		scene::ecs::EntityUID selectedEntityID;
 	};
 	
 }

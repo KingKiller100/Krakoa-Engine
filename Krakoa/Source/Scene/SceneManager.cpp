@@ -15,7 +15,7 @@ namespace krakoa::scene
 	using namespace ecs::components;
 
 	SceneManager::SceneManager()
-		: StateMachine(SceneRuntimeState::STOP, 
+		: SimpleStateMachine(SceneRuntimeState::STOP, 
 		     [](const auto& current, const auto& next)
 		     {
 			 const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",

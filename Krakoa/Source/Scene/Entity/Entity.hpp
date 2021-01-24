@@ -47,7 +47,7 @@ namespace krakoa::scene::ecs
 		{
 			KRK_ASSERT(
 				!HasComponent<Component>(), // Assert a brand new component being added
-				klib::kString::ToString("Attempt to add a component already a part of this entity - {0}", klib::GetTypeName<Component>())
+				klib::kString::ToString("Attempt to add a component already a part of this entity - \"{0}\"", klib::GetTypeName<Component>())
 			);
 
 			Multi_Ptr<ComponentWrapperBase> comp = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
@@ -60,7 +60,7 @@ namespace krakoa::scene::ecs
 		{
 			KRK_ASSERT(
 				HasComponent<Component>(), // Assert component already a part of entity
-				klib::ToString("Attempt to remove a component from this entity - {0}", klib::GetTypeName<Component>())
+				klib::ToString("Attempt to remove a component from this entity - \"{0}\"", klib::GetTypeName<Component>())
 			);
 
 			const ComponentUID uid = manager->GetUniqueID<Component>();
@@ -73,7 +73,7 @@ namespace krakoa::scene::ecs
 		{
 			KRK_ASSERT(
 				HasComponent<Component>(), // Assert component already a part of entity
-				klib::ToString("Attempt to get a component not a part of this entity - {0}", klib::GetTypeName<Component>())
+				klib::ToString("Attempt to get a component not a part of this entity - \"{0}\"", klib::GetTypeName<Component>())
 			);
 
 			const ComponentUID uid = manager->GetUniqueID<Component>();

@@ -12,11 +12,11 @@ namespace krakoa::scene::ecs::components
 		TagComponent(const std::string& tag);
 		~TagComponent() noexcept;
 
-		[[nodiscard]] const std::string& GetTag() const;
+		[[nodiscard]] std::string_view GetTag() const;
+		[[nodiscard]] const char* GetData() const;
+		[[nodiscard]] char* GetData();
 		void SetTag(const std::string_view& tag);
 
-		[[nodiscard]] const char* GetType() const noexcept;
-		
 	private:
 		std::string tagName;
 	};

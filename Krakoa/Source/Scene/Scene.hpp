@@ -17,6 +17,8 @@ namespace krakoa::scene
 
 		ecs::Entity& AddEntity(const std::string& entityName) override;
 
+		const EntityMap& GetEntities() const override;
+	
 		[[nodiscard]] const ecs::Entity& GetEntity(const std::string& entityName) const override;
 		[[nodiscard]] const ecs::Entity& GetEntity(ecs::EntityUID id) const override;
 
@@ -38,7 +40,7 @@ namespace krakoa::scene
 
 	private:
 		std::string name;
-		std::map<std::string, ecs::Entity> entities;
+		EntityMap entities;
 		Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
 		SceneRuntimeState* runtimeState;
 	};

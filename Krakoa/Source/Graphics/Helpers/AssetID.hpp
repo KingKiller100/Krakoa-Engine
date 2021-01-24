@@ -28,7 +28,7 @@ namespace krakoa::graphics
 		std::uint32_t id;
 	};
 
-	struct AssetIDGenerator : private util::TypeUniqueIdentifier<AssetIDGenerator, std::uint32_t>
+	struct AssetIDGenerator : private util::TypeUniqueIdentifier<std::uint32_t>
 	{
 		static std::uint32_t Generate() noexcept
 		{

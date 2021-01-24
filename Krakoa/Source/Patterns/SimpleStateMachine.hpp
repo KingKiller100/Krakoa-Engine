@@ -5,14 +5,14 @@
 namespace patterns
 {
 	template<typename State>
-	class StateMachine
+	class SimpleStateMachine
 	{
 	public:
 		using StateChangeFunc_t = std::function<void(const State&, const State&)>;
 		using State_t = State;
 		
 	public:
-		explicit constexpr StateMachine(State&& initalState, const StateChangeFunc_t& func = nullptr)
+		explicit constexpr SimpleStateMachine(State&& initalState, const StateChangeFunc_t& func = nullptr)
 			: currentState(std::forward<State>(initalState))
 			, changeStateFunc(func)
 		{}
@@ -47,12 +47,12 @@ namespace patterns
 			changeStateFunc = func;
 		}
 		
-		constexpr bool operator==(const StateMachine& other)
+		constexpr bool operator==(const SimpleStateMachine& other)
 		{
 			return currentState == other.currentState && changeStateFunc == other.changeStateFunc;
 		}
 
-		constexpr bool operator!=(const StateMachine& other)
+		constexpr bool operator!=(const SimpleStateMachine& other)
 		{
 			return !(*this == other);
 		}

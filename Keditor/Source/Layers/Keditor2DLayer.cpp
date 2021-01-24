@@ -136,8 +136,6 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Remove an entity");
 			const std::string name("Dummy");
 			auto& dummyEntity = scene->AddEntity(name);
-			(void)dummyEntity.GetComponent<TagComponent>();
-			dummyEntity.RemoveComponent<TagComponent>();
 			scene->RemoveEntity(name);
 		}
 

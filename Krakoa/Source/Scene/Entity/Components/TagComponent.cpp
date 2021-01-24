@@ -20,9 +20,19 @@ namespace krakoa::scene::ecs::components
 	TagComponent::~TagComponent() noexcept
 		= default;
 
-	const std::string& TagComponent::GetTag() const
+	std::string_view TagComponent::GetTag() const
 	{
 		return tagName;
+	}
+
+	const char* TagComponent::GetData() const
+	{
+		return tagName.data();
+	}
+
+	char* TagComponent::GetData()
+	{
+		return tagName.data();
 	}
 
 	void TagComponent::SetTag(const std::string_view& tag)

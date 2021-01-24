@@ -3,6 +3,8 @@
 
 #include <Utility/Enum/kEnum.hpp>
 
+#include <map>
+
 namespace krakoa::scene
 {
 	ENUM_STRUCT_FWD_DCL(SceneRuntimeState);
@@ -15,9 +17,14 @@ namespace krakoa::scene
 	class iScene
 	{
 	public:
+		using EntityMap = std::map<std::string, ecs::Entity>;
+		
+	public:
 		virtual ~iScene() = default;
 
 		virtual ecs::Entity& AddEntity(const std::string& name) = 0;
+		
+		virtual const EntityMap& GetEntities() const = 0;
 		
 		virtual const ecs::Entity& GetEntity(const std::string& name) const = 0;
 		virtual const ecs::Entity& GetEntity(ecs::EntityUID id) const = 0;

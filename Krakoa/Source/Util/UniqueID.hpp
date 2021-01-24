@@ -4,7 +4,7 @@
 
 namespace util
 {
-	template<typename T, typename Identifier_t = std::uint64_t>
+	template<typename Identifier_t = std::uint64_t>
 	struct TypeUniqueIdentifier
 	{
 	public:
@@ -17,7 +17,7 @@ namespace util
 			static const auto id = MakeUniqueID();
 			return id;
 		}
-		
+
 	private:
 		static auto MakeUniqueID()
 		{
@@ -25,10 +25,5 @@ namespace util
 			return id++;
 		}
 	};
-	
-	template<typename Identifier_t = std::uint64_t >
-	using TypeUID = TypeUniqueIdentifier<void, Identifier_t>;
-
-	
 }
 

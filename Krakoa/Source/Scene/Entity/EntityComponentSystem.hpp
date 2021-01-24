@@ -15,7 +15,7 @@
 
 namespace krakoa::scene::ecs
 {
-	class EntityComponentSystem final : util::TypeUniqueIdentifier<EntityComponentSystem, ComponentUID>
+	class EntityComponentSystem final : util::TypeUniqueIdentifier<ComponentUID>
 	{
 	public:
 		EntityComponentSystem();
@@ -113,13 +113,11 @@ namespace krakoa::scene::ecs
 			return iter != compVec.end();
 		}
 
-
 		template<typename Component, typename ...Components>
 		USE_RESULT bool HasComponents(EntityUID id) const noexcept
 		{
 			return HasComponentsImpl<void, Component, Components...>(id);
 		}
-
 
 		template<typename Component>
 		bool RemoveComponent(EntityUID id) noexcept
@@ -163,7 +161,7 @@ namespace krakoa::scene::ecs
 		}
 
 		template<typename PlaceHolder>
-		USE_RESULT bool HasComponentsImpl(EntityUID id) const noexcept
+		USE_RESULT bool HasComponentsImpl(EntityUID) const noexcept
 		{
 			return true;
 		}

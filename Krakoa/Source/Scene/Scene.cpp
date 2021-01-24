@@ -35,7 +35,7 @@ namespace krakoa::scene
 
 		auto pair = entities.emplace(entityName, entityComponentSystem);
 		auto& entity = pair.first->second;
-		entity.AddComponent<components::TagComponent>(entityName);
+		//entity.AddComponent<components::TagComponent>(entityName);
 
 		KRK_DBG(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name
@@ -44,6 +44,11 @@ namespace krakoa::scene
 		));
 		
 		return entity;
+	}
+
+	const Scene::EntityMap& Scene::GetEntities() const
+	{
+		return entities;
 	}
 
 	bool Scene::HasEntity(const std::string& entityName) const

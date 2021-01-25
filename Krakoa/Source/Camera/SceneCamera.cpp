@@ -53,9 +53,12 @@ namespace krakoa
 
 	void SceneCamera::UpdateProjection()
 	{
+		const auto zDir = kmaths::ZAxisDirection::LEFT_HAND;
+		
 		if (projectionType == ProjectionType::Perspective)
 		{
-			projectionMat = kmaths::Perspective_ZO(perspSpecs.fov, aspectRatio, perspSpecs.nearClip, perspSpecs.farClip);
+			projectionMat =
+				kmaths::Perspective_ZO(zDir, perspSpecs.fov, aspectRatio, perspSpecs.nearClip, perspSpecs.farClip);
 		}
 		else
 		{
@@ -64,7 +67,7 @@ namespace krakoa
 			const float orthoBottom = -orthoSpecs.size * 0.5f;
 			const float orthoTop = orthoSpecs.size * 0.5f;
 
-			projectionMat = kmaths::Ortho_ZO(kmaths::ZAxisDirection::LEFT_HAND, orthoLeft, orthoRight,
+			projectionMat = kmaths::Ortho_ZO(zDir, orthoLeft, orthoRight,
 				orthoBottom, orthoTop, orthoSpecs.nearClip, orthoSpecs.farClip);
 		}
 	}

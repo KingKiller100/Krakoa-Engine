@@ -22,6 +22,11 @@ namespace krakoa::scene::panels
 
 		panels.emplace_back(Solo_Ptr<iScenePanel>(Make_Solo<EntitiesPanel>(selectedEntityID)));
 		panels.emplace_back(Solo_Ptr<iScenePanel>(Make_Solo<ComponentsPanel>(selectedEntityID)));
+		
+		for (const auto& panel : panels)
+		{
+			panel->LogConnected();
+		}
 	}
 
 	void SceneHierarchyPanel::OnRender()

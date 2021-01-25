@@ -37,7 +37,7 @@ namespace krakoa::scene
 		auto& entity = entities.emplace_back(entityComponentSystem);
 		entity.AddComponent<components::TagComponent>(tag);
 
-		KRK_DBG(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
+		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name
 			, tag
 			, entity.GetID()

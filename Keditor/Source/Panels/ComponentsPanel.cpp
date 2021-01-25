@@ -22,6 +22,11 @@ namespace krakoa::scene
 	panels::ComponentsPanel::~ComponentsPanel() noexcept
 		= default;
 
+	void panels::ComponentsPanel::LogConnected() const
+	{
+		KRK_LOG("Keditor", "Components panel connected");
+	}
+
 	void panels::ComponentsPanel::DrawActiveScene(const iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();

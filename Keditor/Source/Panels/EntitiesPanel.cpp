@@ -17,6 +17,11 @@ namespace krakoa::scene::panels
 	EntitiesPanel::~EntitiesPanel() noexcept
 		= default;
 
+	void EntitiesPanel::LogConnected() const
+	{
+		KRK_LOG("Keditor", "Entities panel connected");
+	}
+
 	void EntitiesPanel::DrawActiveScene(const iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -54,6 +59,7 @@ namespace krakoa::scene::panels
 
 				if (ImGui::IsItemClicked(input::MOUSE_LEFT))
 				{
+					KRK_DBG(klib::ToString( "[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
 					selectedEntity = eid;
 				}
 

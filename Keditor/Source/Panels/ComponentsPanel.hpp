@@ -20,6 +20,8 @@ namespace krakoa::scene
 			ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) noexcept;
 			~ComponentsPanel() noexcept override;
 
+			void LogConnected() const override;
+			
 			void DrawActiveScene(const iScene& scene) override;
 			void DrawNoActiveScene() override;
 

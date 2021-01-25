@@ -71,7 +71,6 @@ namespace krakoa
 
 			const auto& bounds = cameraController.GetBounds();
 			cameraEntity.AddComponent<CameraComponent>(new SceneCamera(bounds), true);
-			cameraEntity.AddComponent<TransformComponent>();
 			cameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraControllerScript>();
 		}
 
@@ -80,12 +79,9 @@ namespace krakoa
 
 			auto& colourEntity = scene->AddEntity("Colour");
 
-			colourEntity.AddComponent<TransformComponent>(
-				Vector3f(-0.5f, 0.f, -0.75f),
-				0.f,
-				Vector3f(0, 0, 1),
-				Vector3f(0.2f, 0.2f, 1.f)
-				);
+			auto& transform = colourEntity.GetComponent<TransformComponent>();
+			transform.SetPosition({ -0.5f, 0.f, -0.75f });
+			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
 			colourEntity.AddComponent<Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
@@ -99,13 +95,11 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create cyan entity");
 
 			auto& cyanEntity = scene->AddEntity("Cyan");
-			cyanEntity.AddComponent<TransformComponent>(
-				Vector3f(0.5f, 0.f, -0.75f),
-				0.f,
-				Vector3f(0, 0, 1),
-				Vector3f(0.2f, 0.2f, 1.f)
-				);
-
+			
+			auto& transform = cyanEntity.GetComponent<TransformComponent>();
+			transform.SetPosition({ 0.5f, 0.f, -0.75f });
+			transform.SetScale(Vector2f{ 0.2f, 0.2f });
+			
 			cyanEntity.AddComponent<Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
 				colours::Cyan
@@ -116,12 +110,10 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create magenta entity");
 
 			auto& magentaEntity = scene->AddEntity("Magenta");
-			magentaEntity.AddComponent<TransformComponent>(
-				Vector3f(0.f, 0.5f, -0.75f),
-				0.f,
-				Vector3f(0, 0, 1),
-				Vector3f(0.2f, 0.2f, 1.f)
-				);
+			
+			auto& transform = magentaEntity.GetComponent<TransformComponent>();
+			transform.SetPosition({ 0.f, 0.5f, -0.75f });
+			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
 			magentaEntity.AddComponent<Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
@@ -141,12 +133,9 @@ namespace krakoa
 
 			auto& yellowEntity = scene->AddEntity("Yellow");
 
-			yellowEntity.AddComponent<TransformComponent>(
-				Vector3f(0.f, -0.5f, -0.75f),
-				0.f,
-				Vector3f(0, 0, 1),
-				Vector3f(0.2f, 0.2f, 1.f)
-				);
+			auto& transform = yellowEntity.GetComponent<TransformComponent>();
+			transform.SetPosition({ 0.f, -0.5f, -0.75f });
+			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
 			yellowEntity.AddComponent<Appearance2DComponent>(
 				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
@@ -158,9 +147,10 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create textured entity");
 
 			auto& texturedEntity = scene->AddEntity("Textured");
-			auto& transform = texturedEntity.AddComponent<TransformComponent>();
-			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 
+			auto& transform = texturedEntity.GetComponent<TransformComponent>();
+			transform.SetScale(Vector2f{ 0.2f, 0.2f });
+			
 			texturedEntity.AddComponent<Appearance2DComponent>(*pSubTexture, colours::Invisible, 3.f);
 
 			auto& nsc = texturedEntity.AddComponent<NativeScriptComponent>();
@@ -223,18 +213,18 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Updating entity's \"ColourChangeScript\" component");
 
 			scene->ForEach([&](const scene::ecs::Entity& entity)
-			{
-				if (!entity.HasComponent<NativeScriptComponent>())
-					return;
+				{
+					if (!entity.HasComponent<NativeScriptComponent>())
+						return;
 
-				auto& script = entity.GetComponent<NativeScriptComponent>();
+					auto& script = entity.GetComponent<NativeScriptComponent>();
 
-				if (!script.IsActive()
-					|| !script.HasScript<ColourChangeScript>())
-					return;
+					if (!script.IsActive()
+						|| !script.HasScript<ColourChangeScript>())
+						return;
 
-				script.GetScript<ColourChangeScript>().SetColour(geometryColour);
-			});
+					script.GetScript<ColourChangeScript>().SetColour(geometryColour);
+				});
 		}
 	}
 

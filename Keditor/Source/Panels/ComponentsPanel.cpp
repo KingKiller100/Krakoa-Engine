@@ -1,5 +1,7 @@
 ﻿#include "ComponentsPanel.hpp"
 
+#include <Camera/SceneCamera.hpp>
+
 #include <Scene/iScene.hpp>
 
 #include <Scene/Entity/Entity.hpp>
@@ -116,12 +118,79 @@ namespace krakoa::scene
 		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
 		{
 			auto& camera = entity.GetComponent<components::CameraComponent>();
-			
-			auto projectionTypes = std::array{ "Orthographic", "Perspective" };
+			auto* sceneCamera = camera.GetCamera<SceneCamera>();
 
-			ImGui::BeginCombo("Projection", projectionTypes[0]);
-			
+			if (sceneCamera)
+			{
+				const auto camType = sceneCamera->GetProjectionType();
+
+				auto projectionTypes = std::array{ "Orthographic", "Perspective" };
+				const auto currentSelection = projectionTypes[camType];
+
+				if (ImGui::BeginCombo("Projection", currentSelection, ImGuiComboFlags_HeightLarge))
+				{
+					for (auto i = 0; i < projectionTypes.size(); ++i)
+					{
+						const auto& type = projectionTypes[i];
+						const bool selected = (currentSelection == type);
+						if (ImGui::Selectable(type, selected))
+						{
+							sceneCamera->SetProjectionType(i);
+						}
+
+						if (selected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+
+				if (camType == SceneCamera::ProjectionType::Orthographic)
+				{
+					float orthoSize = sceneCamera->GetOrthographicSize();
+					if (ImGui::DragFloat("Size", &orthoSize, 0.01f, 0.25f, 3))
+					{
+						sceneCamera->SetOrthographicSize(orthoSize);
+					}
+
+					float orthoNear = sceneCamera->GetOrthographicNearClip();
+					if (ImGui::DragFloat("Near Clip", &orthoNear, 0.01f, -1, 9.95))
+					{
+						sceneCamera->SetOrthographicNearClip(orthoNear);
+					}
+
+					float orthoFar = sceneCamera->GetOrthographicFarClip();
+					if (ImGui::DragFloat("Far Clip", &orthoFar, 0.01f, orthoNear + 0.05f, 10))
+					{
+						sceneCamera->SetOrthographicFarClip(orthoFar);
+					}
+				}
+
+				if (camType == SceneCamera::ProjectionType::Perspective)
+				{
+					float perspectiveVerticalFOV = sceneCamera->GetPerspectiveVerticalFOV();
+					if (ImGui::DragFloat("Vertical Field of View", &perspectiveVerticalFOV, 0.05f))
+					{
+						sceneCamera->SetPerspectiveVerticalFOV(perspectiveVerticalFOV);
+					}
+
+					float perspectiveNear = sceneCamera->GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near Clip", &perspectiveNear, 0.05f))
+					{
+						sceneCamera->SetPerspectiveNearClip(perspectiveNear);
+					}
+
+					float perspectiveFar = sceneCamera->GetPerspectiveFarClip();
+					if (ImGui::DragFloat("Far Clip", &perspectiveFar, 0.05f))
+					{
+						sceneCamera->SetPerspectiveFarClip(perspectiveFar);
+					}
+				}
+			}
+
 			ImGui::TreePop();
 		}
+
+
 	}
 }

@@ -1,6 +1,9 @@
 ﻿#include "Precompile.hpp"
 #include "SceneCamera.hpp"
 
+#include "../Logging/EngineLogger.hpp"
+
+#include <Utility/String/Tricks/kStringOperators.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 namespace krakoa
@@ -49,6 +52,8 @@ namespace krakoa
 	void SceneCamera::SetProjectionType(ProjectionType projType)
 	{
 		projectionType = projType;
+		KRK_DBG("Scene camera projection: " + std::string(projType.ToString()));
+		UpdateProjection();
 	}
 
 	void SceneCamera::UpdateProjection()

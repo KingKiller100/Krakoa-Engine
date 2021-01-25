@@ -15,7 +15,7 @@ namespace krakoa::scene::ecs::components
 		TransformComponent(const kmaths::Vector3f& position,
 		                   const float radians,
 		                   const kmaths::Vector3f& rotationAxes,
-		                   const kmaths::Vector3f& scale) noexcept;
+		                   const kmaths::Vector3f& scale = {1.f, 1.f, 1.f}) noexcept;
 
 		~TransformComponent() noexcept;
 

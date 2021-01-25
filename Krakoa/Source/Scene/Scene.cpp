@@ -4,6 +4,7 @@
 #include "SceneRuntimeState.hpp"
 
 #include "Entity/Components/TagComponent.hpp"
+#include "Entity/Components/TransformComponent.hpp"
 #include "Entity/Components/NativeScriptComponent.hpp"
 
 #include "../Debug/Debug.hpp"
@@ -36,6 +37,7 @@ namespace krakoa::scene
 
 		auto& entity = entities.emplace_back(entityComponentSystem);
 		entity.AddComponent<components::TagComponent>(tag);
+		entity.AddComponent<components::TransformComponent>();
 
 		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name

@@ -62,7 +62,6 @@ namespace krakoa
 		
 	private:
 		ProjectionType projectionType;
-		float aspectRatio;
 		OrthographicSpecs orthoSpecs;
 		PerspectiveSpecs perspSpecs;
 	};

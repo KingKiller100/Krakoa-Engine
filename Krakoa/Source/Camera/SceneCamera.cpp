@@ -54,7 +54,7 @@ namespace krakoa
 	void SceneCamera::UpdateProjection()
 	{
 		const auto zDir = kmaths::ZAxisDirection::LEFT_HAND;
-		
+
 		if (projectionType == ProjectionType::Perspective)
 		{
 			projectionMat =

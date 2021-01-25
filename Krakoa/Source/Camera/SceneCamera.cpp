@@ -55,7 +55,7 @@ namespace krakoa
 	{
 		if (projectionType == ProjectionType::Perspective)
 		{
-			projectionMat = kmaths::Perspective(perspSpecs.fov, aspectRatio, perspSpecs.nearClip, perspSpecs.farClip);
+			projectionMat = kmaths::Perspective_ZO(perspSpecs.fov, aspectRatio, perspSpecs.nearClip, perspSpecs.farClip);
 		}
 		else
 		{

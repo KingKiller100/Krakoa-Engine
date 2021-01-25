@@ -9,22 +9,10 @@ using namespace kmaths;
 
 namespace krakoa::scene::ecs::components
 {
-	CameraComponent::CameraComponent(iCamera* cam)
+	CameraComponent::CameraComponent(iCamera* cam, bool primary)
 		: camera(cam)
-		, isPrimary(false)
-	{}
-
-	CameraComponent::CameraComponent(const kmaths::Matrix4x4f& projection, bool primary)
-		: camera(new Camera(projection))
 		, isPrimary(primary)
 	{}
-
-	CameraComponent::CameraComponent(float aspectRatio, bool primary)
-		: camera(new Camera(Ortho_ZO(ZAxisDirection::LEFT_HAND,
-			-aspectRatio, aspectRatio, -1.f, 1.f, -1.f, 1.f)))
-		, isPrimary(primary)
-	{
-	}
 
 	iCamera& CameraComponent::GetCamera() const
 	{
@@ -39,5 +27,23 @@ namespace krakoa::scene::ecs::components
 	bool CameraComponent::IsPrimary() const noexcept
 	{
 		return isPrimary;
+	}
+
+	void CameraComponent::SetAspectRatio(float aspectRatio)
+	{
+		if (!fixedAspectRatio)
+		{
+			
+		}
+	}
+
+	bool CameraComponent::SetAspectRatioStatic()
+	{
+		fixedAspectRatio = true;
+	}
+
+	bool CameraComponent::SetAspectRatioDynamic()
+	{
+		fixedAspectRatio = false;
 	}
 }

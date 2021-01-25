@@ -17,6 +17,7 @@ namespace krakoa
 			USE_RESULT constexpr float GetWidth() const  { return (right - left); }
 			USE_RESULT constexpr float GetHeight() const { return (top - bottom); }
 		};
+		
 	public:
 		OrthographicCameraController(float aspectRatio, bool isRotationAllowed = false);
 		~OrthographicCameraController();

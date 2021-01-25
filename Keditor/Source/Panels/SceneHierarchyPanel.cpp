@@ -6,7 +6,6 @@
 #include "EntitiesPanel.hpp"
 #include "ComponentsPanel.hpp"
 
-#include <Scene/iScene.hpp>
 #include <Scene/Entity/Entity.hpp>
 
 #include <ImGui/imgui.h>
@@ -14,7 +13,6 @@
 
 namespace krakoa::scene::panels
 {
-
 	SceneHierarchyPanel::SceneHierarchyPanel()
 		: selectedEntityID(new ecs::EntityUID{})
 	{
@@ -50,7 +48,5 @@ namespace krakoa::scene::panels
 				panel->DrawNoActiveScene();
 			}
 		}
-
 	}
-
 }

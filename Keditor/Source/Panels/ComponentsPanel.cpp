@@ -30,7 +30,7 @@ namespace krakoa::scene
 	void panels::ComponentsPanel::DrawActiveScene(const iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		ImGui::Begin("Components");
 		if (!pSelectedEntity.expired())
 		{
@@ -63,21 +63,21 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (entity.HasComponent<components::TagComponent>())
+		if (!entity.HasComponent<components::TagComponent>())
+			return;
+
+		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TagComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
 		{
-			if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TagComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
+			auto& tag = entity.GetComponent<components::TagComponent>();
+
+			char buffer[1 << 8];
+			std::strcpy(buffer, tag.GetData());
+			if (ImGui::InputText("Tag", tag.GetData(), sizeof(buffer)))
 			{
-				auto& tag = entity.GetComponent<components::TagComponent>();
-
-				char buffer[1 << 8];
-				std::strcpy(buffer, tag.GetData());
-				if (ImGui::InputText("Tag", tag.GetData(), sizeof(buffer)))
-				{
-					tag.SetTag(buffer);
-				}
-
-				ImGui::TreePop();
+				tag.SetTag(buffer);
 			}
+
+			ImGui::TreePop();
 		}
 	}
 
@@ -85,29 +85,43 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (entity.HasComponent<components::TransformComponent>())
+		if (!entity.HasComponent<components::TransformComponent>())
+			return;
+
+		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
 		{
-			if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
-			{
-				auto& transform = entity.GetComponent<components::TransformComponent>();
-				const auto& position = transform.GetPosition();
-				const auto& scale = transform.GetScale();
-				auto rotation = kmaths::ToDegrees(transform.GetRotation());
+			auto& transform = entity.GetComponent<components::TransformComponent>();
+			const auto& position = transform.GetPosition();
+			const auto& scale = transform.GetScale();
+			auto rotation = kmaths::ToDegrees(transform.GetRotation());
 
-				ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
-				ImGui::DragFloat("Rotation", &rotation, 0.5f);
-				ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
+			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
+			ImGui::DragFloat("Rotation", &rotation, 0.5f);
+			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
 
-				transform.SetRotation(kmaths::ToRadians(rotation));
+			transform.SetRotation(kmaths::ToRadians(rotation));
 
-				ImGui::TreePop();
-			}
+			ImGui::TreePop();
 		}
+
 	}
 
 	void panels::ComponentsPanel::DisplayCameraComponent(const ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
+		if (!entity.HasComponent<components::CameraComponent>())
+			return;
+
+		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+		{
+			auto& camera = entity.GetComponent<components::CameraComponent>();
+			
+			auto projectionTypes = std::array{ "Orthographic", "Perspective" };
+
+			ImGui::BeginCombo("Projection", projectionTypes[0]);
+			
+			ImGui::TreePop();
+		}
 	}
 }

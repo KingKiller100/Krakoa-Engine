@@ -46,7 +46,15 @@ namespace krakoa::scene
 		return entity;
 	}
 
-	void Scene::ForEach(const EntityForEachFunc& func) const
+	void Scene::ForEach(const EntityForEachFunc& func)
+	{
+		for (auto& entity : entities)
+		{
+			func(entity);
+		}
+	}
+
+	void Scene::ForEach(const EntityForEachConstFunc& func) const
 	{
 		for (const auto& entity : entities)
 		{

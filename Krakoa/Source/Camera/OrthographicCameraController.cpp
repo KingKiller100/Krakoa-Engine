@@ -8,7 +8,6 @@
 
 namespace krakoa
 {
-
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool isRotationAllowed)
 		: aspectRatio(aspectRatio), zoomLevel(1.f), isRotationAllowed(isRotationAllowed),
 		bounds({ -(aspectRatio * zoomLevel), aspectRatio * zoomLevel, -zoomLevel, zoomLevel }),

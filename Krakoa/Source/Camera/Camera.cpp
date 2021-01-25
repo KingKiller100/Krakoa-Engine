@@ -16,5 +16,15 @@ namespace krakoa
 	{
 		return projectionMat;
 	}
+
+	void Camera::SetAspectRatio(float aspectRatio)
+	{
+		this->aspectRatio = aspectRatio;
+	}
+
+	void Camera::SetAspectRatio(float width, float height)
+	{
+		SetAspectRatio(width / height);
+	}
 }
 

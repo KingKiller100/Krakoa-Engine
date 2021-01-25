@@ -61,7 +61,6 @@ namespace krakoa::scene::panels
 			{
 				KRK_DBG(klib::ToString( "[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
 				selectedEntity = eid;
-				entity.
 			}
 
 			if (opened)

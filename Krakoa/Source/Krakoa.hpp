@@ -25,6 +25,8 @@
 #include "Input/MouseButtonCode.hpp"
 
 // Camera
+#include "Camera/iCamera.hpp"
+#include "Camera/SceneCamera.hpp"
 #include "Camera/OrthographicCamera.hpp"
 #include "Camera/OrthographicCameraController.hpp"
 

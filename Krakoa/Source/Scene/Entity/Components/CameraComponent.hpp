@@ -23,8 +23,8 @@ namespace krakoa::scene::ecs::components
 		bool IsPrimary() const noexcept;
 
 		void SetAspectRatio(float aspectRatio);
-		bool SetAspectRatioStatic();
-		bool SetAspectRatioDynamic();
+		void SetAspectRatioStatic();
+		void SetAspectRatioDynamic();
 	private:
 		Solo_Ptr<iCamera> camera;
 		bool isPrimary;

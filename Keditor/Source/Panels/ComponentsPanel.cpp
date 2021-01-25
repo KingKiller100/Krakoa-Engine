@@ -113,7 +113,7 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::CameraComponent>())
 			return;
 
-		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
 		{
 			auto& camera = entity.GetComponent<components::CameraComponent>();
 			

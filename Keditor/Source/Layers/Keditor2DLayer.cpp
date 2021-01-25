@@ -69,11 +69,8 @@ namespace krakoa
 
 			auto& cameraEntity = scene->AddEntity("Camera");
 
-			const auto bounds = cameraController.GetBounds().GetWidth() / cameraController.GetBounds().GetHeight();
-			cameraEntity.AddComponent<CameraComponent>(
-				bounds,
-				true
-				);
+			const auto& bounds = cameraController.GetBounds();
+			cameraEntity.AddComponent<CameraComponent>(new SceneCamera(bounds), true);
 			cameraEntity.AddComponent<TransformComponent>();
 			cameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraControllerScript>();
 		}

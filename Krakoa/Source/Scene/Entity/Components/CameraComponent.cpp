@@ -33,16 +33,16 @@ namespace krakoa::scene::ecs::components
 	{
 		if (!fixedAspectRatio)
 		{
-			
+			camera->SetAspectRatio(aspectRatio);
 		}
 	}
 
-	bool CameraComponent::SetAspectRatioStatic()
+	void CameraComponent::SetAspectRatioStatic()
 	{
 		fixedAspectRatio = true;
 	}
 
-	bool CameraComponent::SetAspectRatioDynamic()
+	void CameraComponent::SetAspectRatioDynamic()
 	{
 		fixedAspectRatio = false;
 	}

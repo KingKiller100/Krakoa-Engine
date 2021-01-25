@@ -71,7 +71,7 @@ namespace krakoa
 		camTranslationSpeed = transSpeed;
 	}
 
-	const OrthographicCameraController::Bounds& OrthographicCameraController::GetBounds() const
+	const iCamera::Bounds& OrthographicCameraController::GetBounds() const
 	{
 		return bounds;
 	}

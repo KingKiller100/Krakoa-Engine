@@ -32,7 +32,7 @@ namespace krakoa
 
 	void SceneCamera::SetViewportSize(std::uint32_t width, std::uint32_t height)
 	{
-		SetAspectRatio(width, height);
+		SetAspectRatio(static_cast<float>(width), static_cast<float>(height));
 		UpdateProjection();
 	}
 

@@ -10,14 +10,6 @@ namespace krakoa
 {
 	class OrthographicCameraController
 	{
-		struct Bounds
-		{
-			float left = 0, right = 1, bottom = 0, top = 1;
-
-			USE_RESULT constexpr float GetWidth() const  { return (right - left); }
-			USE_RESULT constexpr float GetHeight() const { return (top - bottom); }
-		};
-		
 	public:
 		OrthographicCameraController(float aspectRatio, bool isRotationAllowed = false);
 		~OrthographicCameraController();
@@ -34,7 +26,7 @@ namespace krakoa
 		void Resize(float width, float height);
 		void Resize(kmaths::Vector2f dimensions);
 		
-		const Bounds& GetBounds() const;
+		const iCamera::Bounds& GetBounds() const;
 
 	private:
 		bool OnMouseScrolledEvent(const events::MouseScrolledEvent& e);
@@ -46,7 +38,7 @@ namespace krakoa
 		float aspectRatio; // width / height
 		float zoomLevel;
 		bool isRotationAllowed;
-		Bounds bounds;
+		iCamera::Bounds bounds;
 		OrthographicCamera camera;
 
 		float rotationZ;

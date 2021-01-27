@@ -2,22 +2,21 @@
 #include "TransformComponent.hpp"
 
 #include "../../../Debug/Instrumentor.hpp"
-#include <Template/kTypeInfo.hpp>
+
+#include <Maths/Quaternions/Quaternions.hpp>
 
 namespace krakoa::scene::ecs::components
 {
-	TransformComponent::TransformComponent() noexcept 
-		: rotationAxes(0.f, 0.f, 1.f),
-		radians(0),
+	TransformComponent::TransformComponent() noexcept
+		: rotations(0.f, 0.f, 1.f),
 		scale(1.f, 1.f, 1.f)
 	{}
 
-	TransformComponent::TransformComponent(const kmaths::Vector3f& position, const float radians,
+	TransformComponent::TransformComponent(const kmaths::Vector3f& position,
 		const kmaths::Vector3f& rotationAxes,
 		const kmaths::Vector3f& scale) noexcept
 		: position(position),
-		rotationAxes(rotationAxes),
-		radians(radians),
+		rotations(rotationAxes),
 		scale(scale)
 	{}
 
@@ -28,23 +27,20 @@ namespace krakoa::scene::ecs::components
 	{
 		KRK_PROFILE_FUNCTION();
 
-		return kmaths::TRS(position, radians, rotationAxes, scale);
+		const auto quaternions = kmaths::Quaternionf::EulerToQuaternions(rotations);
+		auto transform = quaternions.CalculateTransformMatrix(position)
+			* kmaths::Scale(scale);
+		return transform;
+		// return kmaths::TRS(position, radians, rotations, scale);
 	}
 
-	void TransformComponent::SetScale(const kmaths::Vector2f & value)
+	void TransformComponent::SetScale(const kmaths::Vector2f& value)
 	{
 		KRK_PROFILE_FUNCTION();
 		SetScale(kmaths::Vector3f{ value.x, value.y, 1.f });
 	}
 
-	const char* TransformComponent::GetType() const noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-
-		return klib::GetTypeName<TransformComponent>();
-	}
-
-	const kmaths::Vector3f& TransformComponent::GetPosition() const noexcept
+	kmaths::Vector3f TransformComponent::GetPosition() const noexcept
 	{
 		return position;
 	}
@@ -54,7 +50,7 @@ namespace krakoa::scene::ecs::components
 		position = value;
 	}
 
-	const kmaths::Vector3f& TransformComponent::GetScale() const noexcept
+	kmaths::Vector3f TransformComponent::GetScale() const noexcept
 	{
 		return scale;
 	}
@@ -64,23 +60,20 @@ namespace krakoa::scene::ecs::components
 		scale = value;
 	}
 
-	const kmaths::Vector3f& TransformComponent::GetRotationAxes() const noexcept
+	kmaths::Vector3f TransformComponent::GetRotation(kmaths::Theta theta) const noexcept
 	{
-		return rotationAxes;
+		return theta == kmaths::Theta::RADIANS
+			? rotations
+			: rotations * kmaths::constants::RadsToDegs<float>;
 	}
 
-	void TransformComponent::SetRotationAxes(const kmaths::Vector3f& value) noexcept
+	kmaths::Vector3f TransformComponent::GetRotation() const noexcept
 	{
-		rotationAxes = value;
+		return rotations;
 	}
 
-	float TransformComponent::GetRotation(kmaths::Theta theta) const noexcept
+	void TransformComponent::SetRotation(const kmaths::Vector3f& value) noexcept
 	{
-		return theta == kmaths::Theta::RADIANS ? radians : kmaths::ToDegrees(radians);
-	}
-
-	void TransformComponent::SetRotation(const float value) noexcept
-	{
-		radians = value;
+		rotations = value;
 	}
 }

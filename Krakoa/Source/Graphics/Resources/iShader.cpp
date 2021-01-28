@@ -10,7 +10,7 @@
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/String/Tricks/kStringOperators.hpp>
 
-using namespace klib::operators;
+using namespace klib::kString::operators;
 
 namespace krakoa::graphics
 {

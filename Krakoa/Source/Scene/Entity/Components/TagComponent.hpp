@@ -1,12 +1,10 @@
 ﻿#pragma once
 
-#include <Template/kSimpleOperators.hpp>
-
 #include <string>
 
 namespace krakoa::scene::ecs::components
 {
-	class TagComponent : public klib::SimpleOperators<TagComponent>
+	class TagComponent
 	{
 	public:
 		TagComponent(const std::string_view& tag);

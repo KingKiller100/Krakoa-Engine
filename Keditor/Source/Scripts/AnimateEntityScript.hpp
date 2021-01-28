@@ -63,7 +63,7 @@ namespace krakoa
 		void UpdateRotation(float deltaTime)
 		{
 			degreesRotation += rotSpeed * deltaTime;
-			transform->SetRotation(kmaths::ToRadians(degreesRotation));
+			transform->SetRotation({ 0.f, 0.f, kmaths::ToRadians(degreesRotation) });
 		}
 		
 	private:

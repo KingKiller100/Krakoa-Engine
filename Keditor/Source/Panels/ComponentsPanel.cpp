@@ -98,7 +98,7 @@ namespace krakoa::scene
 			auto rotation = kmaths::ToDegrees(transform.GetRotation());
 
 			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
-			ImGui::DragFloat("Rotation", &rotation, 0.5f);
+			ImGui::DragFloat("Rotation", &rotation.z, 0.5f);
 			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
 
 			transform.SetRotation(kmaths::ToRadians(rotation));
@@ -148,13 +148,13 @@ namespace krakoa::scene
 				if (camType == SceneCamera::ProjectionType::Orthographic)
 				{
 					float orthoSize = sceneCamera->GetOrthographicSize();
-					if (ImGui::DragFloat("Size", &orthoSize, 0.01f, 0.25f, 3))
+					if (ImGui::DragFloat("Size", &orthoSize, 0.01f, 0.25f, 3.f))
 					{
 						sceneCamera->SetOrthographicSize(orthoSize);
 					}
 
 					float orthoNear = sceneCamera->GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near Clip", &orthoNear, 0.01f, -1, 9.95))
+					if (ImGui::DragFloat("Near Clip", &orthoNear, 0.01f, -1.f, 9.95f))
 					{
 						sceneCamera->SetOrthographicNearClip(orthoNear);
 					}

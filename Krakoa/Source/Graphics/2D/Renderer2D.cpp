@@ -16,7 +16,7 @@
 #include "../../Camera/iCamera.hpp"
 #include "../../Camera/OrthographicCamera.hpp"
 
-#include <Maths/Quaternions/Quaternions.hpp>
+#include <Maths/Quaternions/QuaternionsMathsHelper.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 #include <array>
@@ -27,7 +27,7 @@ namespace krakoa::graphics
 {
 	namespace
 	{
-		constexpr kmaths::Quaternionf q_(1.f, 0.f, 0.f, 0.f, kmaths::Theta::DEGREES);
+		constexpr kmaths::Quaternionf q_ = kmaths::IdentityQuaternion<float>(Theta::DEGREES);
 	}
 
 	_2D::PrimitivesData* pData = nullptr;
@@ -290,7 +290,7 @@ namespace krakoa::graphics
 		DrawTriangle(appearance.GetSubTexture(),
 			transform.GetPosition(),
 			transform.GetScale(),
-			transform.GetRotation(),
+			transform.GetRotation().z,
 			appearance.GetColour(),
 			appearance.GetTilingFactor());
 	}
@@ -301,7 +301,7 @@ namespace krakoa::graphics
 		DrawQuad(appearance.GetSubTexture(),
 			transform.GetPosition(),
 			transform.GetScale(),
-			transform.GetRotation(),
+			transform.GetRotation().z,
 			appearance.GetColour(),
 			appearance.GetTilingFactor());
 	}

@@ -12,11 +12,12 @@
 
 namespace krakoa::scene::ecs
 {
-	class EntityUID : klib::kTemplate::SimpleOperators<EntityUID>
+	class EntityUID : klib::kTemplate::SimpleComparisonOperators<EntityUID>
 	{
 	public:
 		using ID_t = std::uint64_t;
 
+	private:
 		static constexpr auto s_Null = std::numeric_limits<ID_t>::max();
 
 	public:

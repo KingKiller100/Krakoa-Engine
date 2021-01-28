@@ -9,7 +9,7 @@
 
 namespace krakoa::graphics
 {
-	class AssetID : public klib::kTemplate::SimpleOperators<AssetID>
+	class AssetID : public klib::kTemplate::SimpleComparisonOperators<AssetID>
 	{
 	public:
 		AssetID(const std::uint32_t ids) noexcept;

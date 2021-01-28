@@ -13,7 +13,7 @@ namespace krakoa::scene::ecs::components
 		TransformComponent() noexcept;
 
 		TransformComponent(const kmaths::Vector3f& position,
-		                   const kmaths::Vector3f& rotationAxes,
+		                   const kmaths::Vector3f& rotation,
 		                   const kmaths::Vector3f& scale = {1.f, 1.f, 1.f}) noexcept;
 
 		~TransformComponent() noexcept;
@@ -28,6 +28,9 @@ namespace krakoa::scene::ecs::components
 		USE_RESULT kmaths::Vector3f GetRotation(kmaths::Theta theta) const noexcept;
 		USE_RESULT kmaths::Vector3f GetRotation() const noexcept;
 		void SetRotation(const kmaths::Vector3f& value) noexcept;
+		void SetRotationX(const kmaths::Vector3f::Type& value) noexcept;
+		void SetRotationY(const kmaths::Vector3f::Type& value) noexcept;
+		void SetRotationZ(const kmaths::Vector3f::Type& value) noexcept;
 
 		USE_RESULT kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept;
 		

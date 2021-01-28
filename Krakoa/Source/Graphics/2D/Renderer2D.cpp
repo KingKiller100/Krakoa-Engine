@@ -437,7 +437,7 @@ namespace krakoa::graphics
 		kmaths::Quaternionf qpq_;
 		if (radians != 0)
 		{
-			const kmaths::Quaternionf qp(radians, 0, 0, 1);
+			const kmaths::Quaternionf qp(radians, 1, 1, 1);
 			qpq_ = qp * q_;
 		}
 

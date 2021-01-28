@@ -26,8 +26,8 @@ namespace krakoa::ui
 		ImGui::End();
 	}
 
-	bool DrawTree(void* id, TreeNodeFlags flags, const std::string_view& name,
-		const InteractAction& openedAction)
+	bool DrawTree(const std::string_view& name, void* id, TreeNodeFlags flags,
+	              const InteractAction& openedAction)
 	{
 		const bool opened = ImGui::TreeNodeEx(id, flags, name.data());
 		if (opened)

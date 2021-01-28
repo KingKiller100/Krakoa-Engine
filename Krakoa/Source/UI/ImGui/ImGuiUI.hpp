@@ -19,8 +19,9 @@ namespace krakoa
 
 		void Draw(const char* name, bool* pOpen, WindowFlags flags, const DrawWindowFunc& context);
 
-		bool DrawTree(void* id, TreeNodeFlags flags, const std::string_view& name
-		              , const InteractAction& openedAction);
+		bool DrawTree(const std::string_view& name, void* id, TreeNodeFlags flags, const InteractAction& openedAction);
+		
+		bool DrawTree(const std::string_view& name, void* id, TreeNodeFlags flags, const InteractAction& openedAction);
 	}
 }
 

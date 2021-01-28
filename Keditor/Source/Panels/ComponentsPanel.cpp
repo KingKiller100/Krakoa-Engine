@@ -92,7 +92,7 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::TransformComponent>())
 			return;
 
-		DrawTree((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform",
+		DrawTree("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
 			[&]()
 			{
 				auto& transform = entity.GetComponent<components::TransformComponent>();
@@ -108,24 +108,26 @@ namespace krakoa::scene
 			});
 	}
 
-	void panels::ComponentsPanel::DisplayCameraComponent(const ecs::Entity& entity)
+	void panels::ComponentsPanel::DisplayCameraComponent(const ecs::Entity& entity) const
 	{
 		KRK_PROFILE_FUNCTION();
 
 		if (!entity.HasComponent<components::CameraComponent>())
 			return;
 
-		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
-		{
-			auto& camera = entity.GetComponent<components::CameraComponent>();
-			auto* sceneCamera = camera.GetCamera<SceneCamera>();
-
-			if (sceneCamera)
+		DrawTree("Camera", (void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
+			[&]
 			{
+				auto& camera = entity.GetComponent<components::CameraComponent>();
+				auto* sceneCamera = camera.GetCamera<SceneCamera>();
+
+				if (!sceneCamera)
+					return;
+
 				const auto camType = sceneCamera->GetProjectionType();
 
 				auto projectionTypes = std::array{ "Orthographic", "Perspective" };
-				const auto currentSelection = projectionTypes[camType];
+				const auto* const currentSelection = projectionTypes[camType];
 
 				if (ImGui::BeginCombo("Projection", currentSelection, ImGuiComboFlags_HeightLarge))
 				{
@@ -186,10 +188,7 @@ namespace krakoa::scene
 						sceneCamera->SetPerspectiveFarClip(perspectiveFar);
 					}
 				}
-			}
-
-			ImGui::TreePop();
-		}
+			});
 
 
 	}

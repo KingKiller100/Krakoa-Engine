@@ -3,11 +3,12 @@
 #include <Camera/SceneCamera.hpp>
 
 #include <Scene/iScene.hpp>
-
 #include <Scene/Entity/Entity.hpp>
 #include <Scene/Entity/Components/TagComponent.hpp>
 #include <Scene/Entity/Components/CameraComponent.hpp>
 #include <Scene/Entity/Components/TransformComponent.hpp>
+
+#include <UI/ImGui/ImGuiUI.hpp>
 
 #include <Util/TypeInfo.hpp>
 
@@ -16,6 +17,7 @@
 namespace krakoa::scene
 {
 	using namespace ecs;
+	using namespace krakoa::ui;
 
 	panels::ComponentsPanel::ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) noexcept
 		: pSelectedEntity(pSelected)
@@ -90,22 +92,20 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::TransformComponent>())
 			return;
 
-		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
-		{
-			auto& transform = entity.GetComponent<components::TransformComponent>();
-			const auto& position = transform.GetPosition();
-			const auto& scale = transform.GetScale();
-			auto rotation = kmaths::ToDegrees(transform.GetRotation());
+		DrawTree((void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Transform",
+			[&]()
+			{
+				auto& transform = entity.GetComponent<components::TransformComponent>();
+				const auto& position = transform.GetPosition();
+				const auto& scale = transform.GetScale();
+				auto rotation = kmaths::ToDegrees(transform.GetRotation());
 
-			ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
-			ImGui::DragFloat("Rotation", &rotation.z, 0.5f);
-			ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
+				ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
+				ImGui::DragFloat("Rotation", &rotation.z, 0.5f);
+				ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
 
-			transform.SetRotation(kmaths::ToRadians(rotation));
-
-			ImGui::TreePop();
-		}
-
+				transform.SetRotation(kmaths::ToRadians(rotation));
+			});
 	}
 
 	void panels::ComponentsPanel::DisplayCameraComponent(const ecs::Entity& entity)

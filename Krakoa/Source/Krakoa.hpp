@@ -72,6 +72,9 @@
 #include "Scene/Entity/Components/AppearanceComponent.hpp"
 #include "Scene/Entity/Components/NativeScriptComponent.hpp"
 
+// UI
+#include "UI/ImGui/ImGuiUI.hpp"
+
 // Util
 #include "Util/TypeInfo.hpp"
 

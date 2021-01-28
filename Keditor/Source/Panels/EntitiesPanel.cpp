@@ -55,7 +55,11 @@ namespace krakoa::scene::panels
 
 			const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
 
-			const bool opened = ImGui::TreeNodeEx((void*)eid, flags, "%s", tag.GetData());
+			if (ImGui::TreeNodeEx((void*)eid, flags, "%s", tag.GetData()))
+			{
+				ImGui::Text("id: %llu", eid.GetValue());
+				ImGui::TreePop();
+			}
 
 			if (ImGui::IsItemClicked(input::MOUSE_LEFT))
 			{
@@ -63,11 +67,6 @@ namespace krakoa::scene::panels
 				selectedEntity = eid;
 			}
 
-			if (opened)
-			{
-				ImGui::Text("id: %llu", eid.GetValue());
-				ImGui::TreePop();
-			}
 		});
 	}
 

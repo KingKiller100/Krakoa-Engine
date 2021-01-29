@@ -10,17 +10,17 @@
 
 namespace krakoa::ui
 {
-	void DrawWindow(const char* label, const Instruction& instruction)
+	void DrawPanel(const char* label, const Instruction& instruction)
 	{
-		DrawWindow(label, 0, instruction);
+		DrawPanel(label, WindowFlags::None, instruction);
 	}
 
-	void DrawWindow(const char* label, WindowFlags flags, const Instruction& instruction)
+	void DrawPanel(const char* label, WindowFlags flags, const Instruction& instruction)
 	{
-		DrawWindow(label, nullptr, flags, instruction);
+		DrawPanel(label, nullptr, flags, instruction);
 	}
 
-	void DrawWindow(const char* label, bool* pOpen, WindowFlags flags, const Instruction& instruction)
+	void DrawPanel(const char* label, bool* pOpen, WindowFlags flags, const Instruction& instruction)
 	{
 		ImGui::Begin(label, pOpen, flags);
 		if (instruction)
@@ -166,5 +166,22 @@ namespace krakoa::ui
 		ImGui::PopID();
 
 		return altered;
+	}
+
+	bool HandleSelectable(const std::string_view& label, bool selected, const Instruction& action)
+	{
+		return HandleSelectable(label, selected, SelectableFlags::None, kmaths::Vector2f(), action);
+	}
+
+	bool HandleSelectable(const std::string_view& label, bool selected, SelectableFlags flags,
+	                      const kmaths::Vector2f& size, const Instruction& action)
+	{
+		if (ImGui::Selectable(label.data(), selected, flags, {size.x, size.y}))
+		{
+			action();
+			return true;
+		}
+
+		return false;
 	}
 }

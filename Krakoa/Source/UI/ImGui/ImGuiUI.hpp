@@ -17,11 +17,9 @@ namespace krakoa
 	{
 		using Instruction = std::function<void()>;
 
-		void DrawWindow(const char* label, const Instruction& instruction);
-
-		void DrawWindow(const char* label, WindowFlags flags, const Instruction& instruction);
-
-		void DrawWindow(const char* label, bool* pOpen, WindowFlags flags, const Instruction& instruction);
+		void DrawPanel(const char* label, const Instruction& instruction);
+		void DrawPanel(const char* label, WindowFlags flags, const Instruction& instruction);
+		void DrawPanel(const char* label, bool* pOpen, WindowFlags flags, const Instruction& instruction);
 
 		void DrawRawText(const std::string_view& text);
 
@@ -31,7 +29,7 @@ namespace krakoa
 		
 		bool DrawButton(const std::string_view& label, float width, float height, const Instruction& action);
 		bool DrawButton(const std::string_view& label, kmaths::Vector2f dimensions, const Instruction& action);
-		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour, const Instruction& action);
+		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour, float& value, float incrementVal, const Instruction& action);
 
 		bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags flags, const Instruction& action);
 		
@@ -41,6 +39,9 @@ namespace krakoa
 		                        const std::array<graphics::Colour, 3>& btnColours
 		                        , float incrementVal = 0.1f, kmaths::Vector3f::Type resetValue = 0.f,
 		                        float columnWidth = 100.f);
+
+		bool HandleSelectable(const std::string_view& label, bool selected, const Instruction& action);
+		bool HandleSelectable(const std::string_view& label, bool selected, SelectableFlags flags, const kmaths::Vector2f& size, const Instruction& action);
 	}
 }
 

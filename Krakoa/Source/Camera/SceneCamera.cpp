@@ -3,7 +3,7 @@
 
 #include "../Logging/EngineLogger.hpp"
 
-#include <Utility/String/Tricks/kStringOperators.hpp>
+// #include <Utility/String/Tricks/kStringOperators.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 namespace krakoa
@@ -27,9 +27,9 @@ namespace krakoa
 		UpdateProjection();
 	}
 
-	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
+	void SceneCamera::SetOrthographic(float zoom, float nearClip, float farClip)
 	{
-		orthoSpecs = { size, nearClip, farClip };
+		orthoSpecs = { zoom, nearClip, farClip };
 		UpdateProjection();
 	}
 
@@ -67,10 +67,10 @@ namespace krakoa
 		}
 		else
 		{
-			const float orthoLeft = -orthoSpecs.size * aspectRatio * 0.5f;
-			const float orthoRight = orthoSpecs.size * aspectRatio * 0.5f;
-			const float orthoBottom = -orthoSpecs.size * 0.5f;
-			const float orthoTop = orthoSpecs.size * 0.5f;
+			const float orthoLeft = -orthoSpecs.zoomScale * aspectRatio * 0.5f;
+			const float orthoRight = orthoSpecs.zoomScale * aspectRatio * 0.5f;
+			const float orthoBottom = -orthoSpecs.zoomScale * 0.5f;
+			const float orthoTop = orthoSpecs.zoomScale * 0.5f;
 
 			projectionMat = kmaths::Ortho_ZO(zDir, orthoLeft, orthoRight,
 				orthoBottom, orthoTop, orthoSpecs.nearClip, orthoSpecs.farClip);
@@ -110,14 +110,14 @@ namespace krakoa
 		UpdateProjection();
 	}
 
-	float SceneCamera::GetOrthographicSize() const
+	float SceneCamera::GetOrthographicZoom() const
 	{
-		return orthoSpecs.size;
+		return orthoSpecs.zoomScale;
 	}
 
-	void SceneCamera::SetOrthographicSize(float size)
+	void SceneCamera::SetOrthographicZoom(float size)
 	{
-		orthoSpecs.size = size;
+		orthoSpecs.zoomScale = size;
 		UpdateProjection();
 	}
 

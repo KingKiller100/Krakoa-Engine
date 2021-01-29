@@ -72,8 +72,8 @@ namespace krakoa
 		const auto maxDays = valueMap.ReadAs<size_t>("MaxDays");
 		const auto lastWrite = entry.last_write_time();
 		const auto now = std::filesystem::_File_time_clock::now();
-		const auto diff = now - lastWrite;
-		const auto totalHours = std::chrono::duration_cast<std::chrono::hours>(diff);
+		const auto timeSinceLastWrite = now - lastWrite;
+		const auto totalHours = std::chrono::duration_cast<std::chrono::hours>(timeSinceLastWrite);
 		const auto totalDays = totalHours / 24.0;
 		const auto tooOld = maxDays < totalDays.count();
 

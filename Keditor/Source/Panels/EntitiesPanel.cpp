@@ -33,7 +33,7 @@ namespace krakoa::scene::panels
 
 		auto& selectedEntity = *pSelectedEntity.lock();
 
-		ui::DrawWindow("Entities", [&]()
+		ui::DrawPanel("Entities", [&]()
 			{
 				SelectEntity(selectedEntity, scene);
 				ClearIfNoneSelected(selectedEntity);
@@ -42,7 +42,7 @@ namespace krakoa::scene::panels
 
 	void EntitiesPanel::DrawNoActiveScene()
 	{
-		ui::DrawWindow("Entities", nullptr);
+		ui::DrawPanel("Entities", nullptr);
 	}
 
 	void EntitiesPanel::SelectEntity(ecs::EntityUID& selectedEntity, const iScene& scene)

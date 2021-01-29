@@ -16,7 +16,7 @@ namespace krakoa
 
 		struct OrthographicSpecs
 		{
-			float size = 10.f;
+			float zoomScale = 10.f;
 			float nearClip = -1.f;
 			float farClip = 1.0f;
 		};
@@ -33,7 +33,7 @@ namespace krakoa
 		~SceneCamera() noexcept override;
 
 		void SetPerspective(float verticalFOV, float nearClip, float farClip);
-		void SetOrthographic(float size, float nearClip, float farClip);
+		void SetOrthographic(float zoom, float nearClip, float farClip);
 
 		void SetViewportSize(std::uint32_t width, std::uint32_t height);
 		void SetViewportSize(const kmaths::Vector2<std::uint32_t>& dimensions);
@@ -46,8 +46,8 @@ namespace krakoa
 		float GetPerspectiveFarClip() const;
 		void SetPerspectiveFarClip(float farClip);
 
-		float GetOrthographicSize() const;
-		void SetOrthographicSize(float size);
+		float GetOrthographicZoom() const;
+		void SetOrthographicZoom(float size);
 		float GetOrthographicNearClip() const;
 		void SetOrthographicNearClip(float nearClip);
 		float GetOrthographicFarClip() const;

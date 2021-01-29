@@ -72,11 +72,12 @@ namespace krakoa::scene
 
 		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TagComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
 		{
+			constexpr ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackAlways;
 			auto& tag = entity.GetComponent<components::TagComponent>();
 
 			char buffer[1 << 8];
 			std::strcpy(buffer, tag.GetData());
-			if (ImGui::InputText("Tag", tag.GetData(), sizeof(buffer)))
+			if (ImGui::InputText("Tag", tag.GetData(), sizeof(buffer), ))
 			{
 				tag.SetTag(buffer);
 			}
@@ -88,14 +89,15 @@ namespace krakoa::scene
 	void panels::ComponentsPanel::DisplayTransformComponent(const ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
+
+		if (!entity.HasComponent<components::TransformComponent>())
+			return;
+
 		constexpr auto btnColours = std::array{
 			graphics::colours::Red,
 			graphics::colours::Green,
 			graphics::colours::Blue,
 		};
-
-		if (!entity.HasComponent<components::TransformComponent>())
-			return;
 
 		DrawTreeNode("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
 			[&]()
@@ -155,45 +157,53 @@ namespace krakoa::scene
 
 				if (camType == SceneCamera::ProjectionType::Orthographic)
 				{
-					float orthoSize = sceneCamera->GetOrthographicSize();
+					float orthoSize = sceneCamera->GetOrthographicZoom();
+					float orthoNear = sceneCamera->GetOrthographicNearClip();
+					float orthoFar = sceneCamera->GetOrthographicFarClip();
+
 					DrawDragValue("Zoom", orthoSize, 0.01f, 0.25f, 10.f,
 						[&]()
 						{
-							sceneCamera->SetOrthographicSize(orthoSize);
+							sceneCamera->SetOrthographicZoom(orthoSize);
 						});
-
-					float orthoNear = sceneCamera->GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near Clip", &orthoNear, 0.01f, -1.f, 9.95f))
-					{
-						sceneCamera->SetOrthographicNearClip(orthoNear);
-					}
-
-					float orthoFar = sceneCamera->GetOrthographicFarClip();
-					if (ImGui::DragFloat("Far Clip", &orthoFar, 0.01f, orthoNear + 0.05f, 10))
-					{
-						sceneCamera->SetOrthographicFarClip(orthoFar);
-					}
+					DrawDragValue("Near Clip", orthoNear, 0.01f, -1.f, 9.95f,
+						[&]()
+						{
+							sceneCamera->SetOrthographicNearClip(orthoNear);
+							if (orthoNear >= orthoFar)
+							{
+								orthoFar = orthoNear + 0.05f;
+								sceneCamera->SetOrthographicFarClip(orthoFar);
+							}
+						});
+					DrawDragValue("Far Clip", orthoFar, 0.01f, orthoNear + 0.05f, 10.f,
+						[&]()
+						{
+							sceneCamera->SetOrthographicFarClip(orthoFar);
+						});
 				}
 
 				if (camType == SceneCamera::ProjectionType::Perspective)
 				{
-					float perspectiveVerticalFOV = sceneCamera->GetPerspectiveVerticalFOV();
-					if (ImGui::DragFloat("Vertical Field of View", &perspectiveVerticalFOV, 0.05f))
-					{
-						sceneCamera->SetPerspectiveVerticalFOV(perspectiveVerticalFOV);
-					}
-
+					float perspectiveVerticalFOV = kmaths::ToDegrees(sceneCamera->GetPerspectiveVerticalFOV());
 					float perspectiveNear = sceneCamera->GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near Clip", &perspectiveNear, 0.05f))
-					{
-						sceneCamera->SetPerspectiveNearClip(perspectiveNear);
-					}
-
 					float perspectiveFar = sceneCamera->GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far Clip", &perspectiveFar, 0.05f))
-					{
-						sceneCamera->SetPerspectiveFarClip(perspectiveFar);
-					}
+
+					DrawDragValue("Vertical F.O.V.", perspectiveVerticalFOV, 0.5f,
+						[&]()
+						{
+							sceneCamera->SetPerspectiveVerticalFOV(kmaths::ToRadians(perspectiveVerticalFOV));
+						});
+					DrawDragValue("Near Clip", perspectiveNear, 0.05f,
+						[&]()
+						{
+							sceneCamera->SetPerspectiveNearClip(perspectiveNear);
+						});
+					DrawDragValue("Far Clip", perspectiveFar, 0.05f,
+						[&]()
+						{
+							sceneCamera->SetPerspectiveFarClip(perspectiveFar);
+						});
 				}
 			});
 

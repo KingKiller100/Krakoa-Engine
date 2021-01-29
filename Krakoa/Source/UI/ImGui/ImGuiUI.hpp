@@ -27,6 +27,7 @@ namespace krakoa
 
 		bool DrawButton(const std::string_view& label, float width, float height, const Instruction& action);
 		bool DrawButton(const std::string_view& label, kmaths::Vector2f dimensions, const Instruction& action);
+		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour, const Instruction& action);
 
 		bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags flags, const Instruction& action);
 		

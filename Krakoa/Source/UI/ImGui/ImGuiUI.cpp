@@ -3,6 +3,8 @@
 
 #include "../../Graphics/Helpers/Colour.hpp"
 
+#include <Utility/String/Tricks/kStringOperators.hpp>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -49,8 +51,30 @@ namespace krakoa::ui
 		return DrawButton(label, dimensions.x, dimensions.y, action);
 	}
 
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour,
+	                        float& value, float incrementVal, const Instruction& action)
+	{
+		constexpr auto hoveredColourChange = kmaths::Vector4f{ 0.1f, 0.1f, 0.05f, 0.f };
+
+		const auto btnColourX = colour.ToFloats<float>();
+		const auto btnColourHoveredX = (colour + hoveredColourChange).ToFloats<float>();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(btnColourX.x, btnColourX.y, btnColourX.z, btnColourX.w));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(btnColourHoveredX.x, btnColourHoveredX.y, btnColourHoveredX.z, btnColourX.w));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(btnColourX.x, btnColourX.y, btnColourX.z, btnColourX.w));
+
+		const auto opened = DrawButton(label, dimensions, action);
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat(("##" + label).data(), &value, incrementVal);
+		ImGui::PopItemWidth();
+
+		return opened;
+	}
+
 	bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags flags,
-		const Instruction& action)
+	                  const Instruction& action)
 	{
 		const bool opened = ImGui::TreeNodeEx(id, flags, "%s", label.data());
 		if (opened)
@@ -76,8 +100,6 @@ namespace krakoa::ui
 	void DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values, const std::array<graphics::Colour, 3>& btnColours
 		, float incrementVal, kmaths::Vector3f::Type resetValue, float columnWidth)
 	{
-		
-		
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
 		DrawRawText(label);
@@ -89,39 +111,27 @@ namespace krakoa::ui
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
 		const kmaths::Vector2f buttonSize(lineHeight * 3.f, lineHeight);
 
-		const auto btnColourX = btnColours[0].ToFloats<float>();
-		
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(btnColourX.x, btnColourX.y, btnColourX.z, btnColourX.w));
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(btnColourX.x + 0.1f, btnColourX.y + 0.1f, btnColourX.z, btnColourX.w));
-		
-		DrawButton("X", buttonSize,[&]()
+		DrawButtonWithDrag("X", buttonSize, btnColours[0], values.x, incrementVal,
+			[&]()
 			{
 				values.x = resetValue;
 			});
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, incrementVal);
-		ImGui::PopItemWidth();
+		
 		ImGui::SameLine();
 
-		DrawButton("Y", buttonSize,[&]()
+		DrawButtonWithDrag("Y", buttonSize, btnColours[2], values.y, incrementVal,
+			[&]()
 			{
 				values.y = resetValue;
 			});
 
 		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, incrementVal);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		DrawButton("Z", buttonSize,[&]()
+		
+		DrawButtonWithDrag("Z", buttonSize, btnColours[2], values.z, incrementVal,
+			[&]()
 			{
 				values.z = resetValue;
 			});
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, incrementVal);
-		ImGui::PopItemWidth();
 		
 		ImGui::PopStyleVar();
 		

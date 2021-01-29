@@ -1,27 +1,39 @@
 #pragma once
 
-#include "../Flags/TreeNodeFlags.hpp"
-#include "../Flags/WindowFlags.hpp"
+#include "../Flags/UIFlags.hpp"
+
+#include "../../Graphics/Helpers/Colour.hpp"
+
+#include <Maths/Vectors/Vector2.hpp>
+#include <Maths/Vectors/Vector3.hpp>
 
 #include <functional>
 #include <string>
+
 
 namespace krakoa
 {
 	namespace ui
 	{
-		using DrawWindowFunc = std::function<void()>;
-		using InteractAction = std::function<void()>;
+		using Instruction = std::function<void()>;
 
-		void Draw(const char* name, const DrawWindowFunc& context);
+		void DrawWindow(const char* label, const Instruction& instruction);
 
-		void Draw(const char* name, WindowFlags flags, const DrawWindowFunc& context);
+		void DrawWindow(const char* label, WindowFlags flags, const Instruction& context);
 
-		void Draw(const char* name, bool* pOpen, WindowFlags flags, const DrawWindowFunc& context);
+		void DrawWindow(const char* label, bool* pOpen, WindowFlags flags, const Instruction& context);
 
-		bool DrawTree(const std::string_view& name, void* id, TreeNodeFlags flags, const InteractAction& openedAction);
+		void DrawRawText(const std::string_view& text);
+
+		bool DrawButton(const std::string_view& label, float width, float height, const Instruction& action);
+		bool DrawButton(const std::string_view& label, kmaths::Vector2f dimensions, const Instruction& action);
+
+		bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags flags, const Instruction& action);
 		
-		bool DrawTree(const std::string_view& name, void* id, TreeNodeFlags flags, const InteractAction& openedAction);
+		bool DrawCheckBox(const std::string_view& label, const char* previewSelection, ComboBoxFlag flags, const Instruction& action);
+
+		void DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values, const std::array<graphics::Colour, 3>& btnColours
+			, float incrementVal = 0.1f, kmaths::Vector3f::Type resetValue = 0.f, float columnWidth = 100.f);
 	}
 }
 

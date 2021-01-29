@@ -92,7 +92,7 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::TransformComponent>())
 			return;
 
-		DrawTree("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
+		DrawTreeNode("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
 			[&]()
 			{
 				auto& transform = entity.GetComponent<components::TransformComponent>();
@@ -115,7 +115,7 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::CameraComponent>())
 			return;
 
-		DrawTree("Camera", (void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
+		DrawTreeNode("Camera", (void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
 			[&]
 			{
 				auto& camera = entity.GetComponent<components::CameraComponent>();

@@ -235,6 +235,16 @@ namespace krakoa::graphics
 
 			return { r, g, b, a };
 		}
+		
+		USE_RESULT constexpr Colour operator+(const kmaths::Vector4f& v) const noexcept
+		{
+			const auto r = kmaths::Clamp<std::uint8_t>(red + FloatToColour(v[0]), MinColourValue, MaxColourValue);
+			const auto g = kmaths::Clamp<std::uint8_t>((green + FloatToColour(v[1])), MinColourValue, MaxColourValue);
+			const auto b = kmaths::Clamp<std::uint8_t>((blue + FloatToColour(v[2])), MinColourValue, MaxColourValue);
+			const auto a = kmaths::Clamp<std::uint8_t>((alpha + FloatToColour(v[3])), MinColourValue, MaxColourValue);
+
+			return { r, g, b, a };
+		}
 
 		USE_RESULT constexpr Colour operator-(const Colour& c) const noexcept
 		{
@@ -242,6 +252,16 @@ namespace krakoa::graphics
 			const auto g = kmaths::Clamp<uint8_t>((green - c.green), MinColourValue, MaxColourValue);
 			const auto b = kmaths::Clamp<uint8_t>((blue - c.blue), MinColourValue, MaxColourValue);
 			const auto a = kmaths::Clamp<uint8_t>((alpha - c.alpha), MinColourValue, MaxColourValue);
+
+			return { r, g, b, a };
+		}
+
+		USE_RESULT constexpr Colour operator-(const kmaths::Vector4f& v) const noexcept
+		{
+			const auto r = kmaths::Clamp<std::uint8_t>(red - FloatToColour(v[0]), MinColourValue, MaxColourValue);
+			const auto g = kmaths::Clamp<std::uint8_t>((green - FloatToColour(v[1])), MinColourValue, MaxColourValue);
+			const auto b = kmaths::Clamp<std::uint8_t>((blue - FloatToColour(v[2])), MinColourValue, MaxColourValue);
+			const auto a = kmaths::Clamp<std::uint8_t>((alpha - FloatToColour(v[3])), MinColourValue, MaxColourValue);
 
 			return { r, g, b, a };
 		}

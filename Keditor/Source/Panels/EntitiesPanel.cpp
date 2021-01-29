@@ -6,6 +6,8 @@
 #include <Scene/Entity/Entity.hpp>
 #include <Scene/Entity/Components/TagComponent.hpp>
 
+#include <UI/ImGui/ImGuiUI.hpp>
+
 #include <ImGui/imgui.h>
 
 namespace krakoa::scene::panels
@@ -25,22 +27,22 @@ namespace krakoa::scene::panels
 	void EntitiesPanel::DrawActiveScene(const iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
-		
-		if (pSelectedEntity. expired())
+
+		if (pSelectedEntity.expired())
 			return;
-		
+
 		auto& selectedEntity = *pSelectedEntity.lock();
-		
-		ImGui::Begin("Entities");
-		SelectEntity(selectedEntity, scene);
-		ClearIfNoneSelected(selectedEntity);
-		ImGui::End();
+
+		ui::DrawWindow("Entities", [&]()
+			{
+				SelectEntity(selectedEntity, scene);
+				ClearIfNoneSelected(selectedEntity);
+			});
 	}
 
 	void EntitiesPanel::DrawNoActiveScene()
 	{
-		ImGui::Begin("Entities");
-		ImGui::End();
+		ui::DrawWindow("Entities", nullptr);
 	}
 
 	void EntitiesPanel::SelectEntity(ecs::EntityUID& selectedEntity, const iScene& scene)
@@ -48,26 +50,26 @@ namespace krakoa::scene::panels
 		KRK_PROFILE_FUNCTION();
 
 		scene.ForEach([&](const ecs::Entity& entity)
-		{
-			const auto eid = entity.GetID();
-			const auto selected = selectedEntity == eid ? ImGuiTreeNodeFlags_Selected : 0;
-			const ImGuiTreeNodeFlags flags = selected | ImGuiTreeNodeFlags_OpenOnArrow;
-
-			const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
-
-			if (ImGui::TreeNodeEx((void*)eid, flags, "%s", tag.GetData()))
 			{
-				ImGui::Text("id: %llu", eid.GetValue());
-				ImGui::TreePop();
-			}
+				const auto eid = entity.GetID();
+				const auto selected = selectedEntity == eid ? ImGuiTreeNodeFlags_Selected : 0;
+				const ImGuiTreeNodeFlags flags = selected | ImGuiTreeNodeFlags_OpenOnArrow;
 
-			if (ImGui::IsItemClicked(input::MOUSE_LEFT))
-			{
-				KRK_DBG(klib::ToString( "[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
-				selectedEntity = eid;
-			}
+				const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
 
-		});
+				if (ImGui::TreeNodeEx((void*)eid, flags, "%s", tag.GetData()))
+				{
+					ImGui::Text("id: %llu", eid.GetValue());
+					ImGui::TreePop();
+				}
+
+				if (ImGui::IsItemClicked(input::MOUSE_LEFT))
+				{
+					KRK_DBG(klib::ToString("[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
+					selectedEntity = eid;
+				}
+
+			});
 	}
 
 	void EntitiesPanel::ClearIfNoneSelected(ecs::EntityUID& selectedEntity)

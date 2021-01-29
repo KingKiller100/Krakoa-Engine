@@ -88,6 +88,11 @@ namespace krakoa::scene
 	void panels::ComponentsPanel::DisplayTransformComponent(const ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
+		constexpr auto btnColours = std::array{
+			graphics::colours::Red,
+			graphics::colours::Green,
+			graphics::colours::Blue,
+		};
 
 		if (!entity.HasComponent<components::TransformComponent>())
 			return;
@@ -96,15 +101,17 @@ namespace krakoa::scene
 			[&]()
 			{
 				auto& transform = entity.GetComponent<components::TransformComponent>();
-				const auto& position = transform.GetPosition();
-				const auto& scale = transform.GetScale();
+				auto position = transform.GetPosition();
+				auto scale = transform.GetScale();
 				auto rotation = kmaths::ToDegrees(transform.GetRotation());
 
-				ImGui::DragFloat3("Position", position.GetPointerToData(), 0.05f);
-				ImGui::DragFloat("Rotation", &rotation.z, 0.5f);
-				ImGui::DragFloat3("Scale", scale.GetPointerToData(), 0.1f);
+				DrawVec3Controller("Position", position, btnColours, 0.05f);
+				DrawVec3Controller("Rotation", rotation, btnColours, 0.5f);
+				DrawVec3Controller("Scale", scale, btnColours, 0.5f, 1.f);
 
+				transform.SetPosition(position);
 				transform.SetRotation(kmaths::ToRadians(rotation));
+				transform.SetScale(scale);
 			});
 	}
 
@@ -129,31 +136,31 @@ namespace krakoa::scene
 				auto projectionTypes = std::array{ "Orthographic", "Perspective" };
 				const auto* const currentSelection = projectionTypes[camType];
 
-				if (ImGui::BeginCombo("Projection", currentSelection, ImGuiComboFlags_HeightLarge))
-				{
-					for (auto i = 0; i < projectionTypes.size(); ++i)
+				ui::DrawComboBox("Projection", currentSelection, ImGuiComboFlags_HeightLarge,
+					[&]()
 					{
-						const auto& type = projectionTypes[i];
-						const bool selected = (currentSelection == type);
-						if (ImGui::Selectable(type, selected))
+						for (auto i = 0; i < projectionTypes.size(); ++i)
 						{
-							sceneCamera->SetProjectionType(i);
+							const auto& type = projectionTypes[i];
+							const bool selected = (currentSelection == type);
+							if (ImGui::Selectable(type, selected))
+							{
+								sceneCamera->SetProjectionType(i);
+							}
+
+							if (selected)
+								ImGui::SetItemDefaultFocus();
 						}
-
-						if (selected)
-							ImGui::SetItemDefaultFocus();
-					}
-
-					ImGui::EndCombo();
-				}
+					});
 
 				if (camType == SceneCamera::ProjectionType::Orthographic)
 				{
 					float orthoSize = sceneCamera->GetOrthographicSize();
-					if (ImGui::DragFloat("Size", &orthoSize, 0.01f, 0.25f, 3.f))
-					{
-						sceneCamera->SetOrthographicSize(orthoSize);
-					}
+					DrawDragValue("Zoom", orthoSize, 0.01f, 0.25f, 10.f,
+						[&]()
+						{
+							sceneCamera->SetOrthographicSize(orthoSize);
+						});
 
 					float orthoNear = sceneCamera->GetOrthographicNearClip();
 					if (ImGui::DragFloat("Near Clip", &orthoNear, 0.01f, -1.f, 9.95f))

@@ -1,9 +1,11 @@
 ﻿#pragma once
 
 #include <Scene/Entity/Components/TransformComponent.hpp>
+#include <Scene/Entity/ScriptEntity.hpp>
 #include <Input/Input.hpp>
 
 #include <Maths/Vectors/Vector3.hpp>
+
 
 namespace krakoa
 {
@@ -35,26 +37,26 @@ namespace krakoa
 	private:
 		void UpdatePosition(float deltaTime)
 		{
-			constexpr auto up = Vector3f(0, 1, 0);
-			constexpr auto down = Vector3f(0, -1, 0);
-			constexpr auto left = Vector3f(-1, 0, 0);
-			constexpr auto right = Vector3f(1, 0, 0);
+			constexpr auto up = kmaths::Vector3f(0, 1, 0);
+			constexpr auto down = kmaths::Vector3f(0, -1, 0);
+			constexpr auto left = kmaths::Vector3f(-1, 0, 0);
+			constexpr auto right = kmaths::Vector3f(1, 0, 0);
 
 			const auto& position = transform->GetPosition();
 
 			const auto speed = moveSpeed * deltaTime;
 			kmaths::Vector3f movement;
 			
-			if (input::InputManager::IsKeyPressed(input::KEY_RIGHT))
+			if (input::IsKeyPressed(input::KEY_RIGHT))
 				movement += right * speed;
 
-			if (input::InputManager::IsKeyPressed(input::KEY_LEFT))
+			if (input::IsKeyPressed(input::KEY_LEFT))
 				movement += left * speed;
 
-			if (input::InputManager::IsKeyPressed(input::KEY_UP))
+			if (input::IsKeyPressed(input::KEY_UP))
 				movement += up * speed;
 
-			if (input::InputManager::IsKeyPressed(input::KEY_DOWN))
+			if (input::IsKeyPressed(input::KEY_DOWN))
 				movement += down * speed;
 
 			transform->SetPosition(position + movement);

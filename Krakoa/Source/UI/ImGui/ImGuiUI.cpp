@@ -12,22 +12,19 @@ namespace krakoa::ui
 {
 	void DrawWindow(const char* label, const Instruction& instruction)
 	{
-		ImGui::Begin(label);
-		instruction();
-		ImGui::End();
+		DrawWindow(label, 0, instruction);
 	}
 
-	void DrawWindow(const char* label, WindowFlags flags, const Instruction& context)
+	void DrawWindow(const char* label, WindowFlags flags, const Instruction& instruction)
 	{
-		ImGui::Begin(label, nullptr, flags);
-		context();
-		ImGui::End();
+		DrawWindow(label, nullptr, flags, instruction);
 	}
 
-	void DrawWindow(const char* label, bool* pOpen, WindowFlags flags, const Instruction& context)
+	void DrawWindow(const char* label, bool* pOpen, WindowFlags flags, const Instruction& instruction)
 	{
 		ImGui::Begin(label, pOpen, flags);
-		context();
+		if (instruction)
+			instruction();
 		ImGui::End();
 	}
 
@@ -36,11 +33,35 @@ namespace krakoa::ui
 		ImGui::Text(text.data());
 	}
 
+	bool DrawDragValue(const std::string_view& label, float& value, float increment, const Instruction& instruction)
+	{
+		return DrawDragValue(label, value, increment, 0, 0, instruction);
+	}
+
+	bool DrawDragValue(const std::string_view& label, float& value, float increment, float v_min, float v_max,
+		const Instruction& instruction)
+	{
+		return DrawDragValue(label, value, increment, v_min, v_max, "%.3f", instruction);
+	}
+
+	bool DrawDragValue(const std::string_view& label, float& value, float increment, float v_min, float v_max,
+		const char* format, const Instruction& instruction)
+	{
+		if (ImGui::DragFloat(label.data(), &value, increment, v_min, v_max, format))
+		{
+			if (instruction)
+				instruction();
+			return true;
+		}
+		return false;
+	}
+
 	bool DrawButton(const std::string_view& label, float width, float height, const Instruction& action)
 	{
 		if (ImGui::Button(label.data(), { width, height }))
 		{
-			action();
+			if (action)
+				action();
 			return true;
 		}
 		return false;
@@ -52,54 +73,59 @@ namespace krakoa::ui
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour,
-	                        float& value, float incrementVal, const Instruction& action)
+		float& value, float incrementVal, const Instruction& action)
 	{
 		constexpr auto hoveredColourChange = kmaths::Vector4f{ 0.1f, 0.1f, 0.05f, 0.f };
 
-		const auto btnColourX = colour.ToFloats<float>();
-		const auto btnColourHoveredX = (colour + hoveredColourChange).ToFloats<float>();
+		const auto btnColour = colour.ToFloats<float>();
+		const auto btnColourHovered = (colour + hoveredColourChange).ToFloats<float>();
 
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(btnColourX.x, btnColourX.y, btnColourX.z, btnColourX.w));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(btnColourHoveredX.x, btnColourHoveredX.y, btnColourHoveredX.z, btnColourX.w));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(btnColourX.x, btnColourX.y, btnColourX.z, btnColourX.w));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(btnColour.x, btnColour.y, btnColour.z, btnColour.w));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(btnColourHovered.x, btnColourHovered.y, btnColourHovered.z, btnColour.w));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(btnColour.x, btnColour.y, btnColour.z, btnColour.w));
 
 		const auto opened = DrawButton(label, dimensions, action);
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
-		ImGui::DragFloat(("##" + label).data(), &value, incrementVal);
+		DrawDragValue(("##" + label).data(), value, incrementVal, nullptr);
 		ImGui::PopItemWidth();
 
 		return opened;
 	}
 
 	bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags flags,
-	                  const Instruction& action)
+		const Instruction& action)
 	{
 		const bool opened = ImGui::TreeNodeEx(id, flags, "%s", label.data());
 		if (opened)
 		{
-			action();
+			if (action)
+				action();
 			ImGui::TreePop();
 		}
 		return opened;
 	}
 
-	bool DrawCheckBox(const std::string_view& label, const char* previewSelection, ComboBoxFlag flags,
+	bool DrawComboBox(const std::string_view& label, const char* previewSelection, ComboBoxFlag flags,
 		const Instruction& action)
 	{
 		if (ImGui::BeginCombo(label.data(), previewSelection, flags))
 		{
-			action();
+			if (action)
+				action();
 			ImGui::EndCombo();
 			return true;
 		}
 		return false;
 	}
 
-	void DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values, const std::array<graphics::Colour, 3>& btnColours
-		, float incrementVal, kmaths::Vector3f::Type resetValue, float columnWidth)
+	bool DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values,
+	                        const std::array<graphics::Colour, 3>& btnColours
+	                        , float incrementVal, kmaths::Vector3f::Type resetValue, float columnWidth)
 	{
+		ImGui::PushID(label.data());
+		
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
 		DrawRawText(label);
@@ -109,32 +135,36 @@ namespace krakoa::ui
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.f, 0.f });
 
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
-		const kmaths::Vector2f buttonSize(lineHeight * 3.f, lineHeight);
+		const kmaths::Vector2f buttonSize(lineHeight + 3.f, lineHeight);
 
-		DrawButtonWithDrag("X", buttonSize, btnColours[0], values.x, incrementVal,
+		auto altered = DrawButtonWithDrag("X", buttonSize, btnColours[0], values.x, incrementVal,
 			[&]()
 			{
 				values.x = resetValue;
 			});
-		
+
 		ImGui::SameLine();
 
-		DrawButtonWithDrag("Y", buttonSize, btnColours[2], values.y, incrementVal,
+		altered |= DrawButtonWithDrag("Y", buttonSize, btnColours[1], values.y, incrementVal,
 			[&]()
 			{
 				values.y = resetValue;
 			});
 
 		ImGui::SameLine();
-		
-		DrawButtonWithDrag("Z", buttonSize, btnColours[2], values.z, incrementVal,
+
+		altered |= DrawButtonWithDrag("Z", buttonSize, btnColours[2], values.z, incrementVal,
 			[&]()
 			{
 				values.z = resetValue;
 			});
-		
+
 		ImGui::PopStyleVar();
-		
+
 		ImGui::Columns(1);
+
+		ImGui::PopID();
+
+		return altered;
 	}
 }

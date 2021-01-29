@@ -52,7 +52,7 @@ namespace krakoa
 	void SceneCamera::SetProjectionType(ProjectionType projType)
 	{
 		projectionType = projType;
-		KRK_DBG("Scene camera projection: " + std::string(projType.ToString()));
+		KRK_INF("Scene camera projection: " + std::string(projType.ToString()));
 		UpdateProjection();
 	}
 

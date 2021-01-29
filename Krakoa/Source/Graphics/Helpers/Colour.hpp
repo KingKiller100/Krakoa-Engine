@@ -4,18 +4,101 @@
 #include <Maths/Vectors/Vector4.hpp>
 
 #include <Maths/kAlgorithms.hpp>
+#include <Template/kSimpleOperators.hpp>
 
 #include <cstdint>
 
 namespace krakoa::graphics
 {
 	using namespace kmaths;
-	
+
 	class Colour final
 	{
 		struct HSL
 		{
 			float hue = 0, saturation = 0, lightness = 0;
+		};
+
+		class ColourComponent : klib::kTemplate::SimpleComparisonOperators<ColourComponent>
+		{
+		public:
+			constexpr ColourComponent(std::uint8_t value = 0)
+				: value(value)
+			{}
+
+			constexpr std::uint8_t GetValue() const noexcept
+			{
+				return value;
+			}
+
+			ColourComponent operator+(const ColourComponent& other) const
+			{
+				const auto opVal = static_cast<int>(value) + static_cast<int>(other.value);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			ColourComponent operator-(const ColourComponent& other) const
+			{
+				const auto opVal = static_cast<int>(value) - static_cast<int>(other.value);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			ColourComponent operator*(const ColourComponent& other) const
+			{
+				const auto opVal = static_cast<int>(value) * static_cast<int>(other.value);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			ColourComponent operator/(const ColourComponent& other) const
+			{
+				const auto opVal = static_cast<float>(value) / static_cast<float>(other.value);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			template<typename T>
+			ColourComponent operator+(const T& other) const
+			{
+				const auto opVal = static_cast<int>(value) + static_cast<int>(other);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			template<typename T>
+			ColourComponent operator-(const T& other) const
+			{
+				const auto opVal = static_cast<int>(value) - static_cast<int>(other);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			template<typename T>
+			ColourComponent operator*(const T& other) const
+			{
+				const auto opVal = static_cast<int>(value) * static_cast<int>(other);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+
+			template<typename T>
+			ColourComponent operator/(const T& other) const
+			{
+				const auto opVal = static_cast<float>(value) / static_cast<float>(other);
+				const auto res = kmaths::Clamp(opVal, 0, 255);
+				return { static_cast<std::uint8_t>(res) };
+			}
+			
+			template<typename T>
+			constexpr operator T() const noexcept
+			{
+				return value;
+			}
+
+		private:
+			std::uint8_t value;
 		};
 
 	public:
@@ -97,7 +180,7 @@ namespace krakoa::graphics
 			: red(rgba[0]), green(rgba[1]),
 			blue(rgba[2]), alpha(rgba[3])
 		{}
-		
+
 		~Colour() noexcept
 			= default;
 
@@ -201,9 +284,9 @@ namespace krakoa::graphics
 		USE_RESULT constexpr Vector3f GetRGB() const noexcept
 		{
 			constexpr auto multiplier = kmaths::constants::OneOver<float>(MaxColourValue);
-			const auto r = red * multiplier;
-			const auto g = green * multiplier;
-			const auto b = blue * multiplier;
+			const auto r = red.GetValue() * multiplier;
+			const auto g = green.GetValue() * multiplier;
+			const auto b = blue.GetValue() * multiplier;
 
 			return Vector3f{ r, g, b };
 		}
@@ -212,16 +295,16 @@ namespace krakoa::graphics
 		{
 			constexpr auto multiplier = kmaths::constants::OneOver<float>(MaxColourValue);
 			const auto rgb = GetRGB();
-			const auto a = alpha * multiplier;
+			const auto a = alpha.GetValue() * multiplier;
 
 			return Vector4f{ rgb[0], rgb[1], rgb[2], a };
 		}
 
 		USE_RESULT constexpr Colour Inverse() const noexcept
 		{
-			return Colour(CAST(uint8_t, MaxColourValue - red)
-				, CAST(uint8_t, MaxColourValue - green)
-				, CAST(uint8_t, MaxColourValue - blue)
+			return Colour(static_cast<uint8_t>(MaxColourValue - red.GetValue())
+				, CAST(uint8_t, MaxColourValue - green.GetValue())
+				, CAST(uint8_t, MaxColourValue - blue.GetValue())
 				, alpha);
 		}
 
@@ -235,7 +318,7 @@ namespace krakoa::graphics
 
 			return { r, g, b, a };
 		}
-		
+
 		USE_RESULT constexpr Colour operator+(const kmaths::Vector4f& v) const noexcept
 		{
 			const auto r = kmaths::Clamp<std::uint8_t>(red + FloatToColour(v[0]), MinColourValue, MaxColourValue);
@@ -338,18 +421,18 @@ namespace krakoa::graphics
 				const auto vec = ToFloats<T>();
 				return std::array<T, 4>{
 					vec[0]
-					, vec[1]
-					, vec[2]
-					, vec[3]
+						, vec[1]
+						, vec[2]
+						, vec[3]
 				};
 			}
 			else
 			{
 				return std::array<T, 4>{
 					static_cast<T>(red)
-					, static_cast<T>(green)
-					, static_cast<T>(blue)
-					, static_cast<T>(alpha)
+						, static_cast<T>(green)
+						, static_cast<T>(blue)
+						, static_cast<T>(alpha)
 				};
 			}
 		}
@@ -364,10 +447,10 @@ namespace krakoa::graphics
 
 
 	private:
-		std::uint8_t red = MinColourValue;
-		std::uint8_t green = MinColourValue;
-		std::uint8_t blue = MinColourValue;
-		std::uint8_t alpha = MaxColourValue;
+		ColourComponent red{};
+		ColourComponent green{};
+		ColourComponent blue{};
+		ColourComponent alpha{};
 	};
 
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>

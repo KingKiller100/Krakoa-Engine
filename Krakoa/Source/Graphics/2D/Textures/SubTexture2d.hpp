@@ -1,10 +1,11 @@
 ﻿#pragma once
 
+#include "../Primitives2D/BatchRendererData.hpp"
 #include "../../../Core/PointerTypes.hpp"
 #include <Maths/Vectors/Vector2.hpp>
+#include <Utility/Enum/kEnum.hpp>
 #include <vector>
-
-#include "../Primitives2D/BatchRendererData.hpp"
+#include <cstdint>
 
 namespace krakoa::graphics
 {
@@ -12,13 +13,12 @@ namespace krakoa::graphics
 
 	using TexCoordsList = std::vector<kmaths::Vector2f>;
 
-	enum class GeometryType : uint8_t
-	{
+	ENUM_CLASS(GeometryType, std::uint8_t,
 		QUAD = batch::limits::quad::vertices,
 		CIRCLE = batch::limits::circle::vertices,
 		TRIANGLE = batch::limits::triangle::vertices,
-		UNKNOWN = 255,
-	};
+		UNKNOWN = 255
+	);
 
 	class SubTexture2D
 	{
@@ -31,7 +31,7 @@ namespace krakoa::graphics
 		};
 
 	public:
-		SubTexture2D();
+		SubTexture2D(GeometryType geo);
 		SubTexture2D(iTexture2D* texture, const TexCoordData& data);
 		SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordData& data);
 		~SubTexture2D() noexcept;
@@ -53,10 +53,12 @@ namespace krakoa::graphics
 
 	private:
 		void CreateTexCoords();
-
+		GeometryType DeduceGeometryType() const;
+		
 	private:
 		Multi_Ptr<iTexture2D> texture;
 		std::vector<kmaths::Vector2f> texCoords;
 		TexCoordData texCoordData;
+		GeometryType geometry;
 	};
 }

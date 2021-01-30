@@ -7,8 +7,9 @@
 #include <Scene/Entity/Components/TagComponent.hpp>
 #include <Scene/Entity/Components/CameraComponent.hpp>
 #include <Scene/Entity/Components/TransformComponent.hpp>
+#include <Scene/Entity/Components/AppearanceComponent.hpp>
 
-#include <UI/ImGui/ImGuiUI.hpp>
+#include <UI/ImGui/UI.hpp>
 
 #include <Util/TypeInfo.hpp>
 
@@ -61,6 +62,7 @@ namespace krakoa::scene
 		DisplayTagComponent(entity);
 		DisplayCameraComponent(entity);
 		DisplayTransformComponent(entity);
+		DisplayAppearanceComponent(entity);
 	}
 
 	void panels::ComponentsPanel::DisplayTagComponent(const ecs::Entity& entity)
@@ -73,8 +75,7 @@ namespace krakoa::scene
 		DrawTreeNode("Tag", (void*)util::GetTypeHash<components::TagComponent>(), TreeNodeFlags::DefaultOpen,
 			[&]()
 			{
-				constexpr auto
-				flags = InputTextFlags::EnterReturnsTrue | InputTextFlags::CharsNoBlank;
+				constexpr auto flags = InputTextFlags::EnterReturnsTrue | InputTextFlags::CharsNoBlank;
 				auto& tag = entity.GetComponent<components::TagComponent>();
 
 				char buffer[1 << 8];
@@ -83,6 +84,9 @@ namespace krakoa::scene
 				DrawInputTextBox("Tag Name", buffer, sizeof(buffer), flags,
 					[&]()
 					{
+						if (klib::IsWhiteSpaceOrNull(buffer))
+							return;
+						
 						tag.SetTag(buffer);
 					});
 			});
@@ -116,6 +120,34 @@ namespace krakoa::scene
 				transform.SetPosition(position);
 				transform.SetRotation(kmaths::ToRadians(rotation));
 				transform.SetScale(scale);
+			});
+	}
+
+	void panels::ComponentsPanel::DisplayAppearanceComponent(const ecs::Entity& entity)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		using Component_t = components::Appearance2DComponent;
+		
+		if (!entity.HasComponent<Component_t>())
+			return;
+
+		DrawTreeNode("Appearance", (void*)util::GetTypeHash<Component_t>(), TreeNodeFlags::DefaultOpen,
+			[&]()
+			{
+				auto& appearance = entity.GetComponent<Component_t>();
+
+				auto colour = appearance.GetColour();
+				const auto geoType = appearance.GetGeometryType();
+				// auto& subTexture = appearance.GetSubTexture().GetTexture()->;
+
+				char buffer[1 << 8];
+				klib::type_trait::Traits<char>::Copy(buffer, geoType.ToString(), sizeof(buffer));
+				
+				DrawInputTextBox("Geometry", buffer, sizeof(buffer), InputTextFlags::ReadOnly);
+				DrawColourController("Colour", colour);
+
+				appearance.SetColour(colour);
 			});
 	}
 

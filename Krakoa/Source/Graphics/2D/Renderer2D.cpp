@@ -317,7 +317,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		QueryLimitsMet();
+		FlushIfLimitsMet();
 
 		float texIndex = 0.f;
 		const kmaths::Vector2f* texCoords;
@@ -347,7 +347,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 
-		QueryLimitsMet();
+		FlushIfLimitsMet();
 
 		float texIndex = 0.f;
 		const kmaths::Vector2f* texCoords;
@@ -366,7 +366,7 @@ namespace krakoa::graphics
 		AddNewQuad(position, scale, radians, tintColour, texIndex, texCoords, tilingFactor);
 	}
 
-	void Renderer2D::QueryLimitsMet() noexcept
+	void Renderer2D::FlushIfLimitsMet() noexcept
 	{
 		const auto totalIndices = pData->quad.indexCount + pData->triangle.indexCount;
 

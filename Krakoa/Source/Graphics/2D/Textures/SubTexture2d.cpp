@@ -5,7 +5,7 @@
 
 namespace krakoa::graphics
 {
-	SubTexture2D* SubTexture2D::Create(const std::shared_ptr<iTexture2D > & texture, const TexCoordData& data)
+	SubTexture2D* SubTexture2D::Create(const std::shared_ptr<iTexture2D >& texture, const TexCoordData& data)
 	{
 		return new SubTexture2D(texture, data);
 	}
@@ -15,25 +15,28 @@ namespace krakoa::graphics
 		return Create(Multi_Ptr<iTexture2D>(texture), texCoordData);
 	}
 
-	SubTexture2D::SubTexture2D()
-		: texture(nullptr),
-		texCoords(),
-		texCoordData()
+	SubTexture2D::SubTexture2D(GeometryType geo)
+		: texture(nullptr)
+		, geometry(geo)
 	{
 	}
 
 	SubTexture2D::SubTexture2D(iTexture2D* texture, const TexCoordData& data)
-		: texture(Multi_Ptr<iTexture2D>(texture)),
-		texCoordData(data)
+		: texture(Multi_Ptr<iTexture2D>(texture))
+		, texCoordData(data)
+		, geometry(GeometryType::UNKNOWN)
 	{
 		CreateTexCoords();
+		geometry = DeduceGeometryType();
 	}
 
 	SubTexture2D::SubTexture2D(const std::shared_ptr<iTexture2D>& texture, const TexCoordData& data)
-		: texture(texture),
-		texCoordData(data)
+		: texture(texture)
+		, texCoordData(data)
+		, geometry(GeometryType::UNKNOWN)
 	{
 		CreateTexCoords();
+		geometry = DeduceGeometryType();
 	}
 
 	SubTexture2D::~SubTexture2D() noexcept
@@ -74,7 +77,7 @@ namespace krakoa::graphics
 		return &texCoords[0];
 	}
 
-	GeometryType SubTexture2D::GetGeometryType() const noexcept
+	GeometryType SubTexture2D::DeduceGeometryType() const
 	{
 		switch (texCoordData.baseCoords.size()) {
 		case batch::limits::quad::vertices: return GeometryType::QUAD;
@@ -82,6 +85,11 @@ namespace krakoa::graphics
 		case batch::limits::triangle::vertices: return GeometryType::TRIANGLE;
 		default: return GeometryType::UNKNOWN;
 		}
+	}
+
+	GeometryType SubTexture2D::GetGeometryType() const noexcept
+	{
+		return geometry;
 	}
 
 	void SubTexture2D::SetTexture(iTexture2D* tex) noexcept

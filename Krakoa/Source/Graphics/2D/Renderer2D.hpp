@@ -52,7 +52,7 @@ namespace krakoa
 
 		private:
 			static void RestartBatch() noexcept;
-			static void QueryLimitsMet() noexcept;
+			static void FlushIfLimitsMet() noexcept;
 			static float UpdateTextureList(const std::shared_ptr<iTexture2D>& texture) noexcept;
 
 			static void AddNewTriangle(const kmaths::Vector3f& position, const kmaths::Vector2f& scale, const float radians, const Colour colour, const float texIndex

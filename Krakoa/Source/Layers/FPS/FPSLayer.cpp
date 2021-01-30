@@ -2,7 +2,7 @@
 #include "FPSLayer.hpp"
 
 #include "../../Debug/Instrumentor.hpp"
-#include "../../UI/ImGui/ImGuiUI.hpp"
+#include "../../UI/ImGui/UI.hpp"
 
 #include <Maths/kAlgorithms.hpp>
 #include <Utility/String/kToString.hpp>

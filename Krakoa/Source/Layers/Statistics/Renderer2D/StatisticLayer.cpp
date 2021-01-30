@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "StatisticLayer.hpp"
 
-#include "../../../UI/ImGui/ImGuiUI.hpp"
+#include "../../../UI/ImGui/UI.hpp"
 #include "../../../Debug/Instrumentor.hpp"
 #include "../../../Graphics/2D/Renderer2D.hpp"
 

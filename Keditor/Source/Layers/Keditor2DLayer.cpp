@@ -98,7 +98,7 @@ namespace krakoa
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
 			
 			cyanEntity.AddComponent<Appearance2DComponent>(
-				SubTexture2D(nullptr, pSubTexture->GetTexCoordData()),
+				GeometryType::QUAD,
 				colours::Cyan
 				);
 		}

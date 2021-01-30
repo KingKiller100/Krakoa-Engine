@@ -147,7 +147,7 @@ namespace krakoa::scene
 				break;
 
 			default: // case of an unknown geometry type
-				KRK_FATAL("Failed to draw unknown geometry type");
+				KRK_FATAL(klib::ToString("Failed to draw entity {0} - unknown geometry type", entity.GetID()));
 				break;
 			}
 		}

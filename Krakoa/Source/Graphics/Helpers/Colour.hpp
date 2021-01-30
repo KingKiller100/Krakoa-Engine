@@ -181,6 +181,11 @@ namespace krakoa::graphics
 			blue(rgba[2]), alpha(rgba[3])
 		{}
 
+		constexpr Colour(const Colour& rgb, uint8_t alpha) noexcept
+			: red(rgb.red), green(rgb.green),
+			blue(rgb.blue), alpha(alpha)
+		{}
+
 		~Colour() noexcept
 			= default;
 
@@ -450,7 +455,7 @@ namespace krakoa::graphics
 		ColourComponent red{};
 		ColourComponent green{};
 		ColourComponent blue{};
-		ColourComponent alpha{};
+		ColourComponent alpha{255};
 	};
 
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>

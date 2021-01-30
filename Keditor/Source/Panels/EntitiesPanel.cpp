@@ -6,7 +6,7 @@
 #include <Scene/Entity/Entity.hpp>
 #include <Scene/Entity/Components/TagComponent.hpp>
 
-#include <UI/ImGui/ImGuiUI.hpp>
+#include <UI/ImGui/UI.hpp>
 
 #include <ImGui/imgui.h>
 

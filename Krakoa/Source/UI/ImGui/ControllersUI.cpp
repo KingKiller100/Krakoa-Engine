@@ -78,7 +78,7 @@ namespace krakoa::ui
 		auto altered = DrawButtonWithDrag("R", buttonSize, graphics::colours::Red, red, 1,
 			[&]()
 			{
-				red = 255
+				red = 255;
 			});
 
 		DrawSameLine();

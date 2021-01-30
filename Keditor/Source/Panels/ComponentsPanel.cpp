@@ -17,7 +17,7 @@
 namespace krakoa::scene
 {
 	using namespace ecs;
-	using namespace krakoa::ui;
+	using namespace ui;
 
 	panels::ComponentsPanel::ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) noexcept
 		: pSelectedEntity(pSelected)
@@ -35,32 +35,32 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		ImGui::Begin("Components");
-		if (!pSelectedEntity.expired())
-		{
-			const auto& id = *pSelectedEntity.lock();
+		DrawPanel("Components",
+			[&]()
+			{
+				if (pSelectedEntity.expired()) return;
 
-			if (!id.IsNull())
+				const auto& id = *pSelectedEntity.lock();
+				if (id.IsNull()) return;
+
 				DisplayComponents(id, scene);
-		}
-		ImGui::End();
+			});
 	}
 
 	void panels::ComponentsPanel::DrawNoActiveScene()
 	{
-		ImGui::Begin("Components");
-		ImGui::End();
+		DrawPanel("Components", nullptr);
 	}
 
 	void panels::ComponentsPanel::DisplayComponents(const EntityUID& id, const iScene& scene)
 	{
-		if (scene.HasEntity(id))
-		{
-			const auto& entity = scene.GetEntity(id);
-			DisplayTagComponent(entity);
-			DisplayCameraComponent(entity);
-			DisplayTransformComponent(entity);
-		}
+		if (!scene.HasEntity(id))
+			return;
+
+		const auto& entity = scene.GetEntity(id);
+		DisplayTagComponent(entity);
+		DisplayCameraComponent(entity);
+		DisplayTransformComponent(entity);
 	}
 
 	void panels::ComponentsPanel::DisplayTagComponent(const ecs::Entity& entity)
@@ -70,20 +70,22 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::TagComponent>())
 			return;
 
-		if (ImGui::TreeNodeEx((void*)util::GetTypeHash<components::TagComponent>(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
-		{
-			constexpr ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackAlways;
-			auto& tag = entity.GetComponent<components::TagComponent>();
-
-			char buffer[1 << 8];
-			std::strcpy(buffer, tag.GetData());
-			if (ImGui::InputText("Tag", tag.GetData(), sizeof(buffer), ))
+		DrawTreeNode("Tag", (void*)util::GetTypeHash<components::TagComponent>(), TreeNodeFlags::DefaultOpen,
+			[&]()
 			{
-				tag.SetTag(buffer);
-			}
+				constexpr auto
+				flags = InputTextFlags::EnterReturnsTrue | InputTextFlags::CharsNoBlank;
+				auto& tag = entity.GetComponent<components::TagComponent>();
 
-			ImGui::TreePop();
-		}
+				char buffer[1 << 8];
+				std::strcpy(buffer, tag.GetData());
+
+				DrawInputTextBox("Tag Name", buffer, sizeof(buffer), flags,
+					[&]()
+					{
+						tag.SetTag(buffer);
+					});
+			});
 	}
 
 	void panels::ComponentsPanel::DisplayTransformComponent(const ecs::Entity& entity)
@@ -124,7 +126,7 @@ namespace krakoa::scene
 		if (!entity.HasComponent<components::CameraComponent>())
 			return;
 
-		DrawTreeNode("Camera", (void*)util::GetTypeHash<components::CameraComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
+		DrawTreeNode("Camera", (void*)util::GetTypeHash<components::CameraComponent>(), TreeNodeFlags::DefaultOpen,
 			[&]
 			{
 				auto& camera = entity.GetComponent<components::CameraComponent>();
@@ -145,10 +147,11 @@ namespace krakoa::scene
 						{
 							const auto& type = projectionTypes[i];
 							const bool selected = (currentSelection == type);
-							if (ImGui::Selectable(type, selected))
-							{
-								sceneCamera->SetProjectionType(i);
-							}
+							HandleSelectable(type, selected,
+								[&]()
+								{
+									sceneCamera->SetProjectionType(i);
+								});
 
 							if (selected)
 								ImGui::SetItemDefaultFocus();
@@ -206,7 +209,5 @@ namespace krakoa::scene
 						});
 				}
 			});
-
-
 	}
 }

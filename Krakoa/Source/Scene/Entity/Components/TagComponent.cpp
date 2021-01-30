@@ -35,11 +35,6 @@ namespace krakoa::scene::ecs::components
 		return tagName.data();
 	}
 
-	void TagComponent::SetTag(const std::string_view& tag)
-	{
-		tagName = tag;
-	}
-
 	void TagComponent::Reserve(size_t size)
 	{
 		tagName.reserve(size);

@@ -8,6 +8,10 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+
+#include "../../../../Keditor/Source/Scripts/AnimateEntityScript.hpp"
+#include "../../../../Keditor/Source/Scripts/AnimateEntityScript.hpp"
+
 namespace krakoa::ui
 {
 	void DrawPanel(const char* label, const Instruction& instruction)
@@ -15,12 +19,12 @@ namespace krakoa::ui
 		DrawPanel(label, WindowFlags::None, instruction);
 	}
 
-	void DrawPanel(const char* label, WindowFlags flags, const Instruction& instruction)
+	void DrawPanel(const char* label, WindowFlags::underlying_t flags, const Instruction& instruction)
 	{
 		DrawPanel(label, nullptr, flags, instruction);
 	}
 
-	void DrawPanel(const char* label, bool* pOpen, WindowFlags flags, const Instruction& instruction)
+	void DrawPanel(const char* label, bool* pOpen, WindowFlags::underlying_t flags, const Instruction& instruction)
 	{
 		ImGui::Begin(label, pOpen, flags);
 		if (instruction)
@@ -28,9 +32,20 @@ namespace krakoa::ui
 		ImGui::End();
 	}
 
-	void DrawRawText(const std::string_view& text)
+	void DrawRawTextBox(const std::string_view& label)
 	{
-		ImGui::Text(text.data());
+		ImGui::Text(label.data());
+	}
+
+	bool DrawInputTextBox(const std::string_view& label, char* buf, size_t buf_size, InputTextFlags::underlying_t flags,
+	                      const Instruction& instruction)
+	{
+		if (ImGui::InputText(label.data(), buf, buf_size, flags))
+		{
+			instruction();
+			return true;
+		}
+		return false;
 	}
 
 	bool DrawDragValue(const std::string_view& label, float& value, float increment, const Instruction& instruction)
@@ -94,8 +109,8 @@ namespace krakoa::ui
 		return opened;
 	}
 
-	bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags flags,
-		const Instruction& action)
+	bool DrawTreeNode(const std::string_view& label, void* id, TreeNodeFlags::underlying_t flags,
+	                  const Instruction& action)
 	{
 		const bool opened = ImGui::TreeNodeEx(id, flags, "%s", label.data());
 		if (opened)
@@ -107,8 +122,8 @@ namespace krakoa::ui
 		return opened;
 	}
 
-	bool DrawComboBox(const std::string_view& label, const char* previewSelection, ComboBoxFlag flags,
-		const Instruction& action)
+	bool DrawComboBox(const std::string_view& label, const char* previewSelection, ComboBoxFlags::underlying_t flags,
+	                  const Instruction& action)
 	{
 		if (ImGui::BeginCombo(label.data(), previewSelection, flags))
 		{
@@ -128,7 +143,7 @@ namespace krakoa::ui
 		
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
-		DrawRawText(label);
+		DrawRawTextBox(label);
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
@@ -173,7 +188,7 @@ namespace krakoa::ui
 		return HandleSelectable(label, selected, SelectableFlags::None, kmaths::Vector2f(), action);
 	}
 
-	bool HandleSelectable(const std::string_view& label, bool selected, SelectableFlags flags,
+	bool HandleSelectable(const std::string_view& label, bool selected, SelectableFlags::underlying_t flags,
 	                      const kmaths::Vector2f& size, const Instruction& action)
 	{
 		if (ImGui::Selectable(label.data(), selected, flags, {size.x, size.y}))

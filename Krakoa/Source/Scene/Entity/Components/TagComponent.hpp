@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <TypeTraits/StringTraits.hpp>
+
 #include <string>
 
 namespace krakoa::scene::ecs::components
@@ -15,7 +17,14 @@ namespace krakoa::scene::ecs::components
 		[[nodiscard]] std::string_view GetTag() const;
 		[[nodiscard]] const char* GetData() const;
 		[[nodiscard]] char* GetData();
-		void SetTag(const std::string_view& tag);
+
+		template<typename Stringish, class = std::enable_if_t<
+			klib::type_trait::Is_Stringish_V<Stringish>
+			>>
+		void SetTag(const Stringish& tag)
+		{
+			tagName = tag;
+		}
 
 		void Reserve(size_t size);
 		void Resize(size_t size);

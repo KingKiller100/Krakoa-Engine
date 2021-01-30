@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "WindowFlags.hpp"
-#include "CheckBoxFlag.hpp"
+#include "InputTextFlags.hpp"
+#include "ComboBoxFlags.hpp"
 #include "TreeNodeFlags.hpp"
 #include "SelectableFlags.hpp"

@@ -8,10 +8,6 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-
-#include "../../../../Keditor/Source/Scripts/AnimateEntityScript.hpp"
-#include "../../../../Keditor/Source/Scripts/AnimateEntityScript.hpp"
-
 namespace krakoa::ui
 {
 	void DrawPanel(const char* label, const Instruction& instruction)
@@ -32,7 +28,18 @@ namespace krakoa::ui
 		ImGui::End();
 	}
 
-	void DrawRawTextBox(const std::string_view& label)
+	void DrawNewLine(size_t count)
+	{
+		if (count == 0)
+			return;
+
+		for (; count > 0; --count)
+		{
+			ImGui::NewLine();
+		}
+	}
+
+	void DrawRawText(const std::string_view& label)
 	{
 		ImGui::Text(label.data());
 	}
@@ -143,7 +150,7 @@ namespace krakoa::ui
 		
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
-		DrawRawTextBox(label);
+		DrawRawText(label);
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());

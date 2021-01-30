@@ -2,10 +2,11 @@
 #include "FPSLayer.hpp"
 
 #include "../../Debug/Instrumentor.hpp"
-
-#include <imgui.h>
+#include "../../UI/ImGui/ImGuiUI.hpp"
 
 #include <Maths/kAlgorithms.hpp>
+#include <Utility/String/kToString.hpp>
+#include <Template/kArthimeticOperators.hpp>
 
 namespace krakoa
 {
@@ -41,24 +42,23 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		ImGui::Begin("Frames Per Seconds (FPS)");
-
-		const auto fps = CalculateAverageFPS();
-		ImGui::Text("Average FPS: %.2f fps", fps);
-
-		ImGui::End();
+		ui::DrawPanel("Frames Per Seconds (FPS)",
+			[&]()
+			{
+				const auto fps = CalculateAverageFPS();
+				ui::DrawRawText(klib::ToString("Average FPS: {0:2} fps", fps));
+			});
 	}
 
 	USE_RESULT float FPSLayer::CalculateAverageFPS() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 
-		float sum = 0;
-		for (auto frameTime : sampleTimes)
-			sum += frameTime;
-
+		const float sum = klib::kTemplate::ArithmeticOperators::Addition(sampleTimes, 0);
 		const auto count = sampleTimes.size();
-		return sum / count;
+		const auto avg = sum / count;
+
+		return avg;
 	}
 
 }

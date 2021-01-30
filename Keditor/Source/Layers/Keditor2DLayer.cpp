@@ -10,9 +10,6 @@
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
 
-
-
-
 namespace krakoa
 {
 	using namespace graphics;

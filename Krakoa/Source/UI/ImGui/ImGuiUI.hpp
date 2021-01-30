@@ -21,7 +21,7 @@ namespace krakoa
 		void DrawPanel(const char* label, WindowFlags::underlying_t flags, const Instruction& instruction);
 		void DrawPanel(const char* label, bool* pOpen, WindowFlags::underlying_t flags, const Instruction& instruction);
 
-		void DrawRawTextBox(const std::string_view& label);
+		void DrawRawText(const std::string_view& label);
 		bool DrawInputTextBox(const std::string_view& label, char* buf, size_t buf_size, InputTextFlags::underlying_t flags,
 		                      const Instruction& instruction);
 

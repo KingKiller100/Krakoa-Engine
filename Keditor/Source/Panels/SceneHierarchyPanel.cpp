@@ -1,11 +1,9 @@
 ﻿#include "SceneHierarchyPanel.hpp"
-
-#include <Core/Application.hpp>
-#include <Debug/Instrumentor.hpp>
-
 #include "EntitiesPanel.hpp"
 #include "ComponentsPanel.hpp"
 
+#include <Core/Application.hpp>
+#include <Debug/Instrumentor.hpp>
 #include <Scene/Entity/Entity.hpp>
 
 #include <ImGui/imgui.h>

@@ -16,6 +16,7 @@ namespace krakoa::scene
 		~Scene();
 
 		ecs::Entity& AddEntity(const std::string& tag) override;
+		ecs::Entity& AddEmptyEntity() override;
 
 		void ForEach(const EntityForEachFunc& func) override;
 		void ForEach(const EntityForEachConstFunc& func) const override;

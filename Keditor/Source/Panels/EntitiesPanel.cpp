@@ -45,31 +45,38 @@ namespace krakoa::scene::panels
 		ui::DrawPanel("Entities", nullptr);
 	}
 
-	void EntitiesPanel::SelectEntity(ecs::EntityUID& selectedEntity, const iScene& scene)
+	void EntitiesPanel::SelectEntity(ecs::EntityUID& selectedEntity, iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
 
 		scene.ForEach([&](const ecs::Entity& entity)
 			{
 				const auto eid = entity.GetID();
-				const auto selected = selectedEntity == eid ? ImGuiTreeNodeFlags_Selected : 0;
-				const ImGuiTreeNodeFlags flags = selected | ImGuiTreeNodeFlags_OpenOnArrow;
+				const auto selected = selectedEntity == eid ? ui::TreeNodeFlags::Selected : 0;
+				const ImGuiTreeNodeFlags flags = selected | ui::TreeNodeFlags::OpenOnArrow;
 
 				const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
 
-				const auto opened = ImGui::TreeNodeEx((void*)eid, flags, "%s", tag.GetData());
+				ui::DrawTreeNode(tag.GetTag(), (void*)eid, flags, [&](bool opened)
+					{
+						ui::IsItemClicked(input::MOUSE_LEFT,
+							[&](bool clicked)
+							{
+								KRK_DBG(klib::ToString("[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
+								selectedEntity = eid;
+							});
 
-				if (ImGui::IsItemClicked(input::MOUSE_LEFT))
-				{
-					KRK_DBG(klib::ToString("[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
-					selectedEntity = eid;
-				}
+						ui::popups::DrawMousePopupMenu(nullptr, input::MOUSE_RIGHT, false,
+							[&]()
+							{
+								scene.AddEmptyEntity();
+							});
 
-				if (opened)
-				{
-					ImGui::Text("id: %llu", eid.GetValue());
-					ImGui::TreePop();
-				}
+						if (opened)
+						{
+							ImGui::Text("id: %llu", eid.GetValue());
+						}
+					});
 			});
 	}
 

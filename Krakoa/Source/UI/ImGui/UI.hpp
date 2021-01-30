@@ -10,5 +10,6 @@
 #include "SelectablesUI.hpp"
 #include "ControllersUI.hpp"
 #include "ValueDragBoxUI.hpp"
+#include "MouseUI.hpp"
 
 

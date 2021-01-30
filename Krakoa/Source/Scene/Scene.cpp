@@ -48,6 +48,25 @@ namespace krakoa::scene
 		return entity;
 	}
 
+	ecs::Entity& Scene::AddEmptyEntity()
+	{
+		KRK_PROFILE_FUNCTION();
+
+		auto& entity = entities.emplace_back(entityComponentSystem);
+		const auto tag = klib::ToString("Entity {0}", entity.GetID());
+
+		entity.AddComponent<components::TagComponent>(tag);
+		entity.AddComponent<components::TransformComponent>();
+
+		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
+			name
+			, tag
+			, entity.GetID()
+		));
+		
+		return entity;
+	}
+
 	void Scene::ForEach(const EntityForEachFunc& func)
 	{
 		for (auto& entity : entities)

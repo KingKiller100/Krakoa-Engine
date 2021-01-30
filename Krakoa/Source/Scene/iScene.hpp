@@ -24,6 +24,7 @@ namespace krakoa::scene
 		virtual ~iScene() = default;
 
 		virtual ecs::Entity& AddEntity(const std::string& name) = 0;
+		virtual ecs::Entity& AddEmptyEntity() = 0;
 		
 		virtual void ForEach(const EntityForEachConstFunc& func) const = 0;
 		virtual void ForEach(const EntityForEachFunc& func) = 0;

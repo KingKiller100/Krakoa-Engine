@@ -144,7 +144,7 @@ namespace krakoa::scene
 				char buffer[1 << 8];
 				klib::type_trait::Traits<char>::Copy(buffer, geoType.ToString(), sizeof(buffer));
 				
-				DrawInputTextBox("Geometry", buffer, sizeof(buffer), InputTextFlags::ReadOnly);
+				DrawInputTextBox("Geometry", buffer, sizeof(buffer), InputTextFlags::ReadOnly | InputTextFlags::NoMarkEdited);
 				DrawColourController("Colour", colour);
 
 				appearance.SetColour(colour);

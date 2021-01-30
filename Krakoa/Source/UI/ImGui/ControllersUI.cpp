@@ -75,7 +75,7 @@ namespace krakoa::ui
 		const kmaths::Vector2f buttonSize(lineHeight + 3.f, lineHeight);
 
 		auto red = value.Red();
-		auto altered = DrawButtonWithDrag("R", buttonSize, graphics::colours::Red, red, 1,
+		auto altered = DrawButtonWithDrag("R", buttonSize, graphics::Colour{red, 0, 0 }, red, 1,
 			[&]()
 			{
 				red = 255;
@@ -84,7 +84,7 @@ namespace krakoa::ui
 		DrawSameLine();
 
 		auto green = value.Green();
-		altered |= DrawButtonWithDrag("G", buttonSize, graphics::colours::Green, green, 1,
+		altered |= DrawButtonWithDrag("G", buttonSize, graphics::Colour{ 0, green, 0 }, green, 1,
 			[&]()
 			{
 				green = 255;
@@ -93,7 +93,7 @@ namespace krakoa::ui
 		DrawSameLine();
 
 		auto blue = value.Blue();
-		altered |= DrawButtonWithDrag("B", buttonSize, graphics::colours::Blue, blue, 1,
+		altered |= DrawButtonWithDrag("B", buttonSize, graphics::Colour{ 0, 0, blue }, blue, 1,
 			[&]()
 			{
 				blue = 255;

@@ -92,11 +92,11 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create cyan entity");
 
 			auto& cyanEntity = scene->AddEntity("Cyan");
-			
+
 			auto& transform = cyanEntity.GetComponent<TransformComponent>();
 			transform.SetPosition({ 0.5f, 0.f, -0.75f });
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
-			
+
 			cyanEntity.AddComponent<Appearance2DComponent>(
 				GeometryType::QUAD,
 				colours::Cyan
@@ -107,7 +107,7 @@ namespace krakoa
 			KRK_PROFILE_SCOPE("Create magenta entity");
 
 			auto& magentaEntity = scene->AddEntity("Magenta");
-			
+
 			auto& transform = magentaEntity.GetComponent<TransformComponent>();
 			transform.SetPosition({ 0.f, 0.5f, -0.75f });
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
@@ -147,7 +147,7 @@ namespace krakoa
 
 			auto& transform = texturedEntity.GetComponent<TransformComponent>();
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
-			
+
 			texturedEntity.AddComponent<Appearance2DComponent>(*pSubTexture, colours::Invisible, 3.f);
 
 			auto& nsc = texturedEntity.AddComponent<NativeScriptComponent>();
@@ -211,16 +211,16 @@ namespace krakoa
 
 			scene->ForEach([&](const scene::ecs::Entity& entity)
 				{
-					if (!entity.HasComponent<NativeScriptComponent>())
-						return;
-
-					auto& script = entity.GetComponent<NativeScriptComponent>();
-
-					if (!script.IsActive()
-						|| !script.HasScript<ColourChangeScript>())
-						return;
-
-					script.GetScript<ColourChangeScript>().SetColour(geometryColour);
+					// if (!entity.HasComponent<NativeScriptComponent>())
+					// 	return;
+					//
+					// auto& script = entity.GetComponent<NativeScriptComponent>();
+					//
+					// if (!script.IsActive()
+					// 	|| !script.HasScript<ColourChangeScript>())
+					// 	return;
+					//
+					// script.GetScript<ColourChangeScript>().SetColour(geometryColour);
 				});
 		}
 	}
@@ -270,26 +270,17 @@ namespace krakoa
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
 		}
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+		ui::DrawMenuBar([] {
+			ui::DrawMenu("File", [] {
+				ui::DrawMenuItem("Exist", [&]()
+					{
+						GetApp().Close();
+					});
+				});
+			});
 
-				if (ImGui::MenuItem("Exit"))
-					GetApp().Close();
 
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenuBar();
-		}
-
-		{
-			sceneHierarchyPanel.OnRender();
-		}
+		sceneHierarchyPanel.OnRender();
 
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
@@ -310,8 +301,6 @@ namespace krakoa
 			ImGui::End();
 			ImGui::PopStyleVar();
 		}
-		
-		RenderColourControls();
 
 		if (isWindowFocused || isWindowHovered)
 			application.GetImGuiLayer().BlockEvents();
@@ -339,16 +328,6 @@ namespace krakoa
 			frameBuffer.Resize(viewportSize);
 			cameraController.Resize(viewportSize);
 		}
-	}
-
-	void Keditor2DLayer::RenderColourControls() const noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-
-		ImGui::Begin("Geometry Colour Settings");
-		auto* colourArray = const_cast<float*>(geometryColour.GetPointerToData());
-		ImGui::ColorEdit4("Colour", colourArray, ImGuiColorEditFlags_None);
-		ImGui::End();
 	}
 
 	void Keditor2DLayer::OnEvent(events::Event& e)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MenuUI.hpp"
 #include "TextUI.hpp"
 #include "PanelUI.hpp"
 #include "LayoutUI.hpp"

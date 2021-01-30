@@ -12,19 +12,19 @@ namespace krakoa::ui
 	const char* GetPrintfToken(size_t hashcode)
 	{
 		static const std::unordered_map<size_t, const char*> tokenMap = {
-			{typeid(long double).hash_code(), ".6f"},
-			{typeid(double).hash_code(), ".6f"},
-			{typeid(float).hash_code(), ".3f"},
-			{typeid(std::int8_t).hash_code(), PRId8},
-			{typeid(std::int16_t).hash_code(), PRId16},
-			{typeid(std::int32_t).hash_code(), PRId32},
-			{typeid(long).hash_code(), PRId32},
-			{typeid(std::int64_t).hash_code(), PRIu64},
-			{typeid(std::uint8_t).hash_code(), PRIu8},
-			{typeid(std::uint16_t).hash_code(), PRIu16},
-			{typeid(std::uint32_t).hash_code(), PRIu32},
-			{typeid(unsigned long).hash_code(), PRIu32},
-			{typeid(std::uint64_t).hash_code(), PRIu64},
+			{typeid(long double).hash_code(),   "%.6f"},
+			{typeid(double).hash_code(),        "%.6f"},
+			{typeid(float).hash_code(),         "%.3f"},
+			{typeid(std::int8_t).hash_code(),   "%" PRId8},
+			{typeid(std::int16_t).hash_code(),  "%" PRId16},
+			{typeid(std::int32_t).hash_code(),  "%" PRId32},
+			{typeid(long).hash_code(),          "%" PRId32},
+			{typeid(std::int64_t).hash_code(),  "%" PRIu64},
+			{typeid(std::uint8_t).hash_code(),  "%" PRIu8},
+			{typeid(std::uint16_t).hash_code(), "%" PRIu16},
+			{typeid(std::uint32_t).hash_code(), "%" PRIu32},
+			{typeid(unsigned long).hash_code(), "%" PRIu32},
+			{typeid(std::uint64_t).hash_code(), "%" PRIu64},
 		};
 
 		return tokenMap.at(hashcode);

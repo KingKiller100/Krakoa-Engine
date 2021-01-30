@@ -5,9 +5,6 @@
 #include "../../../Debug/Instrumentor.hpp"
 #include "../../../Graphics/2D/Renderer2D.hpp"
 
-#include <Utility/String/kToString.hpp>
-
-
 namespace krakoa
 {
 	Renderer2DStatistics::Renderer2DStatistics()
@@ -20,36 +17,34 @@ namespace krakoa
 	void Renderer2DStatistics::OnRender()
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 #if KRK_ENABLE_STATISTICS
-		const auto& stats = graphics::Renderer2D::GetStats();
 
-		ui::DrawPanel("Renderer2D Statistics",
-			[&]()
+		using namespace ui;
+
+		DrawPanel("Renderer2D Statistics",
+			[]()
 			{
-				
+				const auto& stats = graphics::Renderer2D::GetStats();
+				DrawRawText("Total Draw Calls: {0}", stats.TotalDrawCalls());
+				DrawRawText("Total Geometry: {0}", stats.TotalGeometryCount());
+
+				DrawNewLine();
+				DrawRawText("Quad Draw Calls: {0}", stats.quadDrawCallsCount);
+				DrawRawText("Triangle Draw Calls: {0}", stats.triangleDrawCallsCount);
+
+				DrawNewLine();
+				DrawRawText("Quad Max Batch: {0}", graphics::batch::limits::quad::max);
+				DrawRawText("Quad Count: {0}", stats.quadCount);
+				DrawRawText("Quad Vertices Count: {0}", stats.TotalQuadVertexCount());
+				DrawRawText("Quad Indices Count: {0}", stats.TotalQuadIndexCount());
+
+				DrawNewLine();
+				DrawRawText("Triangle Max Batch: {0}", graphics::batch::limits::triangle::max);
+				DrawRawText("Triangle Count: {0}", stats.triangleCount);
+				DrawRawText("Triangle Vertices Count: {0}", stats.TotalTriangleVertexCount());
+				DrawRawText("Triangle Indices Count: {0}", stats.TotalTriangleIndexCount());
 			});
-		
-		ImGui::Text("Total Draw Calls: %zu", stats.TotalDrawCalls());
-		ImGui::Text("Total Geometry: %zu", stats.TotalGeometryCount());
-
-		ui::DrawNewLine();
-		ImGui::Text("Quad Draw Calls: %zu", stats.quadDrawCallsCount);
-		ImGui::Text("Triangle Draw Calls: %zu", stats.triangleDrawCallsCount);
-
-		ui::DrawNewLine();
-		ImGui::Text("Quad Max Batch: %zu", graphics::batch::limits::quad::max);
-		ImGui::Text("Quad Count: %zu", stats.quadCount);
-		ImGui::Text("Quad Vertices Count: %zu", stats.TotalQuadVertexCount());
-		ImGui::Text("Quad Indices Count: %zu", stats.TotalQuadIndexCount());
-
-		ui::DrawNewLine();
-		ImGui::Text("Triangle Max Batch: %zu", graphics::batch::limits::triangle::max);
-		ImGui::Text("Triangle Count: %zu", stats.triangleCount);
-		ImGui::Text("Triangle Vertices Count: %zu", stats.TotalTriangleVertexCount());
-		ImGui::Text("Triangle Indices Count: %zu", stats.TotalTriangleIndexCount());
-		
-		ImGui::End();
 #endif //KRK_ENABLE_STATISTICS
 	}
 }

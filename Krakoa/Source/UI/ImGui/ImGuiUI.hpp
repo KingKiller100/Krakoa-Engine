@@ -6,6 +6,7 @@
 
 #include <Maths/Vectors/Vector2.hpp>
 #include <Maths/Vectors/Vector3.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <array>
 #include <functional>
@@ -21,7 +22,13 @@ namespace krakoa
 		void DrawPanel(const char* label, WindowFlags::underlying_t flags, const Instruction& instruction);
 		void DrawPanel(const char* label, bool* pOpen, WindowFlags::underlying_t flags, const Instruction& instruction);
 
+		void DrawNewLine(size_t count = 1);
 		void DrawRawText(const std::string_view& label);
+		template<typename T, typename ...Ts>
+		void DrawRawText(const std::string_view& fmt, const T& arg, const Ts& ...args)
+		{
+			DrawRawText(klib::kString::ToString(fmt, arg, args...));
+		}
 		bool DrawInputTextBox(const std::string_view& label, char* buf, size_t buf_size, InputTextFlags::underlying_t flags,
 		                      const Instruction& instruction);
 

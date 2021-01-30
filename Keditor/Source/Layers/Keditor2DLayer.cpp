@@ -310,8 +310,7 @@ namespace krakoa
 			ImGui::End();
 			ImGui::PopStyleVar();
 		}
-
-		RenderZoomControls();
+		
 		RenderColourControls();
 
 		if (isWindowFocused || isWindowHovered)
@@ -342,36 +341,13 @@ namespace krakoa
 		}
 	}
 
-	void Keditor2DLayer::RenderZoomControls() noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-
-		static constexpr Vector2f in(0.f, 1.f);
-		static constexpr Vector2f out(0.f, -1.f);
-
-		ImGui::Begin("Zoom Controls");
-
-		if (ImGui::ArrowButton("Zoom In", ImGuiDir_Up))
-		{
-			auto zoomInEvent = events::MouseScrolledEvent(in);
-			cameraController.OnEvent(zoomInEvent);
-		}
-		else if (ImGui::ArrowButton("Zoom Out", ImGuiDir_Down))
-		{
-			auto zoomOutEvent = events::MouseScrolledEvent(out);
-			cameraController.OnEvent(zoomOutEvent);
-		}
-
-		ImGui::End();
-	}
-
 	void Keditor2DLayer::RenderColourControls() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 
 		ImGui::Begin("Geometry Colour Settings");
 		auto* colourArray = const_cast<float*>(geometryColour.GetPointerToData());
-		ImGui::ColorEdit4("Geometry Colour", colourArray, ImGuiColorEditFlags_None);
+		ImGui::ColorEdit4("Colour", colourArray, ImGuiColorEditFlags_None);
 		ImGui::End();
 	}
 

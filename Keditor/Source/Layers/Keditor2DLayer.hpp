@@ -35,7 +35,6 @@ namespace krakoa
 	private:
 		void UpdateEntities() const noexcept;
 		void UpdateViewport() noexcept;
-		void RenderZoomControls() noexcept;
 		void RenderColourControls() const noexcept;
 
 		void SetUpScene();

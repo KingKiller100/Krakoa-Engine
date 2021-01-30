@@ -59,13 +59,6 @@ namespace krakoa::ui
 		return altered;
 	}
 
-	/**
-	 * \brief 
-	 * \param label 
-	 * \param value 
-	 * \param columnWidth 
-	 * \return 
-	 */
 	bool DrawColourController(const std::string_view& label, graphics::Colour& value, float columnWidth)
 	{
 		ImGui::PushID(label.data());
@@ -75,7 +68,7 @@ namespace krakoa::ui
 		DrawRawText(label);
 		ImGui::NextColumn();
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushMultiItemsWidths(4, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.f, 0.f });
 
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
@@ -83,37 +76,37 @@ namespace krakoa::ui
 
 		auto red = value.Red();
 		auto altered = DrawButtonWithDrag("R", buttonSize, graphics::colours::Red, red, 1,
-		                                  [&]()
-		                                  {
-			                                  value = graphics::Colour(red, value.Green(), value.Blue());
-		                                  });
+			[&]()
+			{
+				red = 255
+			});
 
 		DrawSameLine();
 
 		auto green = value.Green();
 		altered |= DrawButtonWithDrag("G", buttonSize, graphics::colours::Green, green, 1,
-		                              [&]()
-		                              {
-			                              value = graphics::Colour(value.Red(), green, value.Blue());
-		                              });
+			[&]()
+			{
+				green = 255;
+			});
 
 		DrawSameLine();
 
 		auto blue = value.Blue();
 		altered |= DrawButtonWithDrag("B", buttonSize, graphics::colours::Blue, blue, 1,
-		                              [&]()
-		                              {
-			                              value = graphics::Colour(value.Red(), value.Green(), blue);
-		                              });
+			[&]()
+			{
+				blue = 255;
+			});
 
 		DrawSameLine();
 
 		auto alpha = value.Alpha();
 		altered |= DrawButtonWithDrag("A", buttonSize, graphics::colours::White, alpha, 1,
-		                              [&]()
-		                              {
-			                              value = graphics::Colour(value, alpha);
-		                              });
+			[&]()
+			{
+				alpha = 255;
+			});
 
 		ImGui::PopStyleVar();
 
@@ -121,6 +114,8 @@ namespace krakoa::ui
 
 		ImGui::PopID();
 
+		value = { red, green, blue, alpha };
+		
 		return altered;
 	}
 }

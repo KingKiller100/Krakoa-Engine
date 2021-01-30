@@ -275,7 +275,7 @@ namespace krakoa
 
 				ui::DrawMenuBar([] {
 					ui::DrawMenu("File", [] {
-						ui::DrawMenuItem("Exist", [&]()
+						ui::DrawMenuItem("Exit", [&]()
 							{
 								GetApp().Close();
 							});

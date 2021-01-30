@@ -10,6 +10,6 @@ namespace krakoa::ui
 	void DrawMenu(const std::string_view& label, bool enabled, const UICallBack& content);
 	void DrawMenu(const std::string_view& label, const UICallBack& content);
 	void DrawMenuItem(const std::string_view& label, bool selected, bool enabled, const UICallBack& callback);
-	void DrawMenuItem(const std::string_view& label, bool selected = false, const UICallBack& callback);
+	void DrawMenuItem(const std::string_view& label, bool selected, const UICallBack& callback);
 	void DrawMenuItem(const std::string_view& label, const UICallBack& callback);
 }

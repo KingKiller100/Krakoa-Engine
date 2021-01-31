@@ -92,7 +92,7 @@ namespace krakoa::scene::panels
 
 						if (opened)
 						{
-							ui::DrawRawText("id: %llu", eid.GetValue());
+							ui::DrawRawText("id: {0}", eid.GetValue());
 						}
 
 						if (markedEntityForRemoval)

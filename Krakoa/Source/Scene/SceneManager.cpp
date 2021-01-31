@@ -68,6 +68,12 @@ namespace krakoa::scene
 		return *currentScene->second;
 	}
 
+	iScene& SceneManager::GetCurrentScene()
+	{
+		KRK_PROFILE_FUNCTION();
+		return *currentScene->second;
+	}
+
 	void SceneManager::SetCurrentScene(const std::string& name)
 	{
 		currentScene = scenes.find(name);

@@ -88,6 +88,11 @@ namespace krakoa::scene::ecs
 			return components.find(manager->GetUniqueID<Component>()) != components.end();
 		}
 
+		operator EntityUID() const noexcept
+		{
+			return GetID();
+		}
+		
 		bool operator==(const Entity& other) const noexcept;
 		bool operator!=(const Entity& other) const noexcept;
 

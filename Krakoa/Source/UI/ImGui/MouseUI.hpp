@@ -13,5 +13,5 @@ namespace krakoa::ui
 		void DrawMousePopupMenuItem(const char* label, const UICallBack& callback);
 	}
 
-	void IsItemClicked(input::MouseCode mouseButtonCode, const UIQueryCallBack& callback);
+	void IsItemClicked(input::MouseCode mouseButtonCode, const UICallBack& callback);
 }

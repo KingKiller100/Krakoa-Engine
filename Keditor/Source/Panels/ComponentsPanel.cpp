@@ -13,8 +13,6 @@
 
 #include <Util/TypeInfo.hpp>
 
-#include <ImGui/imgui.h>
-
 namespace krakoa::scene
 {
 	using namespace ecs;
@@ -32,7 +30,7 @@ namespace krakoa::scene
 		KRK_LOG("Keditor", "Components panel connected");
 	}
 
-	void panels::ComponentsPanel::DrawActiveScene(const iScene& scene)
+	void panels::ComponentsPanel::DrawActiveScene(iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -45,6 +43,18 @@ namespace krakoa::scene
 				if (id.IsNull()) return;
 
 				DisplayComponents(id, scene);
+
+				DrawButton("Add Component", {}, [&]()
+					{
+						popups::OpenPopup("Add Component",
+							[&]()
+							{
+								DrawMenuItem("Camera", [&]()
+									{
+										scene.GetEntity(id).add;
+									});
+							});
+					});
 			});
 	}
 
@@ -105,7 +115,7 @@ namespace krakoa::scene
 			graphics::colours::Blue,
 		};
 
-		DrawTreeNode("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), ImGuiTreeNodeFlags_DefaultOpen,
+		DrawTreeNode("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), TreeNodeFlags::DefaultOpen,
 			[&]()
 			{
 				auto& transform = entity.GetComponent<components::TransformComponent>();
@@ -172,7 +182,7 @@ namespace krakoa::scene
 				auto projectionTypes = std::array{ "Orthographic", "Perspective" };
 				const auto* const currentSelection = projectionTypes[camType];
 
-				ui::DrawComboBox("Projection", currentSelection, ImGuiComboFlags_HeightLarge,
+				ui::DrawComboBox("Projection", currentSelection, ComboBoxFlags::HeightLarge,
 					[&]()
 					{
 						for (auto i = 0; i < projectionTypes.size(); ++i)
@@ -186,7 +196,7 @@ namespace krakoa::scene
 								});
 
 							if (selected)
-								ImGui::SetItemDefaultFocus();
+								SetItemDefaultFocused();
 						}
 					});
 

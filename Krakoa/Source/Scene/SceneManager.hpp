@@ -39,6 +39,7 @@ namespace krakoa
 			void RemoveAll();
 
 			iScene& GetCurrentScene() const;
+			iScene& GetCurrentScene();
 			void SetCurrentScene(const std::string& name);
 
 			void LoadFromFile(const std::filesystem::path& path);

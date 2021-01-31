@@ -24,7 +24,7 @@ namespace krakoa::scene::panels
 		KRK_LOG("Keditor", "Entities panel connected");
 	}
 
-	void EntitiesPanel::DrawActiveScene(const iScene& scene)
+	void EntitiesPanel::DrawActiveScene(iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -36,6 +36,17 @@ namespace krakoa::scene::panels
 		ui::DrawPanel("Entities", [&]()
 			{
 				SelectEntity(selectedEntity, scene);
+
+				ui::popups::DrawMousePopupMenu(nullptr, input::MOUSE_RIGHT, false,
+					[&]()
+					{
+						ui::popups::DrawMousePopupMenuItem("Create Empty Entity",
+							[&]()
+							{
+								scene.AddEmptyEntity();
+							});
+					});
+
 				ClearIfNoneSelected(selectedEntity);
 			});
 	}
@@ -60,21 +71,34 @@ namespace krakoa::scene::panels
 				ui::DrawTreeNode(tag.GetTag(), (void*)eid, flags, [&](bool opened)
 					{
 						ui::IsItemClicked(input::MOUSE_LEFT,
-							[&](bool clicked)
+							[&]()
 							{
 								KRK_DBG(klib::ToString("[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
 								selectedEntity = eid;
 							});
 
+						bool pendingRemoval = false;
 						ui::popups::DrawMousePopupMenu(nullptr, input::MOUSE_RIGHT, false,
 							[&]()
 							{
-								scene.AddEmptyEntity();
+								ui::popups::DrawMousePopupMenuItem("Delete Entity",
+									[&]()
+									{
+										pendingRemoval = true;
+									});
 							});
 
 						if (opened)
 						{
 							ImGui::Text("id: %llu", eid.GetValue());
+						}
+					
+						if (pendingRemoval)
+						{
+							if (selectedEntity == entity.GetID())
+								selectedEntity.Nullify();
+							
+							scene.RemoveEntity(entity);
 						}
 					});
 			});

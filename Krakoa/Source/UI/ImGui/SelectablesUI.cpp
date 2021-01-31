@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "SelectablesUI.hpp"
-#include <Maths/Vectors/Vector2.hpp>
+
+#include <Maths/Vectors/Vector2.hpp>
 
 #include <imgui.h>
 
@@ -21,5 +22,10 @@ namespace krakoa::ui
 		}
 
 		return false;
+	}
+
+	void SetItemDefaultFocused()
+	{
+		ImGui::SetItemDefaultFocus();
 	}
 }

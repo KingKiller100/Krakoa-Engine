@@ -16,7 +16,7 @@ namespace krakoa::scene::panels
 
 		void LogConnected() const override;
 		
-		void DrawActiveScene(const iScene& scene) override;
+		void DrawActiveScene(iScene& scene) override;
 		void DrawNoActiveScene() override;
 
 	private:

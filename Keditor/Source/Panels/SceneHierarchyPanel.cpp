@@ -32,7 +32,7 @@ namespace krakoa::scene::panels
 		const auto& sceneMan = GetApp().GetSceneManager();
 		if (sceneMan.HasActiveScene())
 		{
-			const auto& currentScene = sceneMan.GetCurrentScene();
+			auto& currentScene = sceneMan.GetCurrentScene();
 
 			for (auto& panel : panels)
 			{

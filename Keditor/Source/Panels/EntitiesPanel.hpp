@@ -20,7 +20,7 @@ namespace krakoa::scene::panels
 		void DrawNoActiveScene() override;
 
 	private:
-		void SelectEntity(ecs::EntityUID& selectedEntity, iScene& scene);
+		void DrawEntityNode(ecs::EntityUID& selectedEntity, iScene& scene);
 		void ClearIfNoneSelected(ecs::EntityUID& selectedEntity);
 
 	private:

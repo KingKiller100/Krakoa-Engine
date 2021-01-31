@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "SceneRuntimeState.hpp"
- #include "Entity/EntityComponentSystem.hpp"
+#include "Entity/EntityComponentSystem.hpp"
 
 #include "../Core/PointerTypes.hpp"
 #include "../Patterns/SimpleStateMachine.hpp"
@@ -13,13 +13,13 @@
 
 namespace krakoa
 {
-	namespace panels
-	{
-		class SceneHierarchyPanel;
-	}
-	
 	namespace scene
 	{
+		namespace panels
+		{
+			class SceneHierarchyPanel;
+		}
+
 		class iScene;
 
 		struct PendingScene
@@ -52,9 +52,9 @@ namespace krakoa
 			{
 				return entityComponentSystem->GetEntitiesWithComponents<Components>();
 			}
-			
+
 			friend class panels::SceneHierarchyPanel;
-			
+
 		private:
 			void RenderEntities(const iScene& scene) const;
 

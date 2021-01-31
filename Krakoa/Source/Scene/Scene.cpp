@@ -159,6 +159,22 @@ namespace krakoa::scene
 		return *iter;
 	}
 
+	ecs::Entity& Scene::GetEntity(const std::string& eName)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		const auto iter = std::find_if(entities.begin(), entities.end(),
+			[&eName](const decltype(entities)::value_type& entity)
+			{
+				return entity.GetComponent<TagComponent>().GetTag() == eName;
+			});
+
+		KRK_ASSERT(iter != entities.end(),
+			"Entity \"" + eName + "\" does not exists in scene \"" + name + "\"");
+
+		return *iter;
+	}
+
 	bool Scene::RemoveEntity(const std::string& eName)
 	{
 		KRK_PROFILE_FUNCTION();

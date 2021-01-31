@@ -3,9 +3,11 @@
 
 #include <imgui.h>
 
+#include "MenuUI.hpp"
+
 namespace krakoa::ui::popups
 {
-	void OpenPopup(const std::string_view& label, WindowFlags::underlying_t flags, const UICallBack& callback)
+	void DrawPopup(const std::string_view& label, WindowFlags::underlying_t flags, const UICallBack& callback)
 	{
 		ImGui::OpenPopup(label.data());
 
@@ -16,8 +18,17 @@ namespace krakoa::ui::popups
 		}
 	}
 
-	void OpenPopup(const std::string_view& label, const UICallBack& callback)
+	void DrawPopup(const std::string_view& label, const UICallBack& callback)
 	{
-		OpenPopup(label, WindowFlags::None, callback);
+		DrawPopup(label, WindowFlags::None, callback);
+	}
+
+	void DrawPopupOption(const std::string_view& label, const UICallBack& callback)
+	{
+		DrawMenuItem(label, [&]()
+			{
+				callback();
+				ImGui::CloseCurrentPopup();
+			});
 	}
 }

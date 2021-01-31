@@ -8,10 +8,13 @@
 #include <Scene/Entity/Components/CameraComponent.hpp>
 #include <Scene/Entity/Components/TransformComponent.hpp>
 #include <Scene/Entity/Components/AppearanceComponent.hpp>
+#include <Scene/Entity/Components/NativeScriptComponent.hpp>
 
 #include <UI/ImGui/UI.hpp>
 
 #include <Util/TypeInfo.hpp>
+
+#include "Core/Application.hpp"
 
 namespace krakoa::scene
 {
@@ -44,16 +47,33 @@ namespace krakoa::scene
 
 				DisplayComponents(id, scene);
 
-				DrawButton("Add Component", {}, [&]()
-					{
-						popups::OpenPopup("Add Component",
-							[&]()
+				DrawButton("Add Component", {}, [&]() {
+					popups::DrawPopup("Add Component", [&]() {
+						auto& entity = scene.GetEntity(id);
+						
+						popups::DrawPopupOption("Camera", [&]()
 							{
-								DrawMenuItem("Camera", [&]()
-									{
-										scene.GetEntity(id).add;
-									});
+								const auto& window = GetApp().GetWindow();
+								const auto size = kmaths::Vector2f(window.GetDimensions());
+								const auto aspectRatio = size.x / size.y;
+								entity.AddComponent<components::CameraComponent>(
+									new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
+									);
 							});
+						
+						popups::DrawPopupOption("Appearance", [&]()
+							{
+								entity.AddComponent<components::Appearance2DComponent>(
+									graphics::GeometryType::QUAD,
+									graphics::colours::White
+									);
+							});
+						
+						popups::DrawPopupOption("Script", [&]()
+							{
+								entity.AddComponent<components::NativeScriptComponent>();
+							});
+						});
 					});
 			});
 	}
@@ -96,7 +116,7 @@ namespace krakoa::scene
 					{
 						if (klib::IsWhiteSpaceOrNull(buffer))
 							return;
-						
+
 						tag.SetTag(buffer);
 					});
 			});
@@ -138,7 +158,7 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		using Component_t = components::Appearance2DComponent;
-		
+
 		if (!entity.HasComponent<Component_t>())
 			return;
 
@@ -153,7 +173,7 @@ namespace krakoa::scene
 
 				char buffer[1 << 8];
 				klib::type_trait::Traits<char>::Copy(buffer, geoType.ToString(), sizeof(buffer));
-				
+
 				DrawInputTextBox("Geometry", buffer, sizeof(buffer), InputTextFlags::ReadOnly | InputTextFlags::NoMarkEdited);
 				DrawColourController("Colour", colour);
 
@@ -189,8 +209,7 @@ namespace krakoa::scene
 						{
 							const auto& type = projectionTypes[i];
 							const bool selected = (currentSelection == type);
-							HandleSelectable(type, selected,
-								[&]()
+							HandleSelectable(type, selected, [&]()
 								{
 									sceneCamera->SetProjectionType(i);
 								});

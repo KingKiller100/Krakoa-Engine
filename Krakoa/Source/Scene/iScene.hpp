@@ -29,8 +29,10 @@ namespace krakoa::scene
 		virtual void ForEach(const EntityForEachConstFunc& func) const = 0;
 		virtual void ForEach(const EntityForEachFunc& func) = 0;
 		
-		virtual const ecs::Entity& GetEntity(const std::string& name) const = 0;
 		virtual const ecs::Entity& GetEntity(ecs::EntityUID id) const = 0;
+		virtual const ecs::Entity& GetEntity(const std::string& name) const = 0;
+		virtual ecs::Entity& GetEntity(ecs::EntityUID id) = 0;
+		virtual ecs::Entity& GetEntity(const std::string& name) = 0;
 
 		virtual bool HasEntity(const std::string& name) const = 0;
 		virtual bool HasEntity(const ecs::EntityUID eid) const = 0;

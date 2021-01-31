@@ -35,7 +35,7 @@ namespace krakoa::scene::panels
 
 		ui::DrawPanel("Entities", [&]()
 			{
-				SelectEntity(selectedEntity, scene);
+				DrawEntityNode(selectedEntity, scene);
 
 				ui::popups::DrawMousePopupMenu(nullptr, input::MOUSE_RIGHT, false,
 					[&]()
@@ -56,15 +56,16 @@ namespace krakoa::scene::panels
 		ui::DrawPanel("Entities", nullptr);
 	}
 
-	void EntitiesPanel::SelectEntity(ecs::EntityUID& selectedEntity, iScene& scene)
+	void EntitiesPanel::DrawEntityNode(ecs::EntityUID& selectedEntity, iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
+
 
 		scene.ForEach([&](const ecs::Entity& entity)
 			{
 				const auto eid = entity.GetID();
 				const auto selected = selectedEntity == eid ? ui::TreeNodeFlags::Selected : 0;
-				const ImGuiTreeNodeFlags flags = selected | ui::TreeNodeFlags::OpenOnArrow;
+				const ImGuiTreeNodeFlags flags = selected | ui::TreeNodeFlags::OpenOnArrow | ui::TreeNodeFlags::SpanAvailWidth;
 
 				const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
 
@@ -77,14 +78,14 @@ namespace krakoa::scene::panels
 								selectedEntity = eid;
 							});
 
-						bool pendingRemoval = false;
-						ui::popups::DrawMousePopupMenu(nullptr, input::MOUSE_RIGHT, false,
+						bool markedEntityForRemoval = false;
+						ui::popups::DrawMousePopupMenuItem(nullptr, input::MOUSE_RIGHT,
 							[&]()
 							{
 								ui::popups::DrawMousePopupMenuItem("Delete Entity",
 									[&]()
 									{
-										pendingRemoval = true;
+										markedEntityForRemoval = true;
 									});
 							});
 
@@ -92,12 +93,12 @@ namespace krakoa::scene::panels
 						{
 							ImGui::Text("id: %llu", eid.GetValue());
 						}
-					
-						if (pendingRemoval)
+
+						if (markedEntityForRemoval)
 						{
 							if (selectedEntity == entity.GetID())
 								selectedEntity.Nullify();
-							
+
 							scene.RemoveEntity(entity);
 						}
 					});

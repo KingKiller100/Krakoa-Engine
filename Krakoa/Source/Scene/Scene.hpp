@@ -23,7 +23,9 @@ namespace krakoa::scene
 		
 		[[nodiscard]] const ecs::Entity& GetEntity(const std::string& eName) const override;
 		[[nodiscard]] const ecs::Entity& GetEntity(ecs::EntityUID id) const override;
-
+		[[nodiscard]] ecs::Entity& GetEntity(ecs::EntityUID id) override;
+		[[nodiscard]] ecs::Entity& GetEntity(const std::string& eName) override;
+		
 		bool HasEntity(const std::string& eName) const override;
 		bool HasEntity(const ecs::EntityUID eid) const override;
 		
@@ -37,7 +39,6 @@ namespace krakoa::scene
 		void SetRuntimeState(SceneRuntimeState* state) override;
 
 	protected:
-		[[nodiscard]] ecs::Entity& GetEntity(ecs::EntityUID id);
 		void UpdateScripts(float deltaTime);
 
 	private:

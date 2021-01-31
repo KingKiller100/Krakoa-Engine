@@ -26,11 +26,11 @@ namespace krakoa::scene
 			void DrawNoActiveScene() override;
 
 		private:
-			void DisplayComponents(const ecs::EntityUID& id, const iScene& scene);
+			void DisplayComponents(const ecs::EntityUID& id, iScene& scene);
 
 			void DisplayTagComponent(const ecs::Entity& entity);
 			void DisplayTransformComponent(const ecs::Entity& entity);
-			void DisplayAppearanceComponent(const ecs::Entity& entity);
+			void DisplayAppearanceComponent(ecs::Entity& entity);
 			void DisplayCameraComponent(const ecs::Entity& entity) const;
 
 		private:

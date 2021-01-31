@@ -27,8 +27,13 @@ namespace krakoa::ui
 		return DrawButton(label, dimensions.x, dimensions.y, callback);
 	}
 
+	bool DrawButton(const std::string_view& label, const UICallBack& callback)
+	{
+		return DrawButton(label, {}, callback);
+	}
+
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour,
-		float& value, float incrementVal, const UICallBack& action)
+	                        float& value, float incrementVal, const UICallBack& action)
 	{
 		constexpr auto hoveredColourChange = kmaths::Vector4f{ 0.1f, 0.1f, 0.05f, 0.f };
 

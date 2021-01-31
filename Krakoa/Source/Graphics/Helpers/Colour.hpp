@@ -417,7 +417,16 @@ namespace krakoa::graphics
 			return Vector4<Float_t>{ r, g, b, a };
 		}
 
-
+		USE_RESULT constexpr std::uint32_t ToU32() const noexcept
+		{
+			std::uint32_t value = 0;
+			value |= (red.GetValue() << 24);
+			value |= (green.GetValue() << 16);
+			value |= (blue.GetValue() << 8);
+			value |= alpha.GetValue();
+			return value;
+		}
+		
 		template<class T>
 		USE_RESULT constexpr auto ToArray() const noexcept
 		{

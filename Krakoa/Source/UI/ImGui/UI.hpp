@@ -2,6 +2,7 @@
 
 #include "MenuUI.hpp"
 #include "TextUI.hpp"
+#include "StyleUI.hpp"
 #include "PanelUI.hpp"
 #include "MouseUI.hpp"
 #include "PopupsUI.hpp"

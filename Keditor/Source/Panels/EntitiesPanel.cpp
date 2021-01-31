@@ -65,7 +65,7 @@ namespace krakoa::scene::panels
 			{
 				const auto eid = entity.GetID();
 				const auto selected = selectedEntity == eid ? ui::TreeNodeFlags::Selected : 0;
-				const ImGuiTreeNodeFlags flags = selected | ui::TreeNodeFlags::OpenOnArrow | ui::TreeNodeFlags::SpanAvailWidth;
+				const auto flags = selected | ui::TreeNodeFlags::OpenOnArrow | ui::TreeNodeFlags::SpanAvailWidth;
 
 				const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
 
@@ -85,13 +85,14 @@ namespace krakoa::scene::panels
 								ui::popups::DrawMousePopupMenuItem("Delete Entity",
 									[&]()
 									{
+										KRK_DBG(klib::ToString("[Entity Panel] Deleting entity [\"{0}\", {1}]", tag.GetData(), eid));
 										markedEntityForRemoval = true;
 									});
 							});
 
 						if (opened)
 						{
-							ImGui::Text("id: %llu", eid.GetValue());
+							ui::DrawRawText("id: %llu", eid.GetValue());
 						}
 
 						if (markedEntityForRemoval)

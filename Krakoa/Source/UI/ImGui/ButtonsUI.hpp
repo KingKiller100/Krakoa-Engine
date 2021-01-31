@@ -14,6 +14,7 @@ namespace krakoa
 	{
 		bool DrawButton(const std::string_view& label, float width, float height, const UICallBack& callback);
 		bool DrawButton(const std::string_view& label, kmaths::Vector2f dimensions, const UICallBack& callback);
+		bool DrawButton(const std::string_view& label, const UICallBack& callback);
 
 		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, graphics::Colour colour, float& value
 			, float incrementVal, const UICallBack& action);

@@ -2,6 +2,8 @@
 
 #include <Camera/SceneCamera.hpp>
 
+#include <Core/Application.hpp>
+
 #include <Scene/iScene.hpp>
 #include <Scene/Entity/Entity.hpp>
 #include <Scene/Entity/Components/TagComponent.hpp>
@@ -14,7 +16,6 @@
 
 #include <Util/TypeInfo.hpp>
 
-#include "Core/Application.hpp"
 
 namespace krakoa::scene
 {
@@ -47,33 +48,46 @@ namespace krakoa::scene
 
 				DisplayComponents(id, scene);
 
-				DrawButton("Add Component", {}, [&]() {
-					popups::DrawPopup("Add Component", [&]() {
+				const char btnName[] = "Add Component";
+				DrawButton(btnName, {}, [&]() {
+					popups::OpenPopup(btnName);
+					});
+
+				popups::DrawPopup(btnName, [&]()
+					{
 						auto& entity = scene.GetEntity(id);
-						
-						popups::DrawPopupOption("Camera", [&]()
-							{
-								const auto& window = GetApp().GetWindow();
-								const auto size = kmaths::Vector2f(window.GetDimensions());
-								const auto aspectRatio = size.x / size.y;
-								entity.AddComponent<components::CameraComponent>(
-									new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
-									);
-							});
-						
-						popups::DrawPopupOption("Appearance", [&]()
-							{
-								entity.AddComponent<components::Appearance2DComponent>(
-									graphics::GeometryType::QUAD,
-									graphics::colours::White
-									);
-							});
-						
-						popups::DrawPopupOption("Script", [&]()
-							{
-								entity.AddComponent<components::NativeScriptComponent>();
-							});
-						});
+
+						if (!entity.HasComponent<components::CameraComponent>())
+						{
+							popups::DrawPopupOption("Camera", [&]()
+								{
+									const auto& window = GetApp().GetWindow();
+									const auto size = kmaths::Vector2f(window.GetDimensions());
+									const auto aspectRatio = size.x / size.y;
+									entity.AddComponent<components::CameraComponent>(
+										new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
+										);
+								});
+						}
+
+						if (!entity.HasComponent<components::Appearance2DComponent>())
+						{
+							popups::DrawPopupOption("Appearance", [&]()
+								{
+									entity.AddComponent<components::Appearance2DComponent>(
+										graphics::GeometryType::QUAD,
+										graphics::colours::White
+										);
+								});
+						}
+
+						if (!entity.HasComponent<components::NativeScriptComponent>())
+						{
+							popups::DrawPopupOption("Script", [&]()
+								{
+									entity.AddComponent<components::NativeScriptComponent>();
+								});
+						}
 					});
 			});
 	}
@@ -83,12 +97,18 @@ namespace krakoa::scene
 		DrawPanel("Components", nullptr);
 	}
 
-	void panels::ComponentsPanel::DisplayComponents(const EntityUID& id, const iScene& scene)
+	enum class gope
+	{
+		nope = 90,
+		yes
+	};
+	
+	void panels::ComponentsPanel::DisplayComponents(const EntityUID& id, iScene& scene)
 	{
 		if (!scene.HasEntity(id))
 			return;
 
-		const auto& entity = scene.GetEntity(id);
+		auto& entity = scene.GetEntity(id);
 		DisplayTagComponent(entity);
 		DisplayCameraComponent(entity);
 		DisplayTransformComponent(entity);
@@ -153,7 +173,7 @@ namespace krakoa::scene
 			});
 	}
 
-	void panels::ComponentsPanel::DisplayAppearanceComponent(const ecs::Entity& entity)
+	void panels::ComponentsPanel::DisplayAppearanceComponent(ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -162,9 +182,25 @@ namespace krakoa::scene
 		if (!entity.HasComponent<Component_t>())
 			return;
 
-		DrawTreeNode("Appearance", (void*)util::GetTypeHash<Component_t>(), TreeNodeFlags::DefaultOpen,
-			[&]()
+		DrawTreeNode("Appearance", (void*)util::GetTypeHash<Component_t>(), TreeNodeFlags::DefaultOpen, [&]()
 			{
+				DrawSameLine();
+
+				const auto popupMenuId = "Settings";
+				DrawButton("+", [&]
+					{
+						popups::OpenPopup(popupMenuId);
+					});
+
+				bool markedComponentForRemoval = false;
+				popups::DrawPopup(popupMenuId, [&]
+					{
+						DrawMenuItem("Remove", [&]
+							{
+								markedComponentForRemoval = true;
+							});
+					});
+			
 				auto& appearance = entity.GetComponent<Component_t>();
 
 				auto colour = appearance.GetColour();
@@ -178,6 +214,9 @@ namespace krakoa::scene
 				DrawColourController("Colour", colour);
 
 				appearance.SetColour(colour);
+
+				if (markedComponentForRemoval)
+					entity.RemoveComponent<components::Appearance2DComponent>();
 			});
 	}
 

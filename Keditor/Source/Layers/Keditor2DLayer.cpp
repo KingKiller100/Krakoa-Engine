@@ -209,8 +209,8 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Updating entity's \"ColourChangeScript\" component");
 
-			scene->ForEach([&](const scene::ecs::Entity& entity)
-				{
+			// scene->ForEach([&](const scene::ecs::Entity& entity)
+				// {
 					// if (!entity.HasComponent<NativeScriptComponent>())
 					// 	return;
 					//
@@ -221,7 +221,7 @@ namespace krakoa
 					// 	return;
 					//
 					// script.GetScript<ColourChangeScript>().SetColour(geometryColour);
-				});
+				// });
 		}
 	}
 
@@ -244,8 +244,8 @@ namespace krakoa
 		ImGui::SetNextWindowPos(viewport->GetWorkPos());
 		ImGui::SetNextWindowSize(viewport->GetWorkSize());
 		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ui::PushStyleVar(ui::StyleVarFlags::WindowRounding);
+		ui::PushStyleVar(ui::StyleVarFlags::WindowBorderSize);
 		window_flags |= ui::WindowFlags::NoTitleBar | ui::WindowFlags::NoCollapse
 			| ui::WindowFlags::NoResize | ui::WindowFlags::NoMove
 			| ui::WindowFlags::NoBringToFrontOnFocus | ui::WindowFlags::NoNavFocus;
@@ -256,51 +256,52 @@ namespace krakoa
 		// all active windows docked into it will lose their parent and become undocked.
 		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ui::DrawPanel("DockSpace", const_cast<bool*>(std::addressof(dockSpaceOpen)), window_flags,
-			[&]
+		ui::StyleUI(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f{}, [&]
 			{
-				ImGui::PopStyleVar();
-
-				// if (opt_fullscreen)
-				ImGui::PopStyleVar(2);
-
-				// DockSpace
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-				{
-					const ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
-				}
-
-				ui::DrawMenuBar([] {
-					ui::DrawMenu("File", [] {
-						ui::DrawMenuItem("Exit", [&]()
-							{
-								GetApp().Close();
-							});
-						});
-					});
-
-				sceneHierarchyPanel.OnRender();
-
-
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
-				ui::DrawPanel("Editor", [&]()
+				ui::DrawPanel("DockSpace", const_cast<bool*>(std::addressof(dockSpaceOpen)), window_flags,
+					[&]
 					{
-						isWindowFocused = ImGui::IsWindowFocused();
-						isWindowHovered = ImGui::IsWindowHovered();
+						ui::PopStyleVar();
 
-						UpdateViewport();
+						// if (opt_fullscreen)
+						ui::PopStyleVar(2);
 
-						auto& frameBuffer = GetApp().GetFrameBuffer();
-						const auto& spec = frameBuffer.GetSpec();
-						const size_t texID = frameBuffer.GetColourAttachmentAssetID();
+						// DockSpace
+						ImGuiIO& io = ImGui::GetIO();
+						if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+						{
+							const ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+							ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
+						}
 
-						ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
-							{ 0, 1.f }, { 1, 0 });
+						ui::DrawMenuBar([] {
+							ui::DrawMenu("File", [] {
+								ui::DrawMenuItem("Exit", [&]()
+									{
+										GetApp().Close();
+									});
+								});
+							});
+
+						sceneHierarchyPanel.OnRender();
+
+
+						ui::PushStyleVar(ui::StyleVarFlags::WindowPadding);
+						ui::DrawPanel("Editor", [&]()
+							{
+								isWindowFocused = ImGui::IsWindowFocused();
+								isWindowHovered = ImGui::IsWindowHovered();
+
+								UpdateViewport();
+
+								auto& frameBuffer = GetApp().GetFrameBuffer();
+								const auto& spec = frameBuffer.GetSpec();
+								const size_t texID = frameBuffer.GetColourAttachmentAssetID();
+
+								ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
+									{ 0, 1.f }, { 1, 0 });
+							});
 					});
-				ImGui::PopStyleVar();
 
 
 				if (isWindowFocused || isWindowHovered)

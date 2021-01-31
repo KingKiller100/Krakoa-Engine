@@ -7,6 +7,11 @@
 
 namespace krakoa::ui
 {
+	void PushStyleVar(StyleVarFlags index, float val)
+	{
+		ImGui::PushStyleVar(index, val);
+	}
+
 	void PushStyleVar(StyleVarFlags index, kmaths::Vector2f val)
 	{
 		ImGui::PushStyleVar(index, { val.x, val.y });
@@ -14,7 +19,7 @@ namespace krakoa::ui
 
 	void PopStyleVar(size_t count)
 	{
-		ImGui::PopStyleVar(count);
+		ImGui::PopStyleVar(static_cast<int>(count));
 	}
 
 	void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback)
@@ -31,7 +36,7 @@ namespace krakoa::ui
 
 	void PopStyleColour(size_t count)
 	{
-		ImGui::PopStyleVar(count);
+		ImGui::PopStyleVar(static_cast<int>(count));
 	}
 
 	void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback)

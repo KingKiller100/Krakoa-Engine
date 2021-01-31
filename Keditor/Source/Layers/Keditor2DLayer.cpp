@@ -242,8 +242,8 @@ namespace krakoa
 		ImGui::SetNextWindowPos(viewport->GetWorkPos());
 		ImGui::SetNextWindowSize(viewport->GetWorkSize());
 		ImGui::SetNextWindowViewport(viewport->ID);
-		ui::PushStyleVar(ui::StyleVarFlags::WindowRounding);
-		ui::PushStyleVar(ui::StyleVarFlags::WindowBorderSize);
+		ui::PushStyleVar(ui::StyleVarFlags::WindowRounding, 0.f);
+		ui::PushStyleVar(ui::StyleVarFlags::WindowBorderSize, 0.f);
 		window_flags |= ui::WindowFlags::NoTitleBar | ui::WindowFlags::NoCollapse
 			| ui::WindowFlags::NoResize | ui::WindowFlags::NoMove
 			| ui::WindowFlags::NoBringToFrontOnFocus | ui::WindowFlags::NoNavFocus;
@@ -254,10 +254,9 @@ namespace krakoa
 		// all active windows docked into it will lose their parent and become undocked.
 		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-		ui::StyleUI(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f{}, [&]
+		ui::StyleUI(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f(), [&]
 			{
-				ui::DrawPanel("DockSpace", window_flags,
-					[&]
+				ui::DrawPanel("DockSpace", window_flags,[&]
 					{
 						ui::PopStyleVar();
 
@@ -284,7 +283,7 @@ namespace krakoa
 						sceneHierarchyPanel.OnRender();
 
 
-						ui::PushStyleVar(ui::StyleVarFlags::WindowPadding);
+						ui::PushStyleVar(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f());
 						ui::DrawPanel("Editor", [&]()
 							{
 								isWindowFocused = ImGui::IsWindowFocused();

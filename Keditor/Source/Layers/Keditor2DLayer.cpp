@@ -228,9 +228,7 @@ namespace krakoa
 	void Keditor2DLayer::OnRender()
 	{
 		KRK_PROFILE_FUNCTION();
-
-		constexpr auto dockSpaceOpen = true;
-
+		
 		// constexpr bool opt_fullscreen = true;
 		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
@@ -258,7 +256,7 @@ namespace krakoa
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		ui::StyleUI(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f{}, [&]
 			{
-				ui::DrawPanel("DockSpace", const_cast<bool*>(std::addressof(dockSpaceOpen)), window_flags,
+				ui::DrawPanel("DockSpace", window_flags,
 					[&]
 					{
 						ui::PopStyleVar();

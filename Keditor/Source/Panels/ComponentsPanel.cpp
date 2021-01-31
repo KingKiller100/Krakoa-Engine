@@ -96,12 +96,6 @@ namespace krakoa::scene
 	{
 		DrawPanel("Components", nullptr);
 	}
-
-	enum class gope
-	{
-		nope = 90,
-		yes
-	};
 	
 	void panels::ComponentsPanel::DisplayComponents(const EntityUID& id, iScene& scene)
 	{

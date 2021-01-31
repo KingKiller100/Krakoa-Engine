@@ -39,7 +39,7 @@ namespace krakoa::ui
         ResizeGrip
     );
 
-    SUPER_ENUM_CLASS(StyleColourFlags, StyleColourFlagsBase, int,
+    SUPER_ENUM_CLASS(StyleColourFlags, StyleColourFlagsBase,
         ResizeGripHovered = 31,
         ResizeGripActive,
         Tab,

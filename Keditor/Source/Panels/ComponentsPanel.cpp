@@ -98,7 +98,7 @@ namespace krakoa::scene
 	{
 		DrawPanel("Components", nullptr);
 	}
-	
+
 	void panels::ComponentsPanel::DisplayComponents(const EntityUID& id, iScene& scene)
 	{
 		if (!scene.HasEntity(id))
@@ -181,15 +181,15 @@ namespace krakoa::scene
 		PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
 		DrawTreeNode("Appearance", (void*)util::GetTypeHash<Component_t>(), TreeNodeFlags::DefaultOpen, [&]()
 			{
-				DrawSameLine();
+				DrawSameLine(GetCurrentWindowWidth() - 25.f);
 
-				const auto popupMenuId = "Settings";
-				DrawButton("+", [&]
+				const char popupMenuId[] = "Settings";
+				DrawButton("+", { 20.f, 20.f }, [&]
 					{
 						popups::OpenPopup(popupMenuId);
 					});
 				PopStyleVar();
-			
+
 				bool markedComponentForRemoval = false;
 				popups::DrawPopup(popupMenuId, [&]
 					{
@@ -198,7 +198,7 @@ namespace krakoa::scene
 								markedComponentForRemoval = true;
 							});
 					});
-			
+
 				auto& appearance = entity.GetComponent<Component_t>();
 
 				auto colour = appearance.GetColour();
@@ -229,10 +229,13 @@ namespace krakoa::scene
 			[&]
 			{
 				auto& camera = entity.GetComponent<components::CameraComponent>();
+				const auto primary = camera.IsPrimary();
 				auto* sceneCamera = camera.GetCamera<SceneCamera>();
 
 				if (!sceneCamera)
 					return;
+
+				camera.SetIsPrimary(ui::DrawCheckBox("Primary", primary));
 
 				const auto camType = sceneCamera->GetProjectionType();
 

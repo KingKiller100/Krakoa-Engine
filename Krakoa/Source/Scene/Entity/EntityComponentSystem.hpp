@@ -12,11 +12,14 @@
 #include <Utility/String/kToString.hpp>
 
 #include <unordered_map>
+#include <functional>
 #include <vector>
 
 
 namespace krakoa::scene::ecs
 {
+	using OnRegisterFunc = std::function<void(EntityUID)>;
+
 	class EntityComponentSystem final : util::TypeUniqueIdentifier<ComponentUID>
 	{
 	public:
@@ -45,7 +48,45 @@ namespace krakoa::scene::ecs
 			ComponentUID uid = GetUniqueID<Component>();
 
 			auto& compVec = componentMap[uid];
+			registrationFuncMap.emplace(uid, nullptr);
 			return compVec.emplace_back(Make_Multi<ComponentWrapper>(uid, entity, std::forward<Args>(params)...));
+		}
+
+		template<typename Component>
+		void RegisterComponentCallback(OnRegisterFunc&& func)
+		{
+			const ComponentUID uid = GetUniqueID<Component>();
+			const auto iter = registrationFuncMap.find(uid);
+			
+			if (iter == registrationFuncMap.end())
+				registrationFuncMap.emplace(uid, std::forward<OnRegisterFunc>(func));
+			else
+				iter->second = std::forward<OnRegisterFunc>(func);
+		}
+
+		template<typename Component>
+		bool RemoveComponentCallback()
+		{
+			const ComponentUID uid = GetUniqueID<Component>();
+			const auto iter = registrationFuncMap.find(uid);
+			if (iter == registrationFuncMap.end())
+				return false;
+			iter->second = nullptr;
+			return true;
+		}
+
+		template<typename Component>
+		void OnComponentRegistered(EntityUID eid) const
+		{
+			ComponentUID uid = GetUniqueID<Component>();
+
+			const auto iter = registrationFuncMap.find(uid);
+			if (iter == registrationFuncMap.end())
+				return;
+
+			const auto& callback = iter->second;
+			if (callback)
+				callback(eid);
 		}
 
 		template<typename Component>
@@ -176,6 +217,7 @@ namespace krakoa::scene::ecs
 	private:
 		std::vector<EntityUID> entities;
 		std::unordered_map<ComponentUID, std::vector<Multi_Ptr<ComponentWrapperBase>>> componentMap;
+		std::unordered_map<ComponentUID, OnRegisterFunc> registrationFuncMap;
 		EntityUID nextFreeID;
 	};
 }

@@ -53,6 +53,7 @@ namespace krakoa::scene::ecs
 
 			Multi_Ptr<ComponentWrapperBase> comp = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
 			components.insert(std::make_pair(comp->GetUID(), comp));
+			manager->OnComponentRegistered<Component>(id);
 			return klib::ToImpl<ComponentWrapper<Component>>(comp);
 		}
 

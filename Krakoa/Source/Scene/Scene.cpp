@@ -6,8 +6,11 @@
 #include "Entity/Components/TagComponent.hpp"
 #include "Entity/Components/TransformComponent.hpp"
 #include "Entity/Components/NativeScriptComponent.hpp"
+#include "Entity/Components/CameraComponent.hpp"
 
 #include "../Debug/Debug.hpp"
+#include "../Core/Application.hpp"
+#include "../Camera/SceneCamera.hpp"
 #include "../Debug/Instrumentor.hpp"
 
 namespace krakoa::scene
@@ -19,7 +22,18 @@ namespace krakoa::scene
 		: name(name)
 		, entityComponentSystem(ecs)
 		, runtimeState(nullptr)
-	{}
+	{
+		entityComponentSystem->RegisterComponentCallback<components::CameraComponent>([&](ecs::EntityUID eid)
+			{
+				auto& entity = GetEntity(eid);
+				auto sceneCam = entity.GetComponent<components::CameraComponent>().GetCamera<SceneCamera>();
+				if (!sceneCam)
+					return;
+
+				const auto& window = GetApp().GetWindow();
+				sceneCam->SetViewportSize(window.GetDimensions());
+			});
+	}
 
 	Scene::~Scene()
 	{
@@ -63,7 +77,7 @@ namespace krakoa::scene
 			, tag
 			, entity.GetID()
 		));
-		
+
 		return entity;
 	}
 
@@ -228,7 +242,7 @@ namespace krakoa::scene
 		);
 
 		entities.erase(iter);
-		
+
 		return true;
 	}
 

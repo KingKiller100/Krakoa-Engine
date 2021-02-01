@@ -178,6 +178,7 @@ namespace krakoa::scene
 		if (!entity.HasComponent<Component_t>())
 			return;
 
+		PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
 		DrawTreeNode("Appearance", (void*)util::GetTypeHash<Component_t>(), TreeNodeFlags::DefaultOpen, [&]()
 			{
 				DrawSameLine();
@@ -187,7 +188,8 @@ namespace krakoa::scene
 					{
 						popups::OpenPopup(popupMenuId);
 					});
-
+				PopStyleVar();
+			
 				bool markedComponentForRemoval = false;
 				popups::DrawPopup(popupMenuId, [&]
 					{

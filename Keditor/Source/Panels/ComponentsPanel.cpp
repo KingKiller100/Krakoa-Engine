@@ -24,6 +24,49 @@ namespace krakoa::scene
 	using namespace ecs;
 	using namespace ui;
 
+	namespace
+	{
+		template<typename Component, typename UILayoutFunc>
+		void DrawComponent(const std::string_view& name, Entity& entity
+			, const UILayoutFunc& uiLayoutFunc, bool removable = true)
+		{
+			KRK_PROFILE_FUNCTION();
+
+			if (!entity.HasComponent<Component>())
+				return;
+
+			Component& component = entity.GetComponent<Component>();
+
+			PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
+			DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), TreeNodeFlags::DefaultOpen, [&]()
+				{
+					DrawSameLine(GetCurrentWindowWidth() - 25.f);
+
+					const char popupMenuId[] = "Settings";
+					DrawButton("+", { 20.f, 20.f }, [&]
+						{
+							popups::OpenPopup(popupMenuId);
+						});
+					PopStyleVar();
+
+					bool markedComponentForRemoval = false;
+					if (removable)
+					{
+						popups::DrawPopup(popupMenuId, [&] {
+							DrawMenuItem("Remove", [&]
+								{
+									markedComponentForRemoval = true;
+								});
+							});
+					}
+					uiLayoutFunc(component);
+
+					if (markedComponentForRemoval)
+						entity.RemoveComponent<Component>();
+				});
+		}
+	}
+
 	panels::ComponentsPanel::ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) noexcept
 		: pSelectedEntity(pSelected)
 	{}
@@ -111,23 +154,18 @@ namespace krakoa::scene
 		DisplayAppearanceComponent(entity);
 	}
 
-	void panels::ComponentsPanel::DisplayTagComponent(const ecs::Entity& entity)
+	void panels::ComponentsPanel::DisplayTagComponent(ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (!entity.HasComponent<components::TagComponent>())
-			return;
-
-		DrawTreeNode("Tag", (void*)util::GetTypeHash<components::TagComponent>(), TreeNodeFlags::DefaultOpen,
-			[&]()
+		DrawComponent<components::TagComponent>("Tag", entity, [](components::TagComponent& tag)
 			{
 				constexpr auto flags = InputTextFlags::EnterReturnsTrue | InputTextFlags::CharsNoBlank;
-				auto& tag = entity.GetComponent<components::TagComponent>();
 
 				char buffer[1 << 8];
 				std::strcpy(buffer, tag.GetData());
 
-				DrawInputTextBox("Tag Name", buffer, sizeof(buffer), flags,
+				DrawInputTextBox("Name", buffer, sizeof(buffer), flags,
 					[&]()
 					{
 						if (klib::IsWhiteSpaceOrNull(buffer))
@@ -135,26 +173,22 @@ namespace krakoa::scene
 
 						tag.SetTag(buffer);
 					});
-			});
+			}
+		, false);
 	}
 
-	void panels::ComponentsPanel::DisplayTransformComponent(const ecs::Entity& entity)
+	void panels::ComponentsPanel::DisplayTransformComponent(ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (!entity.HasComponent<components::TransformComponent>())
-			return;
-
-		constexpr auto btnColours = std::array{
-			graphics::colours::Red,
-			graphics::colours::Green,
-			graphics::colours::Blue,
-		};
-
-		DrawTreeNode("Transform", (void*)util::GetTypeHash<components::TransformComponent>(), TreeNodeFlags::DefaultOpen,
-			[&]()
+		DrawComponent<components::TransformComponent>("Transform", entity, [](components::TransformComponent& transform)
 			{
-				auto& transform = entity.GetComponent<components::TransformComponent>();
+				constexpr auto btnColours = std::array{
+					graphics::colours::Red,
+					graphics::colours::Green,
+					graphics::colours::Blue,
+				};
+
 				auto position = transform.GetPosition();
 				auto scale = transform.GetScale();
 				auto rotation = kmaths::ToDegrees(transform.GetRotation());
@@ -166,41 +200,16 @@ namespace krakoa::scene
 				transform.SetPosition(position);
 				transform.SetRotation(kmaths::ToRadians(rotation));
 				transform.SetScale(scale);
-			});
+			}
+		, false);
 	}
 
 	void panels::ComponentsPanel::DisplayAppearanceComponent(ecs::Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		using Component_t = components::Appearance2DComponent;
-
-		if (!entity.HasComponent<Component_t>())
-			return;
-
-		PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
-		DrawTreeNode("Appearance", (void*)util::GetTypeHash<Component_t>(), TreeNodeFlags::DefaultOpen, [&]()
+		DrawComponent<components::Appearance2DComponent>("Appearance", entity, [](components::Appearance2DComponent& appearance)
 			{
-				DrawSameLine(GetCurrentWindowWidth() - 25.f);
-
-				const char popupMenuId[] = "Settings";
-				DrawButton("+", { 20.f, 20.f }, [&]
-					{
-						popups::OpenPopup(popupMenuId);
-					});
-				PopStyleVar();
-
-				bool markedComponentForRemoval = false;
-				popups::DrawPopup(popupMenuId, [&]
-					{
-						DrawMenuItem("Remove", [&]
-							{
-								markedComponentForRemoval = true;
-							});
-					});
-
-				auto& appearance = entity.GetComponent<Component_t>();
-
 				auto colour = appearance.GetColour();
 				const auto geoType = appearance.GetGeometryType();
 				// auto& subTexture = appearance.GetSubTexture().GetTexture()->;
@@ -212,9 +221,6 @@ namespace krakoa::scene
 				DrawColourController("Colour", colour);
 
 				appearance.SetColour(colour);
-
-				if (markedComponentForRemoval)
-					entity.RemoveComponent<components::Appearance2DComponent>();
 			});
 	}
 
@@ -224,11 +230,8 @@ namespace krakoa::scene
 
 		if (!entity.HasComponent<components::CameraComponent>())
 			return;
-
-		DrawTreeNode("Camera", (void*)util::GetTypeHash<components::CameraComponent>(), TreeNodeFlags::DefaultOpen,
-			[&]
+		DrawComponent<components::CameraComponent>("Appearance", entity, [](components::CameraComponent& camera)
 			{
-				auto& camera = entity.GetComponent<components::CameraComponent>();
 				const auto primary = camera.IsPrimary();
 				auto* sceneCamera = camera.GetCamera<SceneCamera>();
 

@@ -55,6 +55,10 @@ namespace krakoa::scene::ecs
 		template<typename Component>
 		void RegisterComponentCallback(OnRegisterFunc&& func)
 		{
+			KRK_DBG(klib::ToString("Registering callback for component \"{0}\""
+				, util::GetTypeNameNoNamespace<Component>())
+			);
+			
 			const ComponentUID uid = GetUniqueID<Component>();
 			const auto iter = registrationFuncMap.find(uid);
 			
@@ -67,6 +71,10 @@ namespace krakoa::scene::ecs
 		template<typename Component>
 		bool RemoveComponentCallback()
 		{
+			KRK_DBG(klib::ToString("Removing callback for component \"{0}\""
+				, util::GetTypeNameNoNamespace<Component>())
+			);
+			
 			const ComponentUID uid = GetUniqueID<Component>();
 			const auto iter = registrationFuncMap.find(uid);
 			if (iter == registrationFuncMap.end())

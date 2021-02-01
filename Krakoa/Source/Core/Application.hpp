@@ -55,11 +55,18 @@ namespace krakoa
 		void PopLayer(LayerBase* layer);
 		void PopOverlay(LayerBase* overlay);
 
+		template<typename Manager>
+		void RegisterSingleton()
+		{
+			
+		}
+		
 	private:
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
 		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
 
+		
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;
@@ -69,6 +76,8 @@ namespace krakoa
 		
 		Solo_Ptr<graphics::iFrameBuffer> frameBuffer;
 
+		std::vector<Solo_Ptr<patterns::iSingleton>> singletons;
+		
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;

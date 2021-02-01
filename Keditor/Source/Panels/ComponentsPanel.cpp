@@ -16,6 +16,8 @@
 
 #include <Util/TypeInfo.hpp>
 
+#include <Maths/Vectors/VectorMathsHelper.hpp>
+
 
 namespace krakoa::scene
 {

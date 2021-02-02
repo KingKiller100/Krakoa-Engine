@@ -11,8 +11,11 @@
 
 namespace krakoa::graphics
 {
-	const kmaths::Matrix4x4f* Renderer::camera_VPMat = nullptr;
-
+	namespace
+	{
+		const kmaths::Matrix4x4f* camera_VPMat = nullptr;
+	}
+	
 	void Renderer::Initialize(ShaderLibrary& shaderLibrary)
 	{
 		KRK_PROFILE_FUNCTION();

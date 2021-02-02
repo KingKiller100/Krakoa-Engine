@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "../../Core/PointerTypes.hpp"
-
 #include <filesystem>
 
 struct ImFont;
@@ -24,11 +22,13 @@ namespace krakoa::fonts
 		
 		[[nodiscard]] const std::filesystem::path& GetPath() const;
 		
-		void Load(const std::filesystem::path& filepath, size_t fontSize);
+		void Load(const std::filesystem::path& filepath, float fontSize);
+
+		friend class FontManager;
 		
 	private:
 		std::filesystem::path path;
-		Solo_Ptr<ImFont> font;
+		ImFont* font;
 	};
 	
 }

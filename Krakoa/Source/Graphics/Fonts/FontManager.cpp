@@ -3,10 +3,12 @@
 
 #include "Font.hpp"
 
+#include <imgui.h>
+
 namespace krakoa::fonts
 {
 	FontManager::FontManager()
-		= default;
+	{}
 
 	FontManager::~FontManager()
 	{
@@ -18,21 +20,35 @@ namespace krakoa::fonts
 		fontMap.clear();
 	}
 
-	void FontManager::Add(const Font& font)
+	void FontManager::MakeDefault(const Font& font)
 	{
-		const auto filename = font.GetPath().stem().string();
-		const auto iter = fontMap.find(filename);
+		auto& io = ImGui::GetIO();
+		io.FontDefault = font.font;
+	}
 
-		if (iter != fontMap.end())
-			return;
-
-		fontMap.emplace(filename, font);
+	void FontManager::MakeDefault(const std::string& fontName)
+	{
+		const auto& font = Get(fontName);
+		MakeDefault(font);
 	}
 
 	void FontManager::Load(const std::filesystem::path& filepath, float size)
 	{
 		const auto filename = filepath.stem().string();
-		fontMap.emplace(filepath, filename, size);
+		auto pair = fontMap.emplace(filename, Font(filepath, size));
+
+		if (GetSize() == 1)
+			MakeDefault(pair.first->second);
+	}
+
+	void FontManager::Delete(const std::string& fontName)
+	{
+		const auto iter = fontMap.find(fontName);
+
+		if (iter == fontMap.end())
+			return;
+
+		fontMap.erase(iter);
 	}
 
 	const Font& FontManager::Get(const std::string& name) const
@@ -43,5 +59,10 @@ namespace krakoa::fonts
 	Font& FontManager::Get(const std::string& name)
 	{
 		return fontMap.at(name);
+	}
+
+	size_t FontManager::GetSize() const
+	{
+		return fontMap.size();
 	}
 }

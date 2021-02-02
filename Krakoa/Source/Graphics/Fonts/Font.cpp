@@ -9,8 +9,9 @@
 namespace krakoa::fonts
 {
 	Font::Font()
-		= default;
- 
+		: font(nullptr)
+	{}
+
 	Font::Font(const std::filesystem::path& filepath, float fontSize)
 	{
 		Load(filepath, fontSize);
@@ -44,13 +45,13 @@ namespace krakoa::fonts
 		return path;
 	}
 
-	void Font::Load(const std::filesystem::path& filepath, size_t fontSize)
+	void Font::Load(const std::filesystem::path& filepath, float fontSize)
 	{
 		path = filepath;
 
 		KRK_INF(klib::ToString("Loading font: [\"{0:f}\", {1}] - \"{0}\"", filepath, fontSize));
-		
+
 		auto* f = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
-		font.reset(std::move(f));
+		font = f;
 	}
 }

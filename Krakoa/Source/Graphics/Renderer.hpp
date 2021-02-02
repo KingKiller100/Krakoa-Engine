@@ -31,7 +31,7 @@ namespace krakoa::graphics
 
 		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
 
-	private:
-		static const kmaths::Matrix4x4f* camera_VPMat;
+	// private:
+	// 	static const kmaths::Matrix4x4f* camera_VPMat;
 	};
 }

@@ -3,6 +3,7 @@
 
 #include "../Logging/EngineLogger.hpp"
 
+#include "../Debug/Debug.hpp"
 #include "../Debug/Instrumentor.hpp"
 
 #include "../Input/KeyCode.hpp"
@@ -11,12 +12,13 @@
 #include "../Layers/FPS/FPSLayer.hpp"
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
-#include "../Debug/Debug.hpp"
 #include "../Graphics/Renderer.hpp"
 #include "../Graphics/2D/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
+#include "../Graphics/Fonts/FontManager.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
+#include <Utility/FileSystem/kFileSystem.hpp>
 
 #include <chrono>
 
@@ -90,6 +92,8 @@ namespace krakoa
 		fbSpec.width = 1024;
 		fbSpec.height = 640;
 		frameBuffer.reset(graphics::iFrameBuffer::Create(fbSpec));
+
+		std::filesystem::directory_iterator()
 	}
 
 	void Application::OnEvent(events::Event& e)

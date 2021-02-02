@@ -28,10 +28,10 @@ namespace krakoa::scene
 		private:
 			void DisplayComponents(const ecs::EntityUID& id, iScene& scene);
 
-			void DisplayTagComponent(const ecs::Entity& entity);
-			void DisplayTransformComponent(const ecs::Entity& entity);
+			void DisplayTagComponent(ecs::Entity& entity);
+			void DisplayTransformComponent(ecs::Entity& entity);
 			void DisplayAppearanceComponent(ecs::Entity& entity);
-			void DisplayCameraComponent(const ecs::Entity& entity) const;
+			void DisplayCameraComponent(ecs::Entity& entity) const;
 
 		private:
 			Weak_Ptr<ecs::EntityUID> pSelectedEntity;

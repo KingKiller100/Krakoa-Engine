@@ -35,21 +35,24 @@ namespace krakoa::scene
 			if (!entity.HasComponent<Component>())
 				return;
 
-			Component& component = entity.GetComponent<Component>();
+			auto& component = entity.GetComponent<Component>();
 
-			PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
-			DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), TreeNodeFlags::DefaultOpen, [&]()
+			// if (removable)
+				PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
+
+			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), TreeNodeFlags::DefaultOpen, [&]()
 				{
-					DrawSameLine(GetCurrentWindowWidth() - 25.f);
-
-					const char popupMenuId[] = "Settings";
-					DrawButton("+", { 20.f, 20.f }, [&]
-						{
-							popups::OpenPopup(popupMenuId);
-						});
-					PopStyleVar();
-
 					bool markedComponentForRemoval = false;
+
+						DrawSameLine(GetCurrentWindowWidth() - 25.f);
+
+						const char popupMenuId[] = "Settings";
+						DrawButton("+", { 20.f, 20.f }, [&]
+							{
+								popups::OpenPopup(popupMenuId);
+							});
+						PopStyleVar();
+
 					if (removable)
 					{
 						popups::DrawPopup(popupMenuId, [&] {
@@ -59,11 +62,21 @@ namespace krakoa::scene
 								});
 							});
 					}
+
 					uiLayoutFunc(component);
 
 					if (markedComponentForRemoval)
 						entity.RemoveComponent<Component>();
 				});
+		}
+
+		template<typename Component>
+		void DrawAddComponentMousePopupOption(const std::string_view& name, Entity& entity, const ui::UICallBack& uiPopupFunc)
+		{
+			if (!entity.HasComponent<Component>())
+			{
+				popups::DrawPopupOption(name, uiPopupFunc);
+			}
 		}
 	}
 
@@ -83,17 +96,19 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		DrawPanel("Components",
-			[&]()
+		DrawPanel("Components", [&]()
 			{
-				if (pSelectedEntity.expired()) return;
+				if (pSelectedEntity.expired())
+					return;
 
 				const auto& id = *pSelectedEntity.lock();
-				if (id.IsNull()) return;
+				if (id.IsNull())
+					return;
 
 				DisplayComponents(id, scene);
 
 				const char btnName[] = "Add Component";
+
 				DrawButton(btnName, {}, [&]() {
 					popups::OpenPopup(btnName);
 					});
@@ -102,37 +117,31 @@ namespace krakoa::scene
 					{
 						auto& entity = scene.GetEntity(id);
 
-						if (!entity.HasComponent<components::CameraComponent>())
-						{
-							popups::DrawPopupOption("Camera", [&]()
-								{
-									const auto& window = GetApp().GetWindow();
-									const auto size = kmaths::Vector2f(window.GetDimensions());
-									const auto aspectRatio = size.x / size.y;
-									entity.AddComponent<components::CameraComponent>(
-										new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
-										);
-								});
-						}
+						DrawAddComponentMousePopupOption<components::CameraComponent>("Camera", entity, [&]()
+							{
+								const auto& window = GetApp().GetWindow();
+								const auto size = kmaths::Vector2f(window.GetDimensions());
+								const auto aspectRatio = size.x / size.y;
+								entity.AddComponent<components::CameraComponent>(
+									new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
+									);
+							});
 
-						if (!entity.HasComponent<components::Appearance2DComponent>())
-						{
-							popups::DrawPopupOption("Appearance", [&]()
-								{
-									entity.AddComponent<components::Appearance2DComponent>(
-										graphics::GeometryType::QUAD,
-										graphics::colours::White
-										);
-								});
-						}
+						DrawAddComponentMousePopupOption<components::Appearance2DComponent>("Camera", entity, [&]()
+							{
+								entity.AddComponent<components::Appearance2DComponent>(
+									graphics::GeometryType::QUAD,
+									graphics::colours::White
+									);
+							});
 
-						if (!entity.HasComponent<components::NativeScriptComponent>())
-						{
-							popups::DrawPopupOption("Script", [&]()
-								{
-									entity.AddComponent<components::NativeScriptComponent>();
-								});
-						}
+						DrawAddComponentMousePopupOption<components::NativeScriptComponent>("Script", entity, [&]()
+							{
+								popups::DrawPopupOption("Script", [&]()
+									{
+										entity.AddComponent<components::NativeScriptComponent>();
+									});
+							});
 					});
 			});
 	}
@@ -224,13 +233,11 @@ namespace krakoa::scene
 			});
 	}
 
-	void panels::ComponentsPanel::DisplayCameraComponent(const ecs::Entity& entity) const
+	void panels::ComponentsPanel::DisplayCameraComponent(ecs::Entity& entity) const
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (!entity.HasComponent<components::CameraComponent>())
-			return;
-		DrawComponent<components::CameraComponent>("Appearance", entity, [](components::CameraComponent& camera)
+		DrawComponent<components::CameraComponent>("Camera", entity, [](components::CameraComponent& camera)
 			{
 				const auto primary = camera.IsPrimary();
 				auto* sceneCamera = camera.GetCamera<SceneCamera>();

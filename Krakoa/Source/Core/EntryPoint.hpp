@@ -9,6 +9,8 @@
 #	include "../Debug/Instrumentor.hpp"
 #	include "../Config/GlobalConfig.hpp"
 
+#	include "../FileSystem/VirtualFileExplorer.hpp"
+
 #	include <memory>
 #	include <filesystem>
 
@@ -47,14 +49,17 @@ inline void Launch()
 	krakoa::tests::TestDriver::RunAll();
 	krakoa::tests::TestDriver::ShutDown();
 #else
-
-	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\Krakoa\\";
+	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
+	
+	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
+	filesystem::VirtualFileExplorer::Initialize(cwd);
+	filesystem::VirtualFileExplorer::Mount(cwd + "Krakoa\\Assets", "Assets\\");
+	
 	configuration::GlobalConfig::Create(cwd);
 	auto globalConfig = Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
 
 	KRK_INIT_LOGS("");
 
-	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 	CreateApplication();
 	auto pApp = Solo_Ptr<Application>(Application::Pointer());
 	pApp->Initialize();

@@ -18,7 +18,7 @@ namespace krakoa::configurations
 		using ConfigMap = std::unordered_map<std::string, Solo_Ptr<ConfigValueMap>>;
 
 	public:
-		GlobalConfig(Token, const std::filesystem::path& parentPath);
+		GlobalConfig(Token);
 		~GlobalConfig() noexcept;
 
 		template<typename T>
@@ -48,7 +48,6 @@ namespace krakoa::configurations
 		void Initialize();
 
 	private:
-		std::filesystem::path root;
 		ConfigMap configMap;
 	};
 

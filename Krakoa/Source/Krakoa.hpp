@@ -33,6 +33,9 @@
 // Colours
 #include "Graphics/Helpers/Colour.hpp"
 
+// File System
+#include "FileSystem/VirtualFileExplorer.hpp"
+
 // Frame Buffer
 #include "Graphics/Framebuffers/iFrameBuffer.hpp"
 

@@ -69,12 +69,16 @@ namespace krakoa
 	{
 		if (g_CheckedOldFile)
 			return;
+
+		const auto logPath = pLogger->GetFile().GetPath();
 		
-		const auto entry = std::filesystem::directory_entry(pLogger->GetFile().GetPath());
+		const auto entry = std::filesystem::directory_entry(logPath);
 
 		if (!entry.exists())
 			return;
 
+		pLogger->GetFile().Close(false);
+		
 		const auto maxBytes = configurations::GetConfiguration<size_t>("Logging", "MaxBytes");
 		const auto fileSize = entry.file_size();
 		const auto tooBig = fileSize > maxBytes;
@@ -89,6 +93,8 @@ namespace krakoa
 
 		if (tooBig || tooOld)
 			klib::Remove(entry.path());
+		
+		pLogger->GetFile().Open();
 
 		g_CheckedOldFile = true;
 	}

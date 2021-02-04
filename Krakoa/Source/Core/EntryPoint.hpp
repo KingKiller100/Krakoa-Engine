@@ -59,18 +59,13 @@ inline void Launch()
 	filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
 	
-	configurations::GlobalConfig::Create(cwd);
+	configurations::GlobalConfig::Create();
 	auto globalConfig = Solo_Ptr<configurations::GlobalConfig>(configurations::GlobalConfig::Pointer());
 
 	EngineLogger::SetMinimumLogLevelUsingConfig();
 	EngineLogger::RemoveOldFileUsingConfig();
 
-	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
-	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Shaders", "Shaders");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
-
-	const auto dirs = filesystem::VirtualFileExplorer::GetDirectories("Fonts");
-	const auto files = filesystem::VirtualFileExplorer::GetFiles("Fonts", ".ttf", filesystem::RECURSIVE);
 	
 	CreateApplication();
 	auto pApp = Solo_Ptr<Application>(Application::Pointer());

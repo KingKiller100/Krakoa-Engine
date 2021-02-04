@@ -1,11 +1,11 @@
 ﻿#include "Precompile.hpp"
 #include "GlobalConfig.hpp"
 
+#include "../FileSystem/VirtualFileExplorer.hpp"
 
 namespace krakoa::configurations
 {
-	GlobalConfig::GlobalConfig(Token, const std::filesystem::path& parentPath)
-		: root(parentPath)
+	GlobalConfig::GlobalConfig(Token)
 	{
 		Initialize();
 	}
@@ -19,29 +19,15 @@ namespace krakoa::configurations
 	void GlobalConfig::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
-		constexpr auto configFolder = "Krakoa\\Config";
-		
-		const auto configPath = root / configFolder;
+		const auto files = filesystem::VirtualFileExplorer::GetFiles(
+			"Config", "ini", filesystem::FileSearchMode::RECURSIVE
+		);
 
-		const std::filesystem::directory_iterator end_iter;
-
-		for (std::filesystem::directory_iterator dir_iter(configPath); 
-			dir_iter != end_iter; 
-			++dir_iter)
+		for (const auto& file : files)
 		{
-			const auto& entry = *dir_iter;
-			if (!entry.is_regular_file())
-				continue;
+			const auto filename = klib::ToLower(file.stem().string());
 
-			const auto& path = entry.path();
-
-			if (!path.has_extension() 
-				|| path.extension().string().find("ini") == std::string::npos)
-				continue;
-
-			const auto filename = klib::ToLower(path.stem().string());
-			
-			configMap.emplace(filename, Make_Solo<ConfigValueMap>(path));
+			configMap.emplace(filename, Make_Solo<ConfigValueMap>(file));
 		}
 	}
 

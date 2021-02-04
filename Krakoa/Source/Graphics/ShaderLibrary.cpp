@@ -6,6 +6,7 @@
 #include "../Logging/EngineLogger.hpp"
 #include "../Debug/Debug.hpp"
 #include "../Debug/Instrumentor.hpp"
+#include "../FileSystem/VirtualFileExplorer.hpp"
 
 #include <Utility/String/kToString.hpp>
 #include <Utility/String/kStringTricks.hpp>
@@ -13,7 +14,9 @@
 namespace krakoa::graphics
 {
 	ShaderLibrary::ShaderLibrary(Token &&)
-	{}
+	{
+		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Shaders", "Shaders");
+	}
 
 	ShaderLibrary::~ShaderLibrary()
 		= default;

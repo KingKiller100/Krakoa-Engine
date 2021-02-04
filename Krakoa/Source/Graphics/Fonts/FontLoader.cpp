@@ -1,6 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "FontLoader.hpp"
 
+#include "../../FileSystem/VirtualFileExplorer.hpp"
+
 #include "Font.hpp"
 
 #include <imgui.h>
@@ -8,7 +10,9 @@
 namespace krakoa::fonts
 {
 	FontLoader::FontLoader()
-	{}
+	{
+		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
+	}
 
 	FontLoader::~FontLoader()
 	{

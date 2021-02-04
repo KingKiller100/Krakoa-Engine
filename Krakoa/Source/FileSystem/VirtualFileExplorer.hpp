@@ -8,7 +8,7 @@
 
 namespace krakoa::filesystem
 {
-	enum FileSearchMode
+	enum struct FileSearchMode
 	{
 		NORMAL,
 		RECURSIVE
@@ -25,12 +25,14 @@ namespace krakoa::filesystem
 		static void Mount(const std::filesystem::path& relativePath, const std::string& vtlPath);
 		
 		static void Dismount(const std::string& vtlPath);
+		static void DismountAll();
 
 		static klib::Path GetRealPath(const PathRedirectsMap::key_type& vtlPath);
 		
-		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, FileSearchMode searchMode = NORMAL);
-		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, const std::string_view& extension, FileSearchMode searchMode = NORMAL);
-		static klib::PathList GetDirectories(const PathRedirectsMap::key_type& vtlPath, FileSearchMode searchMode = NORMAL);
+		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, FileSearchMode searchMode = FileSearchMode::NORMAL);
+		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, const std::string_view& extension
+			, FileSearchMode searchMode = FileSearchMode::NORMAL);
+		static klib::PathList GetDirectories(const PathRedirectsMap::key_type& vtlPath, FileSearchMode searchMode = FileSearchMode::NORMAL);
 		
 		static std::filesystem::path GetRoot();
 

@@ -72,7 +72,15 @@ namespace krakoa::filesystem
 
 		VerifyDirectory(absPath);
 
-		redirectMap[vtlPath] = absPath;
+		if (redirectMap.find(vtlPath) != redirectMap.end())
+		{
+			KRK_ERR(vtlPath + " already exists. Please dismount first if you want to change path");
+			return;
+		}
+
+		const auto key = klib::ToLower(vtlPath);
+		
+		redirectMap[key] = absPath;
 	}
 
 	void VirtualFileExplorer::Mount(const std::filesystem::path& relativePath, const std::string& vtlPath)
@@ -90,14 +98,9 @@ namespace krakoa::filesystem
 		redirectMap.erase(iter);
 	}
 
-	klib::Path VirtualFileExplorer::GetRealPath(const PathRedirectsMap::key_type& vtlPath)
+	void VirtualFileExplorer::DismountAll()
 	{
-		const auto iter = redirectMap.find(vtlPath);
-
-		if (iter == redirectMap.end())
-			return {};
-
-		return iter->second;
+		redirectMap.clear();
 	}
 
 	klib::PathList VirtualFileExplorer::GetFiles(const std::string& vtlPath, FileSearchMode searchMode)
@@ -114,7 +117,7 @@ namespace krakoa::filesystem
 
 		klib::PathList files;
 
-		if (searchMode == RECURSIVE)
+		if (searchMode == FileSearchMode::RECURSIVE)
 			files = GetRecursiveImpl(path, insertionCluseFunc);
 		else
 			files = GetNormalImpl(path, insertionCluseFunc);
@@ -145,7 +148,7 @@ namespace krakoa::filesystem
 
 		klib::PathList files;
 
-		if (searchMode == RECURSIVE)
+		if (searchMode == FileSearchMode::RECURSIVE)
 			files = GetRecursiveImpl(path, insertionClauseFunc);
 		else
 			files = GetNormalImpl(path, insertionClauseFunc);
@@ -168,13 +171,25 @@ namespace krakoa::filesystem
 
 		klib::PathList files;
 
-		if (searchMode == RECURSIVE)
+		if (searchMode == FileSearchMode::RECURSIVE)
 			files = GetRecursiveImpl(path, insertionCluseFunc);
 		else
 			files = GetNormalImpl(path, insertionCluseFunc);
 
 
 		return files;
+	}
+
+	klib::Path VirtualFileExplorer::GetRealPath(const PathRedirectsMap::key_type& vtlPath)
+	{
+		const auto key = klib::ToLower(vtlPath);
+
+		const auto iter = redirectMap.find(key);
+
+		if (iter == redirectMap.end())
+			return {};
+
+		return iter->second;
 	}
 
 	void VirtualFileExplorer::VerifyDirectory(const std::filesystem::path& path)

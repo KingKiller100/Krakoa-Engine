@@ -16,6 +16,8 @@ namespace krakoa::graphics
 		ShaderLibrary(Token&&);
 		~ShaderLibrary();
 
+		void Initialize() const;
+		
 		USE_RESULT std::weak_ptr<iShader> Get(const std::string& name) const;
 		std::weak_ptr<iShader> Load(const std::string_view& filepath);
 		std::weak_ptr<iShader> Load(const std::string& name, const std::string_view& filepath);

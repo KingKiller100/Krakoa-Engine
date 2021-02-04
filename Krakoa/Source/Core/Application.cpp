@@ -83,10 +83,11 @@ namespace krakoa
 		// Initialize InputManager
 		input::InputManager::Initialize();
 		managers.push_back(input::InputManager::Pointer());
-
-		RegisterManager<graphics::ShaderLibrary>();
+		
+		RegisterManager<filesystem::AssetManager>();
 		
 		// Initialize Graphics Stuff
+		RegisterManager<graphics::ShaderLibrary>();
 		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
 		// Initialize Scene Manager

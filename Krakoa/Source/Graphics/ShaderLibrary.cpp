@@ -14,13 +14,17 @@
 namespace krakoa::graphics
 {
 	ShaderLibrary::ShaderLibrary(Token &&)
-	{
-		const auto rendererAPI = iRendererAPI::GetAPI();
-		filesystem::VirtualFileExplorer::Mount(klib::ToString("Keditor\\Assets\\Shaders\\{0}", rendererAPI), "Shaders");
-	}
+	{}
 
 	ShaderLibrary::~ShaderLibrary()
 		= default;
+
+	void ShaderLibrary::Initialize() const
+	{
+		const auto rendererAPI = iRendererAPI::GetAPI();
+		const auto relativePath = klib::ToString("Keditor\\Assets\\Shaders\\{0}", rendererAPI);
+		filesystem::VirtualFileExplorer::Mount(relativePath, "Shaders");
+	}
 
 	USE_RESULT std::weak_ptr<iShader> ShaderLibrary::Get(const std::string & name) const
 	{

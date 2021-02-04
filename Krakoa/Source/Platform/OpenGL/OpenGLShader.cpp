@@ -24,7 +24,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		
-		path = filePath / ".glsl";
+		path = filePath.string() + ".glsl";
 		KRK_ASSERT(klib::CheckFileExists(path), klib::ToString("Shader file does not exist: {0}", path))
 		
 		const auto shaderData = klib::kFileSystem::ReadFile(path.string());

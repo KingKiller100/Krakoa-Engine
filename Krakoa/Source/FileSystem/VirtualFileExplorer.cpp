@@ -17,13 +17,13 @@ namespace krakoa::filesystem
 	namespace
 	{
 		template<typename InsertionFunc>
-		klib::PathList GetNormalImpl(fs::directory_iterator dir_iter, InsertionFunc insertionClause)
+		klib::PathList GetNormalImpl(const fs::path& path, InsertionFunc insertionClause)
 		{
 			klib::PathList items;
 
 			const auto end_iter = fs::directory_iterator();
 
-			for (; dir_iter != end_iter; ++dir_iter)
+			for (auto dir_iter = fs::directory_iterator(path); dir_iter != end_iter; ++dir_iter)
 			{
 				if (insertionClause(dir_iter))
 					items.emplace_back(dir_iter->path());
@@ -33,26 +33,24 @@ namespace krakoa::filesystem
 		}
 
 		template<typename InsertionFunc>
-		klib::PathList GetRecursiveImpl(fs::directory_iterator dir_iter, InsertionFunc insertionClause)
+		klib::PathList GetRecursiveImpl(const fs::path& path, InsertionFunc insertionClause)
 		{
 			klib::PathList items;
 
 			const auto end_iter = fs::directory_iterator();
 
-			for (; dir_iter != end_iter; ++dir_iter)
+			for (auto dir_iter = fs::directory_iterator(path); dir_iter != end_iter; ++dir_iter)
 			{
-				klib::PathList subItems;
-
 				if (dir_iter->is_directory())
 				{
-					subItems = GetRecursiveImpl(dir_iter, insertionClause);
+					klib::PathList subItems = GetRecursiveImpl(dir_iter->path(), insertionClause);
+					items.insert(items.end(), subItems.begin(), subItems.end());
 				}
 				else
 				{
-					subItems = GetNormalImpl(dir_iter, insertionClause);
+					if (insertionClause(dir_iter))
+						items.emplace_back(dir_iter->path());
 				}
-
-				items.insert(items.end(), subItems.begin(), subItems.end());
 			}
 
 			return items;
@@ -111,22 +109,15 @@ namespace krakoa::filesystem
 
 		const auto insertionCluseFunc = [&](const fs::directory_iterator& dir_iter)
 		{
-			const auto& currentPath = dir_iter->path();
-
-			if (!currentPath.has_extension())
-				return false;
-
-			const auto ext = currentPath.extension();
-
 			return dir_iter->is_regular_file();
 		};
 
 		klib::PathList files;
 
 		if (searchMode == RECURSIVE)
-			files = GetRecursiveImpl(fs::directory_iterator(path), insertionCluseFunc);
+			files = GetRecursiveImpl(path, insertionCluseFunc);
 		else
-			files = GetNormalImpl(fs::directory_iterator(path), insertionCluseFunc);
+			files = GetNormalImpl(path, insertionCluseFunc);
 
 
 		return files;
@@ -140,7 +131,7 @@ namespace krakoa::filesystem
 		if (path.empty())
 			return {};
 
-		const auto insertionCluseFunc = [&](const fs::directory_iterator& dir_iter)
+		const auto insertionClauseFunc = [&](const fs::directory_iterator& dir_iter)
 		{
 			const auto& currentPath = dir_iter->path();
 
@@ -155,9 +146,9 @@ namespace krakoa::filesystem
 		klib::PathList files;
 
 		if (searchMode == RECURSIVE)
-			files = GetRecursiveImpl(fs::directory_iterator(path), insertionCluseFunc);
+			files = GetRecursiveImpl(path, insertionClauseFunc);
 		else
-			files = GetNormalImpl(fs::directory_iterator(path), insertionCluseFunc);
+			files = GetNormalImpl(path, insertionClauseFunc);
 
 
 		return files;
@@ -172,22 +163,15 @@ namespace krakoa::filesystem
 
 		const auto insertionCluseFunc = [&](const fs::directory_iterator& dir_iter)
 		{
-			const auto& currentPath = dir_iter->path();
-
-			if (!currentPath.has_extension())
-				return false;
-
-			const auto ext = currentPath.extension();
-
 			return dir_iter->is_directory();
 		};
 
 		klib::PathList files;
 
 		if (searchMode == RECURSIVE)
-			files = GetRecursiveImpl(fs::directory_iterator(path), insertionCluseFunc);
+			files = GetRecursiveImpl(path, insertionCluseFunc);
 		else
-			files = GetNormalImpl(fs::directory_iterator(path), insertionCluseFunc);
+			files = GetNormalImpl(path, insertionCluseFunc);
 
 
 		return files;

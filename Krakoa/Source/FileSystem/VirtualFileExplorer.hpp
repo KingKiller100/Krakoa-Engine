@@ -28,9 +28,9 @@ namespace krakoa::filesystem
 
 		static klib::Path GetRealPath(const PathRedirectsMap::key_type& vtlPath);
 		
-		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath);
-		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, const std::string_view& extension);
-		static klib::PathList GetDirectories(const PathRedirectsMap::key_type& vtlPath);
+		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, FileSearchMode searchMode = NORMAL);
+		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, const std::string_view& extension, FileSearchMode searchMode = NORMAL);
+		static klib::PathList GetDirectories(const PathRedirectsMap::key_type& vtlPath, FileSearchMode searchMode = NORMAL);
 		
 		static std::filesystem::path GetRoot();
 

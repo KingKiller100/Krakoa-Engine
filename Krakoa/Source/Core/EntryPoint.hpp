@@ -65,6 +65,7 @@ inline void Launch()
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
 
 	const auto dirs = filesystem::VirtualFileExplorer::GetDirectories("Fonts");
+	const auto files = filesystem::VirtualFileExplorer::GetFiles("Fonts", ".ttf", filesystem::RECURSIVE);
 	
 	CreateApplication();
 	auto pApp = Solo_Ptr<Application>(Application::Pointer());

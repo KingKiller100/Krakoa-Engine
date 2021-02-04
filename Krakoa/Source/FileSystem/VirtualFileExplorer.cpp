@@ -17,7 +17,7 @@ namespace krakoa::filesystem
 	namespace
 	{
 		template<typename InsertionFunc>
-		klib::PathList GetImpl(const fs::path& path, InsertionFunc insertionClause)
+		klib::PathList GetImpl(const fs::path& path, FileSearchMode searchMode, InsertionFunc insertionClause)
 		{
 			klib::PathList items;
 
@@ -25,14 +25,22 @@ namespace krakoa::filesystem
 
 			for (auto dir_iter = fs::directory_iterator(path); dir_iter != end_iter; ++dir_iter)
 			{
-				if (insertionClause(dir_iter))
-					items.emplace_back(dir_iter->path());
+				if (searchMode == RECURSIVE && dir_iter->is_directory())
+				{
+					const auto subItems = GetImpl(dir_iter->path(), searchMode, insertionClause);
+					items.insert(items.end(), subItems.begin(), subItems.end());
+				}
+				else
+				{
+					if (insertionClause(dir_iter))
+						items.emplace_back(dir_iter->path());
+				}
 			}
 
 			return items;
 		}
 	}
-	
+
 	void VirtualFileExplorer::Initialize(std::filesystem::path path)
 	{
 		KRK_INF("Assigning root path: " + path.string());
@@ -47,7 +55,7 @@ namespace krakoa::filesystem
 		KRK_INF(klib::ToString("Mounting path \"{0}\" -> \"{1}\"", absPath, vtlPath));
 
 		VerifyDirectory(absPath);
-		
+
 		redirectMap[vtlPath] = absPath;
 	}
 
@@ -76,48 +84,50 @@ namespace krakoa::filesystem
 		return iter->second;
 	}
 
-	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath)
+	klib::PathList VirtualFileExplorer::GetFiles(const std::string& vtlPath, FileSearchMode searchMode)
 	{
 		const auto path = GetRealPath(vtlPath);
 
 		if (path.empty())
 			return {};
 
-		return GetImpl(path, [](const fs::directory_iterator& dir_iter)
+		return GetImpl(path, searchMode, [](const fs::directory_iterator& dir_iter)
 			{
 				return dir_iter->is_regular_file();
 			});
 	}
 
 	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath,
-		const std::string_view& extension)
+		const std::string_view& extension, FileSearchMode searchMode)
 	{
 		const auto path = GetRealPath(vtlPath);
 
 		if (path.empty())
 			return {};
 
-		return GetImpl(path, [&](const fs::directory_iterator& dir_iter)
+		auto files = GetImpl(path, searchMode, [&](const fs::directory_iterator& dir_iter)
 			{
 				const auto& currentPath = dir_iter->path();
-			
+
 				if (!currentPath.has_extension())
 					return false;
 
 				const auto ext = currentPath.extension();
-			
+
 				return dir_iter->is_regular_file() && ext == extension;
 			});
+
+		return files;
 	}
 
-	klib::PathList VirtualFileExplorer::GetDirectories(const PathRedirectsMap::key_type& vtlPath)
+	klib::PathList VirtualFileExplorer::GetDirectories(const std::string& vtlPath, FileSearchMode searchMode)
 	{
 		const auto path = GetRealPath(vtlPath);
 
 		if (path.empty())
 			return {};
 
-		return GetImpl(path, [](const fs::directory_iterator& dir_iter)
+		return GetImpl(path, searchMode, [](const fs::directory_iterator& dir_iter)
 			{
 				return dir_iter->is_directory();
 			});

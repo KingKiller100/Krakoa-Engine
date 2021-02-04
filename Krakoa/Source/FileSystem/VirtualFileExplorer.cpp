@@ -14,30 +14,46 @@ namespace krakoa::filesystem
 	fs::path VirtualFileExplorer::root;
 	VirtualFileExplorer::PathRedirectsMap VirtualFileExplorer::redirectMap;
 
-	void VirtualFileExplorer::Initialize(const std::filesystem::path& rootPath)
+	namespace
 	{
-		KRK_INF("Assigning root path: " + root.string());
-		
-		if (!klib::CheckDirectoryExists(rootPath))
-			KRK_FATAL("Root path does not exist: " + rootPath.string());
-		
-		if (klib::CheckFileExists(rootPath))
-			KRK_FATAL(klib::ToString("Root path given is a file: {0}", rootPath));
+		template<typename InsertionFunc>
+		klib::PathList GetImpl(const fs::path& path, InsertionFunc insertionClause)
+		{
+			klib::PathList items;
 
-		root = std::move(rootPath);
+			const auto end_iter = fs::directory_iterator();
+
+			for (auto dir_iter = fs::directory_iterator(path); dir_iter != end_iter; ++dir_iter)
+			{
+				if (insertionClause(dir_iter))
+					items.emplace_back(dir_iter->path());
+			}
+
+			return items;
+		}
+	}
+	
+	void VirtualFileExplorer::Initialize(std::filesystem::path path)
+	{
+		KRK_INF("Assigning root path: " + path.string());
+
+		VerifyDirectory(path);
+
+		root = fs::absolute(path);
 	}
 
-	void VirtualFileExplorer::Mount(const std::filesystem::path& physicalPath, const std::string& vtlPath)
+	void VirtualFileExplorer::MountAbs(const std::filesystem::path& absPath, const std::string& vtlPath)
 	{
-		KRK_INF(klib::ToString("Mounting path \"{0}\" -> \"{1}\"", physicalPath, vtlPath));
+		KRK_INF(klib::ToString("Mounting path \"{0}\" -> \"{1}\"", absPath, vtlPath));
 
-		if (!klib::CheckDirectoryExists(physicalPath))
-			KRK_FATAL("Physical path does not exist: " + physicalPath.string());
+		VerifyDirectory(absPath);
 		
-		if (klib::CheckFileExists(physicalPath))
-			KRK_FATAL("Path is a file: " + physicalPath.string());
-		
-		redirectMap[vtlPath].emplace_back(physicalPath);
+		redirectMap[vtlPath] = absPath;
+	}
+
+	void VirtualFileExplorer::Mount(const std::filesystem::path& relativePath, const std::string& vtlPath)
+	{
+		MountAbs(root / relativePath, vtlPath);
 	}
 
 	void VirtualFileExplorer::Dismount(const std::string& vtlPath)
@@ -50,67 +66,70 @@ namespace krakoa::filesystem
 		redirectMap.erase(iter);
 	}
 
-	bool VirtualFileExplorer::PhysicalPathExists(const std::filesystem::path& physicalPath)
+	klib::Path VirtualFileExplorer::GetRealPath(const PathRedirectsMap::key_type& vtlPath)
 	{
-		return klib::CheckDirectoryExists(physicalPath);
-	}
-
-	bool VirtualFileExplorer::PathExists(const std::filesystem::path& vtlPath)
-	{
-		return redirectMap.find(vtlPath.string()) != redirectMap.end();
-	}
-
-	bool VirtualFileExplorer::PhysicalFileExists(const std::filesystem::path& physicalPath)
-	{
-		return klib::CheckFileExists(physicalPath);
-	}
-
-	bool VirtualFileExplorer::FileExists(const std::filesystem::path& vtlPath)
-	{
-		auto paths = ResolveVirtualPath(vtlPath);
-		const auto filename = vtlPath.filename();
-		for (auto& path : paths)
-		{
-			if (klib::CheckFileExists(path / filename))
-				return true;
-		}
-		return false;
-	}
-
-	klib::FileLines<char> VirtualFileExplorer::ReadFile(const std::filesystem::path& vtlPath)
-	{
-		auto paths = ResolveVirtualPath(vtlPath);
-		const auto file = vtlPath.filename();
-
-		fs::path filePath;
-		for (auto& path : paths)
-		{
-			filePath = path / file;
-
-			if (!PhysicalFileExists(filePath))
-			{
-				filePath.clear();
-			}
-		}
-		
-		return klib::ReadFile(filePath.string());
-	}
-
-	klib::PathList VirtualFileExplorer::ResolveVirtualPath(const std::filesystem::path& vtlPath)
-	{
-		if (PathExists(vtlPath))
-		
-		const auto parentPath = vtlPath.has_filename() ? vtlPath.parent_path() : vtlPath;
-
-		const auto iter = redirectMap.find(vtlPath.string());
+		const auto iter = redirectMap.find(vtlPath);
 
 		if (iter == redirectMap.end())
-		{
-			KRK_WRN("Virtual F.E. redirect path does not exist: " + vtlPath.string());
 			return {};
-		}
 
 		return iter->second;
+	}
+
+	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath)
+	{
+		const auto path = GetRealPath(vtlPath);
+
+		if (path.empty())
+			return {};
+
+		return GetImpl(path, [](const fs::directory_iterator& dir_iter)
+			{
+				return dir_iter->is_regular_file();
+			});
+	}
+
+	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath,
+		const std::string_view& extension)
+	{
+		const auto path = GetRealPath(vtlPath);
+
+		if (path.empty())
+			return {};
+
+		return GetImpl(path, [&](const fs::directory_iterator& dir_iter)
+			{
+				const auto& currentPath = dir_iter->path();
+			
+				if (!currentPath.has_extension())
+					return false;
+
+				const auto ext = currentPath.extension();
+			
+				return dir_iter->is_regular_file() && ext == extension;
+			});
+	}
+
+	klib::PathList VirtualFileExplorer::GetDirectories(const PathRedirectsMap::key_type& vtlPath)
+	{
+		const auto path = GetRealPath(vtlPath);
+
+		if (path.empty())
+			return {};
+
+		return GetImpl(path, [](const fs::directory_iterator& dir_iter)
+			{
+				return dir_iter->is_directory();
+			});
+	}
+
+	void VirtualFileExplorer::VerifyDirectory(const std::filesystem::path& path)
+	{
+		if (!klib::CheckDirectoryExists(path))
+			KRK_FATAL("Path does not exist: " + path.string());
+
+		if (klib::CheckFileExists(path))
+			KRK_FATAL(klib::ToString("Path given is a file: {0}", path));
 	}
 
 	std::filesystem::path VirtualFileExplorer::GetRoot()

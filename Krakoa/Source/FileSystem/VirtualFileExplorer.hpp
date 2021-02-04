@@ -8,28 +8,34 @@
 
 namespace krakoa::filesystem
 {
+	enum FileSearchMode
+	{
+		NORMAL,
+		RECURSIVE
+	};
+	
 	class VirtualFileExplorer
 	{
-		using PathRedirectsMap = std::unordered_map<std::string, std::vector<std::filesystem::path>>;
+		using PathRedirectsMap = std::unordered_map<std::string, std::filesystem::path>;
 		
 	public:
-		static void Initialize(const std::filesystem::path& rootPath);
+		static void Initialize(std::filesystem::path path);
 
-		static void Mount(const std::filesystem::path& physicalPath, const std::string& vtlPath);
+		static void MountAbs(const std::filesystem::path& absPath, const std::string& vtlPath);
+		static void Mount(const std::filesystem::path& relativePath, const std::string& vtlPath);
 		
 		static void Dismount(const std::string& vtlPath);
 
-		static bool PhysicalPathExists(const std::filesystem::path& physicalPath);
-		static bool PathExists(const std::filesystem::path& vtlPath);
+		static klib::Path GetRealPath(const PathRedirectsMap::key_type& vtlPath);
 		
-		static bool PhysicalFileExists(const std::filesystem::path& physicalPath);
-		static bool FileExists(const std::filesystem::path& vtlPath);
+		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath);
+		static klib::PathList GetFiles(const PathRedirectsMap::key_type& vtlPath, const std::string_view& extension);
+		static klib::PathList GetDirectories(const PathRedirectsMap::key_type& vtlPath);
 		
-		static klib::FileLines<char> ReadFile(const std::filesystem::path& vtlPath);
-
-		static klib::PathList ResolveVirtualPath(const std::filesystem::path& vtlPath);
-
 		static std::filesystem::path GetRoot();
+
+	private:
+		static void VerifyDirectory(const std::filesystem::path& path);
 
 	private:
 		static std::filesystem::path root;

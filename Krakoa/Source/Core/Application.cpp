@@ -92,8 +92,6 @@ namespace krakoa
 		fbSpec.width = 1024;
 		fbSpec.height = 640;
 		frameBuffer.reset(graphics::iFrameBuffer::Create(fbSpec));
-
-		std::filesystem::directory_iterator()
 	}
 
 	void Application::OnEvent(events::Event& e)

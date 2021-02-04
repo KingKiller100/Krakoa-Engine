@@ -19,7 +19,7 @@ namespace krakoa::configuration
 	void GlobalConfig::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
-		constexpr auto configFolder = "Config";
+		constexpr auto configFolder = "Krakoa\\Config";
 		
 		const auto configPath = root / configFolder;
 

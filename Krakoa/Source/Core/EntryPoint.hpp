@@ -52,14 +52,20 @@ inline void Launch()
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 	
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
-	filesystem::VirtualFileExplorer::Initialize(cwd);
-	filesystem::VirtualFileExplorer::Mount(cwd + "Krakoa\\Assets", "Assets\\");
-	
+
 	configuration::GlobalConfig::Create(cwd);
 	auto globalConfig = Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
-
 	KRK_INIT_LOGS("");
 
+	filesystem::VirtualFileExplorer::Initialize(cwd);
+	filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
+	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
+	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
+	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Shaders", "Shaders");
+	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
+
+	const auto dirs = filesystem::VirtualFileExplorer::GetDirectories("Fonts");
+	
 	CreateApplication();
 	auto pApp = Solo_Ptr<Application>(Application::Pointer());
 	pApp->Initialize();

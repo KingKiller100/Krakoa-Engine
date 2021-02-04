@@ -23,9 +23,8 @@ namespace krakoa
 		static klib::kLogs::Logging& GetLogger();
 		static void ShutDown();
 
-	private:
-		static void SetMinimumLogLevelFromConfig(const configurations::ConfigValueMap& valueMap);
-		static void RemoveOldFile(const configurations::ConfigValueMap& valueMap, const std::filesystem::path& fileToDelete);
+		static void SetMinimumLogLevelUsingConfig();
+		static void RemoveOldFileUsingConfig();
 		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pLogger;

@@ -2,20 +2,27 @@
 #include "EngineLogger.hpp"
 
 #include "../Config/GlobalConfig.hpp"
+#include "../FileSystem/VirtualFileExplorer.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/Calendar/kCalendar.hpp>
 
 namespace krakoa
 {
+	using namespace filesystem;
+
+	namespace
+	{
+		bool g_LogLevelSet = false;
+		bool g_CheckedOldFile = false;
+	}
+	
 	Solo_Ptr<klib::Logging> EngineLogger::pLogger;
 
 	void EngineLogger::CoreInit(const std::string_view& initMsg)
 	{
 		if (pLogger)
 			return;
-		
-		const auto& configValueMap = configurations::GetGlobalConfig().GetValueMap("Logging");
 
 		std::filesystem::path dir(klib::kFileSystem::GetExeDirectory());
 		dir /= "Logs\\";
@@ -26,8 +33,6 @@ namespace krakoa
 
 		const auto path = dir / (std::string(filename) + extension);
 
-		RemoveOldFile(configValueMap, path);
-
 		const auto padding = std::string(72, '*');
 		const auto spacing = std::string(12, ' ');
 
@@ -37,8 +42,6 @@ namespace krakoa
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
 
 		pLogger = Make_Solo<klib::Logging>(path, name);
-
-		SetMinimumLogLevelFromConfig(configValueMap);
 
 		pLogger->SetCacheMode(false);
 		pLogger->GetConsole().SetDebugStringOutput(true);
@@ -51,25 +54,32 @@ namespace krakoa
 		pLogger->AddRaw();
 	}
 
-	void EngineLogger::SetMinimumLogLevelFromConfig(const configurations::ConfigValueMap& valueMap)
+	void EngineLogger::SetMinimumLogLevelUsingConfig()
 	{
-		const auto logLevelStr = valueMap.ReadAs<std::string_view>("Level");
+		if (g_LogLevelSet) return;
+		
+		const auto logLevelStr = configurations::GetConfiguration<std::string_view>("Logging", "Level");
 		const auto min_level = klib::LogLevel::FromString(klib::ToUpper(logLevelStr));
 		pLogger->SetMinimumLoggingLevel(min_level);
+		
+		g_LogLevelSet = true;
 	}
 
-	void EngineLogger::RemoveOldFile(const configurations::ConfigValueMap& valueMap, const std::filesystem::path& fileToDelete)
+	void EngineLogger::RemoveOldFileUsingConfig()
 	{
-		const auto entry = std::filesystem::directory_entry(fileToDelete);
+		if (g_CheckedOldFile)
+			return;
+		
+		const auto entry = std::filesystem::directory_entry(pLogger->GetFile().GetPath());
 
 		if (!entry.exists())
 			return;
 
-		const auto maxBytes = valueMap.ReadAs<size_t>("MaxBytes");
+		const auto maxBytes = configurations::GetConfiguration<size_t>("Logging", "MaxBytes");
 		const auto fileSize = entry.file_size();
 		const auto tooBig = fileSize > maxBytes;
 
-		const auto maxDays = valueMap.ReadAs<size_t>("MaxDays");
+		const auto maxDays = configurations::GetConfiguration<size_t>("Logging", "MaxBytes");
 		const auto lastWrite = entry.last_write_time();
 		const auto now = std::filesystem::_File_time_clock::now();
 		const auto timeSinceLastWrite = now - lastWrite;
@@ -78,7 +88,9 @@ namespace krakoa
 		const auto tooOld = maxDays < totalDays.count();
 
 		if (tooBig || tooOld)
-			klib::Remove(fileToDelete);
+			klib::Remove(entry.path());
+
+		g_CheckedOldFile = true;
 	}
 
 	void EngineLogger::ShutDown()

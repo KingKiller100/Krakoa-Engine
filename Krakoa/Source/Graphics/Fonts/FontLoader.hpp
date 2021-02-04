@@ -1,8 +1,5 @@
 #pragma once
 
-#include "../../Core/PointerTypes.hpp"
-#include "../../Patterns/ManagerBase.hpp"
-
 #include <filesystem>
 #include <string>
 #include <unordered_map>
@@ -11,11 +8,11 @@ namespace krakoa::fonts
 {
 	class Font;
 	
-	class FontManager : public patterns::ManagerBase<FontManager>
+	class FontLoader
 	{
 	public:
-		FontManager();
-		~FontManager();
+		FontLoader();
+		~FontLoader();
 
 		void Load(const std::filesystem::path& filepath, float size);
 		void Delete(const std::string& fontName);

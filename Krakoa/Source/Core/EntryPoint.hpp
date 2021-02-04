@@ -51,15 +51,20 @@ inline void Launch()
 #else
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
 	
-	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
-
-	configurations::GlobalConfig::Create(cwd);
-	auto globalConfig = Solo_Ptr<configurations::GlobalConfig>(configurations::GlobalConfig::Pointer());
 	KRK_INIT_LOGS("");
+	
+	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
 
 	filesystem::VirtualFileExplorer::Initialize(cwd);
 	filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
+	
+	configurations::GlobalConfig::Create(cwd);
+	auto globalConfig = Solo_Ptr<configurations::GlobalConfig>(configurations::GlobalConfig::Pointer());
+
+	EngineLogger::SetMinimumLogLevelUsingConfig();
+	EngineLogger::RemoveOldFileUsingConfig();
+
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Shaders", "Shaders");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");

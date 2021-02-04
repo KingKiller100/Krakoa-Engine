@@ -16,7 +16,7 @@ namespace krakoa::configurations
 	class GlobalConfig : public patterns::ManagerBase<GlobalConfig>
 	{
 		using ConfigMap = std::unordered_map<std::string, Solo_Ptr<ConfigValueMap>>;
-		
+
 	public:
 		GlobalConfig(Token, const std::filesystem::path& parentPath);
 		~GlobalConfig() noexcept;
@@ -28,7 +28,7 @@ namespace krakoa::configurations
 			const auto& value = valueMap.ReadAs<T>(key);
 			return value;
 		}
-		
+
 		template<typename T>
 		T TryGet(const std::string& context, const std::string& key, T defaultValue) const
 		{
@@ -43,7 +43,7 @@ namespace krakoa::configurations
 		}
 
 		const ConfigValueMap& GetValueMap(const std::string& context) const;
-		
+
 	private:
 		void Initialize();
 
@@ -53,4 +53,16 @@ namespace krakoa::configurations
 	};
 
 	GlobalConfig& GetGlobalConfig();
+
+	template<typename T>
+	T GetConfiguration(const std::string& context, const std::string& key)
+	{
+		return GetGlobalConfig().Get<T>(context, key);
+	}
+
+	template<typename T>
+	T GetConfiguration(const std::string& context, const std::string& key, T defaultValue)
+	{
+		return GetGlobalConfig().TryGet<T>(context, key, defaultValue);
+	}
 }

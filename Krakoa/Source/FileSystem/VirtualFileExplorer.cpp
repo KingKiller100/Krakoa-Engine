@@ -140,7 +140,7 @@ namespace krakoa::filesystem
 
 			const auto ext = currentPath.extension();
 
-			return dir_iter->is_regular_file() && ext == extension;
+			return dir_iter->is_regular_file() && klib::Contains(ext.string(), extension);
 		};
 
 		klib::PathList files;

@@ -24,7 +24,7 @@ namespace krakoa::fonts
 		
 		void Load(const std::filesystem::path& filepath, float fontSize);
 
-		friend class FontManager;
+		friend class FontLoader;
 		
 	private:
 		std::filesystem::path path;

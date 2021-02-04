@@ -1,5 +1,5 @@
 ﻿#include "Precompile.hpp"
-#include "FontManager.hpp"
+#include "FontLoader.hpp"
 
 #include "Font.hpp"
 
@@ -7,32 +7,32 @@
 
 namespace krakoa::fonts
 {
-	FontManager::FontManager()
+	FontLoader::FontLoader()
 	{}
 
-	FontManager::~FontManager()
+	FontLoader::~FontLoader()
 	{
 		Clear();
 	}
 
-	void FontManager::Clear()
+	void FontLoader::Clear()
 	{
 		fontMap.clear();
 	}
 
-	void FontManager::MakeDefault(const Font& font)
+	void FontLoader::MakeDefault(const Font& font)
 	{
 		auto& io = ImGui::GetIO();
 		io.FontDefault = font.font;
 	}
 
-	void FontManager::MakeDefault(const std::string& fontName)
+	void FontLoader::MakeDefault(const std::string& fontName)
 	{
 		const auto& font = Get(fontName);
 		MakeDefault(font);
 	}
 
-	void FontManager::Load(const std::filesystem::path& filepath, float size)
+	void FontLoader::Load(const std::filesystem::path& filepath, float size)
 	{
 		const auto filename = filepath.stem().string();
 		auto pair = fontMap.emplace(filename, Font(filepath, size));
@@ -41,7 +41,7 @@ namespace krakoa::fonts
 			MakeDefault(pair.first->second);
 	}
 
-	void FontManager::Delete(const std::string& fontName)
+	void FontLoader::Delete(const std::string& fontName)
 	{
 		const auto iter = fontMap.find(fontName);
 
@@ -51,17 +51,17 @@ namespace krakoa::fonts
 		fontMap.erase(iter);
 	}
 
-	const Font& FontManager::Get(const std::string& name) const
+	const Font& FontLoader::Get(const std::string& name) const
 	{
 		return fontMap.at(name);
 	}
 
-	Font& FontManager::Get(const std::string& name)
+	Font& FontLoader::Get(const std::string& name)
 	{
 		return fontMap.at(name);
 	}
 
-	size_t FontManager::GetSize() const
+	size_t FontLoader::GetSize() const
 	{
 		return fontMap.size();
 	}

@@ -15,7 +15,7 @@
 #include "../Graphics/Renderer.hpp"
 #include "../Graphics/2D/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
-#include "../Graphics/Fonts/FontManager.hpp"
+#include "../Graphics/Fonts/FontLoader.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>

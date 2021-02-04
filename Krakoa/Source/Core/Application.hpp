@@ -55,10 +55,11 @@ namespace krakoa
 		void PopLayer(LayerBase* layer);
 		void PopOverlay(LayerBase* overlay);
 
-		template<typename Manager>
-		void RegisterSingleton()
+		template<typename Manager, typename ...Args>
+		void RegisterManager(Args&& ...args)
 		{
-			
+			Manager::Create(std::forward<Args>(args)...);
+			managers.emplace_back(Manager::Pointer());
 		}
 		
 	private:
@@ -76,7 +77,7 @@ namespace krakoa
 		
 		Solo_Ptr<graphics::iFrameBuffer> frameBuffer;
 
-		std::vector<Solo_Ptr<patterns::iSingleton>> singletons;
+		std::vector<patterns::iSingleton*> managers;
 		
 	private:
 		ImGuiLayer* pImGuiLayer;

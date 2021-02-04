@@ -3,7 +3,7 @@
 
 #include "Resources/iShader.hpp"
 
-#include "../Logging/EngineLogger.hpp"
+#include "iRendererAPI.hpp"
 #include "../Debug/Debug.hpp"
 #include "../Debug/Instrumentor.hpp"
 #include "../FileSystem/VirtualFileExplorer.hpp"
@@ -15,7 +15,8 @@ namespace krakoa::graphics
 {
 	ShaderLibrary::ShaderLibrary(Token &&)
 	{
-		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Shaders", "Shaders");
+		const auto rendererAPI = iRendererAPI::GetAPI();
+		filesystem::VirtualFileExplorer::Mount(klib::ToString("Keditor\\Assets\\Shaders\\{0}", rendererAPI), "Shaders");
 	}
 
 	ShaderLibrary::~ShaderLibrary()
@@ -40,7 +41,8 @@ namespace krakoa::graphics
 	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string& name, const std::string_view& filepath)
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto shader = iShader::Create(name, filepath);
+		const auto path = filesystem::VirtualFileExplorer::GetRealPath("Shaders");
+		const auto shader = iShader::Create(name, path / filepath);
 		return Add(name, shader);
 	}
 

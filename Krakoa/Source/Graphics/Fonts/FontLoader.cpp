@@ -7,7 +7,7 @@
 
 #include <imgui.h>
 
-namespace krakoa::fonts
+namespace krakoa::graphics
 {
 	FontLoader::FontLoader()
 	{

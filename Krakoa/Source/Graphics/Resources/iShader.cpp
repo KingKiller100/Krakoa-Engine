@@ -17,15 +17,11 @@ namespace krakoa::graphics
 	iShader::~iShader()
 		= default;
 
-	iShader * iShader::Create(const std::string_view& name, const std::string_view & shaderFilePath)
+	iShader * iShader::Create(const std::string_view& name, const std::filesystem::path& shaderFilePath)
 	{
-		const auto cwd = klib::GetCurrentWorkingDirectory();
-		
-		const auto formattedPath = klib::Replace(cwd + shaderFilePath, '/', '\\');
-
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLShader(name, formattedPath);
+		case iRendererAPI::API::OPENGL: return new OpenGLShader(name, shaderFilePath);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 

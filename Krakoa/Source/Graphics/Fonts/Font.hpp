@@ -4,7 +4,7 @@
 
 struct ImFont;
 
-namespace krakoa::fonts
+namespace krakoa::graphics
 {
 	class Font
 	{

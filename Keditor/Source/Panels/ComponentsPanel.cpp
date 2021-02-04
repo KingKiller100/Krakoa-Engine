@@ -37,10 +37,13 @@ namespace krakoa::scene
 
 			auto& component = entity.GetComponent<Component>();
 
+			constexpr auto treeNodeflags = TreeNodeFlags::DefaultOpen | TreeNodeFlags::Framed
+			| TreeNodeFlags::SpanAvailWidth | TreeNodeFlags::AllowItemOverlap;
+			
 			// if (removable)
 				PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
 
-			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), TreeNodeFlags::DefaultOpen, [&]()
+			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), treeNodeflags, [&]()
 				{
 					bool markedComponentForRemoval = false;
 

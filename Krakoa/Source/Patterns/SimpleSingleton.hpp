@@ -12,7 +12,7 @@ namespace patterns
 	};
 	
 	template <class T>
-	class SimpleSingleton : iSingleton
+	class SimpleSingleton : public iSingleton
 	{
 	public:
 		using Type = T;

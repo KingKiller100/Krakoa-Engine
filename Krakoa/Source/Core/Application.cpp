@@ -12,13 +12,13 @@
 #include "../Layers/FPS/FPSLayer.hpp"
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
+#include "../FileSystem/AssetManager.hpp"
+
 #include "../Graphics/Renderer.hpp"
 #include "../Graphics/2D/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
-#include "../Graphics/Fonts/FontLoader.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
-#include <Utility/FileSystem/kFileSystem.hpp>
 
 #include <chrono>
 
@@ -49,11 +49,13 @@ namespace krakoa
 		KRK_BANNER("Shut Down", "Closing App", "*", "*", 10);
 		graphics::Renderer::ShutDown();
 
-		auto* inputPtr = input::InputManager::Pointer();
-		if (inputPtr)
+		for (auto* manager : managers)
 		{
-			delete inputPtr;
-			inputPtr = nullptr;
+			if (manager)
+			{
+				delete manager;
+				manager = nullptr;
+			}
 		}
 
 		const auto appTimeSpan = timeStep.GetLifeTimeTimeSpan();
@@ -80,9 +82,11 @@ namespace krakoa
 
 		// Initialize InputManager
 		input::InputManager::Initialize();
+		managers.push_back(input::InputManager::Pointer());
 
+		RegisterManager<graphics::ShaderLibrary>();
+		
 		// Initialize Graphics Stuff
-		graphics::ShaderLibrary::Create();
 		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
 		// Initialize Scene Manager

@@ -32,9 +32,9 @@ namespace krakoa::graphics
 
 		virtual const std::string& GetName() const noexcept = 0;
 
-		static iShader* Create(const std::string_view& name, const std::string_view & shaderFilePath);
+		static iShader* Create(const std::string_view& name, const std::filesystem::path& shaderFilePath);
 
 	private:
-		virtual std::unordered_map<uint32_t, std::string> ParseShaderFile(const std::string_view& filePath) const = 0;
+		virtual std::unordered_map<uint32_t, std::string> ParseShaderFile(const std::filesystem::path& filePath) const = 0;
 	};
 }

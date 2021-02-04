@@ -6,7 +6,7 @@
 #include <Utility/String/kToString.hpp>
 #include <imgui.h>
 
-namespace krakoa::fonts
+namespace krakoa::graphics
 {
 	Font::Font()
 		: font(nullptr)

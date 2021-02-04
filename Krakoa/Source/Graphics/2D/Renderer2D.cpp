@@ -162,7 +162,7 @@ namespace krakoa::graphics
 				samplers[i] = i;
 			}
 
-			const auto mainShader = shaderLibrary.Load("MainShader", "Assets/Shaders/OpenGL/MainShader");
+			const auto mainShader = shaderLibrary.Load("MainShader", "MainShader");
 			if (!mainShader.expired())
 			{
 				auto main_shader_s_ptr = mainShader.lock();

@@ -64,8 +64,6 @@ inline void Launch()
 
 	EngineLogger::SetMinimumLogLevelUsingConfig();
 	EngineLogger::RemoveOldFileUsingConfig();
-
-	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
 	
 	CreateApplication();
 	auto pApp = Solo_Ptr<Application>(Application::Pointer());

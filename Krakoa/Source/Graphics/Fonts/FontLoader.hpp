@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace krakoa::fonts
+namespace krakoa::graphics
 {
 	class Font;
 	

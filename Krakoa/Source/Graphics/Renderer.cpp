@@ -29,7 +29,7 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		Renderer2D::ShutDown();
-		delete ShaderLibrary::Pointer();
+		// delete ShaderLibrary::Pointer();
 	}
 
 	void Renderer::OnWindowResize(const int x, const int y, const int width, const int height) noexcept

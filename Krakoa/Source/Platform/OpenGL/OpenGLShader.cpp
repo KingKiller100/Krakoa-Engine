@@ -13,19 +13,21 @@
 
 namespace krakoa::graphics
 {
-	OpenGLShader::OpenGLShader(const std::string_view& name, const std::string_view & shaderFilePath)
+	OpenGLShader::OpenGLShader(const std::string_view& name, const std::filesystem::path& shaderFilePath)
 		: name(name)
 	{
 		const auto sources = OpenGLShader::ParseShaderFile(shaderFilePath);
 		BuildShader(sources);
 	}
 
-	std::unordered_map<uint32_t, std::string> OpenGLShader::ParseShaderFile(const std::string_view& filePath) const
+	std::unordered_map<uint32_t, std::string> OpenGLShader::ParseShaderFile(const std::filesystem::path& filePath) const
 	{
 		KRK_PROFILE_FUNCTION();
-		path = klib::kFileSystem::AppendFileExtension(filePath, ".glsl");
+		
+		path = filePath / ".glsl";
 		KRK_ASSERT(klib::CheckFileExists(path), klib::ToString("Shader file does not exist: {0}", path))
-		const auto shaderData = klib::kFileSystem::ReadFile(path);
+		
+		const auto shaderData = klib::kFileSystem::ReadFile(path.string());
 		KRK_ASSERT(!shaderData.empty(), klib::ToString("Shader file is empty: {0}", path));
 
 		std::unordered_map<uint32_t, std::string> sources;

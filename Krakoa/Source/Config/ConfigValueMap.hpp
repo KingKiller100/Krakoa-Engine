@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace krakoa::configuration
+namespace krakoa::configurations
 {
 	using ValueMap = std::unordered_map<std::string, std::string>;
 	

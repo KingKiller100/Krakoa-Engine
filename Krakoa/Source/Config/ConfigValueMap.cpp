@@ -4,7 +4,7 @@
 #include <Utility/String/kStringTricks.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
-namespace krakoa::configuration
+namespace krakoa::configurations
 {
 	ConfigValueMap::ConfigValueMap(const std::filesystem::path& path) noexcept
 		: values(ConfigFileParser::ParseFile(path))

@@ -10,7 +10,7 @@
 
 namespace krakoa
 {
-	namespace configuration
+	namespace configurations
 	{
 		class ConfigValueMap;
 	}
@@ -24,8 +24,8 @@ namespace krakoa
 		static void ShutDown();
 
 	private:
-		static void SetMinimumLogLevelFromConfig(const configuration::ConfigValueMap& valueMap);
-		static void RemoveOldFile(const configuration::ConfigValueMap& valueMap, const std::filesystem::path& fileToDelete);
+		static void SetMinimumLogLevelFromConfig(const configurations::ConfigValueMap& valueMap);
+		static void RemoveOldFile(const configurations::ConfigValueMap& valueMap, const std::filesystem::path& fileToDelete);
 		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pLogger;

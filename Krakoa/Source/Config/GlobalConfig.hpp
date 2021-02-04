@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace krakoa::configuration
+namespace krakoa::configurations
 {
 	class GlobalConfig : public patterns::ManagerBase<GlobalConfig>
 	{

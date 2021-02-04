@@ -17,24 +17,42 @@ namespace krakoa::filesystem
 	namespace
 	{
 		template<typename InsertionFunc>
-		klib::PathList GetImpl(const fs::path& path, FileSearchMode searchMode, InsertionFunc insertionClause)
+		klib::PathList GetNormalImpl(fs::directory_iterator dir_iter, InsertionFunc insertionClause)
 		{
 			klib::PathList items;
 
 			const auto end_iter = fs::directory_iterator();
 
-			for (auto dir_iter = fs::directory_iterator(path); dir_iter != end_iter; ++dir_iter)
+			for (; dir_iter != end_iter; ++dir_iter)
 			{
-				if (searchMode == RECURSIVE && dir_iter->is_directory())
+				if (insertionClause(dir_iter))
+					items.emplace_back(dir_iter->path());
+			}
+
+			return items;
+		}
+
+		template<typename InsertionFunc>
+		klib::PathList GetRecursiveImpl(fs::directory_iterator dir_iter, InsertionFunc insertionClause)
+		{
+			klib::PathList items;
+
+			const auto end_iter = fs::directory_iterator();
+
+			for (; dir_iter != end_iter; ++dir_iter)
+			{
+				klib::PathList subItems;
+
+				if (dir_iter->is_directory())
 				{
-					const auto subItems = GetImpl(dir_iter->path(), searchMode, insertionClause);
-					items.insert(items.end(), subItems.begin(), subItems.end());
+					subItems = GetRecursiveImpl(dir_iter, insertionClause);
 				}
 				else
 				{
-					if (insertionClause(dir_iter))
-						items.emplace_back(dir_iter->path());
+					subItems = GetNormalImpl(dir_iter, insertionClause);
 				}
+
+				items.insert(items.end(), subItems.begin(), subItems.end());
 			}
 
 			return items;
@@ -91,10 +109,27 @@ namespace krakoa::filesystem
 		if (path.empty())
 			return {};
 
-		return GetImpl(path, searchMode, [](const fs::directory_iterator& dir_iter)
-			{
-				return dir_iter->is_regular_file();
-			});
+		const auto insertionCluseFunc = [&](const fs::directory_iterator& dir_iter)
+		{
+			const auto& currentPath = dir_iter->path();
+
+			if (!currentPath.has_extension())
+				return false;
+
+			const auto ext = currentPath.extension();
+
+			return dir_iter->is_regular_file();
+		};
+
+		klib::PathList files;
+
+		if (searchMode == RECURSIVE)
+			files = GetRecursiveImpl(fs::directory_iterator(path), insertionCluseFunc);
+		else
+			files = GetNormalImpl(fs::directory_iterator(path), insertionCluseFunc);
+
+
+		return files;
 	}
 
 	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath,
@@ -105,17 +140,25 @@ namespace krakoa::filesystem
 		if (path.empty())
 			return {};
 
-		auto files = GetImpl(path, searchMode, [&](const fs::directory_iterator& dir_iter)
-			{
-				const auto& currentPath = dir_iter->path();
+		const auto insertionCluseFunc = [&](const fs::directory_iterator& dir_iter)
+		{
+			const auto& currentPath = dir_iter->path();
 
-				if (!currentPath.has_extension())
-					return false;
+			if (!currentPath.has_extension())
+				return false;
 
-				const auto ext = currentPath.extension();
+			const auto ext = currentPath.extension();
 
-				return dir_iter->is_regular_file() && ext == extension;
-			});
+			return dir_iter->is_regular_file() && ext == extension;
+		};
+
+		klib::PathList files;
+
+		if (searchMode == RECURSIVE)
+			files = GetRecursiveImpl(fs::directory_iterator(path), insertionCluseFunc);
+		else
+			files = GetNormalImpl(fs::directory_iterator(path), insertionCluseFunc);
+
 
 		return files;
 	}
@@ -127,10 +170,27 @@ namespace krakoa::filesystem
 		if (path.empty())
 			return {};
 
-		return GetImpl(path, searchMode, [](const fs::directory_iterator& dir_iter)
-			{
-				return dir_iter->is_directory();
-			});
+		const auto insertionCluseFunc = [&](const fs::directory_iterator& dir_iter)
+		{
+			const auto& currentPath = dir_iter->path();
+
+			if (!currentPath.has_extension())
+				return false;
+
+			const auto ext = currentPath.extension();
+
+			return dir_iter->is_directory();
+		};
+
+		klib::PathList files;
+
+		if (searchMode == RECURSIVE)
+			files = GetRecursiveImpl(fs::directory_iterator(path), insertionCluseFunc);
+		else
+			files = GetNormalImpl(fs::directory_iterator(path), insertionCluseFunc);
+
+
+		return files;
 	}
 
 	void VirtualFileExplorer::VerifyDirectory(const std::filesystem::path& path)

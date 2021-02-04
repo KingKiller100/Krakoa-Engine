@@ -2,7 +2,7 @@
 #include "GlobalConfig.hpp"
 
 
-namespace krakoa::configuration
+namespace krakoa::configurations
 {
 	GlobalConfig::GlobalConfig(Token, const std::filesystem::path& parentPath)
 		: root(parentPath)

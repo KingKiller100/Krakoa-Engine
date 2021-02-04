@@ -15,7 +15,7 @@ namespace krakoa
 		if (pLogger)
 			return;
 		
-		const auto& configValueMap = configuration::GetGlobalConfig().GetValueMap("Logging");
+		const auto& configValueMap = configurations::GetGlobalConfig().GetValueMap("Logging");
 
 		std::filesystem::path dir(klib::kFileSystem::GetExeDirectory());
 		dir /= "Logs\\";
@@ -51,14 +51,14 @@ namespace krakoa
 		pLogger->AddRaw();
 	}
 
-	void EngineLogger::SetMinimumLogLevelFromConfig(const configuration::ConfigValueMap& valueMap)
+	void EngineLogger::SetMinimumLogLevelFromConfig(const configurations::ConfigValueMap& valueMap)
 	{
 		const auto logLevelStr = valueMap.ReadAs<std::string_view>("Level");
 		const auto min_level = klib::LogLevel::FromString(klib::ToUpper(logLevelStr));
 		pLogger->SetMinimumLoggingLevel(min_level);
 	}
 
-	void EngineLogger::RemoveOldFile(const configuration::ConfigValueMap& valueMap, const std::filesystem::path& fileToDelete)
+	void EngineLogger::RemoveOldFile(const configurations::ConfigValueMap& valueMap, const std::filesystem::path& fileToDelete)
 	{
 		const auto entry = std::filesystem::directory_entry(fileToDelete);
 

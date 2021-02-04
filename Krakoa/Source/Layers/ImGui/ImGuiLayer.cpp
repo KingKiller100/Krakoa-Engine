@@ -150,7 +150,7 @@ namespace krakoa
 
 	void ImGuiLayer::SetDemoWindowStateFromConfig()
 	{
-		const auto& gConfig = configuration::GetGlobalConfig();
+		const auto& gConfig = configurations::GetGlobalConfig();
 		demoWindowState = gConfig.Get<bool>("ImGui", "DemoWindow");
 	}
 }

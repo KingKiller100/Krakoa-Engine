@@ -53,8 +53,8 @@ inline void Launch()
 	
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
 
-	configuration::GlobalConfig::Create(cwd);
-	auto globalConfig = Solo_Ptr<configuration::GlobalConfig>(configuration::GlobalConfig::Pointer());
+	configurations::GlobalConfig::Create(cwd);
+	auto globalConfig = Solo_Ptr<configurations::GlobalConfig>(configurations::GlobalConfig::Pointer());
 	KRK_INIT_LOGS("");
 
 	filesystem::VirtualFileExplorer::Initialize(cwd);

@@ -28,6 +28,9 @@ namespace krakoa::graphics
 
 	void FontLoader::MakeDefault(const Multi_Ptr<Font>& font)
 	{
+		if (!font)
+			return;
+		
 		auto& io = ImGui::GetIO();
 		io.FontDefault = font->font;
 		defaultFont = font;

@@ -121,42 +121,7 @@ namespace krakoa::scene
 
 				DisplayComponents(id, scene);
 
-				const char btnName[] = "Add Component";
-
-				DrawButton(btnName, {}, [&]() {
-					popups::OpenPopup(btnName);
-					});
-
-				popups::DrawPopup(btnName, [&]()
-					{
-						auto& entity = scene.GetEntity(id);
-
-						DrawAddComponentMousePopupOption<components::CameraComponent>("Camera", entity, [&]()
-							{
-								const auto& window = GetApp().GetWindow();
-								const auto size = kmaths::Vector2f(window.GetDimensions());
-								const auto aspectRatio = size.x / size.y;
-								entity.AddComponent<components::CameraComponent>(
-									new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
-									);
-							});
-
-						DrawAddComponentMousePopupOption<components::Appearance2DComponent>("Camera", entity, [&]()
-							{
-								entity.AddComponent<components::Appearance2DComponent>(
-									graphics::GeometryType::QUAD,
-									graphics::colours::White
-									);
-							});
-
-						DrawAddComponentMousePopupOption<components::NativeScriptComponent>("Script", entity, [&]()
-							{
-								popups::DrawPopupOption("Script", [&]()
-									{
-										entity.AddComponent<components::NativeScriptComponent>();
-									});
-							});
-					});
+				DrawAddComponentButton(scene, id);
 			});
 	}
 
@@ -334,6 +299,46 @@ namespace krakoa::scene
 							sceneCamera->SetPerspectiveFarClip(perspectiveFar);
 						});
 				}
+			});
+	}
+
+	void panels::ComponentsPanel::DrawAddComponentButton(iScene& scene, const ecs::EntityUID& id)
+	{
+		const char btnName[] = "Add Component";
+
+		DrawButton(btnName, {}, [&]() {
+			popups::OpenPopup(btnName);
+			});
+
+		popups::DrawPopup(btnName, [&]()
+			{
+				auto& entity = scene.GetEntity(id);
+
+				DrawAddComponentMousePopupOption<components::CameraComponent>("Camera", entity, [&]()
+					{
+						const auto& window = GetApp().GetWindow();
+						const auto size = kmaths::Vector2f(window.GetDimensions());
+						const auto aspectRatio = size.x / size.y;
+						entity.AddComponent<components::CameraComponent>(
+							new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
+							);
+					});
+
+				DrawAddComponentMousePopupOption<components::Appearance2DComponent>("Appearance", entity, [&]()
+					{
+						entity.AddComponent<components::Appearance2DComponent>(
+							graphics::GeometryType::QUAD,
+							graphics::colours::White
+							);
+					});
+
+				DrawAddComponentMousePopupOption<components::NativeScriptComponent>("Script", entity, [&]()
+					{
+						popups::DrawPopupOption("Script", [&]()
+							{
+								entity.AddComponent<components::NativeScriptComponent>();
+							});
+					});
 			});
 	}
 }

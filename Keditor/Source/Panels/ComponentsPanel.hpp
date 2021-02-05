@@ -33,6 +33,8 @@ namespace krakoa::scene
 			void DisplayAppearanceComponent(ecs::Entity& entity);
 			void DisplayCameraComponent(ecs::Entity& entity) const;
 
+			void DrawAddComponentButton(iScene& scene, const ecs::EntityUID& id);
+
 		private:
 			Weak_Ptr<ecs::EntityUID> pSelectedEntity;
 		};

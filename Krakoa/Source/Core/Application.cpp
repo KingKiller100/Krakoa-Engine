@@ -127,6 +127,7 @@ namespace krakoa
 		const auto width = CAST(int, e.GetWidth());
 		const auto height = CAST(int, e.GetHeight());
 		graphics::Renderer::OnWindowResize(0, 0, width, height);
+		KRK_DBG(klib::ToString("Resizing window event: ({0}, {1})", width, height));
 		return false;
 	}
 

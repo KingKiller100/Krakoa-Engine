@@ -35,7 +35,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		auto* const pWinTexture = iTexture2D::Create("Assets/Win.png");
+		auto* const pWinTexture = iTexture2D::Create("Win.png");
 
 		pSubTexture.reset(
 			SubTexture2D::Create(

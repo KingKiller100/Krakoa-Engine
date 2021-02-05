@@ -6,8 +6,9 @@
 #include "../../../Debug/Debug.hpp"
 #include "../../../Logging/EngineLogger.hpp"
 #include "../../../Platform//OpenGL/OpenGLTexture2D.hpp"
+#include "../../../FileSystem/VirtualFileExplorer.hpp"
 
-#include <Utility/String/kStringTricks.hpp>
+// #include <Utility/String/kStringTricks.hpp>
 
 
 namespace krakoa::graphics
@@ -23,13 +24,13 @@ namespace krakoa::graphics
 		return nullptr;
 	}
 
-	iTexture2D* iTexture2D::Create(const std::string_view& path, const bool cache)
+	iTexture2D* iTexture2D::Create(const std::filesystem::path& path, const bool cache)
 	{
-		const auto formattedPath = klib::kString::Replace(path, '/', '\\');
-
+		const auto texturesPath = filesystem::VirtualFileExplorer::GetRealPath("Textures");
+		
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;
-		case iRendererAPI::API::OPENGL: return new OpenGLTexture2D(formattedPath, cache);
+		case iRendererAPI::API::OPENGL: return new OpenGLTexture2D(texturesPath / path, cache);
 		default:                            KRK_FATAL("Unknown RendererAPI type!");
 		}
 

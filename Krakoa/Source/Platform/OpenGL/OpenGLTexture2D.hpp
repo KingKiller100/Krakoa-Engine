@@ -3,13 +3,15 @@
 #include "../../Graphics/Helpers/AssetID.hpp"
 #include "../../Graphics/2D/Textures/iTexture2D.hpp"
 
+#include <filesystem>
+
 namespace krakoa::graphics
 {
 	class OpenGLTexture2D : public iTexture2D
 	{
 	public:
 		OpenGLTexture2D(const uint32_t width, const uint32_t height);
-		OpenGLTexture2D(const std::string_view& path, const bool cache = false);
+		OpenGLTexture2D(const std::filesystem::path& path, const bool cache = false);
 		~OpenGLTexture2D();
 
 		uint32_t GetWidth() const noexcept override;
@@ -27,7 +29,7 @@ namespace krakoa::graphics
 		AssetID GetAssetID() const noexcept override;
 
 	private:
-		std::string path;
+		std::filesystem::path path;
 		kmaths::Vector2u dimensions;
 
 		std::uint32_t rendererID;

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../Core/PointerTypes.hpp"
 #include <Utility/FileSystem/kFileSystemTypes.hpp>
 
 #include <filesystem>
 #include <string>
 #include <unordered_map>
+
 
 namespace krakoa::filesystem
 {
@@ -13,10 +15,18 @@ namespace krakoa::filesystem
 		NORMAL,
 		RECURSIVE
 	};
+
+	struct VirtualFolder
+	{
+		std::string name;
+		klib::PathList files;
+		std::vector<Multi_Ptr<VirtualFolder>> folders;
+	};
 	
 	class VirtualFileExplorer
 	{
 		using PathRedirectsMap = std::unordered_map<std::string, std::filesystem::path>;
+		using DirectoryMap = std::unordered_map<std::string, VirtualFolder>;
 		
 	public:
 		static void Initialize(std::filesystem::path path);
@@ -38,10 +48,12 @@ namespace krakoa::filesystem
 
 	private:
 		static void VerifyDirectory(const std::filesystem::path& path);
-
+		static void MapVPath(const PathRedirectsMap::key_type& key);
+		
 	private:
 		static std::filesystem::path root;
 		static PathRedirectsMap redirectMap;
+		static DirectoryMap folderMap;
 	};
 }
 

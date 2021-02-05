@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "OpenGLTexture2D.hpp"
 
+#include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Logging/EngineLogger.hpp"
 
@@ -8,7 +9,6 @@
 
 #include <GLAD/glad.h>
 
-#include "../../Debug/Debug.hpp"
 
 namespace krakoa::graphics
 {
@@ -32,7 +32,7 @@ namespace krakoa::graphics
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string_view& path, const bool cache)
+	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& path, const bool cache)
 		: path(path)
 		, rendererID(0)
 		, internalFormat(0)
@@ -42,7 +42,7 @@ namespace krakoa::graphics
 
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(KRK_TRUE);
-		buffer = stbi_load(path.data(), &width, &height, &channels, 4);
+		buffer = stbi_load(path.string().c_str(), &width, &height, &channels, 4);
 		KRK_ASSERT(buffer != nullptr, "Failed to load image");
 
 		dimensions = kmaths::Vector2u(width, height);

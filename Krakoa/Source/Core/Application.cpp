@@ -10,6 +10,7 @@
 #include "../Input/InputManager.hpp"
 
 #include "../Layers/FPS/FPSLayer.hpp"
+#include "../Layers/Logging/LoggerLayer.hpp"
 #include "../Layers/Statistics/Renderer2D/StatisticLayer.hpp"
 
 #include "../FileSystem/AssetManager.hpp"
@@ -73,25 +74,20 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		// Initialize Layer
-		pImGuiLayer = new ImGuiLayer();
-		PushOverlay(pImGuiLayer);
-
-		PushOverlay(new FPSLayer());
-		PushOverlay(new Renderer2DStatistics());
+		PushInternalLayers();
 
 		// Initialize InputManager
 		input::InputManager::Initialize();
 		AddManager(input::InputManager::Pointer());
-		
+
 		RegisterManager<filesystem::AssetManager>();
-		
+
 		// Initialize Graphics Stuff
 		RegisterManager<graphics::ShaderLibrary>();
 		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
+		AddManager(new scene::SceneManager());
 		// Initialize Scene Manager
-		sceneManager = Make_Solo<scene::SceneManager>();
 
 		graphics::FrameBufferSpecification fbSpec;
 		fbSpec.width = 1024;
@@ -101,6 +97,17 @@ namespace krakoa
 		auto& assetMan = GetManager<filesystem::AssetManager>();
 		assetMan.LoadFontFamily("Raleway", 18.f);
 		assetMan.LoadFontFamily("Open_Sans", 18.f);
+	}
+
+	void Application::PushInternalLayers()
+	{
+		// Initialize Layer
+		pImGuiLayer = new ImGuiLayer();
+		PushOverlay(pImGuiLayer);
+
+		PushOverlay(new LoggerLayer());
+		PushOverlay(new FPSLayer());
+		PushOverlay(new Renderer2DStatistics());
 	}
 
 	void Application::OnEvent(events::Event& e)
@@ -158,6 +165,7 @@ namespace krakoa
 	void Application::Run() const
 	{
 		const auto deltaTime = timeStep.GetStep();
+		auto& sceneManager = GetManager<scene::SceneManager>();
 
 		if (input::InputManager::IsKeyPressed(input::KEY_V))
 			pImGuiLayer->ToggleVisibility();
@@ -167,16 +175,9 @@ namespace krakoa
 			layerStack.OnUpdate(deltaTime);
 		}
 
-		// Update
-		// sceneManager->Update(deltaTime);
-
 		frameBuffer->Bind();
-
 		graphics::Renderer::Update();
-
-		// Draw
-		sceneManager->OnUpdate(deltaTime);
-
+		sceneManager.OnUpdate(deltaTime);
 		frameBuffer->Unbind();
 
 		pImGuiLayer->BeginDraw();
@@ -213,7 +214,7 @@ namespace krakoa
 
 	scene::SceneManager& Application::GetSceneManager() const
 	{
-		return *sceneManager;
+		return GetManager<scene::SceneManager>();
 	}
 
 	Application& GetApp()

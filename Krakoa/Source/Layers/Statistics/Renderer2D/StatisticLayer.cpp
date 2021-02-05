@@ -22,8 +22,7 @@ namespace krakoa
 
 		using namespace ui;
 
-		DrawPanel("Renderer2D Statistics",
-			[]()
+		DrawPanel("Renderer2D Statistics", []()
 			{
 				const auto& stats = graphics::Renderer2D::GetStats();
 				DrawRawText("Total Draw Calls: {0}", stats.TotalDrawCalls());

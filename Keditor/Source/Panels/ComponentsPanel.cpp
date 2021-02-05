@@ -69,6 +69,9 @@ namespace krakoa::scene
 						popups::DrawPopup(popupMenuId, [&] {
 							DrawMenuItem("Remove", [&]
 								{
+									KRK_NRM(klib::ToString("Removing component \"{0}\" from entity {1}",
+										util::GetTypeNameNoNamespace<Component>()
+										, entity.GetID()));
 									markedComponentForRemoval = true;
 								});
 							});
@@ -159,6 +162,8 @@ namespace krakoa::scene
 					{
 						if (klib::IsWhiteSpaceOrNull(buffer))
 							return;
+
+						KRK_INF(klib::ToString("Renaming entity: \"{0}\"->\"{1}\"", tag.GetData(), buffer));
 
 						tag.SetTag(buffer);
 					});
@@ -316,6 +321,10 @@ namespace krakoa::scene
 
 				DrawAddComponentMousePopupOption<components::CameraComponent>("Camera", entity, [&]()
 					{
+						KRK_NRM(klib::ToString("Adding component \"Camera\" to entity {0}",
+							entity.GetID())
+						);
+
 						const auto& window = GetApp().GetWindow();
 						const auto size = kmaths::Vector2f(window.GetDimensions());
 						const auto aspectRatio = size.x / size.y;
@@ -326,6 +335,10 @@ namespace krakoa::scene
 
 				DrawAddComponentMousePopupOption<components::Appearance2DComponent>("Appearance", entity, [&]()
 					{
+						KRK_NRM(klib::ToString("Adding component \"Appearance\" to entity {0}",
+							entity.GetID())
+						);
+					
 						entity.AddComponent<components::Appearance2DComponent>(
 							graphics::GeometryType::QUAD,
 							graphics::colours::White
@@ -336,6 +349,10 @@ namespace krakoa::scene
 					{
 						popups::DrawPopupOption("Script", [&]()
 							{
+								KRK_NRM(klib::ToString("Adding component \"Native Script\" to entity {0}",
+									entity.GetID())
+								);
+							
 								entity.AddComponent<components::NativeScriptComponent>();
 							});
 					});

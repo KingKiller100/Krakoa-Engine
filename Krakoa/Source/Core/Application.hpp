@@ -53,7 +53,7 @@ namespace krakoa
 
 
 		template<typename Manager>
-		Manager& GetManager()
+		Manager& GetManager() const
 		{
 			return klib::ToImpl<Manager>(managers[GetUniqueID<Manager>()]);
 		}
@@ -79,17 +79,16 @@ namespace krakoa
 		}
 		
 	private:
+		void PushInternalLayers();
+		
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
 		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
-
 		
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
-
-		Solo_Ptr<scene::SceneManager> sceneManager;
 		
 		Solo_Ptr<graphics::iFrameBuffer> frameBuffer;
 

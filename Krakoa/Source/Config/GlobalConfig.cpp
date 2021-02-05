@@ -21,7 +21,7 @@ namespace krakoa::configurations
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_LOG("Configurations", "Parsing config files");
+		KRK_LOG("Config", "Parsing config files");
 
 		const auto files = filesystem::VirtualFileExplorer::GetFiles(
 			"Config", "ini", filesystem::FileSearchMode::RECURSIVE
@@ -34,7 +34,7 @@ namespace krakoa::configurations
 			configMap.emplace(filename, Make_Solo<ConfigValueMap>(file));
 		}
 		
-		KRK_LOG("Configurations", "Parsing concluded");
+		KRK_LOG("Config", "Parsing concluded");
 	}
 
 	const ConfigValueMap& GlobalConfig::GetValueMap(const std::string& context) const

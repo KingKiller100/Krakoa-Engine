@@ -5,6 +5,7 @@
 
 #include "../Core/PointerTypes.hpp"
 #include "../Patterns/SimpleStateMachine.hpp"
+#include "../Patterns/SimpleSingleton.hpp"
 
 #include <filesystem>
 #include <unordered_map>
@@ -28,7 +29,7 @@ namespace krakoa
 			std::filesystem::path path;
 		};
 
-		class SceneManager final : public patterns::SimpleStateMachine<SceneRuntimeState>
+		class SceneManager final : public patterns::SimpleStateMachine<SceneRuntimeState>, public patterns::iSingleton
 		{
 		public:
 			SceneManager();

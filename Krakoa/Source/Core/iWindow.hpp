@@ -1,12 +1,11 @@
 #pragma once
 
 #include "EngineMacros.hpp"
+#include "../EventsSystem/Event.hpp"
 
 #include <Maths/Vectors/Vector2.hpp>
 
 #include <any>
-
-#include "../EventsSystem/Event.hpp"
 
 namespace krakoa
 {

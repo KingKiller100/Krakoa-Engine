@@ -36,7 +36,7 @@ namespace krakoa::configurations
 		
 		ValueMap values;
 
-		KRK_LOG("Configurations", "Parsing config file: " + path.string());
+		KRK_LOG("Config", "Parsing config file: " + path.string());
 		
 		auto lines = klib::ReadFile(path.string());
 
@@ -65,6 +65,8 @@ namespace krakoa::configurations
 			const auto key = klib::ToLower(line.substr(0, colonPos));
 			const auto value = line.substr(colonPos + 1);
 
+			KRK_NRM(klib::ToString("Mapping: [\"{0}\" -> \"{1}\"]", key, value));
+			
 			values.emplace(key, value);
 		}
 		

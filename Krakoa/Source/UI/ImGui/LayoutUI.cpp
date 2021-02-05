@@ -20,4 +20,9 @@ namespace krakoa::ui
 	{
 		ImGui::SameLine(offsetX, spacing);
 	}
+
+	void DrawSeparator()
+	{
+		ImGui::Separator();
+	}
 }

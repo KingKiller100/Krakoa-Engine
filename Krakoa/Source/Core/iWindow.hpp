@@ -18,7 +18,7 @@ namespace krakoa
 		Vector2u dimensions;
 
 		WindowProperties(const std::string_view& title,
-			const Vector2u& dimensions = Vector2u(1024, 640))
+			const Vector2u& dimensions = Vector2u(1144, 640))
 			: title(title), dimensions(dimensions)
 		{}
 	};

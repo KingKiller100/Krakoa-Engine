@@ -20,5 +20,9 @@ namespace krakoa::ui
 		return { GetCurrentWindowWidth(), GetCurrentWindowHeight() };
 	}
 
-
+	kmaths::Vector2f GetContentRegionAvailable() noexcept
+	{
+		const auto cra = ImGui::GetContentRegionAvail();
+		return { cra.x, cra.y };
+	}
 }

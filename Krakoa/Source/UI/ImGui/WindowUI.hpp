@@ -9,4 +9,7 @@ namespace krakoa::ui
 	float GetCurrentWindowWidth() noexcept;
 	float GetCurrentWindowHeight() noexcept;
 	kmaths::Vector2f GetCurrentWindowDimensions() noexcept;
+
+	
+	kmaths::Vector2f GetContentRegionAvailable() noexcept;
 }

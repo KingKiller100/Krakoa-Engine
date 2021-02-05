@@ -18,6 +18,9 @@
 
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_internal.h>
+
 
 namespace krakoa::scene
 {
@@ -35,24 +38,29 @@ namespace krakoa::scene
 			if (!entity.HasComponent<Component>())
 				return;
 
-			auto& component = entity.GetComponent<Component>();
-
 			constexpr auto treeNodeflags = TreeNodeFlags::DefaultOpen | TreeNodeFlags::Framed
 				| TreeNodeFlags::SpanAvailWidth | TreeNodeFlags::AllowItemOverlap;
 
-			if (removable)
-				PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
+			auto& component = entity.GetComponent<Component>();
 
-			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), treeNodeflags, [&]()
+			if (removable)
+			{
+				PushStyleVar(StyleVarFlags::FramePadding, { 4.f, 4.f });
+				DrawSeparator();
+			}
+
+			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), treeNodeflags, [&](bool opened)
 				{
 					bool markedComponentForRemoval = false;
 
 					if (removable)
 					{
-						DrawSameLine(GetCurrentWindowWidth() - 25.f);
+						const auto contentRegionAvail = ui::GetContentRegionAvailable();
+						const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+						DrawSameLine(contentRegionAvail.x - lineHeight * .25f);
 
 						const char popupMenuId[] = "Settings";
-						DrawButton("+", { 20.f, 20.f }, [&]
+						DrawButton("+", { lineHeight, lineHeight }, [&]
 							{
 								popups::OpenPopup(popupMenuId);
 							});
@@ -66,7 +74,10 @@ namespace krakoa::scene
 							});
 					}
 
-					uiLayoutFunc(component);
+					if (opened)
+					{
+						uiLayoutFunc(component);
+					}
 
 					if (markedComponentForRemoval)
 						entity.RemoveComponent<Component>();
@@ -159,10 +170,11 @@ namespace krakoa::scene
 		if (!scene.HasEntity(id))
 			return;
 
+		// This is the draw order of the components
 		auto& entity = scene.GetEntity(id);
 		DisplayTagComponent(entity);
-		DisplayCameraComponent(entity);
 		DisplayTransformComponent(entity);
+		DisplayCameraComponent(entity);
 		DisplayAppearanceComponent(entity);
 	}
 

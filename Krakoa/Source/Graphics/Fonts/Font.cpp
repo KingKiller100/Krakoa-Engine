@@ -4,14 +4,15 @@
 #include "../../Debug/Debug.hpp"
 #include "../../Logging/EngineLogger.hpp"
 
+#include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/String/kToString.hpp>
 #include <imgui.h>
 
 namespace krakoa::graphics
 {
 	Font::Font()
-		: font(nullptr)
-		, modifiers(FontModifiers::None)
+		: modifiers(0)
+		, font(nullptr)
 	{}
 
 	Font::Font(const std::filesystem::path& filepath, float fontSize)
@@ -56,5 +57,32 @@ namespace krakoa::graphics
 		font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
 
 		KRK_ASSERT(font, "Unable to load font");
+
+		DeduceModifiers();
+	}
+
+	FontModifiers::underlying_t Font::GetModifiers() const
+	{
+		return modifiers;
+	}
+
+	void Font::DeduceModifiers()
+	{
+		const auto filename = klib::ToLower(path.filename().string());
+		const auto parentPath = path.parent_path().string();
+		const auto folder = parentPath.substr(parentPath.find_last_of(klib::pathSeparator<char>));
+
+		modifiers = 0;
+		
+		FontModifiers::ForEach([&](FontModifiers val)
+			{
+				auto str = val.ToString();
+				const auto valStr = klib::ToLower(str);
+				if (klib::Contains(filename, valStr)
+					|| klib::Contains(folder, valStr))
+				{
+					modifiers |= val;
+				}
+			});
 	}
 }

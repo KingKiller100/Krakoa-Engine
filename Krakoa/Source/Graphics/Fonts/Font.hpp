@@ -8,8 +8,7 @@ struct ImFont;
 
 namespace krakoa::graphics
 {
-	enum struct FontModifiers
-	{
+	ENUM_STRUCT(FontModifiers, short,
 		None = 0,
 		Regular = BIT_SHIFT(0),
 		Bold = BIT_SHIFT(1),
@@ -19,8 +18,8 @@ namespace krakoa::graphics
 		Medium = BIT_SHIFT(5),
 		Semi = BIT_SHIFT(6),
 		Extra = BIT_SHIFT(7),
-		Black = BIT_SHIFT(8),
-	};
+		Black = BIT_SHIFT(8)
+	);
 	
 	class Font
 	{
@@ -40,13 +39,16 @@ namespace krakoa::graphics
 		
 		void Load(const std::filesystem::path& filepath, float fontSize);
 
-		FontModifiers GetModifiers() const;
+		FontModifiers::underlying_t GetModifiers() const;
 		
 		friend class FontLoader;
+
+	private:
+		void DeduceModifiers();
 		
 	private:
 		std::filesystem::path path;
-		FontModifiers modifiers;
+		FontModifiers::underlying_t modifiers;
 		ImFont* font;
 	};
 	

@@ -38,9 +38,10 @@ namespace krakoa::graphics
 	{
 		const auto filename = filepath.stem().string();
 		auto pair = fontMap.emplace(filename, Font(filepath, size));
-
-		if (GetSize() == 1)
-			MakeDefault(pair.first->second);
+		const auto& font = pair.first->second;
+		
+		if (font.GetModifiers() & FontModifiers::Regular)
+			MakeDefault(font);
 	}
 
 	void FontLoader::Delete(const std::string& fontName)

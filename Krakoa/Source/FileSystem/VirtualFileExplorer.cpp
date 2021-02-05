@@ -35,6 +35,7 @@ namespace krakoa::filesystem
 				{
 					size_t i = 0;
 
+
 					for (; i < vFolder.size(); ++i)
 					{
 						current = vFolder[i];
@@ -45,8 +46,8 @@ namespace krakoa::filesystem
 						}
 					}
 
-					++iter;
 					vFolder = vFolder[i]->folders;
+					++iter;
 				}
 
 				return current.get();
@@ -155,7 +156,9 @@ namespace krakoa::filesystem
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
 
-		const auto folder = GetDirectoryImpl(&vDirectory, hierarchy);
+		const auto folder = hierarchy.size() > 2
+			? GetDirectoryImpl(&vDirectory, hierarchy)
+			: &vDirectory;
 
 		if (!folder)
 		{
@@ -178,8 +181,10 @@ namespace krakoa::filesystem
 		const auto& key = hierarchy.front();
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
-
-		const auto folder = GetDirectoryImpl(&vDirectory, hierarchy);
+		
+		const auto folder = hierarchy.size() > 2
+			? GetDirectoryImpl(&vDirectory, hierarchy)
+			: &vDirectory;
 
 		if (!folder)
 		{
@@ -201,7 +206,7 @@ namespace krakoa::filesystem
 			
 				const auto ext = file.extension();
 
-				return klib::Contains(ext.string(), extension);
+				return !klib::Contains(ext.string(), extension);
 			});
 
 		return files;
@@ -214,7 +219,9 @@ namespace krakoa::filesystem
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
 
-		const auto folder = GetDirectoryImpl(&vDirectory, hierarchy);
+		const auto folder = hierarchy.size() > 2
+			? GetDirectoryImpl(&vDirectory, hierarchy)
+			: &vDirectory;
 
 		if (!folder)
 		{

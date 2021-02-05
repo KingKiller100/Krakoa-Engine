@@ -19,11 +19,11 @@ namespace krakoa::graphics
 	void Renderer::Initialize(ShaderLibrary& shaderLibrary)
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_BANNER("Architecture Info", "GRAPHICS", "*", "*", 10);
+		KRK_LOG("Graphics", "Architecture Info");
 		RenderCommand::Initialize();
 		shaderLibrary.Initialize();
 		Renderer2D::Initialize(shaderLibrary);
-		KRK_BANNER("Architecture Info Concluded", "GRAPHICS", "*", "*", 5);
+		KRK_LOG("Graphics", "Architecture Info Concluded");
 	}
 
 	void Renderer::ShutDown()

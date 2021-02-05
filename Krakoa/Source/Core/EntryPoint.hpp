@@ -59,7 +59,7 @@ inline void Launch()
 	filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
 	
-	auto files = filesystem::VirtualFileExplorer::GetFiles("Assets\\Fonts");
+	auto files = filesystem::VirtualFileExplorer::GetFiles("Assets\\Fonts\\Raleway");
 	
 	configurations::GlobalConfig::Create();
 	auto globalConfig = Solo_Ptr<configurations::GlobalConfig>(configurations::GlobalConfig::Pointer());

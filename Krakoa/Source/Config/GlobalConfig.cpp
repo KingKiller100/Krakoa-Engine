@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "GlobalConfig.hpp"
 
+#include "../Logging/EngineLogger.hpp"
 #include "../FileSystem/VirtualFileExplorer.hpp"
 
 namespace krakoa::configurations
@@ -19,6 +20,9 @@ namespace krakoa::configurations
 	void GlobalConfig::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
+
+		KRK_LOG("Configurations", "Parsing config files");
+
 		const auto files = filesystem::VirtualFileExplorer::GetFiles(
 			"Config", "ini", filesystem::FileSearchMode::RECURSIVE
 		);
@@ -29,6 +33,8 @@ namespace krakoa::configurations
 
 			configMap.emplace(filename, Make_Solo<ConfigValueMap>(file));
 		}
+		
+		KRK_LOG("Configurations", "Parsing concluded");
 	}
 
 	const ConfigValueMap& GlobalConfig::GetValueMap(const std::string& context) const

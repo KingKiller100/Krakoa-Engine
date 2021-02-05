@@ -1,7 +1,10 @@
 ﻿#include "Precompile.hpp"
 #include "ConfigValueMap.hpp"
 
-#include <Utility/String/kStringTricks.hpp>
+#include "../Debug/Debug.hpp"
+#include "../Logging/EngineLogger.hpp"
+
+#include <Utility/String/kToString.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
 namespace krakoa::configurations
@@ -18,7 +21,6 @@ namespace krakoa::configurations
 
 	const ConfigValueMap::DataMap& ConfigValueMap::RetrieveMap() const
 	{
-		
 		return values;
 	}
 
@@ -33,11 +35,17 @@ namespace krakoa::configurations
 		KRK_PROFILE_FUNCTION();
 		
 		ValueMap values;
+
+		KRK_LOG("Configurations", "Parsing config file: " + path.string());
 		
 		auto lines = klib::ReadFile(path.string());
 
+		size_t index = 0;
+		
 		for (auto& line : lines)
 		{
+			klib::SourceInfo source(path.string(), index++, "");
+		
 			const auto commentPos = line.find(s_CommentToken);
 
 			if (commentPos != std::string::npos)
@@ -51,8 +59,7 @@ namespace krakoa::configurations
 
 			if (colonPos == std::string::npos)
 			{
-				throw std::runtime_error("Bad line: \"" + line +
-					"\" source: \"" + path.string() + "\"");
+				KRK_FATAL(klib::ToString("[Configurations] Bad line - source: {0}", source));
 			}
 
 			const auto key = klib::ToLower(line.substr(0, colonPos));

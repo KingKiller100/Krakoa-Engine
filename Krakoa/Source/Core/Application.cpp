@@ -97,6 +97,9 @@ namespace krakoa
 		fbSpec.width = 1024;
 		fbSpec.height = 640;
 		frameBuffer.reset(graphics::iFrameBuffer::Create(fbSpec));
+
+		auto& assetMan = GetManager<filesystem::AssetManager>();
+		auto family = assetMan.LoadFontFamily("Raleway", 18.f);
 	}
 
 	void Application::OnEvent(events::Event& e)

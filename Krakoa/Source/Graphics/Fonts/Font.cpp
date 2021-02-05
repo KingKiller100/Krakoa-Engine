@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "Font.hpp"
 
+#include "../../Debug/Debug.hpp"
 #include "../../Logging/EngineLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
@@ -51,7 +52,8 @@ namespace krakoa::graphics
 
 		KRK_INF(klib::ToString("Loading font: [\"{0:f}\", {1}] - \"{0}\"", filepath, fontSize));
 
-		auto* f = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
-		font = f;
+		font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
+
+		KRK_ASSERT(font, "Unable to load font");
 	}
 }

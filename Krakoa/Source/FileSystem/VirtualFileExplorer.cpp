@@ -56,9 +56,10 @@ namespace krakoa::filesystem
 
 		klib::PathList GetFilesRecursiveImpl(const VirtualFolder& vDirectory)
 		{
-			klib::PathList items;
-
+			const auto& files = vDirectory.files;
 			const auto& folders = vDirectory.folders;
+
+			klib::PathList items;
 
 			if (folders.empty())
 				items.insert(items.end(), vDirectory.files.begin(), vDirectory.files.end());
@@ -68,6 +69,7 @@ namespace krakoa::filesystem
 				{
 					const auto subItems = GetFilesRecursiveImpl(*subFolders);
 					items.insert(items.end(), subItems.begin(), subItems.end());
+					items.insert(items.end(), files.begin(), files.end());
 				}
 			}
 
@@ -156,7 +158,7 @@ namespace krakoa::filesystem
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
 
-		const auto folder = hierarchy.size() > 2
+		const auto folder = hierarchy.size() >= 2
 			? GetDirectoryImpl(&vDirectory, hierarchy)
 			: &vDirectory;
 
@@ -182,7 +184,7 @@ namespace krakoa::filesystem
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
 		
-		const auto folder = hierarchy.size() > 2
+		const auto folder = hierarchy.size() >= 2
 			? GetDirectoryImpl(&vDirectory, hierarchy)
 			: &vDirectory;
 
@@ -219,7 +221,7 @@ namespace krakoa::filesystem
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
 
-		const auto folder = hierarchy.size() > 2
+		const auto folder = hierarchy.size() >= 2
 			? GetDirectoryImpl(&vDirectory, hierarchy)
 			: &vDirectory;
 

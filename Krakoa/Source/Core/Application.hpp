@@ -26,6 +26,8 @@
 
 #include "../Graphics/Framebuffers/iFrameBuffer.hpp"
 
+#include <Template/kToImpl.hpp>
+
 #include <memory>
 
 
@@ -48,7 +50,14 @@ namespace krakoa
 		graphics::iFrameBuffer& GetFrameBuffer() const;
 		ImGuiLayer& GetImGuiLayer() const;
 		scene::SceneManager& GetSceneManager() const;
-		
+
+
+		template<typename Manager>
+		Manager& GetManager()
+		{
+			return klib::ToImpl<Manager>(managers[GetUniqueID<Manager>()]);
+		}
+
 	protected:
 		void PushLayer(LayerBase* layer);
 		void PushOverlay(LayerBase* overlay);
@@ -60,6 +69,7 @@ namespace krakoa
 		{
 			Manager::Create(std::forward<Args>(args)...);
 			managers.emplace_back(Manager::Pointer());
+			(void)GetUniqueID<Manager>();
 		}
 		
 	private:

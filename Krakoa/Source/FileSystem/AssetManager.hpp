@@ -3,6 +3,7 @@
 #include "../Core/PointerTypes.hpp"
 #include "../Patterns/ManagerBase.hpp"
 #include "../Graphics/Fonts/FontLoader.hpp"
+#include "../Graphics/Fonts/Font.hpp"
 
 #include <Utility/FileSystem/kFileSystemTypes.hpp>
 

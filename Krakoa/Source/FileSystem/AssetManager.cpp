@@ -31,7 +31,8 @@ namespace krakoa::filesystem
 	std::vector<graphics::Font> AssetManager::LoadFontFamily(const std::string_view& fontFamily, float size) const
 	{
 		std::vector<graphics::Font> fonts;
-		const auto files = VirtualFileExplorer::GetFiles("Fonts", "ttf", FileSearchMode::RECURSIVE);
+		const auto path = klib::ToString("Fonts\\{0}", fontFamily);
+		const auto files = VirtualFileExplorer::GetFiles(path, "ttf", FileSearchMode::RECURSIVE);
 
 		for (const auto& file : files)
 		{

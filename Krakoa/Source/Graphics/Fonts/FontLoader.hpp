@@ -1,13 +1,13 @@
 #pragma once
 
+#include "Font.hpp"
+
 #include <filesystem>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace krakoa::graphics
 {
-	class Font;
-	
 	class FontLoader
 	{
 	public:
@@ -27,6 +27,6 @@ namespace krakoa::graphics
 		size_t GetSize() const;
 		
 	private:
-		std::unordered_map<std::string, Font> fontMap;
+		std::map<std::string, Font> fontMap;
 	};
 }

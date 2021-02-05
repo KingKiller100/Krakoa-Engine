@@ -3,14 +3,11 @@
 
 #include "../../FileSystem/VirtualFileExplorer.hpp"
 
-#include "Font.hpp"
-
 #include <imgui.h>
 
 namespace krakoa::graphics
 {
 	FontLoader::FontLoader()
-		: fontMap()
 	{
 		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
 	}
@@ -40,7 +37,7 @@ namespace krakoa::graphics
 	void FontLoader::Load(const std::filesystem::path& filepath, float size)
 	{
 		const auto filename = filepath.stem().string();
-		auto pair = fontMap.insert(std::make_pair(filename, Font(filepath, size)));
+		auto pair = fontMap.emplace(filename, Font(filepath, size));
 
 		if (GetSize() == 1)
 			MakeDefault(pair.first->second);

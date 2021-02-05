@@ -64,12 +64,18 @@ namespace krakoa
 		void PopLayer(LayerBase* layer);
 		void PopOverlay(LayerBase* overlay);
 
+		template<typename Manager>
+		void AddManager(Manager* ptr)
+		{
+			managers.emplace_back(ptr);
+			(void)GetUniqueID<Manager>();
+		}
+		
 		template<typename Manager, typename ...Args>
 		void RegisterManager(Args&& ...args)
 		{
 			Manager::Create(std::forward<Args>(args)...);
-			managers.emplace_back(Manager::Pointer());
-			(void)GetUniqueID<Manager>();
+			AddManager(Manager::Pointer());
 		}
 		
 	private:

@@ -11,6 +11,7 @@ namespace krakoa::graphics
 {
 	Font::Font()
 		: font(nullptr)
+		, modifiers(FontModifiers::None)
 	{}
 
 	Font::Font(const std::filesystem::path& filepath, float fontSize)

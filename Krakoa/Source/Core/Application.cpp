@@ -82,7 +82,7 @@ namespace krakoa
 
 		// Initialize InputManager
 		input::InputManager::Initialize();
-		managers.push_back(input::InputManager::Pointer());
+		AddManager(input::InputManager::Pointer());
 		
 		RegisterManager<filesystem::AssetManager>();
 		

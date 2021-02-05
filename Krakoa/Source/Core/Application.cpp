@@ -99,7 +99,8 @@ namespace krakoa
 		frameBuffer.reset(graphics::iFrameBuffer::Create(fbSpec));
 
 		auto& assetMan = GetManager<filesystem::AssetManager>();
-		auto family = assetMan.LoadFontFamily("Raleway", 18.f);
+		assetMan.LoadFontFamily("Raleway", 18.f);
+		assetMan.LoadFontFamily("Open_Sans", 18.f);
 	}
 
 	void Application::OnEvent(events::Event& e)

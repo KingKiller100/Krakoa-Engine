@@ -28,14 +28,11 @@ namespace krakoa::graphics
 		Font(const std::filesystem::path& filepath, float fontSize);
 		~Font();
 
-		ImFont& GetFont();
-		[[nodiscard]] const ImFont& GetFont()const ;
-
 		[[nodiscard]] float GetSize() const;
 		
 		[[nodiscard]] float GetScale() const;
 		
-		[[nodiscard]] const std::filesystem::path& GetPath() const;
+		[[nodiscard]] std::string_view GetName() const;
 		
 		void Load(const std::filesystem::path& filepath, float fontSize);
 
@@ -44,11 +41,12 @@ namespace krakoa::graphics
 		friend class FontLoader;
 
 	private:
-		void DeduceModifiers();
+		void DeduceModifiers(const std::filesystem::path& path);
 		
 	private:
-		std::filesystem::path path;
+		std::string name;
 		FontModifiers::underlying_t modifiers;
+		float size;
 		ImFont* font;
 	};
 	

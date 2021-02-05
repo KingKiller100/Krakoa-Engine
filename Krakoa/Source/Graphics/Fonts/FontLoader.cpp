@@ -1,7 +1,11 @@
 ﻿#include "Precompile.hpp"
 #include "FontLoader.hpp"
 
+#include "../../Debug/Debug.hpp"
 #include "../../FileSystem/VirtualFileExplorer.hpp"
+
+#include <Utility/String/kStringTricks.hpp>
+#include <Utility/String/kToString.hpp>
 
 #include <imgui.h>
 
@@ -19,53 +23,111 @@ namespace krakoa::graphics
 
 	void FontLoader::Clear()
 	{
-		fontMap.clear();
+		fontFamilies.clear();
 	}
 
-	void FontLoader::MakeDefault(const Font& font)
+	void FontLoader::MakeDefault(const Multi_Ptr<Font>& font)
 	{
 		auto& io = ImGui::GetIO();
-		io.FontDefault = font.font;
+		io.FontDefault = font->font;
+		defaultFont = font;
 	}
 
-	void FontLoader::MakeDefault(const std::string& fontName)
+	void FontLoader::MakeDefault(const std::string& fontName, FontModifiers::underlying_t type)
 	{
-		const auto& font = Get(fontName);
+		const auto& font = GetFont(fontName, type);
 		MakeDefault(font);
+	}
+
+	std::set<Multi_Ptr<Font>>& FontLoader::GetFamily(const std::string& name)
+	{
+		const auto iter = fontFamilies.find(name);
+		KRK_ASSERT(iter != fontFamilies.end(), "Font family has not been loaded yet: " + name);
+		return iter->second;
+	}
+
+	const std::set<Multi_Ptr<Font>>& FontLoader::GetFamily(const std::string& name) const
+	{
+		const auto iter = fontFamilies.find(name);
+		KRK_ASSERT(iter != fontFamilies.end(), "Font family has not been loaded yet: " + name);
+		return iter->second;
 	}
 
 	void FontLoader::Load(const std::filesystem::path& filepath, float size)
 	{
+		const auto font = Make_Multi<Font>(filepath, size);
+
 		const auto filename = filepath.stem().string();
-		auto pair = fontMap.emplace(filename, Font(filepath, size));
-		const auto& font = pair.first->second;
-		
-		if (font.GetModifiers() & FontModifiers::Regular)
+		const auto split = klib::Split(filename, "-");
+		const auto family = split.front();
+
+		fontFamilies[family].insert(font);
+
+		if (font->GetModifiers() & FontModifiers::Regular)
 			MakeDefault(font);
+	}
+
+	void FontLoader::LoadFamilyFromFile(const std::string_view& family, float size)
+	{
+		const auto path = klib::ToString("Fonts\\{0}", family);
+		const auto files = filesystem::VirtualFileExplorer::GetFiles(path, "ttf", filesystem::FileSearchMode::RECURSIVE);
+
+		for (const auto& file : files)
+		{
+			Load(file, size);
+		}
 	}
 
 	void FontLoader::Delete(const std::string& fontName)
 	{
-		const auto iter = fontMap.find(fontName);
+		const auto iter = fontFamilies.find(fontName);
 
-		if (iter == fontMap.end())
+		if (iter == fontFamilies.end())
 			return;
 
-		fontMap.erase(iter);
+		fontFamilies.erase(iter);
 	}
 
-	const Font& FontLoader::Get(const std::string& name) const
+	const Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, FontModifiers::underlying_t type) const
 	{
-		return fontMap.at(name);
+		const auto& family = GetFamily(name);
+
+		Multi_Ptr<Font> font;
+		for (const auto& currentFont : family)
+		{
+			if (currentFont->GetModifiers() & type)
+			{
+				font = currentFont;
+				break;
+			}
+		}
+
+		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired types: {0}", type));
+
+		return font;
 	}
 
-	Font& FontLoader::Get(const std::string& name)
+	Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, FontModifiers::underlying_t type)
 	{
-		return fontMap.at(name);
+		const auto& family = GetFamily(name);
+
+		Multi_Ptr<Font> font;
+		for (const auto& currentFont : family)
+		{
+			if (currentFont->GetModifiers() & type)
+			{
+				font = currentFont;
+				break;
+			}
+		}
+
+		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired types: {0}", type));
+
+		return font;
 	}
 
 	size_t FontLoader::GetSize() const
 	{
-		return fontMap.size();
+		return fontFamilies.size();
 	}
 }

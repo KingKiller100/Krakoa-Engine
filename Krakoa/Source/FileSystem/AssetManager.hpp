@@ -18,10 +18,12 @@ namespace krakoa::filesystem
 		AssetManager(Token&&);
 		~AssetManager();
 
-		graphics::Font& LoadFont(const std::filesystem::path& path, float size) const;
-		std::vector<graphics::Font> LoadFontFamily(const std::string_view& fontFamily, float size) const;
+		void LoadFont(const std::filesystem::path& path, float size) const;
+		void LoadFontFamily(const std::string_view& fontFamily, float size) const;
 		void LoadScript(const klib::Path& path);
 
+		const graphics::FontLoader& GetFontLoader() const;
+		
 	private:
 		bool VerifyFile(const klib::Path& path) const;
 		

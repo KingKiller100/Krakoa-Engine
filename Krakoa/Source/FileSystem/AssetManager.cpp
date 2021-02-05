@@ -19,37 +19,24 @@ namespace krakoa::filesystem
 	{
 	}
 
-	graphics::Font& AssetManager::LoadFont(const std::filesystem::path& path, float size) const
+	void AssetManager::LoadFont(const std::filesystem::path& path, float size) const
 	{
 		fontLoader->Load(path, size);
-
-		auto& font = fontLoader->Get(path.stem().string());
-
-		return font;
 	}
 
-	std::vector<graphics::Font> AssetManager::LoadFontFamily(const std::string_view& fontFamily, float size) const
+	void AssetManager::LoadFontFamily(const std::string_view& fontFamily, float size) const
 	{
-		std::vector<graphics::Font> fonts;
-		const auto path = klib::ToString("Fonts\\{0}", fontFamily);
-		const auto files = VirtualFileExplorer::GetFiles(path, "ttf", FileSearchMode::RECURSIVE);
-
-		for (const auto& file : files)
-		{
-			const auto filename = file.filename();
-			if (!klib::Contains(filename.string(), fontFamily))
-				continue;
-
-			const auto& font = LoadFont(file, size);
-			fonts.push_back(font);
-		}
-
-		return fonts;
+		fontLoader->LoadFamilyFromFile(fontFamily, size);
 	}
 
 	void AssetManager::LoadScript(const klib::Path& path)
 	{
 		scriptFiles.emplace_back(path);
+	}
+
+	const graphics::FontLoader& AssetManager::GetFontLoader() const
+	{
+		return *fontLoader;
 	}
 
 	bool AssetManager::VerifyFile(const klib::Path& path) const

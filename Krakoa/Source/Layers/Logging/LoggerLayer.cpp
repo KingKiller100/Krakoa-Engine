@@ -1,12 +1,11 @@
 ﻿#include "Precompile.hpp"
 #include "LoggerLayer.hpp"
 
+#include "../../UI/ImGui/UI.hpp"
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Logging/EngineLogger.hpp"
-#include "../../UI/ImGui/UI.hpp"
 
-#include <Template/kToImpl.hpp>
 #include <Utility/String/kToString.hpp>
 
 #include <sstream>
@@ -15,7 +14,7 @@ namespace krakoa
 {
 	namespace
 	{
-		constexpr auto g_MaxlogsToDisplay = 30;
+		constexpr auto g_MaxlogsToDisplay = 70;
 	}
 
 	struct PanelLogger : public klib::iLoggerDestination
@@ -26,7 +25,7 @@ namespace krakoa
 		{
 			const auto& msg = entry.GetMsg();
 			const auto& dsc = entry.GetDescriptor();
-			const auto log = klib::ToString("[{0}]: {1}\n", dsc.lvl, msg.text);
+			const auto log = klib::ToString("[{0}]: {1}\n", dsc.lvl.ToUnderlying(), msg.text);
 			logs << log;
 		}
 		bool IsOpen() const override
@@ -57,7 +56,7 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 
 		auto& engineLogger = EngineLogger::GetLogger();
-		auto& panelLogger = klib::ToImpl<PanelLogger>(engineLogger.GetExtraDestination(0));
+		auto& panelLogger = engineLogger.GetExtraDestination<PanelLogger>(0);
 
 		ui::DrawPanel("Console", [&]()
 			{
@@ -68,12 +67,13 @@ namespace krakoa
 				if (size > g_MaxlogsToDisplay)
 				{
 					const auto remaining = size - g_MaxlogsToDisplay;
-
 					lines.erase(lines.begin(), lines.begin() + remaining);
 				}
 
 				for (auto& line : lines)
-					ui::DrawRawText("{0}", line.data());
+				{
+					ui::DrawRawText(line);
+				}
 			});
 	}
 

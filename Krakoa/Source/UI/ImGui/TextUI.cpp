@@ -5,9 +5,9 @@
 
 namespace krakoa::ui
 {
-	void DrawRawText(const std::string_view& label)
+	void DrawRawText(const std::string_view& text)
 	{
-		ImGui::Text(label.data());
+		ImGui::Text(text.data());
 	}
 
 	bool DrawInputTextBox(const std::string_view& label, char* buf, size_t buf_size, InputTextFlags::underlying_t flags,

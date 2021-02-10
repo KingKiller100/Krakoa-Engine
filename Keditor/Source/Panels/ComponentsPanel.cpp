@@ -119,7 +119,7 @@ namespace krakoa::scene::panels
 					return;
 
 				const auto& id = *pSelectedEntity.lock();
-				if (id.IsNull())
+				if (!id)
 					return;
 
 				DisplayComponents(id, scene);

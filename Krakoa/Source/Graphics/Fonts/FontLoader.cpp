@@ -74,7 +74,7 @@ namespace krakoa::graphics
 	{
 		KRK_INF("Loading font family: " + family);
 		
-		const auto path = klib::ToString("Fonts\\{0}", family);
+		const auto path = klib::ToString("Fonts/{0}", family);
 		const auto files = filesystem::VirtualFileExplorer::GetFiles(path, "ttf", filesystem::FileSearchMode::RECURSIVE);
 
 		for (const auto& file : files)

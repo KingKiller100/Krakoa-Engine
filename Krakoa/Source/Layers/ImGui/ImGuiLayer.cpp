@@ -55,7 +55,7 @@ namespace krakoa
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
+		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -119,7 +119,7 @@ namespace krakoa
 		// Create a back up context for a window to render outside of main window space
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			auto backupCurrentContext = glfwGetCurrentContext();
+			const auto backupCurrentContext = glfwGetCurrentContext();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backupCurrentContext);
@@ -150,8 +150,7 @@ namespace krakoa
 
 	void ImGuiLayer::SetDemoWindowStateFromConfig()
 	{
-		const auto& gConfig = configurations::GetGlobalConfig();
-		demoWindowState = gConfig.Get<bool>("ImGui", "DemoWindow");
+		demoWindowState = configurations::GetConfiguration<bool>("ImGui", "DemoWindow");
 	}
 }
 

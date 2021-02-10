@@ -154,7 +154,8 @@ namespace krakoa::filesystem
 
 	klib::PathList VirtualFileExplorer::GetFiles(const std::string& vtlPath, FileSearchMode searchMode)
 	{
-		auto hierarchy = klib::Split(vtlPath, "\\");
+		const auto correctPath = CorrectPath(vtlPath);
+		auto hierarchy = klib::Split(correctPath, "\\");
 		const auto& key = hierarchy.front();
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
@@ -180,7 +181,8 @@ namespace krakoa::filesystem
 	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath,
 		const std::string_view& extension, FileSearchMode searchMode)
 	{
-		auto hierarchy = klib::Split(vtlPath, "\\");
+		const auto correctPath = CorrectPath(vtlPath);
+		auto hierarchy = klib::Split(correctPath, "\\");
 		const auto& key = hierarchy.front();
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
@@ -217,7 +219,8 @@ namespace krakoa::filesystem
 
 	klib::PathList VirtualFileExplorer::GetDirectories(const std::string& vtlPath, FileSearchMode searchMode)
 	{
-		auto hierarchy = klib::Split(vtlPath, "\\");
+		const auto correctPath = CorrectPath(vtlPath);
+		auto hierarchy = klib::Split(correctPath, "\\");
 		const auto& key = hierarchy.front();
 
 		auto vDirectory = folderMap.at(klib::ToLower(key));
@@ -264,6 +267,11 @@ namespace krakoa::filesystem
 
 		if (klib::CheckFileExists(path))
 			KRK_FATAL(klib::ToString("Path given is a file: {0}", path));
+	}
+
+	std::string VirtualFileExplorer::CorrectPath(const std::string& path)
+	{
+		return klib::Replace(path, '/', '\\');
 	}
 
 	void VirtualFileExplorer::MapVPath(const PathRedirectsMap::key_type& key)

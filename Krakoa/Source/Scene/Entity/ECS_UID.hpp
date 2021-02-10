@@ -52,6 +52,11 @@ namespace krakoa::scene::ecs
 
 		ID_t GetValue() const;
 
+		operator bool() const noexcept
+		{
+			return !IsNull();
+		}
+		
 		template<typename T>
 		constexpr operator T() const noexcept
 		{

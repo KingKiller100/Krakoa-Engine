@@ -7,7 +7,7 @@
 
 namespace krakoa::ui
 {
-	void DrawRawText(const std::string_view& label);
+	void DrawRawText(const std::string_view& text);
 	
 	template<typename T, typename ...Ts>
 	void DrawRawText(const std::string_view& fmt, const T& arg, const Ts& ...args)

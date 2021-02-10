@@ -47,9 +47,10 @@ namespace krakoa::filesystem
 		static std::filesystem::path GetRoot();
 
 	private:
-		static void VerifyDirectory(const std::filesystem::path& path);
 		static void MapVPath(const PathRedirectsMap::key_type& key);
-		
+		static void VerifyDirectory(const std::filesystem::path& path);
+		static std::string CorrectPath(const std::string& path);
+	
 	private:
 		static std::filesystem::path root;
 		static PathRedirectsMap redirectMap;

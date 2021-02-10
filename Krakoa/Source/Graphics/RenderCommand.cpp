@@ -17,8 +17,7 @@ namespace krakoa::graphics
 
 	void RenderCommand::CreateApi()
 	{
-		const auto& globalConfig = configurations::GetGlobalConfig();
-		const auto apiStr = globalConfig.Get<std::string>("Renderer", "API");
+		const auto apiStr = configurations::GetConfiguration<std::string>("Renderer", "API");
 		const auto api = iRendererAPI::API::FromString(klib::ToUpper(apiStr));
 
 		switch (api.ToEnum()) {

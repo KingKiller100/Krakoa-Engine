@@ -3,8 +3,6 @@
 
 #include "VirtualFileExplorer.hpp"
 
-#include "../Graphics/Fonts/Font.hpp"
-
 #include <Utility/FileSystem/kFileSystem.hpp>
 
 namespace krakoa::filesystem
@@ -16,8 +14,7 @@ namespace krakoa::filesystem
 	}
 
 	AssetManager::~AssetManager()
-	{
-	}
+		= default;
 
 	void AssetManager::LoadFont(const std::filesystem::path& path, float size) const
 	{

@@ -41,7 +41,6 @@ namespace krakoa::graphics
 
 	void Font::Load(const std::filesystem::path& filepath, float fontSize)
 	{
-
 		KRK_INF(klib::ToString("Loading font: [\"{0:f}\", {1}] - \"{0}\"", filepath, fontSize));
 
 		font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
@@ -63,7 +62,7 @@ namespace krakoa::graphics
 
 		modifiers = 0;
 
-		FontModifiers::ForEach([&](FontModifiers val)
+		FontModifiers::ForEach([&](const FontModifiers val)
 			{
 				const auto valStr = klib::ToLower(val.ToString());
 				if (klib::Contains(filename, valStr)

@@ -104,11 +104,12 @@ namespace krakoa::filesystem
 
 	void VirtualFileExplorer::Initialize(std::filesystem::path path)
 	{
-		KRK_INF("Assigning root path: " + path.string());
+		const auto absPath = fs::absolute(path);
+		KRK_INF("Assigning root path: " + absPath.string());
 
 		VerifyDirectory(path);
 
-		root = fs::absolute(path);
+		root = absPath;
 	}
 
 	void VirtualFileExplorer::MountAbs(const std::filesystem::path& absPath, const std::string& vtlPath)

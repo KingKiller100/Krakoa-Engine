@@ -19,7 +19,6 @@ namespace krakoa::graphics
 
 		void Load(const std::filesystem::path& filepath, float size);
 		void LoadFamilyFromFile(const std::string_view& family, float size);
-		void Delete(const std::string& fontName);
 		void Clear();
 
 		void MakeDefault(const Multi_Ptr<Font>& font);
@@ -35,6 +34,6 @@ namespace krakoa::graphics
 		
 	private:
 		Multi_Ptr<Font> defaultFont;
-		std::map<std::string, std::set<Multi_Ptr<Font>>> fontFamilies;
+		std::map<std::string, std::set<Multi_Ptr<Font>>> families;
 	};
 }

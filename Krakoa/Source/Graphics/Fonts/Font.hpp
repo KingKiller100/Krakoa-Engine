@@ -36,7 +36,7 @@ namespace krakoa::graphics
 		
 		void Load(const std::filesystem::path& filepath, float fontSize);
 
-		FontModifiers::underlying_t GetModifiers() const;
+		[[nodiscard]] FontModifiers::underlying_t GetModifiers() const;
 		
 		friend class FontLoader;
 

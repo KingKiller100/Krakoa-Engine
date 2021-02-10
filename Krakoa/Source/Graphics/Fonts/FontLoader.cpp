@@ -4,8 +4,8 @@
 #include "../../Debug/Debug.hpp"
 #include "../../FileSystem/VirtualFileExplorer.hpp"
 
+#include <Utility/String/kToString.hpp> 
 #include <Utility/String/kStringTricks.hpp>
-#include <Utility/String/kToString.hpp>
 
 #include <imgui.h>
 
@@ -23,7 +23,7 @@ namespace krakoa::graphics
 
 	void FontLoader::Clear()
 	{
-		fontFamilies.clear();
+		families.clear();
 	}
 
 	void FontLoader::MakeDefault(const Multi_Ptr<Font>& font)
@@ -44,15 +44,15 @@ namespace krakoa::graphics
 
 	std::set<Multi_Ptr<Font>>& FontLoader::GetFamily(const std::string& name)
 	{
-		const auto iter = fontFamilies.find(name);
-		KRK_ASSERT(iter != fontFamilies.end(), "Font family has not been loaded yet: " + name);
+		const auto iter = families.find(name);
+		KRK_ASSERT(iter != families.end(), "Font family has not been loaded yet: " + name);
 		return iter->second;
 	}
 
 	const std::set<Multi_Ptr<Font>>& FontLoader::GetFamily(const std::string& name) const
 	{
-		const auto iter = fontFamilies.find(name);
-		KRK_ASSERT(iter != fontFamilies.end(), "Font family has not been loaded yet: " + name);
+		const auto iter = families.find(name);
+		KRK_ASSERT(iter != families.end(), "Font family has not been loaded yet: " + name);
 		return iter->second;
 	}
 
@@ -64,7 +64,7 @@ namespace krakoa::graphics
 		const auto split = klib::Split(filename, "-");
 		const auto family = split.front();
 
-		fontFamilies[family].insert(font);
+		families[family].insert(font);
 
 		if (font->GetModifiers() & FontModifiers::Regular)
 			MakeDefault(font);
@@ -72,6 +72,8 @@ namespace krakoa::graphics
 
 	void FontLoader::LoadFamilyFromFile(const std::string_view& family, float size)
 	{
+		KRK_INF("Loading font family: " + family);
+		
 		const auto path = klib::ToString("Fonts\\{0}", family);
 		const auto files = filesystem::VirtualFileExplorer::GetFiles(path, "ttf", filesystem::FileSearchMode::RECURSIVE);
 
@@ -81,15 +83,15 @@ namespace krakoa::graphics
 		}
 	}
 
-	void FontLoader::Delete(const std::string& fontName)
-	{
-		const auto iter = fontFamilies.find(fontName);
-
-		if (iter == fontFamilies.end())
-			return;
-
-		fontFamilies.erase(iter);
-	}
+	// void FontLoader::Delete(const std::string& fontName)
+	// {
+	// 	const auto iter = families.find(fontName);
+	//
+	// 	if (iter == families.end())
+	// 		return;
+	//
+	// 	families.erase(iter);
+	// }
 
 	const Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, FontModifiers::underlying_t type) const
 	{
@@ -131,6 +133,6 @@ namespace krakoa::graphics
 
 	size_t FontLoader::GetSize() const
 	{
-		return fontFamilies.size();
+		return families.size();
 	}
 }

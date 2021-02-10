@@ -4,7 +4,6 @@
 #include "EntityComponentSystem.hpp"
 
 #include "../../Debug/Debug.hpp"
-
 #include "../../Util/TypeInfo.hpp"
 
 #include <HelperMacros.hpp>

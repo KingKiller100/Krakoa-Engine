@@ -19,14 +19,6 @@ namespace krakoa::scene::ecs
 		, manager(entityComponentSystem)
 	{}
 
-	// Entity::Entity(const Entity& other)
-	// 	: id(other.id)
-	// 	, selected(false)
-	// 	, active(other.active)
-	// 	, components(other.components)
-	// 	, manager(other.manager)
-	// {}
-
 	Entity::Entity(Entity&& other) noexcept
 		: id(std::move(other.id))
 		, selected(false)
@@ -34,16 +26,6 @@ namespace krakoa::scene::ecs
 		, components(std::move(other.components))
 		, manager(std::move(other.manager))
 	{}
-
-	// Entity& Entity::operator=(const Entity& other)
-	// {
-	// 	id = other.id;
-	// 	selected = false;
-	// 	components = other.components;
-	// 	active = other.active;
-	// 	manager = other.manager;
-	// 	return *this;
-	// }
 
 	Entity& Entity::operator=(Entity&& other) noexcept
 	{

@@ -22,7 +22,7 @@
 #include <ImGui/imgui_internal.h>
 
 
-namespace krakoa::scene
+namespace krakoa::scene::panels
 {
 	using namespace ecs;
 	using namespace ui;
@@ -38,7 +38,7 @@ namespace krakoa::scene
 			if (!entity.HasComponent<Component>())
 				return;
 
-			constexpr auto treeNodeflags = TreeNodeFlags::DefaultOpen | TreeNodeFlags::Framed
+			constexpr auto treeNodeFlags = TreeNodeFlags::DefaultOpen | TreeNodeFlags::Framed
 				| TreeNodeFlags::SpanAvailWidth | TreeNodeFlags::AllowItemOverlap;
 
 			auto& component = entity.GetComponent<Component>();
@@ -49,25 +49,25 @@ namespace krakoa::scene
 				DrawSeparator();
 			}
 
-			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), treeNodeflags, [&](bool opened)
+			ui::DrawTreeNode(name, (void*)util::GetTypeHash<Component>(), treeNodeFlags, [&](bool opened)
 				{
 					bool markedComponentForRemoval = false;
 
 					if (removable)
 					{
-						const auto contentRegionAvail = ui::GetContentRegionAvailable();
+						const auto contentRegionAvail = GetContentRegionAvailable();
 						const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 						DrawSameLine(contentRegionAvail.x - lineHeight * .5f);
 
 						const char popupMenuId[] = "Settings";
-						DrawButton("+", { lineHeight, lineHeight }, [&]
+						ui::DrawButton("+", { lineHeight, lineHeight }, [&]
 							{
 								popups::OpenPopup(popupMenuId);
 							});
 						PopStyleVar();
 
 						popups::DrawPopup(popupMenuId, [&] {
-							DrawMenuItem("Remove", [&]
+							ui::DrawMenuItem("Remove", [&]
 								{
 									KRK_NRM(klib::ToString("Removing component \"{0}\" from entity {1}",
 										util::GetTypeNameNoNamespace<Component>()
@@ -88,7 +88,7 @@ namespace krakoa::scene
 		}
 
 		template<typename Component>
-		void DrawAddComponentMousePopupOption(const std::string_view& name, Entity& entity, const ui::UICallBack& uiPopupFunc)
+		void DrawAddComponentMousePopupOption(const std::string_view& name, Entity& entity, const UICallBack& uiPopupFunc)
 		{
 			if (!entity.HasComponent<Component>())
 			{
@@ -97,19 +97,19 @@ namespace krakoa::scene
 		}
 	}
 
-	panels::ComponentsPanel::ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) noexcept
+	ComponentsPanel::ComponentsPanel(const Multi_Ptr<EntityUID>& pSelected) noexcept
 		: pSelectedEntity(pSelected)
 	{}
 
-	panels::ComponentsPanel::~ComponentsPanel() noexcept
+	ComponentsPanel::~ComponentsPanel() noexcept
 		= default;
 
-	void panels::ComponentsPanel::LogConnected() const
+	void ComponentsPanel::LogConnected() const
 	{
 		KRK_LOG("Keditor", "Components panel connected");
 	}
 
-	void panels::ComponentsPanel::DrawActiveScene(iScene& scene)
+	void ComponentsPanel::DrawActiveScene(iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -128,12 +128,12 @@ namespace krakoa::scene
 			});
 	}
 
-	void panels::ComponentsPanel::DrawNoActiveScene()
+	void ComponentsPanel::DrawNoActiveScene()
 	{
 		DrawPanel("Components", nullptr);
 	}
 
-	void panels::ComponentsPanel::DisplayComponents(const EntityUID& id, iScene& scene)
+	void ComponentsPanel::DisplayComponents(const EntityUID& id, iScene& scene)
 	{
 		if (!scene.HasEntity(id))
 			return;
@@ -146,7 +146,7 @@ namespace krakoa::scene
 		DisplayAppearanceComponent(entity);
 	}
 
-	void panels::ComponentsPanel::DisplayTagComponent(ecs::Entity& entity)
+	void ComponentsPanel::DisplayTagComponent(Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -171,7 +171,7 @@ namespace krakoa::scene
 		, false);
 	}
 
-	void panels::ComponentsPanel::DisplayTransformComponent(ecs::Entity& entity)
+	void ComponentsPanel::DisplayTransformComponent(Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -185,20 +185,20 @@ namespace krakoa::scene
 
 				auto position = transform.GetPosition();
 				auto scale = transform.GetScale();
-				auto rotation = kmaths::ToDegrees(transform.GetRotation());
+				auto rotation = ToDegrees(transform.GetRotation());
 
 				DrawVec3Controller("Position", position, btnColours, 0.05f);
 				DrawVec3Controller("Rotation", rotation, btnColours, 0.5f);
 				DrawVec3Controller("Scale", scale, btnColours, 0.5f, 1.f);
 
 				transform.SetPosition(position);
-				transform.SetRotation(kmaths::ToRadians(rotation));
+				transform.SetRotation(ToRadians(rotation));
 				transform.SetScale(scale);
 			}
 		, false);
 	}
 
-	void panels::ComponentsPanel::DisplayAppearanceComponent(ecs::Entity& entity)
+	void ComponentsPanel::DisplayAppearanceComponent(Entity& entity)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -218,7 +218,7 @@ namespace krakoa::scene
 			});
 	}
 
-	void panels::ComponentsPanel::DisplayCameraComponent(ecs::Entity& entity) const
+	void ComponentsPanel::DisplayCameraComponent(Entity& entity) const
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -230,14 +230,14 @@ namespace krakoa::scene
 				if (!sceneCamera)
 					return;
 
-				camera.SetIsPrimary(ui::DrawCheckBox("Primary", primary));
+				camera.SetIsPrimary(DrawCheckBox("Primary", primary));
 
 				const auto camType = sceneCamera->GetProjectionType();
 
 				auto projectionTypes = std::array{ "Orthographic", "Perspective" };
 				const auto* const currentSelection = projectionTypes[camType];
 
-				ui::DrawComboBox("Projection", currentSelection, ComboBoxFlags::HeightLarge,
+				DrawComboBox("Projection", currentSelection, ComboBoxFlags::HeightLarge,
 					[&]()
 					{
 						for (auto i = 0; i < projectionTypes.size(); ++i)
@@ -284,14 +284,14 @@ namespace krakoa::scene
 
 				if (camType == SceneCamera::ProjectionType::Perspective)
 				{
-					float perspectiveVerticalFOV = kmaths::ToDegrees(sceneCamera->GetPerspectiveVerticalFOV());
+					float perspectiveVerticalFOV = ToDegrees(sceneCamera->GetPerspectiveVerticalFOV());
 					float perspectiveNear = sceneCamera->GetPerspectiveNearClip();
 					float perspectiveFar = sceneCamera->GetPerspectiveFarClip();
 
 					DrawDragValue("Vertical F.O.V.", perspectiveVerticalFOV, 0.5f,
 						[&]()
 						{
-							sceneCamera->SetPerspectiveVerticalFOV(kmaths::ToRadians(perspectiveVerticalFOV));
+							sceneCamera->SetPerspectiveVerticalFOV(ToRadians(perspectiveVerticalFOV));
 						});
 					DrawDragValue("Near Clip", perspectiveNear, 0.05f,
 						[&]()
@@ -307,7 +307,7 @@ namespace krakoa::scene
 			});
 	}
 
-	void panels::ComponentsPanel::DrawAddComponentButton(iScene& scene, const ecs::EntityUID& id)
+	void ComponentsPanel::DrawAddComponentButton(iScene& scene, const EntityUID& id)
 	{
 		const char btnName[] = "Add Component";
 
@@ -326,7 +326,7 @@ namespace krakoa::scene
 						);
 
 						const auto& window = GetApp().GetWindow();
-						const auto size = kmaths::Vector2f(window.GetDimensions());
+						const auto size = Vector2f(window.GetDimensions());
 						const auto aspectRatio = size.x / size.y;
 						entity.AddComponent<components::CameraComponent>(
 							new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
@@ -338,7 +338,7 @@ namespace krakoa::scene
 						KRK_NRM(klib::ToString("Adding component \"Appearance\" to entity {0}",
 							entity.GetID())
 						);
-					
+
 						entity.AddComponent<components::Appearance2DComponent>(
 							graphics::GeometryType::QUAD,
 							graphics::colours::White
@@ -352,7 +352,7 @@ namespace krakoa::scene
 								KRK_NRM(klib::ToString("Adding component \"Native Script\" to entity {0}",
 									entity.GetID())
 								);
-							
+
 								entity.AddComponent<components::NativeScriptComponent>();
 							});
 					});

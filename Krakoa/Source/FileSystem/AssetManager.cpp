@@ -8,34 +8,32 @@
 namespace krakoa::filesystem
 {
 	AssetManager::AssetManager(Token&&)
-		: fontLoader(new graphics::FontLoader())
+		: fontLib(new graphics::FontLibrary())
 	{
 		VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
 	}
 
-	AssetManager::~AssetManager()
-		= default;
-
 	void AssetManager::LoadFont(const std::filesystem::path& path, float size) const
 	{
-		fontLoader->Load(path, size);
+		fontLib->Load(path, size);
 	}
 
-	void AssetManager::LoadFontFamily(const std::string_view& fontFamily, float size) const
+	void AssetManager::LoadFontFamily(const std::string& fontFamily, float size) const
 	{
-		fontLoader->LoadFamilyFromFile(fontFamily, size);
+		fontLib->LoadFamilyFromFile(fontFamily, size);
+	}
+
+	const graphics::Font& AssetManager::GetFont(const std::string& fontFamily, float size,
+		graphics::FontModifiers::underlying_t type) const
+	{
+		return *fontLib->GetFont(fontFamily, size, type);
 	}
 
 	void AssetManager::LoadScript(const klib::Path& path)
 	{
 		scriptFiles.emplace_back(path);
 	}
-
-	const graphics::FontLoader& AssetManager::GetFontLoader() const
-	{
-		return *fontLoader;
-	}
-
+	
 	bool AssetManager::VerifyFile(const klib::Path& path) const
 	{
 		return klib::CheckFileExists(path);

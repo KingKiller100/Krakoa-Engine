@@ -47,7 +47,7 @@ namespace krakoa
 
 	void Application::ShutDown()
 	{
-		KRK_BANNER("Shut Down", "Closing App", "*", "*", 10);
+		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
 		graphics::Renderer::ShutDown();
 
 		for (auto* manager : managers)

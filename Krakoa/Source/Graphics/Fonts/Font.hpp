@@ -38,12 +38,14 @@ namespace krakoa::graphics
 
 		[[nodiscard]] FontModifiers::underlying_t GetModifiers() const;
 
+		bool Empty() const noexcept;
+		
 		operator ImFont*() const
 		{
 			return impl;
 		}
 		
-		friend class FontLoader;
+		friend class FontLibrary;
 
 	private:
 		void DeduceModifiers(const std::filesystem::path& path);

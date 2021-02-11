@@ -37,6 +37,11 @@ namespace krakoa::graphics
 		void Load(const std::filesystem::path& filepath, float fontSize);
 
 		[[nodiscard]] FontModifiers::underlying_t GetModifiers() const;
+
+		operator ImFont*() const
+		{
+			return impl;
+		}
 		
 		friend class FontLoader;
 
@@ -47,7 +52,7 @@ namespace krakoa::graphics
 		std::string name;
 		FontModifiers::underlying_t modifiers;
 		float size;
-		ImFont* font;
+		ImFont* impl;
 	};
 	
 }

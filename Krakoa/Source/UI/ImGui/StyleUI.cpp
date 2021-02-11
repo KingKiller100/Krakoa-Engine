@@ -2,6 +2,7 @@
 #include "StyleUI.hpp"
 
 #include "../../Graphics/Helpers/Colour.hpp"
+#include "../../Graphics/Fonts/Font.hpp"
 
 #include <imgui.h>
 
@@ -44,5 +45,15 @@ namespace krakoa::ui
 		PushStyleColour(index, colour);
 		callback();
 		PopStyleColour();
+	}
+
+	void PushFont(const graphics::Font& font)
+	{
+		ImGui::PushFont(font);
+	}
+
+	void PopFont()
+	{
+		ImGui::PopFont();
 	}
 }

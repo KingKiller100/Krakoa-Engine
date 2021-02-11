@@ -11,6 +11,7 @@ namespace krakoa
 {
 	namespace graphics
 	{
+		class Font;
 		class Colour;
 	}
 
@@ -25,6 +26,9 @@ namespace krakoa
 		
 		void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback);
 		void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback);
+
+		void PushFont(const graphics::Font& font);
+		void PopFont();
 	}
 }
 

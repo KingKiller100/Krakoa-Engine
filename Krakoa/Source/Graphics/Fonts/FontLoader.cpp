@@ -11,6 +11,24 @@
 
 namespace krakoa::graphics
 {
+	namespace
+	{
+		std::vector<FontModifiers> DecipherFontModifiersMask(FontModifiers::underlying_t mask)
+		{
+			std::vector<FontModifiers> modifiers;
+			
+			FontModifiers::ForEach([mask, &modifiers](const FontModifiers fm)
+			{
+				if (mask & fm)
+				{
+					modifiers.emplace_back(fm);
+				}
+			});
+
+			return modifiers;
+		}
+	}
+	
 	FontLoader::FontLoader()
 	{
 		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
@@ -32,13 +50,13 @@ namespace krakoa::graphics
 			return;
 		
 		auto& io = ImGui::GetIO();
-		io.FontDefault = font->font;
+		io.FontDefault = font->impl;
 		defaultFont = font;
 	}
 
-	void FontLoader::MakeDefault(const std::string& fontName, FontModifiers::underlying_t type)
+	void FontLoader::MakeDefault(const std::string& fontName, float size, FontModifiers::underlying_t type)
 	{
-		const auto& font = GetFont(fontName, type);
+		const auto& font = GetFont(fontName, size, type);
 		MakeDefault(font);
 	}
 
@@ -93,40 +111,42 @@ namespace krakoa::graphics
 	// 	families.erase(iter);
 	// }
 
-	const Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, FontModifiers::underlying_t type) const
+	const Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, float size, FontModifiers::underlying_t type) const
 	{
 		const auto& family = GetFamily(name);
 
 		Multi_Ptr<Font> font;
 		for (const auto& currentFont : family)
 		{
-			if (currentFont->GetModifiers() & type)
+			if (currentFont->GetModifiers() & type
+				&& currentFont->GetSize() == size)
 			{
 				font = currentFont;
 				break;
 			}
 		}
 
-		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired types: {0}", type));
+		KRK_ASSERT(font, klib::ToString("Cannot find font with the requirements: {0}", type));
 
 		return font;
 	}
 
-	Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, FontModifiers::underlying_t type)
+	Multi_Ptr<Font> FontLoader::GetFont(const std::string& name, float size, FontModifiers::underlying_t modifiersMask)
 	{
 		const auto& family = GetFamily(name);
 
 		Multi_Ptr<Font> font;
 		for (const auto& currentFont : family)
 		{
-			if (currentFont->GetModifiers() & type)
+			if (currentFont->GetModifiers() & modifiersMask
+				&& currentFont->GetSize() == size)
 			{
 				font = currentFont;
 				break;
 			}
 		}
 
-		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired types: {0}", type));
+		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired: size={0} modifiers={1}", modifiersMask, DecipherFontModifiersMask(modifiersMask)));
 
 		return font;
 	}

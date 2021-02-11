@@ -13,7 +13,7 @@ namespace krakoa::graphics
 	Font::Font()
 		: modifiers(0)
 		, size(0)
-		, font(nullptr)
+		, impl(nullptr)
 	{}
 
 	Font::Font(const std::filesystem::path& filepath, float fontSize)
@@ -31,7 +31,7 @@ namespace krakoa::graphics
 
 	float Font::GetScale() const
 	{
-		return font->Scale;
+		return impl->Scale;
 	}
 
 	std::string_view Font::GetName() const
@@ -43,13 +43,13 @@ namespace krakoa::graphics
 	{
 		KRK_INF(klib::ToString("Loading font: [\"{0:f}\", {1}] - \"{0}\"", filepath, fontSize));
 
-		font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
+		impl = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
 
 		const auto isDecimal = kmaths::IsDecimal(fontSize - kmaths::Floor(fontSize));
 		name = klib::ToString("{0:f}_{1}", filepath, isDecimal ? fontSize : static_cast<size_t>(fontSize));
 		size = fontSize;
 
-		KRK_ASSERT(font, "Unable to load font");
+		KRK_ASSERT(impl, "Unable to load font");
 
 		DeduceModifiers(filepath);
 	}

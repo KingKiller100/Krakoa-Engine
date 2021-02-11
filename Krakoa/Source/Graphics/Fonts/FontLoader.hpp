@@ -22,13 +22,13 @@ namespace krakoa::graphics
 		void Clear();
 
 		void MakeDefault(const Multi_Ptr<Font>& font);
-		void MakeDefault(const std::string& fontName, FontModifiers::underlying_t type = FontModifiers::Regular);
+		void MakeDefault(const std::string& fontName, float size, FontModifiers::underlying_t type = FontModifiers::Regular);
 
 		std::set<Multi_Ptr<Font>>& GetFamily(const std::string& name);
 		const std::set<Multi_Ptr<Font>>& GetFamily(const std::string& name) const;
 
-		const Multi_Ptr<Font> GetFont(const std::string& fontFamily, FontModifiers::underlying_t type) const;
-		Multi_Ptr<Font> GetFont(const std::string& fontFamily, FontModifiers::underlying_t type);
+		const Multi_Ptr<Font> GetFont(const std::string& fontFamily, float size, FontModifiers::underlying_t type) const;
+		Multi_Ptr<Font> GetFont(const std::string& fontFamily, float size, FontModifiers::underlying_t modifiersMask);
 
 		size_t GetSize() const;
 		

@@ -104,8 +104,7 @@ project "Krakoa"
         }
         removefiles
         {
-            "%{prj.name}/Source/**/*test*",
-            "%{prj.name}/Tests/**"
+            "%{prj.name}/Source/**/*test*"
         }
         symbols "On"
         runtime "Debug"

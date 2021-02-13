@@ -23,12 +23,13 @@ namespace krakoa
 
 		void PushStyleColour(StyleColourFlags index, const graphics::Colour& colour);
 		void PopStyleColour(size_t count = 1);
-		
-		void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback);
-		void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback);
 
 		void PushFont(const graphics::Font& font);
 		void PopFont();
+		
+		void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback);
+		void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback);
+		void StyleUI(const graphics::Font& font, const UICallBack& callback);
 	}
 }
 

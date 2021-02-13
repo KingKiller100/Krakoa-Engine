@@ -405,7 +405,7 @@ namespace krakoa::graphics
 		constexpr Colour& operator=(const Colour& other) noexcept
 			= default;
 
-		template<class Float_t>
+		template<class Float_t = float>
 		USE_RESULT constexpr Vector4<Float_t> ToFloats() const noexcept
 		{
 			static_assert(std::is_floating_point_v<Float_t>, "Type must be a floating point data type");

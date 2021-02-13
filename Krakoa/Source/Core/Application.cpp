@@ -19,6 +19,8 @@
 #include "../Graphics/2D/Renderer2D.hpp"
 #include "../Graphics/ShaderLibrary.hpp"
 
+#include "../Scene/SceneManager.hpp"
+
 #include <Utility/Logging/kLogging.hpp>
 
 #include <chrono>
@@ -211,12 +213,7 @@ namespace krakoa
 	{
 		return *pImGuiLayer;
 	}
-
-	scene::SceneManager& Application::GetSceneManager() const
-	{
-		return GetManager<scene::SceneManager>();
-	}
-
+	
 	Application& GetApp()
 	{
 		return Application::Reference();

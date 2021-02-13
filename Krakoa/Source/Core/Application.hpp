@@ -22,9 +22,9 @@
 #include "../Layers/ImGui/ImGuiLayer.hpp"
 #include "../Layers/LayerStacker.hpp"
 
-#include "../Scene/SceneManager.hpp"
-
 #include "../Graphics/Framebuffers/iFrameBuffer.hpp"
+
+#include "../Util/UniqueID.hpp"
 
 #include <Template/kToImpl.hpp>
 
@@ -49,8 +49,6 @@ namespace krakoa
 		iWindow& GetWindow() const;
 		graphics::iFrameBuffer& GetFrameBuffer() const;
 		ImGuiLayer& GetImGuiLayer() const;
-		scene::SceneManager& GetSceneManager() const;
-
 
 		template<typename Manager>
 		Manager& GetManager() const
@@ -70,30 +68,30 @@ namespace krakoa
 			managers.emplace_back(ptr);
 			(void)GetUniqueID<Manager>();
 		}
-		
+
 		template<typename Manager, typename ...Args>
 		void RegisterManager(Args&& ...args)
 		{
 			Manager::Create(std::forward<Args>(args)...);
 			AddManager(Manager::Pointer());
 		}
-		
+
 	private:
 		void PushInternalLayers();
-		
+
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
 		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
-		
+
 	protected:
 		bool isRunning;
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
-		
+
 		Solo_Ptr<graphics::iFrameBuffer> frameBuffer;
 
-		std::vector<patterns::iSingleton*> managers;
-		
+		std::vector<iSingleton*> managers;
+
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;
@@ -102,5 +100,7 @@ namespace krakoa
 
 	void CreateApplication();
 	Application& GetApp();
+
 	iWindow& GetWindow();
+
 }

@@ -13,35 +13,10 @@
 #include <imgui.h>
 #include <bitset>
 
+#include "../../Util/EnumHelpers.hpp"
+
 namespace krakoa::graphics
 {
-	namespace
-	{
-		std::vector<FontModifiers> DecipherFontModifiersMask(FontModifiers::underlying_t mask)
-		{
-			KRK_PROFILE_FUNCTION();
-			const std::bitset<klib::type_trait::Traits<FontModifiers>::Bits> bitSet = mask;
-			std::vector<FontModifiers> modifiers;
-
-			FontModifiers::ForEach([mask, &modifiers, &bitSet](const FontModifiers fm)
-			{
-				if (fm == FontModifiers::None)
-					return;
-
-				const std::bitset<klib::type_trait::Traits<FontModifiers>::Bits> fmBitSet = fm.ToUnderlying();
-
-				const auto result = bitSet & fmBitSet;
-				
-				if (result.count() == 1 
-					|| result.count() == fmBitSet.count())
-				{
-					modifiers.emplace_back(fm);
-				}
-			});
-
-			return modifiers;
-		}
-	}
 
 	FontLibrary::FontLibrary()
 	{
@@ -100,10 +75,13 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 		const auto& font = GetFont(family, size, modifiers);
 		MakeDefault(font);
-		KRK_INF(klib::ToString("New default font: Font [{0}, {1}] modifier(s) [{2:,}]", 
+		KRK_INF(klib::ToString("New default font: Font [{0}, {1}] modifier(s) [{2:,}]",
 			family
-				, size
-			, DecipherFontModifiersMask(modifiers))
+			, size
+			, util::DecipherEnumBitMask<FontModifiers>(modifiers, [](FontModifiers fm)
+		{
+			return fm == FontModifiers::None;
+		}))
 		);
 	}
 
@@ -170,7 +148,10 @@ namespace krakoa::graphics
 			}
 		}
 
-		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired: size={0} modifier(s)=[{1:,}]", modifiersMask, DecipherFontModifiersMask(modifiersMask)));
+		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired: size={0} modifier(s)=[{1:,}]",
+			modifiersMask
+			, util::DecipherEnumBitMask<FontModifiers>(modifiersMask))
+		);
 
 		return font;
 	}

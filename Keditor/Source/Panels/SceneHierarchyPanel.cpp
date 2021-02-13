@@ -4,6 +4,7 @@
 
 #include <Core/Application.hpp>
 #include <Debug/Instrumentor.hpp>
+#include <Scene/SceneManager.hpp>
 #include <Scene/Entity/Entity.hpp>
 
 #include <ImGui/imgui.h>
@@ -29,7 +30,8 @@ namespace krakoa::scene::panels
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto& sceneMan = GetApp().GetSceneManager();
+		const auto& sceneMan = GetApp().GetManager<SceneManager>();
+
 		if (sceneMan.HasActiveScene())
 		{
 			auto& currentScene = sceneMan.GetCurrentScene();

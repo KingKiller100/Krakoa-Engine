@@ -6,6 +6,7 @@
 
 #include <ImGui/imgui.h>
 
+#include <Scene/SceneManager.hpp>
 #include <Graphics/2D/Textures/iTexture2D.hpp>
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
@@ -54,8 +55,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		auto& sceneMan =
-			application.GetSceneManager();
+		auto& sceneMan = application.GetManager<scene::SceneManager>();
 
 		sceneMan.Add("Keditor2D");
 
@@ -177,7 +177,7 @@ namespace krakoa
 	{
 		if (input::IsKeyPressed(input::KEY_LEFT_ALT))
 		{
-			auto& sceneMan = application.GetSceneManager();
+			auto& sceneMan = application.GetManager<scene::SceneManager>();
 
 			if (input::IsKeyReleased(input::KEY_P))
 			{
@@ -228,7 +228,7 @@ namespace krakoa
 	void Keditor2DLayer::OnRender()
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 		// constexpr bool opt_fullscreen = true;
 		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
@@ -255,57 +255,57 @@ namespace krakoa
 		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		ui::StyleUI(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f(), [&]
+		{
+			ui::DrawPanel("DockSpace", window_flags, [&]
 			{
-				ui::DrawPanel("DockSpace", window_flags,[&]
-					{
-						ui::PopStyleVar();
+				ui::PopStyleVar();
 
-						// if (opt_fullscreen)
-						ui::PopStyleVar(2);
+				// if (opt_fullscreen)
+				ui::PopStyleVar(2);
 
-						// DockSpace
-						ImGuiIO& io = ImGui::GetIO();
-						if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+				// DockSpace
+				ImGuiIO& io = ImGui::GetIO();
+				if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+				{
+					const ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
+				}
+
+				ui::DrawMenuBar([] {
+					ui::DrawMenu("File", [] {
+						ui::DrawMenuItem("Exit", [&]()
 						{
-							const ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-							ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
-						}
-
-						ui::DrawMenuBar([] {
-							ui::DrawMenu("File", [] {
-								ui::DrawMenuItem("Exit", [&]()
-									{
-										GetApp().Close();
-									});
-								});
-							});
-
-						sceneHierarchyPanel.OnRender();
-
-
-						ui::PushStyleVar(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f());
-						ui::DrawPanel("Editor", [&]()
-							{
-								isWindowFocused = ImGui::IsWindowFocused();
-								isWindowHovered = ImGui::IsWindowHovered();
-
-								UpdateViewport();
-
-								auto& frameBuffer = GetApp().GetFrameBuffer();
-								const auto& spec = frameBuffer.GetSpec();
-								const size_t texID = frameBuffer.GetColourAttachmentAssetID();
-
-								ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
-									{ 0, 1.f }, { 1, 0 });
-							});
+							GetApp().Close();
+						});
 					});
+				});
+
+				sceneHierarchyPanel.OnRender();
 
 
-				if (isWindowFocused || isWindowHovered)
-					application.GetImGuiLayer().BlockEvents();
-				else
-					application.GetImGuiLayer().UnblockEvents();
+				ui::PushStyleVar(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f());
+				ui::DrawPanel("Editor", [&]()
+				{
+					isWindowFocused = ImGui::IsWindowFocused();
+					isWindowHovered = ImGui::IsWindowHovered();
+
+					UpdateViewport();
+
+					auto& frameBuffer = GetApp().GetFrameBuffer();
+					const auto& spec = frameBuffer.GetSpec();
+					const size_t texID = frameBuffer.GetColourAttachmentAssetID();
+
+					ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
+						{ 0, 1.f }, { 1, 0 });
+				});
 			});
+
+
+			if (isWindowFocused || isWindowHovered)
+				application.GetImGuiLayer().BlockEvents();
+			else
+				application.GetImGuiLayer().UnblockEvents();
+		});
 
 	}
 

@@ -23,28 +23,15 @@ namespace krakoa::ui
 		ImGui::PopStyleVar(static_cast<int>(count));
 	}
 
-	void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback)
-	{
-		PushStyleVar(index, val);
-		callback();
-		PopStyleVar();
-	}
-
 	void PushStyleColour(StyleColourFlags index, const graphics::Colour& colour)
 	{
-		ImGui::PushStyleColor(index.ToUnderlying(), colour.ToU32());
+		const auto fColour = colour.ToFloats();
+		ImGui::PushStyleColor(index.ToUnderlying(), { fColour.x, fColour.y, fColour.z, fColour.w });
 	}
 
 	void PopStyleColour(size_t count)
 	{
-		ImGui::PopStyleVar(static_cast<int>(count));
-	}
-
-	void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback)
-	{
-		PushStyleColour(index, colour);
-		callback();
-		PopStyleColour();
+		ImGui::PopStyleColor(static_cast<int>(count));
 	}
 
 	void PushFont(const graphics::Font& font)
@@ -55,5 +42,26 @@ namespace krakoa::ui
 	void PopFont()
 	{
 		ImGui::PopFont();
+	}
+
+	void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback)
+	{
+		PushStyleVar(index, val);
+		callback();
+		PopStyleVar();
+	}
+
+	void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback)
+	{
+		PushStyleColour(index, colour);
+		callback();
+		PopStyleColour();
+	}
+
+	void StyleUI(const graphics::Font& font, const UICallBack& callback)
+	{
+		PushFont(font);
+		callback();
+		PopFont();
 	}
 }

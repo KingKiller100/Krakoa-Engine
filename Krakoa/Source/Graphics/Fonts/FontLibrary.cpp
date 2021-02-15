@@ -17,7 +17,6 @@
 
 namespace krakoa::graphics
 {
-
 	FontLibrary::FontLibrary()
 	{
 		FontLoader::Initialize();
@@ -81,8 +80,8 @@ namespace krakoa::graphics
 			, util::DecipherEnumBitMask<FontModifiers>(modifiers, [](FontModifiers fm)
 		{
 			return fm == FontModifiers::None;
-		}))
-		);
+		})
+		));
 	}
 
 	std::set<Multi_Ptr<Font>>& FontLibrary::GetFamily(const std::string& name)

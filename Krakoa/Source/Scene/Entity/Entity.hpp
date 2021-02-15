@@ -79,7 +79,13 @@ namespace krakoa::scene::ecs
 
 			const ComponentUID uid = manager->GetUniqueID<Component>();
 			auto& comp = components.at(uid);
-			return klib::ToImpl<ComponentWrapper<Component>>(comp);
+
+			if (comp.expired())
+				KRK_FATAL(
+					klib::ToString("Accessing component in entity but no longer in E.C.S.  - \"{0}\"", util::GetTypeNameNoNamespace<Component>())
+				);
+
+			return klib::ToImpl<ComponentWrapper<Component>>(comp.lock());
 		}
 
 		template<typename Component>
@@ -100,7 +106,7 @@ namespace krakoa::scene::ecs
 		UID id;
 		bool selected;
 		bool active;
-		std::unordered_map<ComponentUID, Multi_Ptr<ComponentWrapperBase>> components;
+		std::unordered_map<ComponentUID, Weak_Ptr<ComponentWrapperBase>> components;
 		Multi_Ptr<EntityComponentSystem> manager;
 	};
 }

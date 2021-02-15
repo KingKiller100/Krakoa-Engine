@@ -18,6 +18,9 @@ namespace krakoa::filesystem
 		AssetManager(Token&&);
 		~AssetManager() = default;
 
+		const graphics::FontLibrary& GetFontLibrary() const;
+		graphics::FontLibrary& GetFontLibrary();
+		
 		void LoadFont(const std::filesystem::path& path, float size) const;
 		void LoadFontFamily(const std::string& fontFamily, float size) const;
 		[[nodiscard]] const graphics::Font& GetFont(const std::string& fontFamily, float size, graphics::FontModifiers::underlying_t type) const;

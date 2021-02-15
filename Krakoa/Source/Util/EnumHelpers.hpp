@@ -2,6 +2,9 @@
 
 #include <TypeTraits/TraitsBase.hpp>
 
+#include <Utility/Enum/kEnum.hpp>
+#include <Utility/Enum/kEnumSuper.hpp>
+
 #include <vector>
 #include <bitset>
 #include <functional>

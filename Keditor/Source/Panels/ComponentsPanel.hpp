@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <vector>
+
 #include "iScenePanel.hpp"
 
 #include <Core/PointerTypes.hpp>
@@ -14,6 +16,8 @@ namespace krakoa::scene
 
 	namespace panels
 	{
+		class iComponentProperties;
+
 		class ComponentsPanel final : public iScenePanel
 		{
 		public:
@@ -27,16 +31,11 @@ namespace krakoa::scene
 
 		private:
 			void DisplayComponents(const ecs::EntityUID& id, iScene& scene);
-
-			void DisplayTagComponent(ecs::Entity& entity);
-			void DisplayTransformComponent(ecs::Entity& entity);
-			void DisplayAppearanceComponent(ecs::Entity& entity);
-			void DisplayCameraComponent(ecs::Entity& entity) const;
-
 			void DrawAddComponentButton(iScene& scene, const ecs::EntityUID& id);
 
 		private:
 			Weak_Ptr<ecs::EntityUID> pSelectedEntity;
+			std::vector<Solo_Ptr<iComponentProperties>> properties;
 		};
 	}
 }

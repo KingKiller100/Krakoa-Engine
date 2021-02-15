@@ -13,6 +13,16 @@ namespace krakoa::filesystem
 		VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
 	}
 
+	const graphics::FontLibrary& AssetManager::GetFontLibrary() const
+	{
+		return *fontLib;
+	}
+
+	graphics::FontLibrary& AssetManager::GetFontLibrary()
+	{
+		return *fontLib;
+	}
+
 	void AssetManager::LoadFont(const std::filesystem::path& path, float size) const
 	{
 		fontLib->Load(path, size);

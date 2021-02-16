@@ -74,6 +74,7 @@ namespace krakoa::graphics
 	void FontLibrary::MakeDefault(const std::string& family, float size, Font::Modifiers::underlying_t modifiers)
 	{
 		KRK_PROFILE_FUNCTION();
+		
 		const auto& font = GetFont(family, size, modifiers);
 		MakeDefault(family, font);
 		KRK_INF(klib::ToString("New default font: Font [{0}, {1}] modifier(s) [{2:,}]",

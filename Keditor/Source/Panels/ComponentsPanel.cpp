@@ -66,6 +66,12 @@ namespace krakoa::scene::panels
 	{
 		KRK_PROFILE_FUNCTION();
 
+		const auto winSize = GetWindow().GetDimensions();
+
+		const auto minDim = winSize / kmaths::constants::OneOver<float>(6);
+		const auto maxDim = minDim * 3;
+		
+		ui::SetNextWindowConstraints(minDim, maxDim);
 		DrawPanel("Components", [&]()
 		{
 			if (pSelectedEntity.expired())
@@ -76,7 +82,6 @@ namespace krakoa::scene::panels
 				return;
 
 			DisplayComponents(id, scene);
-
 		});
 	}
 
@@ -103,6 +108,8 @@ namespace krakoa::scene::panels
 
 	void ComponentsPanel::DrawAddComponentButton(iScene& scene, Entity& entity)
 	{
+		//ImGui::PushItemWidth(-1);
+		
 		const char btnName[] = "Add Component";
 
 		DrawButton(btnName, {}, [&]()
@@ -117,5 +124,7 @@ namespace krakoa::scene::panels
 				option->DisplayOption(entity);
 			}
 		});
+
+		// ImGui::PopItemWidth();
 	}
 }

@@ -64,4 +64,11 @@ namespace krakoa::ui
 		callback();
 		PopFont();
 	}
+
+	void SetThemeStyle(StyleColourFlags uiIndex, const graphics::Colour colour)
+	{
+		auto& style = ImGui::GetStyle();
+		const auto fCol = colour.ToFloats();
+		style.Colors[uiIndex.ToUnderlying()] = { fCol.x, fCol.y, fCol.z, fCol.w };
+	}
 }

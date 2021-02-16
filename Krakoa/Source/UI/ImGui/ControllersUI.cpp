@@ -94,12 +94,10 @@ namespace krakoa::ui
 			const auto& btnCol = btnColours[i];
 			auto& val = values[i];
 
-			StyleUI(font, [&]() {
-				btnPressed = DrawButtonWithDrag(btnLabel, buttonSize, btnCol, val, incrementVal,
-					[&]()
-				{
-					val = resetValue;
-				});
+			btnPressed = DrawButtonWithDrag(btnLabel, buttonSize, btnCol, val, font, incrementVal,
+				[&]()
+			{
+				val = resetValue;
 			});
 		}
 
@@ -202,12 +200,10 @@ namespace krakoa::ui
 			const auto btnLabel = btnLabels[i];
 			const auto& btnCol = btnColours[i];
 
-			StyleUI(font, [&]() {
-				btnPressed = DrawButtonWithDrag(btnLabel, buttonSize, btnCol, value[i].GetValue(), 1.f,
-					[&]()
-				{
-					value[i] = 255;
-				});
+			btnPressed = DrawButtonWithDrag(btnLabel, buttonSize, btnCol, value[i].GetValue(), font, 1.f,
+				[&]()
+			{
+				value[i] = 255;
 			});
 		}
 

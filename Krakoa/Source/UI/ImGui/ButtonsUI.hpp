@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../UITypes.hpp"
+#include "../../Graphics/Fonts/Font.hpp"
 
 #include <Maths/Vectors/Vector2.hpp>
 
@@ -24,6 +25,15 @@ namespace krakoa
 			, std::uint32_t& value, float incrementVal, const UICallBack& action);
 		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint8_t> dimensions, graphics::Colour baseColour
 			, std::uint8_t& value, float incrementVal, const UICallBack& action);
+
+		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour, float& value
+		                        , const graphics::Font& font, float incrementVal, const UICallBack& action);
+		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::int32_t> dimensions, graphics::Colour baseColour
+			, std::int32_t& value, const graphics::Font& font, float incrementVal, const UICallBack& action);
+		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint32_t> dimensions, graphics::Colour baseColour
+			, std::uint32_t& value, const graphics::Font& font, float incrementVal, const UICallBack& action);
+		bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint8_t> dimensions, graphics::Colour baseColour
+			, std::uint8_t& value, const graphics::Font& font, float incrementVal, const UICallBack& action);
 	}
 }
 

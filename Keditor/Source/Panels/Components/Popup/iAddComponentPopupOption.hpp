@@ -1,6 +1,7 @@
 #pragma once
-#include "Scene/Entity/Entity.hpp"
-#include "UI/ImGui/UI.hpp"
+
+#include <Scene/Entity/Entity.hpp>
+#include <UI/ImGui/UI.hpp>
 
 namespace krakoa::scene::panels
 {

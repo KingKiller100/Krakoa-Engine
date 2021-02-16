@@ -4,7 +4,6 @@
 #include "StyleUI.hpp"
 #include "ValueDragBoxUI.hpp"
 
-#include "../../Logging/EngineLogger.hpp"
 #include "../../Graphics/Helpers/Colour.hpp"
 
 #include <Utility/String/Tricks/kStringOperators.hpp>
@@ -14,6 +13,63 @@
 
 namespace krakoa::ui
 {
+	namespace
+	{
+		constexpr graphics::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
+
+		template<typename T>
+		bool DrawButtonWithDragImpl(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour,
+			T& value, float incrementVal, const UICallBack& action)
+		{
+			const auto btnColour = baseColour;
+			const auto btnColourHovered = (baseColour + hoveredColourChange);
+			const auto btnColourActive = baseColour;
+
+			bool opened = false;
+
+			StyleUI(StyleColourFlags::Button, btnColour, [&] {
+				StyleUI(StyleColourFlags::ButtonHovered, btnColourHovered, [&] {
+					StyleUI(StyleColourFlags::ButtonActive, btnColourActive, [&] {
+						opened = DrawButton(label, dimensions, action);
+					});
+				});
+			});
+
+			ImGui::SameLine();
+			DrawDragValue(("##" + label).data(), value, incrementVal);
+			ImGui::PopItemWidth();
+
+			return opened;
+		}
+
+		template<typename T>
+		bool DrawButtonWithDragImpl(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour,
+			T& value, const graphics::Font& font, float incrementVal, const UICallBack& action)
+		{
+			const auto btnColour = baseColour;
+			const auto btnColourHovered = (baseColour + hoveredColourChange);
+			const auto btnColourActive = baseColour;
+
+			bool opened = false;
+
+			StyleUI(StyleColourFlags::Button, btnColour, [&] {
+				StyleUI(StyleColourFlags::ButtonHovered, btnColourHovered, [&] {
+					StyleUI(StyleColourFlags::ButtonActive, btnColourActive, [&] {
+						StyleUI(font, [&] {
+							opened = DrawButton(label, dimensions, action);
+						});
+					});
+				});
+			});
+
+			ImGui::SameLine();
+			DrawDragValue(("##" + label).data(), value, incrementVal);
+			ImGui::PopItemWidth();
+
+			return opened;
+		}
+	}
+
 	bool DrawButton(const std::string_view& label, float width, float height, const UICallBack& callback)
 	{
 		if (ImGui::Button(label.data(), { width, height }))
@@ -38,104 +94,51 @@ namespace krakoa::ui
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour,
 		float& value, float incrementVal, const UICallBack& action)
 	{
-		constexpr graphics::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
-
-		const auto btnColour = baseColour;
-		const auto btnColourHovered = (baseColour + hoveredColourChange);
-		const auto btnColourActive = baseColour;
-
-		bool opened = false;
-
-		StyleUI(StyleColourFlags::Button, btnColour, [&] {
-			StyleUI(StyleColourFlags::ButtonHovered, btnColourHovered, [&] {
-				StyleUI(StyleColourFlags::ButtonActive, btnColourActive, [&] {
-					opened = DrawButton(label, dimensions, action);
-				});
-			});
-		});
-
-		ImGui::SameLine();
-		DrawDragValue(("##" + label).data(), value, incrementVal);
-		ImGui::PopItemWidth();
-
-		return opened;
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::int32_t> dimensions,
 		graphics::Colour baseColour, std::int32_t& value, float incrementVal, const UICallBack& action)
 	{
-		constexpr graphics::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
-
-		const auto btnColour = baseColour;
-		const auto btnColourHovered = (baseColour + hoveredColourChange);
-		const auto btnColourActive = baseColour;
-
-		bool opened = false;
-
-		StyleUI(StyleColourFlags::Button, btnColour, [&] {
-			StyleUI(StyleColourFlags::ButtonHovered, btnColourHovered, [&] {
-				StyleUI(StyleColourFlags::ButtonActive, btnColourActive, [&] {
-					opened = DrawButton(label, dimensions, action);
-				});
-			});
-		});
-
-		ImGui::SameLine();
-		DrawDragValue(("##" + label).data(), value, incrementVal);
-		ImGui::PopItemWidth();
-
-		return opened;
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint32_t> dimensions,
 		graphics::Colour baseColour, std::uint32_t& value, float incrementVal, const UICallBack& action)
 	{
-		constexpr graphics::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
-
-		const auto btnColour = baseColour;
-		const auto btnColourHovered = (baseColour + hoveredColourChange);
-		const auto btnColourActive = baseColour;
-
-		bool opened = false;
-
-		StyleUI(StyleColourFlags::Button, btnColour, [&] {
-			StyleUI(StyleColourFlags::ButtonHovered, btnColourHovered, [&] {
-				StyleUI(StyleColourFlags::ButtonActive, btnColourActive, [&] {
-					opened = DrawButton(label, dimensions, action);
-				});
-			});
-		});
-
-		ImGui::SameLine();
-		DrawDragValue(("##" + label).data(), value, incrementVal);
-		ImGui::PopItemWidth();
-
-		return opened;
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint8_t> dimensions,
 		graphics::Colour baseColour, std::uint8_t& value, float incrementVal, const UICallBack& action)
 	{
-		constexpr graphics::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
+	}
 
-		const auto btnColour = baseColour;
-		const auto btnColourHovered = (baseColour + hoveredColourChange);
-		const auto btnColourActive = baseColour;
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions,
+		const graphics::Colour& baseColour, float& value, const graphics::Font& font, float incrementVal,
+		const UICallBack& action)
+	{
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
+	}
 
-		bool opened = false;
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::int32_t> dimensions, graphics::Colour baseColour
+		, std::int32_t& value, const graphics::Font& font, float incrementVal, const UICallBack& action)
+	{
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
+	}
 
-		StyleUI(StyleColourFlags::Button, btnColour, [&] {
-			StyleUI(StyleColourFlags::ButtonHovered, btnColourHovered, [&] {
-				StyleUI(StyleColourFlags::ButtonActive, btnColourActive, [&] {
-					opened = DrawButton(label, dimensions, action);
-				});
-			});
-		});
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint32_t> dimensions,
+		graphics::Colour baseColour, std::uint32_t& value, const graphics::Font& font, float incrementVal,
+		const UICallBack& action)
+	{
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
+	}
 
-		ImGui::SameLine();
-		DrawDragValue(("##" + label).data(), value, incrementVal);
-		ImGui::PopItemWidth();
-
-		return opened;
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint8_t> dimensions,
+		graphics::Colour baseColour, std::uint8_t& value, const graphics::Font& font, float incrementVal,
+		const UICallBack& action)
+	{
+		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
 	}
 }

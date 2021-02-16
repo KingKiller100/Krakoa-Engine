@@ -30,6 +30,8 @@ namespace krakoa
 		void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback);
 		void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback);
 		void StyleUI(const graphics::Font& font, const UICallBack& callback);
+
+		void SetThemeStyle(StyleColourFlags uiIndex, const graphics::Colour colour);
 	}
 }
 

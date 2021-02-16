@@ -10,6 +10,8 @@ namespace krakoa::ui
 	float GetCurrentWindowHeight() noexcept;
 	kmaths::Vector2f GetCurrentWindowDimensions() noexcept;
 
-	
 	kmaths::Vector2f GetContentRegionAvailable() noexcept;
+
+	void SetNextWindowConstraints(kmaths::Vector2f minimum, kmaths::Vector2f maximum);
+	
 }

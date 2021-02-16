@@ -25,4 +25,9 @@ namespace krakoa::ui
 		const auto cra = ImGui::GetContentRegionAvail();
 		return { cra.x, cra.y };
 	}
+
+	void SetNextWindowConstraints(kmaths::Vector2f minimum, kmaths::Vector2f maximum)
+	{
+		ImGui::SetNextWindowSizeConstraints({ minimum.x, minimum.y }, { maximum.x, maximum.y });
+	}
 }

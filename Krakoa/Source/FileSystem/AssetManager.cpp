@@ -34,7 +34,7 @@ namespace krakoa::filesystem
 	}
 
 	const graphics::Font& AssetManager::GetFont(const std::string& fontFamily, float size,
-		graphics::FontModifiers::underlying_t type) const
+		graphics::Font::Modifiers::underlying_t type) const
 	{
 		return *fontLib->GetFont(fontFamily, size, type);
 	}

@@ -26,7 +26,12 @@ namespace krakoa::graphics
 				: value(value)
 			{}
 
-			constexpr std::uint8_t GetValue() const noexcept
+			constexpr const std::uint8_t& GetValue() const noexcept
+			{
+				return value;
+			}
+
+			constexpr std::uint8_t& GetValue() noexcept
 			{
 				return value;
 			}
@@ -314,6 +319,31 @@ namespace krakoa::graphics
 		}
 
 		// Operators
+		USE_RESULT constexpr const ColourComponent& operator[](size_t index) const
+		{
+			switch (index)
+			{
+			case 0: return red;
+			case 1: return green;
+			case 2: return blue;
+			case 3: return alpha;
+			default: std::_Xout_of_range("Bad index to colour component");
+			}
+		}
+		
+		USE_RESULT constexpr ColourComponent& operator[](size_t index)
+		{
+			switch (index)
+			{
+			case 0: return red;
+			case 1: return green;
+			case 2: return blue;
+			case 3: return alpha;
+			default: std::_Xout_of_range("Bad index to colour component");
+			}
+		}
+
+
 		USE_RESULT constexpr Colour operator+(const Colour& c) const noexcept
 		{
 			const auto r = kmaths::Clamp<std::uint8_t>((red + c.red), MinColourValue, MaxColourValue);

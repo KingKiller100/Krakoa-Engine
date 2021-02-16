@@ -20,4 +20,5 @@ namespace krakoa::ui
 		, float columnWidth = 100.f);
 
 	bool DrawColourController(const std::string_view& label, graphics::Colour& value, float columnWidth = 100.f);
+	bool DrawColourController(const std::string_view& label, graphics::Colour& value, const graphics::Font& font, float columnWidth = 100.f);
 }

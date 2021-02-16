@@ -62,11 +62,12 @@ namespace krakoa::graphics
 	{
 		const auto filename = klib::ToLower(path.filename().string());
 		const auto parentPath = path.parent_path().string();
-		const auto folder = parentPath.substr(parentPath.find_last_of(klib::pathSeparator<char>));
+		const auto folder =
+			klib::ToLower(parentPath.substr(parentPath.find_last_of(klib::pathSeparator<char>)));
 
 		modifiers = 0;
 
-		FontModifiers::ForEach([&](const FontModifiers val)
+		Modifiers::ForEach([&](const Modifiers val)
 		{
 			const auto valStr = klib::ToLower(val.ToString());
 			if (klib::Contains(filename, valStr)
@@ -82,7 +83,7 @@ namespace krakoa::graphics
 		return impl == nullptr;
 	}
 
-	FontModifiers::underlying_t Font::GetModifiers() const
+	Font::Modifiers::underlying_t Font::GetModifiers() const
 	{
 		return modifiers;
 	}

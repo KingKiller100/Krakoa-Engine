@@ -1,5 +1,9 @@
 ﻿#include "AppearanceProperties.hpp"
 
+
+
+#include "Core/Application.hpp"
+#include "FileSystem/AssetManager.hpp"
 #include "Scene/Entity/Components/AppearanceComponent.hpp"
 
 namespace krakoa::scene::panels
@@ -25,8 +29,12 @@ namespace krakoa::scene::panels
 			char buffer[1 << 8];
 			klib::type_trait::Traits<char>::Copy(buffer, geoType.ToString(), sizeof(buffer));
 
+			const auto& assetManager = GetApp().GetManager<filesystem::AssetManager>();
+			const auto& fontLib = assetManager.GetFontLibrary();
+			const auto& font = fontLib.GetFont(graphics::Font::Modifiers::Bold);
+			
 			ui::DrawInputTextBox("Geometry", buffer, sizeof(buffer), ui::InputTextFlags::ReadOnly | ui::InputTextFlags::NoMarkEdited);
-			ui::DrawColourController("Colour", colour);
+			ui::DrawColourController("Colour", colour, *font);
 
 			appearance.SetColour(colour);
 		});

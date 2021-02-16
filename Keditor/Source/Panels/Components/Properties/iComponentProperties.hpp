@@ -23,7 +23,7 @@ namespace krakoa {
 				virtual void DisplayProperties(ecs::Entity& entity) = 0;
 			};
 
-			
+
 			template<typename Component, typename UILayoutFunc>
 			void DrawComponent(const std::string_view& name, ecs::Entity& entity
 				, const UILayoutFunc& uiLayoutFunc, bool removable = true)
@@ -34,6 +34,8 @@ namespace krakoa {
 
 				if (!entity.HasComponent<Component>())
 					return;
+
+				const auto contentRegionAvail = GetContentRegionAvailable();
 
 				constexpr auto treeNodeFlags = TreeNodeFlags::DefaultOpen | TreeNodeFlags::Framed
 					| TreeNodeFlags::SpanAvailWidth | TreeNodeFlags::AllowItemOverlap;
@@ -52,7 +54,6 @@ namespace krakoa {
 
 					if (removable)
 					{
-						const auto contentRegionAvail = GetContentRegionAvailable();
 						const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 						DrawSameLine(contentRegionAvail.x - lineHeight * .5f);
 

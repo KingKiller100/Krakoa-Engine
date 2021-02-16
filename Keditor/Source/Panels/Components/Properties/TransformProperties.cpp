@@ -1,6 +1,8 @@
 ﻿#include "TransformProperties.hpp"
 
 #include <Scene/Entity/Components/TransformComponent.hpp>
+#include <Core/Application.hpp>
+#include <FileSystem/AssetManager.hpp>
 
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 
@@ -15,7 +17,7 @@ namespace krakoa::scene::panels
 	void TransformProperties::DisplayProperties(ecs::Entity& entity)
 	{
 		using namespace ecs;
-		
+
 		KRK_PROFILE_FUNCTION();
 
 		DrawComponent<components::TransformComponent>("Transform", entity, [](components::TransformComponent& transform)
@@ -30,9 +32,13 @@ namespace krakoa::scene::panels
 			auto scale = transform.GetScale();
 			auto rotation = ToDegrees(transform.GetRotation());
 
-			ui::DrawVec3Controller("Position", position, btnColours, 0.05f);
-			ui::DrawVec3Controller("Rotation", rotation, btnColours, 0.5f);
-			ui::DrawVec3Controller("Scale", scale, btnColours, 0.5f, 1.f);
+			const auto& assetManager = GetApp().GetManager<filesystem::AssetManager>();
+			const auto& fontLib = assetManager.GetFontLibrary();
+			const auto& font = fontLib.GetFont(graphics::Font::Modifiers::Bold);
+
+			ui::DrawVec3Controller("Position", position, btnColours, *font, 0.05f);
+			ui::DrawVec3Controller("Rotation", rotation, btnColours, *font, 0.5f);
+			ui::DrawVec3Controller("Scale", scale, btnColours, *font, 0.5f, 1.f);
 
 			transform.SetPosition(position);
 			transform.SetRotation(ToRadians(rotation));

@@ -47,6 +47,6 @@ namespace krakoa::scene::ecs
 
 	std::string EntityUID::ToString() const noexcept
 	{
-		return klib::ToString<char>(klib::tags::NoFormatTag{}, id);
+		return klib::ToString("{0}", id);
 	}
 }

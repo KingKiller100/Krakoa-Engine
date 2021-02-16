@@ -23,7 +23,7 @@ namespace krakoa::filesystem
 		
 		void LoadFont(const std::filesystem::path& path, float size) const;
 		void LoadFontFamily(const std::string& fontFamily, float size) const;
-		[[nodiscard]] const graphics::Font& GetFont(const std::string& fontFamily, float size, graphics::FontModifiers::underlying_t type) const;
+		[[nodiscard]] const graphics::Font& GetFont(const std::string& fontFamily, float size, graphics::Font::Modifiers::underlying_t type) const;
 
 		void LoadScript(const klib::Path& path);
 		

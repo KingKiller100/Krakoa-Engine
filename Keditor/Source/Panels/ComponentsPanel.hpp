@@ -16,6 +16,7 @@ namespace krakoa::scene
 
 	namespace panels
 	{
+		class iAddComponentPopupOption;
 		class iComponentProperties;
 
 		class ComponentsPanel final : public iScenePanel
@@ -31,11 +32,15 @@ namespace krakoa::scene
 
 		private:
 			void DisplayComponents(const ecs::EntityUID& id, iScene& scene);
-			void DrawAddComponentButton(iScene& scene, const ecs::EntityUID& id);
+			void DrawAddComponentButton(iScene& scene, ecs::Entity& entity);
 
+			void InitializeProperties();
+			void InitializeAddCompPopupOptions();
+		
 		private:
 			Weak_Ptr<ecs::EntityUID> pSelectedEntity;
 			std::vector<Solo_Ptr<iComponentProperties>> properties;
+			std::vector<Solo_Ptr<iAddComponentPopupOption>> addCompPopupOptions;
 		};
 	}
 }

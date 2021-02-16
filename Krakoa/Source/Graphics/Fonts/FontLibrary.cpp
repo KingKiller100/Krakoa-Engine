@@ -45,7 +45,7 @@ namespace krakoa::graphics
 
 		families[family].insert(font);
 
-		if (font->GetModifiers() & FontModifiers::Regular)
+		if (font->GetModifiers() & Font::Modifiers::Regular)
 			MakeDefault(family, size);
 	}
 
@@ -57,7 +57,7 @@ namespace krakoa::graphics
 		MakeDefault(family, size);
 	}
 
-	void FontLibrary::MakeDefault(const Multi_Ptr<Font>& font)
+	void FontLibrary::MakeDefault(const std::string& family, const Multi_Ptr<Font>& font)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -66,20 +66,22 @@ namespace krakoa::graphics
 
 		auto& io = ImGui::GetIO();
 		io.FontDefault = font->impl;
-		defaultFont = font;
+		
+		defaultFontInfo.font = font;
+		defaultFontInfo.family = family;
 	}
 
-	void FontLibrary::MakeDefault(const std::string& family, float size, FontModifiers::underlying_t modifiers)
+	void FontLibrary::MakeDefault(const std::string& family, float size, Font::Modifiers::underlying_t modifiers)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto& font = GetFont(family, size, modifiers);
-		MakeDefault(font);
+		MakeDefault(family, font);
 		KRK_INF(klib::ToString("New default font: Font [{0}, {1}] modifier(s) [{2:,}]",
 			family
 			, size
-			, util::DecipherEnumBitMask<FontModifiers>(modifiers, [](FontModifiers fm)
+			, util::DecipherEnumBitMask<Font::Modifiers>(modifiers, [](Font::Modifiers fm)
 		{
-			return fm == FontModifiers::None;
+			return fm == Font::Modifiers::None;
 		})
 		));
 	}
@@ -100,6 +102,16 @@ namespace krakoa::graphics
 		return iter->second;
 	}
 
+	Multi_Ptr<Font> FontLibrary::GetFont(Font::Modifiers::underlying_t modifiersMask)
+	{
+		return GetFont(defaultFontInfo.family, defaultFontInfo.font->size, modifiersMask);
+	}
+
+	const Multi_Ptr<Font> FontLibrary::GetFont(Font::Modifiers::underlying_t modifiersMask) const
+	{
+		return GetFont(defaultFontInfo.family, defaultFontInfo.font->size, modifiersMask);
+	}
+
 	// void FontLibrary::Delete(const std::string& fontName)
 	// {
 	// 	const auto iter = families.find(fontName);
@@ -110,7 +122,7 @@ namespace krakoa::graphics
 	// 	families.erase(iter);
 	// }
 
-	const Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, FontModifiers::underlying_t modifiers) const
+	const Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, Font::Modifiers::underlying_t modifiersMask) const
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto& family = GetFamily(name);
@@ -118,7 +130,7 @@ namespace krakoa::graphics
 		Multi_Ptr<Font> font;
 		for (const auto& currentFont : family)
 		{
-			if (currentFont->GetModifiers() & modifiers
+			if (currentFont->GetModifiers() & modifiersMask
 				&& currentFont->GetSize() == size)
 			{
 				font = currentFont;
@@ -126,12 +138,12 @@ namespace krakoa::graphics
 			}
 		}
 
-		KRK_ASSERT(font, klib::ToString("Cannot find font with the requirements: {0}", modifiers));
+		KRK_ASSERT(font, klib::ToString("Cannot find font with the requirements: {0}", modifiersMask));
 
 		return font;
 	}
 
-	Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, FontModifiers::underlying_t modifiersMask)
+	Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, Font::Modifiers::underlying_t modifiersMask)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto& family = GetFamily(name);
@@ -149,10 +161,20 @@ namespace krakoa::graphics
 
 		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired: size={0} modifier(s)=[{1:,}]",
 			modifiersMask
-			, util::DecipherEnumBitMask<FontModifiers>(modifiersMask))
+			, util::DecipherEnumBitMask<Font::Modifiers>(modifiersMask))
 		);
 
 		return font;
+	}
+
+	const Multi_Ptr<Font> FontLibrary::GetFont(float size, Font::Modifiers::underlying_t modifiersMask) const
+	{
+		return GetFont(defaultFontInfo.family, size, modifiersMask);
+	}
+
+	Multi_Ptr<Font> FontLibrary::GetFont(float size, Font::Modifiers::underlying_t modifiersMask)
+	{
+		return GetFont(defaultFontInfo.family, size, modifiersMask);
 	}
 
 	size_t FontLibrary::GetSize() const

@@ -12,7 +12,7 @@
 
 #include <Windows.h>
 
-namespace krakoa::debug::windows
+namespace krakoa::debug::win32
 {
 	ENUM_CLASS(MessageBoxResponse, long,
 		MSGBOX_OKAY = 1,
@@ -26,7 +26,7 @@ namespace krakoa::debug::windows
 		MSGBOX_CONTINUE
 	);
 
-	void RaiseMessageBox_Windows(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept
+	void RaiseMessageBox_Win32(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept
 	{
 		const auto caption = klib::ToString("[Desc] {0}"
 			"\n[File]: {1}"

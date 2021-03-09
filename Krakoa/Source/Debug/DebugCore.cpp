@@ -24,7 +24,7 @@ namespace krakoa::debug
 			, msg);
 		
 #if KRAKOA_OS_WINDOWS
-		windows::RaiseMessageBox_Windows("Krakoa Debug Error", errorMsg, sourceInfo, MB_ABORTRETRYIGNORE | MB_ICONERROR);
+		win32::RaiseMessageBox_Win32("Krakoa Debug Error", errorMsg, sourceInfo, MB_ABORTRETRYIGNORE | MB_ICONERROR);
 #endif
 	}
 

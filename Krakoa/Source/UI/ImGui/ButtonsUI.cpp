@@ -4,7 +4,7 @@
 #include "StyleUI.hpp"
 #include "ValueDragBoxUI.hpp"
 
-#include "../../Graphics/Helpers/Colour.hpp"
+#include "../../Graphics/Colour.hpp"
 
 #include <Utility/String/Tricks/kStringOperators.hpp>
 #include <Utility/String/kToString.hpp>

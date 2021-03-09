@@ -13,7 +13,7 @@
 #include "../../Platform/OpenGL/OpenGLContext.hpp"
 
 #include <Utility/String/kToString.hpp>
-#include <Platform/kPlatform.hpp>
+#include <Utility/Platform/kPlatform.hpp>
 
 #include <GLFW/glfw3.h>
 

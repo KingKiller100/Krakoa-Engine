@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "StyleUI.hpp"
 
-#include "../../Graphics/Helpers/Colour.hpp"
+#include "../../Graphics/Colour.hpp"
 #include "../../Graphics/Fonts/Font.hpp"
 
 #include <imgui.h>

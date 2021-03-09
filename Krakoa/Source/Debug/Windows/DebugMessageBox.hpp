@@ -6,9 +6,9 @@
 
 #if KRAKOA_OS_WINDOWS
 
-namespace krakoa::debug::windows
+namespace krakoa::debug::win32
 {
-	void RaiseMessageBox_Windows(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept;
+	void RaiseMessageBox_Win32(const std::string_view& title, const std::string_view& msg, const klib::SourceInfo& sourceInfo, long optionsMask) noexcept;
 }
 
 #endif

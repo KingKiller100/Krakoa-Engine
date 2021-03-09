@@ -202,7 +202,8 @@ namespace krakoa::filesystem
 			? GetFilesRecursiveImpl(*folder)
 			: folder->files;
 
-		std::erase_if(files, [&](const decltype(files)::value_type& file)
+
+		auto toRemove = std::remove_if( files.begin(), files.end(), [&](const decltype(files)::value_type& file)
 			{
 				if (!file.has_extension())
 				{
@@ -213,6 +214,7 @@ namespace krakoa::filesystem
 
 				return !klib::Contains(ext.string(), extension);
 			});
+		files.erase(toRemove, files.end());
 
 		return files;
 	}

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../../Graphics/Helpers/Colour.hpp"
+#include "../../Graphics/Colour.hpp"
 
 namespace krakoa {
 	namespace graphics {

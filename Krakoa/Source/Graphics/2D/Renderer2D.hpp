@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Helpers/Colour.hpp"
+#include "../Colour.hpp"
 #include "Renderer2DStatistics.hpp"
 
 #include "../../Scene/Entity/Components/AppearanceComponent.hpp"

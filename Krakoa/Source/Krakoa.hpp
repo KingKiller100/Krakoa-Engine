@@ -31,7 +31,7 @@
 #include "Camera/OrthographicCameraController.hpp"
 
 // Colours
-#include "Graphics/Helpers/Colour.hpp"
+#include "Graphics/Colour.hpp"
 
 // File System
 #include "FileSystem/VirtualFileExplorer.hpp"

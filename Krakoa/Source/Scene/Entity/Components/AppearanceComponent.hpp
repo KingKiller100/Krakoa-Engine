@@ -2,7 +2,7 @@
 
 #include "../../../Core/PointerTypes.hpp"
 
-#include "../../../Graphics/Helpers/Colour.hpp"
+#include "../../../Graphics/Colour.hpp"
 #include "../../../Graphics/2D/Textures/iTexture2D.hpp"
 #include "../../../Graphics/2D/Textures/SubTexture2d.hpp"
 

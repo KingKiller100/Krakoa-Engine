@@ -49,8 +49,19 @@ namespace patterns
 		>>
 		static constexpr void Create(Args&& ...params)
 		{
-			if (!instance)
+			if ( !IsActive() )
 				instance = new ThisOrDerived(Token(), std::forward<Args>(params)...);
+		}
+
+		static constexpr void Destroy() noexcept
+		{
+			delete instance;
+			instance = nullptr;
+		}
+		
+		USE_RESULT static constexpr bool IsActive() noexcept
+		{
+			return instance != nullptr;
 		}
 
 	protected:

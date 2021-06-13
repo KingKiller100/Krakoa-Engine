@@ -76,6 +76,13 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
+		libStore.reset(new library::LibraryStore());
+
+		using FT = void(int, long);
+		libStore->Unload("test.dll");
+		KRK_INF("Wow that worked");
+		
+		
 		PushInternalLayers();
 
 		// Initialize InputManager

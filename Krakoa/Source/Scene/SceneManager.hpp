@@ -29,7 +29,7 @@ namespace krakoa
 			std::filesystem::path path;
 		};
 
-		class SceneManager final : public patterns::SimpleStateMachine<SceneRuntimeState>, public patterns::iSingleton
+		class SceneManager final : public patterns::iSingleton, public patterns::SimpleStateMachine<SceneRuntimeState>
 		{
 		public:
 			SceneManager();

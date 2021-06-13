@@ -26,6 +26,8 @@
 
 #include "../Util/UniqueID.hpp"
 
+#include "../Platform/Library/LibraryStore.hpp"
+
 #include <Template/kToImpl.hpp>
 
 #include <memory>
@@ -92,6 +94,8 @@ namespace krakoa
 
 		std::vector<iSingleton*> managers;
 
+		Solo_Ptr<library::LibraryStore> libStore;
+		
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;

@@ -75,10 +75,14 @@ namespace krakoa
 	void Application::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
-
+		constexpr auto libToLoad = "shell32.dll";
+		
 		libStore.reset(new library::LibraryStore());
-
-		using FT = void(int, long);
+		
+		if (!libStore->Exists(libToLoad))
+		{
+			const auto func = libStore->LoadFunc<void()>(libToLoad, "getFunc");
+		}
 		libStore->Unload("test.dll");
 		KRK_INF("Wow that worked");
 		

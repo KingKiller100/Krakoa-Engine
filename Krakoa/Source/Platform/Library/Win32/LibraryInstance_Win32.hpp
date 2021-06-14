@@ -14,7 +14,7 @@ namespace krakoa::library
 		void Load(const char* dllName) override;
 		void Unload() override;
 		bool IsLoaded() const override;
-		void LoadFunction(const char* funcName, void* outFunc) override;
+		void LoadFunction(const char* funcName, void*& outFunc) override;
 
 	private:
 		::HINSTANCE instance;

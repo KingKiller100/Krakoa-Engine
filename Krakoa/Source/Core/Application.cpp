@@ -24,6 +24,7 @@
 #include <Utility/Logging/kLogging.hpp>
 
 #include <chrono>
+#include <Windows.h>
 
 namespace krakoa
 {
@@ -81,9 +82,15 @@ namespace krakoa
 		
 		if (!libStore->Exists(libToLoad))
 		{
-			const auto func = libStore->LoadFunc<void()>(libToLoad, "getFunc");
+			const auto func = libStore->LoadFunc<BOOL(PCWSTR)>(libToLoad, "PathIsExe");
+			const auto myPath = __argv[0];
+			const std::wstring wMyPath = klib::Convert<wchar_t>(myPath);
+			const auto res = func(wMyPath.data()) == TRUE;
+			KRK_INF(klib::ToString("File \"{0}\" is an executable: {1}", myPath, res));
 		}
-		libStore->Unload("test.dll");
+		libStore->Unload(libToLoad);
+		KRK_INF(klib::ToString("Total libraries: {0}", libStore->CountInstances()));
+		KRK_INF(klib::ToString("Total Active libraries: {0}", libStore->CountActiveInstances()));
 		KRK_INF("Wow that worked");
 		
 		

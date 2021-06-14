@@ -24,12 +24,13 @@ namespace krakoa::library
 	void LibraryStore::Unload(const std::string_view& libName)
 	{
 		KRK_PROFILE_FUNCTION();
-		if (Exists(libName))
+		const auto libInfoIter = libraries.find(libName.data());
+		if (libInfoIter != libraries.end())
 		{
-			const auto& lib = libraries.at(libName.data());
+			const auto& lib = libInfoIter->second;
 			KRK_INF(klib::ToString("Unloading library: {0}", libName));
 			lib->Unload();
-			KRK_INF(klib::ToString("Unloaded: {0}", lib->IsLoaded()));
+			KRK_INF(klib::ToString("Unloaded: {0}", !lib->IsLoaded()));
 		}
 	}
 
@@ -63,7 +64,8 @@ namespace krakoa::library
 		size_t count = 0;
 		for (auto&& libInfo : libraries)
 		{
-			if (const auto & lib = libInfo.second; lib->IsLoaded())
+			if (const auto & lib = libInfo.second; 
+				lib->IsLoaded())
 			{
 				++count;
 			}

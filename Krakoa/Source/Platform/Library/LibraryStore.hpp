@@ -26,7 +26,7 @@ namespace krakoa::library
 			
 			FuncT* function = nullptr;
 			const auto& lib = libraries.at(std::string(libName));
-			lib->LoadFunction(funcName, (void*)function);
+			lib->LoadFunction(funcName, (void*&)function);
 
 			if (function == nullptr)
 			{

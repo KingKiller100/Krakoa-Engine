@@ -28,7 +28,10 @@ namespace krakoa::library
 
 	void LibraryInstance_Win32::Unload()
 	{
-		::FreeLibrary(instance);
+		if (::FreeLibrary(instance) != FALSE)
+		{
+			instance = nullptr;
+		}
 	}
 
 	bool LibraryInstance_Win32::IsLoaded() const
@@ -36,7 +39,7 @@ namespace krakoa::library
 		return instance != nullptr && instance != INVALID_HANDLE_VALUE;
 	}
 
-	void LibraryInstance_Win32::LoadFunction(const char* funcName, void* outFunc)
+	void LibraryInstance_Win32::LoadFunction(const char* funcName, void*& outFunc)
 	{
 		outFunc = ::GetProcAddress(instance, funcName);
 	}

@@ -26,7 +26,7 @@
 
 #include "../Util/UniqueID.hpp"
 
-#include "../Platform/Library/LibraryStore.hpp"
+#include "../Platform/OperatingSystem/iOperatingSystemInfo.hpp"
 
 #include <Template/kToImpl.hpp>
 
@@ -78,6 +78,8 @@ namespace krakoa
 			AddManager(Manager::Pointer());
 		}
 
+
+		
 	private:
 		void PushInternalLayers();
 
@@ -94,7 +96,7 @@ namespace krakoa
 
 		std::vector<iSingleton*> managers;
 
-		Solo_Ptr<library::LibraryStore> libStore;
+		Solo_Ptr<os::iOperatingSystemInfo> osInfo;
 		
 	private:
 		ImGuiLayer* pImGuiLayer;

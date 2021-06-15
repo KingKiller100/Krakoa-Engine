@@ -1,6 +1,6 @@
 #pragma once
 
-namespace krakoa::library
+namespace krakoa::os::library
 {
 	class iLibraryInstance
 	{

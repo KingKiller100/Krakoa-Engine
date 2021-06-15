@@ -7,12 +7,14 @@
 #include <unordered_map>
 
 
-namespace krakoa::library
+namespace krakoa::os::library
 {
+	using CreateLibraryInstanceFunc = iLibraryInstance * (const char*);
+	
 	class LibraryStore
 	{
 	public:
-		LibraryStore();
+		LibraryStore(std::function<CreateLibraryInstanceFunc> createFunc);
 		~LibraryStore();
 
 		template<typename FuncT>
@@ -38,6 +40,7 @@ namespace krakoa::library
 		
 		void Unload(const std::string_view& libName);
 		void UnloadAll();
+		void Clear();
 		USE_RESULT bool Exists(const std::string_view& libName);
 		USE_RESULT size_t CountInstances() const;
 		USE_RESULT size_t CountActiveInstances() const;
@@ -48,5 +51,6 @@ namespace krakoa::library
 	
 	private:
 		std::unordered_map<std::string, Solo_Ptr<iLibraryInstance>> libraries;
+		std::function<CreateLibraryInstanceFunc> createInstanceFunc;
 	};	
 }

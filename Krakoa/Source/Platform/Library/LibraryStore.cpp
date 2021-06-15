@@ -1,23 +1,26 @@
 ﻿#include "Precompile.hpp"
 #include "LibraryStore.hpp"
-#include "Win32/LibraryInstance_Win32.hpp"
 
 #include "../../Logging/EngineLogger.hpp"
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
 #include <Utility/String/kToString.hpp>
-#include <Utility/Platform/kPlatform.hpp>
 
-namespace krakoa::library
+namespace krakoa::os::library
 {
-	LibraryStore::LibraryStore()
+	LibraryStore::LibraryStore(std::function<CreateLibraryInstanceFunc> createFunc)
+		: createInstanceFunc(std::move(createFunc))
 	{
 	}
 
 	LibraryStore::~LibraryStore()
 	{
-		UnloadAll();
+		Clear();
+	}
+
+	void LibraryStore::Clear()
+	{
 		libraries.clear();
 	}
 
@@ -44,7 +47,7 @@ namespace krakoa::library
 
 			KRK_INF(klib::ToString("Unloading library: {0}", name));
 			lib->Unload();
-			KRK_INF(klib::ToString("Unloaded: {0}", lib->IsLoaded()));
+			KRK_INF(klib::ToString("Unloaded: {0}", !lib->IsLoaded()));
 		}
 	}
 
@@ -64,7 +67,7 @@ namespace krakoa::library
 		size_t count = 0;
 		for (auto&& libInfo : libraries)
 		{
-			if (const auto & lib = libInfo.second; 
+			if (const auto& lib = libInfo.second;
 				lib->IsLoaded())
 			{
 				++count;
@@ -95,16 +98,11 @@ namespace krakoa::library
 	iLibraryInstance* LibraryStore::CreateLibrary(const std::string_view& libName) const
 	{
 		KRK_PROFILE_FUNCTION();
-		switch (klib::GetPlatform())
+		if (createInstanceFunc == nullptr)
 		{
-		case klib::PlatformOS::WINDOWS_32:
-		case klib::PlatformOS::WINDOWS_64:
-		case klib::PlatformOS::WINDOWS:
-			return new LibraryInstance_Win32(libName.data());
-
-		default:
-			KRK_FATAL(klib::ToString("Attempting to load library on unsupported platform: {0}", libName));
 			return nullptr;
 		}
+
+		return createInstanceFunc(libName.data());
 	}
 }

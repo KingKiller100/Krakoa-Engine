@@ -23,7 +23,6 @@ namespace patterns
 	public:
 		constexpr SimpleSingleton() noexcept
 			= default;
-		virtual ~SimpleSingleton() noexcept = default;
 
 		SimpleSingleton(const SimpleSingleton&) = delete;
 		SimpleSingleton& operator=(const SimpleSingleton&) = delete;

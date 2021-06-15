@@ -4,6 +4,7 @@
 #include "../Core/PointerTypes.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
+#include "../Util/Fmt.hpp"
 
 #include <memory>
 

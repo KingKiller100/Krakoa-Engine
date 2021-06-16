@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "iLibraryInstance.hpp"
-#include "../../Core/PointerTypes.hpp"
-#include "../../Logging/EngineLogger.hpp"
+#include "../../../Core/PointerTypes.hpp"
+#include "../../../Logging/EngineLogger.hpp"
 #include <string>
 #include <functional>
 #include <unordered_map>

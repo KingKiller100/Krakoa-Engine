@@ -1,9 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "LibraryStore.hpp"
 
-#include "../../Logging/EngineLogger.hpp"
-#include "../../Debug/Debug.hpp"
-#include "../../Debug/Instrumentor.hpp"
+#include "../../../Debug/Debug.hpp"
+#include "../../../Debug/Instrumentor.hpp"
 
 #include <Utility/String/kToString.hpp>
 

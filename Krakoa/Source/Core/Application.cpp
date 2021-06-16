@@ -95,16 +95,12 @@ namespace krakoa
 		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
 
 		AddManager(new scene::SceneManager());
-		// Initialize Scene Manager
-
-		graphics::FrameBufferSpecification fbSpec;
-		fbSpec.width = 1024;
-		fbSpec.height = 640;
-		frameBuffer.reset(graphics::iFrameBuffer::Create(fbSpec));
+		
+		frameBuffer.reset(graphics::iFrameBuffer::Create({ 1024, 640, 1, false }));
 
 		auto& assetMan = GetManager<filesystem::AssetManager>();
-		assetMan.LoadFontFamily("Raleway", 18.f);
-		assetMan.LoadFontFamily("Open_Sans", 18.f);
+		assetMan.Initialize();
+		assetMan.GetFontLibrary().MakeDefault("OpenSans", 18.f);
 	}
 
 	void Application::PushInternalLayers()

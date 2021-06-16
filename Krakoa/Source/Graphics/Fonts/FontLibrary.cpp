@@ -4,6 +4,7 @@
 
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
+#include "../../Util/EnumHelpers.hpp"
 
 #include <Utility/String/kToString.hpp> 
 #include <Utility/String/STL/VectorToString.hpp> 
@@ -13,7 +14,6 @@
 #include <imgui.h>
 #include <bitset>
 
-#include "../../Util/EnumHelpers.hpp"
 
 namespace krakoa::graphics
 {
@@ -39,6 +39,9 @@ namespace krakoa::graphics
 
 		const auto font = FontLoader::Load(filepath, size);
 
+		if (font->Empty())
+			return;
+		
 		const auto filename = filepath.stem().string();
 		const auto split = klib::Split(filename, "-");
 		const auto family = split.front();
@@ -160,11 +163,14 @@ namespace krakoa::graphics
 			}
 		}
 
-		KRK_ASSERT(font, klib::ToString("Cannot find font with the desired: size={0} modifier(s)=[{1:,}]",
-			modifiersMask
-			, util::DecipherEnumBitMask<Font::Modifiers>(modifiersMask))
-		);
-
+		if (!font)
+		{
+			KRK_DBG(klib::ToString("Cannot find font with the desired: size={0} modifier(s)=[{1:,}]",
+				modifiersMask
+				, util::DecipherEnumBitMask<Font::Modifiers>(modifiersMask))
+			);
+		}
+		
 		return font;
 	}
 

@@ -17,7 +17,9 @@ namespace krakoa::graphics
 	{
 		KRK_PROFILE_FUNCTION();
 		if (!initialized)
+		{
 			VirtualFileExplorer::Mount("Keditor\\Assets\\Fonts", "Fonts");
+		}
 
 		initialized = true;
 	}

@@ -2,7 +2,7 @@
 #include "OperatingSystemInfoWindows.hpp"
 
 #include "../../../Logging/EngineLogger.hpp"
-#include "../../Library/Windows/LibraryInstance_Windows.hpp"
+#include "../Library/Windows/LibraryInstance_Windows.hpp"
 
 #include <bcrypt.h>
 #include <Windows.h>
@@ -13,7 +13,7 @@
 namespace krakoa::os
 {
 	OperatingSystemInfoWindows::OperatingSystemInfoWindows()
-		: versionInfo({ "Windows", 0, 0, 0 })
+		: versionInfo({ "Windows", klib::PlatformOS::WINDOWS, "", "", 0, 0, 0 })
 		, libStore(nullptr)
 	{
 	}
@@ -24,7 +24,7 @@ namespace krakoa::os
 	void OperatingSystemInfoWindows::Initialize()
 	{
 		KRK_LOG("OS", "Operating System Info");
-		KRK_INF(util::Fmt("Platform: {0}", versionInfo.systemName));
+		KRK_INF(util::Fmt("System: {0}", versionInfo.systemName));
 
 		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iLibraryInstance*
 		{
@@ -64,15 +64,15 @@ namespace krakoa::os
 			}
 			else
 			{
-				KRK_INF(util::Fmt("Platform: {0}", platformTypeStrings[osInfo.dwPlatformId]));
-				KRK_INF(util::Fmt("Product: {0}", productTypeStrings[osInfo.wProductType - 1]));
+				versionInfo.platformID = platformTypeStrings[osInfo.dwPlatformId];
+				versionInfo.productType = productTypeStrings[osInfo.wProductType];
 
 				versionInfo.major = osInfo.dwMajorVersion;
 				versionInfo.minor = osInfo.dwMinorVersion;
 				versionInfo.buildNo = osInfo.dwBuildNumber;
 			}
 
-			KRK_INF("Source: "  QUICK_TEXTIFY(RtlGetVersionFunc(&osInfo)));
+			KRK_DBG("Source: "  QUICK_TEXTIFY(RtlGetVersionFunc(&osInfo)));
 		}
 		else
 		{
@@ -86,15 +86,15 @@ namespace krakoa::os
 			}
 			else
 			{
-				KRK_INF(util::Fmt("Platform: {0}", platformTypeStrings[os_version_info.dwPlatformId]));
-				KRK_INF(util::Fmt("Product: {0}", IsWindowsServer() ? "Server" : "Work Station"));
+				versionInfo.platformID = platformTypeStrings[os_version_info.dwPlatformId];
+				versionInfo.productType = IsWindowsServer() ? "Server" : "Work Station";
 
 				versionInfo.major = os_version_info.dwMajorVersion;
 				versionInfo.minor = os_version_info.dwMinorVersion;
 				versionInfo.buildNo = os_version_info.dwBuildNumber;
 			}
 
-			KRK_INF("Source: "  QUICK_TEXTIFY(GetVersionEx((OSVERSIONINFO*)&os_version_info)));
+			KRK_DBG("Source: "  QUICK_TEXTIFY(GetVersionEx((OSVERSIONINFO*)&os_version_info)));
 		}
 	}
 

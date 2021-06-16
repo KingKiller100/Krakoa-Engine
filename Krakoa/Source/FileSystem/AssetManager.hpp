@@ -18,6 +18,8 @@ namespace krakoa::filesystem
 		AssetManager(Token&&);
 		~AssetManager() = default;
 
+		void Initialize() const;
+		
 		const graphics::FontLibrary& GetFontLibrary() const;
 		graphics::FontLibrary& GetFontLibrary();
 		

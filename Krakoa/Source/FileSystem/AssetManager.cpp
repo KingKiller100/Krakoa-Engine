@@ -10,7 +10,22 @@ namespace krakoa::filesystem
 	AssetManager::AssetManager(Token&&)
 		: fontLib(new graphics::FontLibrary())
 	{
+	}
+
+	void AssetManager::Initialize() const
+	{
 		VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
+
+		static constexpr float typicalFontSizes[] = { 12, 16, 18, /*24, 28, 36, 48, 60, 72*/ };
+		
+		const auto files = VirtualFileExplorer::GetFiles("Fonts", ".ttf", FileSearchMode::RECURSIVE);
+		for (auto&& file : files)
+		{
+			for (auto size : typicalFontSizes)
+			{
+				LoadFont(file, size);
+			}
+		}
 	}
 
 	const graphics::FontLibrary& AssetManager::GetFontLibrary() const

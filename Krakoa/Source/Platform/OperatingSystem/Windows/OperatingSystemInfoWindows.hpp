@@ -12,7 +12,7 @@ namespace krakoa::os
 
 		void Initialize() override;
 		void Shutdown() override;
-		[[nodiscard]] VersionInfo GetVersionInfo() const noexcept override;
+		[[nodiscard]] const VersionInfo& GetVersionInfo() const noexcept override;
 		[[nodiscard]] library::LibraryStore& GetLibraryStore() noexcept override;
 
 	private:

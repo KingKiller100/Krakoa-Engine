@@ -10,10 +10,10 @@ namespace krakoa::graphics
 {
 	class iShader;
 
-	class ShaderLibrary : public patterns::ManagerBase<ShaderLibrary>
+	class ShaderLibrary
 	{
 	public:
-		ShaderLibrary(Token&&);
+		ShaderLibrary();
 		~ShaderLibrary();
 
 		void Initialize() const;

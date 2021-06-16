@@ -13,7 +13,7 @@
 
 namespace krakoa::graphics
 {
-	ShaderLibrary::ShaderLibrary(Token &&)
+	ShaderLibrary::ShaderLibrary()
 	{}
 
 	ShaderLibrary::~ShaderLibrary()

@@ -23,18 +23,12 @@ namespace krakoa::os
 
 	void OperatingSystemInfoWindows::Initialize()
 	{
-		KRK_LOG("OS", "Operating System Info");
-		KRK_INF(util::Fmt("System: {0}", versionInfo.systemName));
-
 		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iLibraryInstance*
 		{
 			return new library::LibraryInstance_Windows(libName);
 		}));
 
 		LoadVersionInfo();
-
-		KRK_INF(util::Fmt("Version No: {0}.{1}.{2}", versionInfo.major, versionInfo.minor, versionInfo.buildNo));
-		KRK_LOG("OS", "Operating System Info Concluded");
 	}
 
 	void OperatingSystemInfoWindows::Shutdown()
@@ -65,7 +59,7 @@ namespace krakoa::os
 			else
 			{
 				versionInfo.platformID = platformTypeStrings[osInfo.dwPlatformId];
-				versionInfo.productType = productTypeStrings[osInfo.wProductType];
+				versionInfo.productType = productTypeStrings[osInfo.wProductType - 1];
 
 				versionInfo.major = osInfo.dwMajorVersion;
 				versionInfo.minor = osInfo.dwMinorVersion;
@@ -98,7 +92,7 @@ namespace krakoa::os
 		}
 	}
 
-	VersionInfo OperatingSystemInfoWindows::GetVersionInfo() const noexcept
+	const VersionInfo& OperatingSystemInfoWindows::GetVersionInfo() const noexcept
 	{
 		return versionInfo;
 	}

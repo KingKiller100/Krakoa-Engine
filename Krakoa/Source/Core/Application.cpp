@@ -81,6 +81,7 @@ namespace krakoa
 
 		osInfo.reset(os::CreateOperatingSystemInfo());
 		osInfo->Initialize();
+		LogOSInfo();
 		
 		PushInternalLayers();
 
@@ -89,10 +90,8 @@ namespace krakoa
 		AddManager(input::InputManager::Pointer());
 
 		RegisterManager<filesystem::AssetManager>();
-
-		// Initialize Graphics Stuff
-		RegisterManager<graphics::ShaderLibrary>();
-		graphics::Renderer::Initialize(graphics::ShaderLibrary::Reference());
+		
+		graphics::Renderer::Initialize();
 
 		AddManager(new scene::SceneManager());
 		
@@ -101,6 +100,13 @@ namespace krakoa
 		auto& assetMan = GetManager<filesystem::AssetManager>();
 		assetMan.Initialize();
 		assetMan.GetFontLibrary().MakeDefault("OpenSans", 18.f);
+	}
+
+	void Application::LogOSInfo() const
+	{
+		const auto& vi = osInfo->GetVersionInfo();
+		KRK_LOG("OS", util::Fmt("{0} {1}.{2}.{3}", vi.systemName, vi.major, vi.minor, vi.buildNo));
+		KRK_LOG("OS", util::Fmt("{0}-{1}", vi.platformID, vi.productType));
 	}
 
 	void Application::PushInternalLayers()

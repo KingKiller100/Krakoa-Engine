@@ -47,7 +47,6 @@ namespace krakoa
 		void Close() noexcept;
 		USE_RESULT bool IsRunning() const;
 
-
 		iWindow& GetWindow() const;
 		graphics::iFrameBuffer& GetFrameBuffer() const;
 		ImGuiLayer& GetImGuiLayer() const;
@@ -64,6 +63,8 @@ namespace krakoa
 		void PopLayer(LayerBase* layer);
 		void PopOverlay(LayerBase* overlay);
 
+		void LogOSInfo() const;
+		
 		template<typename Manager>
 		void AddManager(Manager* ptr)
 		{
@@ -78,8 +79,6 @@ namespace krakoa
 			AddManager(Manager::Pointer());
 		}
 
-
-		
 	private:
 		void PushInternalLayers();
 

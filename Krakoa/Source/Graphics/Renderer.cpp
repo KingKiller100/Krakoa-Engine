@@ -11,18 +11,20 @@
 
 namespace krakoa::graphics
 {
+	ShaderLibrary Renderer::shaderLib;
+	
 	namespace
 	{
 		const kmaths::Matrix4x4f* camera_VPMat = nullptr;
 	}
 	
-	void Renderer::Initialize(ShaderLibrary& shaderLibrary)
+	void Renderer::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
 		KRK_LOG("Graphics", "Architecture Info");
 		RenderCommand::Initialize();
-		shaderLibrary.Initialize();
-		Renderer2D::Initialize(shaderLibrary);
+		shaderLib.Initialize();
+		Renderer2D::Initialize(shaderLib);
 		KRK_LOG("Graphics", "Architecture Info Concluded");
 	}
 

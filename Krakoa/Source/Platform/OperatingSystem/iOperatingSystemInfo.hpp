@@ -27,7 +27,7 @@ namespace krakoa::os
 
 		virtual void Initialize() = 0;
 		virtual void Shutdown() = 0;
-		USE_RESULT virtual VersionInfo GetVersionInfo() const noexcept = 0;
+		USE_RESULT virtual const VersionInfo& GetVersionInfo() const noexcept = 0;
 		USE_RESULT virtual library::LibraryStore& GetLibraryStore() noexcept = 0;
 	};
 

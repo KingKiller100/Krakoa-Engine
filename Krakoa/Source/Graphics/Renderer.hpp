@@ -14,7 +14,7 @@ namespace krakoa::graphics
 	class Renderer
 	{
 	public:
-		static void Initialize(ShaderLibrary& shaderLibrary);
+		static void Initialize();
 		static void ShutDown();
 
 		static void OnWindowResize(const int x, const int y, const int width, const int height)  noexcept;
@@ -31,7 +31,7 @@ namespace krakoa::graphics
 
 		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
 
-	// private:
-	// 	static const kmaths::Matrix4x4f* camera_VPMat;
+	private:
+		static ShaderLibrary shaderLib;;
 	};
 }

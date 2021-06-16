@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "OperatingSystemInfoWindows.hpp"
 
-#include "../../../Logging/EngineLogger.hpp"
+#include "../LogOS.hpp"
 #include "../Library/Windows/LibraryInstance_Windows.hpp"
 
 #include <bcrypt.h>
@@ -15,6 +15,7 @@ namespace krakoa::os
 	OperatingSystemInfoWindows::OperatingSystemInfoWindows()
 		: versionInfo({ "Windows", klib::PlatformOS::WINDOWS, "", "", 0, 0, 0 })
 		, libStore(nullptr)
+		, errorHandler(nullptr)
 	{
 	}
 
@@ -23,6 +24,8 @@ namespace krakoa::os
 
 	void OperatingSystemInfoWindows::Initialize()
 	{
+		errorHandler.reset(errors::CreateErrorHandler());
+		
 		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iLibraryInstance*
 		{
 			return new library::LibraryInstance_Windows(libName);
@@ -54,7 +57,7 @@ namespace krakoa::os
 			osInfo.dwOSVersionInfoSize = sizeof(osInfo);
 			if (rtlGetVersionFunc(&osInfo) != 0) // 0 denotes success?
 			{
-				KRK_ERR("Unable to retrieve version info from system: ");
+				LogOSError("Unable to retrieve version info from system: ");
 			}
 			else
 			{
@@ -76,7 +79,7 @@ namespace krakoa::os
 
 			if (::GetVersionEx((OSVERSIONINFO*)&os_version_info) != 0)
 			{
-				KRK_ERR("Unable to retrieve version info from system");
+				LogOSError("Unable to retrieve version info from system");
 			}
 			else
 			{
@@ -102,4 +105,8 @@ namespace krakoa::os
 		return *libStore;
 	}
 
+	errors::iErrorHandler& OperatingSystemInfoWindows::GetErrorHandler() noexcept
+	{
+		return *errorHandler;
+	}
 }

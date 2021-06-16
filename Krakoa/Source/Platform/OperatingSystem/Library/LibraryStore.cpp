@@ -4,14 +4,13 @@
 #include "../../../Debug/Debug.hpp"
 #include "../../../Debug/Instrumentor.hpp"
 
-#include <Utility/String/kToString.hpp>
+#include "../../../Util/Fmt.hpp"
 
 namespace krakoa::os::library
 {
 	LibraryStore::LibraryStore(std::function<CreateLibraryInstanceFunc> createFunc)
 		: createInstanceFunc(std::move(createFunc))
-	{
-	}
+	{}
 
 	LibraryStore::~LibraryStore()
 	{
@@ -30,9 +29,9 @@ namespace krakoa::os::library
 		if (libInfoIter != libraries.end())
 		{
 			const auto& lib = libInfoIter->second;
-			KRK_INF(klib::ToString("Unloading library: {0}", libName));
+			LogOS(util::Fmt("Unloading library: {0}", libName));
 			lib->Unload();
-			KRK_INF(klib::ToString("Unloaded: {0}", !lib->IsLoaded()));
+			LogOS(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
 		}
 	}
 
@@ -44,9 +43,9 @@ namespace krakoa::os::library
 			const auto& name = libInfo.first;
 			const auto& lib = libInfo.second;
 
-			KRK_INF(klib::ToString("Unloading library: {0}", name));
+			LogOS(util::Fmt("Unloading library: {0}", name));
 			lib->Unload();
-			KRK_INF(klib::ToString("Unloaded: {0}", !lib->IsLoaded()));
+			LogOS(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
 		}
 	}
 
@@ -83,13 +82,13 @@ namespace krakoa::os::library
 			return true;
 		}
 
-		KRK_INF(klib::ToString("Loading library: {0}", libName));
+		LogOS(util::Fmt("Loading library: {0}", libName));
 
 		const auto lib = CreateLibrary(libName);
 		libraries.emplace(libName.data(), lib);
 		const auto loaded = lib->IsLoaded();
 
-		loaded ? KRK_DBG("Library loaded") : KRK_WRN("Library load failed");
+		loaded ? KRK_DBG("Library loaded") : LogOSError("Library load failed");
 
 		return loaded;
 	}

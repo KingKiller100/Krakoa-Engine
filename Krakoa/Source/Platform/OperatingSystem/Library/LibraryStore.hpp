@@ -1,7 +1,10 @@
 ﻿#pragma once
 #include "iLibraryInstance.hpp"
+
+#include "../LogOS.hpp"
 #include "../../../Core/PointerTypes.hpp"
 #include "../../../Logging/EngineLogger.hpp"
+
 #include <string>
 #include <functional>
 #include <unordered_map>
@@ -32,7 +35,7 @@ namespace krakoa::os::library
 
 			if (function == nullptr)
 			{
-				KRK_ERR(klib::ToString("Unable to load function \"{0}\" from library \"{1}\"", funcName, libName));
+				LogOSError(klib::ToString("Unable to load function \"{0}\" from library \"{1}\"", funcName, libName));
 			}
 			
 			return function;
@@ -48,6 +51,7 @@ namespace krakoa::os::library
 	private:
 		bool Load(const std::string_view& libName);
 		USE_RESULT iLibraryInstance* CreateLibrary(const std::string_view& libName) const;
+
 	
 	private:
 		std::unordered_map<std::string, Solo_Ptr<iLibraryInstance>> libraries;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Library/LibraryStore.hpp"
+#include "ErrorHandler/iErrorHandler.hpp"
 
 #include <HelperMacros.hpp>
 #include <Utility/Platform/kPlatform.hpp>
@@ -29,6 +30,7 @@ namespace krakoa::os
 		virtual void Shutdown() = 0;
 		USE_RESULT virtual const VersionInfo& GetVersionInfo() const noexcept = 0;
 		USE_RESULT virtual library::LibraryStore& GetLibraryStore() noexcept = 0;
+		USE_RESULT virtual errors::iErrorHandler& GetErrorHandler() noexcept = 0;
 	};
 
 	iOperatingSystemInfo* CreateOperatingSystemInfo();

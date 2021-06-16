@@ -8,18 +8,20 @@ namespace krakoa::os
 	{
 	public:
 		OperatingSystemInfoWindows();
-		~OperatingSystemInfoWindows();
+		~OperatingSystemInfoWindows() override;
 
 		void Initialize() override;
 		void Shutdown() override;
 		[[nodiscard]] const VersionInfo& GetVersionInfo() const noexcept override;
 		[[nodiscard]] library::LibraryStore& GetLibraryStore() noexcept override;
+		[[nodiscard]] errors::iErrorHandler& GetErrorHandler() noexcept override;
 
 	private:
 		void LoadVersionInfo();
-		
+
 	private:
 		VersionInfo versionInfo;
 		Solo_Ptr<library::LibraryStore> libStore;
+		Solo_Ptr<errors::iErrorHandler> errorHandler;
 	};
 }

@@ -71,9 +71,7 @@ inline void Launch()
 	KRK_PROFILE_SESSION_END();
 
 	KRK_PROFILE_SESSION_BEGIN("RunTime", "KRK_PROFILER-Runtime");
-	do {
-		pApp->Run();
-	} while (pApp->IsRunning());
+	pApp->Run();
 	KRK_PROFILE_SESSION_END();
 
 	KRK_PROFILE_SESSION_BEGIN("ShutDown", "KRK_PROFILER-ShutDown");

@@ -48,33 +48,6 @@ namespace krakoa
 	Application::~Application()
 		= default;
 
-	void Application::ShutDown()
-	{
-		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
-		graphics::Renderer::ShutDown();
-
-		for (auto* manager : managers)
-		{
-			if (manager)
-			{
-				delete manager;
-				manager = nullptr;
-			}
-		}
-
-		const auto appTimeSpan = timeStep.GetLifeTimeTimeSpan();
-
-		KRK_NRM(klib::ToString("Total Runtime: {0}h {1}m {2}s",
-			appTimeSpan.hours.count()
-			, appTimeSpan.minutes.count()
-			, appTimeSpan.seconds.count()
-		));
-
-		osInfo->Shutdown();
-		
-		KRK_LOG_END();
-	}
-
 	void Application::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
@@ -82,7 +55,11 @@ namespace krakoa
 		osInfo.reset(os::CreateOperatingSystemInfo());
 		osInfo->Initialize();
 		LogOSInfo();
-		
+		osInfo->GetErrorHandler().SetEmergencyExitFunc([this]()
+		{
+			this->ShutDown();
+		});
+
 		PushInternalLayers();
 
 		// Initialize InputManager
@@ -90,11 +67,11 @@ namespace krakoa
 		AddManager(input::InputManager::Pointer());
 
 		RegisterManager<filesystem::AssetManager>();
-		
+
 		graphics::Renderer::Initialize();
 
 		AddManager(new scene::SceneManager());
-		
+
 		frameBuffer.reset(graphics::iFrameBuffer::Create({ 1024, 640, 1, false }));
 
 		auto& assetMan = GetManager<filesystem::AssetManager>();
@@ -105,8 +82,9 @@ namespace krakoa
 	void Application::LogOSInfo() const
 	{
 		const auto& vi = osInfo->GetVersionInfo();
-		KRK_LOG("OS", util::Fmt("{0} {1}.{2}.{3}", vi.systemName, vi.major, vi.minor, vi.buildNo));
-		KRK_LOG("OS", util::Fmt("{0}-{1}", vi.platformID, vi.productType));
+		KRK_LOG("OS", util::Fmt("System: {0} {1}.{2}.{3}", vi.systemName, vi.major, vi.minor, vi.buildNo));
+		KRK_LOG("OS", util::Fmt("Platform: {0}", vi.platformID));
+		KRK_LOG("OS", util::Fmt("Product: {0}", vi.productType));
 	}
 
 	void Application::PushInternalLayers()
@@ -144,8 +122,70 @@ namespace krakoa
 		const auto width = CAST(int, e.GetWidth());
 		const auto height = CAST(int, e.GetHeight());
 		graphics::Renderer::OnWindowResize(0, 0, width, height);
-		KRK_DBG(klib::ToString("Resizing window event: ({0}, {1})", width, height));
+		KRK_DBG(util::Fmt("Resizing window event: ({0}, {1})", width, height));
 		return false;
+	}
+
+	void Application::Run() const
+	{
+		try
+		{
+			do {
+				const auto deltaTime = timeStep.GetStep();
+				auto& sceneManager = GetManager<scene::SceneManager>();
+
+				if (input::InputManager::IsKeyPressed(input::KEY_V))
+					pImGuiLayer->ToggleVisibility();
+
+				if (!isMinimized)
+				{
+					layerStack.OnUpdate(deltaTime);
+				}
+
+				frameBuffer->Bind();
+				graphics::Renderer::Update();
+				sceneManager.OnUpdate(deltaTime);
+				frameBuffer->Unbind();
+
+				pImGuiLayer->BeginDraw();
+				layerStack.OnRender();
+				pImGuiLayer->EndDraw();
+
+				pWindow->OnUpdate();
+			} while (IsRunning());
+		}
+		catch (const std::exception& e)
+		{
+			KRK_ERR(util::Fmt("[Exception] {0}", e.what()));
+			osInfo->GetErrorHandler().EmergencyExit();
+		}
+	}
+
+	void Application::ShutDown()
+	{
+		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
+		graphics::Renderer::ShutDown();
+
+		for (auto* manager : managers)
+		{
+			if (manager)
+			{
+				delete manager;
+				manager = nullptr;
+			}
+		}
+
+		const auto appTimeSpan = timeStep.GetLifeTimeTimeSpan();
+
+		KRK_NRM(klib::ToString("Total Runtime: {0}h {1}m {2}s",
+			appTimeSpan.hours.count()
+			, appTimeSpan.minutes.count()
+			, appTimeSpan.seconds.count()
+		));
+
+		osInfo->Shutdown();
+
+		KRK_LOG_END();
 	}
 
 	void Application::PushLayer(LayerBase* layer)
@@ -172,31 +212,6 @@ namespace krakoa
 		layerStack.PopOverlay(overlay);
 	}
 
-	void Application::Run() const
-	{
-		const auto deltaTime = timeStep.GetStep();
-		auto& sceneManager = GetManager<scene::SceneManager>();
-
-		if (input::InputManager::IsKeyPressed(input::KEY_V))
-			pImGuiLayer->ToggleVisibility();
-
-		if (!isMinimized)
-		{
-			layerStack.OnUpdate(deltaTime);
-		}
-
-		frameBuffer->Bind();
-		graphics::Renderer::Update();
-		sceneManager.OnUpdate(deltaTime);
-		frameBuffer->Unbind();
-
-		pImGuiLayer->BeginDraw();
-		layerStack.OnRender();
-		pImGuiLayer->EndDraw();
-
-		pWindow->OnUpdate();
-	}
-
 	void Application::Close() noexcept
 	{
 		isRunning = false;
@@ -221,7 +236,7 @@ namespace krakoa
 	{
 		return *pImGuiLayer;
 	}
-	
+
 	Application& GetApp()
 	{
 		return Application::Reference();

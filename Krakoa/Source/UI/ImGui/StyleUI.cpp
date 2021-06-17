@@ -23,7 +23,7 @@ namespace krakoa::ui
 		ImGui::PopStyleVar(static_cast<int>(count));
 	}
 
-	void PushStyleColour(StyleColourFlags index, const graphics::Colour& colour)
+	void PushStyleColour(StyleColourFlags index, const gfx::Colour& colour)
 	{
 		const auto fColour = colour.ToFloats();
 		ImGui::PushStyleColor(index.ToUnderlying(), { fColour.x, fColour.y, fColour.z, fColour.w });
@@ -34,7 +34,7 @@ namespace krakoa::ui
 		ImGui::PopStyleColor(static_cast<int>(count));
 	}
 
-	void PushFont(const graphics::Font& font)
+	void PushFont(const gfx::Font& font)
 	{
 		ImGui::PushFont(font);
 	}
@@ -51,21 +51,21 @@ namespace krakoa::ui
 		PopStyleVar();
 	}
 
-	void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback)
+	void StyleUI(StyleColourFlags index, const gfx::Colour& colour, const UICallBack& callback)
 	{
 		PushStyleColour(index, colour);
 		callback();
 		PopStyleColour();
 	}
 
-	void StyleUI(const graphics::Font& font, const UICallBack& callback)
+	void StyleUI(const gfx::Font& font, const UICallBack& callback)
 	{
 		PushFont(font);
 		callback();
 		PopFont();
 	}
 
-	void SetThemeStyle(StyleColourFlags uiIndex, const graphics::Colour colour)
+	void SetThemeStyle(StyleColourFlags uiIndex, const gfx::Colour colour)
 	{
 		auto& style = ImGui::GetStyle();
 		const auto fCol = colour.ToFloats();

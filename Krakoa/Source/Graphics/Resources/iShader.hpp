@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	struct ShaderSource
 	{

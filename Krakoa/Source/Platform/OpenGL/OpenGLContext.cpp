@@ -8,7 +8,7 @@
 #include <GLAD/glad.h>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	OpenGLContext::OpenGLContext(GLFWwindow * _windowHandle)
 		: windowHandle(_windowHandle)

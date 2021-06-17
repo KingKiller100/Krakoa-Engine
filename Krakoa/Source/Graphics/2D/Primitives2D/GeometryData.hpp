@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	struct GeometricData
 	{

@@ -8,9 +8,9 @@
 
 #include "../../Debug/Debug.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
-	GLenum ShaderDataTypeToRenderAPIBaseType(graphics::ShaderDataType type)
+	GLenum ShaderDataTypeToRenderAPIBaseType(gfx::ShaderDataType type)
 	{
 		KRK_PROFILE_FUNCTION();
 		switch (type) {

@@ -4,7 +4,7 @@
 
 #include "../../Patterns/MemoryTracker.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class iVertexArray : public patterns::MemoryTracker<iVertexArray>
 	{

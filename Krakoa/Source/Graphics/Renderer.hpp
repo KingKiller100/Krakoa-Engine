@@ -6,7 +6,7 @@
 
 namespace krakoa { class OrthographicCamera; }
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class iShader;
 	class ShaderLibrary;
@@ -32,6 +32,6 @@ namespace krakoa::graphics
 		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
 
 	private:
-		static ShaderLibrary shaderLib;;
+		static ShaderLibrary s_ShaderLib;
 	};
 }

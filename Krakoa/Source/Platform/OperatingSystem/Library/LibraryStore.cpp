@@ -31,7 +31,7 @@ namespace krakoa::os::library
 			const auto& lib = libInfoIter->second;
 			LogOS(util::Fmt("Unloading library: {0}", libName));
 			lib->Unload();
-			LogOS(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
+			KRK_DBG(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
 		}
 	}
 
@@ -45,7 +45,7 @@ namespace krakoa::os::library
 
 			LogOS(util::Fmt("Unloading library: {0}", name));
 			lib->Unload();
-			LogOS(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
+			KRK_DBG(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
 		}
 	}
 

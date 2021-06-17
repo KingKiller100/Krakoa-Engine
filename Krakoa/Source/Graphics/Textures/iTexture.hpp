@@ -7,7 +7,7 @@
 #include <cstdint>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class iTexture
 	{

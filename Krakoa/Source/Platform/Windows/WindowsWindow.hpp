@@ -36,7 +36,7 @@ namespace krakoa
 
 	private:
 		GLFWwindow *window;
-		std::unique_ptr<graphics::iContext> pRenderContext;
+		std::unique_ptr<gfx::iContext> pRenderContext;
 
 		struct WindowData
 		{

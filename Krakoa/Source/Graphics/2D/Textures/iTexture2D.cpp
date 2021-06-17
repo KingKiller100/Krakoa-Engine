@@ -11,7 +11,7 @@
 // #include <Utility/String/kStringTricks.hpp>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	iTexture2D* iTexture2D::Create(const uint32_t width, const uint32_t height)
 	{

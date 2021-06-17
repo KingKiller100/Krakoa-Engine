@@ -1,6 +1,6 @@
 #pragma once
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class iContext
 	{

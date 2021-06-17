@@ -1,5 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "Renderer.hpp"
+
+#include "LogGraphics.hpp"
 #include "RenderCommand.hpp"
 
 #include "2D/Renderer2D.hpp"
@@ -9,23 +11,23 @@
 #include "../Camera/OrthographicCamera.hpp"
 #include "../Graphics/Resources/iShader.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
-	ShaderLibrary Renderer::shaderLib;
-	
+	ShaderLibrary Renderer::s_ShaderLib;
+
 	namespace
 	{
 		const kmaths::Matrix4x4f* camera_VPMat = nullptr;
 	}
-	
+
 	void Renderer::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
-		KRK_LOG("Graphics", "Architecture Info");
+		LogGFX("Architecture Info:");
 		RenderCommand::Initialize();
-		shaderLib.Initialize();
-		Renderer2D::Initialize(shaderLib);
-		KRK_LOG("Graphics", "Architecture Info Concluded");
+		s_ShaderLib.Initialize();
+		Renderer2D::Initialize(s_ShaderLib);
+		// LogGFX("Architecture Info Concluded");
 	}
 
 	void Renderer::ShutDown()
@@ -64,9 +66,9 @@ namespace krakoa::graphics
 	void Renderer::Update()
 	{
 		KRK_PROFILE_FUNCTION();
-		
+
 #ifdef KRAKOA_DEBUG
-		SetClearColour(colours::Orange); 
+		SetClearColour(colours::Orange);
 #else
 		SetClearColour({ 0.05f, 0.05f, 0.05f, 1.f }); // Black background colour
 #endif // DEBUG

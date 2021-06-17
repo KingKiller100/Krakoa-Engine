@@ -2,7 +2,7 @@
 #include "BufferLayout.hpp"
 #include "../../Debug/Debug.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	uint32_t GetComponentCount(ShaderDataType type)
 	{

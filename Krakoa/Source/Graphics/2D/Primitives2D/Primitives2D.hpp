@@ -8,7 +8,7 @@
 
 #include "../../../Patterns/ManagerBase.hpp"
 
-namespace krakoa::graphics::_2D
+namespace krakoa::gfx::_2D
 {
 	struct PrimitivesData 
 	{

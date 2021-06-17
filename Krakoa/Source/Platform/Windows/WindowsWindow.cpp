@@ -87,7 +87,7 @@ namespace krakoa
 
 
 #if defined(KRAKOA_DEBUG)
-		if (graphics::Renderer::GetAPI() == graphics::iRendererAPI::API::OPENGL)
+		if (gfx::Renderer::GetAPI() == gfx::iRendererAPI::API::OPENGL)
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 		
@@ -96,7 +96,7 @@ namespace krakoa
 		
 		KRK_ASSERT(window != nullptr, "Window pointer not created");
 
-		pRenderContext = std::make_unique<graphics::OpenGLContext>(window);
+		pRenderContext = std::make_unique<gfx::OpenGLContext>(window);
 		pRenderContext->Init();
 
 		glfwSetWindowUserPointer(window, &data);

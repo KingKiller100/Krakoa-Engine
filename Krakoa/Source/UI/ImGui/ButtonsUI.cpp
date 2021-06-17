@@ -15,10 +15,10 @@ namespace krakoa::ui
 {
 	namespace
 	{
-		constexpr graphics::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
+		constexpr gfx::Colour hoveredColourChange = kmaths::Vector3f{ 0.1f, 0.1f, 0.05f, 0.f };
 
 		template<typename T>
-		bool DrawButtonWithDragImpl(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour,
+		bool DrawButtonWithDragImpl(const std::string_view& label, kmaths::Vector2f dimensions, const gfx::Colour& baseColour,
 			T& value, float incrementVal, const UICallBack& action)
 		{
 			const auto btnColour = baseColour;
@@ -43,8 +43,8 @@ namespace krakoa::ui
 		}
 
 		template<typename T>
-		bool DrawButtonWithDragImpl(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour,
-			T& value, const graphics::Font& font, float incrementVal, const UICallBack& action)
+		bool DrawButtonWithDragImpl(const std::string_view& label, kmaths::Vector2f dimensions, const gfx::Colour& baseColour,
+			T& value, const gfx::Font& font, float incrementVal, const UICallBack& action)
 		{
 			const auto btnColour = baseColour;
 			const auto btnColourHovered = (baseColour + hoveredColourChange);
@@ -91,52 +91,52 @@ namespace krakoa::ui
 		return DrawButton(label, {}, callback);
 	}
 
-	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, const graphics::Colour& baseColour,
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions, const gfx::Colour& baseColour,
 		float& value, float incrementVal, const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::int32_t> dimensions,
-		graphics::Colour baseColour, std::int32_t& value, float incrementVal, const UICallBack& action)
+		gfx::Colour baseColour, std::int32_t& value, float incrementVal, const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint32_t> dimensions,
-		graphics::Colour baseColour, std::uint32_t& value, float incrementVal, const UICallBack& action)
+		gfx::Colour baseColour, std::uint32_t& value, float incrementVal, const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint8_t> dimensions,
-		graphics::Colour baseColour, std::uint8_t& value, float incrementVal, const UICallBack& action)
+		gfx::Colour baseColour, std::uint8_t& value, float incrementVal, const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2f dimensions,
-		const graphics::Colour& baseColour, float& value, const graphics::Font& font, float incrementVal,
+		const gfx::Colour& baseColour, float& value, const gfx::Font& font, float incrementVal,
 		const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
 	}
 
-	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::int32_t> dimensions, graphics::Colour baseColour
-		, std::int32_t& value, const graphics::Font& font, float incrementVal, const UICallBack& action)
+	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::int32_t> dimensions, gfx::Colour baseColour
+		, std::int32_t& value, const gfx::Font& font, float incrementVal, const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint32_t> dimensions,
-		graphics::Colour baseColour, std::uint32_t& value, const graphics::Font& font, float incrementVal,
+		gfx::Colour baseColour, std::uint32_t& value, const gfx::Font& font, float incrementVal,
 		const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);
 	}
 
 	bool DrawButtonWithDrag(const std::string_view& label, kmaths::Vector2<std::uint8_t> dimensions,
-		graphics::Colour baseColour, std::uint8_t& value, const graphics::Font& font, float incrementVal,
+		gfx::Colour baseColour, std::uint8_t& value, const gfx::Font& font, float incrementVal,
 		const UICallBack& action)
 	{
 		return DrawButtonWithDragImpl(label, dimensions, baseColour, value, font, incrementVal, action);

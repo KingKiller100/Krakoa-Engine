@@ -2,7 +2,7 @@
 
 #include "../../Graphics/Framebuffers/iFrameBuffer.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLFrameBuffer final : public iFrameBuffer
 	{

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../../Graphics/iRendererAPI.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLRendererAPI : public iRendererAPI
 	{

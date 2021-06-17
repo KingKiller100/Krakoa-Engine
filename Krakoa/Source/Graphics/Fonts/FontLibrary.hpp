@@ -5,7 +5,7 @@
 #include <set>
 #include <map>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class FontLibrary
 	{

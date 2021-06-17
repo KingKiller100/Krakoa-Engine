@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "Primitives2D.hpp"
 
-namespace krakoa::graphics::_2D
+namespace krakoa::gfx::_2D
 {
 	void PrimitivesData::IncrementQuadIndexCount() noexcept
 	{

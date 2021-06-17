@@ -23,9 +23,9 @@ namespace krakoa::scene::panels
 		DrawComponent<components::TransformComponent>("Transform", entity, [](components::TransformComponent& transform)
 		{
 			constexpr auto btnColours = std::array{
-				graphics::colours::Red,
-				graphics::colours::Green,
-				graphics::colours::Blue,
+				gfx::colours::Red,
+				gfx::colours::Green,
+				gfx::colours::Blue,
 			};
 
 			auto position = transform.GetPosition();
@@ -34,7 +34,7 @@ namespace krakoa::scene::panels
 
 			const auto& assetManager = GetApp().GetManager<filesystem::AssetManager>();
 			const auto& fontLib = assetManager.GetFontLibrary();
-			const auto& font = fontLib.GetFont(graphics::Font::Modifiers::Bold);
+			const auto& font = fontLib.GetFont(gfx::Font::Modifiers::Bold);
 
 			ui::DrawVec3Controller("Position", position, btnColours, *font, 0.05f);
 			ui::DrawVec3Controller("Rotation", rotation, btnColours, *font, 0.5f);

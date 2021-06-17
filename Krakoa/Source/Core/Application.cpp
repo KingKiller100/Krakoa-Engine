@@ -20,7 +20,7 @@
 
 #include "../Scene/SceneManager.hpp"
 
-#include "ExceptionHandler.hpp"
+#include "../Debug/ExceptionHandler.hpp"
 
 #include <chrono>
 #include <Windows.h>
@@ -67,11 +67,11 @@ namespace krakoa
 
 		RegisterManager<filesystem::AssetManager>();
 
-		graphics::Renderer::Initialize();
+		gfx::Renderer::Initialize();
 
 		AddManager(new scene::SceneManager());
 
-		frameBuffer.reset(graphics::iFrameBuffer::Create({ 1024, 640, 1, false }));
+		frameBuffer.reset(gfx::iFrameBuffer::Create({ 1024, 640, 1, false }));
 
 		auto& assetMan = GetManager<filesystem::AssetManager>();
 		assetMan.Initialize();
@@ -120,7 +120,7 @@ namespace krakoa
 		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
 		const auto width = CAST(int, e.GetWidth());
 		const auto height = CAST(int, e.GetHeight());
-		graphics::Renderer::OnWindowResize(0, 0, width, height);
+		gfx::Renderer::OnWindowResize(0, 0, width, height);
 		KRK_DBG(util::Fmt("Resizing window event: ({0}, {1})", width, height));
 		return false;
 	}
@@ -142,7 +142,7 @@ namespace krakoa
 				}
 
 				frameBuffer->Bind();
-				graphics::Renderer::Update();
+				gfx::Renderer::Update();
 				sceneManager.OnUpdate(deltaTime);
 				frameBuffer->Unbind();
 
@@ -168,7 +168,7 @@ namespace krakoa
 	void Application::ShutDown()
 	{
 		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
-		graphics::Renderer::ShutDown();
+		gfx::Renderer::ShutDown();
 
 		for (auto* manager : managers)
 		{
@@ -231,7 +231,7 @@ namespace krakoa
 		return *pWindow;
 	}
 
-	graphics::iFrameBuffer& Application::GetFrameBuffer() const
+	gfx::iFrameBuffer& Application::GetFrameBuffer() const
 	{
 		return *frameBuffer;
 	}

@@ -10,7 +10,7 @@
 #include <GLAD/glad.h>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	OpenGLTexture2D::OpenGLTexture2D(const uint32_t width, const uint32_t height)
 		: path("N/A")

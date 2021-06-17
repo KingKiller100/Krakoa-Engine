@@ -20,12 +20,12 @@ namespace krakoa::filesystem
 
 		void Initialize() const;
 		
-		const graphics::FontLibrary& GetFontLibrary() const;
-		graphics::FontLibrary& GetFontLibrary();
+		const gfx::FontLibrary& GetFontLibrary() const;
+		gfx::FontLibrary& GetFontLibrary();
 		
 		void LoadFont(const std::filesystem::path& path, float size) const;
 		void LoadFontFamily(const std::string& fontFamily, float size) const;
-		[[nodiscard]] const graphics::Font& GetFont(const std::string& fontFamily, float size, graphics::Font::Modifiers::underlying_t type) const;
+		[[nodiscard]] const gfx::Font& GetFont(const std::string& fontFamily, float size, gfx::Font::Modifiers::underlying_t type) const;
 
 		void LoadScript(const klib::Path& path);
 		
@@ -33,7 +33,7 @@ namespace krakoa::filesystem
 		bool VerifyFile(const klib::Path& path) const;
 		
 	private:
-		Solo_Ptr<graphics::FontLibrary> fontLib;
+		Solo_Ptr<gfx::FontLibrary> fontLib;
 		std::vector<std::filesystem::path> scriptFiles;
 	};
 }

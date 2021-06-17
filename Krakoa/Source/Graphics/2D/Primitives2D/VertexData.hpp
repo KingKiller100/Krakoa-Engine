@@ -2,7 +2,7 @@
 
 #include <Maths/Vectors/PredefinedVectors.hpp>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	struct VertexData
 	{

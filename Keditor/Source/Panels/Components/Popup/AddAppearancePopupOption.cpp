@@ -19,8 +19,8 @@ namespace krakoa::scene::panels
 			);
 
 			entity.AddComponent<ecs::components::Appearance2DComponent>(
-				graphics::GeometryType::QUAD,
-				graphics::colours::White
+				gfx::GeometryType::QUAD,
+				gfx::colours::White
 				);
 		});
 	}

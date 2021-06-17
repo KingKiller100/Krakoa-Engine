@@ -5,17 +5,19 @@
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Util/EnumHelpers.hpp"
+#include "../LogGraphics.hpp"
 
 #include <Utility/String/kToString.hpp> 
 #include <Utility/String/STL/VectorToString.hpp> 
 #include <Utility/String/kStringTricks.hpp>
 #include <TypeTraits/TraitsBase.hpp>
 
+
 #include <imgui.h>
 #include <bitset>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	FontLibrary::FontLibrary()
 	{
@@ -80,7 +82,7 @@ namespace krakoa::graphics
 		
 		const auto& font = GetFont(family, size, modifiers);
 		MakeDefault(family, font);
-		KRK_INF(klib::ToString("New default font: Font [{0}, {1}] modifier(s) [{2:,}]",
+		LogGFX(klib::ToString("New default font: Font [{0}, {1}] modifier(s) [{2:,}]",
 			family
 			, size
 			, util::DecipherEnumBitMask<Font::Modifiers>(modifiers, [](Font::Modifiers fm)

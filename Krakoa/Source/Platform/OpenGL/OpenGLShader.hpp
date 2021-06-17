@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLShader : public iShader
 	{

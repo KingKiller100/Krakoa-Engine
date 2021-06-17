@@ -43,7 +43,7 @@ namespace krakoa
 	private:
 		Application& application;
 		
-		Solo_Ptr<graphics::SubTexture2D> pSubTexture;
+		Solo_Ptr<gfx::SubTexture2D> pSubTexture;
 
 		OrthographicCameraController cameraController;
 

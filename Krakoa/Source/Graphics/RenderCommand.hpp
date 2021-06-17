@@ -3,7 +3,7 @@
 #include "Resources/iVertexArray.hpp"
 #include "../Core/PointerTypes.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class RenderCommand
 	{

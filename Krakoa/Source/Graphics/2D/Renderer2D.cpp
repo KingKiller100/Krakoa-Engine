@@ -23,7 +23,7 @@
 
 using namespace krakoa::scene::ecs::components;
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	namespace
 	{

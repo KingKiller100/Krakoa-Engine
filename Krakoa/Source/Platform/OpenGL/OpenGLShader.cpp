@@ -11,7 +11,7 @@
 #include <GLAD/glad.h>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	OpenGLShader::OpenGLShader(const std::string_view& name, const std::filesystem::path& shaderFilePath)
 		: name(name)

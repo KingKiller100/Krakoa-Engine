@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	using namespace kmaths;
 

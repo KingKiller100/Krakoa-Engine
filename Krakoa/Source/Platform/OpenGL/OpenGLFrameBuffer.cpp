@@ -8,7 +8,7 @@
 
 #include <glad/glad.h>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	namespace
 	{

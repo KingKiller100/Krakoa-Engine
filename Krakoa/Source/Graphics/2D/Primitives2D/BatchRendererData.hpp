@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	namespace batch::limits
 	{

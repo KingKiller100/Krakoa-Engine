@@ -8,7 +8,7 @@
 #include <Utility/String/kToString.hpp>
 #include <imgui.h>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	Font::Font()
 		: modifiers(0)
@@ -48,7 +48,7 @@ namespace krakoa::graphics
 
 		impl = ImGui::GetIO().Fonts->AddFontFromFileTTF(filepath.string().data(), fontSize);
 		
-		KRK_INF(klib::ToString("Loading font: [\"{0:f}\", {1}] - \"{0}\"", filepath, fontSize));
+		KRK_DBG(klib::ToString("Loading font: [\"{0:f}\", {1}] - \"{0}\"", filepath, fontSize));
 
 		const auto isDecimal = kmaths::IsDecimal(fontSize - kmaths::Floor(fontSize));
 		name = klib::ToString("{0:f}_{1}", filepath, isDecimal ? fontSize : static_cast<size_t>(fontSize));

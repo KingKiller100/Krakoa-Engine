@@ -16,7 +16,7 @@ namespace krakoa
 	class iCamera;
 	class OrthographicCamera;
 
-	namespace graphics
+	namespace gfx
 	{
 		class ShaderLibrary;
 		class iTexture2D;

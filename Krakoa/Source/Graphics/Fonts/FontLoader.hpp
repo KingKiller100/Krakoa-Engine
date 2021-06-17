@@ -8,7 +8,7 @@
 #include <string>
 #include <set>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class FontLoader
 	{

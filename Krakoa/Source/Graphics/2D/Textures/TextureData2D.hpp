@@ -6,7 +6,7 @@
 #include <array>
 #include <cstdint>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	struct TextureData2D
 	{

@@ -2,7 +2,7 @@
 
 #include "../../Textures/iTexture.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class iTexture2D : public iTexture
 	{

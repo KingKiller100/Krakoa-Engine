@@ -6,7 +6,7 @@
 #include "../Renderer.hpp"
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	iVertexBuffer::~iVertexBuffer()
 		= default;

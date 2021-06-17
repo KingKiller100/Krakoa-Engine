@@ -24,7 +24,7 @@ namespace krakoa
 
 		DrawPanel("Renderer2D Statistics", []()
 			{
-				const auto& stats = graphics::Renderer2D::GetStats();
+				const auto& stats = gfx::Renderer2D::GetStats();
 				DrawRawText("Total Draw Calls: {0}", stats.TotalDrawCalls());
 				DrawRawText("Total Geometry: {0}", stats.TotalGeometryCount());
 
@@ -33,13 +33,13 @@ namespace krakoa
 				DrawRawText("Triangle Draw Calls: {0}", stats.triangleDrawCallsCount);
 
 				DrawNewLine();
-				DrawRawText("Quad Max Batch: {0}", graphics::batch::limits::quad::max);
+				DrawRawText("Quad Max Batch: {0}", gfx::batch::limits::quad::max);
 				DrawRawText("Quad Count: {0}", stats.quadCount);
 				DrawRawText("Quad Vertices Count: {0}", stats.TotalQuadVertexCount());
 				DrawRawText("Quad Indices Count: {0}", stats.TotalQuadIndexCount());
 
 				DrawNewLine();
-				DrawRawText("Triangle Max Batch: {0}", graphics::batch::limits::triangle::max);
+				DrawRawText("Triangle Max Batch: {0}", gfx::batch::limits::triangle::max);
 				DrawRawText("Triangle Count: {0}", stats.triangleCount);
 				DrawRawText("Triangle Vertices Count: {0}", stats.TotalTriangleVertexCount());
 				DrawRawText("Triangle Indices Count: {0}", stats.TotalTriangleIndexCount());

@@ -3,7 +3,7 @@
 
 #include "iTexture2D.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	SubTexture2D* SubTexture2D::Create(const std::shared_ptr<iTexture2D >& texture, const TexCoordData& data)
 	{

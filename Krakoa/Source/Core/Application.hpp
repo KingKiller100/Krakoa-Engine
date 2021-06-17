@@ -48,7 +48,7 @@ namespace krakoa
 		USE_RESULT bool IsRunning() const;
 
 		iWindow& GetWindow() const;
-		graphics::iFrameBuffer& GetFrameBuffer() const;
+		gfx::iFrameBuffer& GetFrameBuffer() const;
 		ImGuiLayer& GetImGuiLayer() const;
 
 		template<typename Manager>
@@ -91,7 +91,7 @@ namespace krakoa
 		std::unique_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
 
-		Solo_Ptr<graphics::iFrameBuffer> frameBuffer;
+		Solo_Ptr<gfx::iFrameBuffer> frameBuffer;
 
 		std::vector<iSingleton*> managers;
 

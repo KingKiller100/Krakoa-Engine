@@ -7,7 +7,7 @@
 #include "../Renderer.hpp"
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	iVertexArray::~iVertexArray()
 		= default;

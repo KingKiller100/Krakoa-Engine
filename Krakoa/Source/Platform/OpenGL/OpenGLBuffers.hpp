@@ -2,7 +2,7 @@
 
 #include "../../Graphics/Resources/iBuffers.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLVertexBuffer : public iVertexBuffer
 	{

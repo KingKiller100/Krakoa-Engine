@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Primitives2D/BatchRendererData.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	// Statistics
 	struct Statistics

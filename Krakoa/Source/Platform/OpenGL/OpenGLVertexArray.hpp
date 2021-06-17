@@ -6,7 +6,7 @@
 #include <vector>
 
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLVertexArray : public iVertexArray
 	{

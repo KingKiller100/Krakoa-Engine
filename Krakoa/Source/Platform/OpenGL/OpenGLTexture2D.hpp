@@ -5,7 +5,7 @@
 
 #include <filesystem>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLTexture2D : public iTexture2D
 	{

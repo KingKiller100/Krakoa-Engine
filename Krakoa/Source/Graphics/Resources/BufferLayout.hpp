@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	enum class ShaderDataType : uint8_t
 	{

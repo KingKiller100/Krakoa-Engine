@@ -11,7 +11,7 @@
 #include <Utility/String/kToString.hpp>
 #include <Utility/String/kStringTricks.hpp>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	ShaderLibrary::ShaderLibrary()
 	{}

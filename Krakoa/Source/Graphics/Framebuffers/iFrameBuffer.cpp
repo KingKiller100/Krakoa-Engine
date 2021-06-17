@@ -6,7 +6,7 @@
 #include "../../Debug/Debug.hpp"
 #include "../../Platform/OpenGL/OpenGLFrameBuffer.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	iFrameBuffer* iFrameBuffer::Create(const FrameBufferSpecification& spec)
 	{

@@ -9,7 +9,7 @@
 
 namespace krakoa
 {
-	namespace graphics
+	namespace gfx
 	{
 		class Font;
 		class Colour;
@@ -21,17 +21,17 @@ namespace krakoa
 		void PushStyleVar(StyleVarFlags index, kmaths::Vector2f val);
 		void PopStyleVar(size_t count = 1);
 
-		void PushStyleColour(StyleColourFlags index, const graphics::Colour& colour);
+		void PushStyleColour(StyleColourFlags index, const gfx::Colour& colour);
 		void PopStyleColour(size_t count = 1);
 
-		void PushFont(const graphics::Font& font);
+		void PushFont(const gfx::Font& font);
 		void PopFont();
 		
 		void StyleUI(StyleVarFlags index, kmaths::Vector2f val, const UICallBack& callback);
-		void StyleUI(StyleColourFlags index, const graphics::Colour& colour, const UICallBack& callback);
-		void StyleUI(const graphics::Font& font, const UICallBack& callback);
+		void StyleUI(StyleColourFlags index, const gfx::Colour& colour, const UICallBack& callback);
+		void StyleUI(const gfx::Font& font, const UICallBack& callback);
 
-		void SetThemeStyle(StyleColourFlags uiIndex, const graphics::Colour colour);
+		void SetThemeStyle(StyleColourFlags uiIndex, const gfx::Colour colour);
 	}
 }
 

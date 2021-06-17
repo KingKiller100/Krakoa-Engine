@@ -9,7 +9,7 @@
 
 using namespace krakoa::filesystem;
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	bool FontLoader::initialized = false;
 

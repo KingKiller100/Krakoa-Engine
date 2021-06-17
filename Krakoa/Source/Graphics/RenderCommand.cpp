@@ -5,7 +5,7 @@
 
 #include "../Platform/OpenGL/OpenGLRendererAPI.hpp"
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	Solo_Ptr<iRendererAPI> RenderCommand::rendererAPI = nullptr;
 

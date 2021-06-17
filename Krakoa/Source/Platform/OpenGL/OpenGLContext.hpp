@@ -4,7 +4,7 @@
 
 struct GLFWwindow;
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class OpenGLContext : public iContext
 	{

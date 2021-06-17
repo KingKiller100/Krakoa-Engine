@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class iTexture2D;
 

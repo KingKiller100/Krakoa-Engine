@@ -6,7 +6,7 @@
 
 struct ImFont;
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	class Font
 	{

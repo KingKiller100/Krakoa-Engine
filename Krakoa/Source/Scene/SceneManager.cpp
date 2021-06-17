@@ -130,7 +130,7 @@ namespace krakoa::scene
 		const auto drawables
 			= entityComponentSystem->GetEntitiesWithComponents<Appearance2DComponent, TransformComponent>();
 
-		graphics::Renderer2D::BeginScene(*camera, cameraTransform);
+		gfx::Renderer2D::BeginScene(*camera, cameraTransform);
 
 		for (const auto id : drawables)
 		{
@@ -140,16 +140,16 @@ namespace krakoa::scene
 			const auto& transform = entity.GetComponent<TransformComponent>();
 
 			switch (appearance.GetGeometryType()) {
-			case graphics::GeometryType::QUAD:
-				graphics::Renderer2D::DrawQuad(appearance, transform);
+			case gfx::GeometryType::QUAD:
+				gfx::Renderer2D::DrawQuad(appearance, transform);
 				break;
 
-			case graphics::GeometryType::TRIANGLE:
-				graphics::Renderer2D::DrawTriangle(appearance, transform);
+			case gfx::GeometryType::TRIANGLE:
+				gfx::Renderer2D::DrawTriangle(appearance, transform);
 				break;
 
-			case graphics::GeometryType::CIRCLE:
-				//	graphics::Renderer2D::DrawCircle(appearance, transform);
+			case gfx::GeometryType::CIRCLE:
+				//	gfx::Renderer2D::DrawCircle(appearance, transform);
 				break;
 
 			default: // case of an unknown geometry type
@@ -158,6 +158,6 @@ namespace krakoa::scene
 			}
 		}
 
-		graphics::Renderer2D::EndScene();
+		gfx::Renderer2D::EndScene();
 	}
 }

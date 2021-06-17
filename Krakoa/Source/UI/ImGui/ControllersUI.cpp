@@ -15,7 +15,7 @@
 namespace krakoa::ui
 {
 	bool DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values,
-		const std::array<graphics::Colour, 3>& btnColours
+		const std::array<gfx::Colour, 3>& btnColours
 		, float incrementVal, kmaths::Vector3f::Type resetValue, float columnWidth)
 	{
 		ImGui::PushID(label.data());
@@ -63,7 +63,7 @@ namespace krakoa::ui
 	}
 
 	bool DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values,
-		const std::array<graphics::Colour, 3>& btnColours, const graphics::Font& font, float incrementVal,
+		const std::array<gfx::Colour, 3>& btnColours, const gfx::Font& font, float incrementVal,
 		kmaths::Vector3f::Type resetValue, float columnWidth)
 	{
 		ImGui::PushID(label.data());
@@ -110,7 +110,7 @@ namespace krakoa::ui
 		return btnPressed;
 	}
 
-	bool DrawColourController(const std::string_view& label, graphics::Colour& value, float columnWidth)
+	bool DrawColourController(const std::string_view& label, gfx::Colour& value, float columnWidth)
 	{
 		ImGui::PushID(label.data());
 
@@ -127,11 +127,11 @@ namespace krakoa::ui
 
 		constexpr std::array<const char*, 4> btnLabels = { "R", "G", "B", "A" };
 
-		auto btnColours = std::array<graphics::Colour, 4> {
-			graphics::Colour{ value.Red(), 0, 0, 255 },
+		auto btnColours = std::array<gfx::Colour, 4> {
+			gfx::Colour{ value.Red(), 0, 0, 255 },
 			{ 0, value.Green(),  0, 255 },
 			{ 0, 0, value.Blue(), 255 },
-			{ graphics::colours::White, value.Alpha() }
+			{ gfx::colours::White, value.Alpha() }
 		};
 
 		bool btnPressed = false;
@@ -163,7 +163,7 @@ namespace krakoa::ui
 		return btnPressed;
 	}
 
-	bool DrawColourController(const std::string_view& label, graphics::Colour& value, const graphics::Font& font,
+	bool DrawColourController(const std::string_view& label, gfx::Colour& value, const gfx::Font& font,
 		float columnWidth)
 	{
 		ImGui::PushID(label.data());
@@ -181,11 +181,11 @@ namespace krakoa::ui
 
 		constexpr std::array<const char*, 4> btnLabels = { "R", "G", "B", "A" };
 
-		auto btnColours = std::array<graphics::Colour, 4> {
-			graphics::Colour{ value.Red(), 0, 0, 255 },
+		auto btnColours = std::array<gfx::Colour, 4> {
+			gfx::Colour{ value.Red(), 0, 0, 255 },
 			{ 0, value.Green(),  0, 255 },
 			{ 0, 0, value.Blue(), 255 },
-			{ graphics::colours::White, value.Alpha() }
+			{ gfx::colours::White, value.Alpha() }
 		};
 
 		bool btnPressed = false;

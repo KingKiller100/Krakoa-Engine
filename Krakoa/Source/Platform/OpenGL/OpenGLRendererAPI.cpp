@@ -4,6 +4,7 @@
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Logging/EngineLogger.hpp"
 #include "../../Graphics/Colour.hpp"
+#include "../../Graphics/LogGraphics.hpp"
 
 #include <Utility/String/kToString.hpp>
 
@@ -11,7 +12,7 @@
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	namespace
 	{
@@ -72,9 +73,9 @@ namespace krakoa::graphics
 
 	void OpenGLRendererAPI::InitRendererInfo() noexcept
 	{
-		g_RendererInfo.glVersion = REINTERPRET(const char*, glGetString(GL_VERSION));
-		g_RendererInfo.glVendor = REINTERPRET(const char*, glGetString(GL_VENDOR));
-		g_RendererInfo.glRenderer = REINTERPRET(const char*, glGetString(GL_RENDERER));
+		g_RendererInfo.glVersion = reinterpret_cast<const char*>(glad_glGetString(0x1F02));
+		g_RendererInfo.glVendor = reinterpret_cast<const char*>(glad_glGetString(0x1F00));
+		g_RendererInfo.glRenderer = reinterpret_cast<const char*>(glad_glGetString(0x1F01));
 		g_RendererInfo.glfwVersion = glfwGetVersionString();
 		g_RendererInfo.imGuiVersion = IMGUI_VERSION;
 	}
@@ -85,12 +86,12 @@ namespace krakoa::graphics
 		KRK_PROFILE_FUNCTION();
 
 		// Rendering hardware info
-		KRK_INF(klib::ToString("API: {0}", api.ToString()));
-		KRK_INF(klib::ToString("Version: {0}", g_RendererInfo.glVersion));
-		KRK_INF(klib::ToString("Vendor: {0}", g_RendererInfo.glVendor));
-		KRK_INF(klib::ToString("Hardware: {0}", g_RendererInfo.glRenderer));
-		KRK_INF(klib::ToString("GLFW Version: {0}", g_RendererInfo.glfwVersion));
-		KRK_INF(klib::ToString("ImGui Version: {0}", g_RendererInfo.imGuiVersion));
+		LogGFX(klib::ToString("API: {0}", api.ToString()));
+		LogGFX(klib::ToString("Version: {0}", g_RendererInfo.glVersion));
+		LogGFX(klib::ToString("Vendor: {0}", g_RendererInfo.glVendor));
+		LogGFX(klib::ToString("Hardware: {0}", g_RendererInfo.glRenderer));
+		LogGFX(klib::ToString("GLFW Version: {0}", g_RendererInfo.glfwVersion));
+		LogGFX(klib::ToString("ImGui Version: {0}", g_RendererInfo.imGuiVersion));
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const Colour& colour)

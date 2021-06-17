@@ -12,7 +12,7 @@
 
 using namespace klib::kString::operators;
 
-namespace krakoa::graphics
+namespace krakoa::gfx
 {
 	iShader::~iShader()
 		= default;

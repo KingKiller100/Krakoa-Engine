@@ -13,7 +13,7 @@
 
 namespace krakoa
 {
-	using namespace graphics;
+	using namespace gfx;
 	using namespace scene::ecs::components;
 
 	Keditor2DLayer::Keditor2DLayer() noexcept

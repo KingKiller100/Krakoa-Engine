@@ -8,7 +8,7 @@
 namespace krakoa::filesystem
 {
 	AssetManager::AssetManager(Token&&)
-		: fontLib(new graphics::FontLibrary())
+		: fontLib(new gfx::FontLibrary())
 	{
 	}
 
@@ -16,7 +16,7 @@ namespace krakoa::filesystem
 	{
 		VirtualFileExplorer::Mount("Keditor\\Assets\\Textures", "Textures");
 
-		static constexpr float typicalFontSizes[] = { 12, 16, 18, /*24, 28, 36, 48, 60, 72*/ };
+		static constexpr float typicalFontSizes[] = { 12, 18, /*24, 28, 36, 48, 60, 72*/ };
 		
 		const auto files = VirtualFileExplorer::GetFiles("Fonts", ".ttf", FileSearchMode::RECURSIVE);
 		for (auto&& file : files)
@@ -28,12 +28,12 @@ namespace krakoa::filesystem
 		}
 	}
 
-	const graphics::FontLibrary& AssetManager::GetFontLibrary() const
+	const gfx::FontLibrary& AssetManager::GetFontLibrary() const
 	{
 		return *fontLib;
 	}
 
-	graphics::FontLibrary& AssetManager::GetFontLibrary()
+	gfx::FontLibrary& AssetManager::GetFontLibrary()
 	{
 		return *fontLib;
 	}
@@ -48,8 +48,8 @@ namespace krakoa::filesystem
 		fontLib->LoadFamilyFromFile(fontFamily, size);
 	}
 
-	const graphics::Font& AssetManager::GetFont(const std::string& fontFamily, float size,
-		graphics::Font::Modifiers::underlying_t type) const
+	const gfx::Font& AssetManager::GetFont(const std::string& fontFamily, float size, 
+		gfx::Font::Modifiers::underlying_t type) const
 	{
 		return *fontLib->GetFont(fontFamily, size, type);
 	}

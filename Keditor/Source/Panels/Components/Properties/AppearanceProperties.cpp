@@ -31,7 +31,7 @@ namespace krakoa::scene::panels
 
 			const auto& assetManager = GetApp().GetManager<filesystem::AssetManager>();
 			const auto& fontLib = assetManager.GetFontLibrary();
-			const auto& font = fontLib.GetFont(graphics::Font::Modifiers::Bold);
+			const auto& font = fontLib.GetFont(gfx::Font::Modifiers::Bold);
 			
 			ui::DrawInputTextBox("Geometry", buffer, sizeof(buffer), ui::InputTextFlags::ReadOnly | ui::InputTextFlags::NoMarkEdited);
 			ui::DrawColourController("Colour", colour, *font);

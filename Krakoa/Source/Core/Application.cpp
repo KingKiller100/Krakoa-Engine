@@ -17,11 +17,10 @@
 
 #include "../Graphics/Renderer.hpp"
 #include "../Graphics/2D/Renderer2D.hpp"
-#include "../Graphics/ShaderLibrary.hpp"
 
 #include "../Scene/SceneManager.hpp"
 
-#include <Utility/Logging/kLogging.hpp>
+#include "ExceptionHandler.hpp"
 
 #include <chrono>
 #include <Windows.h>
@@ -152,12 +151,17 @@ namespace krakoa
 				pImGuiLayer->EndDraw();
 
 				pWindow->OnUpdate();
+				throw std::exception("Crash app run");
 			} while (IsRunning());
 		}
-		catch (const std::exception& e)
+		catch (...)
 		{
-			KRK_ERR(util::Fmt("[Exception] {0}", e.what()));
-			osInfo->GetErrorHandler().EmergencyExit();
+			KRK_LOG("CRASH", "Exception(s): " + errors::UnwrapNestedExceptions());
+			auto& errorHandler = osInfo->GetErrorHandler();
+			errorHandler.CheckForNewError();
+			const auto errCode = errorHandler.GetCode();
+			const auto errText = errorHandler.GetText();
+			KRK_LOG("CRASH", util::Fmt("[System] 0x{0:4h}: {1}", errCode, errText));
 		}
 	}
 

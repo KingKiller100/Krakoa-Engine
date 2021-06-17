@@ -21,16 +21,17 @@ namespace krakoa::os::errors
 		return errorCode;
 	}
 
-	std::string ErrorHandlerWindows::GetText() const noexcept
+	std::string_view ErrorHandlerWindows::GetText() const noexcept
 	{
 		return errorText;
 	}
 
 	void ErrorHandlerWindows::EmergencyExit()
 	{
-		LogOSError("Terminating application");
+		LogOSError("Force termination");
 		LogOSError("EmergencyExit via \"::TerminateProcess(::GetCurrentProcess(), -1)\"");
 		CheckForNewError();
+		LogOSError(util::Fmt("{0}: {1}", GetCode(), GetText()));
 		exitFunc();
 		::TerminateProcess(::GetCurrentProcess(), -1);
 	}

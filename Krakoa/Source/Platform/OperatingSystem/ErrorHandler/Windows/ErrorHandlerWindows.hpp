@@ -15,7 +15,7 @@ namespace krakoa::os::errors
 		~ErrorHandlerWindows() override;
 
 		[[nodiscard]] std::uint32_t GetCode() const noexcept override;
-		[[nodiscard]] std::string GetText() const noexcept override;
+		[[nodiscard]] std::string_view GetText() const noexcept override;
 		void EmergencyExit() override;
 		void CheckForNewError() override;
 		void UpdateCode();

@@ -23,7 +23,6 @@
 #include "../Debug/ExceptionHandler.hpp"
 
 #include <chrono>
-#include <Windows.h>
 
 namespace krakoa
 {

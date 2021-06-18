@@ -102,7 +102,7 @@ namespace krakoa
 		ImGui::NewFrame();
 	}
 
-	void ImGuiLayer::EndDraw()
+	void ImGuiLayer::EndDraw() const
 	{
 		KRK_PROFILE_FUNCTION();
 

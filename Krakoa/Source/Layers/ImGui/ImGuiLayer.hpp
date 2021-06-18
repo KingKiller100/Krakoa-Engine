@@ -3,9 +3,6 @@
 #include "../../EventsSystem/Event.hpp"
 
 #include "../LayerBase.hpp"
-#include "../../Core/PointerTypes.hpp"
-
-#include "../../Graphics/Framebuffers/iFrameBuffer.hpp"
 
 
 namespace krakoa
@@ -24,7 +21,7 @@ namespace krakoa
 		void OnEvent(events::Event& e) override;
 
 		void BeginDraw();
-		void EndDraw();
+		void EndDraw() const;
 
 		void ToggleVisibility() noexcept;
 

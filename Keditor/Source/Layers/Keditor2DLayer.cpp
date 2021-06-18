@@ -239,8 +239,8 @@ namespace krakoa
 		// if (opt_fullscreen)
 		// {
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->GetWorkPos());
-		ImGui::SetNextWindowSize(viewport->GetWorkSize());
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ui::PushStyleVar(ui::StyleVarFlags::WindowRounding, 0.f);
 		ui::PushStyleVar(ui::StyleVarFlags::WindowBorderSize, 0.f);

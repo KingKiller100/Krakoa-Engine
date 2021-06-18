@@ -108,7 +108,7 @@ namespace krakoa
 
 		// Get Display Dimensions
 		auto& io = ImGui::GetIO();
-		const auto& app = Application::Reference();
+		const auto& app = GetApp();
 		const auto& dimensions = app.GetWindow().GetDimensions();
 		io.DisplaySize = ImVec2(CAST(float, dimensions.X()), CAST(float, dimensions.Y()));
 

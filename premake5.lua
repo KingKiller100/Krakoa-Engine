@@ -22,7 +22,7 @@ workspace "KrakoaEngine"
     IncludeDir["GLFW"] = "Krakoa/Vendors/GLFW/include/"
     IncludeDir["KLIB"] = "../kLibrary/Source/"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
-    IncludeDir["ImGUI"] = "Krakoa/Vendors/imgui/"
+    IncludeDir["ImGUI"] = "Krakoa/Vendors/ImGui/"
     IncludeDir["STBI"] = "Krakoa/Vendors/STB Image/"
 
 group "Dependencies"

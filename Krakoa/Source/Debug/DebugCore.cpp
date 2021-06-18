@@ -36,6 +36,6 @@ namespace krakoa::debug
 			, klib::CalendarInfoSourceType::LOCAL
 			});
 
-		throw std::exception();
+		throw std::exception(msg.data());
 	}
 }

@@ -82,7 +82,7 @@ namespace krakoa::os::library
 			return true;
 		}
 
-		LogOS(util::Fmt("Loading library: {0}", libName));
+		LogOS("Loading library: {0}", libName);
 
 		const auto lib = CreateLibrary(libName);
 		libraries.emplace(libName.data(), lib);

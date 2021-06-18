@@ -7,7 +7,7 @@
 
 namespace krakoa::errors
 {
-	namespace 
+	namespace
 	{
 		template<typename T>
 		std::exception_ptr GetNested(T&& e)
@@ -29,14 +29,11 @@ namespace krakoa::errors
 			if (ePtr == nullptr)
 				throw std::bad_exception{};
 
-			std::string desc;
-			size_t nestIndex = 0;
+			std::string output;
+			std::vector<std::string> descriptions;
 
 			do
 			{
-				desc += klib::ToString("\n[{0}] ", nestIndex);
-				++nestIndex;
-				
 				try
 				{
 					std::exception_ptr currentPtr;
@@ -45,19 +42,34 @@ namespace krakoa::errors
 				}
 				catch (const std::exception& e)
 				{
-					desc += util::Fmt("{0}", e.what());
+					descriptions.emplace_back(util::Fmt("{0}", e.what()));
 					ePtr = GetNested(e);
 				}
-				catch (const std::string& e) { desc += util::Fmt("{0}", e); }
-				catch (const char* e) { desc += util::Fmt("{0}", e); }
-				catch (...) { desc += "Unknown exception"; }
-				
+				catch (const std::string& e) { descriptions.emplace_back(util::Fmt("{0}", e)); }
+				catch (const char* e) { descriptions.emplace_back(util::Fmt("{0}", e)); }
+				catch (...) { descriptions.emplace_back("Unknown exception"); }
+
 			} while (ePtr != nullptr);
 
-			return desc;
+			if (!descriptions.empty())
+			{
+				if (descriptions.size() > 1)
+				{
+					for (size_t i = 0; i < descriptions.size(); ++i)
+					{
+						output += util::Fmt("\n[{0}] {1}", i, descriptions[i]);
+					}
+				}
+				else
+				{
+					output = descriptions.front();
+				}
+			}
+
+			return output;
 		}
 	}
-	
+
 	std::string UnwrapNestedExceptions(std::exception_ptr ePtr)
 	{
 		return GetFullDescription(ePtr);

@@ -33,6 +33,7 @@ namespace krakoa
 }
 
 // Initializer
+#define KRK_LOG_LVL_TRC                                            ::klib::kLogs::LogLevel::TRC
 #define KRK_LOG_LVL_DBG                                            ::klib::kLogs::LogLevel::DBG
 #define KRK_LOG_LVL_NRM                                            ::klib::kLogs::LogLevel::NRM
 #define KRK_LOG_LVL_INF                                            ::klib::kLogs::LogLevel::INF
@@ -50,6 +51,7 @@ namespace krakoa
 #define KRK_CHANGE_LOGS_DESTINATION(destination)                    ::krakoa::EngineLogger::GetLogger().GetFile().SetPath(destination)
 #define KRK_CHANGE_LOGS_FILENAME(name)                              ::krakoa::EngineLogger::GetLogger().GetFile().SetFileName(name)
 #define KRK_LOG_RAW(msg)                                            ::krakoa::EngineLogger::GetLogger().AddRaw(msg)
+#define KRK_TRC(msg)                                                ::krakoa::EngineLogger::GetLogger().AddEntry(KRK_LOG_LVL_TRC, ::klib::kLogs::LogMessage(msg))
 #define KRK_DBG(msg)                                                ::krakoa::EngineLogger::GetLogger().AddEntry(KRK_LOG_LVL_DBG, ::klib::kLogs::LogMessage(msg))
 #define KRK_NRM(msg)                                                ::krakoa::EngineLogger::GetLogger().AddEntry(KRK_LOG_LVL_NRM, ::klib::kLogs::LogMessage(msg))
 #define KRK_INF(msg)                                                ::krakoa::EngineLogger::GetLogger().AddEntry(KRK_LOG_LVL_INF, ::klib::kLogs::LogMessage(msg))

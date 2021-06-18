@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../Debug/Instrumentor.hpp"
+#include "../FileSystem/IniFile.hpp"
 
 #include <filesystem>
 #include <string>
@@ -8,21 +9,16 @@
 
 namespace krakoa::configurations
 {
-	using ValueMap = std::unordered_map<std::string, std::string>;
+	using ValueMap = filesystem::IniFile::ValueMap;
 	
 	class ConfigFileParser
 	{
-	protected:
-		static constexpr auto s_CommentToken = '*';
-		
 	public:
 		static ValueMap ParseFile(const std::filesystem::path& path);
 	};
 	
 	class ConfigValueMap
 	{
-		using DataMap = std::unordered_map<std::string, std::string>;
-		
 	public:
 		ConfigValueMap(const std::filesystem::path& path) noexcept;
 
@@ -33,7 +29,7 @@ namespace krakoa::configurations
 		{
 			KRK_PROFILE_FUNCTION();
 			
-			const auto& valueStr = RetrieveValue(klib::ToLower(key));
+			const auto& valueStr = RetrieveValue(klib::ToLower(key)).value;
 
 			if constexpr (klib::type_trait::Is_String_V<T>)
 			{
@@ -58,11 +54,11 @@ namespace krakoa::configurations
 			}
 		}
 
-		const DataMap& RetrieveMap() const;
-		const DataMap::mapped_type& RetrieveValue(
-			const DataMap::key_type& key) const;
+		const ValueMap& RetrieveMap() const;
+		const ValueMap::mapped_type& RetrieveValue(
+			const ValueMap::key_type& key) const;
 		
 	private:
-		std::unordered_map<std::string, std::string> values;
+		ValueMap values;
 	};
 }

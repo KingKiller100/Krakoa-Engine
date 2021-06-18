@@ -86,12 +86,12 @@ namespace krakoa::gfx
 		KRK_PROFILE_FUNCTION();
 
 		// Rendering hardware info
-		LogGFX(klib::ToString("API: {0}", api.ToString()));
-		LogGFX(klib::ToString("Version: {0}", g_RendererInfo.glVersion));
-		LogGFX(klib::ToString("Vendor: {0}", g_RendererInfo.glVendor));
-		LogGFX(klib::ToString("Hardware: {0}", g_RendererInfo.glRenderer));
-		LogGFX(klib::ToString("GLFW Version: {0}", g_RendererInfo.glfwVersion));
-		LogGFX(klib::ToString("ImGui Version: {0}", g_RendererInfo.imGuiVersion));
+		LogGFX("API: {0}", api.ToString());
+		LogGFX("Version: {0}", g_RendererInfo.glVersion);
+		LogGFX("Vendor: {0}", g_RendererInfo.glVendor);
+		LogGFX("Hardware: {0}", g_RendererInfo.glRenderer);
+		LogGFX("GLFW Version: {0}", g_RendererInfo.glfwVersion);
+		LogGFX("ImGui Version: {0}", g_RendererInfo.imGuiVersion);
 	}
 
 	void OpenGLRendererAPI::SetClearColour(const Colour& colour)

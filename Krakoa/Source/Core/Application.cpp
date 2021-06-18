@@ -27,7 +27,6 @@
 
 namespace krakoa
 {
-
 	Application::Application(Token&, const std::string_view& appName)
 		: isRunning(true)
 		, timeStep(/*120*/)
@@ -121,7 +120,7 @@ namespace krakoa
 		const auto width = CAST(int, e.GetWidth());
 		const auto height = CAST(int, e.GetHeight());
 		gfx::Renderer::OnWindowResize(0, 0, width, height);
-		KRK_DBG(util::Fmt("Resizing window event: ({0}, {1})", width, height));
+		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
 		return false;
 	}
 
@@ -151,7 +150,6 @@ namespace krakoa
 				pImGuiLayer->EndDraw();
 
 				pWindow->OnUpdate();
-				throw std::exception("Crash app run");
 			} while (IsRunning());
 		}
 		catch (...)

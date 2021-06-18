@@ -10,6 +10,9 @@
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 
+#include "../../Graphics/Renderer.hpp"
+#include "../../Graphics/iRendererAPI.hpp"
+
 #include "../../Platform/OpenGL/OpenGLContext.hpp"
 
 #include <Utility/String/kToString.hpp>
@@ -17,8 +20,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include "../../Graphics/Renderer.hpp"
-#include "../../Graphics/iRendererAPI.hpp"
 
 
 namespace krakoa
@@ -26,7 +27,10 @@ namespace krakoa
 	using namespace klib;
 	using namespace events;
 
-	static bool isInitialized = false;
+	namespace
+	{
+		bool isInitialized = false;
+	}
 
 	static void GLFWErrorCallback(int errorCode, const char* description)
 	{
@@ -65,7 +69,7 @@ namespace krakoa
 		data.dimensions = props.dimensions;
 		data.title = props.title;
 
-		KRK_NRM(kString::ToString("Creating Window {0} with dimensions ({1}, {2})",
+		KRK_NRM(kString::ToString("Creating {0} window with dimensions ({1}, {2})",
 			data.title,
 			data.dimensions.X(),
 			data.dimensions.Y()));
@@ -90,10 +94,10 @@ namespace krakoa
 		if (gfx::Renderer::GetAPI() == gfx::iRendererAPI::API::OPENGL)
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
-		
+
 		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.data(),
 			nullptr, nullptr);
-		
+
 		KRK_ASSERT(window != nullptr, "Window pointer not created");
 
 		pRenderContext = std::make_unique<gfx::OpenGLContext>(window);
@@ -110,89 +114,89 @@ namespace krakoa
 		KRK_PROFILE_FUNCTION();
 		// Set up window callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
-			{
-				const unsigned w = CAST(unsigned, width);
-				const unsigned h = CAST(unsigned, height);
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				data.dimensions = kmaths::Vector2u(w, h);
-				WindowResizeEvent e(w, h);
-				data.eventCallBack(e);
-			});
+		{
+			const unsigned w = CAST(unsigned, width);
+			const unsigned h = CAST(unsigned, height);
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			data.dimensions = kmaths::Vector2u(w, h);
+			WindowResizeEvent e(w, h);
+			data.eventCallBack(e);
+		});
 		glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				WindowClosedEvent e;
-				data.eventCallBack(e);
-			});
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			WindowClosedEvent e;
+			data.eventCallBack(e);
+		});
 		glfwSetCharCallback(window, [](GLFWwindow* window, unsigned key)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				KeyTypedEvent e(key);
-				data.eventCallBack(e);
-			});
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			KeyTypedEvent e(key);
+			data.eventCallBack(e);
+		});
 		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-				switch (action) {
-				case GLFW_PRESS:
-				{
-					KeyPressedEvent e(key, 0);
-					data.eventCallBack(e);
-					break;
-				}
-				case GLFW_REPEAT:
-				{
-					KeyPressedEvent e(key, 1);
-					data.eventCallBack(e);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					KeyReleasedEvent e(key);
-					data.eventCallBack(e);
-					break;
-				}
-				default:
-					break;
-				}
-			});
+			switch (action) {
+			case GLFW_PRESS:
+			{
+				KeyPressedEvent e(key, 0);
+				data.eventCallBack(e);
+				break;
+			}
+			case GLFW_REPEAT:
+			{
+				KeyPressedEvent e(key, 1);
+				data.eventCallBack(e);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				KeyReleasedEvent e(key);
+				data.eventCallBack(e);
+				break;
+			}
+			default:
+				break;
+			}
+		});
 		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			switch (action) {
+			case GLFW_PRESS:
 			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				switch (action) {
-				case GLFW_PRESS:
-				{
-					MouseButtonPressedEvent e(button);
-					data.eventCallBack(e);
-					break;
-				}
-				case GLFW_RELEASE:
-				{
-					MouseButtonReleasedEvent e(button);
-					data.eventCallBack(e);
-					break;
-				}
-				default:
-					break;
-				}
-			});
+				MouseButtonPressedEvent e(button);
+				data.eventCallBack(e);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				MouseButtonReleasedEvent e(button);
+				data.eventCallBack(e);
+				break;
+			}
+			default:
+				break;
+			}
+		});
 		glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				const auto offsets = Vector2f(static_cast<float>(xOffset), static_cast<float>(yOffset));
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const auto offsets = Vector2f(static_cast<float>(xOffset), static_cast<float>(yOffset));
 
-				MouseScrolledEvent e(offsets);
-				data.eventCallBack(e);
-			});
+			MouseScrolledEvent e(offsets);
+			data.eventCallBack(e);
+		});
 		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos)
-			{
-				auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-				const auto positions = Vector2f(static_cast<float>(xPos), static_cast<float>(yPos));
+		{
+			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			const auto positions = Vector2f(static_cast<float>(xPos), static_cast<float>(yPos));
 
-				MouseMovedEvent e(positions);
-				data.eventCallBack(e);
-			});
+			MouseMovedEvent e(positions);
+			data.eventCallBack(e);
+		});
 	}
 
 	std::any WindowsWindow::GetNativeWindow() const noexcept

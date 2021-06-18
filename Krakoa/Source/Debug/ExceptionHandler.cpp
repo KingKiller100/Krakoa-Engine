@@ -29,8 +29,8 @@ namespace krakoa::errors
 			if (ePtr == nullptr)
 				throw std::bad_exception{};
 
-			std::string output;
-			std::vector<std::string> descriptions;
+			std::string fullOutput;
+			std::vector<std::string> messages;
 
 			do
 			{
@@ -42,31 +42,31 @@ namespace krakoa::errors
 				}
 				catch (const std::exception& e)
 				{
-					descriptions.emplace_back(util::Fmt("{0}", e.what()));
+					messages.emplace_back(e.what());
 					ePtr = GetNested(e);
 				}
-				catch (const std::string& e) { descriptions.emplace_back(util::Fmt("{0}", e)); }
-				catch (const char* e) { descriptions.emplace_back(util::Fmt("{0}", e)); }
-				catch (...) { descriptions.emplace_back("Unknown exception"); }
+				catch (const std::string& e) { messages.emplace_back(e); }
+				catch (const char* e) { messages.emplace_back(e); }
+				catch (...) { messages.emplace_back("Unknown Exception"); }
 
 			} while (ePtr != nullptr);
 
-			if (!descriptions.empty())
+			if (!messages.empty())
 			{
-				if (descriptions.size() > 1)
+				if (messages.size() > 1)
 				{
-					for (size_t i = 0; i < descriptions.size(); ++i)
+					for (size_t i = 0; i < messages.size(); ++i)
 					{
-						output += util::Fmt("\n[{0}] {1}", i, descriptions[i]);
+						fullOutput += util::Fmt("\n[{0}] {1}", i, messages[i]);
 					}
 				}
 				else
 				{
-					output = descriptions.front();
+					fullOutput = messages.front();
 				}
 			}
 
-			return output;
+			return fullOutput;
 		}
 	}
 

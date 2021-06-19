@@ -10,7 +10,9 @@
 
 #include "Entity/Entity.hpp"
 
-namespace krakoa::scene
+#include <Utility/FileSystem/kFileSystem.hpp>
+
+namespace krakoa::scene::serialize
 {
 	SceneSerializer::SceneSerializer(const Multi_Ptr<iScene>& scene)
 		: scene(scene)
@@ -22,16 +24,16 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto sceneName = scene->GetName();
+		const auto sceneName = std::string(scene->GetName());
 
 		KRK_INF(util::Fmt("Serializing scene: {0}", sceneName));
 		
-		serialize::Emitter emitter;
+		impl::Emitter emitter;
 
-		emitter << serialize::BeginMap;
-		emitter << serialize::Key << "Scene" << serialize::Value << sceneName;
-		emitter << serialize::Key << "Entities" << serialize::Value;
-		emitter << serialize::BeginSeq;
+		emitter << impl::BeginMap;
+		emitter << impl::Key << "Scene" << impl::Value << sceneName;
+		emitter << impl::Key << "Entities" << impl::Value;
+		emitter << impl::BeginSeq;
 		scene->ForEach([&emitter](const ecs::Entity& entity)
 		{
 			if (entity.GetID().IsNull())
@@ -41,19 +43,22 @@ namespace krakoa::scene
 			
 			if (!emitter.good())
 			{
-				KRK_ERR(util::Fmt("Failed to entity: {0}", entity.GetID()));
+				KRK_ERR(util::Fmt("Failed to serialize entity: {0}\n"
+					"Reason: {1}", entity.GetID(), emitter.GetLastError()));
 			}
 		});
-		emitter << serialize::EndSeq;
-		emitter << serialize::EndMap;
+		emitter << impl::EndSeq;
+		emitter << impl::EndMap;
 
 		if (!emitter.good())
 		{
-			KRK_ERR("Failed to serialize scene");
+			KRK_ERR(util::Fmt("Failed to serialize scene: {0}", emitter.GetLastError()));
 		}
 
-		std::ofstream file(path);
-		file << emitter.c_str();
+		auto outputPath = path;
+		outputPath /= sceneName;
+		outputPath.replace_extension(s_FileExtension);
+		klib::WriteFile(outputPath, emitter.c_str());
 		KRK_INF("Serialization complete");
 	}
 

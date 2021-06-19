@@ -15,6 +15,11 @@
 
 namespace krakoa
 {
+	namespace panels
+	{
+		class MenuBar;
+	}
+	
 	class Application;
 	
 	class Keditor2DLayer : public LayerBase
@@ -39,7 +44,7 @@ namespace krakoa
 		void SetUpScene();
 
 		void ToggleScenePlayState() const;
-		
+	
 	private:
 		Application& application;
 		
@@ -50,10 +55,10 @@ namespace krakoa
 		kmaths::Vector4f geometryColour;
 		kmaths::Vector3f position;
 
-		scene::iScene* scene;
-		
-		float degreesRotation = 0.f;
+		Weak_Ptr<scene::iScene> activeScene;
 
+		Solo_Ptr<panels::MenuBar> menuBar;
+		
 		bool isWindowFocused;
 		bool isWindowHovered;
 

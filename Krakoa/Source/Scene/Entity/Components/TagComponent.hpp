@@ -15,8 +15,8 @@ namespace krakoa::scene::ecs::components
 		~TagComponent() noexcept;
 
 		[[nodiscard]] std::string_view GetTag() const;
-		[[nodiscard]] const char* GetData() const;
-		[[nodiscard]] char* GetData();
+		[[nodiscard]] const char* GetRawTag() const;
+		[[nodiscard]] char* GetRawTag();
 
 		template<typename Stringish, class = std::enable_if_t<
 			klib::type_trait::Is_Stringish_V<Stringish>

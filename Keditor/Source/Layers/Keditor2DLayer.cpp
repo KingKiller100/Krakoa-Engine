@@ -3,13 +3,17 @@
 #include "../Scripts/ColourChangeScript.hpp"
 #include "../Scripts/AnimateEntityScript.hpp"
 #include "../Scripts/CameraControllerScript.hpp"
+#include "../Panels/MenuBar.hpp"
 
 #include <ImGui/imgui.h>
+
 
 #include <Scene/SceneManager.hpp>
 #include <Graphics/2D/Textures/iTexture2D.hpp>
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
+
+#include "Scene/SceneSerializer.hpp"
 
 namespace krakoa
 {
@@ -24,7 +28,7 @@ namespace krakoa
 			/ CAST(float, application.GetWindow().GetHeight()),
 			true) // Aspect ratio from window size
 		, position({ 0.f, 0.f })
-		, scene(nullptr)
+		, activeScene()
 		, isWindowFocused(false)
 		, isWindowHovered(false)
 	{
@@ -59,12 +63,18 @@ namespace krakoa
 
 		sceneMan.Add("Keditor2D");
 
-		scene = std::addressof(sceneMan.GetCurrentScene());
+		activeScene = sceneMan.GetCurrentScene();
 
+		if (activeScene.expired())
+		{
+			KRK_FATAL("No active scene available to");
+		}
+
+		const auto sc = activeScene.lock();
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
 
-			auto& cameraEntity = scene->AddEntity("Camera");
+			auto& cameraEntity = sc->AddEntity("Camera");
 
 			const auto& bounds = cameraController.GetBounds();
 			cameraEntity.AddComponent<CameraComponent>(new SceneCamera(bounds), true);
@@ -74,7 +84,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create coloured entity");
 
-			auto& colourEntity = scene->AddEntity("Colour");
+			auto& colourEntity = sc->AddEntity("Colour");
 
 			auto& transform = colourEntity.GetComponent<TransformComponent>();
 			transform.SetPosition({ -0.5f, 0.f, -0.75f });
@@ -91,7 +101,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create cyan entity");
 
-			auto& cyanEntity = scene->AddEntity("Cyan");
+			auto& cyanEntity = sc->AddEntity("Cyan");
 
 			auto& transform = cyanEntity.GetComponent<TransformComponent>();
 			transform.SetPosition({ 0.5f, 0.f, -0.75f });
@@ -106,7 +116,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create magenta entity");
 
-			auto& magentaEntity = scene->AddEntity("Magenta");
+			auto& magentaEntity = sc->AddEntity("Magenta");
 
 			auto& transform = magentaEntity.GetComponent<TransformComponent>();
 			transform.SetPosition({ 0.f, 0.5f, -0.75f });
@@ -121,14 +131,14 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Remove an entity");
 			const std::string name("Dummy");
-			auto& dummyEntity = scene->AddEntity(name);
-			scene->RemoveEntity(name);
+			auto& dummyEntity = sc->AddEntity(name);
+			sc->RemoveEntity(name);
 		}
 
 		{
 			KRK_PROFILE_SCOPE("Create yellow entity");
 
-			auto& yellowEntity = scene->AddEntity("Yellow");
+			auto& yellowEntity = sc->AddEntity("Yellow");
 
 			auto& transform = yellowEntity.GetComponent<TransformComponent>();
 			transform.SetPosition({ 0.f, -0.5f, -0.75f });
@@ -143,7 +153,7 @@ namespace krakoa
 		{
 			KRK_PROFILE_SCOPE("Create textured entity");
 
-			auto& texturedEntity = scene->AddEntity("Textured");
+			auto& texturedEntity = sc->AddEntity("Textured");
 
 			auto& transform = texturedEntity.GetComponent<TransformComponent>();
 			transform.SetScale(Vector2f{ 0.2f, 0.2f });
@@ -154,6 +164,11 @@ namespace krakoa
 			nsc.Bind<ColourChangeScript>();
 			nsc.Bind<AnimateEntityScript>();
 		}
+
+		scene::serialize::SceneSerializer serializer(sc);
+		serializer.Serialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
+
+		menuBar.reset(new panels::MenuBar{});
 	}
 
 	void Keditor2DLayer::OnDetach()
@@ -203,26 +218,9 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (scene->GetRuntimeState() == scene::SceneRuntimeState::STOP)
-			return;
+		// if (activeScene->GetRuntimeState() == scene::SceneRuntimeState::STOP)
+			// return;
 
-		{
-			KRK_PROFILE_SCOPE("Updating entity's \"ColourChangeScript\" component");
-
-			// scene->ForEach([&](const scene::ecs::Entity& entity)
-				// {
-					// if (!entity.HasComponent<NativeScriptComponent>())
-					// 	return;
-					//
-					// auto& script = entity.GetComponent<NativeScriptComponent>();
-					//
-					// if (!script.IsActive()
-					// 	|| !script.HasScript<ColourChangeScript>())
-					// 	return;
-					//
-					// script.GetScript<ColourChangeScript>().SetColour(geometryColour);
-				// });
-		}
 	}
 
 	void Keditor2DLayer::OnRender()
@@ -271,14 +269,7 @@ namespace krakoa
 					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
 				}
 
-				ui::DrawMenuBar([] {
-					ui::DrawMenu("File", [] {
-						ui::DrawMenuItem("Exit", [&]()
-						{
-							GetApp().Close();
-						});
-					});
-				});
+				menuBar->Draw();
 
 				sceneHierarchyPanel.OnRender();
 

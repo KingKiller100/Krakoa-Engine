@@ -4,6 +4,7 @@
 #include "Scene.hpp"
 
 #include "../Graphics/2D/Renderer2D.hpp"
+#include "../FileSystem/VirtualFileExplorer.hpp"
 
 #include "Entity/Components/CameraComponent.hpp"
 #include "Entity/Components/TransformComponent.hpp"
@@ -25,12 +26,15 @@ namespace krakoa::scene
 		     })
 		, currentScene(scenes.end())
 		, entityComponentSystem(new ecs::EntityComponentSystem())
-	{}
+	{
+		//Temporary
+		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Scenes", "Scenes");
+	}
 
 	SceneManager::~SceneManager()
 	{
 		RemoveAll();
-		entityComponentSystem->RemoveAllEntities();
+		// entityComponentSystem->RemoveAllEntities();
 	}
 
 	void SceneManager::Add(const std::string& name)
@@ -62,16 +66,16 @@ namespace krakoa::scene
 		scenes.clear();
 	}
 
-	iScene& SceneManager::GetCurrentScene() const
+	Weak_Ptr<iScene> SceneManager::GetCurrentScene() const
 	{
 		KRK_PROFILE_FUNCTION();
-		return *currentScene->second;
+		return currentScene->second;
 	}
 
-	iScene& SceneManager::GetCurrentScene()
+	Weak_Ptr<iScene> SceneManager::GetCurrentScene()
 	{
 		KRK_PROFILE_FUNCTION();
-		return *currentScene->second;
+		return currentScene->second;
 	}
 
 	void SceneManager::SetCurrentScene(const std::string& name)
@@ -87,7 +91,7 @@ namespace krakoa::scene
 	void SceneManager::OnUpdate(const float deltaTime)
 	{
 		KRK_PROFILE_FUNCTION();
-		auto& scene = GetCurrentScene();
+		auto& scene = *GetCurrentScene().lock();
 
 		scene.OnUpdate(deltaTime);
 

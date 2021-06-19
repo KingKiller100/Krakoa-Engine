@@ -25,12 +25,12 @@ namespace krakoa::scene::ecs::components
 		return tagName;
 	}
 
-	const char* TagComponent::GetData() const
+	const char* TagComponent::GetRawTag() const
 	{
 		return tagName.data();
 	}
 
-	char* TagComponent::GetData()
+	char* TagComponent::GetRawTag()
 	{
 		return tagName.data();
 	}

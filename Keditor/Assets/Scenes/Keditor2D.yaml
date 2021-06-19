@@ -1,0 +1,14 @@
+Scene: Keditor2D
+Entities:
+  - Entity: 0
+    Tag: Camera
+  - Entity: 1
+    Tag: Colour
+  - Entity: 2
+    Tag: Cyan
+  - Entity: 3
+    Tag: Magenta
+  - Entity: 4
+    Tag: Yellow
+  - Entity: 5
+    Tag: Textured

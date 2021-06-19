@@ -33,14 +33,14 @@ namespace krakoa
 		{
 		public:
 			SceneManager();
-			~SceneManager();
+			~SceneManager() override;
 
 			void Add(const std::string& name);
 			bool Remove(const std::string_view& name);
 			void RemoveAll();
 
-			iScene& GetCurrentScene() const;
-			iScene& GetCurrentScene();
+			Weak_Ptr<iScene> GetCurrentScene() const;
+			Weak_Ptr<iScene> GetCurrentScene();
 			void SetCurrentScene(const std::string& name);
 
 			void LoadFromFile(const std::filesystem::path& path);

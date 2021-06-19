@@ -23,7 +23,9 @@ namespace YAML
 }
 
 
-namespace krakoa::scene::serialize
+namespace krakoa::scene::serialize::impl
 {
 	using namespace YAML;
+
+	
 }

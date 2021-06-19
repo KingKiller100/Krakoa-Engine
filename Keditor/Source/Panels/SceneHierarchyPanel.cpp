@@ -34,11 +34,11 @@ namespace krakoa::scene::panels
 
 		if (sceneMan.HasActiveScene())
 		{
-			auto& currentScene = sceneMan.GetCurrentScene();
+			auto currentScene = sceneMan.GetCurrentScene().lock();
 
 			for (auto& panel : panels)
 			{
-				panel->DrawActiveScene(currentScene);
+				panel->DrawActiveScene(*currentScene);
 			}
 		}
 		else

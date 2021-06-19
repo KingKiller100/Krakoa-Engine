@@ -21,7 +21,7 @@ namespace krakoa::scene::panels
 			constexpr auto flags = ui::InputTextFlags::EnterReturnsTrue | ui::InputTextFlags::CharsNoBlank;
 
 			char buffer[1 << 8];
-			std::strcpy(buffer, tag.GetData());
+			std::strcpy(buffer, tag.GetRawTag());
 
 			ui::DrawInputTextBox("Name", buffer, sizeof(buffer), flags,
 				[&]()
@@ -29,7 +29,7 @@ namespace krakoa::scene::panels
 				if (klib::IsWhiteSpaceOrNull(buffer))
 					return;
 
-				KRK_INF(klib::ToString("Renaming entity: \"{0}\"->\"{1}\"", tag.GetData(), buffer));
+				KRK_INF(klib::ToString("Renaming entity: \"{0}\"->\"{1}\"", tag.GetTag(), buffer));
 
 				tag.SetTag(buffer);
 			});

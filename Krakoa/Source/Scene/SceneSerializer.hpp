@@ -5,10 +5,12 @@
 
 #include <filesystem>
 
-namespace krakoa::scene
+namespace krakoa::scene::serialize
 {
 	class SceneSerializer
 	{
+		static constexpr auto s_FileExtension = ".yaml";
+		
 	public:
 		SceneSerializer(const Multi_Ptr<iScene>& scene);
 		
@@ -16,11 +18,10 @@ namespace krakoa::scene
 		void SerializeBinary(const std::filesystem::path& path);
 		bool Deserialize(const std::filesystem::path& path);
 		bool DeserializeBinary(const std::filesystem::path& path);
-
+		
 	private:
 		std::string name;
 		Multi_Ptr<iScene> scene;
-		
 	};
 }
 

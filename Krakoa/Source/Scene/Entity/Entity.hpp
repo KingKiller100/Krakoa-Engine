@@ -22,11 +22,11 @@ namespace krakoa::scene::ecs
 		Entity(UID id, Multi_Ptr<EntityComponentSystem> entityComponentSystem);
 		Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem);
 
-		// Entity(const Entity& other);
-		// Entity& operator=(const Entity& other);
+		 Entity(const Entity& other) = default;
+		 Entity& operator=(const Entity& other) = default;
 
-		Entity(Entity&& other) noexcept;
-		Entity& operator=(Entity&& other) noexcept;
+		Entity(Entity&& other) noexcept = default;
+		Entity& operator=(Entity&& other) noexcept = default;
 
 		~Entity() noexcept;
 

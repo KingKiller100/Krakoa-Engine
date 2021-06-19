@@ -74,7 +74,7 @@ namespace krakoa::scene::panels
 						ui::IsItemClicked(input::MOUSE_LEFT,
 							[&]()
 							{
-								KRK_DBG(klib::ToString("[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetData(), eid));
+								KRK_DBG(klib::ToString("[Entity Panel] Selected entity [\"{0}\", {1}]", tag.GetRawTag(), eid));
 								selectedEntity = eid;
 							});
 
@@ -85,7 +85,7 @@ namespace krakoa::scene::panels
 								ui::popups::DrawMousePopupMenuItem("Delete Entity",
 									[&]()
 									{
-										KRK_DBG(klib::ToString("[Entity Panel] Deleting entity [\"{0}\", {1}]", tag.GetData(), eid));
+										KRK_DBG(klib::ToString("[Entity Panel] Deleting entity [\"{0}\", {1}]", tag.GetRawTag(), eid));
 										markedEntityForRemoval = true;
 									});
 							});

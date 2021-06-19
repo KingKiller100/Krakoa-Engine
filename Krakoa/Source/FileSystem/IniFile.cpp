@@ -67,6 +67,6 @@ namespace krakoa::filesystem
 			KRK_LOG("INI", line);
 		}
 		
-		klib::WriteFile(path, contents, std::ios::out);
+		klib::WriteFile(path, contents);
 	}
 }

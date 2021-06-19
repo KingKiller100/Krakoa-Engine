@@ -104,7 +104,8 @@ project "Krakoa"
             "KRK_ENABLE_ASSERT",
             "KRAKOA_DEBUG",
             "KLIB_DEBUG",
-            "KLOG_OPT_DBG_STR"
+            "KLOG_OPT_DBG_STR",
+            "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
         }
         removefiles
         {

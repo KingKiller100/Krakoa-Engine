@@ -77,7 +77,7 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		auto& entity = entities.emplace_back(entityComponentSystem);
-		const auto tag = klib::ToString("Entity {0}", entity.GetID());
+		const auto tag = klib::ToString("Entity {0}", entity.GetID().GetValue());
 
 		entity.AddComponent<components::TagComponent>(tag);
 		entity.AddComponent<components::TransformComponent>();
@@ -203,19 +203,6 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		{
-			auto& entity = GetEntity(eName);
-			if (entity.HasComponent<components::NativeScriptComponent>())
-			{
-				auto& script = entity.GetComponent<components::NativeScriptComponent>();
-
-				if (script.IsActive())
-				{
-					script.InvokeDestroy();
-				}
-			}
-		}
-
 		const auto iter = std::find_if(entities.begin(), entities.end(),
 			[&eName](const decltype(entities)::value_type& entity)
 			{
@@ -224,9 +211,8 @@ namespace krakoa::scene
 
 		if (iter == entities.end())
 			return false;
-
-		entities.erase(iter);
-		return true;
+		
+		return RemoveEntity(*iter);
 	}
 
 	bool Scene::RemoveEntity(const Entity& entity)
@@ -245,14 +231,19 @@ namespace krakoa::scene
 			}
 		}
 
+#if MSVC_PLATFORM_TOOLSET > 141
+		const auto iter = std::ranges::find(entities, entity);
+#else
 		const auto iter = std::find(entities.begin(), entities.end(), entity);
-
+#endif
+		
 		KRK_ASSERT(iter != entities.end(),
 			klib::ToString("Entity \"{0}\" already exists in scene \"" + name + "\"", entity.GetID())
 		);
 
-		entities.erase(iter);
+		KRK_INF(util::Fmt("Destorying entity: {0}", iter->GetComponent<TagComponent>().GetTag()));
 
+		entities.erase(iter);
 		return true;
 	}
 

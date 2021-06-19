@@ -12,9 +12,6 @@ namespace krakoa {
 
 namespace YAML
 {
-	ostream_wrapper& operator<<(ostream_wrapper& stream,
-	                                   const std::string_view& str);
-
 	Emitter& operator<<(Emitter& emitter,
 	                           const std::string_view& str);
 

@@ -42,6 +42,16 @@ namespace krakoa::scene
 		entities.clear();
 	}
 
+	std::string_view Scene::GetName() const
+	{
+		return name;
+	}
+
+	void Scene::SetName(const std::string& name)
+	{
+		this->name = name;
+	}
+
 	Entity& Scene::AddEntity(const std::string& tag)
 	{
 		KRK_PROFILE_FUNCTION();

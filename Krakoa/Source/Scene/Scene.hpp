@@ -14,6 +14,9 @@ namespace krakoa::scene
 	public:
 		Scene(const std::string_view& name, Multi_Ptr<ecs::EntityComponentSystem> ecs);
 		~Scene();
+	
+		std::string_view GetName() const override;
+		void SetName(const std::string& name) override;
 
 		ecs::Entity& AddEntity(const std::string& tag) override;
 		ecs::Entity& AddEmptyEntity() override;

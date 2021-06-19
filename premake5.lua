@@ -24,7 +24,7 @@ workspace "KrakoaEngine"
     IncludeDir["GLAD"] = "Krakoa/Vendors/GLAD/include/"
     IncludeDir["ImGUI"] = "Krakoa/Vendors/ImGui/"
     IncludeDir["STBI"] = "Krakoa/Vendors/STB Image/"
-    IncludeDir["YAML"] = "Krakoa/Vendors/YAML/"
+    IncludeDir["YAML"] = "Krakoa/Vendors/YAML/include"
 
 group "Dependencies"
     include "Krakoa/Vendors/GLFW"

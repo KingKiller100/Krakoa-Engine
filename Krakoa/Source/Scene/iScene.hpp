@@ -23,6 +23,9 @@ namespace krakoa::scene
 	public:
 		virtual ~iScene() = default;
 
+		virtual std::string_view GetName() const = 0;
+		virtual void SetName(const std::string& name) = 0;
+		
 		virtual ecs::Entity& AddEntity(const std::string& name) = 0;
 		virtual ecs::Entity& AddEmptyEntity() = 0;
 		

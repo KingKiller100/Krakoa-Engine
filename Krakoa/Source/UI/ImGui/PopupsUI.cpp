@@ -12,7 +12,7 @@ namespace krakoa::ui::popups
 		ImGui::OpenPopup(label.data());
 	}
 
-	void DrawPopup(const std::string_view& label, WindowFlags::underlying_t flags, const UICallBack& callback)
+	void DrawPopup(const std::string_view& label, WindowFlags::Underlying_t flags, const UICallBack& callback)
 	{
 		if (ImGui::BeginPopup(label.data(), flags))
 		{

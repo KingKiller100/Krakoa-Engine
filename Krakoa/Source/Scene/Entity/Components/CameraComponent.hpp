@@ -14,9 +14,15 @@ namespace krakoa::scene::ecs::components
 		[[nodiscard]] iCamera& GetCamera() const;
 
 		template<typename Camera>
-		Camera* GetCamera() const
+		[[nodiscard]] Camera& GetCamera() const
 		{
-			return dynamic_cast<Camera*>(camera.get());
+			return *dynamic_cast<Camera*>(camera.get());
+		}
+		
+		template<typename Camera>
+		[[nodiscard]] bool IsCamera() const
+		{
+			return dynamic_cast<Camera*>(camera.get()) != nullptr;
 		}
 
 		void SetIsPrimary(bool primary);

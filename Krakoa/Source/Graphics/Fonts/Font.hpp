@@ -37,7 +37,8 @@ namespace krakoa::gfx
 
 		void Load(const std::filesystem::path& filepath, float fontSize);
 
-		[[nodiscard]] Modifiers::underlying_t GetModifiers() const;
+		[[nodiscard]] std::vector<Modifiers> GetModifiers() const;
+		[[nodiscard]] Modifiers::Underlying_t GetModifiersMask() const;
 
 		bool Empty() const noexcept;
 
@@ -53,7 +54,7 @@ namespace krakoa::gfx
 
 	private:
 		std::string name;
-		Modifiers::underlying_t modifiers;
+		Modifiers::Underlying_t modifiers;
 		float size;
 		ImFont* impl;
 	};

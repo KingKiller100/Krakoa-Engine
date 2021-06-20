@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <Maths/Matrices/Matrix4x4.hpp>
+#include "../Maths/Maths.hpp"
 
 namespace krakoa
 {
@@ -11,14 +11,14 @@ namespace krakoa
 		{
 			float left = 0, right = 1, bottom = 0, top = 1;
 
-			USE_RESULT constexpr float GetWidth() const { return (right - left); }
-			USE_RESULT constexpr float GetHeight() const { return (top - bottom); }
+			USE_RESULT constexpr float GetWidth() const { return maths::Abs(right - left); }
+			USE_RESULT constexpr float GetHeight() const { return maths::Abs(top - bottom); }
 		};
 
 	public:
 		virtual ~iCamera() noexcept = default;
 		
-		virtual const kmaths::Matrix4x4f& GetProjectionMatrix() const noexcept = 0;
+		virtual const maths::Matrix4x4f& GetProjectionMatrix() const noexcept = 0;
 		virtual float GetAspectRatio() const noexcept = 0;
 		virtual void SetAspectRatio(float aspectRatio) = 0;
 		virtual void SetAspectRatio(float width, float height) = 0;

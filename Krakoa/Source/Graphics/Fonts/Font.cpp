@@ -3,6 +3,7 @@
 
 #include "../../Debug/Debug.hpp"
 #include "../../Logging/EngineLogger.hpp"
+#include "../../Util/EnumHelpers.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/String/kToString.hpp>
@@ -59,6 +60,11 @@ namespace krakoa::gfx
 		DeduceModifiers(filepath);
 	}
 
+	std::vector<Font::Modifiers> Font::GetModifiers() const
+	{
+		return util::DecipherEnumBitMask<Modifiers>(modifiers);
+	}
+
 	void Font::DeduceModifiers(const std::filesystem::path& path)
 	{
 		const auto filename = klib::ToLower(path.filename().string());
@@ -84,7 +90,7 @@ namespace krakoa::gfx
 		return impl == nullptr;
 	}
 
-	Font::Modifiers::underlying_t Font::GetModifiers() const
+	Font::Modifiers::Underlying_t Font::GetModifiersMask() const
 	{
 		return modifiers;
 	}

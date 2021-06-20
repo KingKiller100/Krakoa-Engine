@@ -64,7 +64,7 @@ namespace krakoa
 		RecalculateViewMatrix();
 	}
 
-	const kmaths::Matrix4x4f& OrthographicCamera::GetProjectionMatrix() const noexcept
+	const maths::Matrix4x4f& OrthographicCamera::GetProjectionMatrix() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		return projectionMat;

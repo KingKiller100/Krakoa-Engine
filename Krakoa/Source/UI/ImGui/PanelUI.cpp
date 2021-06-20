@@ -10,12 +10,12 @@ namespace krakoa::ui
 		DrawPanel(label, WindowFlags::None, instruction);
 	}
 
-	void DrawPanel(const char* label, WindowFlags::underlying_t flags, const UICallBack& instruction)
+	void DrawPanel(const char* label, WindowFlags::Underlying_t flags, const UICallBack& instruction)
 	{
 		DrawPanel(label, nullptr, flags, instruction);
 	}
 
-	void DrawPanel(const char* label, bool* pOpen, WindowFlags::underlying_t flags, const UICallBack& instruction)
+	void DrawPanel(const char* label, bool* pOpen, WindowFlags::Underlying_t flags, const UICallBack& instruction)
 	{
 		ImGui::Begin(label, pOpen, flags);
 		if (instruction)

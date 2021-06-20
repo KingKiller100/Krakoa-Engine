@@ -15,6 +15,6 @@ namespace krakoa::ui
 		DrawRawText(klib::kString::ToString(fmt, arg, args...));
 	}
 
-	bool DrawInputTextBox(const std::string_view& label, char* buf, size_t buf_size, InputTextFlags::underlying_t flags,
+	bool DrawInputTextBox(const std::string_view& label, char* buf, size_t buf_size, InputTextFlags::Underlying_t flags,
 		const UICallBack& cb = nullptr);
 }

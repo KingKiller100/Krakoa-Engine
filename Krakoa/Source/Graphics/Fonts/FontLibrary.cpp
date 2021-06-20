@@ -50,7 +50,7 @@ namespace krakoa::gfx
 
 		families[family].insert(font);
 
-		if (font->GetModifiers() & Font::Modifiers::Regular)
+		if (font->GetModifiersMask() & Font::Modifiers::Regular)
 			MakeDefault(family, size);
 	}
 
@@ -76,7 +76,7 @@ namespace krakoa::gfx
 		defaultFontInfo.family = family;
 	}
 
-	void FontLibrary::MakeDefault(const std::string& family, float size, Font::Modifiers::underlying_t modifiers)
+	void FontLibrary::MakeDefault(const std::string& family, float size, Font::Modifiers::Underlying_t modifiers)
 	{
 		KRK_PROFILE_FUNCTION();
 		
@@ -108,12 +108,12 @@ namespace krakoa::gfx
 		return iter->second;
 	}
 
-	Multi_Ptr<Font> FontLibrary::GetFont(Font::Modifiers::underlying_t modifiersMask)
+	Multi_Ptr<Font> FontLibrary::GetFont(Font::Modifiers::Underlying_t modifiersMask)
 	{
 		return GetFont(defaultFontInfo.family, defaultFontInfo.font->size, modifiersMask);
 	}
 
-	const Multi_Ptr<Font> FontLibrary::GetFont(Font::Modifiers::underlying_t modifiersMask) const
+	const Multi_Ptr<Font> FontLibrary::GetFont(Font::Modifiers::Underlying_t modifiersMask) const
 	{
 		return GetFont(defaultFontInfo.family, defaultFontInfo.font->size, modifiersMask);
 	}
@@ -128,7 +128,7 @@ namespace krakoa::gfx
 	// 	families.erase(iter);
 	// }
 
-	const Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, Font::Modifiers::underlying_t modifiersMask) const
+	const Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, Font::Modifiers::Underlying_t modifiersMask) const
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto& family = GetFamily(name);
@@ -136,7 +136,7 @@ namespace krakoa::gfx
 		Multi_Ptr<Font> font;
 		for (const auto& currentFont : family)
 		{
-			if (currentFont->GetModifiers() & modifiersMask
+			if (currentFont->GetModifiersMask() & modifiersMask
 				&& currentFont->GetSize() == size)
 			{
 				font = currentFont;
@@ -149,7 +149,7 @@ namespace krakoa::gfx
 		return font;
 	}
 
-	Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, Font::Modifiers::underlying_t modifiersMask)
+	Multi_Ptr<Font> FontLibrary::GetFont(const std::string& name, float size, Font::Modifiers::Underlying_t modifiersMask)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto& family = GetFamily(name);
@@ -157,7 +157,7 @@ namespace krakoa::gfx
 		Multi_Ptr<Font> font;
 		for (const auto& currentFont : family)
 		{
-			if (currentFont->GetModifiers() & modifiersMask
+			if (currentFont->GetModifiersMask() & modifiersMask
 				&& currentFont->GetSize() == size)
 			{
 				font = currentFont;
@@ -176,12 +176,12 @@ namespace krakoa::gfx
 		return font;
 	}
 
-	const Multi_Ptr<Font> FontLibrary::GetFont(float size, Font::Modifiers::underlying_t modifiersMask) const
+	const Multi_Ptr<Font> FontLibrary::GetFont(float size, Font::Modifiers::Underlying_t modifiersMask) const
 	{
 		return GetFont(defaultFontInfo.family, size, modifiersMask);
 	}
 
-	Multi_Ptr<Font> FontLibrary::GetFont(float size, Font::Modifiers::underlying_t modifiersMask)
+	Multi_Ptr<Font> FontLibrary::GetFont(float size, Font::Modifiers::Underlying_t modifiersMask)
 	{
 		return GetFont(defaultFontInfo.family, size, modifiersMask);
 	}

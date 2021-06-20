@@ -20,7 +20,7 @@ namespace krakoa
 		float GetRotation() const noexcept;
 		void SetRotation(const float rotation) noexcept;
 
-		const kmaths::Matrix4x4f& GetProjectionMatrix() const noexcept override;
+		const maths::Matrix4x4f& GetProjectionMatrix() const noexcept override;
 		const kmaths::Matrix4x4f& GetViewMatrix() const noexcept;
 		const kmaths::Matrix4x4f& GetViewProjectionMatrix() const noexcept;
 

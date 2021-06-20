@@ -107,7 +107,7 @@ namespace krakoa::gfx
 		};
 
 	public:
-		inline static constexpr auto Length = 4;
+		inline static constexpr size_t Length = 4;
 		inline static constexpr auto Bytes = Length * sizeof(std::uint8_t);
 
 		inline static constexpr std::uint8_t MinColourValue = 0;

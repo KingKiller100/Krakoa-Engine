@@ -26,12 +26,14 @@ namespace krakoa::scene
 		entityComponentSystem->RegisterComponentCallback<components::CameraComponent>([&](ecs::EntityUID eid)
 			{
 				auto& entity = GetEntity(eid);
-				auto sceneCam = entity.GetComponent<components::CameraComponent>().GetCamera<SceneCamera>();
-				if (!sceneCam)
+				auto& camera = entity.GetComponent<components::CameraComponent>();
+
+				if (!camera.IsCamera<SceneCamera>())
 					return;
 
+				auto& sceneCam = camera.GetCamera<SceneCamera>();
 				const auto& window = GetApp().GetWindow();
-				sceneCam->SetViewportSize(window.GetDimensions());
+				sceneCam.SetViewportSize(window.GetDimensions());
 			});
 	}
 

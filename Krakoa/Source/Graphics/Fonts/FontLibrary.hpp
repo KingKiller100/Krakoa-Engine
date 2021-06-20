@@ -22,18 +22,18 @@ namespace krakoa::gfx
 		void Load(const std::filesystem::path& filepath, float size);
 		void LoadFamilyFromFile(const std::string& family, float size);
 
-		void MakeDefault(const std::string& family, float size, Font::Modifiers::underlying_t modifiers = Font::Modifiers::Regular);
+		void MakeDefault(const std::string& family, float size, Font::Modifiers::Underlying_t modifiers = Font::Modifiers::Regular);
 
 		std::set<Multi_Ptr<Font>>& GetFamily(const std::string& name);
 		const std::set<Multi_Ptr<Font>>& GetFamily(const std::string& name) const;
 
-		Multi_Ptr<Font> GetFont(Font::Modifiers::underlying_t modifiersMask);
-		Multi_Ptr<Font> GetFont(float size, Font::Modifiers::underlying_t modifiersMask);
-		Multi_Ptr<Font> GetFont(const std::string& fontFamily, float size, Font::Modifiers::underlying_t modifiersMask);
+		Multi_Ptr<Font> GetFont(Font::Modifiers::Underlying_t modifiersMask);
+		Multi_Ptr<Font> GetFont(float size, Font::Modifiers::Underlying_t modifiersMask);
+		Multi_Ptr<Font> GetFont(const std::string& fontFamily, float size, Font::Modifiers::Underlying_t modifiersMask);
 
-		const Multi_Ptr<Font> GetFont(Font::Modifiers::underlying_t modifiersMask) const;
-		const Multi_Ptr<Font> GetFont(float size, Font::Modifiers::underlying_t modifiersMask) const;
-		const Multi_Ptr<Font> GetFont(const std::string& fontFamily, float size, Font::Modifiers::underlying_t modifiersMask) const;
+		const Multi_Ptr<Font> GetFont(Font::Modifiers::Underlying_t modifiersMask) const;
+		const Multi_Ptr<Font> GetFont(float size, Font::Modifiers::Underlying_t modifiersMask) const;
+		const Multi_Ptr<Font> GetFont(const std::string& fontFamily, float size, Font::Modifiers::Underlying_t modifiersMask) const;
 		
 
 		size_t GetSize() const;

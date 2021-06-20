@@ -26,5 +26,10 @@ namespace krakoa
 	{
 		SetAspectRatio(width / height);
 	}
+
+	float Camera::GetAspectRatio() const noexcept
+	{
+		return aspectRatio;
+	}
 }
 

@@ -3,7 +3,6 @@
 
 #include "../Logging/EngineLogger.hpp"
 
-// #include <Utility/String/Tricks/kStringOperators.hpp>
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
 namespace krakoa

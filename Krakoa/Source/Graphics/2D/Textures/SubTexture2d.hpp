@@ -13,11 +13,11 @@ namespace krakoa::gfx
 
 	using TexCoordsList = std::vector<kmaths::Vector2f>;
 
-	ENUM_CLASS(GeometryType, std::uint8_t,
+	ENUM_CLASS(GeometryType, std::uint16_t,
 		QUAD = batch::limits::quad::vertices,
 		CIRCLE = batch::limits::circle::vertices,
 		TRIANGLE = batch::limits::triangle::vertices,
-		UNKNOWN = 255
+		UNKNOWN = 65535
 	);
 
 	class SubTexture2D

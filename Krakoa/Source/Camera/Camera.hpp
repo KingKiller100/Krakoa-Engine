@@ -13,7 +13,8 @@ namespace krakoa
 
 		void SetAspectRatio(float aspectRatio) override;
 		void SetAspectRatio(float width, float height) override;
-		
+		float GetAspectRatio() const noexcept override;
+
 	protected:
 		kmaths::Matrix4x4f projectionMat;
 		float aspectRatio;

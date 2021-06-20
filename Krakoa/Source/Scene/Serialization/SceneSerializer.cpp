@@ -1,15 +1,15 @@
 ﻿#include "Precompile.hpp"
 #include "SceneSerializer.hpp"
 
-#include "../Debug/Debug.hpp"
-#include "../Debug/Instrumentor.hpp"
-#include "../Logging/EngineLogger.hpp"
+#include "../Entity/Entity.hpp"
+
+#include "../../Debug/Debug.hpp"
+#include "../../Debug/Instrumentor.hpp"
+#include "../../Logging/EngineLogger.hpp"
 
 #include "SceneSerializerImpl.hpp"
+
 #include <Utility/Debug/Exceptions/NotImplementedException.hpp>
-
-#include "Entity/Entity.hpp"
-
 #include <Utility/FileSystem/kFileSystem.hpp>
 
 namespace krakoa::scene::serialize

@@ -26,10 +26,10 @@ namespace krakoa {
 				void SetPerspectiveFunc();
 
 				void HandleIsPrimary(ecs::components::CameraComponent& camera);
-				void HandleProjectionType(SceneCamera* sceneCam, SceneCamera::ProjectionType projection);
+				void HandleProjectionType(SceneCamera& sceneCam, SceneCamera::ProjectionType projection);
 
 			private:
-				std::array<std::function<void(SceneCamera*)>, SceneCamera::ProjectionType::Count()> projPropertiesFuncs;
+				std::array<std::function<void(SceneCamera&)>, SceneCamera::ProjectionType::Count()> projPropertiesFuncs;
 			};
 		}
 	}

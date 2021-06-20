@@ -13,7 +13,7 @@
 #include <Maths/Vectors/VectorMathsHelper.hpp>
 #include <Krakoa.hpp>
 
-#include "Scene/SceneSerializer.hpp"
+#include <Scene/Serialization/SceneSerializer.hpp>
 
 namespace krakoa
 {

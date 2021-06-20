@@ -1,7 +1,6 @@
 Scene: Keditor2D
 Entities:
-  - Entity: 0
-    Components:
+  - Components:
       Tag: Camera
       Transform:
         Position: [0, 0, 0]
@@ -9,73 +8,70 @@ Entities:
         Scale: [1, 1, 1]
       Camera:
         Primary: true
-        FixedAspectRatio: 2.375
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicZoom: 2.375
-        OrthographicNear: -1
-        OrthographicFar: 1
-  - Entity: 1
-    Components:
+        AspectRatio: 2.375
+        ProjectionTypeIndex: 0
+        Perspective:
+          FieldOfView: 0.785398185
+          Near: 0.00999999978
+          Far: 1000
+        Orthographic:
+          Zoom: 2.375
+          Near: -1
+          Far: 1
+  - Components:
       Tag: Colour
       Transform:
         Position: [-0.5, 0, -0.75]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
-        GeometryType: 4
+        GeometryTypeIndex: 4
         Colour: [1, 1, 1, 0]
-        TillingFactor: 1
+        TilingFactor: 1
         TextureID: N/A
-  - Entity: 2
-    Components:
+  - Components:
       Tag: Cyan
       Transform:
         Position: [0.5, 0, -0.75]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
-        GeometryType: 4
+        GeometryTypeIndex: 4
         Colour: [0, 1, 1, 1]
-        TillingFactor: 1
+        TilingFactor: 1
         TextureID: N/A
-  - Entity: 3
-    Components:
+  - Components:
       Tag: Magenta
       Transform:
         Position: [0, 0.5, -0.75]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
-        GeometryType: 4
+        GeometryTypeIndex: 4
         Colour: [1, 0, 1, 1]
-        TillingFactor: 1
+        TilingFactor: 1
         TextureID: N/A
-  - Entity: 4
-    Components:
+  - Components:
       Tag: Yellow
       Transform:
         Position: [0, -0.5, -0.75]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
-        GeometryType: 4
+        GeometryTypeIndex: 4
         Colour: [1, 1, 0, 1]
-        TillingFactor: 1
+        TilingFactor: 1
         TextureID: N/A
-  - Entity: 5
-    Components:
+  - Components:
       Tag: Textured
       Transform:
         Position: [0, 0, 0]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
-        GeometryType: 4
+        GeometryTypeIndex: 4
         Colour: [1, 1, 1, 0]
-        TillingFactor: 3
+        TilingFactor: 3
         TextureID: 4
         TexCoord: [0, 0]
         TexCoordData:

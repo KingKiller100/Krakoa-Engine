@@ -15,57 +15,57 @@ namespace krakoa::scene::panels
 
 	void CameraProperties::SetOrthographicFunc()
 	{
-		projPropertiesFuncs[SceneCamera::ProjectionType::Orthographic] = [](SceneCamera* sceneCamera)
+		projPropertiesFuncs[SceneCamera::ProjectionType::Orthographic] = [](SceneCamera& sceneCamera)
 		{
-			float orthoSize = sceneCamera->GetOrthographicZoom();
-			float orthoNear = sceneCamera->GetOrthographicNearClip();
-			float orthoFar = sceneCamera->GetOrthographicFarClip();
+			float orthoSize = sceneCamera.GetOrthographicZoom();
+			float orthoNear = sceneCamera.GetOrthographicNearClip();
+			float orthoFar = sceneCamera.GetOrthographicFarClip();
 
 			ui::DrawDragValue("Zoom", orthoSize, 0.01f, 0.25f, 10.f,
 				[&]()
 			{
-				sceneCamera->SetOrthographicZoom(orthoSize);
+				sceneCamera.SetOrthographicZoom(orthoSize);
 			});
 			ui::DrawDragValue("Near Clip", orthoNear, 0.01f, -1.f, 9.95f,
 				[&]()
 			{
-				sceneCamera->SetOrthographicNearClip(orthoNear);
+				sceneCamera.SetOrthographicNearClip(orthoNear);
 				if (orthoNear >= orthoFar)
 				{
 					orthoFar = orthoNear + 0.05f;
-					sceneCamera->SetOrthographicFarClip(orthoFar);
+					sceneCamera.SetOrthographicFarClip(orthoFar);
 				}
 			});
 			ui::DrawDragValue("Far Clip", orthoFar, 0.01f, orthoNear + 0.05f, 10.f,
 				[&]()
 			{
-				sceneCamera->SetOrthographicFarClip(orthoFar);
+				sceneCamera.SetOrthographicFarClip(orthoFar);
 			});
 		};
 	}
 
 	void CameraProperties::SetPerspectiveFunc()
 	{
-		projPropertiesFuncs[SceneCamera::ProjectionType::Perspective] = [](SceneCamera* sceneCamera)
+		projPropertiesFuncs[SceneCamera::ProjectionType::Perspective] = [](SceneCamera& sceneCamera)
 		{
-			float perspectiveVerticalFOV = kmaths::ToDegrees(sceneCamera->GetPerspectiveVerticalFOV());
-			float perspectiveNear = sceneCamera->GetPerspectiveNearClip();
-			float perspectiveFar = sceneCamera->GetPerspectiveFarClip();
+			float perspectiveVerticalFOV = kmaths::ToDegrees(sceneCamera.GetPerspectiveVerticalFOV());
+			float perspectiveNear = sceneCamera.GetPerspectiveNearClip();
+			float perspectiveFar = sceneCamera.GetPerspectiveFarClip();
 
 			ui::DrawDragValue("Vertical F.O.V.", perspectiveVerticalFOV, 0.5f,
 				[&]()
 			{
-				sceneCamera->SetPerspectiveVerticalFOV(kmaths::ToRadians(perspectiveVerticalFOV));
+				sceneCamera.SetPerspectiveVerticalFOV(kmaths::ToRadians(perspectiveVerticalFOV));
 			});
 			ui::DrawDragValue("Near Clip", perspectiveNear, 0.05f,
 				[&]()
 			{
-				sceneCamera->SetPerspectiveNearClip(perspectiveNear);
+				sceneCamera.SetPerspectiveNearClip(perspectiveNear);
 			});
 			ui::DrawDragValue("Far Clip", perspectiveFar, 0.05f,
 				[&]()
 			{
-				sceneCamera->SetPerspectiveFarClip(perspectiveFar);
+				sceneCamera.SetPerspectiveFarClip(perspectiveFar);
 			});
 		};
 	}
@@ -84,12 +84,12 @@ namespace krakoa::scene::panels
 		{
 			HandleIsPrimary(camera);
 
-			auto* sceneCamera = camera.GetCamera<SceneCamera>();
 
-			if (!sceneCamera)
+			if (!camera.IsCamera<SceneCamera>())
 				return;
 
-			const auto projection = sceneCamera->GetProjectionType();
+			auto& sceneCamera = camera.GetCamera<SceneCamera>();
+			const auto projection = sceneCamera.GetProjectionType();
 			HandleProjectionType(sceneCamera, projection);
 			projPropertiesFuncs[projection](sceneCamera);
 		});
@@ -101,7 +101,7 @@ namespace krakoa::scene::panels
 		camera.SetIsPrimary(ui::DrawCheckBox("Primary", primary));
 	}
 
-	void CameraProperties::HandleProjectionType(SceneCamera* sceneCam, SceneCamera::ProjectionType projection)
+	void CameraProperties::HandleProjectionType(SceneCamera& sceneCam, SceneCamera::ProjectionType projection)
 	{
 		std::array<const char*, SceneCamera::ProjectionType::Count()> projectionTypes;
 		size_t index = 0;
@@ -121,7 +121,7 @@ namespace krakoa::scene::panels
 				const bool selected = (currentSelection == type);
 				ui::HandleSelectable(type, selected, [&]()
 				{
-					sceneCam->SetProjectionType(i);
+					sceneCam.SetProjectionType(i);
 				});
 
 				if (selected)

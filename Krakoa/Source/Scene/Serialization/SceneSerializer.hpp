@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "iScene.hpp"
-#include "../Core/PointerTypes.hpp"
+#include "../iScene.hpp"
+#include "../../Core/PointerTypes.hpp"
 
 #include <filesystem>
 

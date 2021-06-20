@@ -325,7 +325,8 @@ namespace krakoa::scene::serialize::impl
 
 			if (const auto appearanceNode = node[keys::ComponentKeys::AppearanceKey]; appearanceNode)
 			{
-				const gfx::GeometryType geometry = appearanceNode["GeometryTypeIndex"].as<gfx::GeometryType::Underlying_t>();
+				const gfx::GeometryType geometry = appearanceNode[keys::AppearanceKeys::GeometryTypeKey].as<gfx::GeometryType::Underlying_t>();
+				const gfx::Colour colour = appearanceNode[keys::AppearanceKeys::ColourKey].as<gfx::Colour>();
 			}
 			
 		}

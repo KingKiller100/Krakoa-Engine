@@ -89,6 +89,24 @@ namespace YAML
 			return true;
 		}
 	};
+
+	template<>
+	struct convert<gfx::AssetID>
+	{
+		using Value_t = gfx::AssetID;
+		static Node encode(const Value_t& aID)
+		{
+			Node node;
+			node.push_back(aID.GetID());
+			return node;
+		}
+
+		static bool decode(const Node& node, Value_t& aID)
+		{
+			aID = node.as<std::uint32_t>();
+			return true;
+		}
+	};
 }
 
 namespace
@@ -203,12 +221,14 @@ Emitter& operator<<(Emitter& emitter, const std::string_view& str)
 
 Emitter& operator<<(Emitter& emitter, const Entity& entity)
 {
+	const auto& tag = entity.GetComponent<TagComponent>();
+	KRK_TRC(util::Fmt("Serializing entity: [{0},{1}]", entity.GetID(), tag.GetTag()));
 	emitter << BeginMap;
 	// emitter << Key << "Entity" << Value << entity.GetID().GetValue();
 	emitter << Key << "Components" << Value;
 	emitter << BeginMap;
 	if (entity.HasComponent<TagComponent>())
-		emitter << Key << "Tag" << Value << entity.GetComponent<TagComponent>();
+		emitter << Key << "Tag" << Value << tag;
 	if (entity.HasComponent<TransformComponent>())
 		emitter << Key << "Transform" << Value << entity.GetComponent<TransformComponent>();
 	if (entity.HasComponent<Appearance2DComponent>())
@@ -242,7 +262,6 @@ namespace krakoa::scene::serialize::impl
 			if (entity.GetID().IsNull())
 				return;
 
-			KRK_NRM(util::Fmt("Serializing entity: {0}", entity.GetID()));
 
 			emitter << entity;
 
@@ -280,7 +299,7 @@ namespace krakoa::scene::serialize::impl
 
 		for (auto&& node : entitiesNode)
 		{
-			 const ecs::EntityUID eID = node[keys::EntityKey].as<ecs::EntityUID::ID_t>();
+			const ecs::EntityUID eID = node[keys::EntityKey].as<ecs::EntityUID::ID_t>();
 			const auto tag = node[keys::ComponentKeys::TagKey].as < std::string >("Entity" + eID.ToString());
 			KRK_DBG(util::Fmt("Deserializing entity: {0}", tag));
 
@@ -310,10 +329,10 @@ namespace krakoa::scene::serialize::impl
 				const SceneCamera::ProjectionType projectionType = cameraNode[keys::CameraKeys::ProjectionTypeKey].as<SceneCamera::ProjectionType::Underlying_t>();
 				const auto perspectiveFOV = cameraNode[keys::CameraKeys::PerspectiveFOVKey].as<float>();
 				const auto perspectiveNear = cameraNode[keys::CameraKeys::PerspectiveNearKey].as<float>();
-				const auto perspectiveFar  = cameraNode[keys::CameraKeys::PerspectiveFarKey].as<float>();
+				const auto perspectiveFar = cameraNode[keys::CameraKeys::PerspectiveFarKey].as<float>();
 				const auto orthographicZoom = cameraNode[keys::CameraKeys::OrthographicZoomKey].as<float>();
 				const auto orthographicNear = cameraNode[keys::CameraKeys::OrthographicNearKey].as<float>();
-				const auto orthographicFar  = cameraNode[keys::CameraKeys::OrthographicFarKey].as<float>();
+				const auto orthographicFar = cameraNode[keys::CameraKeys::OrthographicFarKey].as<float>();
 
 				auto& camera = entity.AddComponent<CameraComponent>(new SceneCamera({}), isPrimary);
 				camera.SetAspectRatio(aspectRatio);
@@ -327,8 +346,12 @@ namespace krakoa::scene::serialize::impl
 			{
 				const gfx::GeometryType geometry = appearanceNode[keys::AppearanceKeys::GeometryTypeKey].as<gfx::GeometryType::Underlying_t>();
 				const gfx::Colour colour = appearanceNode[keys::AppearanceKeys::ColourKey].as<gfx::Colour>();
+				const auto tilingFactor = appearanceNode[keys::AppearanceKeys::TilingFactorKey].as<float>();
+				// const auto textureID = appearanceNode[keys::AppearanceKeys::TextureIDKey].as<gfx::AssetID>();
+				// const auto texCoord = appearanceNode[keys::AppearanceKeys::TexCoordKey].as<maths::Vector2f>();
+				entity.AddComponent<Appearance2DComponent>(geometry, colour, tilingFactor);
 			}
-			
+
 		}
 
 		return true;

@@ -1,4 +1,4 @@
-Scene: Keditor2D
+Scene: Example
 Entities:
   - Components:
       Tag: Camera

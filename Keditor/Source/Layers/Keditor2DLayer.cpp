@@ -61,7 +61,7 @@ namespace krakoa
 
 		auto& sceneMan = application.GetManager<scene::SceneManager>();
 
-		sceneMan.Add("Keditor2D");
+		sceneMan.Add("Example");
 
 		activeScene = sceneMan.GetCurrentScene();
 

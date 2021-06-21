@@ -1,6 +1,5 @@
 ﻿#include "MenuBar.hpp"
 
-#include "Core/Application.hpp"
 #include "UI/ImGui/MenuUI.hpp"
 
 namespace krakoa::panels
@@ -13,22 +12,32 @@ namespace krakoa::panels
 	void MenuBar::DrawNodes()
 	{
 		ui::DrawMenuBar([this] {
-			DrawFileNode();
+			for (auto&& header : menuBarList)
+			{
+				const auto& title = header.first;
+				const auto& commands = header.second;
+				ui::DrawMenu(title, [&commands] {
+					for (auto&& command : commands)
+					{
+						ui::DrawMenuItem(command.first, [&]()
+						{
+							if (command.second)
+								command.second();
+						});
+					}
+				});
+			}
 		});
 	}
 
-	void MenuBar::DrawFileNode()
+	void MenuBar::AddTitle(const MenuBarList::key_type& title)
 	{
-		ui::DrawMenu("File", [] {
-			ui::DrawMenuItem("Save Scene", [&]()
-			{
-				
-			});
-
-			ui::DrawMenuItem("Exit", [&]()
-			{
-				GetApp().Close();
-			});
-		});
+		menuBarList[title];
 	}
+
+	void MenuBar::AddOption(const std::string& title, const ui::NamedCommand& option)
+	{
+		menuBarList[title][option.label] = option.callback;
+	}
+
 }

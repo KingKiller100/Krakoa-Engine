@@ -169,6 +169,7 @@ namespace krakoa
 		serializer.Serialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
 
 		menuBar.reset(new panels::MenuBar{});
+		menuBar->AddOption("File", { "Exit", []() { GetApp().Close(); } });
 	}
 
 	void Keditor2DLayer::OnDetach()

@@ -165,7 +165,7 @@ namespace krakoa
 			nsc.Bind<AnimateEntityScript>();
 		}
 
-		scene::serialize::SceneSerializer serializer(sc);
+		const scene::serialization::SceneSerializer serializer(sc);
 		serializer.Serialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
 
 		menuBar.reset(new panels::MenuBar{});

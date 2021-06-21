@@ -12,7 +12,7 @@
 #include <Utility/Debug/Exceptions/NotImplementedException.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
-namespace krakoa::scene::serialize
+namespace krakoa::scene::serialization
 {
 	SceneSerializer::SceneSerializer(const Multi_Ptr<iScene>& scene)
 		: scene(scene)

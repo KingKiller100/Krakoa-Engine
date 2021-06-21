@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace krakoa::scene::serialize::impl::keys
+namespace krakoa::scene::serialization::impl::keys
 {
 	static constexpr auto SceneKey = "Scene";
 	static constexpr auto EntitiesKey = "Entities";

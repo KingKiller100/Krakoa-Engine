@@ -23,7 +23,7 @@ using namespace YAML;
 
 using namespace krakoa;
 using namespace scene;
-using namespace serialize;
+using namespace serialization;
 using namespace impl;
 using namespace ecs;
 using namespace components;
@@ -243,7 +243,7 @@ Emitter& operator<<(Emitter& emitter, const Entity& entity)
 	return emitter;
 }
 
-namespace krakoa::scene::serialize::impl
+namespace krakoa::scene::serialization::impl
 {
 	std::string SerializeScene(const iScene& scene)
 	{

@@ -5,7 +5,7 @@
 
 #include <filesystem>
 
-namespace krakoa::scene::serialize
+namespace krakoa::scene::serialization
 {
 	class SceneSerializer
 	{

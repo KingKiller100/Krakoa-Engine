@@ -55,7 +55,7 @@ namespace krakoa
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
+		const auto window = GetApp().GetWindow().GetNativeWindow<GLFWwindow>();
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);

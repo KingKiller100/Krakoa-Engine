@@ -25,7 +25,7 @@ namespace krakoa::input
 	bool WindowsInputManager::IsKeyPressedImpl(KeyCode keycode) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
+		const auto window = GetWindow().GetNativeWindow<GLFWwindow>();
 		const auto state = glfwGetKey(window, static_cast<int>(keycode));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
@@ -50,7 +50,7 @@ namespace krakoa::input
 	bool WindowsInputManager::IsMouseButtonPressedImpl(MouseCode button) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
+		const auto window = GetWindow().GetNativeWindow<GLFWwindow>();
 		const auto state = glfwGetMouseButton(window, static_cast<int>(button));
 		return state == GLFW_PRESS;
 	}
@@ -58,7 +58,7 @@ namespace krakoa::input
 	kmaths::Vector2f WindowsInputManager::GetMousePositionImpl() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto window = std::any_cast<GLFWwindow*>(GetApp().GetWindow().GetNativeWindow());
+		const auto window = GetWindow().GetNativeWindow<GLFWwindow>();
 		double xPos, yPos;
 		glfwGetCursorPos(window, &xPos, &yPos);
 		return { static_cast<float>(xPos), static_cast<float>(yPos) };

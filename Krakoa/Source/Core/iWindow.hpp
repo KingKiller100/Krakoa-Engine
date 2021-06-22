@@ -41,7 +41,13 @@ namespace krakoa
 		virtual void SetVsync(bool isEnabled) = 0;
 		USE_RESULT virtual bool IsVsyncActive() const = 0;
 
-		virtual std::any GetNativeWindow() const noexcept = 0;
+		template<typename T>
+		USE_RESULT T* GetNativeWindow() const noexcept
+		{
+			return std::any_cast<T*>(GetNativeWindow());
+		}
+		
+		USE_RESULT virtual std::any GetNativeWindow() const noexcept = 0;
 
 		static iWindow* Create(const WindowProperties& props);
 	};

@@ -11,7 +11,8 @@
 #include "../Panels/SceneHierarchyPanel.hpp"
 
 
-#include "Scene/Scene.hpp"
+#include <Scene/iScene.hpp>
+#include <Scene/Serialization/SceneSerializer.hpp>
 
 namespace krakoa
 {
@@ -55,8 +56,7 @@ namespace krakoa
 		kmaths::Vector4f geometryColour;
 		kmaths::Vector3f position;
 
-		Weak_Ptr<scene::iScene> activeScene;
-
+		scene::serialization::SceneSerializer sceneSerializer;
 		Solo_Ptr<panels::MenuBar> menuBar;
 		
 		bool isWindowFocused;

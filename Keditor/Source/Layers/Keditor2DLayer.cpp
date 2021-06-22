@@ -28,7 +28,6 @@ namespace krakoa
 			/ CAST(float, application.GetWindow().GetHeight()),
 			true) // Aspect ratio from window size
 		, position({ 0.f, 0.f })
-		, activeScene()
 		, isWindowFocused(false)
 		, isWindowHovered(false)
 	{
@@ -63,7 +62,7 @@ namespace krakoa
 
 		sceneMan.Add("Example");
 
-		activeScene = sceneMan.GetCurrentScene();
+		const auto activeScene = sceneMan.GetCurrentScene();
 
 		if (activeScene.expired())
 		{
@@ -165,11 +164,20 @@ namespace krakoa
 			nsc.Bind<AnimateEntityScript>();
 		}
 
-		const scene::serialization::SceneSerializer serializer(sc);
-		serializer.Serialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
+		sceneSerializer = scene::serialization::SceneSerializer(sc);
 
 		menuBar.reset(new panels::MenuBar{});
 		menuBar->AddOption("File", { "Exit", []() { GetApp().Close(); } });
+		menuBar->AddOption("File", { "Save Scene", [this]()
+		{
+			sceneSerializer.Serialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
+		} }
+		);
+		menuBar->AddOption("File", { "Load Scene", [this]()
+		{
+			sceneSerializer.Deserialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
+		} }
+		);
 	}
 
 	void Keditor2DLayer::OnDetach()

@@ -11,7 +11,12 @@ namespace krakoa::filesystem
 	class IniFile
 	{
 	public:
-		struct ValueData { std::string value; klib::MutSourceInfo source; };
+		struct ValueData
+		{
+			std::string value;
+			klib::MutSourceInfo source;
+		};
+		
 		using ValueMap = std::unordered_map<std::string, ValueData>;
 
 		static constexpr auto s_CommentToken = '*';

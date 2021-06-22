@@ -23,7 +23,7 @@ extern void krakoa::CreateApplication();
 #include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
-inline void Launch();
+inline void Launch(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
@@ -31,18 +31,16 @@ int main(int argc, char** argv)
 	klib::kCalendar::UsePlatformCalendarInfoSource();
 
 	memory::HeapFactory::Initialize();
-	Launch();
+	Launch(argc, argv);
 	memory::HeapFactory::ReportMemoryLeaks();
 	memory::HeapFactory::ShutDown();
 
 	return EXIT_SUCCESS;
 }
 
-inline void Launch()
+inline void Launch(int argc, char** argv)
 {
 	using namespace krakoa;
-
-	klib::kDebug::IsDebuggerAttached("DebugPlease");
 
 #ifdef KRAKOA_TEST
 	krakoa::tests::TestDriver::Initialize();
@@ -50,21 +48,28 @@ inline void Launch()
 	krakoa::tests::TestDriver::ShutDown();
 #else
 	KRK_PROFILE_SESSION_BEGIN("Start Up", "KRK_PROFILER-StartUp");
-	
+
 	KRK_INIT_LOGS("");
-	
+
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
 
 	filesystem::VirtualFileExplorer::Initialize(cwd);
 	filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
 	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
-	
+
 	configurations::GlobalConfig::Create();
 	auto globalConfig = Solo_Ptr<configurations::GlobalConfig>(configurations::GlobalConfig::Pointer());
 
+	globalConfig->Set("Application", "CmdArguments", argc, MUT_SRC_INFO());
+	for (auto i = 0; i < argc; ++i)
+	{
+		globalConfig->Set("Application", util::Fmt("CmdArgument{0}", i), argv[i], MUT_SRC_INFO());
+	}
+	globalConfig->Set("Application", "Configuration", klib::GetRuntimeConfigurationStr(), MUT_SRC_INFO());
+
 	EngineLogger::SetMinimumLogLevelUsingConfig();
 	EngineLogger::RemoveOldFileUsingConfig();
-	
+
 	CreateApplication();
 	auto pApp = Solo_Ptr<Application>(Application::Pointer());
 	pApp->Initialize();

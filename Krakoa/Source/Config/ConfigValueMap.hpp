@@ -10,13 +10,13 @@
 namespace krakoa::configurations
 {
 	using ValueMap = filesystem::IniFile::ValueMap;
-	
+
 	class ConfigFileParser
 	{
 	public:
 		static ValueMap ParseFile(const std::filesystem::path& path);
 	};
-	
+
 	class ConfigValueMap
 	{
 	public:
@@ -28,8 +28,8 @@ namespace krakoa::configurations
 		T ReadAs(const std::string& key) const
 		{
 			KRK_PROFILE_FUNCTION();
-			
-			const auto& valueStr = RetrieveValue(klib::ToLower(key)).value;
+
+			const auto& valueStr = RetrieveValue(SanitizeKey(key)).value;
 
 			if constexpr (klib::type_trait::Is_String_V<T>)
 			{
@@ -54,11 +54,16 @@ namespace krakoa::configurations
 			}
 		}
 
+		void Load();
 		const ValueMap& RetrieveMap() const;
 		const ValueMap::mapped_type& RetrieveValue(
 			const ValueMap::key_type& key) const;
-		
+
+		void Set(const std::string& key, const std::string& value, const klib::MutSourceInfo& source);
+		std::string SanitizeKey(const std::string& key) const;
+
 	private:
 		ValueMap values;
+		std::filesystem::path path;
 	};
 }

@@ -19,7 +19,7 @@ namespace krakoa::configurations
 
 	public:
 		GlobalConfig(Token);
-		~GlobalConfig() noexcept;
+		~GlobalConfig() noexcept override;
 
 		template<typename T>
 		T Get(const std::string& context, const std::string& key) const
@@ -44,11 +44,30 @@ namespace krakoa::configurations
 
 		const ConfigValueMap& GetValueMap(const std::string& context) const;
 
+		template<typename T>
+		void Set(const std::string& context, const std::string& key, const T& value, const klib::MutSourceInfo& source)
+		{
+			const auto valueStr = util::Fmt("{0}", value);
+			auto& valueMap = configMap[SanitizeKey(context)];
+			if (!valueMap)
+			{
+				valueMap = Make_Solo<ConfigValueMap>("");
+			}
+			valueMap->Set(SanitizeKey(key), valueStr, source);
+			KRK_LOG("Config", util::Fmt("Setting configuration: {0}: [{1}, {2}]", context, key, valueStr));
+			KRK_LOG("Config", util::Fmt("Source: {0}", source));
+		}
+
+		void AddRemap(const std::string& redirectKey, const std::string& key);
+	
 	private:
 		void Initialize();
-
+		USE_RESULT std::string ResolveKey(const std::string& key) const;
+		USE_RESULT std::string SanitizeKey(const std::string& key) const;
+	
 	private:
 		ConfigMap configMap;
+		std::map<std::string, std::string> remapKeys;
 	};
 
 	template<typename T>

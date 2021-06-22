@@ -17,6 +17,11 @@ namespace krakoa::configurations
 		configMap.clear();
 	}
 
+	void GlobalConfig::AddRemap(const std::string& redirectKey, const std::string& key)
+	{
+		remapKeys[SanitizeKey(redirectKey)] = SanitizeKey(key);
+	}
+
 	void GlobalConfig::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
@@ -29,18 +34,36 @@ namespace krakoa::configurations
 
 		for (const auto& file : files)
 		{
-			const auto filename = klib::ToLower(file.stem().string());
-
-			configMap.emplace(filename, Make_Solo<ConfigValueMap>(file));
+			const auto filename = SanitizeKey(file.stem().string());
+			const auto valueMap = new ConfigValueMap(file);
+			valueMap->Load();
+			configMap.emplace(filename, valueMap);
 		}
 		
 		KRK_LOG("Config", "Parsing concluded");
 	}
 
+	std::string GlobalConfig::ResolveKey(const std::string& key) const
+	{
+		const auto sanitizedKey = SanitizeKey(key);
+		const auto iter = remapKeys.find(sanitizedKey);
+		if (iter != remapKeys.end())
+		{
+			return iter->second;
+		}
+
+		return sanitizedKey;
+	}
+
+	std::string GlobalConfig::SanitizeKey(const std::string& key) const
+	{
+		return klib::ToLower(key);
+	}
+
 	const ConfigValueMap& GlobalConfig::GetValueMap(const std::string& context) const
 	{
 		KRK_PROFILE_FUNCTION();
-		return *configMap.at(klib::ToLower(context));
+		return *configMap.at(SanitizeKey(context));
 	}
 
 	GlobalConfig& GetGlobalConfig()

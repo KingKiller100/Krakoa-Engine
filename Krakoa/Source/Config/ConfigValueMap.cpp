@@ -15,13 +15,19 @@ namespace krakoa::configurations
 	}
 
 	ConfigValueMap::ConfigValueMap(const std::filesystem::path& path) noexcept
-		: values(ConfigFileParser::ParseFile(path))
+		: values()
+		, path(path)
 	{}
 
 	ConfigValueMap::~ConfigValueMap() noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		values.clear();
+	}
+
+	void ConfigValueMap::Load()
+	{
+		values = ConfigFileParser::ParseFile(path);
 	}
 
 	const ValueMap& ConfigValueMap::RetrieveMap() const
@@ -32,6 +38,16 @@ namespace krakoa::configurations
 	const ValueMap::mapped_type& ConfigValueMap::RetrieveValue(
 		const ValueMap::key_type& key) const
 	{
-		return values.at(klib::ToLower(key.data()));
+		return values.at(SanitizeKey(key).data());
+	}
+
+	void ConfigValueMap::Set(const std::string& key, const std::string& value, const klib::MutSourceInfo& source)
+	{
+		values[SanitizeKey(key)] = ValueMap::mapped_type{ value, source };
+	}
+
+	std::string ConfigValueMap::SanitizeKey(const std::string& key) const
+	{
+		return klib::ToLower(key);
 	}
 }

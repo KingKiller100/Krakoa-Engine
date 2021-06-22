@@ -42,6 +42,7 @@ namespace krakoa::scene
 
 		virtual bool RemoveEntity(const std::string& name) = 0;
 		virtual bool RemoveEntity(const ecs::Entity& entity) = 0;
+		virtual void Clear() = 0;
 
 		virtual void OnLoad() = 0;
 		virtual void OnUpdate(float time) = 0;

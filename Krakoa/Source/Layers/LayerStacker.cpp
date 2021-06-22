@@ -114,7 +114,7 @@ namespace krakoa
 		}
 	}
 
-	void LayerStacker::OnRender() const noexcept
+	void LayerStacker::OnRender() const
 	{
 		KRK_PROFILE_FUNCTION();
 

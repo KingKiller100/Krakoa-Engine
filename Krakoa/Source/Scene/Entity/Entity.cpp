@@ -20,13 +20,7 @@ namespace krakoa::scene::ecs
 	{}
 
 	Entity::~Entity() noexcept
-	{
-		if (id.IsNull())
-			return;
-		
-		components.clear();
-		manager->RemoveEntity(id);
-	}
+		= default;
 
 	const bool& Entity::IsSelected() const noexcept
 	{
@@ -65,7 +59,6 @@ namespace krakoa::scene::ecs
 
 	void Entity::RemoveAllComponents() noexcept
 	{
-		components.clear();
 		manager->RemoveAllComponents(id);
 	}
 

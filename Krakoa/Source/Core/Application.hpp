@@ -64,6 +64,9 @@ namespace krakoa
 		void PopOverlay(LayerBase* overlay);
 
 		void LogOSInfo() const;
+
+		void TryRun() const;
+		void RunLoop() const;
 		
 		template<typename Manager>
 		void AddManager(Manager* ptr)

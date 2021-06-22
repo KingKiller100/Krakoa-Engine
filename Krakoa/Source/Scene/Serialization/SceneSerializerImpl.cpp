@@ -224,7 +224,7 @@ Emitter& operator<<(Emitter& emitter, const Entity& entity)
 	const auto& tag = entity.GetComponent<TagComponent>();
 	KRK_TRC(util::Fmt("Serializing entity: [{0},{1}]", entity.GetID(), tag.GetTag()));
 	emitter << BeginMap;
-	// emitter << Key << "Entity" << Value << entity.GetID().GetValue();
+	emitter << Key << "Entity" << Value << entity.GetID().GetValue();
 	emitter << Key << "Components" << Value;
 	emitter << BeginMap;
 	if (entity.HasComponent<TagComponent>())
@@ -300,12 +300,14 @@ namespace krakoa::scene::serialization::impl
 		for (auto&& node : entitiesNode)
 		{
 			const ecs::EntityUID eID = node[keys::EntityKey].as<ecs::EntityUID::ID_t>();
-			const auto tag = node[keys::ComponentKeys::TagKey].as < std::string >("Entity" + eID.ToString());
+			const auto componentNodes = node[keys::ComponentKeys::ComponentsKey];
+
+			const auto tag = componentNodes[keys::ComponentKeys::TagKey].as < std::string >();
 			KRK_DBG(util::Fmt("Deserializing entity: {0}", tag));
 
-			auto entity = scene.AddEntity(tag);
+			auto& entity = scene.AddEntity(tag);
 
-			if (const auto transformNode = node[keys::ComponentKeys::TransformKey]; transformNode)
+			if (const auto transformNode = componentNodes[keys::ComponentKeys::TransformKey]; transformNode)
 			{
 				const auto position = transformNode[keys::TransformKeys::PositionKey].as<maths::Vector3f>();
 				const auto rotation = transformNode[keys::TransformKeys::RotationKey].as<maths::Vector3f>();
@@ -322,31 +324,40 @@ namespace krakoa::scene::serialization::impl
 				}
 			}
 
-			if (const auto cameraNode = node[keys::ComponentKeys::CameraKey]; cameraNode)
+			if (const auto cameraNode = componentNodes[keys::ComponentKeys::CameraKey]; cameraNode)
 			{
+				SceneCamera::PerspectiveSpecs perspective;
+				SceneCamera::OrthographicSpecs orthographic;
+				
 				const auto isPrimary = cameraNode[keys::CameraKeys::IsPrimaryKey].as<bool>();
 				const auto aspectRatio = cameraNode[keys::CameraKeys::AspectRatioKey].as<float>();
 				const SceneCamera::ProjectionType projectionType = cameraNode[keys::CameraKeys::ProjectionTypeKey].as<SceneCamera::ProjectionType::Underlying_t>();
-				const auto perspectiveFOV = cameraNode[keys::CameraKeys::PerspectiveFOVKey].as<float>();
-				const auto perspectiveNear = cameraNode[keys::CameraKeys::PerspectiveNearKey].as<float>();
-				const auto perspectiveFar = cameraNode[keys::CameraKeys::PerspectiveFarKey].as<float>();
-				const auto orthographicZoom = cameraNode[keys::CameraKeys::OrthographicZoomKey].as<float>();
-				const auto orthographicNear = cameraNode[keys::CameraKeys::OrthographicNearKey].as<float>();
-				const auto orthographicFar = cameraNode[keys::CameraKeys::OrthographicFarKey].as<float>();
+
+				const auto perspectiveNode = cameraNode[keys::CameraKeys::PerspectiveKey];
+				perspective.fov = perspectiveNode[keys::CameraKeys::PerspectiveFOVKey].as<float>();
+				perspective.nearClip = perspectiveNode[keys::CameraKeys::PerspectiveNearKey].as<float>();
+				perspective.farClip = perspectiveNode[keys::CameraKeys::PerspectiveFarKey].as<float>();
+
+				const auto orthographicNode = cameraNode[keys::CameraKeys::OrthographicKey];
+				orthographic.zoomScale = orthographicNode[keys::CameraKeys::OrthographicZoomKey].as<float>();
+				orthographic.nearClip = orthographicNode[keys::CameraKeys::OrthographicNearKey].as<float>();
+				orthographic.farClip = orthographicNode[keys::CameraKeys::OrthographicFarKey].as<float>();
 
 				auto& camera = entity.AddComponent<CameraComponent>(new SceneCamera({}), isPrimary);
 				camera.SetAspectRatio(aspectRatio);
+				
 				auto& sceneCam = camera.GetCamera<SceneCamera>();
-				sceneCam.SetOrthographic(orthographicZoom, orthographicNear, orthographicFar);
-				sceneCam.SetPerspective(perspectiveFOV, perspectiveNear, perspectiveFar);
+				sceneCam.SetPerspective(perspective);
+				sceneCam.SetOrthographic(orthographic);
 				sceneCam.SetProjectionType(projectionType);
 			}
 
-			if (const auto appearanceNode = node[keys::ComponentKeys::AppearanceKey]; appearanceNode)
+			if (const auto appearanceNode = componentNodes[keys::ComponentKeys::AppearanceKey]; appearanceNode)
 			{
 				const gfx::GeometryType geometry = appearanceNode[keys::AppearanceKeys::GeometryTypeKey].as<gfx::GeometryType::Underlying_t>();
 				const gfx::Colour colour = appearanceNode[keys::AppearanceKeys::ColourKey].as<gfx::Colour>();
 				const auto tilingFactor = appearanceNode[keys::AppearanceKeys::TilingFactorKey].as<float>();
+
 				// const auto textureID = appearanceNode[keys::AppearanceKeys::TextureIDKey].as<gfx::AssetID>();
 				// const auto texCoord = appearanceNode[keys::AppearanceKeys::TexCoordKey].as<maths::Vector2f>();
 				entity.AddComponent<Appearance2DComponent>(geometry, colour, tilingFactor);

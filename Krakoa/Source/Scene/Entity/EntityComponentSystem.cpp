@@ -8,7 +8,9 @@
 namespace krakoa::scene::ecs
 {
 	EntityComponentSystem::EntityComponentSystem()
-		: nextFreeID(0)
+		: entities()
+		, componentRegistrationFuncMap()
+		, nextFreeID(0)
 	{}
 
 	EntityComponentSystem::~EntityComponentSystem()
@@ -23,7 +25,7 @@ namespace krakoa::scene::ecs
 		KRK_PROFILE_FUNCTION();
 
 		KRK_DBG("Removing all entities");
-		
+
 		entities.clear();
 		componentMap.clear();
 		nextFreeID = 0;
@@ -44,7 +46,7 @@ namespace krakoa::scene::ecs
 
 		if (id.IsNull())
 			return;
-		
+
 		KRK_DBG(klib::ToString("Removing entity id \"{0}\"", id));
 
 		RemoveAllComponents(id);
@@ -66,9 +68,9 @@ namespace krakoa::scene::ecs
 
 			const auto iter = std::find_if(compVec.begin(), compVec.end()
 				, [id](const Multi_Ptr<ComponentWrapperBase>& comp)
-				{
-					return id == comp->GetOwner();
-				});
+			{
+				return id == comp->GetOwner();
+			});
 
 			if (iter != compVec.end())
 				compVec.erase(iter);
@@ -80,10 +82,7 @@ namespace krakoa::scene::ecs
 	bool EntityComponentSystem::HasEntity(EntityUID id) const
 	{
 		KRK_PROFILE_FUNCTION();
-		return std::find(
-			entities.begin()
-			, entities.end()
-			, id)
+		return std::find(entities.begin(), entities.end(), id)
 			!= entities.end();
 	}
 

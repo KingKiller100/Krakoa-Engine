@@ -115,6 +115,5 @@ namespace krakoa::scene::ecs
 		ID_t id{ s_Null };
 	};
 
-
 	using ComponentUID = std::uint32_t;
 }

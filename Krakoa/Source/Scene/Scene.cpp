@@ -32,8 +32,7 @@ namespace krakoa::scene
 					return;
 
 				auto& sceneCam = camera.GetCamera<SceneCamera>();
-				const auto& window = GetApp().GetWindow();
-				sceneCam.SetViewportSize(window.GetDimensions());
+				sceneCam.SetViewportSize(GetApp().GetWindow().GetDimensions());
 			});
 	}
 
@@ -41,7 +40,7 @@ namespace krakoa::scene
 	{
 		KRK_PROFILE_FUNCTION();
 
-		entities.clear();
+		Scene::Clear(); 
 	}
 
 	std::string_view Scene::GetName() const
@@ -114,7 +113,10 @@ namespace krakoa::scene
 		const auto iter = std::find_if(entities.begin(), entities.end(),
 			[&eName](const decltype(entities)::value_type& entity)
 			{
-				return entity.GetComponent<TagComponent>().GetTag() == eName;
+				if (entity.HasComponent<TagComponent>())
+					return entity.GetComponent<TagComponent>().GetTag() == eName;
+
+				return false;
 			});
 		return iter != entities.end();
 	}
@@ -245,8 +247,15 @@ namespace krakoa::scene
 
 		KRK_INF(util::Fmt("Destorying entity: {0}", iter->GetComponent<TagComponent>().GetTag()));
 
+		entityComponentSystem->RemoveEntity(iter->GetID());
 		entities.erase(iter);
 		return true;
+	}
+
+	void Scene::Clear()
+	{
+		entityComponentSystem->RemoveAllEntities();
+		entities.clear();
 	}
 
 	void Scene::OnLoad()

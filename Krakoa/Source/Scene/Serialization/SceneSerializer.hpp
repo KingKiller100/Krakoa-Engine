@@ -12,6 +12,7 @@ namespace krakoa::scene::serialization
 		static constexpr auto s_FileExtension = ".yaml";
 		
 	public:
+		SceneSerializer() = default;
 		SceneSerializer(const Multi_Ptr<iScene>& scene);
 		
 		void Serialize(const std::filesystem::path& path) const;

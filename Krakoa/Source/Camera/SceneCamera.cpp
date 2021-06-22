@@ -22,14 +22,26 @@ namespace krakoa
 
 	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
 	{
-		perspSpecs = { verticalFOV, nearClip, farClip };
+		SetPerspective({ verticalFOV, nearClip, farClip });
+	}
+
+	void SceneCamera::SetPerspective(const SceneCamera::PerspectiveSpecs& specs)
+	{
+		perspSpecs = specs;
+		UpdateProjection();
+	}
+
+	
+	
+	void SceneCamera::SetOrthographic(const SceneCamera::OrthographicSpecs& specs)
+	{
+		orthoSpecs = specs;
 		UpdateProjection();
 	}
 
 	void SceneCamera::SetOrthographic(float zoom, float nearClip, float farClip)
 	{
-		orthoSpecs = { zoom, nearClip, farClip };
-		UpdateProjection();
+		SetOrthographic({ zoom, nearClip, farClip });
 	}
 
 	void SceneCamera::SetViewportSize(std::uint32_t width, std::uint32_t height)

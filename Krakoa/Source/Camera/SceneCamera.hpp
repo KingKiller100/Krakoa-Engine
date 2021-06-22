@@ -32,7 +32,10 @@ namespace krakoa
 		SceneCamera(const Bounds& bounds, float nearClip = -1.f, float farClip = 1.f);
 		~SceneCamera() noexcept override;
 
+		void SetPerspective(const PerspectiveSpecs& specs);
 		void SetPerspective(float verticalFOV, float nearClip, float farClip);
+
+		void SetOrthographic(const OrthographicSpecs& specs);
 		void SetOrthographic(float zoom, float nearClip, float farClip);
 
 		void SetViewportSize(std::uint32_t width, std::uint32_t height);

@@ -29,7 +29,7 @@ namespace krakoa
 
 		void OnUpdate(const float deltaTime) const noexcept;
 		void OnEvent(events::Event& e) const noexcept;
-		void OnRender() const noexcept;
+		void OnRender() const;
 
 	private:
 		std::vector<LayerBase*> layerStack;

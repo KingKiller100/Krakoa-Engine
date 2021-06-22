@@ -42,13 +42,20 @@ namespace krakoa::scene::serialization
 	bool SceneSerializer::Deserialize(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
-		const std::ifstream file(path);
+		auto inPath = path / name;
+		inPath += s_FileExtension;
+		std::ifstream file(inPath);
 		std::stringstream stream;
+
 		stream << file.rdbuf();
 
-		impl::DeserializeScene(*scene, stream.str());
+		if (const auto data = stream.str(); !data.empty())
+		{
+			scene->Clear();
+			impl::DeserializeScene(*scene, data);
+		}
 
-		throw klib::NotImplementedException{ __FUNCTION__ };
+		file.close();
 		return true;
 	}
 

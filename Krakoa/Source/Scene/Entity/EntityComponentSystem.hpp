@@ -48,7 +48,7 @@ namespace krakoa::scene::ecs
 			ComponentUID uid = GetUniqueID<Component>();
 
 			auto& compVec = componentMap[uid];
-			registrationFuncMap.emplace(uid, nullptr);
+			componentRegistrationFuncMap.emplace(uid, nullptr);
 			return compVec.emplace_back(Make_Multi<ComponentWrapper>(uid, entity, std::forward<Args>(params)...));
 		}
 
@@ -60,10 +60,10 @@ namespace krakoa::scene::ecs
 			);
 			
 			const ComponentUID uid = GetUniqueID<Component>();
-			const auto iter = registrationFuncMap.find(uid);
+			const auto iter = componentRegistrationFuncMap.find(uid);
 			
-			if (iter == registrationFuncMap.end())
-				registrationFuncMap.emplace(uid, std::forward<OnRegisterFunc>(func));
+			if (iter == componentRegistrationFuncMap.end())
+				componentRegistrationFuncMap.emplace(uid, std::forward<OnRegisterFunc>(func));
 			else
 				iter->second = std::forward<OnRegisterFunc>(func);
 		}
@@ -76,8 +76,8 @@ namespace krakoa::scene::ecs
 			);
 			
 			const ComponentUID uid = GetUniqueID<Component>();
-			const auto iter = registrationFuncMap.find(uid);
-			if (iter == registrationFuncMap.end())
+			const auto iter = componentRegistrationFuncMap.find(uid);
+			if (iter == componentRegistrationFuncMap.end())
 				return false;
 			iter->second = nullptr;
 			return true;
@@ -88,13 +88,13 @@ namespace krakoa::scene::ecs
 		{
 			ComponentUID uid = GetUniqueID<Component>();
 
-			const auto iter = registrationFuncMap.find(uid);
-			if (iter == registrationFuncMap.end())
+			const auto iter = componentRegistrationFuncMap.find(uid);
+			if (iter == componentRegistrationFuncMap.end())
 				return;
 
-			const auto& callback = iter->second;
-			if (callback)
-				callback(eid);
+			const auto& function = iter->second;
+			if (function)
+				function(eid);
 		}
 
 		template<typename Component>
@@ -225,7 +225,7 @@ namespace krakoa::scene::ecs
 	private:
 		std::vector<EntityUID> entities;
 		std::unordered_map<ComponentUID, std::vector<Multi_Ptr<ComponentWrapperBase>>> componentMap;
-		std::unordered_map<ComponentUID, OnRegisterFunc> registrationFuncMap;
+		std::unordered_map<ComponentUID, OnRegisterFunc> componentRegistrationFuncMap;
 		EntityUID nextFreeID;
 	};
 }

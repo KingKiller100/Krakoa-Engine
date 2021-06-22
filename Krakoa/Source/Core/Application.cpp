@@ -123,33 +123,11 @@ namespace krakoa
 		return false;
 	}
 
-	void Application::Run() const
+	void Application::TryRun() const
 	{
 		try
 		{
-			do {
-				const auto deltaTime = timeStep.GetStep();
-				auto& sceneManager = GetManager<scene::SceneManager>();
-
-				if (input::InputManager::IsKeyPressed(input::KEY_V))
-					pImGuiLayer->ToggleVisibility();
-
-				if (!isMinimized)
-				{
-					layerStack.OnUpdate(deltaTime);
-				}
-
-				frameBuffer->Bind();
-				gfx::Renderer::Update();
-				sceneManager.OnUpdate(deltaTime);
-				frameBuffer->Unbind();
-
-				pImGuiLayer->BeginDraw();
-				layerStack.OnRender();
-				pImGuiLayer->EndDraw();
-
-				pWindow->OnUpdate();
-			} while (IsRunning());
+			RunLoop();
 		}
 		catch (...)
 		{
@@ -161,6 +139,46 @@ namespace krakoa
 			KRK_LOG("CRASH", util::Fmt("[System] 0x{0:4h}: {1}", errCode, errText));
 		}
 	}
+
+	void Application::Run() const
+	{
+		if (klib::ScanForDebugger(std::chrono::milliseconds(500)))
+		{
+			RunLoop();
+		}
+		else
+		{
+			TryRun();
+		}
+	}
+
+	void Application::RunLoop() const
+	{
+		do {
+			const auto deltaTime = timeStep.GetStep();
+			auto& sceneManager = GetManager<scene::SceneManager>();
+
+			if (input::InputManager::IsKeyPressed(input::KEY_V))
+				pImGuiLayer->ToggleVisibility();
+
+			if (!isMinimized)
+			{
+				layerStack.OnUpdate(deltaTime);
+			}
+
+			frameBuffer->Bind();
+			gfx::Renderer::Update();
+			sceneManager.OnUpdate(deltaTime);
+			frameBuffer->Unbind();
+
+			pImGuiLayer->BeginDraw();
+			layerStack.OnRender();
+			pImGuiLayer->EndDraw();
+
+			pWindow->OnUpdate();
+		} while (IsRunning());
+	}
+
 
 	void Application::ShutDown()
 	{

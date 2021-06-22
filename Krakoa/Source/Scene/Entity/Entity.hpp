@@ -50,10 +50,10 @@ namespace krakoa::scene::ecs
 				klib::kString::ToString("Attempt to add a component already a part of this entity - \"{0}\"", util::GetTypeNameNoNamespace<Component>())
 			);
 
-			Multi_Ptr<ComponentWrapperBase> comp = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
-			components.insert(std::make_pair(comp->GetUID(), comp));
+			Multi_Ptr<ComponentWrapperBase> wrapper = manager->RegisterComponent<Component, Args...>(id, std::forward<Args>(params)...);
+			auto& component = klib::ToImpl<ComponentWrapper<Component>>(wrapper);
 			manager->OnComponentRegistered<Component>(id);
-			return klib::ToImpl<ComponentWrapper<Component>>(comp);
+			return component;
 		}
 
 		template<typename Component>
@@ -63,9 +63,7 @@ namespace krakoa::scene::ecs
 				HasComponent<Component>(), // Assert component already a part of entity
 				klib::ToString("Attempt to remove a component from this entity - \"{0}\"", util::GetTypeNameNoNamespace<Component>())
 			);
-
-			const ComponentUID uid = manager->GetUniqueID<Component>();
-			components.erase(uid);
+			
 			return manager->RemoveComponent<Component>(id);
 		}
 
@@ -76,22 +74,22 @@ namespace krakoa::scene::ecs
 				HasComponent<Component>(), // Assert component already a part of entity
 				klib::ToString("Attempt to get a component not a part of this entity - \"{0}\"", util::GetTypeNameNoNamespace<Component>())
 			);
+			
+			auto wrapper = manager->GetComponent<Component>(id);
 
-			const ComponentUID uid = manager->GetUniqueID<Component>();
-			auto& comp = components.at(uid);
-
-			if (comp.expired())
+			if (wrapper == nullptr)
 				KRK_FATAL(
 					klib::ToString("Accessing component in entity but no longer in E.C.S.  - \"{0}\"", util::GetTypeNameNoNamespace<Component>())
 				);
 
-			return klib::ToImpl<ComponentWrapper<Component>>(comp.lock());
+			Component& component = klib::ToImpl<ComponentWrapper<Component>>(wrapper);
+			return component;
 		}
 
 		template<typename Component>
 		USE_RESULT bool HasComponent() const noexcept
 		{
-			return components.find(manager->GetUniqueID<Component>()) != components.end();
+			return manager->HasComponent<Component>(id);
 		}
 
 		operator EntityUID() const noexcept
@@ -106,7 +104,6 @@ namespace krakoa::scene::ecs
 		UID id;
 		bool selected;
 		bool active;
-		std::unordered_map<ComponentUID, Weak_Ptr<ComponentWrapperBase>> components;
 		Multi_Ptr<EntityComponentSystem> manager;
 	};
 }

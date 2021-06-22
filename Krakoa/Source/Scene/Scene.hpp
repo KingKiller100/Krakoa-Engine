@@ -34,6 +34,7 @@ namespace krakoa::scene
 		
 		bool RemoveEntity(const std::string& eName) override;
 		bool RemoveEntity(const ecs::Entity& entity) override;
+		void Clear() override;
 		
 		void OnLoad() override;
 		void OnUpdate(float time) override;

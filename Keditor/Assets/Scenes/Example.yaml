@@ -1,6 +1,7 @@
 Scene: Example
 Entities:
-  - Components:
+  - Entity: 0
+    Components:
       Tag: Camera
       Transform:
         Position: [0, 0, 0]
@@ -18,7 +19,8 @@ Entities:
           Zoom: 2.375
           Near: -1
           Far: 1
-  - Components:
+  - Entity: 1
+    Components:
       Tag: Colour
       Transform:
         Position: [-0.5, 0, -0.75]
@@ -29,10 +31,11 @@ Entities:
         Colour: [1, 1, 1, 0]
         TilingFactor: 1
         TextureID: N/A
-  - Components:
+  - Entity: 2
+    Components:
       Tag: Cyan
       Transform:
-        Position: [0.5, 0, -0.75]
+        Position: [0.5, 0.850000024, -0.75]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
@@ -40,10 +43,11 @@ Entities:
         Colour: [0, 1, 1, 1]
         TilingFactor: 1
         TextureID: N/A
-  - Components:
+  - Entity: 3
+    Components:
       Tag: Magenta
       Transform:
-        Position: [0, 0.5, -0.75]
+        Position: [1.20000005, 0.5, -0.75]
         Rotation: [0, 0, 0]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
@@ -51,34 +55,15 @@ Entities:
         Colour: [1, 0, 1, 1]
         TilingFactor: 1
         TextureID: N/A
-  - Components:
+  - Entity: 4
+    Components:
       Tag: Yellow
       Transform:
         Position: [0, -0.5, -0.75]
-        Rotation: [0, 0, 0]
+        Rotation: [0, 0, -0.907570899]
         Scale: [0.200000003, 0.200000003, 1]
       Appearance:
         GeometryTypeIndex: 4
         Colour: [1, 1, 0, 1]
         TilingFactor: 1
         TextureID: N/A
-  - Components:
-      Tag: Textured
-      Transform:
-        Position: [0, 0, 0]
-        Rotation: [0, 0, 0]
-        Scale: [0.200000003, 0.200000003, 1]
-      Appearance:
-        GeometryTypeIndex: 4
-        Colour: [1, 1, 1, 0]
-        TilingFactor: 3
-        TextureID: 4
-        TexCoord: [0, 0]
-        TexCoordData:
-          BaseCoords:
-            - [0, 0]
-            - [1, 0]
-            - [1, 1]
-            - [0, 1]
-          CoordIndex: [0, 0]
-          SpriteDimensions: [715, 715]

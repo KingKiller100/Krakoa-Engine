@@ -2,7 +2,6 @@
 #include "EngineLogger.hpp"
 
 #include "../Config/GlobalConfig.hpp"
-#include "../FileSystem/VirtualFileExplorer.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/Calendar/kCalendar.hpp>
@@ -10,12 +9,6 @@
 namespace krakoa
 {
 	using namespace filesystem;
-
-	namespace
-	{
-		bool g_LogLevelSet = false;
-		bool g_CheckedOldFile = false;
-	}
 	
 	Solo_Ptr<klib::Logging> EngineLogger::pLogger;
 
@@ -56,20 +49,13 @@ namespace krakoa
 
 	void EngineLogger::SetMinimumLogLevelUsingConfig()
 	{
-		if (g_LogLevelSet) return;
-		
 		const auto logLevelStr = configurations::GetConfiguration<std::string_view>("Logging", "Level");
 		const auto min_level = klib::LogLevel::FromString(klib::ToUpper(logLevelStr));
 		pLogger->SetMinimumLoggingLevel(min_level);
-		
-		g_LogLevelSet = true;
 	}
 
-	void EngineLogger::RemoveOldFileUsingConfig()
+	void EngineLogger::RemoveIfTooOldFile()
 	{
-		if (g_CheckedOldFile)
-			return;
-
 		const auto logPath = pLogger->GetFile().GetPath();
 		
 		const auto entry = std::filesystem::directory_entry(logPath);
@@ -77,7 +63,9 @@ namespace krakoa
 		if (!entry.exists())
 			return;
 
-		pLogger->GetFile().Close(false);
+		auto& fileLogger = pLogger->GetFile();
+
+		fileLogger.Close(false);
 		
 		const auto maxBytes = configurations::GetConfiguration<size_t>("Logging", "MaxBytes");
 		const auto fileSize = entry.file_size();
@@ -94,9 +82,7 @@ namespace krakoa
 		if (tooBig || tooOld)
 			klib::Remove(entry.path());
 		
-		pLogger->GetFile().Open();
-
-		g_CheckedOldFile = true;
+		fileLogger.Open();
 	}
 
 	void EngineLogger::ShutDown()

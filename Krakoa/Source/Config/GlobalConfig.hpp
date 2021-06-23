@@ -24,7 +24,8 @@ namespace krakoa::configurations
 		template<typename T>
 		T Get(const std::string& context, const std::string& key) const
 		{
-			const auto& valueMap = GetValueMap(klib::ToLower(context));
+			const auto cleanKey = SanitizeKey(context);
+			const auto& valueMap = GetValueMap(cleanKey);
 			const auto& value = valueMap.ReadAs<T>(key);
 			return value;
 		}

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../EngineMacros.hpp"
+#include "../Core/EngineMacros.hpp"
 
 #ifdef KRAKOA_TEST
 namespace kTest

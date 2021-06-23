@@ -20,8 +20,6 @@
 
 #include "../Scene/SceneManager.hpp"
 
-#include "../Debug/ExceptionHandler.hpp"
-
 #include <chrono>
 
 namespace krakoa
@@ -49,14 +47,6 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		osInfo.reset(os::CreateOperatingSystemInfo());
-		osInfo->Initialize();
-		LogOSInfo();
-		osInfo->GetErrorHandler().SetEmergencyExitFunc([this]()
-		{
-			this->ShutDown();
-		});
-
 		PushInternalLayers();
 
 		// Initialize InputManager
@@ -75,15 +65,7 @@ namespace krakoa
 		assetMan.Initialize();
 		assetMan.GetFontLibrary().MakeDefault("OpenSans", 18.f);
 	}
-
-	void Application::LogOSInfo() const
-	{
-		const auto& vi = osInfo->GetVersionInfo();
-		KRK_LOG("OS", util::Fmt("System: {0} {1}.{2}.{3}", vi.systemName, vi.major, vi.minor, vi.buildNo));
-		KRK_LOG("OS", util::Fmt("Platform: {0}", vi.platformID));
-		KRK_LOG("OS", util::Fmt("Product: {0}", vi.productType));
-	}
-
+	
 	void Application::PushInternalLayers()
 	{
 		// Initialize Layer
@@ -122,37 +104,8 @@ namespace krakoa
 		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
 		return false;
 	}
-
-	void Application::TryRun() const
-	{
-		try
-		{
-			RunLoop();
-		}
-		catch (...)
-		{
-			KRK_LOG("CRASH", "Exception(s): " + errors::UnwrapNestedExceptions());
-			auto& errorHandler = osInfo->GetErrorHandler();
-			errorHandler.CheckForNewError();
-			const auto errCode = errorHandler.GetCode();
-			const auto errText = errorHandler.GetText();
-			KRK_LOG("CRASH", util::Fmt("[System] 0x{0:4h}: {1}", errCode, errText));
-		}
-	}
-
+	
 	void Application::Run() const
-	{
-		if (klib::ScanForDebugger(std::chrono::milliseconds(500)))
-		{
-			RunLoop();
-		}
-		else
-		{
-			TryRun();
-		}
-	}
-
-	void Application::RunLoop() const
 	{
 		do {
 			const auto deltaTime = timeStep.GetStep();
@@ -178,8 +131,7 @@ namespace krakoa
 			pWindow->OnUpdate();
 		} while (IsRunning());
 	}
-
-
+	
 	void Application::ShutDown()
 	{
 		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
@@ -201,9 +153,7 @@ namespace krakoa
 			, appTimeSpan.minutes.count()
 			, appTimeSpan.seconds.count()
 		));
-
-		osInfo->Shutdown();
-
+		
 		KRK_LOG_END();
 	}
 

@@ -28,7 +28,7 @@ namespace krakoa::scene::serialization
 		const auto sceneData = impl::SerializeScene(*scene);
 
 		auto outputPath = path;
-		outputPath /= name;
+		// outputPath /= name;
 		outputPath.replace_extension(s_FileExtension);
 		klib::WriteFile(outputPath, sceneData);
 		KRK_TRC("Serialization complete");

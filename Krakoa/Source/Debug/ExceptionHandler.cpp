@@ -5,7 +5,7 @@
 
 #include <stdexcept>
 
-namespace krakoa::errors
+namespace krakoa::debug
 {
 	namespace
 	{

@@ -26,7 +26,7 @@
 
 #include "../Util/UniqueID.hpp"
 
-#include "../Platform/OperatingSystem/iOperatingSystemInfo.hpp"
+#include "../Platform/OperatingSystem/iOperatingSystem.hpp"
 
 #include <Template/kToImpl.hpp>
 
@@ -47,12 +47,12 @@ namespace krakoa
 		void Close() noexcept;
 		USE_RESULT bool IsRunning() const;
 
-		iWindow& GetWindow() const;
-		gfx::iFrameBuffer& GetFrameBuffer() const;
-		ImGuiLayer& GetImGuiLayer() const;
+		USE_RESULT iWindow& GetWindow() const;
+		USE_RESULT gfx::iFrameBuffer& GetFrameBuffer() const;
+		USE_RESULT ImGuiLayer& GetImGuiLayer() const;
 
 		template<typename Manager>
-		Manager& GetManager() const
+		USE_RESULT Manager& GetManager() const
 		{
 			return klib::ToImpl<Manager>(managers[GetUniqueID<Manager>()]);
 		}
@@ -62,11 +62,6 @@ namespace krakoa
 		void PushOverlay(LayerBase* overlay);
 		void PopLayer(LayerBase* layer);
 		void PopOverlay(LayerBase* overlay);
-
-		void LogOSInfo() const;
-
-		void TryRun() const;
-		void RunLoop() const;
 		
 		template<typename Manager>
 		void AddManager(Manager* ptr)
@@ -97,8 +92,6 @@ namespace krakoa
 		Solo_Ptr<gfx::iFrameBuffer> frameBuffer;
 
 		std::vector<iSingleton*> managers;
-
-		Solo_Ptr<os::iOperatingSystemInfo> osInfo;
 		
 	private:
 		ImGuiLayer* pImGuiLayer;

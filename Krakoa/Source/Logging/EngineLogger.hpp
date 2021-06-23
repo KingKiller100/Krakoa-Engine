@@ -25,7 +25,7 @@ namespace krakoa
 		static void ShutDown();
 
 		static void SetMinimumLogLevelUsingConfig();
-		static void RemoveOldFileUsingConfig();
+		static void RemoveIfTooOldFile();
 		
 	private:
 		static Solo_Ptr<klib::kLogs::Logging> pLogger;

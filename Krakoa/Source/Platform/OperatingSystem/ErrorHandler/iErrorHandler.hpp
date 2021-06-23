@@ -19,6 +19,4 @@ namespace krakoa::os::errors
 		virtual void EmergencyExit() = 0;
 		virtual void SetEmergencyExitFunc(std::function<EmergencyExitFunc> func) = 0;
 	};
-
-	iErrorHandler* CreateErrorHandler();
 }

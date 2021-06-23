@@ -1,5 +1,6 @@
 #pragma once
 
+#include <HelperMacros.hpp>
 #include <filesystem>
 
 namespace krakoa::os
@@ -8,7 +9,7 @@ namespace krakoa::os
 	{
 	public:
 		virtual ~iFileDialog() = default;
-		virtual std::string OpenFile(const std::string_view filter) = 0;
-		virtual std::string SaveFile(const std::string_view filter) = 0;
+		USE_RESULT virtual std::filesystem::path OpenFile(const std::string_view filter) = 0;
+		USE_RESULT virtual std::filesystem::path SaveFile(const std::string_view filter) = 0;
 	};
 }

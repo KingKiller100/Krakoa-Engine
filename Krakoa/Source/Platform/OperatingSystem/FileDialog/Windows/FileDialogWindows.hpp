@@ -10,7 +10,7 @@ namespace krakoa::os
 		FileDialogWindows();
 		~FileDialogWindows() override;
 
-		std::string OpenFile(const std::string_view filter) override;
-		std::string SaveFile(const std::string_view filter) override;
+		std::filesystem::path OpenFile(const std::string_view filter) override;
+		std::filesystem::path SaveFile(const std::string_view filter) override;
 	};
 }

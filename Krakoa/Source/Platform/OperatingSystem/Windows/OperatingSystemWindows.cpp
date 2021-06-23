@@ -1,45 +1,47 @@
 ﻿#include "Precompile.hpp"
-#include "OperatingSystemInfoWindows.hpp"
+#include "OperatingSystemWindows.hpp"
 
 #include "../LogOS.hpp"
 #include "../Library/Windows/LibraryInstance_Windows.hpp"
+#include "../ErrorHandler/Windows/ErrorHandlerWindows.hpp"
+#include "../FileDialog/Windows/FileDialogWindows.hpp"
 
 #include <bcrypt.h>
 #include <Windows.h>
 #include <VersionHelpers.h>
 
-#define QUICK_TEXTIFY(x) #x
-
 namespace krakoa::os
 {
-	OperatingSystemInfoWindows::OperatingSystemInfoWindows()
+	OperatingSystemWindows::OperatingSystemWindows(Token&&)
 		: versionInfo({ "Windows", klib::PlatformOS::WINDOWS, "", "", 0, 0, 0 })
 		, libStore(nullptr)
 		, errorHandler(nullptr)
 	{
 	}
 
-	OperatingSystemInfoWindows::~OperatingSystemInfoWindows()
+	OperatingSystemWindows::~OperatingSystemWindows()
 		= default;
 
-	void OperatingSystemInfoWindows::Initialize()
+	void OperatingSystemWindows::Initialize()
 	{
-		errorHandler.reset(errors::CreateErrorHandler());
+		errorHandler.reset(new errors::ErrorHandlerWindows());
 		
 		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iLibraryInstance*
 		{
 			return new library::LibraryInstance_Windows(libName);
 		}));
 
+		fileDialog.reset(new FileDialogWindows());
+		
 		LoadVersionInfo();
 	}
 
-	void OperatingSystemInfoWindows::Shutdown()
+	void OperatingSystemWindows::Shutdown()
 	{
 		libStore->UnloadAll();
 	}
 
-	void OperatingSystemInfoWindows::LoadVersionInfo()
+	void OperatingSystemWindows::LoadVersionInfo()
 	{
 		static constexpr const char* productTypeStrings[]
 			= { "Work Station", "Domain Controller", "Server" };
@@ -52,24 +54,24 @@ namespace krakoa::os
 
 		if (rtlGetVersionFunc != nullptr)
 		{
-			RTL_OSVERSIONINFOEXW osInfo;
-			ZeroMemory(&osInfo, sizeof(osInfo));
-			osInfo.dwOSVersionInfoSize = sizeof(osInfo);
-			if (rtlGetVersionFunc(&osInfo) != 0) // 0 denotes success?
+			RTL_OSVERSIONINFOEXW osVersionInfo;
+			ZeroMemory(&osVersionInfo, sizeof(osVersionInfo));
+			osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
+			if (rtlGetVersionFunc(&osVersionInfo) != 0) // 0 denotes success?
 			{
 				LogOSError("Unable to retrieve version info from system: ");
 			}
 			else
 			{
-				versionInfo.platformID = platformTypeStrings[osInfo.dwPlatformId];
-				versionInfo.productType = productTypeStrings[osInfo.wProductType - 1];
+				versionInfo.platformID = platformTypeStrings[osVersionInfo.dwPlatformId];
+				versionInfo.productType = productTypeStrings[osVersionInfo.wProductType - 1];
 
-				versionInfo.major = osInfo.dwMajorVersion;
-				versionInfo.minor = osInfo.dwMinorVersion;
-				versionInfo.buildNo = osInfo.dwBuildNumber;
+				versionInfo.major = osVersionInfo.dwMajorVersion;
+				versionInfo.minor = osVersionInfo.dwMinorVersion;
+				versionInfo.buildNo = osVersionInfo.dwBuildNumber;
 			}
 
-			KRK_DBG("Source: "  QUICK_TEXTIFY(RtlGetVersionFunc(&osInfo)));
+			KRK_DBG("Source function: RtlGetVersionFunc");
 		}
 		else
 		{
@@ -91,22 +93,27 @@ namespace krakoa::os
 				versionInfo.buildNo = os_version_info.dwBuildNumber;
 			}
 
-			KRK_DBG("Source: "  QUICK_TEXTIFY(GetVersionEx((OSVERSIONINFO*)&os_version_info)));
+			KRK_DBG("Source function: GetVersionEx");
 		}
 	}
 
-	const VersionInfo& OperatingSystemInfoWindows::GetVersionInfo() const noexcept
+	const VersionInfo& OperatingSystemWindows::GetVersionInfo() const noexcept
 	{
 		return versionInfo;
 	}
 
-	library::LibraryStore& OperatingSystemInfoWindows::GetLibraryStore() noexcept
+	library::LibraryStore& OperatingSystemWindows::GetLibraryStore() noexcept
 	{
 		return *libStore;
 	}
 
-	errors::iErrorHandler& OperatingSystemInfoWindows::GetErrorHandler() noexcept
+	errors::iErrorHandler& OperatingSystemWindows::GetErrorHandler() noexcept
 	{
 		return *errorHandler;
+	}
+
+	iFileDialog& OperatingSystemWindows::GetFileDialog() noexcept
+	{
+		return *fileDialog;
 	}
 }

@@ -70,6 +70,8 @@ namespace krakoa
 		}
 
 		const auto sc = activeScene.lock();
+
+#if 0
 		{
 			KRK_PROFILE_SCOPE("Create camera entity");
 
@@ -163,6 +165,7 @@ namespace krakoa
 			nsc.Bind<ColourChangeScript>();
 			nsc.Bind<AnimateEntityScript>();
 		}
+#endif
 
 		sceneSerializer = scene::serialization::SceneSerializer(sc);
 
@@ -170,12 +173,27 @@ namespace krakoa
 		menuBar->AddOption("File", { "Exit", []() { GetApp().Close(); } });
 		menuBar->AddOption("File", { "Save Scene", [this]()
 		{
-			sceneSerializer.Serialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
+			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
+
+			auto filePath = fileDialog.OpenFile("scene (*.yam)|*.yaml");
+			if (filePath.empty())
+			{
+				filePath = filesystem::VirtualFileExplorer::GetRealPath("Scenes");
+			}
+			sceneSerializer.Serialize(filePath);
 		} }
 		);
 		menuBar->AddOption("File", { "Load Scene", [this]()
 		{
-			sceneSerializer.Deserialize(filesystem::VirtualFileExplorer::GetRealPath("Scenes"));
+			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
+
+			auto filePath = fileDialog.OpenFile("scene (*.yam)|*.yaml");
+			if (filePath.empty())
+			{
+				filePath = filesystem::VirtualFileExplorer::GetRealPath("Scenes");
+			}
+			
+			sceneSerializer.Deserialize(filePath);
 		} }
 		);
 	}

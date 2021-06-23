@@ -16,8 +16,8 @@ namespace krakoa::os
 
 	FileDialogWindows::~FileDialogWindows()
 		= default;
-	
-	std::string FileDialogWindows::OpenFile(const std::string_view filter)
+
+	std::filesystem::path FileDialogWindows::OpenFile(const std::string_view filter)
 	{
 		OPENFILENAMEA ofn;
 		std::array<char, 260> file;
@@ -25,7 +25,7 @@ namespace krakoa::os
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = glfwGetWin32Window(GetWindow().GetNativeWindow<GLFWwindow>());
 		ofn.lpstrFile = file.data();
-		ofn.nMaxFile = file.size();
+		ofn.nMaxFile = static_cast<DWORD>(file.size());
 		ofn.lpstrFilter = filter.data();
 		ofn.nFilterIndex = 1;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
@@ -36,7 +36,7 @@ namespace krakoa::os
 		return {};
 	}
 
-	std::string FileDialogWindows::SaveFile(const std::string_view filter)
+	std::filesystem::path FileDialogWindows::SaveFile(const std::string_view filter)
 	{
 		OPENFILENAMEA ofn;
 		std::array<char, 260> file;
@@ -44,10 +44,10 @@ namespace krakoa::os
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = glfwGetWin32Window(GetWindow().GetNativeWindow<GLFWwindow>());
 		ofn.lpstrFile = file.data();
-		ofn.nMaxFile = file.size();
+		ofn.nMaxFile = static_cast<DWORD>(file.size());
 		ofn.lpstrFilter = filter.data();
 		ofn.nFilterIndex = 1;
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
 		if (GetSaveFileNameA(&ofn) == TRUE)
 		{
 			return ofn.lpstrFile;

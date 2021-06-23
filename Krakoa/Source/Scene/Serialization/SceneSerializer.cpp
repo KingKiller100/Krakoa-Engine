@@ -42,9 +42,7 @@ namespace krakoa::scene::serialization
 	bool SceneSerializer::Deserialize(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
-		auto inPath = path / name;
-		inPath += s_FileExtension;
-		std::ifstream file(inPath);
+		std::ifstream file(path);
 		std::stringstream stream;
 
 		stream << file.rdbuf();

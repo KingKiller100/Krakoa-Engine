@@ -187,7 +187,7 @@ namespace krakoa
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 
-			auto filePath = fileDialog.OpenFile("scene (*.yam)|*.yaml");
+			auto filePath = fileDialog.OpenFile("scene (*.yaml)\0*.yaml\0");
 			if (filePath.empty())
 			{
 				filePath = filesystem::VirtualFileExplorer::GetRealPath("Scenes");

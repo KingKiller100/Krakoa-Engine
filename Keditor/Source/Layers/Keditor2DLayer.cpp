@@ -178,8 +178,9 @@ namespace krakoa
 
 			os::FileDialogFilter filter;
 			filter.AddFilter("scene", "yaml");
+			filter.FormatFilter();
 			
-			const auto filePath = fileDialog.OpenFile(filter);
+			const auto filePath = fileDialog.SaveFile(filter);
 			if (filePath.empty())
 			{
 				return;
@@ -194,7 +195,8 @@ namespace krakoa
 			os::FileDialogFilter filter;
 			filter.AddFilter("scene", "yaml");
 			filter.AddFilter("all", "*");
-
+			filter.FormatFilter();
+			
 			const auto filePath = fileDialog.OpenFile(filter);
 			if (filePath.empty())
 			{

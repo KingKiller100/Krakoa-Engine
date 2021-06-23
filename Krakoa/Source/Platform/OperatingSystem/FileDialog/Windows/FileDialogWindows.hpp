@@ -25,9 +25,9 @@ namespace krakoa::os
 		FileDialogWindows();
 		~FileDialogWindows() override;
 
-		USE_RESULT std::filesystem::path OpenFile(FileDialogFilter& filter) override;
+		USE_RESULT std::filesystem::path OpenFile(const FileDialogFilter& filter) override;
 		USE_RESULT std::filesystem::path OpenFile(const std::wstring_view filter) override;
-		USE_RESULT std::filesystem::path SaveFile(const std::string_view filter) override;
+		USE_RESULT std::filesystem::path SaveFile(const FileDialogFilter& filter) override;
 		USE_RESULT std::filesystem::path SaveFile(const std::wstring_view filter) override;
 		
 	private:

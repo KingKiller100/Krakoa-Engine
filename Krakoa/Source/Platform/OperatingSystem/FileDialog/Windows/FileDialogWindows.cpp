@@ -60,9 +60,8 @@ namespace krakoa::os
 	FileDialogWindows::~FileDialogWindows()
 		= default;
 
-	std::filesystem::path FileDialogWindows::OpenFile(FileDialogFilter& filter)
+	std::filesystem::path FileDialogWindows::OpenFile(const FileDialogFilter& filter)
 	{
-		filter.FormatFilter();
 		auto* data = filter.GetFilter();
 		const auto path = OpenDialog<OPENFILENAMEA, decltype(GetOpenFileNameA)>(
 			data, GetOpenFileNameA, 
@@ -82,10 +81,10 @@ namespace krakoa::os
 		return path;
 	}
 
-	std::filesystem::path FileDialogWindows::SaveFile(const std::string_view filter)
+	std::filesystem::path FileDialogWindows::SaveFile(const FileDialogFilter& filter)
 	{
 		const auto path = OpenDialog<OPENFILENAMEA, decltype(GetOpenFileNameA)>(
-				filter.data(), GetOpenFileNameA,
+				filter.GetFilter(), GetOpenFileNameA,
 				OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR,
 				directory.data());
 		directory = path.parent_path().c_str();

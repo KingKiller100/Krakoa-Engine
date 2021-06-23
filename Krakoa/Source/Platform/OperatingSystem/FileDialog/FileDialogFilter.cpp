@@ -30,7 +30,7 @@ namespace krakoa::os
 		const auto iter = std::find_if(filters.begin(), filters.end(),
 			[name](const decltype(filters)::value_type& filter)
 		{
-			return filter.name._Equal(name);
+			return filter.name == name;
 		});
 
 		filters.erase(iter);
@@ -56,9 +56,14 @@ namespace krakoa::os
 		}
 	}
 
-	void FileDialogFilter::CreateBuffer()
+	void FileDialogFilter::AppendFilter(const std::string& text)
 	{
-		buffer.reset(new char[bufSize]{});
+		const auto toAddSize = text.size();
+		ExpandFilterData(toAddSize);
+		std::strcpy(buffer.get() + currentSize, text.data());
+		currentSize += toAddSize;
+		buffer[currentSize] = '\0';
+		++currentSize;
 	}
 
 	void FileDialogFilter::ExpandFilterData(size_t toAdd)
@@ -76,14 +81,9 @@ namespace krakoa::os
 		}
 	}
 
-	void FileDialogFilter::AppendFilter(const std::string& text)
+	void FileDialogFilter::CreateBuffer()
 	{
-		const auto toAddSize = text.size();
-		ExpandFilterData(toAddSize);
-		std::strcpy(buffer.get() + currentSize, text.data());
-		currentSize += toAddSize;
-		buffer[currentSize] = '\0';
-		++currentSize;
+		buffer.reset(new char[bufSize]{});
 	}
 }
 

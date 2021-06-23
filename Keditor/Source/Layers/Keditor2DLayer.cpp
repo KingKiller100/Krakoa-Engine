@@ -14,6 +14,7 @@
 #include <Krakoa.hpp>
 
 #include <Scene/Serialization/SceneSerializer.hpp>
+#include <Platform/OperatingSystem/FileDialog/FileDialogFilter.hpp>
 
 namespace krakoa
 {
@@ -175,10 +176,13 @@ namespace krakoa
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 
-			auto filePath = fileDialog.OpenFile("scene (*.yam)|*.yaml");
+			os::FileDialogFilter filter;
+			filter.AddFilter("scene", "yaml");
+			
+			const auto filePath = fileDialog.OpenFile(filter);
 			if (filePath.empty())
 			{
-				filePath = filesystem::VirtualFileExplorer::GetRealPath("Scenes");
+				return;
 			}
 			sceneSerializer.Serialize(filePath);
 		} }
@@ -187,10 +191,14 @@ namespace krakoa
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 
-			auto filePath = fileDialog.OpenFile("scene (*.yaml)\0*.yaml\0");
+			os::FileDialogFilter filter;
+			filter.AddFilter("scene", "yaml");
+			filter.AddFilter("all", "*");
+
+			const auto filePath = fileDialog.OpenFile(filter);
 			if (filePath.empty())
 			{
-				filePath = filesystem::VirtualFileExplorer::GetRealPath("Scenes");
+				return;
 			}
 			
 			sceneSerializer.Deserialize(filePath);

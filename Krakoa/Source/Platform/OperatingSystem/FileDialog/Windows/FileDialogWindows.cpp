@@ -1,6 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "FileDialogWindows.hpp"
 
+#include "../FileDialogFilter.hpp"
 #include "../../../../Core/Application.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
@@ -12,7 +13,6 @@
 
 #include <filesystem>
 
-#include "../FileDialogFilter.hpp"
 
 namespace krakoa::os
 {

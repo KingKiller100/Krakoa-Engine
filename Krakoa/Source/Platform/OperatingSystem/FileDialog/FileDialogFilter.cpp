@@ -12,7 +12,7 @@ namespace krakoa::os
 		, currentSize(0)
 		, bufSize(1ull << 5)
 	{
-		CreateBuffer();
+		RecreateBuffer();
 	}
 
 	void FileDialogFilter::AddFilter(const Filter& filter)
@@ -76,12 +76,12 @@ namespace krakoa::os
 
 			const auto tempBuf = Solo_Ptr<char[]>(new char[bufSize]{});
 			std::memcpy(tempBuf.get(), buffer.get(), sizeof(char) * oldSize);
-			CreateBuffer();
+			RecreateBuffer();
 			std::memcpy(buffer.get(), tempBuf.get(), sizeof(char) * oldSize);
 		}
 	}
 
-	void FileDialogFilter::CreateBuffer()
+	void FileDialogFilter::RecreateBuffer()
 	{
 		buffer.reset(new char[bufSize]{});
 	}

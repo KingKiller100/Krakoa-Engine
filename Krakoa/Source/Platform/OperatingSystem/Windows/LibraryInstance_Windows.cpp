@@ -1,12 +1,13 @@
 ﻿#include "Precompile.hpp"
 #include "LibraryInstance_Windows.hpp"
 
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
+
 namespace krakoa::os::library
 {
 	LibraryInstance_Windows::LibraryInstance_Windows()
 		: instance(nullptr)
-	{
-	}
+	{}
 
 	LibraryInstance_Windows::LibraryInstance_Windows(const char* dllName)
 	{
@@ -44,3 +45,5 @@ namespace krakoa::os::library
 		outFunc = ::GetProcAddress(instance, funcName);
 	}
 }
+
+#endif

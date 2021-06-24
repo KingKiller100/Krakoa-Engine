@@ -1,10 +1,12 @@
 ﻿#include "Precompile.hpp"
 #include "ErrorHandlerWindows.hpp"
 
-#include "../../LogOS.hpp"
-#include "../../../../Debug/Debug.hpp"
+#include "../LogOS.hpp"
+#include "../../../Debug/Debug.hpp"
 
 #include <Windows.h>
+
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 
 namespace krakoa::os::errors
 {
@@ -77,3 +79,5 @@ namespace krakoa::os::errors
 		exitFunc = std::move(func);
 	}
 }
+
+#endif

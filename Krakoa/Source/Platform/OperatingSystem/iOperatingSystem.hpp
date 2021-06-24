@@ -1,30 +1,19 @@
 #pragma once
 
 #include "Library/LibraryStore.hpp"
-#include "ErrorHandler/iErrorHandler.hpp"
 #include "FileDialog/iFileDialog.hpp"
+#include "ErrorHandler/iErrorHandler.hpp"
+#include "VersionInfo/iVersionInfoLoader.hpp"
+#include "EnvironmentVariables/iEnvironmentVariables.hpp"
 
 #include "../../Patterns/SimpleSingleton.hpp"
 
 #include <HelperMacros.hpp>
-#include <Utility/Platform/kPlatform.hpp>
-#include <cstdint>
 
 
 
 namespace krakoa::os
-{
-	struct VersionInfo
-	{
-		std::string systemName;
-		klib::PlatformOS platformOS;
-		std::string platformID;
-		std::string productType;
-		std::uint32_t major;
-		std::uint32_t minor;
-		std::uint32_t buildNo;
-	};
-	
+{	
 	class iOperatingSystem : public patterns::SimpleSingleton<iOperatingSystem>
 	{
 	public:
@@ -34,10 +23,15 @@ namespace krakoa::os
 		virtual void Shutdown() = 0;
 		USE_RESULT virtual const VersionInfo& GetVersionInfo() const noexcept = 0;
 		USE_RESULT virtual library::LibraryStore& GetLibraryStore() noexcept = 0;
+		USE_RESULT virtual const library::LibraryStore& GetLibraryStore() const noexcept = 0;
 		USE_RESULT virtual errors::iErrorHandler& GetErrorHandler() noexcept = 0;
+		USE_RESULT virtual const errors::iErrorHandler& GetErrorHandler() const noexcept = 0;
 		USE_RESULT virtual iFileDialog& GetFileDialog() noexcept = 0;
+		USE_RESULT virtual const iFileDialog& GetFileDialog() const noexcept = 0;
+		USE_RESULT virtual iEnvironmentVariables<char>& GetEnvironmentVariables() noexcept = 0;
+		USE_RESULT virtual const iEnvironmentVariables<char>& GetEnvironmentVariables() const noexcept = 0;
 	};
 
-	void CreateOperatingSystemInfo();
+	void CreateOperatingSystemInterface();
 	void DestroyOperatingSystemInfo();
 }

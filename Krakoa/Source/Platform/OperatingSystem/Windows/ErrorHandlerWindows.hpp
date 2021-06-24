@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../iErrorHandler.hpp"
+#include "../ErrorHandler/iErrorHandler.hpp"
 
 #if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 

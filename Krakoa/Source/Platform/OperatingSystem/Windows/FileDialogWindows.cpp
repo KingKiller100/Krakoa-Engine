@@ -1,10 +1,13 @@
 ﻿#include "Precompile.hpp"
 #include "FileDialogWindows.hpp"
 
-#include "../FileDialogFilter.hpp"
-#include "../../../../Core/Application.hpp"
+#include "../FileDialog/FileDialogFilter.hpp"
+#include "../../../Core/Application.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>
+
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
+
 #include <Windows.h>
 #include <commdlg.h>
 #include <GLFW/glfw3.h>
@@ -54,50 +57,52 @@ namespace krakoa::os
 	}
 
 	FileDialogWindows::FileDialogWindows()
-		: directory(klib::GetCurrentWorkingDirectory<wchar_t>().data())
+		: directory(Make_Solo<PathString<wchar_t>>(klib::GetCurrentWorkingDirectory<wchar_t>().data()))
 	{}
 
 	FileDialogWindows::~FileDialogWindows()
 		= default;
 
-	std::filesystem::path FileDialogWindows::OpenFile(const FileDialogFilter& filter)
+	std::filesystem::path FileDialogWindows::OpenFile(const FileDialogFilter& filter) const
 	{
 		auto* data = filter.GetFilter();
 		const auto path = OpenDialog<OPENFILENAMEA, decltype(GetOpenFileNameA)>(
 			data, GetOpenFileNameA, 
 			OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, 
-			directory.data());
-		directory = path.parent_path().c_str();
+			directory->data());
+		*directory = path.parent_path().c_str();
 		return path;
 	}
 
-	std::filesystem::path FileDialogWindows::OpenFile(const std::wstring_view filter)
+	std::filesystem::path FileDialogWindows::OpenFile(const std::wstring_view filter) const
 	{
 		const auto path = OpenDialog<OPENFILENAMEW, decltype(GetOpenFileNameW)>(
 				filter.data(), GetOpenFileNameW,
 				OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
-				directory.data());
-		directory = path.parent_path().c_str();
+				directory->data());
+		*directory = path.parent_path().c_str();
 		return path;
 	}
 
-	std::filesystem::path FileDialogWindows::SaveFile(const FileDialogFilter& filter)
+	std::filesystem::path FileDialogWindows::SaveFile(const FileDialogFilter& filter) const
 	{
 		const auto path = OpenDialog<OPENFILENAMEA, decltype(GetOpenFileNameA)>(
 				filter.GetFilter(), GetOpenFileNameA,
 				OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR,
-				directory.data());
-		directory = path.parent_path().c_str();
+				directory->data());
+		*directory = path.parent_path().c_str();
 		return path;
 	}
 
-	std::filesystem::path FileDialogWindows::SaveFile(const std::wstring_view filter)
+	std::filesystem::path FileDialogWindows::SaveFile(const std::wstring_view filter) const
 	{
 		const auto path = OpenDialog<OPENFILENAMEW, decltype(GetOpenFileNameW)>(
 			filter.data(), GetOpenFileNameW,
 			OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR,
-			directory.data());
-		directory = path.parent_path().c_str();
+			directory->data());
+		*directory = path.parent_path().c_str();
 		return path;
 	}
 }
+
+#endif

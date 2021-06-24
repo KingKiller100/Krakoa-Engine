@@ -71,6 +71,8 @@ namespace krakoa::configurations
 		std::map<std::string, std::string> remapKeys;
 	};
 
+	void RemapConfigurationKey(const std::string& redirectKey, const std::string& key);
+
 	template<typename T>
 	T GetConfiguration(const std::string& context, const std::string& key)
 	{
@@ -83,5 +85,12 @@ namespace krakoa::configurations
 	{
 		const auto& gConf = GlobalConfig::Reference();
 		return gConf.TryGet<T>(context, key, defaultValue);
+	}
+
+	template<typename T>
+	void SetConfiguration(const std::string& context, const std::string& key, const T& value, const klib::MutSourceInfo& source)
+	{
+		auto& gConf = GlobalConfig::Reference();
+		gConf.Set(context, key, value, source);
 	}
 }

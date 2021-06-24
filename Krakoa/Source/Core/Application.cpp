@@ -65,7 +65,7 @@ namespace krakoa
 		assetMan.Initialize();
 		assetMan.GetFontLibrary().MakeDefault("OpenSans", 18.f);
 	}
-	
+
 	void Application::PushInternalLayers()
 	{
 		// Initialize Layer
@@ -104,7 +104,7 @@ namespace krakoa
 		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
 		return false;
 	}
-	
+
 	void Application::Run() const
 	{
 		do {
@@ -131,7 +131,7 @@ namespace krakoa
 			pWindow->OnUpdate();
 		} while (IsRunning());
 	}
-	
+
 	void Application::ShutDown()
 	{
 		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
@@ -153,8 +153,6 @@ namespace krakoa
 			, appTimeSpan.minutes.count()
 			, appTimeSpan.seconds.count()
 		));
-		
-		KRK_LOG_END();
 	}
 
 	void Application::PushLayer(LayerBase* layer)

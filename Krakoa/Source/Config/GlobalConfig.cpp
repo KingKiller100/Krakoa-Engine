@@ -70,4 +70,10 @@ namespace krakoa::configurations
 	{
 		return GlobalConfig::Reference();
 	}
+
+	void RemapConfigurationKey(const std::string& redirectKey, const std::string& key)
+	{
+		auto& gConf = GlobalConfig::Reference();
+		gConf.AddRemap(redirectKey, key);
+	}
 }

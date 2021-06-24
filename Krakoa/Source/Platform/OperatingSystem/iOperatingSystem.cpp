@@ -6,26 +6,34 @@
 
 namespace krakoa::os
 {
-	void CreateOperatingSystemInfo()
+	void CreateOperatingSystemInterface()
 	{
 		switch (klib::GetPlatform())
 		{
 		case klib::PlatformOS::WINDOWS_32:
 		case klib::PlatformOS::WINDOWS_64:
 		case klib::PlatformOS::WINDOWS:
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 			iOperatingSystem::Create<OperatingSystemWindows>();
 			break;
-
+#endif
+			
 		default:
 			break;
 		}
 
 		if (!iOperatingSystem::IsActive())
+		{
+			LogOSError("Cannot initialize OS instance");
 			return;
+		}
 
+		auto& os = iOperatingSystem::Reference();
+		os.Initialize();
+		
 		const auto& [systemName, platformOS, platformID,
 			productType, major, minor, buildNo]
-			= iOperatingSystem::Reference().GetVersionInfo();
+			= os.GetVersionInfo();
 
 		LogOS(util::Fmt("System: {0} {1}.{2}.{3}", systemName, major, minor, buildNo));
 		LogOS(util::Fmt("Platform: {0}", platformID));

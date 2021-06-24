@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../iFileDialog.hpp"
+#include "../FileDialog/iFileDialog.hpp"
 #include <Utility/FileSystem/kPathString.hpp>
 #include <Utility/String/kStringConverter.hpp>
+
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 
 #include <Windows.h>
 #include <commdlg.h>
@@ -25,12 +27,14 @@ namespace krakoa::os
 		FileDialogWindows();
 		~FileDialogWindows() override;
 
-		USE_RESULT std::filesystem::path OpenFile(const FileDialogFilter& filter) override;
-		USE_RESULT std::filesystem::path OpenFile(const std::wstring_view filter) override;
-		USE_RESULT std::filesystem::path SaveFile(const FileDialogFilter& filter) override;
-		USE_RESULT std::filesystem::path SaveFile(const std::wstring_view filter) override;
+		USE_RESULT std::filesystem::path OpenFile(const FileDialogFilter& filter) const override;
+		USE_RESULT std::filesystem::path OpenFile(const std::wstring_view filter) const override;
+		USE_RESULT std::filesystem::path SaveFile(const FileDialogFilter& filter) const override;
+		USE_RESULT std::filesystem::path SaveFile(const std::wstring_view filter) const override;
 		
 	private:
-		PathString<wchar_t> directory;
+		Solo_Ptr<PathString<wchar_t>> directory;
 	};
 }
+
+#endif

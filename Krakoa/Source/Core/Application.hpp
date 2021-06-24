@@ -98,8 +98,7 @@ namespace krakoa
 		time::TimeStep timeStep;
 		bool isMinimized;
 	};
-
-	void CreateApplication();
+	
 	Application& GetApp();
 
 	iWindow& GetWindow();

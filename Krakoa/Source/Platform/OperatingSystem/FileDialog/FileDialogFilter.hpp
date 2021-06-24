@@ -30,7 +30,7 @@ namespace krakoa::os
 		USE_RESULT const char* GetFilter() const noexcept;
 
 	private:
-		void CreateBuffer();
+		void RecreateBuffer();
 		void ExpandFilterData(size_t toAdd);
 		void AppendFilter(const std::string& text);
 

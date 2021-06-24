@@ -9,6 +9,7 @@
 #	include "../Debug/Instrumentor.hpp"
 #	include "../Debug/ExceptionHandler.hpp"
 #	include "../Config/GlobalConfig.hpp"
+#	include "../Platform/OperatingSystem/iOperatingSystem.hpp"
 
 #	include "../FileSystem/VirtualFileExplorer.hpp"
 
@@ -17,7 +18,10 @@
 #	include <memory>
 #	include <filesystem>
 
-extern void krakoa::CreateApplication();
+namespace krakoa
+{
+	extern void CreateApplication();
+}
 #endif
 
 #include "../Memory/MemoryStructures/HeapFactory.hpp"
@@ -26,28 +30,26 @@ extern void krakoa::CreateApplication();
 #include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
-inline void Launch(int argc, char** argv);
+inline void Launch();
 inline void InitializeVirtualFileSystem();
-inline void InitializeGlobalConfig(int argc, char** argv);
+inline void InitializeGlobalConfig();
 inline void TryRunApplication();
 inline void RunApplication();
 
-using namespace krakoa;
-
-int main(int argc, char** argv)
+int main()
 {
 	klib::kLocale::SetLocale("");
 	klib::kCalendar::UsePlatformCalendarInfoSource();
 
 	memory::HeapFactory::Initialize();
-	Launch(argc, argv);
+	Launch();
 	memory::HeapFactory::ReportMemoryLeaks();
 	memory::HeapFactory::ShutDown();
 
 	return EXIT_SUCCESS;
 }
 
-inline void Launch(int argc, char** argv)
+inline void Launch()
 {
 
 #ifdef KRAKOA_TEST
@@ -59,22 +61,19 @@ inline void Launch(int argc, char** argv)
 
 	KRK_INIT_LOGS("");
 
+	krakoa::os::CreateOperatingSystemInterface();
+	auto& operatingSystem = krakoa::os::iOperatingSystem::Reference();
+
 	InitializeVirtualFileSystem();
-	InitializeGlobalConfig(argc, argv);
+	InitializeGlobalConfig();
 
-	EngineLogger::SetMinimumLogLevelUsingConfig();
-	EngineLogger::RemoveIfTooOldFile();
+	krakoa::EngineLogger::SetMinimumLogLevelUsingConfig();
+	krakoa::EngineLogger::RemoveIfTooOldFile();
 
-	os::CreateOperatingSystemInfo();
-	
-	CreateApplication();
-
-	auto& operatingSystem = os::iOperatingSystem::Reference();
-
-	operatingSystem.Initialize();
+	krakoa::CreateApplication();
 	operatingSystem.GetErrorHandler().SetEmergencyExitFunc([]()
 	{
-		Application::Pointer()->ShutDown();
+		krakoa::Application::Pointer()->ShutDown();
 	});
 
 	if (klib::ScanForDebugger(std::chrono::milliseconds(500)))
@@ -85,30 +84,48 @@ inline void Launch(int argc, char** argv)
 	{
 		TryRunApplication();
 	}
-	Application::Destroy();
-	configurations::GlobalConfig::Destroy();
-	os::DestroyOperatingSystemInfo();
+	
+	krakoa::Application::Destroy();
+	krakoa::configurations::GlobalConfig::Destroy();
+	krakoa::os::DestroyOperatingSystemInfo();
+	KRK_LOG_END();
 }
 
 inline void InitializeVirtualFileSystem()
 {
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
-	filesystem::VirtualFileExplorer::Initialize(cwd);
-	filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
-	filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
+	krakoa::filesystem::VirtualFileExplorer::Initialize(cwd);
+	krakoa::filesystem::VirtualFileExplorer::Mount("Krakoa\\Config", "Config");
+	krakoa::filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
 }
 
-inline void InitializeGlobalConfig(int argc, char** argv)
+inline void InitializeGlobalConfig()
 {
-	configurations::GlobalConfig::Create();
-	auto& globalConfig = configurations::GlobalConfig::Reference();
+	using namespace krakoa::configurations;
 
-	globalConfig.Set("Application", "CmdArguments", argc, MUT_SRC_INFO());
-	for (auto i = 0; i < argc; ++i)
+	const auto& os = krakoa::os::iOperatingSystem::Reference();
+	const auto& sysEnv = os.GetEnvironmentVariables();
+	const auto envKeys = sysEnv.GetKeys();
+
+	GlobalConfig::Create();
+	
+	constexpr char appConfigKey[] = "Application";
+	SetConfiguration(appConfigKey, "CmdArguments", __argc, MUT_SRC_INFO());
+	for (auto i = 0; i < __argc; ++i)
 	{
-		globalConfig.Set("Application", util::Fmt("CmdArgument{0}", i), argv[i], MUT_SRC_INFO());
+		SetConfiguration(appConfigKey, util::Fmt("CmdArgument{0}", i), __argv[i], MUT_SRC_INFO());
 	}
-	globalConfig.Set("Application", "Configuration", klib::GetRuntimeConfigurationStr(), MUT_SRC_INFO());
+	SetConfiguration(appConfigKey, "Configuration", klib::GetRuntimeConfigurationStr(), MUT_SRC_INFO());
+
+	const char configKey[] = "OS";
+	for (auto&& key : envKeys)
+	{
+		SetConfiguration(configKey, key.data(),
+			sysEnv.GetVariable(key.data()), klib::MutSourceInfo(os.GetVersionInfo().productType.data(), 0, __FUNCTION__));
+	}
+
+	RemapConfigurationKey("App", appConfigKey);
+	RemapConfigurationKey("System", configKey);
 }
 
 inline void TryRunApplication()
@@ -119,8 +136,8 @@ inline void TryRunApplication()
 	}
 	catch (...)
 	{
-		KRK_LOG("CRASH", "Exception(s): " + debug::UnwrapNestedExceptions());
-		auto& errorHandler = os::iOperatingSystem::Reference().GetErrorHandler();
+		KRK_LOG("CRASH", "Exception(s): " + krakoa::debug::UnwrapNestedExceptions());
+		auto& errorHandler = krakoa::os::iOperatingSystem::Reference().GetErrorHandler();
 		errorHandler.CheckForNewError();
 		const auto errCode = errorHandler.GetCode();
 		const auto errText = errorHandler.GetText();
@@ -131,7 +148,7 @@ inline void TryRunApplication()
 inline void RunApplication()
 {
 
-	auto& pApp = Application::Reference();
+	auto& pApp = krakoa::Application::Reference();
 	pApp.Initialize();
 	KRK_PROFILE_SESSION_END();
 

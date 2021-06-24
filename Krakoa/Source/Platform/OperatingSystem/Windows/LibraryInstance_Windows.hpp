@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../iLibraryInstance.hpp"
-#include "../../../Windows/IncludeWindowsLite.hpp"
+#include "../Library/iLibraryInstance.hpp"
+#include "../../Windows/IncludeWindowsLite.hpp"
+
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 
 namespace krakoa::os::library
 {
@@ -20,3 +22,5 @@ namespace krakoa::os::library
 		::HINSTANCE instance;
 	};
 }
+
+#endif

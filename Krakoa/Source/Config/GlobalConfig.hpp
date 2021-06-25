@@ -55,7 +55,7 @@ namespace krakoa::configurations
 				valueMap = Make_Solo<ConfigValueMap>("");
 			}
 			valueMap->Set(SanitizeKey(key), valueStr, source);
-			KRK_LOG("Config", util::Fmt("Setting configuration: {0}: [{1}, {2}]", context, key, valueStr));
+			KRK_LOG("Config", util::Fmt("Setting configuration: \"{0}\": [\"{1}\", {2}]", context, key, valueStr));
 			KRK_LOG("Config", util::Fmt("Source: {0}", source));
 		}
 

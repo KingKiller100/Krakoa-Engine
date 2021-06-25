@@ -44,7 +44,7 @@ namespace krakoa::filesystem
 			const auto key = klib::ToLower(line.substr(0, colonPos));
 			const auto value = line.substr(colonPos + 1);
 
-			KRK_LOG("INI", klib::ToString("Mapping: \"{0}\" -> \"{1}\" [{2:f}]", key, value, source));
+			KRK_LOG("INI", klib::ToString("Mapping: \"{0}\" -> \"{1}\" [{2:f}][{2:l}]", key, value, source));
 
 			values.emplace(key, ValueData{ value, source });
 		}

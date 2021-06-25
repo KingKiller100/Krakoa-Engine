@@ -185,6 +185,8 @@ namespace krakoa
 			{
 				return;
 			}
+
+			KRK_INF(util::Fmt("Saving scene to \"{0}\"", filePath));
 			sceneSerializer.Serialize(filePath);
 		} }
 		);
@@ -203,6 +205,7 @@ namespace krakoa
 				return;
 			}
 			
+			KRK_INF(util::Fmt("Loading scene from \"{0}\"", filePath));
 			sceneSerializer.Deserialize(filePath);
 		} }
 		);

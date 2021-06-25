@@ -30,11 +30,11 @@ namespace krakoa
 #include <Utility/Calendar/kUseCalendarSourceInfo.hpp>
 #include <Utility/FileSystem/kFileSystem.hpp>
 
-inline void Launch();
-inline void InitializeVirtualFileSystem();
-inline void InitializeGlobalConfig();
-inline void TryRunApplication();
-inline void RunApplication();
+void Launch();
+void InitializeVirtualFileSystem();
+void InitializeGlobalConfig();
+void TryRunApplication();
+void RunApplication();
 
 int main()
 {
@@ -49,7 +49,7 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-inline void Launch()
+void Launch()
 {
 
 #ifdef KRAKOA_TEST
@@ -91,7 +91,7 @@ inline void Launch()
 	KRK_LOG_END();
 }
 
-inline void InitializeVirtualFileSystem()
+void InitializeVirtualFileSystem()
 {
 	const std::filesystem::path cwd = klib::GetCurrentWorkingDirectory() + "..\\";
 	krakoa::filesystem::VirtualFileExplorer::Initialize(cwd);
@@ -99,7 +99,7 @@ inline void InitializeVirtualFileSystem()
 	krakoa::filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
 }
 
-inline void InitializeGlobalConfig()
+void InitializeGlobalConfig()
 {
 	using namespace krakoa::configurations;
 
@@ -128,7 +128,7 @@ inline void InitializeGlobalConfig()
 	RemapConfigurationKey("System", configKey);
 }
 
-inline void TryRunApplication()
+void TryRunApplication()
 {
 	try
 	{
@@ -145,7 +145,7 @@ inline void TryRunApplication()
 	}
 }
 
-inline void RunApplication()
+void RunApplication()
 {
 
 	auto& pApp = krakoa::Application::Reference();

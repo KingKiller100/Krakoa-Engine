@@ -16,10 +16,7 @@ namespace krakoa::os::library
 
 	LibraryInstance_Windows::~LibraryInstance_Windows()
 	{
-		if (!IsLoaded())
-		{
-			Unload();
-		}
+		Unload();
 	}
 
 	void LibraryInstance_Windows::Load(const char* dllName)

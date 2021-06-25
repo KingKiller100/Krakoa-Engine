@@ -17,7 +17,7 @@ namespace krakoa::os
 			iOperatingSystem::Create<OperatingSystemWindows>();
 			break;
 #endif
-			
+
 		default:
 			break;
 		}
@@ -30,7 +30,7 @@ namespace krakoa::os
 
 		auto& os = iOperatingSystem::Reference();
 		os.Initialize();
-		
+
 		const auto& [systemName, platformOS, platformID,
 			productType, major, minor, buildNo]
 			= os.GetVersionInfo();
@@ -42,6 +42,7 @@ namespace krakoa::os
 
 	void DestroyOperatingSystemInfo()
 	{
-		iOperatingSystem::Destroy();
+		if (iOperatingSystem::IsActive())
+			iOperatingSystem::Destroy();
 	}
 }

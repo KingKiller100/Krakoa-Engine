@@ -5,6 +5,12 @@
 
 namespace krakoa::panels
 {
+	MenuBar::~MenuBar()
+	{
+		commandShortCuts.clear();
+		menuBarList.clear();
+	}
+
 	void MenuBar::Draw()
 	{
 		DrawNodes();
@@ -12,19 +18,32 @@ namespace krakoa::panels
 
 	void MenuBar::DrawNodes()
 	{
-		ui::DrawMenuBar([this] {
+		ui::DrawMenuBar([&] {
 			for (auto&& node : menuBarList)
 			{
 				const auto& title = node.first;
 				const auto& commands = node.second;
-				ui::DrawMenu(title, [&commands] {
+				ui::DrawMenu(title, [&] {
 					for (auto&& command : commands)
 					{
-						ui::DrawMenuItem(command.label, [&]()
+						const auto shortCutIter = commandShortCuts.find(command);
+
+						if (shortCutIter != commandShortCuts.end())
 						{
-							if (command.callback)
-								command.callback();
-						});
+							ui::DrawMenuItem(command->label, shortCutIter->second, [&]()
+							{
+								if (command->callback)
+									command->callback();
+							});
+						}
+						else
+						{
+							ui::DrawMenuItem(command->label, [&]()
+							{
+								if (command->callback)
+									command->callback();
+							});
+						}
 					}
 				});
 			}
@@ -36,20 +55,37 @@ namespace krakoa::panels
 		menuBarList[title];
 	}
 
-	void MenuBar::AddOption(const std::string& title, const ui::NamedCommand& option)
+	void MenuBar::AddOption(const std::string& title, const ui::NamedCommand& command)
 	{
-		KRK_TRC(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", option.label, title));
+		KRK_TRC(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", command.label, title));
 		auto& node = menuBarList[title];
 		const auto iter = std::find_if(node.begin(), node.end(),
-			[&option](const ui::NamedCommand& command)
+			[&command](const Multi_Ptr<ui::NamedCommand>& cmd)
 		{
-			return command.label == option.label;
+			return cmd->label == command.label;
 		});
 
 		if (iter != node.end())
 			return;
 
-		node.emplace_back(option);
+		node.emplace_back(Make_Multi<ui::NamedCommand>(command));
 	}
 
+	void MenuBar::AddOption(const MenuBarList::key_type& title, const std::string_view& shortcut,
+		const ui::NamedCommand& command)
+	{
+		KRK_TRC(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", command.label, title));
+		auto& node = menuBarList[title];
+		const auto iter = std::find_if(node.begin(), node.end(),
+			[&command](const Multi_Ptr<ui::NamedCommand>& cmd)
+		{
+			return cmd->label == command.label;
+		});
+
+		if (iter != node.end())
+			return;
+
+		const auto& item = node.emplace_back(Make_Multi<ui::NamedCommand>(command));
+		commandShortCuts[item] = shortcut.data();
+	}
 }

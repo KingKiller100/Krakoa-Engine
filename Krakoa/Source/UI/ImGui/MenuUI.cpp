@@ -45,4 +45,25 @@ namespace krakoa::ui
 	{
 		DrawMenuItem(label, false, true, callback);
 	}
+
+	void DrawMenuItem(const std::string_view& label, const std::string_view& shortcut, const UICallBack& callback)
+	{
+		DrawMenuItem(label, shortcut, false, callback);
+	}
+
+	void DrawMenuItem(const std::string_view& label, const std::string_view& shortcut, bool selected,
+		const UICallBack& callback)
+	{
+		DrawMenuItem(label, shortcut, selected, true, callback);
+	}
+
+	void DrawMenuItem(const std::string_view& label, const std::string_view& shortcut, bool selected, bool enabled, const UICallBack& callback)
+	{
+		if (ImGui::MenuItem(label.data(), shortcut.data(), selected, enabled))
+		{
+			callback();
+		}
+
+	}
+
 }

@@ -174,15 +174,15 @@ namespace krakoa
 	void Keditor2DLayer::InitializeMenuBar()
 	{
 		menuBar.reset(new panels::MenuBar{});
-		menuBar->AddOption("File", { "New Scene", []
+		menuBar->AddOption("File", "Ctrl + N", { "New Scene", []
 		{
 			throw klib::NotImplementedException("Yet to implement \"New Scene\" command");
 		} });
-		menuBar->AddOption("File", { "Save", []
+		menuBar->AddOption("File", "Ctrl + S", { "Save", []
 		{
 			throw klib::NotImplementedException("Yet to implement \"Save\" command");
 		} });
-		menuBar->AddOption("File", { "Save Scene As", [this]()
+		menuBar->AddOption("File", "Ctrl + Shift + S", { "Save Scene As", [this]()
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 
@@ -199,7 +199,7 @@ namespace krakoa
 			KRK_INF(util::Fmt("Saving scene to \"{0}\"", filePath));
 			sceneSerializer.Serialize(filePath);
 		} });
-		menuBar->AddOption("File", { "Load Scene", [this]()
+		menuBar->AddOption("File", "Ctrl + O", { "Load Scene", [this]()
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 

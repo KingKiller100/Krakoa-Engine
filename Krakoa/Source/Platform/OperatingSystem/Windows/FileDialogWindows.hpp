@@ -13,8 +13,6 @@
 
 namespace krakoa::os
 {
-	class FileDialogFilter;
-
 	class FileDialogWindows : public iFileDialog
 	{
 	public:
@@ -28,9 +26,9 @@ namespace krakoa::os
 		~FileDialogWindows() override;
 
 		USE_RESULT std::filesystem::path OpenFile(const FileDialogFilter& filter) const override;
-		USE_RESULT std::filesystem::path OpenFile(const std::wstring_view filter) const override;
+		USE_RESULT std::filesystem::path OpenFile(const wFileDialogFilter& filter) const override;
 		USE_RESULT std::filesystem::path SaveFile(const FileDialogFilter& filter) const override;
-		USE_RESULT std::filesystem::path SaveFile(const std::wstring_view filter) const override;
+		USE_RESULT std::filesystem::path SaveFile(const wFileDialogFilter& filter) const override;
 		
 	private:
 		Solo_Ptr<PathString<wchar_t>> directory;

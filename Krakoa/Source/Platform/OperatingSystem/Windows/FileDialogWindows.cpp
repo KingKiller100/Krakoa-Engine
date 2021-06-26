@@ -74,10 +74,10 @@ namespace krakoa::os
 		return path;
 	}
 
-	std::filesystem::path FileDialogWindows::OpenFile(const std::wstring_view filter) const
+	std::filesystem::path FileDialogWindows::OpenFile(const wFileDialogFilter& filter) const
 	{
 		const auto path = OpenDialog<OPENFILENAMEW, decltype(GetOpenFileNameW)>(
-				filter.data(), GetOpenFileNameW,
+				filter.GetFilter(), GetOpenFileNameW,
 				OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
 				directory->data());
 		*directory = path.parent_path().c_str();
@@ -94,10 +94,10 @@ namespace krakoa::os
 		return path;
 	}
 
-	std::filesystem::path FileDialogWindows::SaveFile(const std::wstring_view filter) const
+	std::filesystem::path FileDialogWindows::SaveFile(const wFileDialogFilter& filter) const
 	{
 		const auto path = OpenDialog<OPENFILENAMEW, decltype(GetOpenFileNameW)>(
-			filter.data(), GetOpenFileNameW,
+			filter.GetFilter(), GetOpenFileNameW,
 			OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR,
 			directory->data());
 		*directory = path.parent_path().c_str();

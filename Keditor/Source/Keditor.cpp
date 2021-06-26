@@ -29,7 +29,7 @@ namespace krakoa
 		}
 	};
 
-	void krakoa::CreateApplication()
+	void CreateApplication()
 	{
 		Application::Create<Keditor>();
 	}

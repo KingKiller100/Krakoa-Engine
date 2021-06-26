@@ -33,8 +33,9 @@ namespace krakoa::scene::ecs::components
 	{
 		for (auto& [id, script] : scripts)
 		{
-			KRK_DBG(klib::ToString("Destroying script binded to entity id \"{0}\""
+			KRK_DBG(klib::ToString("Destroying script \"{1}\" binded to entity id \"{0}\""
 				, script->GetEntityID()
+				, script->GetScriptName()
 			));
 			script->OnDestroy();
 		}

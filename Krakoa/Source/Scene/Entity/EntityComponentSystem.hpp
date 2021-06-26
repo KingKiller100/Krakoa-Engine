@@ -201,6 +201,8 @@ namespace krakoa::scene::ecs
 
 		bool RemoveAllComponents(EntityUID id) noexcept;
 
+		USE_RESULT bool EmptyEntities() const;
+
 	private:
 		template<typename PlaceHolder, typename Component, typename ...Components>
 		USE_RESULT bool HasComponentsImpl(EntityUID id) const noexcept

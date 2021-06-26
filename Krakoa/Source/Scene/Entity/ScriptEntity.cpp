@@ -3,6 +3,10 @@
 
 namespace krakoa::scene::ecs
 {
+	ScriptEntity::ScriptEntity(const std::string& scriptName)
+		: scriptName(scriptName)
+	{}
+
 	ScriptEntity::~ScriptEntity()
 		= default;
 
@@ -29,6 +33,11 @@ namespace krakoa::scene::ecs
 	void ScriptEntity::SetEntity(Entity* e)
 	{
 		pEntity = e;
+	}
+
+	std::string_view ScriptEntity::GetScriptName() const noexcept
+	{
+		return scriptName;
 	}
 
 	void ScriptEntity::OnCreate()

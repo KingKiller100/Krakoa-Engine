@@ -77,34 +77,6 @@ namespace krakoa
 		PushOverlay(new Renderer2DStatistics());
 	}
 
-	void Application::OnEvent(events::Event& e)
-	{
-		KRK_PROFILE_FUNCTION();
-		events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND_FUNC(Application::OnWindowClosed));
-		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND_FUNC(Application::OnWindowResize));
-
-		layerStack.OnEvent(e);
-	}
-
-	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
-	{
-		KRK_PROFILE_FUNCTION();
-		isRunning = false;
-		return true;
-	}
-
-	bool Application::OnWindowResize(events::WindowResizeEvent& e) noexcept
-	{
-		KRK_PROFILE_FUNCTION();
-		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
-		const auto width = CAST(int, e.GetWidth());
-		const auto height = CAST(int, e.GetHeight());
-		gfx::Renderer::OnWindowResize(0, 0, width, height);
-		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
-		return false;
-	}
-
 	void Application::Run() const
 	{
 		do {
@@ -153,6 +125,34 @@ namespace krakoa
 			, appTimeSpan.minutes.count()
 			, appTimeSpan.seconds.count()
 		));
+	}
+
+	void Application::OnEvent(events::Event& e)
+	{
+		KRK_PROFILE_FUNCTION();
+		events::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND_FUNC(Application::OnWindowClosed));
+		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND_FUNC(Application::OnWindowResize));
+
+		layerStack.OnEvent(e);
+	}
+
+	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
+	{
+		KRK_PROFILE_FUNCTION();
+		isRunning = false;
+		return true;
+	}
+
+	bool Application::OnWindowResize(events::WindowResizeEvent& e) noexcept
+	{
+		KRK_PROFILE_FUNCTION();
+		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
+		const auto width = CAST(int, e.GetWidth());
+		const auto height = CAST(int, e.GetHeight());
+		gfx::Renderer::OnWindowResize(0, 0, width, height);
+		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
+		return false;
 	}
 
 	void Application::PushLayer(LayerBase* layer)

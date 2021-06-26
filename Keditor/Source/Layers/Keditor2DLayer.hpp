@@ -14,6 +14,8 @@
 #include <Scene/iScene.hpp>
 #include <Scene/Serialization/SceneSerializer.hpp>
 
+#include "EventsSystem/KeyEvent.hpp"
+
 namespace krakoa
 {
 	namespace panels
@@ -47,6 +49,13 @@ namespace krakoa
 		void ToggleScenePlayState() const;
 
 		void InitializeMenuBar();
+
+		void CreateNewScene();
+		void SaveScene();
+		void SaveSceneAs();
+		void LoadScene();
+
+		bool OnKeyboardPressed(const events::KeyPressedEvent& e);
 	
 	private:
 		Application& application;
@@ -61,8 +70,8 @@ namespace krakoa
 		scene::serialization::SceneSerializer sceneSerializer;
 		Solo_Ptr<panels::MenuBar> menuBar;
 		
-		bool isWindowFocused;
-		bool isWindowHovered;
+		bool isViewportFocused;
+		bool isViewportHovered;
 
 		scene::panels::SceneHierarchyPanel sceneHierarchyPanel;
 	};

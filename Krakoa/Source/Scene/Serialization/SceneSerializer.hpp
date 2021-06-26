@@ -21,7 +21,7 @@ namespace krakoa::scene::serialization
 		bool DeserializeBinary(const std::filesystem::path& path);
 		
 	private:
-		Multi_Ptr<iScene> scene;
+		Weak_Ptr<iScene> scene;
 		std::string name;
 	};
 }

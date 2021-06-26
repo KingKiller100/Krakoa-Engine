@@ -34,7 +34,7 @@ namespace krakoa::scene::panels
 
 		if (sceneMan.HasActiveScene())
 		{
-			auto currentScene = sceneMan.GetCurrentScene().lock();
+			const auto currentScene = sceneMan.GetCurrentScene().lock();
 
 			for (auto& panel : panels)
 			{

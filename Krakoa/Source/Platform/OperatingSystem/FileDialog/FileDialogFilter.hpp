@@ -112,7 +112,7 @@ namespace krakoa::os
 		std::ptrdiff_t currentSize;
 		size_t bufSize;
 	};
-
+	
 	using Filter = BasicFilter<char>;
 	using wFilter = BasicFilter<wchar_t>;
 	

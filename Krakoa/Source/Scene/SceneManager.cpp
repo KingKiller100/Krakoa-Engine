@@ -16,16 +16,19 @@ namespace krakoa::scene
 	using namespace ecs::components;
 
 	SceneManager::SceneManager()
-		: SimpleStateMachine(SceneRuntimeState::STOP, 
-		     [](const auto& current, const auto& next)
-		     {
-			 const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
-			 current
-			 , next);
-			 KRK_INF(msg);
-		     })
+		: SimpleStateMachine(SceneRuntimeState::STOP,
+			[this](const auto& current, const auto& next)
+	{
+		const SceneRuntimeState prev = current;
+		ResolveNextState(next);
+		const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
+			prev
+			, state);
+		KRK_NRM(msg);
+	})
 		, currentScene(scenes.end())
 		, entityComponentSystem(new ecs::EntityComponentSystem())
+		, state(SceneRuntimeState::STOP)
 	{
 		//Temporary
 		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Scenes", "Scenes");
@@ -34,18 +37,19 @@ namespace krakoa::scene
 	SceneManager::~SceneManager()
 	{
 		RemoveAll();
-		// entityComponentSystem->RemoveAllEntities();
+		entityComponentSystem->RemoveAllEntities();
 	}
 
-	void SceneManager::Add(const std::string& name)
+	Weak_Ptr<iScene> SceneManager::Add(const std::string& name)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		auto* scene = new Scene(name, entityComponentSystem);
-		scenes[name].reset(scene);
-		scene->SetRuntimeState((State_t*)std::addressof(GetState()));
-		currentScene = scenes.find(name);
+		auto& scene = scenes[name];
+		scene.reset(new Scene(name, entityComponentSystem));
+		scene->SetRuntimeState(std::addressof(state));
 		scene->OnLoad();
+		currentScene = scenes.find(name);
+		return scene;
 	}
 
 	bool SceneManager::Remove(const std::string_view& name)
@@ -56,6 +60,7 @@ namespace krakoa::scene
 		if (iter == scenes.end())
 			return false;
 
+		iter->second->Clear();
 		scenes.erase(iter);
 		return true;
 	}
@@ -63,6 +68,16 @@ namespace krakoa::scene
 	void SceneManager::RemoveAll()
 	{
 		KRK_PROFILE_FUNCTION();
+		for (auto&& scnInfo : scenes)
+		{
+			const auto& scene = scnInfo.second;
+			if (scene.use_count() > 1)
+			{
+				const auto msg = util::Fmt("Scene \"{0}\" is still active", scene->GetName());
+				KRK_WRN(msg);
+			}
+			scene->Clear();
+		}
 		scenes.clear();
 	}
 
@@ -103,9 +118,30 @@ namespace krakoa::scene
 		return currentScene != scenes.end();
 	}
 
+	void SceneManager::TogglePlayScene()
+	{
+		if (GetState() == SceneRuntimeState::PLAY)
+			SetState(SceneRuntimeState::STOP);
+		else
+			SetState(SceneRuntimeState::PLAY);
+	}
+
+	void SceneManager::StopScene()
+	{
+		SetState(SceneRuntimeState::STOP);
+	}
+
+	void SceneManager::ResolveNextState(SceneConstants::SceneRuntimeState::Underlying_t nextState)
+	{
+		state = nextState;
+	}
+
 	void SceneManager::RenderEntities(const iScene& scene) const
 	{
 		KRK_PROFILE_FUNCTION();
+
+		if (scene.Empty())
+			return;
 
 		iCamera* camera = nullptr;
 		kmaths::TransformMatrix<float> cameraTransform = kmaths::GetTransformIdentity<float>();

@@ -365,6 +365,8 @@ namespace krakoa::scene::serialization::impl
 
 		}
 
+		scene.SetName(sceneName);
+		
 		return true;
 	}
 }

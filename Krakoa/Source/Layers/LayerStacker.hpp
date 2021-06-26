@@ -21,11 +21,11 @@ namespace krakoa
 		void PopLayer(LayerBase* layer);
 		void PopOverlay(LayerBase* overlay);
 
-		std::vector<LayerBase*>::iterator begin();
-		std::vector<LayerBase*>::iterator end();
+		std::vector<LayerBase*>::reverse_iterator begin();
+		std::vector<LayerBase*>::reverse_iterator end();
 
-		const std::vector<LayerBase*>::const_iterator begin() const ;
-		const std::vector<LayerBase*>::const_iterator end() const;
+		const std::vector<LayerBase*>::const_reverse_iterator begin() const ;
+		const std::vector<LayerBase*>::const_reverse_iterator end() const;
 
 		void OnUpdate(const float deltaTime) const noexcept;
 		void OnEvent(events::Event& e) const noexcept;

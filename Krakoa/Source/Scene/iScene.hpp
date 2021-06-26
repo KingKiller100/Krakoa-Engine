@@ -1,20 +1,18 @@
 ﻿#pragma once
 #include "Entity/ECS_UID.hpp"
 
-#include <Utility/Enum/kEnum.hpp>
+#include "SceneConstants.hpp"
 
 #include <functional>
 
 namespace krakoa::scene
 {
-	ENUM_STRUCT_FWD_DCL(SceneRuntimeState);
-
 	namespace ecs
 	{
 		class Entity;
 	}
 	
-	class iScene
+	class iScene : protected SceneConstants
 	{
 	public:
 		using EntityForEachConstFunc = std::function<void(const ecs::Entity&)>;
@@ -22,6 +20,8 @@ namespace krakoa::scene
 		
 	public:
 		virtual ~iScene() = default;
+
+		virtual bool Empty() const = 0;
 
 		virtual std::string_view GetName() const = 0;
 		virtual void SetName(const std::string& name) = 0;
@@ -47,6 +47,9 @@ namespace krakoa::scene
 		virtual void OnLoad() = 0;
 		virtual void OnUpdate(float time) = 0;
 
+		friend class SceneManager;
+
+	protected:
 		virtual SceneRuntimeState GetRuntimeState() const = 0;
 		virtual void SetRuntimeState(SceneRuntimeState* state) = 0;
 	};

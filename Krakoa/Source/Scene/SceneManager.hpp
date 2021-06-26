@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "SceneRuntimeState.hpp"
+#include "SceneConstants.hpp"
 #include "Entity/EntityComponentSystem.hpp"
 
 #include "../Core/PointerTypes.hpp"
@@ -29,13 +29,14 @@ namespace krakoa
 			std::filesystem::path path;
 		};
 
-		class SceneManager final : public patterns::iSingleton, public patterns::SimpleStateMachine<SceneRuntimeState>
+		class SceneManager final : public patterns::iSingleton, protected SceneConstants
+		, public patterns::SimpleStateMachine<SceneConstants::SceneRuntimeState::Underlying_t>
 		{
 		public:
 			SceneManager();
 			~SceneManager() override;
 
-			void Add(const std::string& name);
+			Weak_Ptr<iScene> Add(const std::string& name);
 			bool Remove(const std::string_view& name);
 			void RemoveAll();
 
@@ -48,6 +49,9 @@ namespace krakoa
 
 			bool HasActiveScene() const;
 
+			void TogglePlayScene();
+			void StopScene();
+			
 			template<typename ...Components>
 			std::vector<ecs::EntityUID> GetEntitiesWithComponents()
 			{
@@ -57,12 +61,14 @@ namespace krakoa
 			friend class panels::SceneHierarchyPanel;
 
 		private:
+			void ResolveNextState(SceneRuntimeState::Underlying_t nextState);
 			void RenderEntities(const iScene& scene) const;
 
 		private:
 			std::unordered_map<std::string, Multi_Ptr<iScene>> scenes;
 			decltype(scenes)::iterator currentScene;
 			std::vector<PendingScene> pendingScenes;
+			SceneRuntimeState state;
 
 			Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
 		};

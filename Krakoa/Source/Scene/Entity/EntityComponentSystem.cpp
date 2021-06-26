@@ -79,6 +79,11 @@ namespace krakoa::scene::ecs
 		return true;
 	}
 
+	bool EntityComponentSystem::EmptyEntities() const
+	{
+		return entities.empty();
+	}
+
 	bool EntityComponentSystem::HasEntity(EntityUID id) const
 	{
 		KRK_PROFILE_FUNCTION();

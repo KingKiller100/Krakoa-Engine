@@ -28,8 +28,8 @@ namespace krakoa
 			/ CAST(float, application.GetWindow().GetHeight()),
 			true) // Aspect ratio from window size
 		, position({ 0.f, 0.f })
-		, isWindowFocused(false)
-		, isWindowHovered(false)
+		, isViewportFocused(false)
+		, isViewportHovered(false)
 	{
 		cameraController.SetRotationSpeed(180.f);
 		cameraController.SetTranslationSpeed(5.f);
@@ -60,16 +60,14 @@ namespace krakoa
 
 		auto& sceneMan = application.GetManager<scene::SceneManager>();
 
-		sceneMan.Add("Example");
-
-		const auto activeScene = sceneMan.GetCurrentScene();
-
-		if (activeScene.expired())
+		const auto scene = sceneMan.Add("Example");
+		
+		if (scene.expired())
 		{
 			KRK_FATAL("No active scene available to");
 		}
 
-		const auto sc = activeScene.lock();
+		const auto scn = scene.lock();
 
 #if 0
 		{
@@ -167,55 +165,28 @@ namespace krakoa
 		}
 #endif
 
-		sceneSerializer = scene::serialization::SceneSerializer(sc);
+		sceneSerializer = scene::serialization::SceneSerializer(scn);
 		InitializeMenuBar();
 	}
 
 	void Keditor2DLayer::InitializeMenuBar()
 	{
 		menuBar.reset(new panels::MenuBar{});
-		menuBar->AddOption("File", "Ctrl + N", { "New Scene", []
+		menuBar->AddOption("File", "Ctrl + N", { "New Scene", [this]
 		{
-			throw klib::NotImplementedException("Yet to implement \"New Scene\" command");
+			CreateNewScene();
 		} });
-		menuBar->AddOption("File", "Ctrl + S", { "Save", []
+		menuBar->AddOption("File", "Ctrl + S", { "Save", [this]
 		{
-			throw klib::NotImplementedException("Yet to implement \"Save\" command");
+			SaveScene();
 		} });
 		menuBar->AddOption("File", "Ctrl + Shift + S", { "Save Scene As", [this]()
 		{
-			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
-
-			os::FileDialogFilter filter;
-			filter.AddFilter("scene", "yaml");
-			filter.FormatFilter();
-
-			const auto filePath = fileDialog.SaveFile(filter);
-			if (filePath.empty())
-			{
-				return;
-			}
-
-			KRK_INF(util::Fmt("Saving scene to \"{0}\"", filePath));
-			sceneSerializer.Serialize(filePath);
+			SaveSceneAs();
 		} });
 		menuBar->AddOption("File", "Ctrl + O", { "Load Scene", [this]()
 		{
-			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
-
-			os::FileDialogFilter filter;
-			filter.AddFilter("scene", "yaml");
-			filter.AddFilter("all", "*");
-			filter.FormatFilter();
-
-			const auto filePath = fileDialog.OpenFile(filter);
-			if (filePath.empty())
-			{
-				return;
-			}
-
-			KRK_INF(util::Fmt("Loading scene from \"{0}\"", filePath));
-			sceneSerializer.Deserialize(filePath);
+			LoadScene();
 		} });
 		menuBar->AddOption("File", { "Exit", []() { GetApp().Close(); } });
 	}
@@ -231,7 +202,7 @@ namespace krakoa
 
 		ToggleScenePlayState();
 
-		if (isWindowFocused)
+		if (isViewportFocused)
 			cameraController.OnUpdate(deltaTime);
 
 		UpdateEntities();
@@ -245,19 +216,11 @@ namespace krakoa
 
 			if (input::IsKeyReleased(input::KEY_P))
 			{
-				const auto currentState = sceneMan.GetState();
-
-				sceneMan.ChangeState(
-					currentState.Compare(
-						scene::SceneRuntimeState::PLAY
-						, scene::SceneRuntimeState::PAUSE
-						, scene::SceneRuntimeState::PLAY)
-				);
+				sceneMan.TogglePlayScene();
 			}
-
-			if (input::IsKeyReleased(input::KEY_S))
+			else if (input::IsKeyReleased(input::KEY_S))
 			{
-				sceneMan.ChangeState(scene::SceneRuntimeState::STOP);
+				sceneMan.StopScene();
 			}
 		}
 	}
@@ -295,6 +258,9 @@ namespace krakoa
 			| ui::WindowFlags::NoBringToFrontOnFocus | ui::WindowFlags::NoNavFocus;
 		// }
 
+		if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ui::WindowFlags::NoBackground;
+		
 		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
 		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
 		// all active windows docked into it will lose their parent and become undocked.
@@ -310,23 +276,28 @@ namespace krakoa
 				ui::PopStyleVar(2);
 
 				// DockSpace
-				ImGuiIO& io = ImGui::GetIO();
+				auto& io = ImGui::GetIO();
+				auto& style = ImGui::GetStyle();
+				const auto minWindowSize = style.WindowMinSize;
+				style.WindowMinSize.x = 370.f;
+
 				if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 				{
-					const ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
+					const ImGuiID dockSpaceID = ImGui::GetID("MyDockSpace");
+					ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
 				}
+
+				style.WindowMinSize = minWindowSize;
 
 				menuBar->Draw();
 
 				sceneHierarchyPanel.OnRender();
-
-
+				
 				ui::PushStyleVar(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f());
-				ui::DrawPanel("Editor", [&]()
+				ui::DrawPanel("Viewport", [&]()
 				{
-					isWindowFocused = ImGui::IsWindowFocused();
-					isWindowHovered = ImGui::IsWindowHovered();
+					isViewportFocused = ImGui::IsWindowFocused();
+					isViewportHovered = ImGui::IsWindowHovered();
 
 					UpdateViewport();
 
@@ -340,13 +311,75 @@ namespace krakoa
 			});
 
 
-			if (isWindowFocused || isWindowHovered)
+			if (!isViewportFocused && !isViewportHovered)
 				application.GetImGuiLayer().BlockEvents();
 			else
 				application.GetImGuiLayer().UnblockEvents();
 		});
-
 	}
+
+	void Keditor2DLayer::CreateNewScene()
+	{
+		os::FileDialogFilter filter;
+		filter.AddFilter("scene", "yaml");
+		filter.FormatFilter();
+
+		const auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
+		const auto path = fileDialog.SaveFile(filter);
+		
+		if (path.empty() || klib::CheckFileExists(path))
+		{
+			return;
+		}
+
+		const auto sceneName = path.stem().string();
+		auto scn = GetApp().GetManager<scene::SceneManager>().Add(sceneName).lock();
+		KRK_INF(util::Fmt("Created new scene: {0}", scn->GetName()));
+	}
+
+	void Keditor2DLayer::SaveSceneAs()
+	{
+		auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
+
+		os::FileDialogFilter filter;
+		filter.AddFilter("scene", "yaml");
+		filter.FormatFilter();
+
+		const auto filePath = fileDialog.SaveFile(filter);
+		if (filePath.empty())
+		{
+			return;
+		}
+
+		KRK_INF(util::Fmt("Saving scene to \"{0}\"", filePath));
+		sceneSerializer.Serialize(filePath);
+	}
+
+	void Keditor2DLayer::LoadScene()
+	{
+		auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
+
+		os::FileDialogFilter filter;
+		filter.AddFilter("scene", "yaml");
+		filter.FormatFilter();
+
+		const auto filePath = fileDialog.OpenFile(filter);
+		if (filePath.empty())
+		{
+			return;
+		}
+
+		KRK_INF(util::Fmt("Loading scene from \"{0}\"", filePath));
+		sceneSerializer.Deserialize(filePath);
+	}
+
+	void Keditor2DLayer::SaveScene()
+	{
+		const auto msg = "Yet to implement \"Save\" command";
+		debug::RaiseNotice(msg, SOURCE_INFO());
+		throw klib::NotImplementedException(msg);
+	}
+
 
 	void Keditor2DLayer::UpdateViewport() noexcept
 	{
@@ -372,5 +405,45 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		cameraController.OnEvent(e);
+
+		events::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<events::KeyPressedEvent>(KRK_BIND_FUNC(Keditor2DLayer::OnKeyboardPressed));
+	}
+
+	bool Keditor2DLayer::OnKeyboardPressed(const events::KeyPressedEvent& e)
+	{
+		if (e.GetRepeatCount() > 0)
+			return false;
+
+		const auto ctrlBtn = IsKeyPressed(input::KEY_LEFT_CONTROL) || IsKeyPressed(input::KEY_RIGHT_CONTROL);
+		const auto shiftBtn = IsKeyPressed(input::KEY_LEFT_SHIFT) || IsKeyPressed(input::KEY_RIGHT_SHIFT);
+
+		switch (e.GetKeyCode())
+		{
+		case input::KEY_N:
+			if (ctrlBtn && !shiftBtn)
+				CreateNewScene();
+			break;
+			
+		case input::KEY_O:
+			if (ctrlBtn && !shiftBtn)
+				LoadScene();
+			break;
+			
+		case input::KEY_S:
+			if (ctrlBtn)
+			{
+				if (shiftBtn)
+					SaveSceneAs();
+				else
+					SaveScene();
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		return false;
 	}
 }

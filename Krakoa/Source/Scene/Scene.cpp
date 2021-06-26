@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "Scene.hpp"
 
-#include "SceneRuntimeState.hpp"
+#include "SceneConstants.hpp"
 
 #include "Entity/Components/TagComponent.hpp"
 #include "Entity/Components/TransformComponent.hpp"
@@ -41,6 +41,11 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		Scene::Clear(); 
+	}
+
+	bool Scene::Empty() const
+	{
+		return entities.empty();
 	}
 
 	std::string_view Scene::GetName() const
@@ -254,7 +259,10 @@ namespace krakoa::scene
 
 	void Scene::Clear()
 	{
-		entityComponentSystem->RemoveAllEntities();
+		for (auto&& entity : entities)
+		{
+			entityComponentSystem->RemoveEntity(entity.GetID());
+		}
 		entities.clear();
 	}
 
@@ -268,11 +276,6 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		UpdateScripts(deltaTime);
-	}
-
-	SceneRuntimeState Scene::GetRuntimeState() const
-	{
-		return *runtimeState;
 	}
 
 	void Scene::UpdateScripts(float deltaTime)
@@ -301,6 +304,11 @@ namespace krakoa::scene
 					script.InvokeDestroy();
 			}
 		}
+	}
+
+	SceneConstants::SceneRuntimeState Scene::GetRuntimeState() const
+	{
+		return *runtimeState;
 	}
 
 	void Scene::SetRuntimeState(SceneRuntimeState* state)

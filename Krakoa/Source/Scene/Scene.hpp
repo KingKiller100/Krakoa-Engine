@@ -15,6 +15,8 @@ namespace krakoa::scene
 		Scene(const std::string_view& name, Multi_Ptr<ecs::EntityComponentSystem> ecs);
 		~Scene();
 	
+		bool Empty() const override;
+	
 		std::string_view GetName() const override;
 		void SetName(const std::string& name) override;
 
@@ -39,11 +41,13 @@ namespace krakoa::scene
 		void OnLoad() override;
 		void OnUpdate(float time) override;
 
-		SceneRuntimeState GetRuntimeState() const override;
-		void SetRuntimeState(SceneRuntimeState* state) override;
-
+		friend class SceneManager;
+	
 	protected:
 		void UpdateScripts(float deltaTime);
+
+		SceneRuntimeState GetRuntimeState() const override;
+		void SetRuntimeState(SceneRuntimeState* state) override;
 
 	private:
 		std::string name;

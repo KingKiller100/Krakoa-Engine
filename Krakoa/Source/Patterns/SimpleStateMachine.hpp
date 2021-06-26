@@ -22,17 +22,6 @@ namespace patterns
 			return currentState;
 		}
 
-		constexpr void ChangeState(const State_t& nextState)
-		{
-			if (nextState == currentState)
-				return;
-
-			if (changeStateFunc != nullptr)
-				changeStateFunc(currentState, nextState);
-
-			currentState = nextState;
-		}
-
 		constexpr bool CheckState(const State_t& otherState)
 		{
 			return currentState == otherState;
@@ -41,18 +30,6 @@ namespace patterns
 		constexpr bool BitMaskState(const State_t& otherState)
 		{
 			return currentState | otherState;
-		}
-
-		constexpr void SetChangeStateFunc(const StateChangeFunc_t& func)
-		{
-			changeStateFunc = func;
-		}
-
-		constexpr bool TransitionState(const State_t& from, const State_t& to)
-		{
-			const auto correctPreviousState = CheckState(from);
-			ChangeState(to);
-			return correctPreviousState;
 		}
 
 		constexpr bool operator==(const SimpleStateMachine& other)
@@ -87,6 +64,30 @@ namespace patterns
 		constexpr bool operator<=(const U& other)
 		{
 			return currentState <= other;
+		}
+
+	protected:
+		constexpr bool TransitionState(const State_t& from, const State_t& to)
+		{
+			const auto correctPreviousState = CheckState(from);
+			SetState(to);
+			return correctPreviousState;
+		}
+		
+		constexpr void SetState(const State_t& nextState)
+		{
+			if (nextState == currentState)
+				return;
+
+			if (changeStateFunc != nullptr)
+				changeStateFunc(currentState, nextState);
+
+			currentState = nextState;
+		}
+
+		constexpr void SetChangeStateFunc(const StateChangeFunc_t& func)
+		{
+			changeStateFunc = func;
 		}
 
 	private:

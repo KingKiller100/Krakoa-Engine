@@ -41,9 +41,9 @@ namespace krakoa
 	void LayerStacker::PopLayer(LayerBase* layer)
 	{
 		KRK_PROFILE_FUNCTION();
-
-		const auto iter = std::find(begin(), end(), layer);
-		if (iter != end())
+		
+		const auto iter = std::find(layerStack.begin(), layerStack.end(), layer);
+		if (iter != layerStack.end())
 		{
 			(*iter)->OnDetach();
 			layerStack.erase(iter);
@@ -55,40 +55,40 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto iter = std::find(begin(), end(), overlay);
-		if (iter != end())
+		const auto iter = std::find(layerStack.begin(), layerStack.end(), overlay);
+		if (iter != layerStack.end())
 		{
 			(*iter)->OnDetach();
 			layerStack.erase(iter);
 		}
 	}
 
-	std::vector<LayerBase*>::iterator LayerStacker::begin()
+	std::vector<LayerBase*>::reverse_iterator LayerStacker::begin()
 	{
 		KRK_PROFILE_FUNCTION();
 
-		return layerStack.begin();
+		return layerStack.rbegin();
 	}
 
-	const std::vector<LayerBase*>::const_iterator LayerStacker::begin() const
+	const std::vector<LayerBase*>::const_reverse_iterator LayerStacker::begin() const
 	{
 		KRK_PROFILE_FUNCTION();
 
-		return layerStack.cbegin();
+		return layerStack.crbegin();
 	}
 
-	std::vector<LayerBase*>::iterator LayerStacker::end()
+	std::vector<LayerBase*>::reverse_iterator LayerStacker::end()
 	{
 		KRK_PROFILE_FUNCTION();
 
-		return layerStack.end();
+		return layerStack.rend();
 	}
 
-	const std::vector<LayerBase*>::const_iterator LayerStacker::end() const
+	const std::vector<LayerBase*>::const_reverse_iterator LayerStacker::end() const
 	{
 		KRK_PROFILE_FUNCTION();
 
-		return layerStack.cend();
+		return layerStack.crend();
 	}
 
 	void LayerStacker::OnUpdate(const float deltaTime) const noexcept
@@ -102,15 +102,17 @@ namespace krakoa
 	void LayerStacker::OnEvent(krakoa::events::Event & e) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-
-		const auto beg = begin();
-		for (auto layer_iter = end() - 1;
-			layer_iter != beg; 
-			--layer_iter)
+		
+		for (auto layer_iter = begin();
+			layer_iter != end(); 
+			++layer_iter)
 		{
 			(*layer_iter)->OnEvent(e);
+
 			if (e.isHandled())
+			{
 				break;
+			}
 		}
 	}
 

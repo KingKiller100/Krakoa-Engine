@@ -34,11 +34,12 @@ namespace krakoa::scene
 					{
 						auto& script = scripts.at(GetUniqueID<Script>());
 
+						const auto scriptName = util::GetTypeNameNoNamespace<Script>();
 						KRK_DBG(klib::ToString("Initialising script \"{0}\""
-							, util::GetTypeNameNoNamespace<Script>()
+							, scriptName
 						));
 
-						script = Make_Solo<Script>();
+						script = Make_Solo<Script>(scriptName);
 					});
 			}
 

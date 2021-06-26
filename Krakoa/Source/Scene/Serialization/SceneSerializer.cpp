@@ -25,10 +25,17 @@ namespace krakoa::scene::serialization
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto sceneData = impl::SerializeScene(*scene);
+		if (scene.expired())
+		{
+			KRK_ERR(util::Fmt("Attempting to serialize null scene", name));
+			return;
+		}
+
+		const auto scn = scene.lock();
+		
+		const auto sceneData = impl::SerializeScene(*scn);
 
 		auto outputPath = path;
-		// outputPath /= name;
 		outputPath.replace_extension(s_FileExtension);
 		klib::WriteFile(outputPath, sceneData);
 		KRK_TRC("Serialization complete");
@@ -37,11 +44,20 @@ namespace krakoa::scene::serialization
 	void SceneSerializer::SerializeBinary(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
+		throw klib::NotImplementedException{ "No implementation for " __FUNCTION__};
 	}
 
 	bool SceneSerializer::Deserialize(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
+
+		if (scene.expired())
+		{
+			KRK_ERR(util::Fmt("Attempting to serialize null scene", name));
+			return false;;
+		}
+
+		
 		std::ifstream file(path);
 		std::stringstream stream;
 
@@ -49,8 +65,9 @@ namespace krakoa::scene::serialization
 
 		if (const auto data = stream.str(); !data.empty())
 		{
-			scene->Clear();
-			impl::DeserializeScene(*scene, data);
+			const auto scn = scene.lock();
+			scn->Clear();
+			impl::DeserializeScene(*scn, data);
 		}
 
 		file.close();
@@ -60,7 +77,7 @@ namespace krakoa::scene::serialization
 	bool SceneSerializer::DeserializeBinary(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
-		throw klib::NotImplementedException{ __FUNCTION__ };
+		throw klib::NotImplementedException{ "No implementation for " __FUNCTION__ };
 		return false;
 	}
 }

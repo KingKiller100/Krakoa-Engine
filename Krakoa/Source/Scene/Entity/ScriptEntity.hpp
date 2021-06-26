@@ -10,6 +10,7 @@ namespace krakoa::scene::ecs
 	class ScriptEntity
 	{
 	public:
+		ScriptEntity(const std::string& scriptName);
 		virtual ~ScriptEntity();
 		
 		friend class components::NativeScriptComponent;
@@ -48,7 +49,8 @@ namespace krakoa::scene::ecs
 		void Activate() const;
 
 		void SetEntity(Entity* e);
-
+		
+		std::string_view GetScriptName() const noexcept;
 		
 		virtual void OnCreate();
 		virtual void OnDestroy();
@@ -56,6 +58,7 @@ namespace krakoa::scene::ecs
 		
 	private:
 		Entity* pEntity = nullptr;
+		std::string scriptName;
 	};
 }
 

@@ -44,7 +44,12 @@ namespace krakoa::configurations
 				T value;
 				if constexpr (klib::type_trait::Is_Bool_V<T>)
 				{
-					value = klib::StrTo<std::uintptr_t>(valueStr) != 0;
+					if (valueStr == "true")
+						value = true;
+					else if (valueStr == "false")
+						value = false;
+					else
+						value = klib::StrTo<std::size_t>(valueStr) != 0;
 				}
 				else
 				{

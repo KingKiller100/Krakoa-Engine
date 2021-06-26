@@ -22,11 +22,11 @@ namespace krakoa::configurations
 		~GlobalConfig() noexcept override;
 
 		template<typename T>
-		T Get(const std::string& context, const std::string& key) const
+		T Get(const std::string& context, const std::string& subject) const
 		{
-			const auto cleanKey = SanitizeKey(context);
+			const auto cleanKey = ResolveKey(context, contextKeyRemaps);
 			const auto& valueMap = GetValueMap(cleanKey);
-			const auto& value = valueMap.ReadAs<T>(key);
+			const auto& value = valueMap.ReadAs<T>(ResolveKey(subject, subjectKeyRemaps));
 			return value;
 		}
 
@@ -59,16 +59,18 @@ namespace krakoa::configurations
 			KRK_LOG("Config", util::Fmt("Source: {0}", source));
 		}
 
-		void AddRemap(const std::string& redirectKey, const std::string& key);
+		void AddContextRemap(const std::string& redirectKey, const std::string& key);
+		void AddSubjectRemap(const std::string& redirectKey, const std::string& key);
 	
 	private:
 		void Initialize();
-		USE_RESULT std::string ResolveKey(const std::string& key) const;
+		USE_RESULT std::string ResolveKey(const std::string& key, const std::map<std::string, std::string>& remap) const;
 		USE_RESULT std::string SanitizeKey(const std::string& key) const;
 	
 	private:
 		ConfigMap configMap;
-		std::map<std::string, std::string> remapKeys;
+		std::map<std::string, std::string> contextKeyRemaps;
+		std::map<std::string, std::string> subjectKeyRemaps;
 	};
 
 	void RemapConfigurationKey(const std::string& redirectKey, const std::string& key);

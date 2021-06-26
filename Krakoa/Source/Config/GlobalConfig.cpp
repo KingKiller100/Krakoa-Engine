@@ -17,9 +17,14 @@ namespace krakoa::configurations
 		configMap.clear();
 	}
 
-	void GlobalConfig::AddRemap(const std::string& redirectKey, const std::string& key)
+	void GlobalConfig::AddContextRemap(const std::string& redirectKey, const std::string& key)
 	{
-		remapKeys[SanitizeKey(redirectKey)] = SanitizeKey(key);
+		contextKeyRemaps[SanitizeKey(redirectKey)] = SanitizeKey(key);
+	}
+
+	void GlobalConfig::AddSubjectRemap(const std::string& redirectKey, const std::string& key)
+	{
+		subjectKeyRemaps[SanitizeKey(redirectKey)] = SanitizeKey(key);
 	}
 
 	void GlobalConfig::Initialize()
@@ -43,11 +48,11 @@ namespace krakoa::configurations
 		KRK_LOG("Config", "Parsing concluded");
 	}
 
-	std::string GlobalConfig::ResolveKey(const std::string& key) const
+	std::string GlobalConfig::ResolveKey(const std::string& key, const std::map<std::string, std::string>& remap) const
 	{
 		const auto sanitizedKey = SanitizeKey(key);
-		const auto iter = remapKeys.find(sanitizedKey);
-		if (iter != remapKeys.end())
+		const auto iter = remap.find(sanitizedKey);
+		if (iter != remap.end())
 		{
 			return iter->second;
 		}
@@ -74,6 +79,6 @@ namespace krakoa::configurations
 	void RemapConfigurationKey(const std::string& redirectKey, const std::string& key)
 	{
 		auto& gConf = GlobalConfig::Reference();
-		gConf.AddRemap(redirectKey, key);
+		gConf.AddContextRemap(redirectKey, key);
 	}
 }

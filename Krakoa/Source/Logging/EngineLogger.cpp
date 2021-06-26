@@ -71,7 +71,7 @@ namespace krakoa
 		const auto fileSize = entry.file_size();
 		const auto tooBig = fileSize > maxBytes;
 
-		const auto maxDays = configurations::GetConfiguration<size_t>("Logging", "MaxBytes");
+		const auto maxDays = configurations::GetConfiguration<size_t>("Logging", "MaxDays");
 		const auto lastWrite = entry.last_write_time();
 		const auto now = std::filesystem::_File_time_clock::now();
 		const auto timeSinceLastWrite = now - lastWrite;

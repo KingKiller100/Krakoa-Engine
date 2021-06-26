@@ -2,6 +2,8 @@
 
 #include <Utility/Logging/kLogging.hpp>
 #include <Utility/Debug/Source/kSourceInfo.hpp>
+#include <Utility/Debug/Exceptions/NotImplementedException.hpp>
+
 
 namespace krakoa::debug
 {

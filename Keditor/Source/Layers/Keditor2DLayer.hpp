@@ -45,6 +45,8 @@ namespace krakoa
 		void SetUpScene();
 
 		void ToggleScenePlayState() const;
+
+		void InitializeMenuBar();
 	
 	private:
 		Application& application;

@@ -10,7 +10,7 @@ namespace patterns
 	public:
 		using StateChangeFunc_t = std::function<void(const State&, const State&)>;
 		using State_t = State;
-		
+
 	public:
 		explicit constexpr SimpleStateMachine(State&& initalState, const StateChangeFunc_t& func = nullptr)
 			: currentState(std::forward<State>(initalState))
@@ -26,17 +26,18 @@ namespace patterns
 		{
 			if (nextState == currentState)
 				return;
-			
+
 			if (changeStateFunc != nullptr)
 				changeStateFunc(currentState, nextState);
+
 			currentState = nextState;
 		}
-		
-		constexpr bool CompareState(const State_t& otherState)
+
+		constexpr bool CheckState(const State_t& otherState)
 		{
 			return currentState == otherState;
 		}
-		
+
 		constexpr bool BitMaskState(const State_t& otherState)
 		{
 			return currentState | otherState;
@@ -46,7 +47,14 @@ namespace patterns
 		{
 			changeStateFunc = func;
 		}
-		
+
+		constexpr bool TransitionState(const State_t& from, const State_t& to)
+		{
+			const auto correctPreviousState = CheckState(from);
+			ChangeState(to);
+			return correctPreviousState;
+		}
+
 		constexpr bool operator==(const SimpleStateMachine& other)
 		{
 			return currentState == other.currentState && changeStateFunc == other.changeStateFunc;

@@ -7,7 +7,6 @@
 
 #include <ImGui/imgui.h>
 
-
 #include <Scene/SceneManager.hpp>
 #include <Graphics/2D/Textures/iTexture2D.hpp>
 #include <Maths/Vectors/VectorMathsHelper.hpp>
@@ -169,17 +168,28 @@ namespace krakoa
 #endif
 
 		sceneSerializer = scene::serialization::SceneSerializer(sc);
+		InitializeMenuBar();
+	}
 
+	void Keditor2DLayer::InitializeMenuBar()
+	{
 		menuBar.reset(new panels::MenuBar{});
-		menuBar->AddOption("File", { "Exit", []() { GetApp().Close(); } });
-		menuBar->AddOption("File", { "Save Scene", [this]()
+		menuBar->AddOption("File", { "New Scene", []
+		{
+			throw klib::NotImplementedException("Yet to implement \"New Scene\" command");
+		} });
+		menuBar->AddOption("File", { "Save", []
+		{
+			throw klib::NotImplementedException("Yet to implement \"Save\" command");
+		} });
+		menuBar->AddOption("File", { "Save Scene As", [this]()
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 
 			os::FileDialogFilter filter;
 			filter.AddFilter("scene", "yaml");
 			filter.FormatFilter();
-			
+
 			const auto filePath = fileDialog.SaveFile(filter);
 			if (filePath.empty())
 			{
@@ -188,8 +198,7 @@ namespace krakoa
 
 			KRK_INF(util::Fmt("Saving scene to \"{0}\"", filePath));
 			sceneSerializer.Serialize(filePath);
-		} }
-		);
+		} });
 		menuBar->AddOption("File", { "Load Scene", [this]()
 		{
 			auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
@@ -198,17 +207,17 @@ namespace krakoa
 			filter.AddFilter("scene", "yaml");
 			filter.AddFilter("all", "*");
 			filter.FormatFilter();
-			
+
 			const auto filePath = fileDialog.OpenFile(filter);
 			if (filePath.empty())
 			{
 				return;
 			}
-			
+
 			KRK_INF(util::Fmt("Loading scene from \"{0}\"", filePath));
 			sceneSerializer.Deserialize(filePath);
-		} }
-		);
+		} });
+		menuBar->AddOption("File", { "Exit", []() { GetApp().Close(); } });
 	}
 
 	void Keditor2DLayer::OnDetach()
@@ -252,7 +261,6 @@ namespace krakoa
 			}
 		}
 	}
-
 
 	void Keditor2DLayer::UpdateEntities() const noexcept
 	{

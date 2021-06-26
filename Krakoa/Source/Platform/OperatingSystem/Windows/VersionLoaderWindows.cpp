@@ -44,7 +44,7 @@ namespace krakoa::os
 				vi.buildNo = osVersionInfo.dwBuildNumber;
 			}
 
-			KRK_DBG("Source function: RtlGetVersionFunc");
+			KRK_DBG("Version source function: RtlGetVersionFunc");
 		}
 		else
 		{
@@ -66,7 +66,7 @@ namespace krakoa::os
 				vi.buildNo = os_version_info.dwBuildNumber;
 			}
 
-			KRK_DBG("Source function: GetVersionEx");
+			KRK_DBG("Version source function: GetVersionEx");
 		}
 
 		return vi;

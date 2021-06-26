@@ -13,17 +13,17 @@ namespace krakoa::panels
 	void MenuBar::DrawNodes()
 	{
 		ui::DrawMenuBar([this] {
-			for (auto&& header : menuBarList)
+			for (auto&& node : menuBarList)
 			{
-				const auto& title = header.first;
-				const auto& commands = header.second;
+				const auto& title = node.first;
+				const auto& commands = node.second;
 				ui::DrawMenu(title, [&commands] {
 					for (auto&& command : commands)
 					{
-						ui::DrawMenuItem(command.first, [&]()
+						ui::DrawMenuItem(command.label, [&]()
 						{
-							if (command.second)
-								command.second();
+							if (command.callback)
+								command.callback();
 						});
 					}
 				});
@@ -39,7 +39,17 @@ namespace krakoa::panels
 	void MenuBar::AddOption(const std::string& title, const ui::NamedCommand& option)
 	{
 		KRK_TRC(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", option.label, title));
-		menuBarList[title][option.label] = option.callback;
+		auto& node = menuBarList[title];
+		const auto iter = std::find_if(node.begin(), node.end(),
+			[&option](const ui::NamedCommand& command)
+		{
+			return command.label == option.label;
+		});
+
+		if (iter != node.end())
+			return;
+
+		node.emplace_back(option);
 	}
 
 }

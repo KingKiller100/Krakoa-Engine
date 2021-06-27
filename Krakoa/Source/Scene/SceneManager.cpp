@@ -2,6 +2,7 @@
 #include "SceneManager.hpp"
 
 #include "Scene.hpp"
+#include "Serialization/SceneSerializer.hpp"
 
 #include "../Graphics/2D/Renderer2D.hpp"
 #include "../FileSystem/VirtualFileExplorer.hpp"
@@ -29,6 +30,7 @@ namespace krakoa::scene
 		, currentScene(scenes.end())
 		, entityComponentSystem(new ecs::EntityComponentSystem())
 		, state(SceneRuntimeState::STOP)
+		, serializer(Make_Solo<serialization::SceneSerializer>())
 	{
 		//Temporary
 		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Scenes", "Scenes");
@@ -49,6 +51,7 @@ namespace krakoa::scene
 		scene->SetRuntimeState(std::addressof(state));
 		scene->OnLoad();
 		currentScene = scenes.find(name);
+		serializer->SetScene(scene);
 		return scene;
 	}
 
@@ -98,9 +101,20 @@ namespace krakoa::scene
 		currentScene = scenes.find(name);
 	}
 
+	void SceneManager::SaveToFile(const std::filesystem::path& path)
+	{
+		KRK_INF(util::Fmt("Saving scene to \"{0}\"", path));
+		serializer->Serialize(path);
+	}
+
 	void SceneManager::LoadFromFile(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
+		if (HasScene(path.stem().string()))
+			return;
+
+		KRK_INF(util::Fmt("Loading scene from \"{0}\"", path));
+		serializer->Deserialize(path);
 	}
 
 	void SceneManager::OnUpdate(const float deltaTime)
@@ -111,6 +125,17 @@ namespace krakoa::scene
 		scene.OnUpdate(deltaTime);
 
 		RenderEntities(scene);
+	}
+
+	bool SceneManager::HasScene(const std::string_view& sceneName) const
+	{
+		const auto iter = std::find_if(scenes.begin(), scenes.end(), [sceneName]
+		(const decltype(scenes)::value_type& scene)
+		{
+			return scene.second->GetName() == sceneName;
+		});
+
+		return iter != scenes.cend();
 	}
 
 	bool SceneManager::HasActiveScene() const

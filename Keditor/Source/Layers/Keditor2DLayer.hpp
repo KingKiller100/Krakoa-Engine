@@ -66,8 +66,7 @@ namespace krakoa
 
 		kmaths::Vector4f geometryColour;
 		kmaths::Vector3f position;
-
-		scene::serialization::SceneSerializer sceneSerializer;
+		
 		Solo_Ptr<panels::MenuBar> menuBar;
 		
 		bool isViewportFocused;

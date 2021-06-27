@@ -21,6 +21,11 @@ namespace krakoa
 			class SceneHierarchyPanel;
 		}
 
+		namespace serialization
+		{
+			class SceneSerializer;
+		}
+		
 		class iScene;
 
 		struct PendingScene
@@ -44,9 +49,11 @@ namespace krakoa
 			Weak_Ptr<iScene> GetCurrentScene();
 			void SetCurrentScene(const std::string& name);
 
+			void SaveToFile(const std::filesystem::path& path);
 			void LoadFromFile(const std::filesystem::path& path);
 			void OnUpdate(const float deltaTime);
 
+			bool HasScene(const std::string_view& sceneName) const;
 			bool HasActiveScene() const;
 
 			void TogglePlayScene();
@@ -68,9 +75,11 @@ namespace krakoa
 			std::unordered_map<std::string, Multi_Ptr<iScene>> scenes;
 			decltype(scenes)::iterator currentScene;
 			std::vector<PendingScene> pendingScenes;
+			Solo_Ptr<serialization::SceneSerializer> serializer;
 			SceneRuntimeState state;
 
 			Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
 		};
 	}
 }
+

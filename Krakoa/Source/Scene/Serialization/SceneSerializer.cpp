@@ -80,4 +80,9 @@ namespace krakoa::scene::serialization
 		throw klib::NotImplementedException{ "No implementation for " __FUNCTION__ };
 		return false;
 	}
+
+	void SceneSerializer::SetScene(const Weak_Ptr<iScene> scene)
+	{
+		this->scene = scene;
+	}
 }

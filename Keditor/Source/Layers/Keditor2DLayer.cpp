@@ -60,7 +60,7 @@ namespace krakoa
 
 		auto& sceneMan = application.GetManager<scene::SceneManager>();
 
-		const auto scene = sceneMan.Add("Example");
+		const auto scene = sceneMan.Add("Demo");
 		
 		if (scene.expired())
 		{
@@ -164,8 +164,7 @@ namespace krakoa
 			nsc.Bind<AnimateEntityScript>();
 		}
 #endif
-
-		sceneSerializer = scene::serialization::SceneSerializer(scn);
+		
 		InitializeMenuBar();
 	}
 
@@ -292,9 +291,16 @@ namespace krakoa
 				menuBar->Draw();
 
 				sceneHierarchyPanel.OnRender();
+
+				const auto currentScene =  GetApp().GetManager<scene::SceneManager>().GetCurrentScene();
+
+				if (currentScene.expired())
+					return;
+
+				const auto scn = currentScene.lock();
 				
 				ui::PushStyleVar(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f());
-				ui::DrawPanel("Viewport", [&]()
+				ui::DrawPanel(scn->GetName().data(), [&]()
 				{
 					isViewportFocused = ImGui::IsWindowFocused();
 					isViewportHovered = ImGui::IsWindowHovered();
@@ -351,8 +357,7 @@ namespace krakoa
 			return;
 		}
 
-		KRK_INF(util::Fmt("Saving scene to \"{0}\"", filePath));
-		sceneSerializer.Serialize(filePath);
+		GetApp().GetManager<scene::SceneManager>().SaveToFile(filePath);
 	}
 
 	void Keditor2DLayer::LoadScene()
@@ -369,8 +374,7 @@ namespace krakoa
 			return;
 		}
 
-		KRK_INF(util::Fmt("Loading scene from \"{0}\"", filePath));
-		sceneSerializer.Deserialize(filePath);
+		GetApp().GetManager<scene::SceneManager>().LoadFromFile(filePath);
 	}
 
 	void Keditor2DLayer::SaveScene()

@@ -19,7 +19,9 @@ namespace krakoa::scene::serialization
 		void SerializeBinary(const std::filesystem::path& path);
 		bool Deserialize(const std::filesystem::path& path);
 		bool DeserializeBinary(const std::filesystem::path& path);
-		
+
+		void SetScene(const Weak_Ptr<iScene> scene);
+
 	private:
 		Weak_Ptr<iScene> scene;
 		std::string name;

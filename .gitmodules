@@ -9,3 +9,6 @@
 [submodule "Krakoa/Vendors/YAML"]
 	path = Krakoa/Vendors/YAML
 	url = https://github.com/KingKiller100/yaml-cpp.git
+[submodule "Krakoa/Vendors/ImGuizmo"]
+	path = Krakoa/Vendors/ImGuizmo
+	url = https://github.com/KingKiller100/ImGuizmo.git

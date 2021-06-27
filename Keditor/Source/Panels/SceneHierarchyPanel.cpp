@@ -49,4 +49,9 @@ namespace krakoa::scene::panels
 			}
 		}
 	}
+
+	ecs::EntityUID& SceneHierarchyPanel::GetSelectedEntity() const
+	{
+		return *selectedEntityID;
+	}
 }

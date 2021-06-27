@@ -5,6 +5,9 @@
 
 #if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 
+#	pragma warning(push)
+#	pragma warning(disable : 4996)
+
 #include <bcrypt.h>
 #include <Windows.h>
 #include <VersionHelpers.h>
@@ -72,6 +75,7 @@ namespace krakoa::os
 		return vi;
 	}
 }
+#	pragma warning(pop)
 
 #endif
 

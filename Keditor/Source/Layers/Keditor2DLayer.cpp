@@ -306,6 +306,9 @@ namespace krakoa
 
 					ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
 						{ 0, 1.f }, { 1, 0 });
+
+					// Gizmos
+					
 				});
 			});
 

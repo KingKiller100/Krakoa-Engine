@@ -15,6 +15,8 @@
 #include <Scene/Serialization/SceneSerializer.hpp>
 #include <Platform/OperatingSystem/FileDialog/FileDialogFilter.hpp>
 
+#include <ImGuizmo.h>
+
 namespace krakoa
 {
 	using namespace gfx;
@@ -27,7 +29,6 @@ namespace krakoa
 			CAST(float, application.GetWindow().GetWidth()) // Aspect ratio from window size
 			/ CAST(float, application.GetWindow().GetHeight()),
 			true) // Aspect ratio from window size
-		, position({ 0.f, 0.f })
 		, isViewportFocused(false)
 		, isViewportHovered(false)
 	{
@@ -308,6 +309,37 @@ namespace krakoa
 						{ 0, 1.f }, { 1, 0 });
 
 					// Gizmos
+					const auto selectedEntityID = sceneHierarchyPanel.GetSelectedEntity();
+					if (selectedEntityID.IsNull())
+						return;
+
+					ImGuizmo::SetOrthographic(false);
+					ImGuizmo::SetDrawlist();
+
+					const auto position = ui::GetWindowPosition();
+					const auto dimension = ui::GetWindowDimensions();
+					ImGuizmo::SetRect(position.x, position.y, dimension.x, dimension.y);
+
+					const auto& scnMan = GetApp().GetManager<scene::SceneManager>();
+					const auto weakRef = scnMan.GetCurrentScene();
+					if (weakRef.expired())
+						return;
+
+					const auto scene = weakRef.lock();
+					const auto camEntity = scene->GetPrimaryCameraEntity();
+					if (camEntity.GetID().IsNull())
+						return;
+
+					const auto& camera = camEntity.GetComponent<CameraComponent>().GetCamera();
+					const auto& projection = camera.GetProjectionMatrix();
+					const auto view = camEntity.GetComponent<TransformComponent>().GetTransformationMatrix2D().Inverse();
+
+					const auto& selectedTransformComp = scene->GetEntity(selectedEntityID).GetComponent<TransformComponent>();
+					const auto transform = selectedTransformComp.GetTransformationMatrix2D();
+
+					ImGuizmo::Manipulate(view.GetPointerToData(), projection.GetPointerToData(),
+						ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, transform.GetPointerToData());
+
 					
 				});
 			});

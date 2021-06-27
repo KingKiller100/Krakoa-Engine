@@ -305,7 +305,7 @@ namespace krakoa::scene::serialization::impl
 			const auto tag = componentNodes[keys::ComponentKeys::TagKey].as < std::string >();
 			KRK_DBG(util::Fmt("Deserializing entity: {0}", tag));
 
-			auto& entity = scene.AddEntity(tag);
+			auto& entity = scene.AddEntity(eID, tag);
 
 			if (const auto transformNode = componentNodes[keys::ComponentKeys::TransformKey]; transformNode)
 			{

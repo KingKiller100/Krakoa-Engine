@@ -26,6 +26,8 @@ namespace krakoa::scene
 		virtual std::string_view GetName() const = 0;
 		virtual void SetName(const std::string& name) = 0;
 		
+		virtual ecs::Entity& AddEntity(const ecs::EntityUID& uid) = 0;
+		virtual ecs::Entity& AddEntity(const ecs::EntityUID& uid, const std::string_view& tag) = 0;
 		virtual ecs::Entity& AddEntity(const std::string& name) = 0;
 		virtual ecs::Entity& AddEmptyEntity() = 0;
 		
@@ -47,6 +49,8 @@ namespace krakoa::scene
 		virtual void OnLoad() = 0;
 		virtual void OnUpdate(float time) = 0;
 
+		virtual ecs::Entity GetPrimaryCameraEntity() const = 0;
+		
 		friend class SceneManager;
 
 	protected:

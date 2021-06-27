@@ -20,6 +20,8 @@ namespace krakoa::scene
 		std::string_view GetName() const override;
 		void SetName(const std::string& name) override;
 
+		ecs::Entity& AddEntity(const ecs::EntityUID& uid) override;
+		ecs::Entity& AddEntity(const ecs::EntityUID& uid, const std::string_view& tag) override;
 		ecs::Entity& AddEntity(const std::string& tag) override;
 		ecs::Entity& AddEmptyEntity() override;
 
@@ -40,6 +42,8 @@ namespace krakoa::scene
 		
 		void OnLoad() override;
 		void OnUpdate(float time) override;
+
+		ecs::Entity GetPrimaryCameraEntity() const override;
 
 		friend class SceneManager;
 	

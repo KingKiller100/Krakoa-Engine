@@ -58,6 +58,32 @@ namespace krakoa::scene
 		this->name = name;
 	}
 
+	ecs::Entity& Scene::AddEntity(const ecs::EntityUID& uid)
+	{
+		return AddEntity(uid, "Entity " + uid.ToString());
+	}
+
+	ecs::Entity& Scene::AddEntity(const ecs::EntityUID& uid, const std::string_view& tag)
+	{
+		KRK_PROFILE_FUNCTION();
+
+		const auto uidStr = uid.ToString();
+		KRK_ASSERT(!HasEntity(uid),
+			"Entity \"" + uidStr + "\" already exists in scene \"" + name + "\"");
+
+		auto& entity = entities.emplace_back(uid, entityComponentSystem);
+		entity.AddComponent<components::TagComponent>(tag);
+		entity.AddComponent<components::TransformComponent>();
+
+		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
+			name
+			, tag
+			, entity.GetID()
+		));
+
+		return entity;
+	}
+
 	Entity& Scene::AddEntity(const std::string& tag)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -276,6 +302,24 @@ namespace krakoa::scene
 		KRK_PROFILE_FUNCTION();
 
 		UpdateScripts(deltaTime);
+	}
+
+	ecs::Entity Scene::GetPrimaryCameraEntity() const
+	{
+		const auto cameraEntities = entityComponentSystem->GetEntitiesWithComponents<CameraComponent>();
+
+		for (auto&& uid : cameraEntities)
+		{
+			const auto entity = Entity{ uid, entityComponentSystem };
+			const auto& component = entity.GetComponent<CameraComponent>();
+			
+			if (component.IsPrimary())
+			{
+				return entity;
+			}
+		}
+
+		return {};
 	}
 
 	void Scene::UpdateScripts(float deltaTime)

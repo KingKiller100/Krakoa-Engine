@@ -10,7 +10,9 @@ namespace krakoa::scene::ecs
 		, selected(false)
 		, active(true)
 		, manager(entityComponentSystem)
-	{}
+	{
+		entityComponentSystem->Add(id);
+	}
 
 	Entity::Entity(Multi_Ptr<EntityComponentSystem> entityComponentSystem)
 		: id(entityComponentSystem->Add())

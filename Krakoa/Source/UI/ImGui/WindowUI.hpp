@@ -2,15 +2,16 @@
 
 #include "../Flags/WindowFlags.hpp"
 
-#include <Maths/Vectors/Vector2.hpp>
+#include "../../Maths/Maths.hpp"
 
 namespace krakoa::ui
 {
 	float GetCurrentWindowWidth() noexcept;
 	float GetCurrentWindowHeight() noexcept;
-	kmaths::Vector2f GetCurrentWindowDimensions() noexcept;
+	maths::Dimensions GetWindowDimensions() noexcept;
+	maths::Point GetWindowPosition() noexcept;
 
-	kmaths::Vector2f GetContentRegionAvailable() noexcept;
+	maths::Dimensions GetContentRegionAvailable() noexcept;
 
 	void SetNextWindowConstraints(kmaths::Vector2f minimum, kmaths::Vector2f maximum);
 	

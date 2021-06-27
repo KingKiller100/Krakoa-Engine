@@ -63,9 +63,6 @@ namespace krakoa
 		Solo_Ptr<gfx::SubTexture2D> pSubTexture;
 
 		OrthographicCameraController cameraController;
-
-		kmaths::Vector4f geometryColour;
-		kmaths::Vector3f position;
 		
 		Solo_Ptr<panels::MenuBar> menuBar;
 		

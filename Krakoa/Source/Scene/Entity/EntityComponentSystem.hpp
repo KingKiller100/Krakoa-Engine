@@ -27,6 +27,7 @@ namespace krakoa::scene::ecs
 		~EntityComponentSystem();
 
 		USE_RESULT EntityUID Add();
+		void Add(EntityUID uid);
 
 		void RemoveEntity(EntityUID id);
 		void RemoveAllEntities() noexcept;

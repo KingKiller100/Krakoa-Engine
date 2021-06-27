@@ -15,12 +15,18 @@ namespace krakoa::ui
 		return ImGui::GetWindowHeight();
 	}
 
-	kmaths::Vector2f GetCurrentWindowDimensions() noexcept
+	maths::Dimensions GetWindowDimensions() noexcept
 	{
 		return { GetCurrentWindowWidth(), GetCurrentWindowHeight() };
 	}
 
-	kmaths::Vector2f GetContentRegionAvailable() noexcept
+	maths::Point GetWindowPosition() noexcept
+	{
+		const auto winPos = ImGui::GetWindowPos();
+		return { winPos.x, winPos.y };
+	}
+
+	maths::Dimensions GetContentRegionAvailable() noexcept
 	{
 		const auto cra = ImGui::GetContentRegionAvail();
 		return { cra.x, cra.y };

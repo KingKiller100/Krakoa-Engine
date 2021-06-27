@@ -75,6 +75,7 @@ namespace krakoa::os
 		return vi;
 	}
 }
+
 #	pragma warning(pop)
 
 #endif

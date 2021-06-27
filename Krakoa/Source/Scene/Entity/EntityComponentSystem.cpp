@@ -40,6 +40,14 @@ namespace krakoa::scene::ecs
 		return entity_uid;
 	}
 
+	void EntityComponentSystem::Add(EntityUID uid)
+	{
+		if (HasEntity(uid))
+			return;
+
+		entities.push_back(uid);
+	}
+
 	void EntityComponentSystem::RemoveEntity(EntityUID id)
 	{
 		KRK_PROFILE_FUNCTION();

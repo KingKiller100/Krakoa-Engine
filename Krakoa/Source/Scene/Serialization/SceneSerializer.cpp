@@ -30,7 +30,6 @@ namespace krakoa::scene::serialization
 			KRK_ERR(util::Fmt("Attempting to serialize null scene", name));
 			return;
 		}
-
 		const auto scn = scene.lock();
 		
 		const auto sceneData = impl::SerializeScene(*scn);

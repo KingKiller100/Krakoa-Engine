@@ -110,9 +110,15 @@ namespace krakoa::scene
 	void SceneManager::LoadFromFile(const std::filesystem::path& path)
 	{
 		KRK_PROFILE_FUNCTION();
-		if (HasScene(path.stem().string()))
+		const auto sceneName = path.stem().string();
+		if (HasScene(sceneName))
+		{
+			currentScene = scenes.find(sceneName);
 			return;
+		}
 
+		const auto scn = Add(sceneName);
+		serializer->SetScene(scn);
 		KRK_INF(util::Fmt("Loading scene from \"{0}\"", path));
 		serializer->Deserialize(path);
 	}
@@ -120,7 +126,7 @@ namespace krakoa::scene
 	void SceneManager::OnUpdate(const float deltaTime)
 	{
 		KRK_PROFILE_FUNCTION();
-		auto& scene = *GetCurrentScene().lock();
+		auto& scene = *currentScene->second;
 
 		scene.OnUpdate(deltaTime);
 

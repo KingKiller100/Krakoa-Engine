@@ -60,8 +60,8 @@ namespace krakoa
 
 		auto& sceneMan = application.GetManager<scene::SceneManager>();
 
-		const auto scene = sceneMan.Add("Demo");
-		
+		const auto scene = sceneMan.Add("EmptyScene");
+
 		if (scene.expired())
 		{
 			KRK_FATAL("No active scene available to");
@@ -164,7 +164,7 @@ namespace krakoa
 			nsc.Bind<AnimateEntityScript>();
 		}
 #endif
-		
+
 		InitializeMenuBar();
 	}
 
@@ -259,7 +259,7 @@ namespace krakoa
 
 		if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ui::WindowFlags::NoBackground;
-		
+
 		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
 		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
 		// all active windows docked into it will lose their parent and become undocked.
@@ -292,15 +292,8 @@ namespace krakoa
 
 				sceneHierarchyPanel.OnRender();
 
-				const auto currentScene =  GetApp().GetManager<scene::SceneManager>().GetCurrentScene();
-
-				if (currentScene.expired())
-					return;
-
-				const auto scn = currentScene.lock();
-				
 				ui::PushStyleVar(ui::StyleVarFlags::WindowPadding, kmaths::Vector2f());
-				ui::DrawPanel(scn->GetName().data(), [&]()
+				ui::DrawPanel("Viewport", [&]()
 				{
 					isViewportFocused = ImGui::IsWindowFocused();
 					isViewportHovered = ImGui::IsWindowHovered();
@@ -332,7 +325,7 @@ namespace krakoa
 
 		const auto& fileDialog = os::iOperatingSystem::Reference().GetFileDialog();
 		const auto path = fileDialog.SaveFile(filter);
-		
+
 		if (path.empty() || klib::CheckFileExists(path))
 		{
 			return;
@@ -428,12 +421,12 @@ namespace krakoa
 			if (ctrlBtn && !shiftBtn)
 				CreateNewScene();
 			break;
-			
+
 		case input::KEY_O:
 			if (ctrlBtn && !shiftBtn)
 				LoadScene();
 			break;
-			
+
 		case input::KEY_S:
 			if (ctrlBtn)
 			{

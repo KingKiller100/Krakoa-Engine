@@ -5,6 +5,8 @@
 
 #include <Maths/Quaternions/Quaternions.hpp>
 
+#include "Maths/Matrices/MatrixMathsHelper.hpp"
+
 namespace krakoa::scene::ecs::components
 {
 	TransformComponent::TransformComponent() noexcept
@@ -27,11 +29,11 @@ namespace krakoa::scene::ecs::components
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto quaternions = kmaths::Quaternionf::EulerToQuaternions(rotations);
-		auto transform = quaternions.CalculateTransformMatrix(position)
-			* kmaths::Scale(scale);
-		return transform;
-		// return kmaths::TRS(position, radians, rotations, scale);
+		return kmaths::TRS(position, rotations.z, { 0,0,1 }, scale);
+		// const auto quaternions = kmaths::Quaternionf::EulerToQuaternions(rotations);
+		// auto transform = quaternions.CalculateTransformMatrix(position)
+			// * kmaths::Scale(scale);
+		// return transform;
 	}
 
 	void TransformComponent::SetScale(const kmaths::Vector2f& value)

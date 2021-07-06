@@ -1,9 +1,6 @@
 ﻿#pragma once
 
-#include <Maths/kMathsTheta.hpp>
-#include <Maths/Vectors/PredefinedVectors.hpp>
-#include <Maths/Matrices/TransformMatrix.hpp>
-#include <Maths/Matrices/MatrixMathsHelper.hpp>
+#include "../../../Maths/Maths.hpp"
 
 namespace krakoa::scene::ecs::components
 {
@@ -12,31 +9,31 @@ namespace krakoa::scene::ecs::components
 	public:
 		TransformComponent() noexcept;
 
-		TransformComponent(const kmaths::Vector3f& position,
-		                   const kmaths::Vector3f& rotation,
-		                   const kmaths::Vector3f& scale = {1.f, 1.f, 1.f}) noexcept;
+		TransformComponent(const maths::Vector3f& position,
+		                   const maths::Vector3f& rotation,
+		                   const maths::Vector3f& scale = {1.f, 1.f, 1.f}) noexcept;
 
 		~TransformComponent() noexcept;
 
-		USE_RESULT kmaths::Vector3f GetPosition() const noexcept;
-		void SetPosition(const kmaths::Vector3f& value) noexcept;
+		USE_RESULT maths::Vector3f GetPosition() const noexcept;
+		void SetPosition(const maths::Vector3f& value) noexcept;
 
-		USE_RESULT kmaths::Vector3f GetScale() const noexcept;
-		void SetScale(const kmaths::Vector3f& value) noexcept;
-		void SetScale(const kmaths::Vector2f& value);
+		USE_RESULT maths::Vector3f GetScale() const noexcept;
+		void SetScale(const maths::Vector3f& value) noexcept;
+		void SetScale(const maths::Vector2f& value);
 
-		USE_RESULT kmaths::Vector3f GetRotation(kmaths::Theta theta) const noexcept;
-		USE_RESULT kmaths::Vector3f GetRotation() const noexcept;
-		void SetRotation(const kmaths::Vector3f& value) noexcept;
-		void SetRotationX(const kmaths::Vector3f::Type& value) noexcept;
-		void SetRotationY(const kmaths::Vector3f::Type& value) noexcept;
-		void SetRotationZ(const kmaths::Vector3f::Type& value) noexcept;
+		USE_RESULT maths::Vector3f GetRotation(maths::Theta theta) const noexcept;
+		USE_RESULT maths::Vector3f GetRotation() const noexcept;
+		void SetRotation(const maths::Vector3f& value) noexcept;
+		void SetRotationX(const maths::Vector3f::Type& value) noexcept;
+		void SetRotationY(const maths::Vector3f::Type& value) noexcept;
+		void SetRotationZ(const maths::Vector3f::Type& value) noexcept;
 
-		USE_RESULT kmaths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept;
+		USE_RESULT maths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept;
 		
 	private:
-		kmaths::Vector3f position;
-		kmaths::Vector3f rotations;
-		kmaths::Vector3f scale;
+		maths::Vector3f position;
+		maths::Vector3f rotations;
+		maths::Vector3f scale;
 	};
 }

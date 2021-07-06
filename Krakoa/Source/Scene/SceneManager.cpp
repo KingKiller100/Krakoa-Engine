@@ -162,7 +162,7 @@ namespace krakoa::scene
 		SetState(SceneRuntimeState::STOP);
 	}
 
-	void SceneManager::ResolveNextState(SceneConstants::SceneRuntimeState::Underlying_t nextState)
+	void SceneManager::ResolveNextState(SceneRuntimeState::Underlying_t nextState)
 	{
 		state = nextState;
 	}
@@ -175,7 +175,7 @@ namespace krakoa::scene
 			return;
 
 		iCamera* camera = nullptr;
-		kmaths::TransformMatrix<float> cameraTransform = kmaths::GetTransformIdentity<float>();
+		auto cameraTransform = maths::GetTransformIdentity<float>();
 
 		const auto cameraEntities
 			= entityComponentSystem->GetEntitiesWithComponents<CameraComponent, TransformComponent>();

@@ -419,10 +419,9 @@ namespace krakoa
 
 		auto& frameBuffer = application.GetFrameBuffer();
 		const auto& spec = frameBuffer.GetSpec();
-		const auto vp = ImGui::GetContentRegionAvail();
-		const Vector2u viewportSize = ToVector<2>(vp);
+		const maths::BasicDimensions<unsigned> viewportSize = ui::GetContentRegionAvailable();
 
-		const bool negativeDimension = IsNegative(vp.x) || IsNegative(vp.y);
+		const bool negativeDimension = IsNegative(viewportSize.x) || IsNegative(viewportSize.y);
 		const bool newViewportValues = viewportSize.x != spec.width || viewportSize.y != spec.height;
 		const auto updateViewport = !negativeDimension && newViewportValues;
 

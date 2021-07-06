@@ -59,20 +59,20 @@ project "Krakoa"
         defines
         {
             "KRAKOA_OS_WINDOWS",
-            "KRAKOA_BUILD_DLL",
+            -- "KRAKOA_BUILD_DLL",
             "KLIB_LIB",
-			"GLFW_INCLUDE_NONE"
+            "KLIB_SHORT_NAMESPACE",
+			"GLFW_INCLUDE_NONE",
+            "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
         }
         
         filter "configurations:Debug"
         defines 
         {
-            "KLIB_SHORT_NAMESPACE",
             "KRK_ENABLE_ASSERT",
             "KRAKOA_DEBUG",
             "KLIB_DEBUG",
             "KLOG_OPT_DBG_STR",
-            "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
         }
         removefiles
         {
@@ -80,8 +80,8 @@ project "Krakoa"
         }
         symbols "On"
         runtime "Debug"
-
-    filter "configurations:Test"
+        
+        filter "configurations:Test"
         defines 
         {
             "KRAKOA_TEST",
@@ -93,9 +93,13 @@ project "Krakoa"
         }
         symbols "On"
         runtime "Debug"
+        
+        filter "configurations:Release"
+        defines 
+        {
+            "KRAKOA_RELEASE",
+        }
 
-    filter "configurations:Release"
-        defines "KRAKOA_RELEASE"
         optimize "Full"
         removefiles
         {

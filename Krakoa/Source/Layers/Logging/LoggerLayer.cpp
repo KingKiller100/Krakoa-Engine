@@ -14,15 +14,22 @@ namespace krakoa
 {
 	struct PanelLogger : public klib::iLoggerDestination
 	{
+	public:
 		~PanelLogger() override = default;
 		void SetName(std::string* newName) override {}
 		void AddEntry(const klib::LogEntry& entry) override
 		{
 			const auto& msg = entry.GetMsg();
 			const auto& dsc = entry.GetDescriptor();
-			// const auto log = klib::ToString("[{0}]: {1}\n", dsc.lvl.ToUnderlying(), msg.text);
-			const auto log = klib::ToString("[{0}]: {1}\n", msg.time.ToString("hh:mm:ss:ccc"), msg.text);
+			const auto log = 
+				klib::ToString("[{0}]: {1}\n", 
+					msg.time.ToString("hh:mm:ss:ccc"), 
+					msg.text);
 			logs << log;
+		}
+		void AddEntry(const klib::LogMessage& message, const klib::LogDescriptor& descriptor)
+		{
+			AddEntry({ message, descriptor });
 		}
 		bool IsOpen() const override
 		{
@@ -30,12 +37,27 @@ namespace krakoa
 		}
 		bool Open() override
 		{
+			const auto msg = klib::LogMessage("Initialized panel");
+			const auto descriptor = klib::LogDescriptor(KRK_LOG_LVL_INF);
+			AddEntry(msg, descriptor);
 			return true;
 		}
-		void Close(const bool outputClosingMsg) override {}
+		void Close(const bool outputClosingMsg) override
+		{}
 
+	public:
 		std::stringstream logs;
 	};
+
+	namespace
+	{
+		PanelLogger& GetLogger()
+		{
+			auto& engineLogger = EngineLogger::GetLogger();
+			auto& panelLogger = engineLogger.GetExtraDestination<PanelLogger>(0);
+			return panelLogger;
+		}
+	}
 
 
 	LoggerLayer::LoggerLayer()
@@ -47,23 +69,25 @@ namespace krakoa
 	LoggerLayer::~LoggerLayer()
 		= default;
 
+	void LoggerLayer::OnAttach()
+	{
+		GetLogger().Open();
+	}
+
 	void LoggerLayer::OnRender()
 	{
 		KRK_PROFILE_FUNCTION();
-		static constexpr auto g_MaxlogsToDisplay = 70;
+		static constexpr auto maxLogsToDisplay = 70;
 
-		auto& engineLogger = EngineLogger::GetLogger();
-		auto& panelLogger = engineLogger.GetExtraDestination<PanelLogger>(0);
-
-		ui::DrawPanel("Console", [&panelLogger]()
+		ui::DrawPanel("Console", []()
 		{
-			const auto logs = panelLogger.logs.str();
+			const auto logs = GetLogger().logs.str();
 			auto lines = klib::Split(logs, "\n");
 			const auto size = lines.size();
 
-			if (size > g_MaxlogsToDisplay)
+			if (size > maxLogsToDisplay)
 			{
-				const auto remaining = size - g_MaxlogsToDisplay;
+				const auto remaining = size - maxLogsToDisplay;
 				lines.erase(lines.begin(), lines.begin() + remaining);
 			}
 

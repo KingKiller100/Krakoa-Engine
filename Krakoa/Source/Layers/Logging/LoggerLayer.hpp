@@ -9,6 +9,7 @@ namespace krakoa
 		LoggerLayer();
 		~LoggerLayer();
 
+		void OnAttach() override;
 		void OnRender() override;
 
 	private:

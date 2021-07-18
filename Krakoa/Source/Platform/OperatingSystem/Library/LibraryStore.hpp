@@ -29,9 +29,8 @@ namespace krakoa::os::library
 					return nullptr;
 			}
 			
-			FuncT* function = nullptr;
 			const auto& lib = libraries.at(std::string(libName));
-			lib->LoadFunction(funcName, (void*&)function);
+			auto* function = static_cast<FuncT*>(lib->GetFunction(funcName));
 
 			if (function == nullptr)
 			{

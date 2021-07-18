@@ -2,6 +2,7 @@
 
 #include "../Library/iLibraryInstance.hpp"
 #include "../../Windows/IncludeWindowsLite.hpp"
+#include <unordered_map>
 
 #if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
 
@@ -16,10 +17,11 @@ namespace krakoa::os::library
 		void Load(const char* dllName) override;
 		void Unload() override;
 		bool IsLoaded() const override;
-		void LoadFunction(const char* funcName, void*& outFunc) override;
+		void* GetFunction(const char* funcName) override;
 
 	private:
 		::HINSTANCE instance;
+		std::unordered_map<std::string, FARPROC> functions;
 	};
 }
 

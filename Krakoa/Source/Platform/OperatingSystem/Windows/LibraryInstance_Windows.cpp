@@ -26,6 +26,7 @@ namespace krakoa::os::library
 
 	void LibraryInstance_Windows::Unload()
 	{
+		functions.clear();
 		if (::FreeLibrary(instance) != FALSE)
 		{
 			instance = nullptr;
@@ -37,9 +38,16 @@ namespace krakoa::os::library
 		return instance != nullptr && instance != INVALID_HANDLE_VALUE;
 	}
 
-	void LibraryInstance_Windows::LoadFunction(const char* funcName, void*& outFunc)
+	void* LibraryInstance_Windows::GetFunction(const char* funcName)
 	{
-		outFunc = ::GetProcAddress(instance, funcName);
+		if (auto iter = functions.find(funcName); iter != functions.end())
+		{
+			return iter->second;
+		}
+		
+		const auto func = ::GetProcAddress(instance, funcName);
+		functions.emplace(funcName, func);
+		return func;
 	}
 }
 

@@ -32,7 +32,7 @@ namespace krakoa::scene::panels
 			return;
 
 		auto& selectedEntity = *pSelectedEntity.lock();
-
+		
 		ui::DrawPanel("Entities", [&]()
 			{
 				DrawEntityNode(selectedEntity, scene);
@@ -59,17 +59,20 @@ namespace krakoa::scene::panels
 	void EntitiesPanel::DrawEntityNode(ecs::EntityUID& selectedEntity, iScene& scene)
 	{
 		KRK_PROFILE_FUNCTION();
-
-
+		
 		scene.ForEach([&](const ecs::Entity& entity)
 			{
 				const auto eid = entity.GetID();
+
+				if (eid.IsNull())
+					return;
+			
 				const auto selected = selectedEntity == eid ? ui::TreeNodeFlags::Selected : 0;
 				const auto flags = selected | ui::TreeNodeFlags::OpenOnArrow | ui::TreeNodeFlags::SpanAvailWidth;
 
 				const auto& tag = entity.GetComponent<ecs::components::TagComponent>();
 
-				ui::DrawTreeNode(tag.GetTag(), (void*)eid, flags, [&](bool opened)
+				ui::DrawTreeNode(tag.GetTag(), eid, flags, [&](bool opened)
 					{
 						ui::IsItemClicked(input::MOUSE_LEFT,
 							[&]()

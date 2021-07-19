@@ -1,8 +1,8 @@
 ﻿#include "Precompile.hpp"
 #include "ManagerBase_Test.hpp"
 
-#include "../Source Files/Patterns/ManagerBase.hpp"
-#include "../Source Files/Memory/Memory Structures/MemoryTypeSizes.hpp"
+#include "../Source/Patterns/ManagerBase.hpp"
+#include "../Source/Memory/MemoryStructures/MemoryTypeSizes.hpp"
 
 #include <Utility/String/kStringTricks.hpp>
 
@@ -16,45 +16,52 @@ namespace krakoa::tests
 	ManagerBaseTester::~ManagerBaseTester()
 		= default;
 
-	class TestManager : public patterns::ManagerBase<TestManager>
+	void ManagerBaseTester::Prepare() noexcept
+	{
+		ADD_TEST(Test());
+	}
+
+	class ManagerTest : public patterns::ManagerBase<ManagerTest>
 	{
 	public:
-		TestManager(Token)
+		ManagerTest(Token)
 			: name("name")
 		{}
 
-		~TestManager()
+		~ManagerTest()
 			= default;
 
 	public:
 		const std::string name;
 	};
 
+	
+	
 	void ManagerBaseTester::Test()
 	{
 		constexpr auto stringTypeSize = sizeof(std::string);
 		constexpr auto ptrTypeSize = sizeof(void*);
 		
-		constexpr auto managerTypeSize = sizeof(TestManager);
+		constexpr auto managerTypeSize = sizeof(ManagerTest);
 		
 		constexpr auto npos = std::string::npos;
 		
-		TestManager::Create();
+		ManagerTest::Create();
 
-		const auto& ptr = TestManager::Pointer();
+		const auto& ptr = ManagerTest::Pointer();
 		VERIFY(ptr != nullptr);
 
 		const auto& ref = *ptr;
 		VERIFY(ref.name == "name");
 		VERIFY_COMPILE_TIME(managerTypeSize == (ptrTypeSize + stringTypeSize));
 
-		const auto status(TestManager::GetHeapStatus());
+		const auto status(ManagerTest::GetHeapStatus());
 		VERIFY(!status.empty());
 		
 		const auto lines = klib::kString::Split(status, "\n");
 
 		const auto name = lines[0];
-		VERIFY(name.find(typeid(TestManager).name()) != npos);
+		VERIFY(name.find(typeid(ManagerTest).name()) != npos);
 
 		const auto countStr = lines[1];
 		VERIFY(countStr.find("1") != npos);

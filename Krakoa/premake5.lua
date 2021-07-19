@@ -15,6 +15,8 @@ project "Krakoa"
     {
         "Source/**.hpp",
         "Source/**.cpp",
+        "Tests/**.hpp",
+        "Tests/**.cpp",
         "cpp.hint",
         "Vendors/STB Image/**.hpp",
         "Vendors/STB Image/**.cpp",

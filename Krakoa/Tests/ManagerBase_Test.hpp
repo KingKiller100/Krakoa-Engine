@@ -11,8 +11,11 @@ namespace krakoa::tests
 		ManagerBaseTester() noexcept;
 		~ManagerBaseTester() override;
 
+	protected:
+		void Prepare() noexcept override;
+
 	private:
-		void Test() override;
+		void Test();
 	};
 }
 #endif

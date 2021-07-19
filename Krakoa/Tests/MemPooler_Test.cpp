@@ -1,7 +1,7 @@
 ﻿#include "Precompile.hpp"
 #include "MemPooler_Test.hpp"
 
-#include "../Source Files/Patterns/MemPooler.hpp"
+#include "../Source/Patterns/MemPooler.hpp"
 
 #include <array>
 
@@ -18,19 +18,20 @@ namespace krakoa::tests
 	class Testclass : public patterns::MemPooler<Testclass, 10>
 	{
 	public:
-		Testclass()
-			= default;
-
-		Testclass(const size_t id)
+		Testclass(const size_t id = 0)
 			: id(id)
 		{}
 
-		~Testclass()
-			= default;
+		~Testclass() override = default;
 
 	private:
 		size_t id;
 	};
+
+	void MemPoolerTester::Prepare() noexcept
+	{
+		ADD_TEST(Test());
+	}
 
 	void MemPoolerTester::Test()
 	{

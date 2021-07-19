@@ -11,9 +11,9 @@ namespace krakoa::tests
 		~MemPoolerTester() override;
 		
 	private:
-		void Test() override;
+		void Prepare() noexcept override;
 	public:
-		
+		void Test();
 	};
 }
 #endif

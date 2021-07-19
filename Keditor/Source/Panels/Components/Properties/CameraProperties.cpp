@@ -101,32 +101,23 @@ namespace krakoa::scene::panels
 		camera.SetIsPrimary(ui::DrawCheckBox("Primary", primary));
 	}
 
-	void CameraProperties::HandleProjectionType(SceneCamera& sceneCam, SceneCamera::ProjectionType projection)
+	void CameraProperties::HandleProjectionType(SceneCamera& sceneCam, SceneCamera::ProjectionType selectedProjection)
 	{
-		std::array<const char*, SceneCamera::ProjectionType::Count()> projectionTypes;
-		size_t index = 0;
 		SceneCamera::ProjectionType::ForEach([&](SceneCamera::ProjectionType pt)
 		{
-			projectionTypes[index++] = pt.ToString();
-		});
-
-		const auto* const currentSelection = projectionTypes[projection];
-
-		ui::DrawComboBox("Projection", currentSelection, ui::ComboBoxFlags::HeightLarge,
-			[&]()
-		{
-			for (auto i = 0; i < projectionTypes.size(); ++i)
+			ui::DrawComboBox("Projection", selectedProjection.C_Str(), ui::ComboBoxFlags::HeightLarge,
+				[&]()
 			{
-				const auto& type = projectionTypes[i];
-				const bool selected = (currentSelection == type);
-				ui::HandleSelectable(type, selected, [&]()
+				const bool selected = (selectedProjection == pt);
+				ui::HandleSelectable(pt.ToString(), selected, 
+					[&]()
 				{
-					sceneCam.SetProjectionType(i);
+					sceneCam.SetProjectionType(selectedProjection);
 				});
 
 				if (selected)
 					ui::SetItemDefaultFocused();
-			}
+			});
 		});
 	}
 }

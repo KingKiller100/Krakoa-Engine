@@ -27,7 +27,7 @@ namespace krakoa::scene::panels
 			// auto& subTexture = appearance.GetSubTexture().GetTexture()->;
 
 			char buffer[1 << 8];
-			klib::type_trait::Traits<char>::Copy(buffer, geoType.ToString(), sizeof(buffer));
+			klib::type_trait::Traits<char>::Copy(buffer, geoType.C_Str(), sizeof(buffer));
 
 			const auto& assetManager = GetApp().GetManager<filesystem::AssetManager>();
 			const auto& fontLib = assetManager.GetFontLibrary();

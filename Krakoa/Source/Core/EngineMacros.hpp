@@ -1,6 +1,7 @@
 #pragma once
 
 #include <HelperMacros.hpp>
+#include <Testing/EnableTesting.hpp>
 
 #ifdef KRAKOA_OS_WINDOWS
 #	if KRAKOA_DYNAMIC_LINK

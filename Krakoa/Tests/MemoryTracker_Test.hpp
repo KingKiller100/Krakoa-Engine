@@ -12,7 +12,9 @@ namespace krakoa::tests
 		~MemoryTrackerTester() override;
 
 	private:
-		void Test() override;
+		void Prepare() noexcept override;
+
+		void Test();
 	};
 }
 #endif

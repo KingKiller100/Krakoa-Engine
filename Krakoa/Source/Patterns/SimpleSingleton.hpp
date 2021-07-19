@@ -23,9 +23,8 @@ namespace patterns
 	public:
 		constexpr SimpleSingleton() noexcept
 			= default;
-
-		SimpleSingleton(const SimpleSingleton&) = delete;
-		SimpleSingleton& operator=(const SimpleSingleton&) = delete;
+		constexpr SimpleSingleton(SimpleSingleton&&) noexcept = default;
+		constexpr SimpleSingleton& operator=(SimpleSingleton&&) noexcept = default;
 
 		USE_RESULT static constexpr T& Reference()
 		{

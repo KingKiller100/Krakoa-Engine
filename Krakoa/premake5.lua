@@ -4,6 +4,7 @@ project "Krakoa"
     cppdialect "C++latest"
     characterset ("default")
 	staticruntime "off"
+    locale "en-GB"
 
     targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")

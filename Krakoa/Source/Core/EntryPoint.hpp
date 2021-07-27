@@ -24,6 +24,8 @@ namespace krakoa
 }
 #endif
 
+#include <iostream>
+
 #include "../Memory/MemoryStructures/HeapFactory.hpp"
 
 #include <Utility/Localization/kLocale.hpp>
@@ -38,7 +40,7 @@ void RunApplication();
 
 int main()
 {
-	klib::kLocale::SetLocale("");
+	klib::kLocale::SetDefaultLocale();
 	klib::kCalendar::UsePlatformCalendarInfoSource();
 
 	memory::HeapFactory::Initialize();
@@ -46,6 +48,8 @@ int main()
 	memory::HeapFactory::ReportMemoryLeaks();
 	memory::HeapFactory::ShutDown();
 
+	std::cin.get();
+	
 	return EXIT_SUCCESS;
 }
 

@@ -14,22 +14,21 @@ namespace krakoa::tests
 {
 	namespace 
 	{
-		kTest::TesterManager* testMan;
+		std::unique_ptr<kTest::TesterManager> testMan;
 	}
 	
 	void TestDriver::Initialize()
 	{
-		testMan = new kTest::TesterManager{};
+		testMan = std::make_unique<kTest::TesterManager>();
 		testMan->Initialize();
-		kTest::InitializeAllTests(testMan);
+		kTest::InitializeAllTests(*testMan);
 		SetUpTests();
 	}
 
 	void TestDriver::ShutDown()
 	{
 		testMan->Shutdown();
-		delete testMan;
-		testMan = nullptr;
+		testMan.reset();
 	}
 	void TestDriver::AddTest(kTest::TesterBase* test)
 	{

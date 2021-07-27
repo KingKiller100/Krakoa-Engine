@@ -53,6 +53,7 @@ void operator delete(void* ptr)
 #ifndef KRAKOA_RELEASE
 	auto* pHeader = memory::AllocHeader::Destroy(ptr);
 	free(pHeader);
+	pHeader = nullptr;
 #else
 	free(ptr);
 #endif

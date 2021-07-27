@@ -60,14 +60,15 @@ namespace memory
 		else // Maybe one null
 		{
 			if (pNext)
-				pNext->pPrev = pHeader->pPrev;
+				pNext->pPrev = pPrev;
 
 			if (pPrev)
-				pPrev->pNext = pHeader->pNext;
+				pPrev->pNext = pNext;
 
 			if (pHeap->GetPrevAddress() == pHeader)
 				pHeap->SetPrevAddress(pPrev);
 
+			pPrev = pNext = nullptr;
 			//pHeader->pPrev = pHeader->pNext = nullptr;
 		}
 

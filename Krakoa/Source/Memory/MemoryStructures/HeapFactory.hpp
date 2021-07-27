@@ -48,7 +48,7 @@ namespace memory
 	private:
 		static void LogTotalBytes(const size_t bytes) noexcept;
 		static void LogTotalAllocations(const size_t active, const size_t total) noexcept;
-		static void ReportMemoryLeaks(Heap* const heap, const size_t minBookmark, const size_t maxBookmark);
+		static void ReportMemoryLeaks(Heap* const heap);
 
 		static Heap* FindHeap(const char* name);
 		

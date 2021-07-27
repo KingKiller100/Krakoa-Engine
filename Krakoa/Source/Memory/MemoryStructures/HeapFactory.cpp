@@ -148,54 +148,44 @@ namespace memory
 			if (!heap->GetPrevAddress())
 				continue;
 
-			ReportMemoryLeaks(heap, 0, heap->GetPrevAddress()->bookmark);
+			ReportMemoryLeaks(heap);
 		}
-		std::cin.get();
 	}
 
-	void HeapFactory::ReportMemoryLeaks(Heap* const heap, const size_t minBookmark, const size_t maxBookmark)
+	void HeapFactory::ReportMemoryLeaks(Heap* const heap)
 	{
 		auto* currentHeader = heap->GetPrevAddress();
 
 		if (!currentHeader)
 			return;
-
-		if (!AllocHeader::VerifyHeader(currentHeader))
-			return;
-
-		while (currentHeader->pPrev && currentHeader->pNext != currentHeader)
-		{
-			if (currentHeader->bookmark < minBookmark)
-			{
-				currentHeader = currentHeader->pNext;
-				break;
-			}
-
-			currentHeader = currentHeader->pPrev;
-		}
-
-		if (currentHeader->bookmark > maxBookmark)
-			return;
-
-		auto bookmark = currentHeader->bookmark;
-
+		
 		size_t totalBytes = 0;
-		while (kmaths::InRange(bookmark, minBookmark, maxBookmark + 1))
+		const auto heapName = heap->GetName();
+
+		size_t smallestBookmark = currentHeader->bookmark;
+
+		while (currentHeader
+			&& currentHeader->pPrev != currentHeader 
+			&& AllocHeader::VerifyHeader(currentHeader, false))
 		{
-			std::cout << "Heap: \"" << heap->GetName() << "\" id: " << bookmark << " "
+			std::cout << "Heap: \"" << heapName << "\" id: " << currentHeader->bookmark << " "
 				<< "Bytes: " << currentHeader->bytes << "\n";
 			
 			totalBytes += currentHeader->bytes;
 
-			currentHeader = currentHeader->pNext;
-
-			if (!currentHeader)
+			if (currentHeader->pPrev == nullptr)
 				break;
+			
+			currentHeader = currentHeader->pPrev;
 
-			bookmark = currentHeader->bookmark;
+			if (currentHeader->bookmark >= smallestBookmark)
+				break;
+			
+
+			smallestBookmark = currentHeader->bookmark;
 		}
 
-		std::cout << "Heap: \"" << heap->GetName() << "\" "
+		std::cout << "Heap: \"" << heapName << "\" "
 			<< "Total Bytes: " << totalBytes << "\n";
 	}
 

@@ -32,7 +32,7 @@ namespace memory
 		const auto name = pHeap->GetName();
 		const size_t count = pHeap->WalkTheHeap();
 
-		if (!count)
+		if (count <= 0)
 			return ToString("Heap \"{0}\" is empty\n", name);
 
 		constexpr size_t bytes_per_object = TemplateHeap<T>::TypeSize;

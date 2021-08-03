@@ -3,10 +3,9 @@
 
 namespace memory
 {
-	constexpr auto SignatureSize = sizeof(Signature_Type);
-	constexpr auto AllocHeaderSize = sizeof(AllocHeader);
-	constexpr auto ControlBlockSize = SignatureSize + AllocHeaderSize;
-
-	template<typename T>
-	constexpr auto MemoryLinkedListSize = sizeof(MemoryLinkedList<T>);
+	constexpr auto SignatureSize = sizeof(AllocHeader::Signature_Type);
+	constexpr auto NodeSize = sizeof(AllocHeaderLinkedList::Node_t);
+	constexpr auto ControlBlockSize = SignatureSize + NodeSize;
+	
+	constexpr auto MemoryLinkedListSize = sizeof(AllocHeaderLinkedList);
 }

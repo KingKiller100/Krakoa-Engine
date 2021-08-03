@@ -16,8 +16,8 @@ namespace patterns
 			{
 				pHeap = memory::HeapFactory::CreateHeap<T>();
 
-				if (ParentName)
-					AddToFamily(ParentName);
+				// if (ParentName)
+					// AddToFamily(ParentName);
 			}
 
 			return ::operator new(bytes, pHeap);
@@ -48,10 +48,10 @@ namespace patterns
 			::operator delete[](pMemBlock);
 		}
 
-		static bool AddToFamily(const char* parent)
-		{
-			return memory::HeapFactory::AddToParent(parent, pHeap);
-		}
+		// static bool AddToFamily(const char* parent)
+		// {
+			// return memory::HeapFactory::AddToParent(parent, pHeap);
+		// }
 
 		USE_RESULT static memory::Heap* GetHeap() noexcept
 		{

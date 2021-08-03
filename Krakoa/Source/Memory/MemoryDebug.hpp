@@ -10,9 +10,9 @@
 
 #if KRK_ENABLE_ASSERT
 
-#	define MEM_ASSERT(cond, msg) kAssertCB(cond, msg, [](const std::string& m, const klib::SourceInfo& s)\
+#	define MEM_ASSERT(cond, msg) kAssertCB(cond, msg, [](const std::string_view& m, const klib::SourceInfo& s)\
 {\
-	::krakoa::debug::RaiseException(m, s, memory::MemoryLogger::GetLogger());\
+	::krakoa::debug::RaiseNotice(m, s);\
 })\
 
 #else

@@ -33,22 +33,19 @@ BlockTotal,
 count
 ));
 
-		auto* pCurrentHeader = pHeap->GetPrevAddress(); // AllocHeader to find previous and next
-
-		if (!pCurrentHeader || !pCurrentHeader->pPrev)
+		auto& allocList = *pHeap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
+		
+		if (!allocList.head || !allocList.tail)
 			return report;
-
-		while (pCurrentHeader->pPrev && pCurrentHeader != pCurrentHeader->pPrev) // Move to the first 
-		{
-			pCurrentHeader = pCurrentHeader->pPrev;
-		}
-
+		
 		size_t currentIndex = 0;
 		
 		do {
-			const auto bytes = pCurrentHeader->bytes;
+			auto* current = allocList.head;
+			auto alloc = current->data;
+			const auto bytes = alloc.bytes;
 			const auto blockBytes = bytes + ControlBlockSize;
-			const auto bookmark = pCurrentHeader->bookmark;
+			const auto bookmark = alloc.bookmark;
 			
 			report.append(ToString(R"(
 Heap: "Default" 
@@ -63,7 +60,7 @@ currentIndex
 , bookmark
 ));
 
-			pCurrentHeader = pCurrentHeader->pNext;
+			current = current->next;
 		} while (++currentIndex < index);
 
 		return report;

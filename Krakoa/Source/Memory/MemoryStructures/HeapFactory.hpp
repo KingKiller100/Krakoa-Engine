@@ -24,13 +24,13 @@ namespace memory
 		template<typename T>
 		static Heap* CreateHeap()
 		{
-			auto* heap = CAST(Heap*, malloc(sizeof(TemplateHeap<T>)));
+			auto* heap = static_cast<Heap*>(malloc(sizeof(TemplateHeap<T>)));
 			heap->Initialize(typeid(T).name(), &templateHeapVFTBL<T>);
 			heaps[activeHeapIndex++] = heap;
 			return heap;
 		}
 
-		static bool AddToParent(const char* parentName, Heap* pChild);
+		// static bool AddToParent(const char* parentName, Heap* pChild);
 		
 		static void Initialize() noexcept;
 		static void ShutDown() noexcept;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <HelperMacros.hpp>
+#include "../../Patterns/LinkedList.hpp"
 
 #include <string>
 
@@ -27,8 +28,7 @@ namespace memory
 		~Heap() noexcept = default;
 
 		void Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept;
-
-		bool AddToParent(Heap* pParent);
+		void ShutDown() const;
 
 		template<size_t N>
 		void SetName(const char(&n)[N]) noexcept
@@ -38,8 +38,9 @@ namespace memory
 		void SetName(const char* n) noexcept;
 		USE_RESULT const char* GetName() const noexcept;
 
-		USE_RESULT const Family& GetFamily() const noexcept;
-		USE_RESULT Family& GetFamily() noexcept;
+		// bool AddToParent(Heap* pParent);
+		// USE_RESULT const Family& GetFamily() const noexcept;
+		// USE_RESULT Family& GetFamily() noexcept;
 
 		void Allocate(const size_t bytes) noexcept;
 		void Deallocate(const size_t bytes) noexcept;
@@ -48,10 +49,13 @@ namespace memory
 		USE_RESULT size_t WalkTheHeap() const;
 		USE_RESULT size_t GetLastBookmark() const;
 
-		void DeleteLeaks();
+		void DeleteLeaks() const;
 
-		void SetPrevAddress(AllocHeader* prev) noexcept;
-		USE_RESULT AllocHeader* GetPrevAddress() const noexcept;
+		template<typename T>
+		USE_RESULT T* GetAllocList() const noexcept
+		{
+			return static_cast<T*>(allocListVoid);
+		}
 
 		USE_RESULT std::string GetStatus() const;
 
@@ -63,11 +67,11 @@ namespace memory
 	protected:
 		const char* name;
 		size_t totalBytes;
-		AllocHeader* pPrevAddress;
-
-		Family family;
-
+		void* allocListVoid;
 		Heap_VFTBL* vftbl;
+
+		// Family family;
+
 	};
 
 	// Virtual Function Table for Heaps

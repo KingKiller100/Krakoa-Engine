@@ -4,31 +4,46 @@
 #include "AllocHeader.hpp"
 
 #include "../MemoryDebug.hpp"
-#include "../../Logging/MemoryLogger.hpp"
 
+#include "../../Util/Fmt.hpp"
 #include <Maths/BytesUnits.hpp>
 
 namespace memory
 {
 	size_t Heap::s_TotalLifetimeBytesAllocated = 0;
-	
+
+	using namespace patterns;
+
 	void Heap::Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept
 	{
 		name = n;
 		totalBytes = 0;
-		pPrevAddress = nullptr;
+		allocListVoid = nullptr;
 		vftbl = heapVTBL;
-
-		family.pParent = nullptr;
-		family.pFirstChild = nullptr;
-		family.pPrevSibling = nullptr;
-		family.pNextSibling = nullptr;
+		allocListVoid = static_cast<BiDirectionalLinkedList<AllocHeader>*>(std::malloc(
+			sizeof(BiDirectionalLinkedList<AllocHeader>)));
+		std::memset(allocListVoid, 0, sizeof(BiDirectionalLinkedList<AllocHeader>));
+		// family.pParent = nullptr;
+		// family.pFirstChild = nullptr;
+		// family.pPrevSibling = nullptr;
+		// family.pNextSibling = nullptr;
 	}
 
-	bool Heap::AddToParent(Heap* pParent)
+	void Heap::ShutDown() const
 	{
-		return false;
+		const auto leaks = WalkTheHeap();
+		
+		MEM_ASSERT(leaks == 0,
+			util::Fmt("{0} has {1} remaining allocation(s)", name, leaks));
+		DeleteLeaks();
+		
+		std::free(allocListVoid);
 	}
+
+	// bool Heap::AddToParent(Heap* pParent)
+	// {
+		// return false;
+	// }
 
 	void Heap::SetName(const char* n) noexcept
 	{
@@ -40,15 +55,15 @@ namespace memory
 		return name;
 	}
 
-	const Heap::Family& Heap::GetFamily() const noexcept
-	{
-		return family;
-	}
+	// const Heap::Family& Heap::GetFamily() const noexcept
+	// {
+		// return family;
+	// }
 
-	Heap::Family& Heap::GetFamily() noexcept
-	{
-		return family;
-	}
+	// Heap::Family& Heap::GetFamily() noexcept
+	// {
+		// return family;
+	// }
 
 	void Heap::Allocate(const size_t bytes) noexcept
 	{
@@ -67,61 +82,53 @@ namespace memory
 
 	size_t Heap::WalkTheHeap() const
 	{
-		auto* pCurrentHeader = pPrevAddress; // casts to AllocHeader to find previous and next
-
-		if (!pCurrentHeader)
+		auto* allocList = static_cast<BiDirectionalLinkedList<AllocHeader>*>(allocListVoid);
+		
+		if (!allocList->head)
 			return 0;
 
-		if (!pCurrentHeader->pPrev)
-			return 1;
-
 		unsigned count(1);
-		pCurrentHeader = pCurrentHeader->pPrev;
+		auto* current = allocList->tail;
 
-		while (pCurrentHeader
-			&& pCurrentHeader->pNext != pCurrentHeader
-			&& AllocHeader::VerifyHeader(pCurrentHeader, false))
+		while (current != allocList->head)
 		{
-			pCurrentHeader = pCurrentHeader->pPrev;
-			count++;
+			current = current->prev;
+			++count;
 		}
 
 		return count;
 	}
 
-	size_t Heap::GetLastBookmark() const
+	void Heap::DeleteLeaks() const
 	{
-		return pPrevAddress->bookmark;
-	}
-
-	void Heap::DeleteLeaks()
-	{
-		auto& pCurrentHeader = pPrevAddress;
-
-		if (!pCurrentHeader)
+		auto* allocList = static_cast<BiDirectionalLinkedList<AllocHeader>*>(allocListVoid);
+		if (!allocList->head)
 			return;
 
-		while (pCurrentHeader
-			&& pCurrentHeader->pPrev != pCurrentHeader
-			&& AllocHeader::VerifyHeader(pCurrentHeader))
+		while (allocList->tail != allocList->head)
 		{
-			auto* pPrev = pCurrentHeader->pPrev;
-			auto* ptr = static_cast<kmaths::Byte_Type*>(AllocHeader::GetPointerFromHeader(pCurrentHeader));
-			delete ptr;
-			pCurrentHeader = pPrev;
+			auto pPrev = allocList->tail->prev;
+			// auto* ptr = static_cast<kmaths::Byte_Type*>(GetDataPointerFromNode(allocList->tail));
+			// delete ptr;
+			std::free(allocList->tail);
+			allocList->tail = pPrev;
 		}
+
+		// auto lastPtr = GetDataPointerFromNode(allocList->head);
+		// delete lastPtr;
+		std::free(allocList->head);
+		allocList->head = allocList->tail = nullptr;
 	}
 
-	void Heap::SetPrevAddress(AllocHeader* prev) noexcept
+	size_t Heap::GetLastBookmark() const
 	{
-		pPrevAddress = prev;
-	}
+		auto* allocList = static_cast<BiDirectionalLinkedList<AllocHeader>*>(allocListVoid);
+		if (allocList->tail)
+			return allocList->tail->data.bookmark;
 
-	AllocHeader* Heap::GetPrevAddress() const noexcept
-	{
-		return pPrevAddress;
+		return 0;
 	}
-
+	
 	std::string Heap::GetStatus() const
 	{
 		MEM_ASSERT(vftbl->getStatusFunc != nullptr,

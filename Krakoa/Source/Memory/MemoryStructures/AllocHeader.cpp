@@ -9,122 +9,153 @@
 #include "../../Logging/MemoryLogger.hpp"
 
 #include <Maths/BytesUnits.hpp>
-#include <Utility/String/kToString.hpp>
 
 namespace memory
 {
-
-	void* AllocHeader::Create(AllocHeader* pHeader, const size_t bytes, Heap* pHeap) noexcept
+	namespace
 	{
-		static size_t bookmarkIter = 0;
-		
-		pHeader->bookmark = bookmarkIter++;
-		pHeader->pHeap = pHeap;
+		size_t g_BookmarkCount = 0;
+	}
+	
 
-		if (!pHeap->GetPrevAddress())
-			CreateLinkedList(pHeader, bytes, nullptr, nullptr);
+	void* CreateNode(AllocHeaderLinkedList::Node_t* node, size_t bytes, Heap* heap)
+	{
+		std::memset(node, 0,  ControlBlockSize + bytes);
+		auto& header = node->data;
+		auto& allocList = *heap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
+		
+		header.Create(heap, bytes, g_BookmarkCount++);
+
+		if (allocList.head == nullptr && allocList.tail == nullptr)
+		{
+			allocList.head = allocList.tail = node;
+		}
+		else if (allocList.head && !allocList.tail)
+		{
+			MEM_FATAL("AllocHeaderLinkedList head is set but tail is null");
+		}
+		else if (!allocList.head && allocList.tail)
+		{
+			MEM_FATAL("AllocHeaderLinkedList tail is set but head is null");
+		}
 		else
 		{
-			auto* pPrevHeader = pHeader->pHeap->GetPrevAddress();
-			pPrevHeader->pNext = pHeader;
-			CreateLinkedList(
-				pHeader,
-				bytes,
-				pPrevHeader,
-				nullptr);
+			auto* prev = allocList.tail;
+			prev->next = node;
+			node->prev = prev;
+			allocList.tail = node;
 		}
 
-		pHeader->pHeap->SetPrevAddress(pHeader);
-
-		auto* pMemEnd = REINTERPRET(Signature_Type*,
-			REINTERPRET(kmaths::Byte_Type*, pHeader)
-			+ AllocHeaderSize + bytes);
-		*pMemEnd = KRK_MEMSYSTEM_END_SIG;
-
-		pHeap->Allocate(bytes + ControlBlockSize);
-
-		return reinterpret_cast<kmaths::Byte_Type*>(pHeader) + AllocHeaderSize;
+		return reinterpret_cast<std::byte*>(node) + NodeSize;
 	}
 
-	AllocHeader* AllocHeader::Destroy(void* pData) noexcept
+	void AllocHeader::Create(Heap* heap, const size_t bytes, size_t bookmark) noexcept
 	{
-		auto* pHeader = GetHeaderFromPointer(pData);
+		this->signature = MemoryBlockSignatureStart;
+		this->pHeap = heap;
+		this->bytes = bytes;
+		this->bookmark = bookmark;
+		
+		auto* pMemEnd = reinterpret_cast<Signature_Type*>(
+			reinterpret_cast<std::byte*>(this) + NodeSize + bytes
+			);
+		*pMemEnd = MemoryBlockSignatureEnd;
 
-		auto* pHeap = pHeader->pHeap;
-		const auto bytes = pHeader->bytes;
-		auto*& pPrev = pHeader->pPrev;
-		auto*& pNext = pHeader->pNext;
-
-		if (!pPrev && !pNext) // Both null
-			pHeap->SetPrevAddress(nullptr);
-		else // Maybe one null
-		{
-			if (pNext)
-				pNext->pPrev = pPrev;
-
-			if (pPrev)
-				pPrev->pNext = pNext;
-
-			if (pHeap->GetPrevAddress() == pHeader)
-				pHeap->SetPrevAddress(pPrev);
-
-			pPrev = pNext = nullptr;
-			//pHeader->pPrev = pHeader->pNext = nullptr;
-		}
-
-		pHeap->Deallocate(bytes + ControlBlockSize);
-
-		return pHeader;
+		heap->Allocate(bytes + ControlBlockSize);
 	}
 
-	bool AllocHeader::VerifyHeader(AllocHeader* pHeader, bool enableAssert)
+	void DestroyNode(AllocHeaderNode* node)
+	{
+		auto& header = node->data;
+		auto* heap = header.pHeap;
+		auto& [head, tail] = *heap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
+		
+		if (head == tail)
+		{
+			head = tail = nullptr;
+		}
+		else if (head && !tail)
+		{
+			MEM_FATAL("AllocHeaderLinkedList head is set but tail is null");
+		}
+		else if (!head && tail)
+		{
+			MEM_FATAL("AllocHeaderLinkedList tail is set but head is null");
+		}
+		else
+		{
+			if (node->next)
+			{
+				node->next->prev = node->prev;
+			}
+
+			if (node->prev)
+			{
+				node->prev->next = node->next;
+			}
+		}
+
+		header.Destroy();
+	}
+
+	size_t GetTotalAllocationsCount() noexcept
+	{
+		return g_BookmarkCount;
+	}
+
+	void AllocHeader::Destroy() noexcept
+	{
+		VerifyHeader(true);
+
+		this->pHeap->Deallocate(bytes + ControlBlockSize);
+	}
+
+
+	AllocHeaderNode* GetNodeFromDataPointer(void* ptr)
+	{
+		return reinterpret_cast<AllocHeaderNode*>(static_cast<std::byte*>(ptr) - NodeSize);
+	}
+
+	void* GetDataPointerFromNode(AllocHeaderNode* node)
+	{
+		if (!node)
+			return nullptr;
+		
+		if (!node->data.VerifyHeader(false))
+			return nullptr;
+
+		return reinterpret_cast<std::byte*>(node) + NodeSize;
+	}
+
+	bool AllocHeader::VerifyHeader(bool enableAssert)
 	{
 		using namespace klib::kString;
 
-		if (!VerifyLinkedList(pHeader))
+		if (signature != MemoryBlockSignatureStart)
 		{
 			if (enableAssert)
 			{
-				MEM_FATAL(ToString("CORRUPTED HEAP - Incorrect signature"
-					" on a heap - memory Address: {0}\n",
-					pHeader));
+				MEM_FATAL("CORRUPTED HEAP - Incorrect start signature"
+					" on a heap\n");
 			}
 			return false;
 		}
 
-		auto* const pMemEnd = REINTERPRET(Signature_Type*,
-			reinterpret_cast<kmaths::Byte_Type*>(pHeader) + AllocHeaderSize + pHeader->bytes);
+		auto* const pMemEnd =
+			reinterpret_cast<Signature_Type*>(
+				reinterpret_cast<std::byte*>(this) + NodeSize + bytes
+				);
 
-		if (*pMemEnd != KRK_MEMSYSTEM_END_SIG)
+		if (*pMemEnd != MemoryBlockSignatureEnd)
 		{
 			if (enableAssert)
 			{
-				MEM_FATAL(ToString("CORRUPTED HEAP - Incorrect end marker on"
-						" a heap - memory address: {0}\n",
-						pHeader));
+				MEM_FATAL("CORRUPTED HEAP - Incorrect end marker on"
+					" a heap - memory address: {0}\n");
 			}
 			return false;
 		}
 
 		return true; // Both correct
-	}
-
-	AllocHeader* AllocHeader::GetHeaderFromPointer(void* pData)
-	{
-		auto* pHeader = REINTERPRET(AllocHeader*,
-			CAST(kmaths::Byte_Type*, pData)
-			- AllocHeaderSize);
-
-		MEM_ASSERT(VerifyHeader(pHeader), "AllocHeader failed verification");
-		return pHeader;
-	}
-
-	void* AllocHeader::GetPointerFromHeader(AllocHeader* pHeader)
-	{
-		if (!VerifyHeader(pHeader, false))
-			return nullptr;
-
-		return REINTERPRET(kmaths::Byte_Type*, pHeader)
-			+ AllocHeaderSize;
 	}
 }

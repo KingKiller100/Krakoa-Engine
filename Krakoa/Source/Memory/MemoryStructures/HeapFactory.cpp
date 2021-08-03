@@ -19,31 +19,31 @@ namespace memory
 	Heap* HeapFactory::defaultHeap = nullptr;
 	HeapFactory::HeapList<HeapFactory::ListSize> HeapFactory::heaps{};
 
-	bool HeapFactory::AddToParent(const char* parentName, Heap* pChild)
-	{
-		auto* parentHeap = FindHeap(parentName);
-
-		if (!parentName)
-			return false;
-
-		auto& firstChild = parentHeap->GetFamily().pFirstChild;
-
-		pChild->GetFamily().pParent = parentHeap;
-
-		if (!firstChild)
-			firstChild = pChild;
-		else
-		{
-			firstChild->GetFamily().pPrevSibling = pChild;
-
-			auto& fam = pChild->GetFamily();
-			fam.pNextSibling = firstChild;
-
-			parentHeap->GetFamily().pFirstChild = pChild;
-		}
-
-		return true;
-	}
+	// bool HeapFactory::AddToParent(const char* parentName, Heap* pChild)
+	// {
+	// 	auto* parentHeap = FindHeap(parentName);
+	//
+	// 	if (!parentName)
+	// 		return false;
+	//
+	// 	auto& firstChild = parentHeap->GetFamily().pFirstChild;
+	//
+	// 	pChild->GetFamily().pParent = parentHeap;
+	//
+	// 	if (!firstChild)
+	// 		firstChild = pChild;
+	// 	else
+	// 	{
+	// 		firstChild->GetFamily().pPrevSibling = pChild;
+	//
+	// 		auto& fam = pChild->GetFamily();
+	// 		fam.pNextSibling = firstChild;
+	//
+	// 		parentHeap->GetFamily().pFirstChild = pChild;
+	// 	}
+	//
+	// 	return true;
+	// }
 
 	void HeapFactory::Initialize() noexcept
 	{
@@ -82,6 +82,7 @@ namespace memory
 			MEM_INF(heap->GetStatus());
 
 			heap->DeleteLeaks();
+			heap->ShutDown();
 			free(heap);
 			heap = nullptr;
 		}
@@ -92,7 +93,7 @@ namespace memory
 		MEM_INF(status);
 
 		LogTotalBytes(totalBytes);
-		LogTotalAllocations(totalAllocations, defaultHeap->GetLastBookmark());
+		LogTotalAllocations(totalAllocations, GetTotalAllocationsCount());
 	}
 
 	Heap* HeapFactory::GetDefaultHeap() noexcept
@@ -102,8 +103,9 @@ namespace memory
 		if (!defaultHeap)
 		{
 			defaultHeap = static_cast<Heap*>(malloc(sizeof(Heap)));
+			std::memset(defaultHeap, 0, sizeof(Heap));
 			defaultHeap->Initialize("Default", &localVFTBL);
-			heaps.front() = defaultHeap;
+			heaps[0] = defaultHeap;
 		}
 
 		return defaultHeap;
@@ -144,45 +146,32 @@ namespace memory
 		{
 			if (!heap)
 				break;
-
-			if (!heap->GetPrevAddress())
-				continue;
-
+			
 			ReportMemoryLeaks(heap);
 		}
 	}
 
 	void HeapFactory::ReportMemoryLeaks(Heap* const heap)
 	{
-		auto* currentHeader = heap->GetPrevAddress();
+		auto* allocList = heap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
 
-		if (!currentHeader)
+		if (!allocList)
+			return;
+
+		if (!allocList->head)
 			return;
 		
 		size_t totalBytes = 0;
 		const auto heapName = heap->GetName();
-
-		size_t smallestBookmark = currentHeader->bookmark;
-
-		while (currentHeader
-			&& currentHeader->pPrev != currentHeader 
-			&& AllocHeader::VerifyHeader(currentHeader, false))
+		
+		auto currentNode = allocList->head;
+		while (currentNode != allocList->tail)
 		{
-			std::cout << "Heap: \"" << heapName << "\" id: " << currentHeader->bookmark << " "
-				<< "Bytes: " << currentHeader->bytes << "\n";
+			auto& header = currentNode->data;
+			std::cout << "Heap: \"" << heapName << "\" id: " << header.bookmark << " ";
+			std::cout << "Bytes: " << header.bytes << "\n";
 			
-			totalBytes += currentHeader->bytes;
-
-			if (currentHeader->pPrev == nullptr)
-				break;
-			
-			currentHeader = currentHeader->pPrev;
-
-			if (currentHeader->bookmark >= smallestBookmark)
-				break;
-			
-
-			smallestBookmark = currentHeader->bookmark;
+			totalBytes += header.bytes;
 		}
 
 		std::cout << "Heap: \"" << heapName << "\" "
@@ -198,7 +187,7 @@ namespace memory
 
 			std::string_view currentHeapName = heap->GetName();
 
-			if (currentHeapName.compare(name))
+			if (currentHeapName == name)
 				return heap;
 		}
 
@@ -236,6 +225,9 @@ bytes));
 
 		MEM_INF(klib::ToString("Lifetime Heap Bytes Deallocations: {0}"
 			, totalDeallocations));
+		
+		MEM_INF(klib::ToString("Total allocations: {0}"
+			, GetTotalAllocationsCount()));
 	}
 
 	void HeapFactory::LogTotalAllocations(const size_t active, const size_t total) noexcept

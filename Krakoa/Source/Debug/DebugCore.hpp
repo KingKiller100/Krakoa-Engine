@@ -8,5 +8,5 @@
 namespace krakoa::debug
 {
 	void RaiseNotice(const std::string_view& msg, const klib::SourceInfo& sourceInfo);
-	void RaiseException(const std::string& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger);
+	void RaiseException(const std::string_view& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger);
 }

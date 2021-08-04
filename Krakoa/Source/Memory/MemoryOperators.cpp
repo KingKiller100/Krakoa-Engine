@@ -53,7 +53,6 @@ void operator delete(void* ptr)
 	auto* allocNode = memory::GetNodeFromDataPointer(ptr);
 	memory::DestroyNode(allocNode);
 	std::free(allocNode);
-	allocNode = nullptr;
 #else
 	std::free(ptr);
 #endif

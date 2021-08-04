@@ -16,34 +16,28 @@ namespace memory
 	{
 		size_t g_BookmarkCount = 0;
 	}
-	
+
 
 	void* CreateNode(AllocHeaderLinkedList::Node_t* node, size_t bytes, Heap* heap)
 	{
-		std::memset(node, 0,  ControlBlockSize + bytes);
+		std::memset(node, 0, ControlBlockSize + bytes);
 		auto& header = node->data;
-		auto& allocList = *heap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
-		
+		auto& allocList = *heap->GetAllocList<AllocHeaderLinkedList>();
+		auto& [head, tail] = allocList;
 		header.Create(heap, bytes, g_BookmarkCount++);
 
-		if (allocList.head == nullptr && allocList.tail == nullptr)
+		MEM_ASSERT((head && tail) || (!head && !tail), "AllocHeaderList has not been initialized correctly");
+
+		if (head == nullptr && tail == nullptr)
 		{
-			allocList.head = allocList.tail = node;
-		}
-		else if (allocList.head && !allocList.tail)
-		{
-			MEM_FATAL("AllocHeaderLinkedList head is set but tail is null");
-		}
-		else if (!allocList.head && allocList.tail)
-		{
-			MEM_FATAL("AllocHeaderLinkedList tail is set but head is null");
+			head = tail = node;
 		}
 		else
 		{
-			auto* prev = allocList.tail;
+			auto* prev = tail;
 			prev->next = node;
 			node->prev = prev;
-			allocList.tail = node;
+			tail = node;
 		}
 
 		return reinterpret_cast<std::byte*>(node) + NodeSize;
@@ -55,7 +49,7 @@ namespace memory
 		this->pHeap = heap;
 		this->bytes = bytes;
 		this->bookmark = bookmark;
-		
+
 		auto* pMemEnd = reinterpret_cast<Signature_Type*>(
 			reinterpret_cast<std::byte*>(this) + NodeSize + bytes
 			);
@@ -68,19 +62,25 @@ namespace memory
 	{
 		auto& header = node->data;
 		auto* heap = header.pHeap;
-		auto& [head, tail] = *heap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
-		
+		auto& [head, tail] = *heap->GetAllocList<AllocHeaderLinkedList>();
+
+		MEM_ASSERT(head != nullptr, "AllocHeaderLinkedList head is not set");
+		MEM_ASSERT(tail != nullptr, "AllocHeaderLinkedList tail is not set");
+
 		if (head == tail)
 		{
 			head = tail = nullptr;
+			MEM_ASSERT(CheckIfChainIsBroken(node), "AllocHeaderLinkedList is broken!");
 		}
-		else if (head && !tail)
+		else if (node == head)
 		{
-			MEM_FATAL("AllocHeaderLinkedList head is set but tail is null");
+			head = head->next;
+			head->prev = nullptr;
 		}
-		else if (!head && tail)
+		else if (node == tail)
 		{
-			MEM_FATAL("AllocHeaderLinkedList tail is set but head is null");
+			tail = tail->prev;
+			tail->next = nullptr;
 		}
 		else
 		{
@@ -92,10 +92,27 @@ namespace memory
 			if (node->prev)
 			{
 				node->prev->next = node->next;
+				CheckIfChainIsBroken(node);
 			}
 		}
 
 		header.Destroy();
+	}
+
+	bool CheckIfChainIsBroken(AllocHeaderNode* node)
+	{
+		const auto heap = node->data.pHeap;
+		const auto& [head, tail] = *heap->GetAllocList<AllocHeaderLinkedList>();
+		
+		auto* current = head;
+
+		while (current != tail)
+		{
+			if (current == nullptr)
+				klib::kDebug::BreakPoint();
+			current = current->next;
+		}
+		return true;
 	}
 
 	size_t GetTotalAllocationsCount() noexcept
@@ -120,7 +137,7 @@ namespace memory
 	{
 		if (!node)
 			return nullptr;
-		
+
 		if (!node->data.VerifyHeader(false))
 			return nullptr;
 

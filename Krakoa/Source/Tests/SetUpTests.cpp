@@ -3,7 +3,6 @@
 
 #include "TestDriver.hpp"
 
-#include "../../Tests/MemPooler_Test.hpp"
 #include "../../Tests/ManagerBase_Test.hpp"
 #include "../../Tests/MemoryTracker_Test.hpp"
 

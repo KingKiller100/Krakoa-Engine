@@ -19,8 +19,8 @@ namespace patterns
 		using Type = T;
 		
 		T data;
-		BidirectionalNode* next = nullptr;
 		BidirectionalNode* prev = nullptr;
+		BidirectionalNode* next = nullptr;
 	};
 
 	template<typename NodeType, typename T = typename NodeType::Type>

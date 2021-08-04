@@ -3,6 +3,7 @@
 #include "../Debug/DebugCore.hpp"
 #include "../Core/EngineMacros.hpp"
 #include "../Logging/MemoryLogger.hpp"
+#include "../Util/Fmt.hpp"
 
 #include <Utility/Debug/kAssert.hpp>
 #include <Utility/Debug/Source/kSourceInfo.hpp>
@@ -10,9 +11,10 @@
 
 #if KRK_ENABLE_ASSERT
 
-#	define MEM_ASSERT(cond, msg) kAssertCB(cond, msg, [](const std::string_view& m, const klib::SourceInfo& s)\
+#	define MEM_ASSERT(cond, msg) kAssertCB(cond, msg, [](std::string_view e, std::string_view m, const klib::SourceInfo& s)\
 {\
-	::krakoa::debug::RaiseNotice(m, s);\
+	const auto err = ::util::Fmt("[FAILED] {0} Condition: \"{1}\" ", e, m);\
+	::krakoa::debug::RaiseNotice(err, s);\
 })\
 
 #else

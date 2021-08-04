@@ -165,13 +165,14 @@ namespace memory
 		const auto heapName = heap->GetName();
 		
 		auto currentNode = allocList->head;
-		while (currentNode != allocList->tail)
+		while (currentNode != nullptr)
 		{
 			auto& header = currentNode->data;
 			std::cout << "Heap: \"" << heapName << "\" id: " << header.bookmark << " ";
 			std::cout << "Bytes: " << header.bytes << "\n";
 			
 			totalBytes += header.bytes;
+			currentNode = currentNode->next;
 		}
 
 		std::cout << "Heap: \"" << heapName << "\" "

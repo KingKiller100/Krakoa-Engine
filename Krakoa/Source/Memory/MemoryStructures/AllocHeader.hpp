@@ -30,13 +30,14 @@ namespace memory
 		Heap* pHeap = nullptr;
 	};
 	
-	using AllocHeaderLinkedList = ::patterns::BiDirectionalLinkedList<AllocHeader>;
+	using AllocHeaderLinkedList = patterns::BiDirectionalLinkedList<AllocHeader>;
 	using AllocHeaderNode = AllocHeaderLinkedList::Node_t;
 	
 	void* CreateNode(AllocHeaderLinkedList::Node_t* node, size_t bytes, Heap* heap);
 	AllocHeaderNode* GetNodeFromDataPointer(void* ptr);
 	void* GetDataPointerFromNode(AllocHeaderNode* allocNode);
 	void DestroyNode(AllocHeaderNode* node);
+	bool CheckIfChainIsBroken(AllocHeaderNode* node);
 
 	size_t GetTotalAllocationsCount() noexcept;
 }

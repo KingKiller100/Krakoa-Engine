@@ -20,6 +20,9 @@ namespace memory
 
 	void* CreateNode(AllocHeaderLinkedList::Node_t* node, size_t bytes, Heap* heap)
 	{
+		static std::mutex mutex;
+		
+		std::scoped_lock lock(mutex);
 		std::memset(node, 0, ControlBlockSize + bytes);
 		auto& header = node->data;
 		auto& allocList = *heap->GetAllocList<AllocHeaderLinkedList>();
@@ -60,6 +63,8 @@ namespace memory
 
 	void DestroyNode(AllocHeaderNode* node)
 	{
+		static std::mutex mutex;
+
 		auto& header = node->data;
 		auto* heap = header.pHeap;
 		auto& [head, tail] = *heap->GetAllocList<AllocHeaderLinkedList>();
@@ -67,10 +72,12 @@ namespace memory
 		MEM_ASSERT(head != nullptr, "AllocHeaderLinkedList head is not set");
 		MEM_ASSERT(tail != nullptr, "AllocHeaderLinkedList tail is not set");
 
+		std::scoped_lock lock(mutex);
+		
 		if (head == tail)
 		{
 			head = tail = nullptr;
-			MEM_ASSERT(CheckIfChainIsBroken(node), "AllocHeaderLinkedList is broken!");
+			(void)heap->WalkTheHeap();
 		}
 		else if (node == head)
 		{
@@ -92,27 +99,11 @@ namespace memory
 			if (node->prev)
 			{
 				node->prev->next = node->next;
-				CheckIfChainIsBroken(node);
+				(void)heap->WalkTheHeap();
 			}
 		}
 
 		header.Destroy();
-	}
-
-	bool CheckIfChainIsBroken(AllocHeaderNode* node)
-	{
-		const auto heap = node->data.pHeap;
-		const auto& [head, tail] = *heap->GetAllocList<AllocHeaderLinkedList>();
-		
-		auto* current = head;
-
-		while (current != tail)
-		{
-			if (current == nullptr)
-				klib::kDebug::BreakPoint();
-			current = current->next;
-		}
-		return true;
 	}
 
 	size_t GetTotalAllocationsCount() noexcept

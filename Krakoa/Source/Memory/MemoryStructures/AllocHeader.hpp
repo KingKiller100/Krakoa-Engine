@@ -37,7 +37,6 @@ namespace memory
 	AllocHeaderNode* GetNodeFromDataPointer(void* ptr);
 	void* GetDataPointerFromNode(AllocHeaderNode* allocNode);
 	void DestroyNode(AllocHeaderNode* node);
-	bool CheckIfChainIsBroken(AllocHeaderNode* node);
 
 	size_t GetTotalAllocationsCount() noexcept;
 }

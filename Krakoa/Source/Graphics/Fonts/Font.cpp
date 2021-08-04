@@ -70,7 +70,7 @@ namespace krakoa::gfx
 		const auto filename = klib::ToLower(path.filename().string());
 		const auto parentPath = path.parent_path().string();
 		const auto folder =
-			klib::ToLower(parentPath.substr(parentPath.find_last_of(klib::pathSeparator<char>)));
+			klib::ToLower(parentPath.substr(parentPath.find_last_of(klib::PathSeparator<char>)));
 
 		modifiers = 0;
 

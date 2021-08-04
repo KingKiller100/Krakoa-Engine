@@ -6,7 +6,7 @@
 #include "../MemoryDebug.hpp"
 
 #include "../../Util/Fmt.hpp"
-#include <Maths/BytesUnits.hpp>
+#include <Utility/Debug/kDebugger.hpp>
 
 namespace memory
 {
@@ -82,17 +82,21 @@ namespace memory
 
 	size_t Heap::WalkTheHeap() const
 	{
-		auto* allocList = static_cast<BiDirectionalLinkedList<AllocHeader>*>(allocListVoid);
+		auto [head, tail] = *static_cast<AllocHeaderLinkedList*>(allocListVoid);
 		
-		if (!allocList->head)
+		if (!head)
 			return 0;
 
-		unsigned count(1);
-		auto* current = allocList->tail;
+		size_t count(1);
+		auto* current = head;
 
-		while (current != allocList->head)
+		while (current != tail)
 		{
-			current = current->prev;
+			current->data.VerifyHeader(true);
+			if (current == nullptr)
+				klib::kDebug::BreakPoint();
+			
+			current = current->next;
 			++count;
 		}
 

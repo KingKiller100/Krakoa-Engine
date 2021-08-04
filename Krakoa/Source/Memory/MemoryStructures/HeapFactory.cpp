@@ -165,7 +165,7 @@ namespace memory
 		const auto heapName = heap->GetName();
 		
 		auto currentNode = allocList->head;
-		while (currentNode != nullptr)
+		while (currentNode != allocList->tail)
 		{
 			auto& header = currentNode->data;
 			std::cout << "Heap: \"" << heapName << "\" id: " << header.bookmark << " ";
@@ -186,7 +186,7 @@ namespace memory
 			if (!heap)
 				return nullptr;
 
-			std::string_view currentHeapName = heap->GetName();
+			const std::string_view currentHeapName = heap->GetName();
 
 			if (currentHeapName == name)
 				return heap;

@@ -82,7 +82,7 @@ namespace krakoa::filesystem
 			const auto end_iter = fs::directory_iterator();
 
 			const auto pathStr = path.string();
-			const auto lastPathSeperator = pathStr.find_last_of(klib::pathSeparator<char>);
+			const auto lastPathSeperator = pathStr.find_last_of(klib::PathSeparator<char>);
 			const auto currentFolder = pathStr.substr(lastPathSeperator + 1);
 
 			vFolder.name = currentFolder;

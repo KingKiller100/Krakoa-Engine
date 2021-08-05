@@ -28,7 +28,7 @@ namespace memory
 		~Heap() noexcept = default;
 
 		void Initialize(const char* n, Heap_VFTBL* heapVTBL) noexcept;
-		void ShutDown() const;
+		void ShutDown();
 
 		template<size_t N>
 		void SetName(const char(&n)[N]) noexcept

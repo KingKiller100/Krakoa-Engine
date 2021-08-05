@@ -17,10 +17,15 @@ namespace memory
 		// 3735928559
 		static constexpr Signature_Type MemoryBlockSignatureEnd = 0xdeadbeef;
 	public:
+		AllocHeader() noexcept = default;
+		AllocHeader(AllocHeader&&) noexcept = default;
+		AllocHeader& operator=(AllocHeader&&) noexcept = default;
+		
+		AllocHeader(const AllocHeader&) = delete;
+		AllocHeader& operator=(const AllocHeader&) const = delete;
+		
 		void Create(Heap* heap, const size_t bytes, size_t bookmark) noexcept;
 		void Destroy() noexcept;
-
-		USE_RESULT static AllocHeader* GetHeaderFromPointer(void* pData);
 		bool VerifyHeader(bool enableAssert = false);
 
 	public:

@@ -34,19 +34,20 @@ count
 ));
 
 		auto& allocList = *pHeap->GetAllocList<patterns::BiDirectionalLinkedList<AllocHeader>>();
-		
+
 		if (!allocList.head || !allocList.tail)
 			return report;
-		
+
 		size_t currentIndex = 0;
-		
+
+		auto* current = allocList.head;
 		do {
-			auto* current = allocList.head;
-			auto alloc = current->data;
+			const auto& alloc = current->data;
 			const auto bytes = alloc.bytes;
 			const auto blockBytes = bytes + ControlBlockSize;
 			const auto bookmark = alloc.bookmark;
-			
+			current = current->next;
+
 			report.append(ToString(R"(
 Heap: "Default" 
 Index: {0}
@@ -60,7 +61,6 @@ currentIndex
 , bookmark
 ));
 
-			current = current->next;
 		} while (++currentIndex < index);
 
 		return report;

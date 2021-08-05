@@ -29,7 +29,7 @@ namespace memory
 		// family.pNextSibling = nullptr;
 	}
 
-	void Heap::ShutDown() const
+	void Heap::ShutDown()
 	{
 		const auto leaks = WalkTheHeap();
 		
@@ -38,6 +38,7 @@ namespace memory
 		DeleteLeaks();
 		
 		std::free(allocListVoid);
+		allocListVoid = nullptr;
 	}
 
 	// bool Heap::AddToParent(Heap* pParent)
@@ -92,10 +93,10 @@ namespace memory
 
 		while (current != tail)
 		{
-			current->data.VerifyHeader(true);
 			if (current == nullptr)
 				klib::kDebug::BreakPoint();
 			
+			current->data.VerifyHeader(true);
 			current = current->next;
 			++count;
 		}
@@ -111,15 +112,11 @@ namespace memory
 
 		while (allocList->tail != allocList->head)
 		{
-			auto pPrev = allocList->tail->prev;
-			// auto* ptr = static_cast<kmaths::Byte_Type*>(GetDataPointerFromNode(allocList->tail));
-			// delete ptr;
+			const auto pPrev = allocList->tail->prev;
 			std::free(allocList->tail);
 			allocList->tail = pPrev;
 		}
-
-		// auto lastPtr = GetDataPointerFromNode(allocList->head);
-		// delete lastPtr;
+		
 		std::free(allocList->head);
 		allocList->head = allocList->tail = nullptr;
 	}

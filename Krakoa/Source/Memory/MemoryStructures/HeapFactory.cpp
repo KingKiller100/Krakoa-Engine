@@ -146,7 +146,7 @@ namespace memory
 		{
 			if (!heap)
 				break;
-			
+
 			ReportMemoryLeaks(heap);
 		}
 	}
@@ -160,20 +160,38 @@ namespace memory
 
 		if (!allocList->head)
 			return;
-		
+
 		size_t totalBytes = 0;
 		const auto heapName = heap->GetName();
-		
+
+		std::stringstream stream;
+
+		auto AppendLeakToStreamFunc = [&stream](const AllocHeader& header)
+		{
+			static size_t count(0);
+			stream << "Heap: \"" << header.pHeap->GetName() << "\" id: " << header.bookmark << " ";
+			stream << "Bytes: " << header.bytes << "\n";
+			if (++count > 500)
+			{
+				std::cout << stream.view();
+				stream.clear();
+				count = 0;
+			}
+		};
+
 		auto currentNode = allocList->head;
 		while (currentNode != allocList->tail)
 		{
-			auto& header = currentNode->data;
-			std::cout << "Heap: \"" << heapName << "\" id: " << header.bookmark << " ";
-			std::cout << "Bytes: " << header.bytes << "\n";
-			
+			const auto& header = currentNode->data;
+			AppendLeakToStreamFunc(header);
 			totalBytes += header.bytes;
 			currentNode = currentNode->next;
 		}
+
+		totalBytes += currentNode->data.bytes;
+		AppendLeakToStreamFunc(currentNode->data);
+
+		std::cout << stream.view();
 
 		std::cout << "Heap: \"" << heapName << "\" "
 			<< "Total Bytes: " << totalBytes << "\n";
@@ -226,7 +244,7 @@ bytes));
 
 		MEM_INF(klib::ToString("Lifetime Heap Bytes Deallocations: {0}"
 			, totalDeallocations));
-		
+
 		MEM_INF(klib::ToString("Total allocations: {0}"
 			, GetTotalAllocationsCount()));
 	}

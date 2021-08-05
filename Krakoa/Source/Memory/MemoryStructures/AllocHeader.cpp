@@ -8,8 +8,6 @@
 
 #include "../../Logging/MemoryLogger.hpp"
 
-#include <Maths/BytesUnits.hpp>
-
 namespace memory
 {
 	namespace
@@ -22,7 +20,7 @@ namespace memory
 	{
 		static std::mutex mutex;
 		
-		std::scoped_lock lock(mutex);
+		// std::scoped_lock lock(mutex);
 		std::memset(node, 0, ControlBlockSize + bytes);
 		auto& header = node->data;
 		auto& allocList = *heap->GetAllocList<AllocHeaderLinkedList>();
@@ -72,12 +70,12 @@ namespace memory
 		MEM_ASSERT(head != nullptr, "AllocHeaderLinkedList head is not set");
 		MEM_ASSERT(tail != nullptr, "AllocHeaderLinkedList tail is not set");
 
-		std::scoped_lock lock(mutex);
+		// std::scoped_lock lock(mutex);
 		
 		if (head == tail)
 		{
 			head = tail = nullptr;
-			(void)heap->WalkTheHeap();
+			// (void)heap->WalkTheHeap();
 		}
 		else if (node == head)
 		{
@@ -99,7 +97,7 @@ namespace memory
 			if (node->prev)
 			{
 				node->prev->next = node->next;
-				(void)heap->WalkTheHeap();
+				// (void)heap->WalkTheHeap();
 			}
 		}
 

@@ -168,10 +168,9 @@ namespace memory
 
 		auto AppendLeakToStreamFunc = [&stream](const AllocHeader& header)
 		{
-			static size_t count(0);
 			stream << "Heap: \"" << header.pHeap->GetName() << "\" id: " << header.bookmark << " ";
 			stream << "Bytes: " << header.bytes << "\n";
-			if (++count > 500)
+			if (static size_t count(0); ++count > 5000)
 			{
 				std::cout << stream.view();
 				stream.clear();

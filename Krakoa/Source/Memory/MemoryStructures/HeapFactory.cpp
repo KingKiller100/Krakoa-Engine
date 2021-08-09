@@ -204,7 +204,7 @@ namespace memory
 
 		std::cout << "Heap: \"" << heapName << "\" | "
 			<< "Total Bytes: " << totalBytes << 
-			" | Total Count: " << heap->GetCount() << "\n";
+			" | Total Alive Count: " << heap->GetCount() << "\n";
 	}
 
 	Heap* HeapFactory::FindHeap(const char* name)

@@ -42,8 +42,12 @@ namespace memory
 		// USE_RESULT const Family& GetFamily() const noexcept;
 		// USE_RESULT Family& GetFamily() noexcept;
 
-		void Allocate(const size_t bytes) noexcept;
-		void Deallocate(const size_t bytes) noexcept;
+		void IncrementAllocationsCount();
+		void DecrementAllocationsCount();
+		USE_RESULT size_t GetCount() const;
+		
+		void AllocateBytes(const size_t bytes) noexcept;
+		void DeallocateBytes(const size_t bytes) noexcept;
 		USE_RESULT size_t GetTotalAllocatedBytes() const noexcept;
 
 		USE_RESULT size_t WalkTheHeap() const;
@@ -67,6 +71,7 @@ namespace memory
 	protected:
 		const char* name;
 		size_t totalBytes;
+		size_t allocationsCount;
 		void* allocListVoid;
 		Heap_VFTBL* vftbl;
 

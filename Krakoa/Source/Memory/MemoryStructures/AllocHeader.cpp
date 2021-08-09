@@ -12,20 +12,18 @@ namespace memory
 {
 	namespace
 	{
-		size_t g_BookmarkCount = 0;
+		std::atomic<size_t> g_BookmarkCount(0);
 	}
 
 
 	void* CreateNode(AllocHeaderLinkedList::Node_t* node, size_t bytes, Heap* heap)
-	{
-		static std::mutex mutex;
-		
-		// std::scoped_lock lock(mutex);
-		std::memset(node, 0, ControlBlockSize + bytes);
+	{		
 		auto& header = node->data;
 		auto& allocList = *heap->GetAllocList<AllocHeaderLinkedList>();
 		auto& [head, tail] = allocList;
 		header.Create(heap, bytes, g_BookmarkCount++);
+
+		 //std::scoped_lock lock(g_Mutex);
 
 		MEM_ASSERT((head && tail) || (!head && !tail), "AllocHeaderList has not been initialized correctly");
 
@@ -40,7 +38,9 @@ namespace memory
 			node->prev = prev;
 			tail = node;
 		}
-
+		
+		heap->IncrementAllocationsCount();
+		
 		return reinterpret_cast<std::byte*>(node) + NodeSize;
 	}
 
@@ -56,35 +56,30 @@ namespace memory
 			);
 		*pMemEnd = MemoryBlockSignatureEnd;
 
-		heap->Allocate(bytes + ControlBlockSize);
+		heap->AllocateBytes(bytes + ControlBlockSize);
 	}
 
 	void DestroyNode(AllocHeaderNode* node)
 	{
-		static std::mutex mutex;
-
 		auto& header = node->data;
 		auto* heap = header.pHeap;
 		auto& [head, tail] = *heap->GetAllocList<AllocHeaderLinkedList>();
 
 		MEM_ASSERT(head != nullptr, "AllocHeaderLinkedList head is not set");
 		MEM_ASSERT(tail != nullptr, "AllocHeaderLinkedList tail is not set");
-
-		// std::scoped_lock lock(mutex);
 		
 		if (head == tail)
 		{
 			head = tail = nullptr;
-			// (void)heap->WalkTheHeap();
 		}
 		else if (node == head)
 		{
-			head = head->next;
+			head = node->next;
 			head->prev = nullptr;
 		}
 		else if (node == tail)
 		{
-			tail = tail->prev;
+			tail = node->prev;
 			tail->next = nullptr;
 		}
 		else
@@ -97,11 +92,12 @@ namespace memory
 			if (node->prev)
 			{
 				node->prev->next = node->next;
-				// (void)heap->WalkTheHeap();
 			}
 		}
 
 		header.Destroy();
+		
+		heap->DecrementAllocationsCount();
 	}
 
 	size_t GetTotalAllocationsCount() noexcept
@@ -113,7 +109,7 @@ namespace memory
 	{
 		VerifyHeader(true);
 
-		this->pHeap->Deallocate(bytes + ControlBlockSize);
+		this->pHeap->DeallocateBytes(bytes + ControlBlockSize);
 	}
 
 

@@ -183,6 +183,13 @@ namespace memory
 		size_t count = 0;
 		while (currentNode != allocList->tail)
 		{
+			if (!currentNode)
+			{
+				std::cout << heapName << " chain is broken: " << 
+					count << "/" << heap->GetCount();
+				break;
+			}
+			
 			const auto& header = currentNode->data;
 			AppendLeakToStreamFunc(header);
 			totalBytes += header.bytes;
@@ -190,13 +197,14 @@ namespace memory
 			++count;
 		}
 
-		totalBytes += currentNode->data.bytes;
-		AppendLeakToStreamFunc(currentNode->data);
+		totalBytes += allocList->tail->data.bytes;
+		AppendLeakToStreamFunc(allocList->tail->data);
 
 		std::cout << stream.view();
 
-		std::cout << "Heap: \"" << heapName << "\" "
-			<< "Total Bytes: " << totalBytes << "\n";
+		std::cout << "Heap: \"" << heapName << "\" | "
+			<< "Total Bytes: " << totalBytes << 
+			" | Total Count: " << heap->GetCount() << "\n";
 	}
 
 	Heap* HeapFactory::FindHeap(const char* name)

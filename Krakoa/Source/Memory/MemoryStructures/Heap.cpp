@@ -6,6 +6,7 @@
 #include "../MemoryDebug.hpp"
 
 #include "../../Util/Fmt.hpp"
+#include "../MemoryUtil.hpp"
 #include <Utility/Debug/kDebugger.hpp>
 
 namespace memory
@@ -20,9 +21,8 @@ namespace memory
 		totalBytes = 0;
 		allocListVoid = nullptr;
 		vftbl = heapVTBL;
-		allocListVoid = static_cast<BiDirectionalLinkedList<AllocHeader>*>(std::malloc(
-			sizeof(BiDirectionalLinkedList<AllocHeader>)));
-		std::memset(allocListVoid, 0, sizeof(BiDirectionalLinkedList<AllocHeader>));
+		allocListVoid = Allocate<BiDirectionalLinkedList<AllocHeader>>();
+		allocationsCount = 0;
 		// family.pParent = nullptr;
 		// family.pFirstChild = nullptr;
 		// family.pPrevSibling = nullptr;
@@ -36,9 +36,10 @@ namespace memory
 		MEM_ASSERT(leaks == 0,
 			util::Fmt("{0} has {1} remaining allocation(s)", name, leaks));
 		DeleteLeaks();
-		
-		std::free(allocListVoid);
+
+		Deallocate(allocListVoid);
 		allocListVoid = nullptr;
+		allocationsCount = 0;
 	}
 
 	// bool Heap::AddToParent(Heap* pParent)
@@ -56,6 +57,22 @@ namespace memory
 		return name;
 	}
 
+	void Heap::IncrementAllocationsCount()
+	{
+		++allocationsCount;
+	}
+
+	void Heap::DecrementAllocationsCount()
+	{
+		MEM_ASSERT(allocationsCount > 0, "Decrementing allocation count when no allocations exist");
+		--allocationsCount;
+	}
+
+	size_t Heap::GetCount() const
+	{
+		return allocationsCount;
+	}
+
 	// const Heap::Family& Heap::GetFamily() const noexcept
 	// {
 		// return family;
@@ -66,12 +83,12 @@ namespace memory
 		// return family;
 	// }
 
-	void Heap::Allocate(const size_t bytes) noexcept
+	void Heap::AllocateBytes(const size_t bytes) noexcept
 	{
 		totalBytes += bytes;
 	}
 
-	void Heap::Deallocate(const size_t bytes) noexcept
+	void Heap::DeallocateBytes(const size_t bytes) noexcept
 	{
 		totalBytes -= bytes;
 	}
@@ -87,21 +104,19 @@ namespace memory
 		
 		if (!head)
 			return 0;
-
-		size_t count(1);
+		
 		auto* current = head;
 
 		while (current != tail)
 		{
 			if (current == nullptr)
-				klib::kDebug::BreakPoint();
+				break;
 			
 			current->data.VerifyHeader(true);
 			current = current->next;
-			++count;
 		}
 
-		return count;
+		return allocationsCount;
 	}
 
 	void Heap::DeleteLeaks() const
@@ -112,12 +127,12 @@ namespace memory
 
 		while (allocList->tail != allocList->head)
 		{
-			const auto pPrev = allocList->tail->prev;
-			std::free(allocList->tail);
-			allocList->tail = pPrev;
+			const auto toDelete = allocList->tail;
+			allocList->tail = allocList->tail->prev;
+			Deallocate(toDelete);
 		}
 		
-		std::free(allocList->head);
+		Deallocate(allocList->head);
 		allocList->head = allocList->tail = nullptr;
 	}
 

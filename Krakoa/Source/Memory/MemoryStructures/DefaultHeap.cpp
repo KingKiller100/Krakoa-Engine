@@ -61,7 +61,7 @@ currentIndex
 , bookmark
 ));
 
-		} while (++currentIndex < index);
+		} while (current != nullptr);
 
 		return report;
 	}

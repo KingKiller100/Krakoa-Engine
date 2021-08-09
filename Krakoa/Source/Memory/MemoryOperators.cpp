@@ -1,5 +1,6 @@
 ﻿#include "Precompile.hpp"
 #include "MemoryOperators.hpp"
+#include "MemoryUtil.hpp"
 
 #include "MemoryStructures/Heap.hpp"
 #include "MemoryStructures/MemoryTypeSizes.hpp"
@@ -32,7 +33,7 @@ void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads Control Bloc
 		memory::Heap::s_TotalLifetimeBytesAllocated += bytes;
 
 	const size_t requestedBytes = memory::NodeSize + bytes + memory::SignatureSize; // Alignment in memory
-	auto* allocNode = static_cast<memory::AllocHeaderNode*>(std::malloc(requestedBytes)); // memory::MemoryPool::Reference().Allocate(requestedBytes);
+	auto* allocNode = memory::Allocate<memory::AllocHeaderNode>(requestedBytes);
 	return memory::CreateNode(allocNode, bytes, pHeap); // Returns pointer to the start of the object's data
 #else
 	return std::malloc(bytes);
@@ -52,7 +53,7 @@ void operator delete(void* ptr)
 	
 	auto* allocNode = memory::GetNodeFromDataPointer(ptr);
 	memory::DestroyNode(allocNode);
-	std::free(allocNode);
+	memory::Deallocate(allocNode);
 #else
 	std::free(ptr);
 #endif

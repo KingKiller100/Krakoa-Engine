@@ -37,7 +37,7 @@ namespace krakoa::tests
 
 	void TestDriver::RunAll()
 	{
-		testMan->RunAll(kTest::TesterManager::Threads::SINGLE);
+		testMan->RunAll(std::thread::hardware_concurrency());
 		std::cin.get();
 		// RunPerformanceTests();
 	}

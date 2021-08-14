@@ -9,13 +9,13 @@
 namespace memory
 {
 	template<typename T>
-	class TemplateHeap final : public Heap
+	class BasicHeap final : public Heap
 	{
 	public:
 		using Type = T;
 		static constexpr auto TypeSize = sizeof(Type);
 
-		~TemplateHeap() noexcept
+		~BasicHeap() noexcept
 			= default;
 
 		USE_RESULT constexpr size_t GetBytesPerObject() const
@@ -35,7 +35,7 @@ namespace memory
 		if (count <= 0)
 			return ToString("Heap \"{0}\" is empty\n", name);
 
-		constexpr size_t bytes_per_object = TemplateHeap<T>::TypeSize;
+		constexpr size_t bytes_per_object = BasicHeap<T>::TypeSize;
 		const size_t bytes_total = bytes_per_object * count;
 
 		const auto totalBytes = pHeap->GetTotalAllocatedBytes();

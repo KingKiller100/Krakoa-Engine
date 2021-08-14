@@ -1,32 +1,25 @@
 ﻿#pragma once
 
 #include "TemplateHeap.hpp"
+#include "../MemoryUtil.hpp"
 
 #include <array>
 #include <atomic>
 
 namespace memory
 {
-	namespace
-	{
-		std::atomic<std::uint16_t> activeHeapIndex(1);
-	}
-
 	class HeapFactory final
 	{
 		static constexpr size_t ListSize = 128;
 		
-		template<size_t N>
-		using HeapList = std::array<Heap*, N>;
+		using HeapList = std::array<Heap*, ListSize>;
 		
 		struct Token {};
 	public:
 		template<typename T>
 		static Heap* CreateHeap()
 		{
-			auto* heap = static_cast<Heap*>(malloc(sizeof(TemplateHeap<T>)));
-			heap->Initialize(typeid(T).name(), &templateHeapVFTBL<T>);
-			heaps[activeHeapIndex++] = heap;
+			auto* heap = CreateHeapImpl(typeid(T).name(), sizeof(BasicHeap<T>), &templateHeapVFTBL<T>);
 			return heap;
 		}
 
@@ -38,7 +31,7 @@ namespace memory
 		static Heap* GetDefaultHeap() noexcept;
 		static std::string WalkTheDefaultHeap();
 
-		static const HeapList<ListSize>& GetHeaps();
+		static const HeapList& GetHeaps();
 		static std::string WalkTheHeap(const size_t index);
 
 		static size_t GetSize();
@@ -46,6 +39,7 @@ namespace memory
 		static void ReportMemoryLeaks();
 
 	private:
+		static Heap* CreateHeapImpl(const char* name, size_t bytes, Heap_VFTBL* vtbl);
 		static void LogTotalBytes(const size_t bytes) noexcept;
 		static void LogTotalAllocations(const size_t active, const size_t total) noexcept;
 		static void ReportMemoryLeaks(Heap* const heap);
@@ -56,6 +50,7 @@ namespace memory
 
 	private:
 		static Heap* defaultHeap;
-		static HeapList<ListSize> heaps;
+		static HeapList heaps;
+		static std::atomic_uint16_t activeHeapIndex;
 	};
 }

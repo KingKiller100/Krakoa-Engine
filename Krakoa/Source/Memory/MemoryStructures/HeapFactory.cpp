@@ -17,7 +17,8 @@
 namespace memory
 {
 	Heap* HeapFactory::defaultHeap = nullptr;
-	HeapFactory::HeapList<HeapFactory::ListSize> HeapFactory::heaps{};
+	HeapFactory::HeapList HeapFactory::heaps{};
+	std::atomic_uint16_t HeapFactory::activeHeapIndex{ 1 };
 
 	// bool HeapFactory::AddToParent(const char* parentName, Heap* pChild)
 	// {
@@ -102,8 +103,7 @@ namespace memory
 
 		if (!defaultHeap)
 		{
-			defaultHeap = static_cast<Heap*>(malloc(sizeof(Heap)));
-			std::memset(defaultHeap, 0, sizeof(Heap));
+			defaultHeap = memory::Allocate<Heap>();
 			defaultHeap->Initialize("Default", &localVFTBL);
 			heaps[0] = defaultHeap;
 		}
@@ -111,7 +111,7 @@ namespace memory
 		return defaultHeap;
 	}
 
-	const HeapFactory::HeapList<HeapFactory::ListSize>& HeapFactory::GetHeaps()
+	const HeapFactory::HeapList& HeapFactory::GetHeaps()
 	{
 		return heaps;
 	}
@@ -149,6 +149,14 @@ namespace memory
 
 			ReportMemoryLeaks(heap);
 		}
+	}
+
+	Heap* HeapFactory::CreateHeapImpl(const char* name, size_t bytes, Heap_VFTBL* vtbl)
+	{
+		auto* heap = Allocate<Heap>(bytes);
+		heap->Initialize(name, vtbl);
+		heaps[activeHeapIndex++] = heap;
+		return heap;
 	}
 
 	void HeapFactory::ReportMemoryLeaks(Heap* const heap)

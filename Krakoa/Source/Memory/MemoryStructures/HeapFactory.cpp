@@ -217,7 +217,7 @@ namespace memory
 
 	Heap* HeapFactory::FindHeap(const char* name)
 	{
-		for (auto& heap : heaps)
+		for (const auto& heap : heaps)
 		{
 			if (!heap)
 				return nullptr;

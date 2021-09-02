@@ -14,11 +14,11 @@ namespace maths
 		using Size = BasicSize<T>;
 
 	public:
-		BasicRect(const Point& a, const Point& b)
+		constexpr BasicRect(const Point& a, const Point& b) noexcept
 			: p1(a), p2(b)
 		{}
 
-		BasicRect(const Point& a, const Size& size)
+		constexpr BasicRect(const Point& a, const Size& size) noexcept
 			: p1(a), p2({a.x + size.width, a.y + size.width})
 		{}
 

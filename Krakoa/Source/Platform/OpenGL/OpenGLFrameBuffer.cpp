@@ -17,6 +17,8 @@ namespace krakoa::gfx
 
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
 		: rendererID(0)
+		, colourAttachment(0)
+		, depthStencilAttachment()
 		, spec(spec)
 	{
 		KRK_PROFILE_FUNCTION();
@@ -46,7 +48,10 @@ namespace krakoa::gfx
 		// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, spec.width, spec.height
 			// , 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr); // Set up colour info and plane size 
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, spec.width, spec.height, 0
+		const auto width = static_cast<GLsizei>(spec.width);
+		const auto height = static_cast<GLsizei>(spec.height);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0
 			, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -54,11 +59,11 @@ namespace krakoa::gfx
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourAttachment, 0);
 
-		glGenTextures(1, &dsAttachment);
-		glBindTexture(GL_TEXTURE_2D, dsAttachment);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, spec.width, spec.height);
+		glGenTextures(1, &depthStencilAttachment.buffer);
+		glBindTexture(GL_TEXTURE_2D, depthStencilAttachment.buffer);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, dsAttachment, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencilAttachment.buffer, 0);
 
 		const auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 
@@ -73,15 +78,18 @@ namespace krakoa::gfx
 
 		glDeleteFramebuffers(1, &rendererID);
 		glDeleteTextures(1, &colourAttachment);
-		glDeleteTextures(1, &dsAttachment);
+		glDeleteTextures(1, &depthStencilAttachment.buffer);
 	}
 
 	void OpenGLFrameBuffer::Bind()
 	{
 		KRK_PROFILE_FUNCTION();
 
+		const auto width = static_cast<GLsizei>(spec.width);
+		const auto height = static_cast<GLsizei>(spec.height);
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, rendererID);
-		glViewport(0, 0, spec.width, spec.height);
+		glViewport(0, 0, width, height);
 	}
 
 	void OpenGLFrameBuffer::Unbind()
@@ -91,18 +99,18 @@ namespace krakoa::gfx
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void OpenGLFrameBuffer::Resize(const kmaths::Vector2<std::uint32_t>& dimensions)
+	void OpenGLFrameBuffer::Resize(const maths::BasicSize<std::uint32_t>& dimensions)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		Resize(dimensions.x, dimensions.y);
+		Resize(dimensions.width, dimensions.height);
 	}
 
 	void OpenGLFrameBuffer::Resize(std::uint32_t width, std::uint32_t height)
 	{
 		KRK_PROFILE_FUNCTION();
 
-		static constexpr char warningFormat[] = "Bad dimensions given Frame Buffer: ({0}, {1})";
+		static constexpr char warningFormat[] = "Bad dimensions given to frame buffer: ({0}, {1})";
 
 		const auto noDimensions = width == 0 || height == 0;
 		const auto badDimensions = width > g_MaxFrameBufferSize || height == g_MaxFrameBufferSize;

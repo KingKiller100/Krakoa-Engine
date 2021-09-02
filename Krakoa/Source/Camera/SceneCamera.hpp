@@ -39,7 +39,7 @@ namespace krakoa
 		void SetOrthographic(float zoom, float nearClip, float farClip);
 
 		void SetViewportSize(std::uint32_t width, std::uint32_t height);
-		void SetViewportSize(const kmaths::Vector2<std::uint32_t>& dimensions);
+		void SetViewportSize(const maths::BasicSize<std::uint32_t>& dimensions);
 
 
 		float GetPerspectiveVerticalFOV() const;

@@ -22,8 +22,8 @@ namespace krakoa::scene::panels
 			);
 
 			const auto& window = GetApp().GetWindow();
-			const auto size = Vector2f(window.GetDimensions());
-			const auto aspectRatio = size.x / size.y;
+			const maths::Size size = window.GetDimensions();
+			const auto aspectRatio = size.width / size.height;
 			entity.AddComponent<ecs::components::CameraComponent>(
 				new SceneCamera(iCamera::Bounds{ -aspectRatio, aspectRatio, -1.f, 1.f })
 			);

@@ -82,7 +82,7 @@ namespace krakoa
 
 		void OnEvent(events::Event& e);
 		bool OnWindowClosed(events::WindowClosedEvent& e);
-		bool OnWindowResize(events::WindowResizeEvent& e) noexcept;
+		bool OnWindowResize(const events::WindowResizeEvent& e) noexcept;
 
 	protected:
 		bool isRunning;

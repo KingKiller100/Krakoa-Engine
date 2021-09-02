@@ -66,12 +66,13 @@ namespace krakoa::scene::panels
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto winSize = GetWindow().GetDimensions();
+		const maths::Size winSize = GetWindow().GetDimensions();
 
-		const auto minDim = winSize / kmaths::constants::OneOver<float>(6);
-		const auto maxDim = minDim * 3;
+		const auto divider = kmaths::constants::OneOver<float>(6);
+		const auto minPoint = maths::Point{ winSize.width / divider, winSize.height / divider };
+		const auto maxPoint = minPoint * 3;
 		
-		ui::SetNextWindowConstraints(minDim, maxDim);
+		ui::SetNextWindowConstraints(minPoint, maxPoint);
 		DrawPanel("Components", [&]()
 		{
 			if (pSelectedEntity.expired())

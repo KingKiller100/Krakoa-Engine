@@ -113,7 +113,8 @@ namespace krakoa
 		auto& io = ImGui::GetIO();
 		const auto& app = GetApp();
 		const auto& dimensions = app.GetWindow().GetDimensions();
-		io.DisplaySize = ImVec2(CAST(float, dimensions.X()), CAST(float, dimensions.Y()));
+		io.DisplaySize = ImVec2(static_cast<float>(dimensions.width), 
+			static_cast<float>(dimensions.height));
 
 		// Rendering
 		ImGui::Render();

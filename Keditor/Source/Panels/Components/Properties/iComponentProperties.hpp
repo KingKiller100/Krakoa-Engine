@@ -55,7 +55,7 @@ namespace krakoa {
 					if (removable)
 					{
 						const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-						DrawSameLine(contentRegionAvail.x - lineHeight * .5f);
+						DrawSameLine(contentRegionAvail.width - lineHeight * .5f);
 
 						const char popupMenuId[] = "Settings";
 						ui::DrawButton("+", { lineHeight, lineHeight }, [&]

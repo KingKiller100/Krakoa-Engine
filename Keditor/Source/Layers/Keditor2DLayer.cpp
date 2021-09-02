@@ -318,7 +318,7 @@ namespace krakoa
 
 					const auto position = ui::GetWindowPosition();
 					const auto dimension = ui::GetWindowDimensions();
-					ImGuizmo::SetRect(position.x, position.y, dimension.x, dimension.y);
+					ImGuizmo::SetRect(position.x, position.y, dimension.width, dimension.height);
 
 					const auto& scnMan = GetApp().GetManager<scene::SceneManager>();
 					const auto weakRef = scnMan.GetCurrentScene();
@@ -419,15 +419,19 @@ namespace krakoa
 
 		auto& frameBuffer = application.GetFrameBuffer();
 		const auto& spec = frameBuffer.GetSpec();
-		const maths::BasicDimensions<unsigned> viewportSize = ui::GetContentRegionAvailable();
+		const auto viewportSize = ui::GetContentRegionAvailable();
 
-		const bool negativeDimension = IsNegative(viewportSize.x) || IsNegative(viewportSize.y);
-		const bool newViewportValues = viewportSize.x != spec.width || viewportSize.y != spec.height;
-		const auto updateViewport = !negativeDimension && newViewportValues;
+		const auto width = static_cast<std::uint32_t>(viewportSize.width);
+		const auto height = static_cast<std::uint32_t>(viewportSize.height);
 
-		if (updateViewport)
+		const bool negativeDimension = IsNegative(width) || IsNegative(height);
+		const bool newViewportValues = width != spec.width || height != spec.height;
+
+		if (!negativeDimension && newViewportValues)
 		{
-			frameBuffer.Resize(viewportSize);
+			const auto vpSize = maths::BasicSize{ width, height };
+
+			frameBuffer.Resize(vpSize);
 			cameraController.Resize(viewportSize);
 		}
 	}

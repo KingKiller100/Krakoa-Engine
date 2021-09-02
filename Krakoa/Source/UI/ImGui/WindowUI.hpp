@@ -8,11 +8,11 @@ namespace krakoa::ui
 {
 	float GetCurrentWindowWidth() noexcept;
 	float GetCurrentWindowHeight() noexcept;
-	maths::Dimensions GetWindowDimensions() noexcept;
+	maths::Size GetWindowDimensions() noexcept;
 	maths::Point GetWindowPosition() noexcept;
 
-	maths::Dimensions GetContentRegionAvailable() noexcept;
+	maths::Size GetContentRegionAvailable() noexcept;
 
-	void SetNextWindowConstraints(kmaths::Vector2f minimum, kmaths::Vector2f maximum);
+	void SetNextWindowConstraints(const maths::Point& minimum, const maths::Point& maximum);
 	
 }

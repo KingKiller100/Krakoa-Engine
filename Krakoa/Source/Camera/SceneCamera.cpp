@@ -50,9 +50,9 @@ namespace krakoa
 		UpdateProjection();
 	}
 
-	void SceneCamera::SetViewportSize(const kmaths::Vector2<std::uint32_t>& dimensions)
+	void SceneCamera::SetViewportSize(const maths::BasicSize<std::uint32_t>& dimensions)
 	{
-		SetViewportSize(dimensions.x, dimensions.y);
+		SetViewportSize(dimensions.width, dimensions.height);
 	}
 
 	SceneCamera::ProjectionType SceneCamera::GetProjectionType() const

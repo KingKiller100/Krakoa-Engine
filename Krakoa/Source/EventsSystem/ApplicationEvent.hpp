@@ -2,19 +2,15 @@
 
 #include "Event.hpp"
 
-#include <Maths/Vectors/Vector2.hpp>
+#include "../Maths/Maths.hpp"
+
 #include <Utility/String/kToString.hpp>
 
 #include <string>
 
 namespace krakoa::events
 {
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<float, 2>;
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<int, 2>;
-
-	using namespace kmaths;
 	using namespace klib;
-
 
 	class KRAKOA_API ApplicationEvent : public Event
 	{
@@ -28,23 +24,23 @@ namespace krakoa::events
 	class KRAKOA_API WindowResizeEvent : public ApplicationEvent
 	{
 	public:
-		WindowResizeEvent(const Vector2u& dimensions)
+		WindowResizeEvent(const maths::uSize& dimensions)
 			: dimensions(dimensions)
 		{}
 
 		WindowResizeEvent(const unsigned width, const unsigned height)
-			: dimensions(width, height)
+			: dimensions( width, height )
 		{}
 
 		USE_RESULT unsigned GetWidth() const noexcept
 		{
-			return dimensions.X();
+			return dimensions.width;
 		}
 		USE_RESULT unsigned GetHeight() const noexcept
 		{
-			return dimensions.Y();
+			return dimensions.height;
 		}
-		USE_RESULT Vector2u& GetDimensions() noexcept
+		USE_RESULT maths::uSize GetDimensions() const noexcept
 		{
 			return dimensions;
 		}
@@ -55,8 +51,9 @@ namespace krakoa::events
 		}
 
 		EVENT_CLASS_TYPE(WINDOW_RESIZE)
+
 	private:
-		Vector2u dimensions;
+		maths::uSize dimensions;
 	};
 
 	class KRAKOA_API WindowOpenEvent : public ApplicationEvent
@@ -89,14 +86,13 @@ namespace krakoa::events
 	class KRAKOA_API WindowMovedEvent : public ApplicationEvent
 	{
 	public:
-		WindowMovedEvent(const Vector2f& newPos)
+		WindowMovedEvent(const maths::Point& newPos)
 			: newPos(newPos)
 		{}
 
 		WindowMovedEvent(const float x, const float y)
 			: newPos(x, y)
 		{}
-
 
 		USE_RESULT float GetX() const noexcept
 		{
@@ -106,19 +102,19 @@ namespace krakoa::events
 		{
 			return newPos.Y();
 		}
-		USE_RESULT Vector2f& GetDimensions() noexcept
+		USE_RESULT maths::Point& GetDimensions() noexcept
 		{
 			return newPos;
 		}
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return kString::ToString("Window Moved Event: New Position - (%.2f, %.2f)", GetX(), GetY());
+			return kString::ToString("Window Moved Event: (%.2f, %.2f)", GetX(), GetY());
 		}
 
 		EVENT_CLASS_TYPE(WINDOW_MOVED)
 
 	private:
-		Vector2f newPos;
+		maths::Point newPos;
 	};
 
 

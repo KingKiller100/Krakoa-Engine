@@ -1,15 +1,11 @@
 #pragma once
 #include "Event.hpp"
+#include "../Maths/Maths.hpp"
 
-#include <Maths/Vectors/Vector2.hpp>
 #include <Utility/String/kToString.hpp>
 
 namespace krakoa::events
 {
-	EXPIMP_TEMPLATE template struct KRAKOA_API kmaths::Vector<float, 2>;
-
-	using namespace kmaths;
-
 	class KRAKOA_API MouseEvent : public Event
 	{
 	public:
@@ -22,17 +18,11 @@ namespace krakoa::events
 	class KRAKOA_API MouseMovedEvent : public MouseEvent
 	{
 	public:
-		MouseMovedEvent(const Vector2f& pos)
+		MouseMovedEvent(const maths::Point& pos)
 			: position(pos)
 		{}
 
-
-		USE_RESULT Vector2f& GetPosition() noexcept
-		{
-			return position;
-		}
-
-		USE_RESULT const Vector2f& GetPosition() const noexcept
+		USE_RESULT maths::Point GetPosition() const noexcept
 		{
 			return position;
 		}
@@ -56,22 +46,17 @@ namespace krakoa::events
 		EVENT_CLASS_TYPE(MOUSE_MOVE)
 
 	private:
-		Vector2f position;
+		maths::Point position;
 	};
 
 	class KRAKOA_API MouseScrolledEvent : public MouseEvent
 	{
 	public:
-		MouseScrolledEvent(const Vector2f& offset)
+		MouseScrolledEvent(const maths::Point& offset)
 			: offset(offset)
 		{}
 
-		USE_RESULT Vector2f& GetOffset() noexcept
-		{
-			return offset;
-		}
-
-		USE_RESULT const Vector2f& GetOffset() const noexcept
+		USE_RESULT maths::Point GetOffset() const noexcept
 		{
 			return offset;
 		}
@@ -94,7 +79,7 @@ namespace krakoa::events
 		EVENT_CLASS_TYPE(MOUSE_SCROLL)
 
 	private:
-		Vector2f offset;
+		maths::Point offset;
 	};
 
 	class KRAKOA_API MouseButtonEvent : public MouseEvent
@@ -111,6 +96,7 @@ namespace krakoa::events
 		MouseButtonEvent(const int button)
 			: button(button)
 		{}
+
 	protected:
 		int button;
 	};
@@ -124,7 +110,7 @@ namespace krakoa::events
 
 		USE_RESULT std::string ToString() const noexcept override
 		{
-			return klib::kString::ToString("Mouse Clicked Event: %d", button);
+			return klib::kString::ToString("Mouse Button Pressed Event: %d", button);
 		}
 
 		EVENT_CLASS_TYPE(MOUSE_CLICK)

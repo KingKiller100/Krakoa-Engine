@@ -144,12 +144,14 @@ namespace krakoa
 		return true;
 	}
 
-	bool Application::OnWindowResize(events::WindowResizeEvent& e) noexcept
+	bool Application::OnWindowResize(const events::WindowResizeEvent& e) noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		isMinimized = e.GetDimensions().MagnitudeSQ() == 0.f;
-		const auto width = CAST(int, e.GetWidth());
-		const auto height = CAST(int, e.GetHeight());
+		const auto width = static_cast<int>(e.GetWidth());
+		const auto height = static_cast<int>(e.GetHeight());
+
+		isMinimized = width == 0 || height == 0 ;
+
 		gfx::Renderer::OnWindowResize(0, 0, width, height);
 		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
 		return false;

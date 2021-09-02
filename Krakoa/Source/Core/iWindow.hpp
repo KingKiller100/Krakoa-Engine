@@ -3,7 +3,7 @@
 #include "EngineMacros.hpp"
 #include "../EventsSystem/Event.hpp"
 
-#include <Maths/Vectors/Vector2.hpp>
+#include "../Maths/Maths.hpp"
 
 #include <any>
 
@@ -14,10 +14,10 @@ namespace krakoa
 	struct WindowProperties
 	{
 		std::string title;
-		Vector2u dimensions;
+		maths::uSize dimensions;
 
 		WindowProperties(const std::string_view& title,
-			const Vector2u& dimensions = Vector2u(1520, 640))
+			const maths::uSize& dimensions = maths::uSize(1520, 640))
 			: title(title), dimensions(dimensions)
 		{}
 	};
@@ -33,7 +33,7 @@ namespace krakoa
 
 		virtual void OnUpdate() = 0;
 
-		virtual const kmaths::Vector2u& GetDimensions() const = 0;
+		[[nodiscard]] virtual maths::uSize GetDimensions() const = 0;
 		USE_RESULT virtual unsigned GetWidth() const = 0;
 		USE_RESULT virtual unsigned GetHeight() const = 0;
 

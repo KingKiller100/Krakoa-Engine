@@ -11,11 +11,11 @@ namespace krakoa
 	{
 	public:
 		WindowsWindow(const WindowProperties& props);
-		~WindowsWindow();
+		~WindowsWindow() override;
 
 		void OnUpdate() override;
 
-		const kmaths::Vector2u& GetDimensions() const override;
+		[[nodiscard]] maths::uSize GetDimensions() const override;
 
 		USE_RESULT unsigned GetWidth() const override;
 		USE_RESULT unsigned GetHeight() const override;
@@ -41,7 +41,7 @@ namespace krakoa
 		struct WindowData
 		{
 			std::string title;
-			kmaths::Vector2u dimensions;
+			maths::uSize dimensions;
 			bool vSyncOn = false;
 
 			EventCallbackFunc eventCallBack;

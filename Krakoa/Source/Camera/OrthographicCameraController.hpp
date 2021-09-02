@@ -24,7 +24,7 @@ namespace krakoa
 		void SetTranslationSpeed(const float transSpeed) noexcept;
 
 		void Resize(float width, float height);
-		void Resize(kmaths::Vector2f dimensions);
+		void Resize(const maths::Size& dimensions);
 		
 		const iCamera::Bounds& GetBounds() const;
 

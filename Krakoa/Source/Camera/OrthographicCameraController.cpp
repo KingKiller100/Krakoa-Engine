@@ -103,9 +103,9 @@ namespace krakoa
 		return false;
 	}
 
-	void OrthographicCameraController::Resize(kmaths::Vector2f dimensions)
+	void OrthographicCameraController::Resize(const maths::Size& dimensions)
 	{
-		Resize(dimensions.x, dimensions.y);
+		Resize(dimensions.width, dimensions.height);
 	}
 
 	void OrthographicCameraController::Resize(float width, float height)

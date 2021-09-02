@@ -3,7 +3,6 @@
 #include "../Core/EngineMacros.hpp"
 
 #include <functional>
-#include <ostream>
 #include <string>
 
 namespace krakoa::events

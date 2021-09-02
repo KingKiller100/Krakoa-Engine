@@ -30,15 +30,15 @@ namespace krakoa
 	namespace
 	{
 		bool isInitialized = false;
-	}
 
-	static void GLFWErrorCallback(int errorCode, const char* description)
-	{
-		const auto msg =
-			ToString("GLFW_ERROR: [{0}] {1}"
-				, errorCode
-				, description);
-		KRK_ERR(msg);
+		void GLFWErrorCallback(int errorCode, const char* description)
+		{
+			const auto msg =
+				ToString("GLFW_ERROR: [{0}] {1}"
+					, errorCode
+					, description);
+			KRK_ERR(msg);
+		}
 	}
 
 	iWindow* iWindow::Create(const WindowProperties& props)
@@ -71,8 +71,8 @@ namespace krakoa
 
 		KRK_NRM(kString::ToString("Creating {0} window with dimensions ({1}, {2})",
 			data.title,
-			data.dimensions.X(),
-			data.dimensions.Y()));
+			data.dimensions.width,
+			data.dimensions.height));
 
 		if (!isInitialized)
 		{
@@ -95,7 +95,7 @@ namespace krakoa
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-		window = glfwCreateWindow(data.dimensions.X(), data.dimensions.Y(), data.title.data(),
+		window = glfwCreateWindow(data.dimensions.width, data.dimensions.height, data.title.data(),
 			nullptr, nullptr);
 
 		KRK_ASSERT(window != nullptr, "Window pointer not created");
@@ -115,10 +115,10 @@ namespace krakoa
 		// Set up window callbacks
 		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
-			const unsigned w = CAST(unsigned, width);
-			const unsigned h = CAST(unsigned, height);
+			const auto w = static_cast<unsigned>(width);
+			const auto h = static_cast<unsigned>(height);
 			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			data.dimensions = kmaths::Vector2u(w, h);
+			data.dimensions = { w, h };
 			WindowResizeEvent e(w, h);
 			data.eventCallBack(e);
 		});
@@ -212,7 +212,7 @@ namespace krakoa
 		pRenderContext->SwapBuffers();
 	}
 
-	const kmaths::Vector2u& WindowsWindow::GetDimensions() const
+	maths::uSize WindowsWindow::GetDimensions() const
 	{
 		KRK_PROFILE_FUNCTION();
 		return data.dimensions;
@@ -221,13 +221,13 @@ namespace krakoa
 	unsigned WindowsWindow::GetWidth() const
 	{
 		KRK_PROFILE_FUNCTION();
-		return data.dimensions.X();
+		return data.dimensions.width;
 	}
 
 	unsigned WindowsWindow::GetHeight() const
 	{
 		KRK_PROFILE_FUNCTION();
-		return data.dimensions.Y();
+		return data.dimensions.height;
 	}
 
 	void WindowsWindow::SetEventCallback(const EventCallbackFunc& cb)

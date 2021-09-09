@@ -50,7 +50,7 @@ namespace krakoa::debug::win32
 		if (response == MessageBoxResponse::MSGBOX_CANCEL
 			|| response == MessageBoxResponse::MSGBOX_ABORT)
 		{
-			exit(1);
+			std::terminate();
 		}
 		else if (response.Compare(MessageBoxResponse::MSGBOX_TRY_AGAIN)
 			|| response == MessageBoxResponse::MSGBOX_RETRY)

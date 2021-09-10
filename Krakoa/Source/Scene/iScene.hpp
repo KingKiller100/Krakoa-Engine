@@ -1,17 +1,13 @@
 ﻿#pragma once
 #include "Entity/ECS_UID.hpp"
-
+#include "Entity/Entity.hpp"
 #include "SceneConstants.hpp"
 
 #include <functional>
 
+
 namespace krakoa::scene
-{
-	namespace ecs
-	{
-		class Entity;
-	}
-	
+{	
 	class iScene : protected SceneConstants
 	{
 	public:
@@ -38,6 +34,12 @@ namespace krakoa::scene
 		virtual const ecs::Entity& GetEntity(const std::string& name) const = 0;
 		virtual ecs::Entity& GetEntity(ecs::EntityUID id) = 0;
 		virtual ecs::Entity& GetEntity(const std::string& name) = 0;
+
+		template<typename Component>
+		Component& GetComponent(ecs::EntityUID id) const
+		{
+			return GetEntity(id).GetComponent<Component>();
+		}
 
 		virtual bool HasEntity(const std::string& name) const = 0;
 		virtual bool HasEntity(const ecs::EntityUID eid) const = 0;

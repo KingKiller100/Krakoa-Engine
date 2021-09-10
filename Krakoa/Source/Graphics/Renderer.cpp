@@ -27,7 +27,6 @@ namespace krakoa::gfx
 		RenderCommand::Initialize();
 		s_ShaderLib.Initialize();
 		Renderer2D::Initialize(s_ShaderLib);
-		// LogGFX("Architecture Info Concluded");
 	}
 
 	void Renderer::ShutDown()

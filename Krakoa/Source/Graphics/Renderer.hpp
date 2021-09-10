@@ -4,34 +4,38 @@
 
 #include <Maths/Matrices/MatrixMathsHelper.hpp>
 
-namespace krakoa { class OrthographicCamera; }
-
-namespace krakoa::gfx
+namespace krakoa
 {
-	class iShader;
-	class ShaderLibrary;
+	class OrthographicCamera;
 
-	class Renderer
+	namespace gfx
 	{
-	public:
-		static void Initialize();
-		static void ShutDown();
+		class iShader;
+		class ShaderLibrary;
 
-		static void OnWindowResize(const int x, const int y, const int width, const int height)  noexcept;
+		class Renderer
+		{
+		public:
+			static void Initialize();
+			static void ShutDown();
 
-		static void BeginScene(const OrthographicCamera& camera);
-		static void EndScene();
-		static void Submit(iShader& shader, const iVertexArray& vertexArray
-			, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>());
+			static void OnWindowResize(const int x, const int y, const int width, const int height)  noexcept;
 
-		static void Update();
-		
-		static void Clear();
-		static void SetClearColour(const Colour& colour);
+			static void BeginScene(const OrthographicCamera& camera);
+			static void EndScene();
+			static void Submit(iShader& shader, const iVertexArray& vertexArray
+				, const kmaths::TransformMatrix<float>& transform = kmaths::GetTransformIdentity<float>());
 
-		static inline iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
+			static void Update();
 
-	private:
-		static ShaderLibrary s_ShaderLib;
-	};
+			static void Clear();
+			static void SetClearColour(const Colour& colour);
+
+			static iRendererAPI::API GetAPI()  noexcept { return iRendererAPI::GetAPI(); }
+			static bool QueryAPI(const iRendererAPI::API api) { return GetAPI() == api; }
+
+		private:
+			static ShaderLibrary s_ShaderLib;
+		};
+	}
 }

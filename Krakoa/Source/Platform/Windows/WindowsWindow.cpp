@@ -86,12 +86,12 @@ namespace krakoa
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-		if (klib::GetPlatform() & klib::PlatformOS::APPLE)
+		if (klib::QueryPlatform(PlatformOS::APPLE))
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
 
 #if defined(KRAKOA_DEBUG)
-		if (gfx::Renderer::GetAPI() == gfx::iRendererAPI::API::OPENGL)
+		if (gfx::Renderer::QueryAPI(gfx::iRendererAPI::API::OPENGL))
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 

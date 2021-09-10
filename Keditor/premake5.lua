@@ -4,6 +4,7 @@ project "Keditor"
     cppdialect "C++latest"
     characterset ("default")
     staticruntime "On"
+    locale "en-GB"
 
     targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
     objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")
@@ -54,7 +55,7 @@ project "Keditor"
         runtime "Debug"
 
     filter "configurations:Test"
-        targetdir ("bin/" .. OutputDir ..  "/Component Tests")
+        -- targetdir ("bin/" .. OutputDir ..  "/Component Tests")
         targetname ("Test")
         defines 
         {

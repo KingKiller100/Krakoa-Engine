@@ -301,12 +301,12 @@ namespace krakoa
 
 					UpdateViewport();
 
-					auto& frameBuffer = GetApp().GetFrameBuffer();
+					const auto& frameBuffer = GetApp().GetFrameBuffer();
 					const auto& spec = frameBuffer.GetSpec();
 					const size_t texID = frameBuffer.GetColourAttachmentAssetID();
 
 					ImGui::Image((void*)texID, ImVec2(static_cast<float>(spec.width), static_cast<float>(spec.height)),
-						{ 0, 1.f }, { 1, 0 });
+						{ 0.f, 1.f }, { 1.f, 0.f });
 
 					// Gizmos
 					const auto selectedEntityID = sceneHierarchyPanel.GetSelectedEntity();
@@ -321,26 +321,37 @@ namespace krakoa
 					ImGuizmo::SetRect(position.x, position.y, dimension.width, dimension.height);
 
 					const auto& scnMan = GetApp().GetManager<scene::SceneManager>();
-					const auto weakRef = scnMan.GetCurrentScene();
-					if (weakRef.expired())
+					const auto sceneRef = scnMan.GetCurrentScene();
+					if (sceneRef.expired())
 						return;
 
-					const auto scene = weakRef.lock();
+					const auto scene = sceneRef.lock();
 					const auto camEntity = scene->GetPrimaryCameraEntity();
 					if (camEntity.GetID().IsNull())
 						return;
 
 					const auto& camera = camEntity.GetComponent<CameraComponent>().GetCamera();
 					const auto& projection = camera.GetProjectionMatrix();
-					const auto view = camEntity.GetComponent<TransformComponent>().GetTransformationMatrix2D().Inverse();
+					const auto camTransform = camEntity.GetComponent<TransformComponent>().GetTransformationMatrix2D();
+					const auto view = camTransform.Inverse();
 
-					const auto& selectedTransformComp = scene->GetEntity(selectedEntityID).GetComponent<TransformComponent>();
-					const auto transform = selectedTransformComp.GetTransformationMatrix2D();
+					auto& selectedTransformComp = scene->GetComponent<TransformComponent>(selectedEntityID);
+					auto transform = selectedTransformComp.GetTransformationMatrix2D();
 
+					transform[3] = selectedTransformComp.GetPosition();
+					
 					ImGuizmo::Manipulate(view.GetPointerToData(), projection.GetPointerToData(),
 						ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, transform.GetPointerToData());
-
 					
+					if (ImGuizmo::IsUsing())
+					{
+						kmaths::Vector3f pos, rot, scl;
+						maths::DecomposeTransform(transform, pos, rot, scl);
+						const auto deltaRot = rot - selectedTransformComp.GetRotation();
+						// selectedTransformComp.SetRotation(selectedTransformComp.GetRotation() + deltaRot);
+						 selectedTransformComp.SetPosition(pos);
+						// selectedTransformComp.SetScale(scl);
+					}
 				});
 			});
 

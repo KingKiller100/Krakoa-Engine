@@ -21,7 +21,7 @@ namespace krakoa::filesystem
 		const auto files = VirtualFileExplorer::GetFiles("Fonts", ".ttf", FileSearchMode::RECURSIVE);
 		for (auto&& file : files)
 		{
-			for (auto size : typicalFontSizes)
+			for (const auto size : typicalFontSizes)
 			{
 				LoadFont(file, size);
 			}

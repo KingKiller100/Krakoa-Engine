@@ -29,6 +29,7 @@ namespace krakoa::scene::ecs::components
 		void SetRotationY(const maths::Vector3f::Type& value) noexcept;
 		void SetRotationZ(const maths::Vector3f::Type& value) noexcept;
 
+		USE_RESULT maths::TransformMatrix<float> GetTransformationMatrix() const noexcept;
 		USE_RESULT maths::TransformMatrix<float> GetTransformationMatrix2D() const noexcept;
 		
 	private:

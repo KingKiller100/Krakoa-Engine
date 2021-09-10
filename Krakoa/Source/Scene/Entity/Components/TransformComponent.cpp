@@ -29,11 +29,18 @@ namespace krakoa::scene::ecs::components
 	{
 		KRK_PROFILE_FUNCTION();
 
-		return kmaths::TRS(position, rotations.z, { 0,0,1 }, scale);
-		// const auto quaternions = kmaths::Quaternionf::EulerToQuaternions(rotations);
-		// auto transform = quaternions.CalculateTransformMatrix(position)
-			// * kmaths::Scale(scale);
-		// return transform;
+		//return kmaths::TRS(position, rotations.z, { 1, 1,1 },  scale);
+		const auto quaternions = kmaths::Quaternionf::EulerToQuaternions(rotations);
+		auto transform = quaternions.CalculateTransformMatrix(position)
+			* kmaths::Scale(scale);
+		return transform;
+	}
+
+	kmaths::TransformMatrix<float> TransformComponent::GetTransformationMatrix() const noexcept
+	{
+		KRK_PROFILE_FUNCTION();
+
+		return kmaths::TRS(position, rotations.z, { 1.f, 1.f, 1.f }, scale);
 	}
 
 	void TransformComponent::SetScale(const kmaths::Vector2f& value)

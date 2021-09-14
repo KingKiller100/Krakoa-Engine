@@ -17,6 +17,8 @@
 
 #include <ImGuizmo.h>
 
+#include "Maths/Quaternions/QuaternionsMathsHelper.hpp"
+
 namespace krakoa
 {
 	using namespace gfx;
@@ -346,7 +348,12 @@ namespace krakoa
 					if (ImGuizmo::IsUsing())
 					{
 						kmaths::Vector3f pos, rot, scl;
-						maths::DecomposeTransform(transform, pos, rot, scl);
+						auto qua = Quaternion<float>(1.f, 0, 0, 0, Theta::DEGREES);
+						auto skew = Vector3f{};
+						auto perspective = Vector4f{};
+						maths::DecomposeTransform(transform, scl, qua,
+							pos, skew, perspective);
+						// maths::DecomposeTransform(transform, pos, rot, scl);
 						const auto deltaRot = rot - selectedTransformComp.GetRotation();
 						// selectedTransformComp.SetRotation(selectedTransformComp.GetRotation() + deltaRot);
 						 selectedTransformComp.SetPosition(pos);

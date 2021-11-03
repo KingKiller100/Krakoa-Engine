@@ -38,7 +38,7 @@ namespace krakoa
 	class KRAKOA_API Application : public patterns::ManagerBase<Application>, util::TypeUniqueIdentifier<>
 	{
 	public:
-		Application(Token&, const std::string_view& appName = "Krakoa Engine");
+		Application( Token&, const std::string_view& appName = "Krakoa Engine" );
 		virtual ~Application();
 
 		virtual void Initialize();
@@ -51,38 +51,38 @@ namespace krakoa
 		USE_RESULT gfx::iFrameBuffer& GetFrameBuffer() const;
 		USE_RESULT ImGuiLayer& GetImGuiLayer() const;
 
-		template<typename Manager>
+		template <typename Manager>
 		USE_RESULT Manager& GetManager() const
 		{
-			return klib::ToImpl<Manager>(managers[GetUniqueID<Manager>()]);
+			return klib::ToImpl<Manager>( managers[GetUniqueID<Manager>()] );
 		}
 
 	protected:
-		void PushLayer(LayerBase* layer);
-		void PushOverlay(LayerBase* overlay);
-		void PopLayer(LayerBase* layer);
-		void PopOverlay(LayerBase* overlay);
-		
-		template<typename Manager>
-		void AddManager(Manager* ptr)
+		void PushLayer( LayerBase* layer );
+		void PushOverlay( LayerBase* overlay );
+		void PopLayer( LayerBase* layer );
+		void PopOverlay( LayerBase* overlay );
+
+		template <typename Manager>
+		void AddManager( Manager* ptr )
 		{
-			managers.emplace_back(ptr);
-			(void)GetUniqueID<Manager>();
+			managers.emplace_back( ptr );
+			( void )GetUniqueID<Manager>();
 		}
 
-		template<typename Manager, typename ...Args>
-		void RegisterManager(Args&& ...args)
+		template <typename Manager, typename ...Args>
+		void RegisterManager( Args&& ...args )
 		{
-			Manager::Create(std::forward<Args>(args)...);
-			AddManager(Manager::Pointer());
+			Manager::Create( std::forward<Args>( args )... );
+			AddManager( Manager::Pointer() );
 		}
 
 	private:
 		void PushInternalLayers();
 
-		void OnEvent(events::Event& e);
-		bool OnWindowClosed(events::WindowClosedEvent& e);
-		bool OnWindowResize(const events::WindowResizeEvent& e) noexcept;
+		void OnEvent( events::Event& e );
+		bool OnWindowClosed( events::WindowClosedEvent& e );
+		bool OnWindowResize( const events::WindowResizeEvent& e ) noexcept;
 
 	protected:
 		bool isRunning;
@@ -92,15 +92,14 @@ namespace krakoa
 		Solo_Ptr<gfx::iFrameBuffer> frameBuffer;
 
 		std::vector<iSingleton*> managers;
-		
+
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;
 		bool isMinimized;
 	};
-	
+
 	Application& GetApp();
 
 	iWindow& GetWindow();
-
 }

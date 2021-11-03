@@ -24,24 +24,24 @@
 
 namespace krakoa
 {
-	Application::Application(Token&, const std::string_view& appName)
-		: isRunning(true)
-		, timeStep(/*120*/)
-		, isMinimized(false)
+	Application::Application( Token&, const std::string_view& appName )
+		: isRunning( true )
+		, timeStep( /*120*/ )
+		, isMinimized( false )
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_ASSERT(!instance, "Instance of application " + std::string(appName) + " already exists!");
+		KRK_ASSERT( !instance, "Instance of application " + std::string(appName) + " already exists!" );
 
 		//timeStep.SetSpeedMultiplier(5);
 
 		// Initialize Window
-		pWindow = std::unique_ptr<iWindow>(iWindow::Create(WindowProperties(appName)));
-		pWindow->SetEventCallback(KRK_BIND_FUNC(Application::OnEvent));
+		pWindow = std::unique_ptr<iWindow>( iWindow::Create( WindowProperties( appName ) ) );
+		pWindow->SetEventCallback( KRK_BIND_FUNC( Application::OnEvent ) );
 	}
 
 	Application::~Application()
-		= default;
+	= default;
 
 	void Application::Initialize()
 	{
@@ -51,30 +51,30 @@ namespace krakoa
 
 		// Initialize InputManager
 		input::InputManager::Initialize();
-		AddManager(input::InputManager::Pointer());
+		AddManager( input::InputManager::Pointer() );
 
 		RegisterManager<filesystem::AssetManager>();
 
 		gfx::Renderer::Initialize();
 
-		AddManager(new scene::SceneManager());
+		AddManager( new scene::SceneManager() );
 
-		frameBuffer.reset(gfx::iFrameBuffer::Create({ 1024, 640, 1, false }));
+		frameBuffer.reset( gfx::iFrameBuffer::Create( {1024, 640, 1, false} ) );
 
 		auto& assetMan = GetManager<filesystem::AssetManager>();
 		assetMan.Initialize();
-		assetMan.GetFontLibrary().MakeDefault("OpenSans", 18.f);
+		assetMan.GetFontLibrary().MakeDefault( "OpenSans", 18.f );
 	}
 
 	void Application::PushInternalLayers()
 	{
 		// Initialize Layer
 		pImGuiLayer = new ImGuiLayer();
-		PushOverlay(pImGuiLayer);
+		PushOverlay( pImGuiLayer );
 
-		PushOverlay(new LoggerLayer());
-		PushOverlay(new FPSLayer());
-		PushOverlay(new Renderer2DStatistics());
+		PushOverlay( new LoggerLayer() );
+		PushOverlay( new FPSLayer() );
+		PushOverlay( new Renderer2DStatistics() );
 	}
 
 	void Application::Run() const
@@ -83,17 +83,17 @@ namespace krakoa
 			const auto deltaTime = timeStep.GetStep();
 			auto& sceneManager = GetManager<scene::SceneManager>();
 
-			if (input::InputManager::IsKeyPressed(input::KEY_V))
+			if ( input::InputManager::IsKeyPressed( input::KEY_V ) )
 				pImGuiLayer->ToggleVisibility();
 
-			if (!isMinimized)
+			if ( !isMinimized )
 			{
-				layerStack.OnUpdate(deltaTime);
+				layerStack.OnUpdate( deltaTime );
 			}
 
 			frameBuffer->Bind();
 			gfx::Renderer::Update();
-			sceneManager.OnUpdate(deltaTime);
+			sceneManager.OnUpdate( deltaTime );
 			frameBuffer->Unbind();
 
 			pImGuiLayer->BeginDraw();
@@ -101,17 +101,17 @@ namespace krakoa
 			pImGuiLayer->EndDraw();
 
 			pWindow->OnUpdate();
-		} while (IsRunning());
+		} while ( IsRunning() );
 	}
 
 	void Application::ShutDown()
 	{
-		KRK_BANNER("Closing App", "Shut Down", "*", "*", 10);
+		KRK_BANNER( "Closing App", "Shut Down", "*", "*", 10 );
 		gfx::Renderer::ShutDown();
 
-		for (auto* manager : managers)
+		for ( auto* manager : managers )
 		{
-			if (manager)
+			if ( manager )
 			{
 				delete manager;
 				manager = nullptr;
@@ -120,65 +120,65 @@ namespace krakoa
 
 		const auto appTimeSpan = timeStep.GetLifeTimeTimeSpan();
 
-		KRK_NRM(klib::ToString("Total Runtime: {0}h {1}m {2}s",
+		KRK_NRM( klib::ToString("Total Runtime: {0}h {1}m {2}s",
 			appTimeSpan.hours.count()
 			, appTimeSpan.minutes.count()
 			, appTimeSpan.seconds.count()
-		));
+		) );
 	}
 
-	void Application::OnEvent(events::Event& e)
+	void Application::OnEvent( events::Event& e )
 	{
 		KRK_PROFILE_FUNCTION();
-		events::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<events::WindowClosedEvent>(KRK_BIND_FUNC(Application::OnWindowClosed));
-		dispatcher.Dispatch<events::WindowResizeEvent>(KRK_BIND_FUNC(Application::OnWindowResize));
+		events::EventDispatcher dispatcher( e );
+		dispatcher.Dispatch<events::WindowClosedEvent>( KRK_BIND_FUNC( Application::OnWindowClosed ) );
+		dispatcher.Dispatch<events::WindowResizeEvent>( KRK_BIND_FUNC( Application::OnWindowResize ) );
 
-		layerStack.OnEvent(e);
+		layerStack.OnEvent( e );
 	}
 
-	bool Application::OnWindowClosed(events::WindowClosedEvent& e)
+	bool Application::OnWindowClosed( events::WindowClosedEvent& e )
 	{
 		KRK_PROFILE_FUNCTION();
 		isRunning = false;
 		return true;
 	}
 
-	bool Application::OnWindowResize(const events::WindowResizeEvent& e) noexcept
+	bool Application::OnWindowResize( const events::WindowResizeEvent& e ) noexcept
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto width = static_cast<int>(e.GetWidth());
-		const auto height = static_cast<int>(e.GetHeight());
+		const auto width = static_cast<int>( e.GetWidth() );
+		const auto height = static_cast<int>( e.GetHeight() );
 
-		isMinimized = width == 0 || height == 0 ;
+		isMinimized = width == 0 || height == 0;
 
-		gfx::Renderer::OnWindowResize(0, 0, width, height);
-		KRK_DBG(util::Fmt("Resize window event: ({0}, {1})", width, height));
+		gfx::Renderer::OnWindowResize( 0, 0, width, height );
+		KRK_DBG( util::Fmt("Resize window event: ({0}, {1})", width, height) );
 		return false;
 	}
 
-	void Application::PushLayer(LayerBase* layer)
+	void Application::PushLayer( LayerBase* layer )
 	{
 		KRK_PROFILE_FUNCTION();
-		layerStack.PushLayer(layer);
+		layerStack.PushLayer( layer );
 	}
 
-	void Application::PushOverlay(LayerBase* overlay)
+	void Application::PushOverlay( LayerBase* overlay )
 	{
 		KRK_PROFILE_FUNCTION();
-		layerStack.PushOverlay(overlay);
+		layerStack.PushOverlay( overlay );
 	}
 
-	void Application::PopLayer(LayerBase* layer)
+	void Application::PopLayer( LayerBase* layer )
 	{
 		KRK_PROFILE_FUNCTION();
-		layerStack.PopLayer(layer);
+		layerStack.PopLayer( layer );
 	}
 
-	void Application::PopOverlay(LayerBase* overlay)
+	void Application::PopOverlay( LayerBase* overlay )
 	{
 		KRK_PROFILE_FUNCTION();
-		layerStack.PopOverlay(overlay);
+		layerStack.PopOverlay( overlay );
 	}
 
 	void Application::Close() noexcept

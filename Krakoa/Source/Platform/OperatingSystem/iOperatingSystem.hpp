@@ -11,9 +11,8 @@
 #include <HelperMacros.hpp>
 
 
-
 namespace krakoa::os
-{	
+{
 	class iOperatingSystem : public patterns::SimpleSingleton<iOperatingSystem>
 	{
 	public:

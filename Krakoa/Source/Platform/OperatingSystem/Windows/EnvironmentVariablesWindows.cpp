@@ -16,18 +16,18 @@ namespace krakoa::os
 		ReadInVariables();
 	}
 
-	std::basic_string<char> EnvironmentVariablesWindows::GetVariable(const std::basic_string<char>& varKey) const
+	std::basic_string<char> EnvironmentVariablesWindows::GetVariable( const std::basic_string<char>& varKey ) const
 	{
-		return variables.at(varKey);
+		return variables.at( klib::ToLower( varKey ) );
 	}
 
 	std::vector<EnvironmentVariablesWindows::StringView> EnvironmentVariablesWindows::GetKeys() const
 	{
 		std::vector<StringView> keys;
 
-		for (auto&& variable : variables)
+		for ( const auto& [key, _] : variables )
 		{
-			keys.emplace_back(variable.first);
+			keys.emplace_back( key );
 		}
 
 		return keys;
@@ -37,30 +37,30 @@ namespace krakoa::os
 	{
 		auto* envStr = GetEnvironmentStrings();
 
-		while (*envStr != '\0')
+		while ( *envStr != '\0' )
 		{
 			++envStr;
 		}
 
 		++envStr;
 
-		while (*envStr != '\0')
+		while ( *envStr != '\0' )
 		{
-			if (*envStr == '=')
+			if ( *envStr == '=' )
 			{}
 			else
 			{
-				const auto eqPos = klib::Find_First_Of(envStr, '=');
-				if (eqPos != Terminator)
+				const auto eqPos = klib::Find_First_Of( envStr, '=' );
+				if ( eqPos != Terminator )
 				{
-					String key(envStr, eqPos);
+					String key( envStr, eqPos );
 					envStr += eqPos + 1;
 					String value = envStr;
 					envStr += value.size();
-					variables.emplace(klib::ToLower(key), value);
+					variables.emplace( klib::ToLower( key ), value );
 				}
 			}
-			
+
 			++envStr;
 		}
 	}

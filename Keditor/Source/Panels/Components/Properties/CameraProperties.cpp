@@ -117,7 +117,10 @@ namespace krakoa::scene::panels
 
 				if (selected)
 					ui::SetItemDefaultFocused();
+					
 			});
+
+			return true;
 		});
 	}
 }

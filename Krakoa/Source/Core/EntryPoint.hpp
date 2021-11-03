@@ -34,7 +34,7 @@ namespace krakoa
 
 void Launch();
 void InitializeVirtualFileSystem();
-void InitializeGlobalConfig();
+void InitializeGlobalConfig( const krakoa::os::iOperatingSystem& os );
 void TryRunApplication();
 void RunApplication();
 
@@ -69,7 +69,7 @@ void Launch()
 	auto& operatingSystem = krakoa::os::iOperatingSystem::Reference();
 
 	InitializeVirtualFileSystem();
-	InitializeGlobalConfig();
+	InitializeGlobalConfig(operatingSystem);
 
 	krakoa::EngineLogger::SetMinimumLogLevelUsingConfig();
 	krakoa::EngineLogger::RemoveIfTooOldFile();
@@ -103,11 +103,10 @@ void InitializeVirtualFileSystem()
 	krakoa::filesystem::VirtualFileExplorer::Mount("Keditor\\Assets", "Assets");
 }
 
-void InitializeGlobalConfig()
+void InitializeGlobalConfig( const krakoa::os::iOperatingSystem& os )
 {
 	using namespace krakoa::configurations;
 
-	const auto& os = krakoa::os::iOperatingSystem::Reference();
 	const auto& sysEnv = os.GetEnvironmentVariables();
 	const auto envKeys = sysEnv.GetKeys();
 
@@ -151,7 +150,6 @@ void TryRunApplication()
 
 void RunApplication()
 {
-
 	auto& pApp = krakoa::Application::Reference();
 	pApp.Initialize();
 	KRK_PROFILE_SESSION_END();

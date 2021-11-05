@@ -1,6 +1,9 @@
 ﻿#include "Precompile.hpp"
 #include "EnvironmentVariablesWindows.hpp"
 
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
+#include "../LogOS.hpp"
+
 #include <Utility/String/Tricks/kStringFind.hpp>
 
 #include <Windows.h>
@@ -16,9 +19,9 @@ namespace krakoa::os
 		ReadInVariables();
 	}
 
-	std::basic_string<char> EnvironmentVariablesWindows::GetVariable( const std::basic_string<char>& varKey ) const
+	std::basic_string_view<EnvironmentVariablesWindows::CharT> EnvironmentVariablesWindows::GetVariable( const std::basic_string_view<CharT>& varKey ) const
 	{
-		return variables.at( klib::ToLower( varKey ) );
+		return variables.at( ResolveKey( varKey ) );
 	}
 
 	std::vector<EnvironmentVariablesWindows::StringView> EnvironmentVariablesWindows::GetKeys() const
@@ -36,6 +39,13 @@ namespace krakoa::os
 	void EnvironmentVariablesWindows::ReadInVariables()
 	{
 		auto* envStr = GetEnvironmentStrings();
+
+		if ( envStr == nullptr )
+		{
+			static constexpr auto msg = "GetEnvironmentStrings() returned nullptr";
+			LogOSError( msg );
+			throw std::runtime_error( msg );
+		}
 
 		while ( *envStr != '\0' )
 		{
@@ -57,11 +67,19 @@ namespace krakoa::os
 					envStr += eqPos + 1;
 					String value = envStr;
 					envStr += value.size();
-					variables.emplace( klib::ToLower( key ), value );
+					variables.emplace( ResolveKey( key ), value );
 				}
 			}
 
 			++envStr;
 		}
 	}
+
+	EnvironmentVariablesWindows::String EnvironmentVariablesWindows::ResolveKey( StringView key ) const
+	{
+		return klib::ToLower( key );
+	}
 }
+
+#endif
+

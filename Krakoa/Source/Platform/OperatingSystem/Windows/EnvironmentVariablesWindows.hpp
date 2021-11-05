@@ -3,6 +3,8 @@
 #include "../EnvironmentVariables/iEnvironmentVariables.hpp"
 #include <unordered_map>
 
+#if defined(_WIN32) || defined(KRAKOA_OS_WINDOWS)
+
 namespace krakoa::os
 {
 	class EnvironmentVariablesWindows : public iEnvironmentVariables<char>
@@ -19,14 +21,18 @@ namespace krakoa::os
 	public:
 		EnvironmentVariablesWindows();
 		~EnvironmentVariablesWindows() override = default;
-		[[nodiscard]] String GetVariable(const String& varKey) const override;
+		[[nodiscard]] std::basic_string_view<CharT> GetVariable( const std::basic_string_view<CharT>& varKey ) const override;
 		[[nodiscard]] std::vector<StringView> GetKeys() const override;
 		
 	
 	private:
 		void ReadInVariables();
+		String ResolveKey(StringView key) const;
 
 	private:
 		std::unordered_map<String, String> variables;
 	};
 }
+
+#endif
+

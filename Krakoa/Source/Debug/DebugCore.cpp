@@ -1,41 +1,60 @@
 ﻿#include "Precompile.hpp"
 
 #include "DebugCore.hpp"
-#include "Windows/DebugMessageBox.hpp"
+#include "../Platform/OperatingSystem/MessageBox/MessageBox.hpp"
 
 #include "../Logging/EngineLogger.hpp"
 
 #include <Utility/String/kToString.hpp>
+#include <Utility/Debug/kDebugger.hpp>
 
-#if KRAKOA_OS_WINDOWS
-#	include <Windows.h>
-#endif
 
 namespace krakoa::debug
 {
-	void RaiseNotice(const std::string_view& msg, const klib::SourceInfo& sourceInfo)
-	{
-		KRK_WRN(msg);
+	using namespace os;
 
-		const auto errorMsg = klib::kString::ToString("{0}"
-			"\nClick \"Abort\" to close application."
-			"\nClick \"Retry\" to break."
-			"\nClick \"Ignore\" to continue."
-			, msg);
+	void RaiseNotice( const std::string_view& msg, const klib::SourceInfo& sourceInfo )
+	{
+		KRK_ERR( msg );
+
+		const auto text = klib::ToString( "[Desc] {0}\n"
+			"Click \"Abort\" to close application.\n"
+			"Click \"Retry\" to break.\n"
+			"Click \"Ignore\" to continue.\n"
+			"[File]: {1}\n"
+			"[Line]: {2}\n"
+			"[Func]: {3}\n"
+			, msg
+			, sourceInfo.file
+			, sourceInfo.line
+			, sourceInfo.func
+		);
 		
-#if KRAKOA_OS_WINDOWS
-		win32::RaiseMessageBox_Win32("Krakoa Debug Error", errorMsg, sourceInfo, MB_ABORTRETRYIGNORE | MB_ICONERROR);
-#endif
+		os::MessageBoxDisplay::Show( "Krakoa Debug Error", text, 
+			MessageBoxButton::ABORTRE_TRY_IGNORE | MessageBoxIcon::ERROR | MessageBoxDefaultButton::BTN_2,
+			[](os::MessageBoxResponse response)
+			{
+				if (response == os::MessageBoxResponse::MSGBOX_CANCEL
+					|| response == os::MessageBoxResponse::MSGBOX_ABORT)
+				{
+					std::terminate();
+				}
+				else if (response == os::MessageBoxResponse::MSGBOX_TRY_AGAIN
+					|| response == os::MessageBoxResponse::MSGBOX_RETRY)
+				{
+					klib::BreakPoint();
+				}
+			});
 	}
 
-	void RaiseException(const std::string_view& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger)
+	void RaiseException( const std::string_view& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger )
 	{
-		logger.AddFatal({
+		logger.AddFatal( {
 			msg
 			, sourceInfo
 			, klib::CalendarInfoSourceType::LOCAL
-			});
+		} );
 
-		throw std::exception(msg.data());
+		throw std::exception( msg.data() );
 	}
 }

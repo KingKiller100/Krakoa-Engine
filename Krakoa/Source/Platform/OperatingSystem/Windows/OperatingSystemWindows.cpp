@@ -4,7 +4,7 @@
 #include "FileDialogWindows.hpp"
 #include "ErrorHandlerWindows.hpp"
 #include "VersionLoaderWindows.hpp"
-#include "LibraryInstance_Windows.hpp"
+#include "OSLibrary_Windows.hpp"
 #include "EnvironmentVariablesWindows.hpp"
 
 #include <Windows.h>
@@ -34,9 +34,9 @@ namespace krakoa::os
 	{
 		errorHandler.reset(new errors::ErrorHandlerWindows());
 
-		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iLibraryInstance*
+		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iOSLibrary*
 		{
-			return new library::LibraryInstance_Windows(libName);
+			return new library::OSLibrary_Windows(libName);
 		}));
 
 		fileDialog.reset(new FileDialogWindows());

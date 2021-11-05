@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "iLibraryInstance.hpp"
+#include "iOSLibrary.hpp"
 
 #include "../LogOS.hpp"
 #include "../../../Core/PointerTypes.hpp"
@@ -12,33 +12,15 @@
 
 namespace krakoa::os::library
 {
-	using CreateLibraryInstanceFunc = iLibraryInstance * (const char*);
+	using CreateLibraryInstanceFunc = iOSLibrary * (const char*);
 	
 	class LibraryStore
 	{
 	public:
 		LibraryStore(std::function<CreateLibraryInstanceFunc> createFunc);
 		~LibraryStore();
-
-		template<typename FuncT>
-		USE_RESULT std::function<FuncT> LoadFunc(const char* libName, const char* funcName)
-		{
-			if (!Exists(libName))
-			{
-				if (!Load(libName))
-					return nullptr;
-			}
-			
-			const auto& lib = libraries.at(std::string(libName));
-			auto* function = static_cast<FuncT*>(lib->GetFunction(funcName));
-
-			if (function == nullptr)
-			{
-				LogOSError(klib::ToString("Unable to load function \"{0}\" from library \"{1}\"", funcName, libName));
-			}
-			
-			return function;
-		}
+		
+		USE_RESULT Weak_Ptr<iOSLibrary> LoadFunc(const char* libName);
 		
 		void Unload(const std::string_view& libName);
 		void UnloadAll();
@@ -49,11 +31,11 @@ namespace krakoa::os::library
 	
 	private:
 		bool Load(const std::string_view& libName);
-		USE_RESULT iLibraryInstance* CreateLibrary(const std::string_view& libName) const;
+		USE_RESULT iOSLibrary* CreateLibrary(const std::string_view& libName) const;
 
 	
 	private:
-		std::unordered_map<std::string, Solo_Ptr<iLibraryInstance>> libraries;
+		std::unordered_map<std::string, Multi_Ptr<iOSLibrary>> libraries;
 		std::function<CreateLibraryInstanceFunc> createInstanceFunc;
 	};	
 }

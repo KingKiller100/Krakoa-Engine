@@ -93,7 +93,7 @@ namespace krakoa::os::library
 		return loaded;
 	}
 
-	iLibraryInstance* LibraryStore::CreateLibrary(const std::string_view& libName) const
+	iOSLibrary* LibraryStore::CreateLibrary(const std::string_view& libName) const
 	{
 		KRK_PROFILE_FUNCTION();
 		if (createInstanceFunc == nullptr)

@@ -27,34 +27,34 @@ namespace krakoa::os
 		QUESTION,
 		EXCLAMATION,
 		ASTERISK,
-		USER,
+		USER, 
 		WARNING,
 		ERROR,
 		INFORMATION,
-		STOP 
+		STOP
 	);
 
 	ENUM_CLASS( MessageBoxDefaultButton, MessageBoxOption_t,
 		BTN_1,
 		BTN_2,
 		BTN_3,
-		BTN_4 
+		BTN_4
 	);
 
-	ENUM_CLASS(MessageBoxModal, MessageBoxOption_t,
-		APPLY,
+	ENUM_CLASS( MessageBoxModal, MessageBoxOption_t,
+		APPL,
 		SYSTEM,
 		TASK,
 		HELP
 	);
 
-	ENUM_CLASS(MessageBoxPosition, MessageBoxOption_t,
+	ENUM_CLASS( MessageBoxPosition, MessageBoxOption_t,
 		NO_FOCUS,
 		SET_FOREGROUND,
 		DEFAULT_DESKTOP_ONLY,
 		TOPMOST,
 		RIGHT,
-		RTLREADING);
+		RTLREADING );
 
 	ENUM_CLASS( MessageBoxResponse, MessageBoxOption_t,
 		MSGBOX_OKAY,

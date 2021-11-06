@@ -9,5 +9,8 @@ namespace krakoa::os
 	{
 	public:
 		static long Show( const std::string_view& title, const std::string_view& text, MessageBoxOption_t optionsMask );
+		static MessageBoxResponse ResolveResponse(long response);
+		static MessageBoxIcon ResolveIcon(long icon);
+		static MessageBoxDefaultButton ResolveDefaultButton(long defBtn);
 	};
 }

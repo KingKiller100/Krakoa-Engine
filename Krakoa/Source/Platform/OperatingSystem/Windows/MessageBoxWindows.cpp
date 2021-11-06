@@ -4,6 +4,11 @@
 
 #include <Windows.h>
 
+#ifdef ERROR
+#	undef ERROR
+#endif
+
+
 namespace krakoa::os
 {
 	namespace 
@@ -14,7 +19,17 @@ namespace krakoa::os
 		const std::string_view& title, const std::string_view& text, MessageBoxOption_t optionsMask
 	)
 	{
-		static std::unordered_map<MessageBoxResponse::Underlying_t, MessageBoxResponse::Value> responsesWin32 =
+		const auto response = ::MessageBoxA( nullptr
+			, text.data()
+			, title.data()
+			, optionsMask );
+
+		return ResolveResponse( response );
+	}
+
+	MessageBoxResponse MessageBoxDisplayWindows::ResolveResponse( long response )
+	{
+		static std::unordered_map<MessageBoxResponse::Underlying_t, MessageBoxResponse::Value> responsesMap =
 		{
 		{IDOK      , MessageBoxResponse::MSGBOX_OKAY       },
 		{IDCANCEL  , MessageBoxResponse::MSGBOX_CANCEL     },
@@ -30,11 +45,37 @@ namespace krakoa::os
 		{IDTIMEOUT , MessageBoxResponse::MSGBOX_TIMEOUT    }
 		};
 
-		const auto response = ::MessageBoxA( nullptr
-			, text.data()
-			, title.data()
-			, optionsMask );
+		return responsesMap.at(response);
+	}
 
-		return responsesWin32.at( response );
+	MessageBoxIcon MessageBoxDisplayWindows::ResolveIcon( long icon )
+	{
+		static std::unordered_map<MessageBoxIcon::Underlying_t, MessageBoxIcon::Value> iconMap =
+		{
+			{MB_ICONHAND, MessageBoxIcon::HAND},
+			{MB_ICONQUESTION, MessageBoxIcon::QUESTION},
+			{MB_ICONEXCLAMATION, MessageBoxIcon::EXCLAMATION},
+			{MB_ICONASTERISK, MessageBoxIcon::ASTERISK},
+			{MB_USERICON, MessageBoxIcon::USER},
+			{MB_ICONWARNING, MessageBoxIcon::WARNING},
+			{MB_ICONERROR, MessageBoxIcon::ERROR},
+			{MB_ICONINFORMATION, MessageBoxIcon::INFORMATION},
+			{MB_ICONSTOP, MessageBoxIcon::STOP},
+		};
+
+		return iconMap.at( icon );
+	}
+
+	MessageBoxDefaultButton MessageBoxDisplayWindows::ResolveDefaultButton( long defBtn )
+	{
+		static std::unordered_map<MessageBoxDefaultButton::Underlying_t, MessageBoxDefaultButton::Value> defaultBtnMap =
+		{
+		{MB_DEFBUTTON1, MessageBoxDefaultButton::BTN_1},
+		{MB_DEFBUTTON2, MessageBoxDefaultButton::BTN_2},
+		{MB_DEFBUTTON3, MessageBoxDefaultButton::BTN_3},
+		{MB_DEFBUTTON4, MessageBoxDefaultButton::BTN_4}
+		};
+
+		return defaultBtnMap.at( defBtn );
 	}
 }

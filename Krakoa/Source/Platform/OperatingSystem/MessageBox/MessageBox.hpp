@@ -12,14 +12,15 @@ namespace krakoa::os
 {
 	using MessageBoxOption_t = long;
 
-	ENUM_CLASS( MessageBoxButton, MessageBoxOption_t,
+	ENUM_CLASS( MessageBoxButtonSet, MessageBoxOption_t,
 		OKAY,
 		OKAY_CANCEL,
-		ABORTRE_TRY_IGNORE,
+		ABORT_RETRY_IGNORE,
 		YES_NO_CANCEL,
 		YES_NO,
 		RETRY_CANCEL,
-		CANCEL_TRY_CONTINUE
+		CANCEL_TRY_CONTINUE,
+		HELP
 	);
 
 	ENUM_CLASS( MessageBoxIcon, MessageBoxOption_t,
@@ -27,7 +28,7 @@ namespace krakoa::os
 		QUESTION,
 		EXCLAMATION,
 		ASTERISK,
-		USER, 
+		USER,
 		WARNING,
 		ERROR,
 		INFORMATION,
@@ -41,11 +42,9 @@ namespace krakoa::os
 		BTN_4
 	);
 
-	ENUM_CLASS( MessageBoxModal, MessageBoxOption_t,
-		APPL,
-		SYSTEM,
-		TASK,
-		HELP
+	ENUM_CLASS( MessageBoxModality, MessageBoxOption_t,
+		BLOCK_WINDOW_INPUT,
+		BLOCK_ALL_WINDOWS_INPUT
 	);
 
 	ENUM_CLASS( MessageBoxPosition, MessageBoxOption_t,
@@ -54,7 +53,9 @@ namespace krakoa::os
 		DEFAULT_DESKTOP_ONLY,
 		TOPMOST,
 		RIGHT,
-		RTLREADING );
+		RTLREADING,
+		SERVICE_NOTIFICATION
+	);
 
 	ENUM_CLASS( MessageBoxResponse, MessageBoxOption_t,
 		MSGBOX_OKAY,
@@ -77,8 +78,13 @@ namespace krakoa::os
 	{
 	public:
 		static void Show(
-			const std::string_view& title, const std::string_view& text, MessageBoxOption_t optionsMask
+			const std::string_view& title, const std::string_view& text
 			, const std::function<MessageBoxCallBack>& cb
+			, MessageBoxButtonSet buttons
+			, MessageBoxIcon icon
+			, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton::BTN_1
+			, MessageBoxModality modality = MessageBoxModality::BLOCK_WINDOW_INPUT
+			, MessageBoxPosition positioning = MessageBoxPosition::TOPMOST
 		);
 	};
 }

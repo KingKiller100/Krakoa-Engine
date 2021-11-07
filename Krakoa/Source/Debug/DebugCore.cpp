@@ -15,8 +15,6 @@ namespace krakoa::debug
 
 	void RaiseNotice( const std::string_view& msg, const klib::SourceInfo& sourceInfo )
 	{
-		static constexpr  auto flags = MessageBoxButton::ABORTRE_TRY_IGNORE | MessageBoxIcon::ERROR | MessageBoxDefaultButton::BTN_2;
-		
 		KRK_ERR( msg );
 
 		const auto text = klib::ToString( "[Desc] {0}\n"
@@ -32,7 +30,7 @@ namespace krakoa::debug
 			, sourceInfo.func
 		);
 
-		MessageBoxDisplay::Show( "Krakoa Debug Error", text, flags,
+		MessageBoxDisplay::Show( "Krakoa Debug Error", text,
 			[]( MessageBoxResponse response )
 			{
 				if ( response == MessageBoxResponse::MSGBOX_CANCEL
@@ -45,7 +43,11 @@ namespace krakoa::debug
 				{
 					klib::BreakPoint();
 				}
-			} );
+			}
+			, MessageBoxButtonSet::ABORT_RETRY_IGNORE
+			, MessageBoxIcon::ERROR
+			, MessageBoxDefaultButton::BTN_2
+		);
 	}
 
 	void RaiseException( const std::string_view& msg, const klib::SourceInfo& sourceInfo, klib::Logging& logger )
@@ -56,6 +58,6 @@ namespace krakoa::debug
 			, klib::CalendarInfoSourceType::LOCAL
 		} );
 
-		throw std::exception( msg.data() );
+		throw std::runtime_error( msg.data() );
 	}
 }

@@ -8,9 +8,19 @@ namespace krakoa::os
 	class MessageBoxDisplayWindows
 	{
 	public:
-		static long Show( const std::string_view& title, const std::string_view& text, MessageBoxOption_t optionsMask );
-		static MessageBoxResponse ResolveResponse(long response);
-		static MessageBoxIcon ResolveIcon(long icon);
-		static MessageBoxDefaultButton ResolveDefaultButton(long defBtn);
+		static long Show(
+			const std::string_view& title, const std::string_view& text
+			, MessageBoxButtonSet buttons
+			, MessageBoxIcon icon
+			, MessageBoxDefaultButton defaultButton
+			, MessageBoxModality modal
+			, MessageBoxPosition positioning
+		);
+		static MessageBoxResponse ResolveResponse( long response );
+		static long ResolveButttonSet(MessageBoxButtonSet btnSet );
+		static long ResolveIcon(MessageBoxIcon icon );
+		static long ResolveDefaultButton(MessageBoxDefaultButton defBtn );
+		static long ResolveModal(MessageBoxModality modal );
+		static long ResolvePositioning(MessageBoxPosition positioning );
 	};
 }

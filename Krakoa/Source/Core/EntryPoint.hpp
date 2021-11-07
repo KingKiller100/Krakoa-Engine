@@ -43,10 +43,16 @@ int main()
 	klib::kLocale::SetDefaultLocale();
 	klib::kCalendar::UsePlatformCalendarInfoSource();
 
+#ifdef KRAKOA_DEBUG
 	memory::HeapFactory::Initialize();
+#endif
+
 	Launch();
+	
+#ifdef KRAKOA_DEBUG
 	memory::HeapFactory::ReportMemoryLeaks();
 	memory::HeapFactory::ShutDown();
+#endif
 
 	std::cin.get();
 	

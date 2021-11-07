@@ -8,54 +8,53 @@
 
 #include "MemoryDebug.hpp"
 
-void* operator new [](const size_t bytes, memory::Heap* pHeap)
+void* operator new []( const size_t bytes, memory::Heap* pHeap )
 {
-	return operator new(bytes, pHeap);
+	return operator new( bytes, pHeap );
 }
 
-void* operator new(const size_t bytes)
+void* operator new( const size_t bytes )
 {
-	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
+	return operator new( bytes, memory::HeapFactory::GetDefaultHeap() );
 }
 
-void* operator new [](const size_t bytes)
+void* operator new []( const size_t bytes )
 {
-	return operator new(bytes, memory::HeapFactory::GetDefaultHeap());
+	return operator new( bytes, memory::HeapFactory::GetDefaultHeap() );
 }
 
-void* operator new(const size_t bytes, memory::Heap* pHeap) // Pads Control Blocks
+void* operator new( const size_t bytes, memory::Heap* pHeap ) // Pads Control Blocks
 {
 #ifndef  KRAKOA_RELEASE
-	MEM_ASSERT(bytes != 0 || bytes < std::numeric_limits<size_t>::max(),
-		"Illegal amount of bytes requested");
+	MEM_ASSERT( bytes != 0 || bytes < std::numeric_limits<size_t>::max(),
+		"Illegal amount of bytes requested" );
 
-	if (memory::Heap::s_TotalLifetimeBytesAllocated < std::numeric_limits<size_t>::max())
+	if ( memory::Heap::s_TotalLifetimeBytesAllocated < std::numeric_limits<size_t>::max() )
 		memory::Heap::s_TotalLifetimeBytesAllocated += bytes;
 
 	const size_t requestedBytes = memory::NodeSize + bytes + memory::SignatureSize; // Alignment in memory
-	auto* allocNode = memory::Allocate<memory::AllocHeaderNode>(requestedBytes);
-	return memory::CreateNode(allocNode, bytes, pHeap); // Returns pointer to the start of the object's data
+	auto* allocNode = memory::Allocate<memory::AllocHeaderNode>( requestedBytes );
+	return memory::CreateNode( allocNode, bytes, pHeap ); // Returns pointer to the start of the object's data
 #else
 	return std::malloc(bytes);
-#endif	
+#endif
 }
 
-void operator delete [](void* ptr)
+void operator delete []( void* ptr )
 {
-	operator delete(ptr);
+	operator delete( ptr );
 }
 
-void operator delete(void* ptr)
+void operator delete( void* ptr )
 {
-	if (ptr == nullptr) return;
+	if ( ptr == nullptr ) return;
 
 #ifndef KRAKOA_RELEASE
-	
-	auto* allocNode = memory::GetNodeFromDataPointer(ptr);
-	memory::DestroyNode(allocNode);
-	memory::Deallocate(allocNode);
+
+	auto* allocNode = memory::GetNodeFromDataPointer( ptr );
+	memory::DestroyNode( allocNode );
+	memory::Deallocate( allocNode );
 #else
 	std::free(ptr);
 #endif
 }
-

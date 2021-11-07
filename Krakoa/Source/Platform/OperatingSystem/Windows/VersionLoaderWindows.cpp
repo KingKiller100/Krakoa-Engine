@@ -1,5 +1,6 @@
 ﻿#include "Precompile.hpp"
 
+#include "../LogOS.hpp"
 #include "VersionLoaderWindows.hpp"
 #include "../Library/LibraryStore.hpp"
 
@@ -22,8 +23,10 @@ namespace krakoa::os
 		static constexpr const char* platformTypeStrings[]
 			= { "Win32s", "Win32_Windows", "Win32_NT" };
 
+		const auto ntdll = libStore.Request( "ntdll.dll" );
+
 		const auto rtlGetVersionFunc
-			= libStore.LoadFunc<NTSTATUS(WINAPI)(LPOSVERSIONINFOEXW)>("ntdll.dll", "RtlGetVersion");
+			= ntdll->Import<NTSTATUS(WINAPI)(LPOSVERSIONINFOEXW)>("RtlGetVersion");
 
 		VersionInfo vi{"Windows", klib::PlatformOS::WINDOWS, "", ""
 			, 0, 0, 0};

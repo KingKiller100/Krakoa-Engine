@@ -1,10 +1,12 @@
 ﻿#include "Precompile.hpp"
 #include "OperatingSystemWindows.hpp"
 
+#include "../LogOS.hpp"
 #include "FileDialogWindows.hpp"
 #include "ErrorHandlerWindows.hpp"
 #include "VersionLoaderWindows.hpp"
 #include "OSLibrary_Windows.hpp"
+#include "OSLibraryLoader_Windows.hpp"
 #include "EnvironmentVariablesWindows.hpp"
 
 #include <Windows.h>
@@ -27,17 +29,13 @@ namespace krakoa::os
 		LogOS("[{0}]: {1}", errorHandler->GetCode(), errorHandler->GetText());
 		
 		libStore->UnloadAll();
-		libStore->Clear();
 	}
 
 	void OperatingSystemWindows::Initialize()
 	{
 		errorHandler.reset(new errors::ErrorHandlerWindows());
 
-		libStore.reset(new library::LibraryStore([](const char* libName) -> library::iOSLibrary*
-		{
-			return new library::OSLibrary_Windows(libName);
-		}));
+		libStore = Make_Solo<library::LibraryStore>( new library::OSLibraryLoader_Windows() );
 
 		fileDialog.reset(new FileDialogWindows());
 

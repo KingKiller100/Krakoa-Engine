@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "iOSLibrary.hpp"
+#include "iOSLibraryLoader.hpp"
 
-#include "../LogOS.hpp"
 #include "../../../Core/PointerTypes.hpp"
 #include "../../../Logging/EngineLogger.hpp"
 
@@ -12,30 +12,25 @@
 
 namespace krakoa::os::library
 {
-	using CreateLibraryInstanceFunc = iOSLibrary * (const char*);
-	
 	class LibraryStore
 	{
 	public:
-		LibraryStore(std::function<CreateLibraryInstanceFunc> createFunc);
+		explicit LibraryStore(iOSLibraryLoader* libraryLoader);
 		~LibraryStore();
 		
-		USE_RESULT Weak_Ptr<iOSLibrary> LoadFunc(const char* libName);
+		USE_RESULT Multi_Ptr<iOSLibrary> Request(const char* libName);
 		
-		void Unload(const std::string_view& libName);
+		void Unload( Multi_Ptr<iOSLibrary>& lib );
 		void UnloadAll();
-		void Clear();
 		USE_RESULT bool Exists(const std::string_view& libName);
-		USE_RESULT size_t CountInstances() const;
-		USE_RESULT size_t CountActiveInstances() const;
+		USE_RESULT size_t Size() const noexcept;
+		USE_RESULT size_t Uses(const std::string_view& libName) const noexcept;
 	
 	private:
 		bool Load(const std::string_view& libName);
-		USE_RESULT iOSLibrary* CreateLibrary(const std::string_view& libName) const;
 
-	
 	private:
+		Solo_Ptr<iOSLibraryLoader> libLoader;
 		std::unordered_map<std::string, Multi_Ptr<iOSLibrary>> libraries;
-		std::function<CreateLibraryInstanceFunc> createInstanceFunc;
 	};	
 }

@@ -20,6 +20,10 @@ namespace krakoa::os::library
 	protected:
 		void* ImportImpl(const char* funcName) override;
 
+		[[nodiscard]] ::HINSTANCE GetHandle() const noexcept;
+
+		friend class OSLibraryLoader_Windows;
+
 	private:
 		::HINSTANCE instance;
 		std::string name;

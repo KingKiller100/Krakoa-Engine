@@ -1,7 +1,9 @@
 ﻿#include "Precompile.hpp"
 #include "iOperatingSystem.hpp"
 
+#include "LogOS.hpp"
 #include "Windows/OperatingSystemWindows.hpp"
+
 #include <Utility/Platform/kPlatform.hpp>
 
 namespace krakoa::os

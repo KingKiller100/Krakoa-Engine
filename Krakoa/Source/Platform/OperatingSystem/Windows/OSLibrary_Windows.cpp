@@ -30,6 +30,11 @@ namespace krakoa::os::library
 		return func;
 	}
 
+	HINSTANCE OSLibrary_Windows::GetHandle() const noexcept
+	{
+		return instance;
+	}
+
 	std::string_view OSLibrary_Windows::GetName() const
 	{
 		return name;

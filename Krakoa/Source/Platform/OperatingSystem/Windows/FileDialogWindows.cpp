@@ -1,7 +1,9 @@
 ﻿#include "Precompile.hpp"
 #include "FileDialogWindows.hpp"
 
+#include "../LogOS.hpp"
 #include "../FileDialog/FileDialogFilter.hpp"
+
 #include "../../../Core/Application.hpp"
 
 #include <Utility/FileSystem/kFileSystem.hpp>

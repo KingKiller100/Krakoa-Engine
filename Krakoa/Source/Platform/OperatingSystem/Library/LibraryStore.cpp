@@ -1,106 +1,120 @@
 ﻿#include "Precompile.hpp"
 #include "LibraryStore.hpp"
 
+#include "../LogOS.hpp"
+
 #include "../../../Debug/Debug.hpp"
 #include "../../../Debug/Instrumentor.hpp"
 
-#include "../../../Util/Fmt.hpp"
-
 namespace krakoa::os::library
 {
-	LibraryStore::LibraryStore(std::function<CreateLibraryInstanceFunc> createFunc)
-		: createInstanceFunc(std::move(createFunc))
+	LibraryStore::LibraryStore( iOSLibraryLoader* libraryLoader )
+		: libLoader( libraryLoader )
 	{}
 
 	LibraryStore::~LibraryStore()
 	{
-		Clear();
+		UnloadAll();
 	}
 
-	void LibraryStore::Clear()
+	Multi_Ptr<iOSLibrary> LibraryStore::Request( const char* libName )
 	{
-		libraries.clear();
-	}
+		if ( const auto iter = libraries.find( libName );
+			iter != libraries.end() )
+		{
+			return iter->second;
+		}
 
-	void LibraryStore::Unload(const std::string_view& libName)
+		return nullptr;
+	}
+	
+	void LibraryStore::Unload( Multi_Ptr<iOSLibrary>& lib )
 	{
 		KRK_PROFILE_FUNCTION();
-		const auto libInfoIter = libraries.find(libName.data());
-		if (libInfoIter != libraries.end())
+
+		/**
+		 * use_count() <= 2 means that "lib" is the last known usage of
+		 * this library by the system. This makes it safe to delete from
+		 * the list and trigger its unload
+		 */
+		if ( lib.use_count() <= 2 )
 		{
-			const auto& lib = libInfoIter->second;
-			LogOS(util::Fmt("Unloading library: {0}", libName));
-			lib->Unload();
-			KRK_DBG(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
+			libraries.erase( lib->GetName().data() );
 		}
+
+		KRK_BREAK_IF( lib.use_count() != 1 );
+
+		lib.reset();
 	}
 
 	void LibraryStore::UnloadAll()
 	{
 		KRK_PROFILE_FUNCTION();
-		for (auto&& libInfo : libraries)
-		{
-			const auto& name = libInfo.first;
-			const auto& lib = libInfo.second;
 
-			LogOS(util::Fmt("Unloading library: {0}", name));
-			lib->Unload();
-			KRK_DBG(util::Fmt("Unloaded: {0}", !lib->IsLoaded()));
+		LogOS("Unloading all libraries");
+
+		for ( auto&& [name, lib] : libraries )
+		{
+			Unload(lib);
 		}
+
+		libraries.clear();
 	}
 
-	bool LibraryStore::Exists(const std::string_view& libName)
+	bool LibraryStore::Exists( const std::string_view& libName )
 	{
 		KRK_PROFILE_FUNCTION();
-		return libraries.find(libName.data()) != libraries.end();
+		return libraries.find( libName.data() ) != libraries.end();
 	}
 
-	size_t LibraryStore::CountInstances() const
+	size_t LibraryStore::Size() const noexcept
 	{
 		return libraries.size();
 	}
 
-	size_t LibraryStore::CountActiveInstances() const
+	size_t LibraryStore::Uses( const std::string_view& libName ) const noexcept
 	{
-		size_t count = 0;
-		for (auto&& libInfo : libraries)
+		if (const auto iter = libraries.find(libName.data());
+			iter != libraries.end())
 		{
-			if (const auto& lib = libInfo.second;
-				lib->IsLoaded())
-			{
-				++count;
-			}
+			return iter->second.use_count();
 		}
-		return count;
+		
+		return 0;
 	}
 
-	bool LibraryStore::Load(const std::string_view& libName)
+	bool LibraryStore::Load( const std::string_view& libName )
 	{
 		KRK_PROFILE_FUNCTION();
-		if (Exists(libName))
+
+		LogOS( "Loading library: {0}", libName );
+
+		const auto dtor = [this]( iOSLibrary* lib )
 		{
-			return true;
-		}
+			if ( !lib )
+				return;
 
-		LogOS("Loading library: {0}", libName);
+			const auto name = lib->GetName();
+			LogOS( "Unloading library: {0}", name );
 
-		const auto lib = CreateLibrary(libName);
-		libraries.emplace(libName.data(), lib);
+			if ( !libLoader->Unload( lib ) )
+			{
+				LogOSError( "{0} failed to unload!", name );
+			}
+		};
+
+		const auto lib = libLoader->Load( libName );
 		const auto loaded = lib->IsLoaded();
 
-		loaded ? KRK_DBG("Library loaded") : LogOSError("Library load failed");
-
-		return loaded;
-	}
-
-	iOSLibrary* LibraryStore::CreateLibrary(const std::string_view& libName) const
-	{
-		KRK_PROFILE_FUNCTION();
-		if (createInstanceFunc == nullptr)
+		if ( loaded )
 		{
-			return nullptr;
+			libraries.emplace( libName, Multi_Ptr<iOSLibrary>( lib, dtor ) );
+		}
+		else
+		{
+			LogOSError( "Library load failed" );
 		}
 
-		return createInstanceFunc(libName.data());
+		return loaded;
 	}
 }

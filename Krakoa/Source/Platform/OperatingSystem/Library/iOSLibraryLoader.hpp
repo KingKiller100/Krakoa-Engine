@@ -10,7 +10,7 @@ namespace krakoa::os::library
 	public:
 		virtual ~iOSLibraryLoader() = default;
 
-		[[nodiscard]] virtual iOSLibrary* Load(const std::string_view& libName) const;
-		void Unload(iOSLibrary* lib) const;
+		[[nodiscard]] virtual iOSLibrary* Load( const std::string_view& libName ) const = 0;
+		virtual bool Unload( iOSLibrary* lib ) const = 0;
 	};
 }

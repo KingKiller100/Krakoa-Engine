@@ -72,12 +72,14 @@ namespace krakoa::os::library
 
 		[[nodiscard]] virtual std::string_view GetName() const = 0;
 		[[nodiscard]] virtual bool IsLoaded() const = 0;
+		[[nodiscard]] virtual std::vector<std::string> GetImportsID() const = 0;
 
 		template <typename T>
 		auto Import( const std::string_view& id )
 		{
 			return ImportWrapper<ImportPtr_t<T>>( id, ImportImpl( id.data() ) );
 		}
+
 
 	protected:
 		virtual void* ImportImpl( const char* id ) = 0;

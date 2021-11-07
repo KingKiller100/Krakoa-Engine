@@ -30,6 +30,18 @@ namespace krakoa::os::library
 		return func;
 	}
 
+	std::vector<std::string> OSLibrary_Windows::GetImportsID() const
+	{
+		std::vector<std::string> list(imports.size());
+
+		for (const auto& [id, _] : imports)
+		{
+			list.emplace_back( id );
+		}
+
+		return list;
+	}
+
 	HINSTANCE OSLibrary_Windows::GetHandle() const noexcept
 	{
 		return instance;

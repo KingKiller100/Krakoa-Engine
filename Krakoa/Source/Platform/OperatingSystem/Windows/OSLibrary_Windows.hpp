@@ -16,12 +16,14 @@ namespace krakoa::os::library
 		
 		bool IsLoaded() const override;
 		[[nodiscard]] std::string_view GetName() const override;
+		[[nodiscard]] std::vector<std::string> GetImportsID() const override;
 
 	protected:
 		void* ImportImpl(const char* funcName) override;
 
 		[[nodiscard]] ::HINSTANCE GetHandle() const noexcept;
-
+	
+	protected:
 		friend class OSLibraryLoader_Windows;
 
 	private:

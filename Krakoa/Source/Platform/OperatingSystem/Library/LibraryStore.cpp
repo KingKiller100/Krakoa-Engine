@@ -86,6 +86,18 @@ namespace krakoa::os::library
 		return 0;
 	}
 
+	std::vector<LibraryStore::Report> LibraryStore::GetReports() const
+	{
+		std::vector<Report> reports;
+		for ( const auto& [name, lib] : libraries )
+		{
+			const auto importsIDs = lib->GetImportsID();
+			reports.emplace_back( Report{name, importsIDs} );
+		}
+
+		return reports;
+	}
+
 	bool LibraryStore::Load( const std::string_view& libName )
 	{
 		KRK_PROFILE_FUNCTION();

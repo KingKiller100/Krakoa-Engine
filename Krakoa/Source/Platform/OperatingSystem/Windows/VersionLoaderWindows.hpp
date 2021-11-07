@@ -10,9 +10,8 @@ namespace krakoa::os
 	{
 	public:
 		~VersionLoaderWindows() override = default;
-		[[nodiscard]] VersionInfo GetVersionInfo(library::LibraryStore& libStore) const override;
+		[[nodiscard]] VersionInfo GetVersionInfo( library::LibraryStore& libStore ) const override;
 	};
 }
 
 #endif
-

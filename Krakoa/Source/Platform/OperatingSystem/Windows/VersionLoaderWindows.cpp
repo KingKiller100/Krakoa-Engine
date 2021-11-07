@@ -35,43 +35,43 @@ namespace krakoa::os
 
 		if ( rtlGetVersionFunc != nullptr )
 		{
-			RTL_OSVERSIONINFOEXW osVersionInfo;
-			ZeroMemory( &osVersionInfo, sizeof(osVersionInfo) );
-			osVersionInfo.dwOSVersionInfoSize = sizeof( osVersionInfo );
-			if ( rtlGetVersionFunc( &osVersionInfo ) != 0 ) // 0 denotes success?
+			RTL_OSVERSIONINFOEXW vi_win32;
+			ZeroMemory( &vi_win32, sizeof(vi_win32) );
+			vi_win32.dwOSVersionInfoSize = sizeof( vi_win32 );
+			if ( rtlGetVersionFunc( &vi_win32 ) != 0 ) // 0 denotes success?
 			{
-				LogOSError( "Unable to retrieve version info from system: " );
+				LogOSError( "Unable to retrieve version info from system" );
 			}
 			else
 			{
-				vi.platformID = platformTypeStrings[osVersionInfo.dwPlatformId];
-				vi.productType = productTypeStrings[osVersionInfo.wProductType - 1];
+				vi.platformID = platformTypeStrings[vi_win32.dwPlatformId];
+				vi.productType = productTypeStrings[vi_win32.wProductType - 1];
 
-				vi.major = osVersionInfo.dwMajorVersion;
-				vi.minor = osVersionInfo.dwMinorVersion;
-				vi.buildNo = osVersionInfo.dwBuildNumber;
+				vi.major = vi_win32.dwMajorVersion;
+				vi.minor = vi_win32.dwMinorVersion;
+				vi.buildNo = vi_win32.dwBuildNumber;
 			}
 
 			KRK_DBG( "Version source function: RtlGetVersionFunc" );
 		}
 		else
 		{
-			OSVERSIONINFOEX os_version_info;
-			ZeroMemory( &os_version_info, sizeof(os_version_info) );
-			os_version_info.dwOSVersionInfoSize = sizeof( OSVERSIONINFOEX );
+			OSVERSIONINFOEX vi_win32;
+			ZeroMemory( &vi_win32, sizeof(vi_win32) );
+			vi_win32.dwOSVersionInfoSize = sizeof( OSVERSIONINFOEX );
 
-			if ( ::GetVersionEx( ( OSVERSIONINFO* )&os_version_info ) != 0 )
+			if ( ::GetVersionEx( ( OSVERSIONINFO* )&vi_win32 ) != 0 )
 			{
 				LogOSError( "Unable to retrieve version info from system" );
 			}
 			else
 			{
-				vi.platformID = platformTypeStrings[os_version_info.dwPlatformId];
+				vi.platformID = platformTypeStrings[vi_win32.dwPlatformId];
 				vi.productType = IsWindowsServer() ? "Server" : "Work Station";
 
-				vi.major = os_version_info.dwMajorVersion;
-				vi.minor = os_version_info.dwMinorVersion;
-				vi.buildNo = os_version_info.dwBuildNumber;
+				vi.major = vi_win32.dwMajorVersion;
+				vi.minor = vi_win32.dwMinorVersion;
+				vi.buildNo = vi_win32.dwBuildNumber;
 			}
 
 			KRK_DBG( "Version source function: GetVersionEx" );

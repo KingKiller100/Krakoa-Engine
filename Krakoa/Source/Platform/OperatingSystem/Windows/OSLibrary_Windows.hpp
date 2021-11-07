@@ -27,7 +27,7 @@ namespace krakoa::os::library
 	private:
 		::HINSTANCE instance;
 		std::string name;
-		std::unordered_map<std::string, FARPROC> functions;
+		std::unordered_map<std::string, FARPROC> imports;
 	};
 }
 

@@ -20,13 +20,13 @@ namespace krakoa::os::library
 
 	void* OSLibrary_Windows::ImportImpl( const char* funcName )
 	{
-		if ( auto iter = functions.find( funcName ); iter != functions.end() )
+		if ( auto iter = imports.find( funcName ); iter != imports.end() )
 		{
 			return iter->second;
 		}
 
 		const auto func = ::GetProcAddress( instance, funcName );
-		functions.emplace( funcName, func );
+		imports.emplace( funcName, func );
 		return func;
 	}
 

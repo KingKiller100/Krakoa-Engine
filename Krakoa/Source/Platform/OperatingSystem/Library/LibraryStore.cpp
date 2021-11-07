@@ -25,10 +25,15 @@ namespace krakoa::os::library
 			return iter->second;
 		}
 
+		if ( Load( libName ) )
+		{
+			return Request( libName );
+		}
+
 		return nullptr;
 	}
-	
-	void LibraryStore::Unload( Multi_Ptr<iOSLibrary>& lib )
+
+	void LibraryStore::Unload( Multi_Ptr<iOSLibrary> lib )
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -42,8 +47,6 @@ namespace krakoa::os::library
 			libraries.erase( lib->GetName().data() );
 		}
 
-		KRK_BREAK_IF( lib.use_count() != 1 );
-
 		lib.reset();
 	}
 
@@ -51,11 +54,11 @@ namespace krakoa::os::library
 	{
 		KRK_PROFILE_FUNCTION();
 
-		LogOS("Unloading all libraries");
+		LogOS( "Unloading all libraries" );
 
-		for ( auto&& [name, lib] : libraries )
+		for ( auto iter = libraries.begin(); iter != libraries.end(); iter = libraries.begin() )
 		{
-			Unload(lib);
+			Unload( iter->second );
 		}
 
 		libraries.clear();
@@ -74,12 +77,12 @@ namespace krakoa::os::library
 
 	size_t LibraryStore::Uses( const std::string_view& libName ) const noexcept
 	{
-		if (const auto iter = libraries.find(libName.data());
-			iter != libraries.end())
+		if ( const auto iter = libraries.find( libName.data() );
+			iter != libraries.end() )
 		{
 			return iter->second.use_count();
 		}
-		
+
 		return 0;
 	}
 

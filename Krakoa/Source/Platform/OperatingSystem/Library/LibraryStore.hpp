@@ -20,7 +20,7 @@ namespace krakoa::os::library
 		
 		USE_RESULT Multi_Ptr<iOSLibrary> Request(const char* libName);
 		
-		void Unload( Multi_Ptr<iOSLibrary>& lib );
+		void Unload( Multi_Ptr<iOSLibrary> lib );
 		void UnloadAll();
 		USE_RESULT bool Exists(const std::string_view& libName);
 		USE_RESULT size_t Size() const noexcept;

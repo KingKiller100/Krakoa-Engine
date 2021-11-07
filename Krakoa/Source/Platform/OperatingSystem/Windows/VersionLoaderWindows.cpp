@@ -15,30 +15,32 @@
 
 namespace krakoa::os
 {
-	VersionInfo VersionLoaderWindows::GetVersionInfo(library::LibraryStore& libStore) const
+	VersionInfo VersionLoaderWindows::GetVersionInfo( library::LibraryStore& libStore ) const
 	{
 		static constexpr const char* productTypeStrings[]
-			= { "Work Station", "Domain Controller", "Server" };
+			= {"Work Station", "Domain Controller", "Server"};
 
 		static constexpr const char* platformTypeStrings[]
-			= { "Win32s", "Win32_Windows", "Win32_NT" };
+			= {"Win32s", "Win32_Windows", "Win32_NT"};
 
 		const auto ntdll = libStore.Request( "ntdll.dll" );
 
 		const auto rtlGetVersionFunc
-			= ntdll->Import<NTSTATUS(WINAPI)(LPOSVERSIONINFOEXW)>("RtlGetVersion");
+			= ntdll->Import<NTSTATUS(WINAPI)( LPOSVERSIONINFOEXW )>( "RtlGetVersion" );
 
-		VersionInfo vi{"Windows", klib::PlatformOS::WINDOWS, "", ""
-			, 0, 0, 0};
+		VersionInfo vi{
+			"Windows", klib::PlatformOS::WINDOWS, "", ""
+			, 0, 0, 0
+		};
 
-		if (rtlGetVersionFunc != nullptr)
+		if ( rtlGetVersionFunc != nullptr )
 		{
 			RTL_OSVERSIONINFOEXW osVersionInfo;
-			ZeroMemory(&osVersionInfo, sizeof(osVersionInfo));
-			osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
-			if (rtlGetVersionFunc(&osVersionInfo) != 0) // 0 denotes success?
+			ZeroMemory( &osVersionInfo, sizeof(osVersionInfo) );
+			osVersionInfo.dwOSVersionInfoSize = sizeof( osVersionInfo );
+			if ( rtlGetVersionFunc( &osVersionInfo ) != 0 ) // 0 denotes success?
 			{
-				LogOSError("Unable to retrieve version info from system: ");
+				LogOSError( "Unable to retrieve version info from system: " );
 			}
 			else
 			{
@@ -50,17 +52,17 @@ namespace krakoa::os
 				vi.buildNo = osVersionInfo.dwBuildNumber;
 			}
 
-			KRK_DBG("Version source function: RtlGetVersionFunc");
+			KRK_DBG( "Version source function: RtlGetVersionFunc" );
 		}
 		else
 		{
 			OSVERSIONINFOEX os_version_info;
-			ZeroMemory(&os_version_info, sizeof(os_version_info));
-			os_version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+			ZeroMemory( &os_version_info, sizeof(os_version_info) );
+			os_version_info.dwOSVersionInfoSize = sizeof( OSVERSIONINFOEX );
 
-			if (::GetVersionEx((OSVERSIONINFO*)&os_version_info) != 0)
+			if ( ::GetVersionEx( ( OSVERSIONINFO* )&os_version_info ) != 0 )
 			{
-				LogOSError("Unable to retrieve version info from system");
+				LogOSError( "Unable to retrieve version info from system" );
 			}
 			else
 			{
@@ -72,7 +74,7 @@ namespace krakoa::os
 				vi.buildNo = os_version_info.dwBuildNumber;
 			}
 
-			KRK_DBG("Version source function: GetVersionEx");
+			KRK_DBG( "Version source function: GetVersionEx" );
 		}
 
 		return vi;
@@ -82,4 +84,3 @@ namespace krakoa::os
 #	pragma warning(pop)
 
 #endif
-

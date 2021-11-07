@@ -17,32 +17,32 @@
 
 namespace krakoa::os
 {
-	OperatingSystemWindows::OperatingSystemWindows(Token&&)
-		: versionInfo({ "Windows", klib::PlatformOS::WINDOWS, "", "", 0, 0, 0 })
-		, libStore(nullptr)
-		, errorHandler(nullptr)
+	OperatingSystemWindows::OperatingSystemWindows( Token&& )
+		: versionInfo( {"Windows", klib::PlatformOS::WINDOWS, "", "", 0, 0, 0} )
+		, libStore( nullptr )
+		, errorHandler( nullptr )
 	{}
 
 	OperatingSystemWindows::~OperatingSystemWindows()
 	{
 		errorHandler->CheckForNewError();
-		LogOS("[{0}]: {1}", errorHandler->GetCode(), errorHandler->GetText());
-		
+		LogOS( "[{0}]: {1}", errorHandler->GetCode(), errorHandler->GetText() );
+
 		libStore->UnloadAll();
 	}
 
 	void OperatingSystemWindows::Initialize()
 	{
-		errorHandler.reset(new errors::ErrorHandlerWindows());
+		errorHandler.reset( new errors::ErrorHandlerWindows() );
 
 		libStore = Make_Solo<library::LibraryStore>( new library::OSLibraryLoader_Windows() );
 
-		fileDialog.reset(new FileDialogWindows());
+		fileDialog.reset( new FileDialogWindows() );
 
-		environmentVariables.reset(new EnvironmentVariablesWindows{});
+		environmentVariables.reset( new EnvironmentVariablesWindows{} );
 
 		const VersionLoaderWindows versionLoader;
-		versionInfo = versionLoader.GetVersionInfo(*libStore);
+		versionInfo = versionLoader.GetVersionInfo( *libStore );
 	}
 
 	void OperatingSystemWindows::Shutdown()
@@ -97,4 +97,3 @@ namespace krakoa::os
 }
 
 #endif
-

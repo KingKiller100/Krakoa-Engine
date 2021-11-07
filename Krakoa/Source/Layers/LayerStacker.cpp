@@ -19,6 +19,7 @@ namespace krakoa
 			delete layer;
 			layer = nullptr;
 		}
+		layerStack.clear();
 	}
 
 	void LayerStacker::PushLayer(LayerBase* layer)

@@ -4,8 +4,8 @@
 
 namespace util
 {
-	template<typename Identifier_t = std::uint64_t>
-	struct TypeUniqueIdentifier
+	template<typename Identifier_t>
+	struct BasicTypeUniqueIdentifier
 	{
 	public:
 		using ID_t = Identifier_t;
@@ -25,5 +25,7 @@ namespace util
 			return id++;
 		}
 	};
+
+	using TypeUniqueIdentifier = BasicTypeUniqueIdentifier<std::uint64_t>;
 }
 

@@ -17,7 +17,7 @@ namespace krakoa::scene
 
 	namespace ecs::components
 	{
-		class NativeScriptComponent : protected util::TypeUniqueIdentifier<>
+		class NativeScriptComponent : protected util::TypeUniqueIdentifier
 		{
 		public:
 			template<typename Script>

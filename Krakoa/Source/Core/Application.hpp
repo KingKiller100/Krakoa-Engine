@@ -35,7 +35,7 @@
 
 namespace krakoa
 {
-	class KRAKOA_API Application : public patterns::ManagerBase<Application>, util::TypeUniqueIdentifier<>
+	class KRAKOA_API Application : public patterns::ManagerBase<Application>, util::TypeUniqueIdentifier
 	{
 	public:
 		Application( Token&, const std::string_view& appName = "Krakoa Engine" );

@@ -20,7 +20,7 @@ namespace krakoa::scene::ecs
 {
 	using OnRegisterFunc = std::function<void(EntityUID)>;
 
-	class EntityComponentSystem final : util::TypeUniqueIdentifier<ComponentUID>
+	class EntityComponentSystem final : util::BasicTypeUniqueIdentifier<ComponentUID>
 	{
 	public:
 		EntityComponentSystem();

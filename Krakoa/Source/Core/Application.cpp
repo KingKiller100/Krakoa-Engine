@@ -83,9 +83,6 @@ namespace krakoa
 			const auto deltaTime = timeStep.GetStep();
 			auto& sceneManager = GetManager<scene::SceneManager>();
 
-			if ( input::InputManager::IsKeyPressed( input::KEY_V ) )
-				pImGuiLayer->ToggleVisibility();
-
 			if ( !isMinimized )
 			{
 				layerStack.OnUpdate( deltaTime );

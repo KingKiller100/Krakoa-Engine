@@ -5,13 +5,13 @@
 
 namespace krakoa::os
 {
-	void LogOS(const std::string_view& msg)
+	void LogOS( const std::string_view& msg )
 	{
-		KRK_LOG("WIN32", msg.data());
+		KRK_LOG( "Win32", msg.data() );
 	}
 
-	void LogOSError(const std::string_view& msg)
+	void LogOSError( const std::string_view& msg )
 	{
-		KRK_LOG("WIN32_ERR", msg.data());
+		KRK_LOG( "Win32_ERR", msg.data() );
 	}
 }

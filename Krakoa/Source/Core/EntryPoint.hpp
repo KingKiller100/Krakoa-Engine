@@ -7,7 +7,7 @@
 #	include "PointerTypes.hpp"
 
 #	include "../Debug/Instrumentor.hpp"
-#	include "../Debug/ExceptionHandler.hpp"
+#	include "../Debug/ExceptionsHandler.hpp"
 #	include "../Config/GlobalConfig.hpp"
 #	include "../Platform/OperatingSystem/iOperatingSystem.hpp"
 
@@ -151,7 +151,8 @@ void TryRunApplication()
 	}
 	catch ( ... )
 	{
-		KRK_LOG( "CRASH", "Exception(s): " + krakoa::debug::UnwrapNestedExceptions() );
+		const auto report = krakoa::debug::UnwrapNestedExceptions();
+		KRK_LOG( "CRASH", "Exception(s): \n" + report );
 		auto& errorHandler = krakoa::os::iOperatingSystem::Reference().GetErrorHandler();
 		errorHandler.CheckForNewError();
 		const auto errCode = errorHandler.GetCode();

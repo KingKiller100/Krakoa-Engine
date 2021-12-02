@@ -1,13 +1,6 @@
 ﻿#pragma once
 
 #include "../Core/EngineMacros.hpp"
-#include "../Core/PointerTypes.hpp"
-
-#include <Utility/Logging/kLogging.hpp>
-#include "../Util/Fmt.hpp"
-
-#include <memory>
-
 
 namespace krakoa
 {
@@ -16,11 +9,11 @@ namespace krakoa
 	public:
 		// Engine side
 		static void CoreInit( const std::string_view& initMsg );
-		static klib::kLogs::Logging& GetLogger();
 		static void ShutDown();
 
-		static void SetMinimumLogLevelUsingConfig();
-		static void RemoveIfTooOldFile();
+		static void SetMinimumLogLevelUsingConfig( klib::LogLevel minLvl );
+		static void RemoveIfTooOldFile( std::int64_t maxDays );
+		static void RemoveIfTooLarge( std::uint64_t maxBytes );
 
 		static void Raw( std::string_view message );
 
@@ -37,9 +30,6 @@ namespace krakoa
 			, const std::string_view& backPadding
 			, std::uint16_t paddingCount
 		);
-
-	private:
-		static Solo_Ptr<klib::kLogs::Logging> pLogger;
 	};
 }
 

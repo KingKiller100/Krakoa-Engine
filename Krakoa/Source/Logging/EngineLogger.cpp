@@ -2,7 +2,11 @@
 #include "EngineLogger.hpp"
 
 #include "../Config/GlobalConfig.hpp"
+#include "../Util/Fmt.hpp"
 
+#include "../Core/PointerTypes.hpp"
+
+#include <Utility/Logging/kLogging.hpp>
 #include <Utility/Logging/Destinations/kFileLogger.hpp>
 #include <Utility/Logging/Destinations/kConsoleLogger.hpp>
 #include <Utility/Logging/Destinations/kDebugOutputWindowLogger.hpp>
@@ -18,13 +22,13 @@ namespace krakoa
 		std::shared_ptr<klib::FileLogger> g_FileLogger;
 		std::shared_ptr<klib::ConsoleLogger> g_ConsoleLogger;
 		std::shared_ptr<klib::DebugOutputWindowLogger> g_DebugOutputWindowLogger;
+		Solo_Ptr<klib::Logging> g_Logger;
 	}
 
-	Solo_Ptr<klib::Logging> EngineLogger::pLogger;
 
 	void EngineLogger::CoreInit( const std::string_view& initMsg )
 	{
-		if ( pLogger )
+		if ( g_Logger )
 			return;
 
 		std::filesystem::path dir( klib::kFileSystem::GetExeDirectory() );
@@ -44,112 +48,119 @@ namespace krakoa
 		const auto dateStr = now.GetDate().ToString( "mmm ddd yyyy" );
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
 
-		pLogger = Make_Solo<klib::Logging>();
-		g_FileLogger = pLogger->AddDestination<klib::FileLogger>( path );
-		g_ConsoleLogger = pLogger->AddDestination<klib::ConsoleLogger>();
-		g_DebugOutputWindowLogger = pLogger->AddDestination<klib::DebugOutputWindowLogger>();
+		g_Logger = Make_Solo<klib::Logging>();
+		g_FileLogger = g_Logger->AddDestination<klib::FileLogger>( path );
+		g_ConsoleLogger = g_Logger->AddDestination<klib::ConsoleLogger>();
+		g_DebugOutputWindowLogger = g_Logger->AddDestination<klib::DebugOutputWindowLogger>();
 
-		pLogger->SetCacheMode( false );
+		g_Logger->SetCacheMode( false );
 
 		g_FileLogger->Open();
 		g_ConsoleLogger->Open();
 		g_DebugOutputWindowLogger->Open();
 
-		pLogger->AddRaw( padding );
-		pLogger->AddRaw( stamp );
-		pLogger->AddRaw( initMsg );
-		pLogger->AddRaw( padding );
+		g_Logger->AddRaw( padding );
+		g_Logger->AddRaw( stamp );
+		g_Logger->AddRaw( initMsg );
+		g_Logger->AddRaw( padding );
 
-		pLogger->AddRaw();
+		g_Logger->AddRaw();
 	}
 
 	void EngineLogger::Raw( std::string_view message )
 	{
-		pLogger->AddRaw( message );
+		g_Logger->AddRaw( message );
 	}
 
 	void EngineLogger::Trace( std::string_view profile, std::string_view message )
 	{
-		pLogger->AddEntry( klib::LogLevel::TRC, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_Logger->AddEntry( klib::LogLevel::TRC, klib::LogProfile( profile ), klib::LogMessage( message ) );
 	}
 
 	void EngineLogger::Debug( std::string_view profile, std::string_view message )
 	{
-		pLogger->AddEntry( klib::LogLevel::DBG, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_Logger->AddEntry( klib::LogLevel::DBG, klib::LogProfile( profile ), klib::LogMessage( message ) );
 	}
 
 	void EngineLogger::Normal( std::string_view profile, std::string_view message )
 	{
-		pLogger->AddEntry( klib::LogLevel::NRM, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_Logger->AddEntry( klib::LogLevel::NRM, klib::LogProfile( profile ), klib::LogMessage( message ) );
 	}
 
 	void EngineLogger::Info( std::string_view profile, std::string_view message )
 	{
-		pLogger->AddEntry( klib::LogLevel::INF, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_Logger->AddEntry( klib::LogLevel::INF, klib::LogProfile( profile ), klib::LogMessage( message ) );
 	}
 
 	void EngineLogger::Warn( std::string_view profile, std::string_view message )
 	{
-		pLogger->AddEntry( klib::LogLevel::WRN, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_Logger->AddEntry( klib::LogLevel::WRN, klib::LogProfile( profile ), klib::LogMessage( message ) );
 	}
 
 	void EngineLogger::Error( std::string_view profile, std::string_view message, klib::SourceInfo sourceInfo )
 	{
-		pLogger->AddEntry( klib::LogLevel::ERR, klib::LogProfile( profile ), klib::LogMessage( klib::ToString( "{0}\n{1}", message, sourceInfo ) ) );
+		g_Logger->AddEntry( klib::LogLevel::ERR, klib::LogProfile( profile ), klib::LogMessage( klib::ToString( "{0}\n{1}", message, sourceInfo ) ) );
 	}
 
 	void EngineLogger::Banner( const klib::LogMessage& message, const std::string_view& frontPadding, const std::string_view& backPadding, std::uint16_t paddingCount )
 	{
-		pLogger->AddBanner( message, frontPadding, backPadding, paddingCount );
+		g_Logger->AddBanner( message, frontPadding, backPadding, paddingCount );
 	}
 
 	void EngineLogger::ShutDown()
 	{
-		GetLogger().AddRaw( R"(
+		g_Logger->AddRaw( R"(
 ************************************************************************
                               Logging Concluded
 ************************************************************************)"
 		);
 	}
 
-	void EngineLogger::SetMinimumLogLevelUsingConfig()
+	void EngineLogger::SetMinimumLogLevelUsingConfig( klib::LogLevel minLvl )
 	{
-		const auto logLevelStr = configurations::GetConfiguration<std::string_view>( "Logging", "Level" );
-		const auto min_level = klib::LogLevel::FromString( klib::ToUpper( logLevelStr ) );
-		pLogger->SetGlobalLevel( min_level );
+		// const auto logLevelStr = configurations::GetConfiguration<std::string_view>( "Logging", "Level" );
+		// const auto min_level = klib::LogLevel::FromString( klib::ToUpper( logLevelStr ) );
+		g_Logger->SetGlobalLevel( minLvl );
 	}
 
-	void EngineLogger::RemoveIfTooOldFile()
+	void EngineLogger::RemoveIfTooOldFile( std::int64_t maxDays )
 	{
-		const auto logPath = g_FileLogger->GetPath();
+		const auto dirEntry = std::filesystem::directory_entry( g_FileLogger->GetPath() );
 
-		const auto entry = std::filesystem::directory_entry( logPath );
-
-		if ( !entry.exists() )
+		if ( !dirEntry.exists() )
 			return;
 
 		g_FileLogger->Close();
+		
+		const auto lastWrite = dirEntry.last_write_time();
 
-		const auto maxBytes = configurations::GetConfiguration<size_t>( "Logging", "MaxBytes" );
-		const auto fileSize = entry.file_size();
-		const auto tooBig = fileSize > maxBytes;
-
-		const auto maxDays = configurations::GetConfiguration<size_t>( "Logging", "MaxDays" );
-		const auto lastWrite = entry.last_write_time();
-		const auto now = std::filesystem::_File_time_clock::now();
+		const auto now = std::chrono::file_clock::now();
 		const auto timeSinceLastWrite = now - lastWrite;
 		const auto totalHours = std::chrono::duration_cast<std::chrono::hours>( timeSinceLastWrite );
 		const auto totalDays = totalHours / 24.0;
 		const auto tooOld = maxDays < totalDays.count();
 
-		if ( tooBig || tooOld )
-			klib::Remove( entry.path() );
+		if ( tooOld )
+			klib::Remove( dirEntry.path() );
 
 		g_FileLogger->Open();
 	}
 
-	klib::Logging& EngineLogger::GetLogger()
+	void EngineLogger::RemoveIfTooLarge(std::uint64_t maxBytes)
 	{
-		return *pLogger;
+		const auto dirEntry = std::filesystem::directory_entry(g_FileLogger->GetPath());
+
+		if (!dirEntry.exists())
+			return;
+
+		g_FileLogger->Close();
+
+		const auto fileSize = dirEntry.file_size();
+		const auto tooBig = fileSize > maxBytes;
+
+		if (tooBig )
+			klib::Remove(dirEntry.path());
+
+		g_FileLogger->Open();
 	}
 }

@@ -69,7 +69,7 @@ project "Krakoa"
             "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
         }
         
-        filter "configurations:Debug"
+    filter "configurations:Debug"
         defines 
         {
             "KRK_ENABLE_ASSERT",
@@ -84,7 +84,7 @@ project "Krakoa"
         symbols "On"
         runtime "Debug"
         
-        filter "configurations:Test"
+    filter "configurations:Test"
         defines 
         {
             "KRAKOA_TEST",
@@ -97,7 +97,7 @@ project "Krakoa"
         symbols "On"
         runtime "Debug"
         
-        filter "configurations:Release"
+    filter "configurations:Release"
         defines 
         {
             "KRAKOA_RELEASE",

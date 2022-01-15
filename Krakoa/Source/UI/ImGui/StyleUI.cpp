@@ -10,12 +10,12 @@ namespace krakoa::ui
 {
 	void PushStyleVar(StyleVarFlags index, float val)
 	{
-		ImGui::PushStyleVar(index, val);
+		ImGui::PushStyleVar(index.ToEnum(), val);
 	}
 
 	void PushStyleVar(StyleVarFlags index, kmaths::Vector2f val)
 	{
-		ImGui::PushStyleVar(index, { val.x, val.y });
+		ImGui::PushStyleVar(index.ToUnderlying(), { val.x, val.y });
 	}
 
 	void PopStyleVar(size_t count)

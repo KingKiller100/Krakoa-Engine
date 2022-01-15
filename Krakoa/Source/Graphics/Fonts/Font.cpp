@@ -7,6 +7,7 @@
 
 #include <Utility/FileSystem/kFileSystem.hpp>
 #include <Utility/String/kToString.hpp>
+#include <Utility/String/Tricks/kStringFind.hpp>
 #include <imgui.h>
 
 namespace krakoa::gfx
@@ -81,7 +82,7 @@ namespace krakoa::gfx
 			if ( klib::Contains( filename, valStr )
 				|| klib::Contains( folder, valStr ) )
 			{
-				modifiers |= val;
+				modifiers |= val.ToUnderlying();
 			}
 			return true;
 		} );

@@ -1,11 +1,10 @@
 ﻿#pragma once
 
 #include <Utility/Enum/kEnum.hpp>
-#include <Utility/Enum/kEnumSuper.hpp>
 
 namespace krakoa::ui
 {
-    ENUM_CLASS(StyleColourFlagsBase, int,
+    ENUM_CLASS(StyleColourFlags, int,
         Text,
         TextDisabled,
         WindowBg,              // Background of normal windows
@@ -36,10 +35,7 @@ namespace krakoa::ui
         Separator,
         SeparatorHovered,
         SeparatorActive,
-        ResizeGrip
-    );
-
-    SUPER_ENUM_CLASS(StyleColourFlags, StyleColourFlagsBase,
+        ResizeGrip,
         ResizeGripHovered = 31,
         ResizeGripActive,
         Tab,

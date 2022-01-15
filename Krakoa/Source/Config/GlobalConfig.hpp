@@ -5,6 +5,7 @@
 #include "../Patterns/ManagerBase.hpp"
 #include "../Core/PointerTypes.hpp"
 
+#include "../Util/Fmt.hpp"
 #include <Utility/String/kStringTricks.hpp>
 
 #include <filesystem>

@@ -24,7 +24,7 @@ namespace memory
 		pMemoryLogger->GetFile().Open();
 		pMemoryLogger->GetFile().SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc]: &t", LogLevel::INF);
 		pMemoryLogger->GetFile().SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc]: &t", LogLevel::BNR);
-		pMemoryLogger->AddRaw(openingMsg);
+		pMemoryLogger->AddRaw( openingMsg );
 	}
 
 	Logging & MemoryLogger::GetLogger()

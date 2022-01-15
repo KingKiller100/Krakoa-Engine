@@ -79,7 +79,8 @@ namespace krakoa
 
 	void Application::Run() const
 	{
-		do {
+		do
+		{
 			const auto deltaTime = timeStep.GetStep();
 			auto& sceneManager = GetManager<scene::SceneManager>();
 
@@ -103,7 +104,7 @@ namespace krakoa
 
 	void Application::ShutDown()
 	{
-		KRK_BANNER( "Closing App", "Shut Down", "*", "*", 10 );
+		KRK_BANNER( "Closing App", "*", "*", 10 );
 		gfx::Renderer::ShutDown();
 
 		for ( auto* manager : managers )
@@ -117,7 +118,7 @@ namespace krakoa
 
 		const auto appTimeSpan = timeStep.GetLifeTimeTimeSpan();
 
-		KRK_NRM( klib::ToString("Total Runtime: {0}h {1}m {2}s",
+		KRK_INF( klib::ToString("Total Runtime: {0}h {1}m {2}s",
 			appTimeSpan.hours.count()
 			, appTimeSpan.minutes.count()
 			, appTimeSpan.seconds.count()

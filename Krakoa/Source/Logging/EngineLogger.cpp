@@ -19,16 +19,17 @@ namespace krakoa
 
 	namespace
 	{
-		std::shared_ptr<klib::FileLogger> g_FileLogger;
-		std::shared_ptr<klib::ConsoleLogger> g_ConsoleLogger;
-		std::shared_ptr<klib::DebugOutputWindowLogger> g_DebugOutputWindowLogger;
-		Solo_Ptr<klib::Logging> g_Logger;
+		klib::LogDispatcher g_Logger;
+		klib::LogDispatcher::LogDestRef<klib::FileLogger> g_FileLogger;
+		klib::LogDispatcher::LogDestRef<klib::ConsoleLogger> g_ConsoleLogger;
+		klib::LogDispatcher::LogDestRef<klib::DebugOutputLogger> g_DebugOutputLogger;
+		LogProfile g_KrakoaLog;
 	}
 
 
 	void EngineLogger::CoreInit( const std::string_view& initMsg )
 	{
-		if ( g_Logger )
+		if ( g_KrakoaLog.IsNull() )
 			return;
 
 		std::filesystem::path dir( klib::kFileSystem::GetExeDirectory() );
@@ -43,84 +44,79 @@ namespace krakoa
 		const auto padding = std::string( 72, '*' );
 		const auto spacing = std::string( 12, ' ' );
 
-		const klib::GregorianCalendar now( klib::CalendarInfoSourceType::LOCAL );
-		const auto timeStr = now.GetTime().ToString( klib::Time::MILLIS );
-		const auto dateStr = now.GetDate().ToString( "mmm ddd yyyy" );
+		const klib::GregorianCalendar today( klib::CalendarInfoSourceType::LOCAL );
+		const auto timeStr = today.GetTime().ToString( klib::Time::MILLIS );
+		const auto dateStr = today.GetDate().ToString( "mmm ddd yyyy" );
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
+		
+		g_FileLogger = g_Logger.AddDestination<klib::FileLogger>( path );
+		g_ConsoleLogger = g_Logger.AddDestination<klib::ConsoleLogger>();
+		g_DebugOutputLogger = g_Logger.AddDestination<klib::DebugOutputLogger>();
 
-		g_Logger = Make_Solo<klib::Logging>();
-		g_FileLogger = g_Logger->AddDestination<klib::FileLogger>( path );
-		g_ConsoleLogger = g_Logger->AddDestination<klib::ConsoleLogger>();
-		g_DebugOutputWindowLogger = g_Logger->AddDestination<klib::DebugOutputWindowLogger>();
+		g_KrakoaLog = g_Logger.RegisterProfile( name, klib::LogLevel::INF );
 
-		g_Logger->SetCacheMode( false );
+		g_Logger.Open();
 
-		g_FileLogger->Open();
-		g_ConsoleLogger->Open();
-		g_DebugOutputWindowLogger->Open();
+		g_KrakoaLog->AddRaw( padding );
+		g_KrakoaLog->AddRaw( stamp );
+		g_KrakoaLog->AddRaw( initMsg );
+		g_KrakoaLog->AddRaw( padding );
 
-		g_Logger->AddRaw( padding );
-		g_Logger->AddRaw( stamp );
-		g_Logger->AddRaw( initMsg );
-		g_Logger->AddRaw( padding );
-
-		g_Logger->AddRaw();
+		g_KrakoaLog->AddNewLine();
 	}
 
 	void EngineLogger::Raw( std::string_view message )
 	{
-		g_Logger->AddRaw( message );
+		g_KrakoaLog->AddRaw( message );
 	}
 
-	void EngineLogger::Trace( std::string_view profile, std::string_view message )
+	void EngineLogger::Trace( std::string_view message )
 	{
-		g_Logger->AddEntry( klib::LogLevel::TRC, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_KrakoaLog->AddEntry( klib::LogLevel::TRC, message );
 	}
 
-	void EngineLogger::Debug( std::string_view profile, std::string_view message )
+	void EngineLogger::Debug( std::string_view message )
 	{
-		g_Logger->AddEntry( klib::LogLevel::DBG, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_KrakoaLog->AddEntry( klib::LogLevel::DBG, message );
 	}
 
-	void EngineLogger::Normal( std::string_view profile, std::string_view message )
+	void EngineLogger::Info( std::string_view message )
 	{
-		g_Logger->AddEntry( klib::LogLevel::NRM, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_KrakoaLog->AddEntry( klib::LogLevel::INF, message );
 	}
 
-	void EngineLogger::Info( std::string_view profile, std::string_view message )
+	void EngineLogger::Warn( std::string_view message )
 	{
-		g_Logger->AddEntry( klib::LogLevel::INF, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_KrakoaLog->AddEntry( klib::LogLevel::WRN, message );
 	}
 
-	void EngineLogger::Warn( std::string_view profile, std::string_view message )
+	void EngineLogger::Error( std::string_view message, klib::SourceInfo sourceInfo )
 	{
-		g_Logger->AddEntry( klib::LogLevel::WRN, klib::LogProfile( profile ), klib::LogMessage( message ) );
+		g_KrakoaLog->AddEntry( klib::LogLevel::ERR, klib::ToString( "{0}\n{1}", message, sourceInfo ) );
 	}
 
-	void EngineLogger::Error( std::string_view profile, std::string_view message, klib::SourceInfo sourceInfo )
+	void EngineLogger::Banner( std::string_view message, const std::string_view& frontPadding, const std::string_view& backPadding, std::uint16_t paddingCount )
 	{
-		g_Logger->AddEntry( klib::LogLevel::ERR, klib::LogProfile( profile ), klib::LogMessage( klib::ToString( "{0}\n{1}", message, sourceInfo ) ) );
-	}
-
-	void EngineLogger::Banner( const klib::LogMessage& message, const std::string_view& frontPadding, const std::string_view& backPadding, std::uint16_t paddingCount )
-	{
-		g_Logger->AddBanner( message, frontPadding, backPadding, paddingCount );
+		g_KrakoaLog->AddBanner( message, frontPadding, backPadding, paddingCount );
 	}
 
 	void EngineLogger::ShutDown()
 	{
-		g_Logger->AddRaw( R"(
+		g_KrakoaLog->AddRaw( R"(
 ************************************************************************
                               Logging Concluded
 ************************************************************************)"
 		);
 	}
 
+	LogProfile EngineLogger::RegisterProfile( std::string_view name )
+	{
+		return g_Logger.RegisterProfile( name, klib::LogLevel::INF );
+	}
+
 	void EngineLogger::SetMinimumLogLevelUsingConfig( klib::LogLevel minLvl )
 	{
-		// const auto logLevelStr = configurations::GetConfiguration<std::string_view>( "Logging", "Level" );
-		// const auto min_level = klib::LogLevel::FromString( klib::ToUpper( logLevelStr ) );
-		g_Logger->SetGlobalLevel( minLvl );
+		g_Logger.SetGlobalLevel( minLvl );
 	}
 
 	void EngineLogger::RemoveIfTooOldFile( std::int64_t maxDays )
@@ -131,7 +127,7 @@ namespace krakoa
 			return;
 
 		g_FileLogger->Close();
-		
+
 		const auto lastWrite = dirEntry.last_write_time();
 
 		const auto now = std::chrono::file_clock::now();
@@ -146,11 +142,11 @@ namespace krakoa
 		g_FileLogger->Open();
 	}
 
-	void EngineLogger::RemoveIfTooLarge(std::uint64_t maxBytes)
+	void EngineLogger::RemoveIfTooLarge( std::uint64_t maxBytes )
 	{
-		const auto dirEntry = std::filesystem::directory_entry(g_FileLogger->GetPath());
+		const auto dirEntry = std::filesystem::directory_entry( g_FileLogger->GetPath() );
 
-		if (!dirEntry.exists())
+		if ( !dirEntry.exists() )
 			return;
 
 		g_FileLogger->Close();
@@ -158,8 +154,8 @@ namespace krakoa
 		const auto fileSize = dirEntry.file_size();
 		const auto tooBig = fileSize > maxBytes;
 
-		if (tooBig )
-			klib::Remove(dirEntry.path());
+		if ( tooBig )
+			klib::Remove( dirEntry.path() );
 
 		g_FileLogger->Open();
 	}

@@ -1,6 +1,7 @@
 ﻿#include "AddAppearancePopupOption.hpp"
 
-#include "Scene/Entity/Components/AppearanceComponent.hpp"
+#include <Scene/Entity/Components/AppearanceComponent.hpp>
+#include "../../../Logging/EditorLogger.hpp"
 
 namespace krakoa::scene::panels
 {
@@ -14,7 +15,7 @@ namespace krakoa::scene::panels
 	{
 		DrawAddComponentMousePopupOption<ecs::components::Appearance2DComponent>("Appearance", entity, [&]()
 		{
-			KRK_NRM(klib::ToString("Adding component \"Appearance\" to entity {0}",
+			LogEditorInfo(klib::ToString("Adding component \"Appearance\" to entity {0}",
 				entity.GetID())
 			);
 

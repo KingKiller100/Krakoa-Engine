@@ -91,7 +91,7 @@ namespace krakoa::scene::panels
 			auto& sceneCamera = camera.GetCamera<SceneCamera>();
 			const auto projection = sceneCamera.GetProjectionType();
 			HandleProjectionType(sceneCamera, projection);
-			projPropertiesFuncs[projection](sceneCamera);
+			projPropertiesFuncs[projection.ToUnderlying()](sceneCamera);
 		});
 	}
 

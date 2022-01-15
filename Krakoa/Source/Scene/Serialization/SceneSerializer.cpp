@@ -6,6 +6,7 @@
 #include "../../Debug/Debug.hpp"
 #include "../../Debug/Instrumentor.hpp"
 #include "../../Logging/EngineLogger.hpp"
+#include "../../Util/Fmt.hpp"
 
 #include "SceneSerializerImpl.hpp"
 

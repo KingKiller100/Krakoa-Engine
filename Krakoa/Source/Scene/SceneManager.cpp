@@ -6,6 +6,7 @@
 
 #include "../Graphics/2D/Renderer2D.hpp"
 #include "../FileSystem/VirtualFileExplorer.hpp"
+#include "../Util/Fmt.hpp"
 
 #include "Entity/Components/CameraComponent.hpp"
 #include "Entity/Components/TransformComponent.hpp"
@@ -25,7 +26,7 @@ namespace krakoa::scene
 		const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
 			prev
 			, state);
-		KRK_NRM(msg);
+		KRK_INF(msg);
 	})
 		, currentScene(scenes.end())
 		, entityComponentSystem(new ecs::EntityComponentSystem())

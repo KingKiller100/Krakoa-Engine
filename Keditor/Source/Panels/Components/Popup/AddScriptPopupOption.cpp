@@ -1,6 +1,7 @@
 ﻿#include "AddScriptPopupOption.hpp"
 
 #include "Scene/Entity/Components/NativeScriptComponent.hpp"
+#include "../../../Logging/EditorLogger.hpp"
 
 namespace krakoa::scene::panels
 {
@@ -16,7 +17,7 @@ namespace krakoa::scene::panels
 		{
 			ui::popups::DrawPopupOption("Script", [&]()
 			{
-				KRK_NRM(klib::ToString("Adding component \"Native Script\" to entity {0}",
+				LogEditorInfo(klib::ToString("Adding component \"Native Script\" to entity {0}",
 						entity.GetID())
 				);
 

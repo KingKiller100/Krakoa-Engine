@@ -75,7 +75,7 @@ namespace krakoa::scene
 		entity.AddComponent<components::TagComponent>(tag);
 		entity.AddComponent<components::TransformComponent>();
 
-		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
+		KRK_INF(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name
 			, tag
 			, entity.GetID()
@@ -95,7 +95,7 @@ namespace krakoa::scene
 		entity.AddComponent<components::TagComponent>(tag);
 		entity.AddComponent<components::TransformComponent>();
 
-		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
+		KRK_INF(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name
 			, tag
 			, entity.GetID()
@@ -114,7 +114,7 @@ namespace krakoa::scene
 		entity.AddComponent<components::TagComponent>(tag);
 		entity.AddComponent<components::TransformComponent>();
 
-		KRK_NRM(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
+		KRK_INF(klib::ToString("Scene \"{0}\": Added entity [\"{1}\", {2}]",
 			name
 			, tag
 			, entity.GetID()

@@ -2,6 +2,8 @@
 #include "EntitiesPanel.hpp"
 #include "ComponentsPanel.hpp"
 
+#include "../Logging/EditorLogger.hpp"
+
 #include <Core/Application.hpp>
 #include <Debug/Instrumentor.hpp>
 #include <Scene/SceneManager.hpp>
@@ -15,7 +17,7 @@ namespace krakoa::scene::panels
 	SceneHierarchyPanel::SceneHierarchyPanel()
 		: selectedEntityID(new ecs::EntityUID{})
 	{
-		KRK_LOG("Keditor", "Scene Hierarchy Created");
+		LogEditorInfo("Keditor", "Scene Hierarchy Created");
 
 		panels.emplace_back(Solo_Ptr<iScenePanel>(Make_Solo<EntitiesPanel>(selectedEntityID)));
 		panels.emplace_back(Solo_Ptr<iScenePanel>(Make_Solo<ComponentsPanel>(selectedEntityID)));

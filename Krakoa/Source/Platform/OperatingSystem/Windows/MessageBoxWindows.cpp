@@ -11,8 +11,9 @@
 
 namespace krakoa::os
 {
-	long MessageBoxDisplayWindows::Show(
-		std::string_view title, std::string_view text
+	MessageBoxResponse MessageBoxDisplayWindows::Show(
+		std::string_view title
+		, std::string_view text
 		, MessageBoxButtonSet buttons
 		, MessageBoxIcon icon
 		, MessageBoxDefaultButton defaultButton

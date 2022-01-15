@@ -13,6 +13,7 @@
 #include "../Entity/Components/NativeScriptComponent.hpp"
 
 #include "../../Graphics/Colour.hpp"
+#include "../../Util/Fmt.hpp"
 #include "../../Maths/Maths.hpp"
 #include "../../Camera/SceneCamera.hpp"
 

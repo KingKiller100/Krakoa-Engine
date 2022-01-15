@@ -1,6 +1,7 @@
 ﻿#include "TagProperties.hpp"
 
 #include "Scene/Entity/Components/TagComponent.hpp"
+#include "../../../Logging/EditorLogger.hpp"
 
 namespace krakoa::scene::panels
 {
@@ -29,7 +30,7 @@ namespace krakoa::scene::panels
 				if (klib::IsWhiteSpaceOrNull(buffer))
 					return;
 
-				KRK_INF(klib::ToString("Renaming entity: \"{0}\"->\"{1}\"", tag.GetTag(), buffer));
+				LogEditorInfo(klib::ToString("Renaming entity: \"{0}\"->\"{1}\"", tag.GetTag(), buffer));
 
 				tag.SetTag(buffer);
 			});

@@ -4,6 +4,7 @@
 #include "Camera/SceneCamera.hpp"
 #include "Core/Application.hpp"
 #include "Scene/Entity/Components/CameraComponent.hpp"
+#include "../../../Logging/EditorLogger.hpp"
 
 namespace krakoa::scene::panels
 {
@@ -17,7 +18,7 @@ namespace krakoa::scene::panels
 	{
 		DrawAddComponentMousePopupOption<ecs::components::CameraComponent>("Camera", entity, [&]()
 		{
-			KRK_NRM(klib::ToString("Adding component \"Camera\" to entity {0}",
+			LogEditorInfo(klib::ToString("Adding component \"Camera\" to entity {0}",
 					entity.GetID())
 			);
 

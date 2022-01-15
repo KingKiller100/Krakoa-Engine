@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../../Logging/EditorLogger.hpp"
+
 #include <UI/ImGui/UI.hpp>
 #include <Util/TypeInfo.hpp>
 #include <Debug/Instrumentor.hpp>
@@ -9,7 +11,6 @@
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
 
-#include <string_view>
 
 namespace krakoa {
 	namespace scene {
@@ -67,7 +68,7 @@ namespace krakoa {
 						popups::DrawPopup(popupMenuId, [&] {
 							ui::DrawMenuItem("Remove", [&]
 							{
-								KRK_NRM(klib::ToString("Removing component \"{0}\" from entity {1}",
+								LogEditorInfo(klib::ToString("Removing component \"{0}\" from entity {1}",
 									util::GetTypeNameNoNamespace<Component>()
 									, entity.GetID()));
 								markedComponentForRemoval = true;

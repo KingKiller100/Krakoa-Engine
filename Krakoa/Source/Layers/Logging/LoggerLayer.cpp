@@ -25,7 +25,7 @@ namespace krakoa
 				klib::ToString( "[{0}]: {1}\n",
 					msg.time.ToString( "hh:mm:ss:ccc" ),
 					msg.text );
-			logs << log;
+			logs_ << log;
 		}
 
 		bool IsOpen() const override
@@ -33,8 +33,14 @@ namespace krakoa
 			return true;
 		}
 
-		std::string_view GetName() const override;
-		void AddRaw( const klib::LogMessage& message ) override;
+		std::string_view GetName() const override
+		{
+			return "PanelLogger";
+		}
+		void AddRaw( const klib::LogMessage& message ) override
+		{
+			logs_ << message.text;
+		}
 
 		void Close() override
 		{}
@@ -42,7 +48,7 @@ namespace krakoa
 		void Open() override
 		{ }
 
-		std::stringstream logs;
+		std::stringstream logs_;
 	};
 
 	namespace
@@ -72,7 +78,7 @@ namespace krakoa
 
 		ui::DrawPanel( "Console", []()
 		{
-			const auto logs = g_PanelLogger->logs.str();
+			const auto logs = g_PanelLogger->logs_.str();
 			auto lines = klib::Split( logs, "\n" );
 			const auto size = lines.size();
 

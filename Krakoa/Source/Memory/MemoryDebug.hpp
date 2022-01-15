@@ -11,7 +11,8 @@
 
 #if KRK_ENABLE_ASSERT
 
-#	define MEM_ASSERT(cond, msg) kAssertCB(cond, msg, [](std::string_view e, std::string_view m, const klib::SourceInfo& s)\
+#	define MEM_ASSERT(cond, msg) if (!(cond)) throw klib::FailedConditionException(#cond, msg, SOURCE_INFO(),\
+[](std::string_view e, std::string_view m, const klib::SourceInfo& s)\
 {\
 	const auto err = ::util::Fmt("[FAILED] {0} Condition: \"{1}\" ", e, m);\
 	::krakoa::debug::RaiseNotice(err, s);\
@@ -21,5 +22,5 @@
 #	define MEM_ASSERT(cond, msg) ((void)0)
 #endif
 
-#define MEM_FATAL(msg) ::krakoa::debug::RaiseException(msg, SOURCE_INFO(), memory::MemoryLogger::GetLogger())
+#define MEM_FATAL(msg) ::krakoa::debug::RaiseException(msg, SOURCE_INFO())
 

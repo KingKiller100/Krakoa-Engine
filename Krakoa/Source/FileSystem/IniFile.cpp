@@ -14,6 +14,8 @@
 
 namespace krakoa::filesystem
 {
+	LogProfile g_IniFileLog = EngineLogger::RegisterProfile( "IniFile" );
+
 	IniFile::ValueMap IniFile::ReadFile( const std::filesystem::path& path )
 	{
 		KRK_PROFILE_FUNCTION();
@@ -46,7 +48,7 @@ namespace krakoa::filesystem
 			const auto key = klib::ToLower( line.substr( 0, colonPos ) );
 			const auto value = line.substr( colonPos + 1 );
 
-			KRK_INF( klib::ToString("Mapping: \"{0}\" -> \"{1}\" from {2:f} [{2:l}]", key, value, source) );
+			g_IniFileLog->AddEntry( klib::LogLevel::INF, klib::ToString( "Mapping: \"{0}\" -> \"{1}\" from {2:f} [{2:l}]", key, value, source ) );
 
 			values.emplace( key, ValueData{value, source} );
 		}
@@ -56,7 +58,7 @@ namespace krakoa::filesystem
 
 	void IniFile::WriteFile( const std::filesystem::path& path, const ValueMap& vMap )
 	{
-		KRK_INF( "INI", "Writing config file: " + path.string() );
+		g_IniFileLog->AddEntry( klib::LogLevel::INF, "Writing config file: " + path.string() );
 
 		std::string contents;
 
@@ -66,7 +68,7 @@ namespace krakoa::filesystem
 			const auto& value = data.second.value;
 			const auto line = util::Fmt( "{0}: {1}", key, value );
 			contents.append( line + "\n" );
-			KRK_INF( "INI", line );
+			g_IniFileLog->AddEntry( klib::LogLevel::INF, line );
 		}
 
 		klib::WriteFile( path, contents );

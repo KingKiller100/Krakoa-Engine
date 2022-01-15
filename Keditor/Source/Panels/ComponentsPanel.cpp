@@ -20,6 +20,8 @@
 #include <Scene/Entity/Components/AppearanceComponent.hpp>
 #include <Scene/Entity/Components/NativeScriptComponent.hpp>
 
+#include "../Logging/EditorLogger.hpp"
+
 #include <UI/ImGui/UI.hpp>
 
 #include <Util/TypeInfo.hpp>
@@ -32,8 +34,8 @@ namespace krakoa::scene::panels
 	using namespace ecs;
 	using namespace ui;
 
-	ComponentsPanel::ComponentsPanel(const Multi_Ptr<EntityUID>& pSelected) noexcept
-		: pSelectedEntity(pSelected)
+	ComponentsPanel::ComponentsPanel( const Multi_Ptr<EntityUID>& pSelected ) noexcept
+		: pSelectedEntity( pSelected )
 	{
 		InitializeProperties();
 		InitializeAddCompPopupOptions();
@@ -41,90 +43,90 @@ namespace krakoa::scene::panels
 
 	void ComponentsPanel::InitializeProperties()
 	{
-		properties.emplace_back(new TagProperties());
-		properties.emplace_back(new TransformProperties());
-		properties.emplace_back(new CameraProperties());
-		properties.emplace_back(new AppearanceProperties());
+		properties.emplace_back( new TagProperties() );
+		properties.emplace_back( new TransformProperties() );
+		properties.emplace_back( new CameraProperties() );
+		properties.emplace_back( new AppearanceProperties() );
 	}
 
 	void ComponentsPanel::InitializeAddCompPopupOptions()
 	{
-		addCompPopupOptions.emplace_back(new AddCameraPopupOption);
-		addCompPopupOptions.emplace_back(new AddAppearancePopupOption);
-		addCompPopupOptions.emplace_back(new AddScriptPopupOption);
+		addCompPopupOptions.emplace_back( new AddCameraPopupOption );
+		addCompPopupOptions.emplace_back( new AddAppearancePopupOption );
+		addCompPopupOptions.emplace_back( new AddScriptPopupOption );
 	}
 
 	ComponentsPanel::~ComponentsPanel() noexcept
-		= default;
+	= default;
 
 	void ComponentsPanel::LogConnected() const
 	{
-		KRK_LOG("Keditor", "Components panel connected");
+		LogEditorInfo( "Components panel connected" );
 	}
 
-	void ComponentsPanel::DrawActiveScene(iScene& scene)
+	void ComponentsPanel::DrawActiveScene( iScene& scene )
 	{
 		KRK_PROFILE_FUNCTION();
 
 		const maths::Size winSize = GetWindow().GetDimensions();
 
-		const auto divider = kmaths::constants::OneOver<float>(6);
-		const auto minPoint = maths::Point{ winSize.width / divider, winSize.height / divider };
+		const auto divider = kmaths::constants::OneOver<float>( 6 );
+		const auto minPoint = maths::Point{winSize.width / divider, winSize.height / divider};
 		const auto maxPoint = minPoint * 3;
-		
-		ui::SetNextWindowConstraints(minPoint, maxPoint);
-		DrawPanel("Components", [&]()
+
+		ui::SetNextWindowConstraints( minPoint, maxPoint );
+		DrawPanel( "Components", [&]()
 		{
-			if (pSelectedEntity.expired())
+			if ( pSelectedEntity.expired() )
 				return;
 
 			const auto& id = *pSelectedEntity.lock();
-			if (!id)
+			if ( !id )
 				return;
 
-			DisplayComponents(id, scene);
-		});
+			DisplayComponents( id, scene );
+		} );
 	}
 
 	void ComponentsPanel::DrawNoActiveScene()
 	{
-		DrawPanel("Components", nullptr);
+		DrawPanel( "Components", nullptr );
 	}
 
-	void ComponentsPanel::DisplayComponents(const EntityUID& id, iScene& scene)
+	void ComponentsPanel::DisplayComponents( const EntityUID& id, iScene& scene )
 	{
-		if (!scene.HasEntity(id))
+		if ( !scene.HasEntity( id ) )
 			return;
 
 		// This is the draw order of the components
-		auto& entity = scene.GetEntity(id);
+		auto& entity = scene.GetEntity( id );
 
-		for (auto& property : properties)
+		for ( auto& property : properties )
 		{
-			property->DisplayProperties(entity);
+			property->DisplayProperties( entity );
 		}
 
-		DrawAddComponentButton(scene, entity);
+		DrawAddComponentButton( scene, entity );
 	}
 
-	void ComponentsPanel::DrawAddComponentButton(iScene& scene, Entity& entity)
+	void ComponentsPanel::DrawAddComponentButton( iScene& scene, Entity& entity )
 	{
 		//ImGui::PushItemWidth(-1);
-		
+
 		const char btnName[] = "Add Component";
 
-		DrawButton(btnName, {}, [&]()
+		DrawButton( btnName, {}, [&]()
 		{
-			popups::OpenPopup(btnName);
-		});
+			popups::OpenPopup( btnName );
+		} );
 
-		popups::DrawPopup(btnName, [&]()
+		popups::DrawPopup( btnName, [&]()
 		{
-			for (auto& option : addCompPopupOptions)
+			for ( auto& option : addCompPopupOptions )
 			{
-				option->DisplayOption(entity);
+				option->DisplayOption( entity );
 			}
-		});
+		} );
 
 		// ImGui::PopItemWidth();
 	}

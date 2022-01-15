@@ -1,7 +1,11 @@
 ﻿#include "MenuBar.hpp"
 
+#include "../Logging/EditorLogger.hpp"
+
+#include "Util/Fmt.hpp"
 #include "UI/ImGui/MenuUI.hpp"
 #include <Logging/EngineLogger.hpp>
+
 
 namespace krakoa::panels
 {
@@ -57,7 +61,7 @@ namespace krakoa::panels
 
 	void MenuBar::AddOption(const std::string& title, const ui::NamedCommand& command)
 	{
-		KRK_TRC(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", command.label, title));
+		LogEditorTrace(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", command.label, title));
 		auto& node = menuBarList[title];
 		const auto iter = std::find_if(node.begin(), node.end(),
 			[&command](const Multi_Ptr<ui::NamedCommand>& cmd)
@@ -74,7 +78,7 @@ namespace krakoa::panels
 	void MenuBar::AddOption(const MenuBarList::key_type& title, const std::string_view& shortcut,
 		const ui::NamedCommand& command)
 	{
-		KRK_TRC(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", command.label, title));
+		LogEditorTrace(util::Fmt("Adding menu command \"{0}\" to option \"{1}\"", command.label, title));
 		auto& node = menuBarList[title];
 		const auto iter = std::find_if(node.begin(), node.end(),
 			[&command](const Multi_Ptr<ui::NamedCommand>& cmd)

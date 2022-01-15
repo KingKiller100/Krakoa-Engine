@@ -15,7 +15,6 @@ namespace memory
 		std::atomic<size_t> g_BookmarkCount(0);
 	}
 
-
 	void* CreateNode(AllocHeaderLinkedList::Node_t* node, size_t bytes, Heap* heap)
 	{		
 		auto& header = node->data;

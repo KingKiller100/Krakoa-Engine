@@ -6,7 +6,9 @@
 
 namespace krakoa::configurations
 {
-	GlobalConfig::GlobalConfig(Token)
+	LogProfile g_ConfigLog = EngineLogger::RegisterProfile( "Config" );
+
+	GlobalConfig::GlobalConfig( Token )
 	{
 		Initialize();
 	}
@@ -17,42 +19,43 @@ namespace krakoa::configurations
 		configMap.clear();
 	}
 
-	void GlobalConfig::AddContextRemap(const std::string& redirectKey, const std::string& key)
+	void GlobalConfig::AddContextRemap( const std::string& redirectKey, const std::string& key )
 	{
-		contextKeyRemaps[SanitizeKey(redirectKey)] = SanitizeKey(key);
+		contextKeyRemaps[SanitizeKey( redirectKey )] = SanitizeKey( key );
 	}
 
-	void GlobalConfig::AddSubjectRemap(const std::string& redirectKey, const std::string& key)
+	void GlobalConfig::AddSubjectRemap( const std::string& redirectKey, const std::string& key )
 	{
-		subjectKeyRemaps[SanitizeKey(redirectKey)] = SanitizeKey(key);
+		subjectKeyRemaps[SanitizeKey( redirectKey )] = SanitizeKey( key );
 	}
 
 	void GlobalConfig::Initialize()
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_LOG("Config", "Parsing config files");
+		g_ConfigLog->AddEntry( klib::LogLevel::INF, "Parsing config files" );
 
 		const auto files = filesystem::VirtualFileExplorer::GetFiles(
 			"Config", "ini", filesystem::FileSearchMode::RECURSIVE
 		);
 
-		for (const auto& file : files)
+		for ( const auto& file : files )
 		{
-			const auto filename = SanitizeKey(file.stem().string());
-			const auto valueMap = new ConfigValueMap(file);
+			const auto filename = SanitizeKey( file.stem().string() );
+			const auto valueMap = new ConfigValueMap( file );
 			valueMap->Load();
-			configMap.emplace(filename, valueMap);
+			configMap.emplace( filename, valueMap );
 		}
-		
-		KRK_LOG("Config", "Parsing concluded");
+
+		g_ConfigLog->AddEntry( klib::LogLevel::INF, "Parsing concluded" );
 	}
 
-	std::string GlobalConfig::ResolveKey(const std::string& key, const std::map<std::string, std::string>& remap) const
+	std::string GlobalConfig::ResolveKey( const std::string& key, const std::map<std::string, std::string>& remap ) const
 	{
-		const auto sanitizedKey = SanitizeKey(key);
-		const auto iter = remap.find(sanitizedKey);
-		if (iter != remap.end())
+		KRK_PROFILE_FUNCTION();
+		const auto sanitizedKey = SanitizeKey( key );
+		const auto iter = remap.find( sanitizedKey );
+		if ( iter != remap.end() )
 		{
 			return iter->second;
 		}
@@ -60,15 +63,21 @@ namespace krakoa::configurations
 		return sanitizedKey;
 	}
 
-	std::string GlobalConfig::SanitizeKey(const std::string& key) const
+	std::string GlobalConfig::SanitizeKey( const std::string& key ) const
 	{
-		return klib::ToLower(key);
+		return klib::ToLower( key );
 	}
 
-	const ConfigValueMap& GlobalConfig::GetValueMap(const std::string& context) const
+	void GlobalConfig::LogNewConfiguration( std::string_view context, std::string_view key, std::string_view value, const klib::MutSourceInfo& sourceInfo )
+	{
+		g_ConfigLog->AddEntry( klib::LogLevel::INF, util::Fmt( "Setting configuration: \"{0}\": [\"{1}\", {2}]", context, key, value ) );
+		g_ConfigLog->AddEntry( klib::LogLevel::INF, util::Fmt( "Source: {0}", sourceInfo ) );
+	}
+
+	const ConfigValueMap& GlobalConfig::GetValueMap( const std::string& context ) const
 	{
 		KRK_PROFILE_FUNCTION();
-		return *configMap.at(SanitizeKey(context));
+		return *configMap.at( SanitizeKey( context ) );
 	}
 
 	GlobalConfig& GetGlobalConfig()
@@ -76,9 +85,9 @@ namespace krakoa::configurations
 		return GlobalConfig::Reference();
 	}
 
-	void RemapConfigurationKey(const std::string& redirectKey, const std::string& key)
+	void RemapConfigurationKey( const std::string& redirectKey, const std::string& key )
 	{
 		auto& gConf = GlobalConfig::Reference();
-		gConf.AddContextRemap(redirectKey, key);
+		gConf.AddContextRemap( redirectKey, key );
 	}
 }

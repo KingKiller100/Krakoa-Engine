@@ -1,14 +1,13 @@
 ﻿#pragma once
 
-#include <Utility/Logging/kLogging.hpp>
 #include "../Core/EngineMacros.hpp"
+#include <Utility/Logging/kLogging.hpp>
+#include <Utility/Debug/Source/kSourceInfo.hpp>
+
+#include "LoggerCore.hpp"
 
 namespace krakoa
 {
-	using LogProfile = klib::LogProfileRef;
-	template <typename T>
-	using LogDest = klib::LogDispatcher::LogDestRef<T>;
-
 	class KRAKOA_API EngineLogger
 	{
 	public:

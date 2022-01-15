@@ -6,13 +6,15 @@
 
 namespace krakoa::gfx
 {
-	void LogGFX(const std::string& msg)
+	LogProfile g_GfxLog = EngineLogger::RegisterProfile( "GFX" );
+
+	void LogGFX( const std::string& msg )
 	{
-		KRK_LOG("GFX", msg);
+		g_GfxLog->AddEntry( klib::LogLevel::INF, msg );
 	}
 
-	void LogGFXError(const std::string& msg)
+	void LogGFXError( const std::string& msg )
 	{
-		KRK_LOG("GFX_ERR", msg);
+		g_GfxLog->AddEntry( klib::LogLevel::ERR, msg );
 	}
 }

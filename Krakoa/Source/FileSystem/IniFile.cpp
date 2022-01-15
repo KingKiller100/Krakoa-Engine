@@ -10,64 +10,65 @@
 #include <Utility/String/kStringTricks.hpp>
 #include <Utility/Debug/Source/kMutableSourceInfoToString.hpp>
 
+#include "../Util/Fmt.hpp"
+
 namespace krakoa::filesystem
 {
-	IniFile::ValueMap IniFile::ReadFile(const std::filesystem::path& path)
+	IniFile::ValueMap IniFile::ReadFile( const std::filesystem::path& path )
 	{
 		KRK_PROFILE_FUNCTION();
 
 		ValueMap values;
 
-		auto fileLines = klib::ReadFile(path.string());
+		auto fileLines = klib::ReadFile( path.string() );
 
 		size_t index = 0;
 
-		for (size_t i = 0; i < fileLines.size(); ++i)
+		for ( size_t i = 0; i < fileLines.size(); ++i )
 		{
 			auto& line = fileLines[i];
-			klib::MutSourceInfo source(path, index++, "");
+			klib::MutSourceInfo source( path, index++, "" );
 
-			if (const auto commentPos = line.find(s_CommentToken); commentPos != std::string::npos)
-				line.erase(commentPos);
+			if ( const auto commentPos = line.find( s_CommentToken ); commentPos != std::string::npos )
+				line.erase( commentPos );
 
-			if (klib::IsWhiteSpaceOrNull(line))
+			if ( klib::IsWhiteSpaceOrNull( line ) )
 				continue;
 
-			klib::Remove(line, ' ');
-			const auto colonPos = line.find(':');
+			klib::Remove( line, ' ' );
+			const auto colonPos = line.find( ':' );
 
-			if (colonPos == std::string::npos)
+			if ( colonPos == std::string::npos )
 			{
-				KRK_FATAL(klib::ToString("[Configurations] Bad line - source: {0}", source));
+				KRK_FATAL( klib::ToString("[Configurations] Bad line - source: {0}", source) );
 			}
 
-			const auto key = klib::ToLower(line.substr(0, colonPos));
-			const auto value = line.substr(colonPos + 1);
+			const auto key = klib::ToLower( line.substr( 0, colonPos ) );
+			const auto value = line.substr( colonPos + 1 );
 
-			krakoa::EngineLogger::
-			KRK_LOG("INI", klib::ToString("Mapping: \"{0}\" -> \"{1}\" from {2:f} [{2:l}]", key, value, source));
+			KRK_INF( klib::ToString("Mapping: \"{0}\" -> \"{1}\" from {2:f} [{2:l}]", key, value, source) );
 
-			values.emplace(key, ValueData{ value, source });
+			values.emplace( key, ValueData{value, source} );
 		}
 
 		return values;
 	}
 
-	void IniFile::WriteFile(const std::filesystem::path& path, const ValueMap& vMap)
+	void IniFile::WriteFile( const std::filesystem::path& path, const ValueMap& vMap )
 	{
-		KRK_LOG("INI", "Writing config file: " + path.string());
+		KRK_INF( "INI", "Writing config file: " + path.string() );
 
 		std::string contents;
 
-		for (auto&& data : vMap)
+		for ( auto&& data : vMap )
 		{
 			const auto& key = data.first;
 			const auto& value = data.second.value;
-			const auto line = util::Fmt("{0}: {1}", key, value);
-			contents.append(line + "\n");
-			KRK_LOG("INI", line);
+			const auto line = util::Fmt( "{0}: {1}", key, value );
+			contents.append( line + "\n" );
+			KRK_INF( "INI", line );
 		}
-		
-		klib::WriteFile(path, contents);
+
+		klib::WriteFile( path, contents );
 	}
 }

@@ -2,9 +2,6 @@
 #include "EngineLogger.hpp"
 
 #include "../Config/GlobalConfig.hpp"
-#include "../Util/Fmt.hpp"
-
-#include "../Core/PointerTypes.hpp"
 
 #include <Utility/Logging/kLogging.hpp>
 #include <Utility/Logging/Destinations/kFileLogger.hpp>
@@ -22,7 +19,7 @@ namespace krakoa
 		klib::LogDispatcher::LogDestRef<klib::FileLogger> g_FileLogger;
 		klib::LogDispatcher::LogDestRef<klib::ConsoleLogger> g_ConsoleLogger;
 		klib::LogDispatcher::LogDestRef<klib::DebugOutputLogger> g_DebugOutputLogger;
-		LogProfile g_KrakoaLog;
+		LogProfile g_KrakoaLog = EngineLogger::RegisterProfile( "Krakoa");
 	}
 
 
@@ -33,8 +30,7 @@ namespace krakoa
 
 		std::filesystem::path dir( klib::kFileSystem::GetExeDirectory() );
 		dir /= "Logs\\";
-
-		constexpr auto name = "Krakoa";
+		
 		constexpr auto filename = "KrakoaEngine";
 		constexpr auto extension = ".log";
 
@@ -51,9 +47,7 @@ namespace krakoa
 		g_FileLogger = dispatcher_.AddDestination<klib::FileLogger>( path );
 		g_ConsoleLogger = dispatcher_.AddDestination<klib::ConsoleLogger>();
 		g_DebugOutputLogger = dispatcher_.AddDestination<klib::DebugOutputLogger>();
-
-		g_KrakoaLog = dispatcher_.RegisterProfile( name, klib::LogLevel::INF );
-
+		
 		dispatcher_.Open();
 
 		g_KrakoaLog->AddRaw( padding );

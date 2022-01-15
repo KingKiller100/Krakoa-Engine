@@ -6,6 +6,7 @@
 #	include "Application.hpp"
 #	include "PointerTypes.hpp"
 
+#	include "../Logging/EngineLogger.hpp"
 #	include "../Debug/Instrumentor.hpp"
 #	include "../Debug/ExceptionsHandler.hpp"
 #	include "../Config/GlobalConfig.hpp"

@@ -152,12 +152,9 @@ void TryRunApplication()
 	catch ( ... )
 	{
 		const auto report = krakoa::debug::UnwrapNestedExceptions();
-		KRK_LOG( "CRASH", "Exception(s): \n" + report );
+		KRK_ERR( "[CRASH] Exception(s): \n" + report );
 		auto& errorHandler = krakoa::os::iOperatingSystem::Reference().GetErrorHandler();
-		errorHandler.CheckForNewError();
-		const auto errCode = errorHandler.GetCode();
-		const auto errText = errorHandler.GetText();
-		KRK_LOG( "CRASH", util::Fmt( "[System] 0x{0:4h}: {1}", errCode, errText ) );
+		errorHandler.EmergencyExit();
 	}
 }
 

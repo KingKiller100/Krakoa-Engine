@@ -12,7 +12,7 @@ namespace krakoa::scene
 	class Scene : public iScene
 	{
 	public:
-		Scene(const std::string_view& name, Multi_Ptr<ecs::EntityComponentSystem> ecs);
+		Scene(std::string_view name, Multi_Ptr<ecs::EntityComponentSystem> ecs);
 		~Scene();
 	
 		bool Empty() const override;
@@ -21,7 +21,7 @@ namespace krakoa::scene
 		void SetName(const std::string& name) override;
 
 		ecs::Entity& AddEntity(const ecs::EntityUID& uid) override;
-		ecs::Entity& AddEntity(const ecs::EntityUID& uid, const std::string_view& tag) override;
+		ecs::Entity& AddEntity(const ecs::EntityUID& uid, std::string_view tag) override;
 		ecs::Entity& AddEntity(const std::string& tag) override;
 		ecs::Entity& AddEmptyEntity() override;
 

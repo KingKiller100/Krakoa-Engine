@@ -78,7 +78,7 @@ namespace krakoa::os
 	{
 	public:
 		static void Show(
-			const std::string_view& title, const std::string_view& text
+			std::string_view title, std::string_view text
 			, const std::function<MessageBoxCallBack>& cb
 			, MessageBoxButtonSet buttons
 			, MessageBoxIcon icon

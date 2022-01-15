@@ -9,7 +9,7 @@ namespace krakoa::os
 	{
 	public:
 		static long Show(
-			const std::string_view& title, const std::string_view& text
+			std::string_view title, std::string_view text
 			, MessageBoxButtonSet buttons
 			, MessageBoxIcon icon
 			, MessageBoxDefaultButton defaultButton

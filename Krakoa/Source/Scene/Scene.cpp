@@ -18,7 +18,7 @@ namespace krakoa::scene
 	using namespace ecs;
 	using namespace components;
 
-	Scene::Scene(const std::string_view& name, Multi_Ptr<EntityComponentSystem> ecs)
+	Scene::Scene(std::string_view name, Multi_Ptr<EntityComponentSystem> ecs)
 		: name(name)
 		, entityComponentSystem(ecs)
 		, runtimeState(nullptr)
@@ -63,7 +63,7 @@ namespace krakoa::scene
 		return AddEntity(uid, "Entity " + uid.ToString());
 	}
 
-	ecs::Entity& Scene::AddEntity(const ecs::EntityUID& uid, const std::string_view& tag)
+	ecs::Entity& Scene::AddEntity(const ecs::EntityUID& uid, std::string_view tag)
 	{
 		KRK_PROFILE_FUNCTION();
 

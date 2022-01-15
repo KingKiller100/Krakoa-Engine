@@ -3,7 +3,7 @@
 
 namespace krakoa::scene::ecs::components
 {
-	TagComponent::TagComponent(const std::string_view& tag)
+	TagComponent::TagComponent(std::string_view tag)
 		:tagName(tag)
 	{}
 

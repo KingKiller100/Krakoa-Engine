@@ -11,7 +11,7 @@ namespace krakoa::os::library
 	OSLibraryLoader_Windows::~OSLibraryLoader_Windows()
 	= default;
 
-	iOSLibrary* OSLibraryLoader_Windows::Load( const std::string_view& libName ) const
+	iOSLibrary* OSLibraryLoader_Windows::Load( std::string_view libName ) const
 	{
 		const auto handle = ::LoadLibraryExA( libName.data(), nullptr, 0 );
 		const auto lib = new OSLibrary_Windows( libName, handle );

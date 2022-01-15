@@ -31,7 +31,7 @@ namespace krakoa::ui
 	}
 
 	template <>
-	bool DrawDragValue(const std::string_view& label, std::int8_t& value, float increment, std::int8_t v_min
+	bool DrawDragValue(std::string_view label, std::int8_t& value, float increment, std::int8_t v_min
 		, std::int8_t v_max, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_S8, &value, increment, &v_min, &v_max, format))
@@ -44,7 +44,7 @@ namespace krakoa::ui
 	}
 
 	template <>
-	bool DrawDragValue(const std::string_view& label, std::int16_t& value, float increment, std::int16_t v_min
+	bool DrawDragValue(std::string_view label, std::int16_t& value, float increment, std::int16_t v_min
 		, std::int16_t v_max, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_S16, &value, increment, &v_min, &v_max, format))
@@ -57,7 +57,7 @@ namespace krakoa::ui
 	}
 
 	template <>
-	bool DrawDragValue(const std::string_view& label, std::int32_t& value, float increment, std::int32_t v_min
+	bool DrawDragValue(std::string_view label, std::int32_t& value, float increment, std::int32_t v_min
 		, std::int32_t v_max, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_S32, &value, increment, &v_min, &v_max, format))
@@ -70,7 +70,7 @@ namespace krakoa::ui
 	}
 	
 	template<>
-	bool DrawDragValue(const std::string_view& label, std::int64_t& value, float increment, std::int64_t v_min, std::int64_t v_max
+	bool DrawDragValue(std::string_view label, std::int64_t& value, float increment, std::int64_t v_min, std::int64_t v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_S64, &value, increment, &v_min, &v_max, format))
@@ -83,7 +83,7 @@ namespace krakoa::ui
 	}
 
 	template<>
-	bool DrawDragValue(const std::string_view& label, std::uint8_t& value, float increment, std::uint8_t v_min, std::uint8_t v_max
+	bool DrawDragValue(std::string_view label, std::uint8_t& value, float increment, std::uint8_t v_min, std::uint8_t v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_U8, &value, increment, &v_min, &v_max, format))
@@ -96,7 +96,7 @@ namespace krakoa::ui
 	}
 	
 	template<>
-	bool DrawDragValue(const std::string_view& label, std::uint16_t& value, float increment, std::uint16_t v_min, std::uint16_t v_max
+	bool DrawDragValue(std::string_view label, std::uint16_t& value, float increment, std::uint16_t v_min, std::uint16_t v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_U16, &value, increment, &v_min, &v_max, format))
@@ -109,7 +109,7 @@ namespace krakoa::ui
 	}
 
 	template<>
-	bool DrawDragValue(const std::string_view& label, std::uint32_t& value, float increment, std::uint32_t v_min, std::uint32_t v_max
+	bool DrawDragValue(std::string_view label, std::uint32_t& value, float increment, std::uint32_t v_min, std::uint32_t v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_U32, &value, increment, &v_min, &v_max, format))
@@ -122,7 +122,7 @@ namespace krakoa::ui
 	}
 
 	template<>
-	bool DrawDragValue(const std::string_view& label, std::uint64_t& value, float increment, std::uint64_t v_min, std::uint64_t v_max
+	bool DrawDragValue(std::string_view label, std::uint64_t& value, float increment, std::uint64_t v_min, std::uint64_t v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_U64, &value, increment, &v_min, &v_max, format))
@@ -136,7 +136,7 @@ namespace krakoa::ui
 
 
 	template<>
-	bool DrawDragValue(const std::string_view& label, float& value, float increment, float v_min, float v_max
+	bool DrawDragValue(std::string_view label, float& value, float increment, float v_min, float v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_Float, &value, increment, &v_min, &v_max, format))
@@ -149,7 +149,7 @@ namespace krakoa::ui
 	}
 
 	template<>
-	bool DrawDragValue(const std::string_view& label, double& value, float increment, double v_min, double v_max
+	bool DrawDragValue(std::string_view label, double& value, float increment, double v_min, double v_max
 		, const char* format, const UICallBack& instruction)
 	{
 		if (ImGui::DragScalar(label.data(), ImGuiDataType_Double, &value, increment, &v_min, &v_max, format))

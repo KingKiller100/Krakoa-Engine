@@ -27,13 +27,13 @@ namespace krakoa::os::library
 
 		void Unload( Multi_Ptr<iOSLibrary> lib );
 		void UnloadAll();
-		USE_RESULT bool Exists( const std::string_view& libName );
+		USE_RESULT bool Exists( std::string_view libName );
 		USE_RESULT size_t Size() const noexcept;
-		USE_RESULT size_t Uses( const std::string_view& libName ) const noexcept;
+		USE_RESULT size_t Uses( std::string_view libName ) const noexcept;
 		USE_RESULT std::vector<Report> GetReports() const;
 
 	private:
-		bool Load( const std::string_view& libName );
+		bool Load( std::string_view libName );
 
 	private:
 		Solo_Ptr<iOSLibraryLoader> libLoader;

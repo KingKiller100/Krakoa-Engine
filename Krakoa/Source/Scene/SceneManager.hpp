@@ -42,7 +42,7 @@ namespace krakoa
 			~SceneManager() override;
 
 			Weak_Ptr<iScene> Add(const std::string& name);
-			bool Remove(const std::string_view& name);
+			bool Remove(std::string_view name);
 			void RemoveAll();
 
 			Weak_Ptr<iScene> GetCurrentScene() const;
@@ -53,7 +53,7 @@ namespace krakoa
 			void LoadFromFile(const std::filesystem::path& path);
 			void OnUpdate(const float deltaTime);
 
-			bool HasScene(const std::string_view& sceneName) const;
+			bool HasScene(std::string_view sceneName) const;
 			bool HasActiveScene() const;
 
 			void TogglePlayScene();

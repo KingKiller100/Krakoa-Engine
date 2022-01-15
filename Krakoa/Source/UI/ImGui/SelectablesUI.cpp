@@ -7,12 +7,12 @@
 
 namespace krakoa::ui
 {
-	bool HandleSelectable(const std::string_view& label, bool selected, const UICallBack& action)
+	bool HandleSelectable(std::string_view label, bool selected, const UICallBack& action)
 	{
 		return HandleSelectable(label, selected, SelectableFlags::None, kmaths::Vector2f(), action);
 	}
 
-	bool HandleSelectable(const std::string_view& label, bool selected, SelectableFlags::Underlying_t flags,
+	bool HandleSelectable(std::string_view label, bool selected, SelectableFlags::Underlying_t flags,
 		const kmaths::Vector2f& size, const UICallBack& action)
 	{
 		if (ImGui::Selectable(label.data(), selected, flags, { size.x, size.y }))

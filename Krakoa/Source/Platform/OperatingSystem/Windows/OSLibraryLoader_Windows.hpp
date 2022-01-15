@@ -9,7 +9,7 @@ namespace krakoa::os::library
 	public:
 		OSLibraryLoader_Windows();
 		~OSLibraryLoader_Windows() override;
-		[[nodiscard]] iOSLibrary* Load( const std::string_view& libName ) const override;
+		[[nodiscard]] iOSLibrary* Load( std::string_view libName ) const override;
 		bool Unload( iOSLibrary* lib ) const override;
 	};
 }

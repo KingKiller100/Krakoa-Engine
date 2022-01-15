@@ -1,20 +1,28 @@
 ﻿#pragma once
 
-#include <Utility/Logging/kLogProfile.hpp>
+#include <Utility/Logging/kLogging.hpp>
 #include "../Core/EngineMacros.hpp"
 
 namespace krakoa
 {
 	using LogProfile = klib::LogProfileRef;
+	template <typename T>
+	using LogDest = klib::LogDispatcher::LogDestRef<T>;
 
 	class KRAKOA_API EngineLogger
 	{
 	public:
 		// Engine side
-		static void CoreInit( const std::string_view& initMsg );
+		static void CoreInit( std::string_view initMsg );
 		static void ShutDown();
 
 		static LogProfile RegisterProfile( std::string_view name );
+
+		template <typename T, typename ...Params>
+		static LogDest<T> AddDestination( Params&& ...params )
+		{
+			return dispatcher_.AddDestination<T>( std::forward<Params>( params )... );
+		}
 
 		static void SetMinimumLogLevelUsingConfig( klib::LogLevel minLvl );
 		static void RemoveIfTooOldFile( std::int64_t maxDays );
@@ -30,10 +38,13 @@ namespace krakoa
 
 		static void Banner(
 			std::string_view message
-			, const std::string_view& frontPadding
-			, const std::string_view& backPadding
+			, std::string_view frontPadding
+			, std::string_view backPadding
 			, std::uint16_t paddingCount
 		);
+
+	private:
+		inline static klib::LogDispatcher dispatcher_;
 	};
 }
 

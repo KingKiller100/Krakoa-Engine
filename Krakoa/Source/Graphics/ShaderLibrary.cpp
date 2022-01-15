@@ -33,7 +33,7 @@ namespace krakoa::gfx
 		return shadersUMap.at(name);
 	}
 
-	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string_view& filepath)
+	std::weak_ptr<iShader> ShaderLibrary::Load(std::string_view filepath)
 	{
 		KRK_PROFILE_FUNCTION();
 		static auto no_name_shader_count = 0ull;
@@ -42,7 +42,7 @@ namespace krakoa::gfx
 		return Add(name, shader);
 	}
 
-	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string& name, const std::string_view& filepath)
+	std::weak_ptr<iShader> ShaderLibrary::Load(const std::string& name, std::string_view filepath)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto path = filesystem::VirtualFileExplorer::GetRealPath("Shaders");
@@ -74,7 +74,7 @@ namespace krakoa::gfx
 		KRK_ASSERT(!Exists(name)
 			, klib::kString::ToString("Adding shader that already exists in the library:\n{0}", name));
 		const auto shaderS_Ptr = std::shared_ptr<iShader>(shader);
-		shadersUMap.insert(std::make_pair(name, shaderS_Ptr));
+		shadersUMap.insert(std::make_pair(std::string( name ), shaderS_Ptr));
 		return shaderS_Ptr;
 	}
 

@@ -7,12 +7,12 @@
 
 namespace krakoa::ui::popups
 {
-	void OpenPopup(const std::string_view& label)
+	void OpenPopup(std::string_view label)
 	{
 		ImGui::OpenPopup(label.data());
 	}
 
-	void DrawPopup(const std::string_view& label, WindowFlags::Underlying_t flags, const UICallBack& callback)
+	void DrawPopup(std::string_view label, WindowFlags::Underlying_t flags, const UICallBack& callback)
 	{
 		if (ImGui::BeginPopup(label.data(), flags))
 		{
@@ -21,12 +21,12 @@ namespace krakoa::ui::popups
 		}
 	}
 
-	void DrawPopup(const std::string_view& label, const UICallBack& callback)
+	void DrawPopup(std::string_view label, const UICallBack& callback)
 	{
 		DrawPopup(label, WindowFlags::None, callback);
 	}
 
-	void DrawPopupOption(const std::string_view& label, const UICallBack& callback)
+	void DrawPopupOption(std::string_view label, const UICallBack& callback)
 	{
 		DrawMenuItem(label, [&]()
 			{

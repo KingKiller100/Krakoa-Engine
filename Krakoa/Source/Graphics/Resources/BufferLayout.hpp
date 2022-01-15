@@ -27,7 +27,7 @@ namespace krakoa::gfx
 		ptrdiff_t offset;
 		bool normalized;
 
-		BufferElement(ShaderDataType type, const std::string_view& name, bool normalized = false);
+		BufferElement(ShaderDataType type, std::string_view name, bool normalized = false);
 	};
 
 	class BufferLayout

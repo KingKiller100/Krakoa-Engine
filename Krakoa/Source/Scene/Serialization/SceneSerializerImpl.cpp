@@ -214,7 +214,7 @@ namespace
 	}
 }
 
-Emitter& operator<<(Emitter& emitter, const std::string_view& str)
+Emitter& operator<<(Emitter& emitter, std::string_view str)
 {
 	return emitter.Write(str.data());
 }

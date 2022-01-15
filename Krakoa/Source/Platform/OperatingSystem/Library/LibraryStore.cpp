@@ -64,7 +64,7 @@ namespace krakoa::os::library
 		libraries.clear();
 	}
 
-	bool LibraryStore::Exists( const std::string_view& libName )
+	bool LibraryStore::Exists( std::string_view libName )
 	{
 		KRK_PROFILE_FUNCTION();
 		return libraries.find( libName.data() ) != libraries.end();
@@ -75,7 +75,7 @@ namespace krakoa::os::library
 		return libraries.size();
 	}
 
-	size_t LibraryStore::Uses( const std::string_view& libName ) const noexcept
+	size_t LibraryStore::Uses( std::string_view libName ) const noexcept
 	{
 		if ( const auto iter = libraries.find( libName.data() );
 			iter != libraries.end() )
@@ -98,7 +98,7 @@ namespace krakoa::os::library
 		return reports;
 	}
 
-	bool LibraryStore::Load( const std::string_view& libName )
+	bool LibraryStore::Load( std::string_view libName )
 	{
 		KRK_PROFILE_FUNCTION();
 

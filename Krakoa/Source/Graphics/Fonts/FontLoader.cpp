@@ -31,7 +31,7 @@ namespace krakoa::gfx
 		return font;
 	}
 
-	std::set<Multi_Ptr<Font>> FontLoader::LoadFamilyFromFile(const std::string_view& family, float size)
+	std::set<Multi_Ptr<Font>> FontLoader::LoadFamilyFromFile(std::string_view family, float size)
 	{
 		KRK_PROFILE_FUNCTION();
 		

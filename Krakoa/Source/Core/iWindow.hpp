@@ -16,7 +16,7 @@ namespace krakoa
 		std::string title;
 		maths::uSize dimensions;
 
-		WindowProperties(const std::string_view& title,
+		WindowProperties(std::string_view title,
 			const maths::uSize& dimensions = maths::uSize(1520, 640))
 			: title(title), dimensions(dimensions)
 		{}

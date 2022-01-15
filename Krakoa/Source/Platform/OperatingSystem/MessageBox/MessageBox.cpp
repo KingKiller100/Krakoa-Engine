@@ -6,7 +6,7 @@
 namespace krakoa::os
 {
 	void MessageBoxDisplay::Show(
-		const std::string_view& title, const std::string_view& text
+		std::string_view title, std::string_view text
 		, const std::function<MessageBoxCallBack>& cb
 		, MessageBoxButtonSet buttons
 		, MessageBoxIcon icon

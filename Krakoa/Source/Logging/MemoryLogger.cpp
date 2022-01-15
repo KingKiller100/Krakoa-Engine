@@ -9,7 +9,7 @@ namespace memory
 
 	std::unique_ptr<Logging> MemoryLogger::pMemoryLogger;
 
-	void MemoryLogger::Init(const std::string_view& openingMsg)
+	void MemoryLogger::Init(std::string_view openingMsg)
 	{
 		if (pMemoryLogger)
 			return;

@@ -179,7 +179,7 @@ namespace krakoa::filesystem
 	}
 
 	klib::PathList VirtualFileExplorer::GetFiles(const PathRedirectsMap::key_type& vtlPath,
-		const std::string_view& extension, FileSearchMode searchMode)
+		std::string_view extension, FileSearchMode searchMode)
 	{
 		const auto correctPath = CorrectPath(vtlPath);
 		auto hierarchy = klib::Split(correctPath, "\\");

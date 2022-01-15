@@ -55,7 +55,7 @@ namespace krakoa::scene
 		return scene;
 	}
 
-	bool SceneManager::Remove(const std::string_view& name)
+	bool SceneManager::Remove(std::string_view name)
 	{
 		KRK_PROFILE_FUNCTION();
 
@@ -133,7 +133,7 @@ namespace krakoa::scene
 		RenderEntities(scene);
 	}
 
-	bool SceneManager::HasScene(const std::string_view& sceneName) const
+	bool SceneManager::HasScene(std::string_view sceneName) const
 	{
 		const auto iter = std::find_if(scenes.begin(), scenes.end(), [sceneName]
 		(const decltype(scenes)::value_type& scene)

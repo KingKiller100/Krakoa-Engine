@@ -13,7 +13,7 @@
 
 namespace krakoa::gfx
 {
-	OpenGLShader::OpenGLShader(const std::string_view& name, const std::filesystem::path& shaderFilePath)
+	OpenGLShader::OpenGLShader(std::string_view name, const std::filesystem::path& shaderFilePath)
 		: name(name)
 	{
 		const auto sources = OpenGLShader::ParseShaderFile(shaderFilePath);
@@ -207,104 +207,104 @@ namespace krakoa::gfx
 		glUseProgram(0);
 	}
 
-	void OpenGLShader::SetInt(const std::string_view& name, const int val)
+	void OpenGLShader::SetInt(std::string_view name, const int val)
 	{
 		UploadUniformInt(name, val);
 	}
 
-	void OpenGLShader::UploadUniformInt(const std::string_view& name, const int val)
+	void OpenGLShader::UploadUniformInt(std::string_view name, const int val)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform1i(location, val);
 	}
 
-	void OpenGLShader::SetIntArray(const std::string_view& name, const int* vals, const uint32_t count)
+	void OpenGLShader::SetIntArray(std::string_view name, const int* vals, const uint32_t count)
 	{
 		UploadIntArray(name, vals, count);
 	}
 
-	void OpenGLShader::UploadIntArray(const std::string_view& name, const int* vals, const uint32_t count)
+	void OpenGLShader::UploadIntArray(std::string_view name, const int* vals, const uint32_t count)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform1iv(location, count, vals );
 	}
 
-	void OpenGLShader::SetFloat(const std::string_view& name, const float val)
+	void OpenGLShader::SetFloat(std::string_view name, const float val)
 	{
 		UploadUniformFloat(name, val);
 	}
 
-	void OpenGLShader::UploadUniformFloat(const std::string_view& name, const float val)
+	void OpenGLShader::UploadUniformFloat(std::string_view name, const float val)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform1f(location, val);
 	}
 
-	void OpenGLShader::SetVec2(const std::string_view& name, const kmaths::Vector2f& v)
+	void OpenGLShader::SetVec2(std::string_view name, const kmaths::Vector2f& v)
 	{
 		KRK_PROFILE_FUNCTION();
 		UploadUniformVec2(name, v);
 	}
 
-	void OpenGLShader::UploadUniformVec2(const std::string_view& name, const kmaths::Vector2f& v)
+	void OpenGLShader::UploadUniformVec2(std::string_view name, const kmaths::Vector2f& v)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform2f(location, v.X(), v.Y());
 	}
 
-	void OpenGLShader::SetVec3(const std::string_view& name, const kmaths::Vector3f& v)
+	void OpenGLShader::SetVec3(std::string_view name, const kmaths::Vector3f& v)
 	{
 		UploadUniformVec3(name, v);
 	}
 
-	void OpenGLShader::UploadUniformVec3(const std::string_view& name, const kmaths::Vector3f& v)
+	void OpenGLShader::UploadUniformVec3(std::string_view name, const kmaths::Vector3f& v)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform3f(location, v.X(), v.Y(), v.Z());
 	}
 
-	void OpenGLShader::SetVec4(const std::string_view& name, const kmaths::Vector4f& v)
+	void OpenGLShader::SetVec4(std::string_view name, const kmaths::Vector4f& v)
 	{
 		UploadUniformVec4(name, v);
 	}
 
-	void OpenGLShader::UploadUniformVec4(const std::string_view& name, const kmaths::Vector4f& v)
+	void OpenGLShader::UploadUniformVec4(std::string_view name, const kmaths::Vector4f& v)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniform4f(location, v.X(), v.Y(), v.Z(), v.W());
 	}
 
-	void OpenGLShader::SetMat3x3(const std::string_view& name, const kmaths::Matrix3x3f& m)
+	void OpenGLShader::SetMat3x3(std::string_view name, const kmaths::Matrix3x3f& m)
 	{
 		UploadUniformMatrix3x3(name, m);
 	}
 
-	void OpenGLShader::UploadUniformMatrix3x3(const std::string_view& name, const kmaths::Matrix3x3f& m)
+	void OpenGLShader::UploadUniformMatrix3x3(std::string_view name, const kmaths::Matrix3x3f& m)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniformMatrix3fv(location, 1, GL_FALSE, m.GetPointerToData());
 	}
 
-	void OpenGLShader::SetMat4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)
+	void OpenGLShader::SetMat4x4(std::string_view name, const kmaths::Matrix4x4f& m)
 	{
 		UploadUniformMatrix4x4(name, m);
 	}
 
-	void OpenGLShader::UploadUniformMatrix4x4(const std::string_view& name, const kmaths::Matrix4x4f& m)
+	void OpenGLShader::UploadUniformMatrix4x4(std::string_view name, const kmaths::Matrix4x4f& m)
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto location = GetUniformLocation(name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, m.GetPointerToData());
 	}
 
-	int OpenGLShader::GetUniformLocation(const std::string_view& uniformName)
+	int OpenGLShader::GetUniformLocation(std::string_view uniformName)
 	{
 		KRK_PROFILE_FUNCTION();
 		GLint location;

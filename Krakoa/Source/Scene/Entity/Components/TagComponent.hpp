@@ -9,7 +9,7 @@ namespace krakoa::scene::ecs::components
 	class TagComponent
 	{
 	public:
-		TagComponent(const std::string_view& tag);
+		TagComponent(std::string_view tag);
 		TagComponent(const char* tag);
 		TagComponent(const std::string& tag);
 		~TagComponent() noexcept;

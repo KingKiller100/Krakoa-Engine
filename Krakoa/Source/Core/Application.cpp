@@ -24,7 +24,7 @@
 
 namespace krakoa
 {
-	Application::Application( Token&, const std::string_view& appName )
+	Application::Application( Token&, std::string_view appName )
 		: isRunning( true )
 		, timeStep( /*120*/ )
 		, isMinimized( false )

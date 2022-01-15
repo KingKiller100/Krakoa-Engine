@@ -9,7 +9,7 @@ namespace memory
 	class MemoryLogger
 	{
 	public:
-		static void Init(const std::string_view& openingMsg);
+		static void Init(std::string_view openingMsg);
 		static klib::kLogs::Logging& GetLogger();
 		
 	private:

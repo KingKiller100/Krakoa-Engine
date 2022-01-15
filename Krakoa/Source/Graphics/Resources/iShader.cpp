@@ -17,7 +17,7 @@ namespace krakoa::gfx
 	iShader::~iShader()
 		= default;
 
-	iShader * iShader::Create(const std::string_view& name, const std::filesystem::path& shaderFilePath)
+	iShader * iShader::Create(std::string_view name, const std::filesystem::path& shaderFilePath)
 	{
 		switch (Renderer::GetAPI()) {
 		case iRendererAPI::API::NONE:   KRK_ERR("RedererAPI::NONE not supported yet!"); break;

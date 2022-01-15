@@ -45,7 +45,7 @@ namespace krakoa::debug
 					fullOutput << "Exception: " << e.what() << "\n";
 					ptr = GetNestedException( e );
 				}
-				catch ( const std::string_view& e )
+				catch ( std::string_view e )
 				{
 					fullOutput << "Error Message: " << e << "\n";
 				}

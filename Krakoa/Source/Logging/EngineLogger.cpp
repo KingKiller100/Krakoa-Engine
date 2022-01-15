@@ -19,7 +19,6 @@ namespace krakoa
 
 	namespace
 	{
-		klib::LogDispatcher g_Logger;
 		klib::LogDispatcher::LogDestRef<klib::FileLogger> g_FileLogger;
 		klib::LogDispatcher::LogDestRef<klib::ConsoleLogger> g_ConsoleLogger;
 		klib::LogDispatcher::LogDestRef<klib::DebugOutputLogger> g_DebugOutputLogger;
@@ -27,7 +26,7 @@ namespace krakoa
 	}
 
 
-	void EngineLogger::CoreInit( const std::string_view& initMsg )
+	void EngineLogger::CoreInit( std::string_view initMsg )
 	{
 		if ( g_KrakoaLog.IsNull() )
 			return;
@@ -49,13 +48,13 @@ namespace krakoa
 		const auto dateStr = today.GetDate().ToString( "mmm ddd yyyy" );
 		const auto stamp = spacing + dateStr + spacing + timeStr + spacing;
 		
-		g_FileLogger = g_Logger.AddDestination<klib::FileLogger>( path );
-		g_ConsoleLogger = g_Logger.AddDestination<klib::ConsoleLogger>();
-		g_DebugOutputLogger = g_Logger.AddDestination<klib::DebugOutputLogger>();
+		g_FileLogger = dispatcher_.AddDestination<klib::FileLogger>( path );
+		g_ConsoleLogger = dispatcher_.AddDestination<klib::ConsoleLogger>();
+		g_DebugOutputLogger = dispatcher_.AddDestination<klib::DebugOutputLogger>();
 
-		g_KrakoaLog = g_Logger.RegisterProfile( name, klib::LogLevel::INF );
+		g_KrakoaLog = dispatcher_.RegisterProfile( name, klib::LogLevel::INF );
 
-		g_Logger.Open();
+		dispatcher_.Open();
 
 		g_KrakoaLog->AddRaw( padding );
 		g_KrakoaLog->AddRaw( stamp );
@@ -95,7 +94,7 @@ namespace krakoa
 		g_KrakoaLog->AddEntry( klib::LogLevel::ERR, klib::ToString( "{0}\n{1}", message, sourceInfo ) );
 	}
 
-	void EngineLogger::Banner( std::string_view message, const std::string_view& frontPadding, const std::string_view& backPadding, std::uint16_t paddingCount )
+	void EngineLogger::Banner( std::string_view message, std::string_view frontPadding, std::string_view backPadding, std::uint16_t paddingCount )
 	{
 		g_KrakoaLog->AddBanner( message, frontPadding, backPadding, paddingCount );
 	}
@@ -111,12 +110,12 @@ namespace krakoa
 
 	LogProfile EngineLogger::RegisterProfile( std::string_view name )
 	{
-		return g_Logger.RegisterProfile( name, klib::LogLevel::INF );
+		return dispatcher_.RegisterProfile( name, klib::LogLevel::INF );
 	}
 
 	void EngineLogger::SetMinimumLogLevelUsingConfig( klib::LogLevel minLvl )
 	{
-		g_Logger.SetGlobalLevel( minLvl );
+		dispatcher_.SetGlobalLevel( minLvl );
 	}
 
 	void EngineLogger::RemoveIfTooOldFile( std::int64_t maxDays )

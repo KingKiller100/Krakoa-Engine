@@ -61,7 +61,7 @@ namespace krakoa::gfx
 		return size * GetComponentCount(type);
 	}
 
-	BufferElement::BufferElement(ShaderDataType type, const std::string_view& name, bool normalized): name(name),
+	BufferElement::BufferElement(ShaderDataType type, std::string_view name, bool normalized): name(name),
 		type(type),
 		bytes(ShaderDataTypeBytes(type)),
 		offset(0),

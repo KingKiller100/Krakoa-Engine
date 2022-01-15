@@ -10,7 +10,7 @@ namespace krakoa::os::library
 	public:
 		using Import_t = Import;
 
-		constexpr ImportWrapper( const std::string_view& name, void* ip )
+		constexpr ImportWrapper( std::string_view name, void* ip )
 			: id( name )
 			, imp( static_cast<Import*>( ip ) )
 		{ }
@@ -75,7 +75,7 @@ namespace krakoa::os::library
 		[[nodiscard]] virtual std::vector<std::string> GetImportsID() const = 0;
 
 		template <typename T>
-		auto Import( const std::string_view& id )
+		auto Import( std::string_view id )
 		{
 			return ImportWrapper<ImportPtr_t<T>>( id, ImportImpl( id.data() ) );
 		}

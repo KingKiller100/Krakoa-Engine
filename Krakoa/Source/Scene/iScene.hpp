@@ -23,7 +23,7 @@ namespace krakoa::scene
 		virtual void SetName(const std::string& name) = 0;
 		
 		virtual ecs::Entity& AddEntity(const ecs::EntityUID& uid) = 0;
-		virtual ecs::Entity& AddEntity(const ecs::EntityUID& uid, const std::string_view& tag) = 0;
+		virtual ecs::Entity& AddEntity(const ecs::EntityUID& uid, std::string_view tag) = 0;
 		virtual ecs::Entity& AddEntity(const std::string& name) = 0;
 		virtual ecs::Entity& AddEmptyEntity() = 0;
 		

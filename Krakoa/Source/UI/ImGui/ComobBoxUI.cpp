@@ -7,7 +7,7 @@
 namespace krakoa::ui
 {
 
-	bool DrawComboBox(const std::string_view& label, const char* previewSelection, ComboBoxFlags::Underlying_t flags,
+	bool DrawComboBox(std::string_view label, const char* previewSelection, ComboBoxFlags::Underlying_t flags,
 		const UICallBack& action)
 	{
 		if (ImGui::BeginCombo(label.data(), previewSelection, flags))

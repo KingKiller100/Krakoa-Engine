@@ -14,7 +14,7 @@
 
 namespace krakoa::ui
 {
-	bool DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values,
+	bool DrawVec3Controller(std::string_view label, kmaths::Vector3f& values,
 		const std::array<gfx::Colour, 3>& btnColours
 		, float incrementVal, kmaths::Vector3f::Type resetValue, float columnWidth)
 	{
@@ -62,7 +62,7 @@ namespace krakoa::ui
 		return btnPressed;
 	}
 
-	bool DrawVec3Controller(const std::string_view& label, kmaths::Vector3f& values,
+	bool DrawVec3Controller(std::string_view label, kmaths::Vector3f& values,
 		const std::array<gfx::Colour, 3>& btnColours, const gfx::Font& font, float incrementVal,
 		kmaths::Vector3f::Type resetValue, float columnWidth)
 	{
@@ -110,7 +110,7 @@ namespace krakoa::ui
 		return btnPressed;
 	}
 
-	bool DrawColourController(const std::string_view& label, gfx::Colour& value, float columnWidth)
+	bool DrawColourController(std::string_view label, gfx::Colour& value, float columnWidth)
 	{
 		ImGui::PushID(label.data());
 
@@ -163,7 +163,7 @@ namespace krakoa::ui
 		return btnPressed;
 	}
 
-	bool DrawColourController(const std::string_view& label, gfx::Colour& value, const gfx::Font& font,
+	bool DrawColourController(std::string_view label, gfx::Colour& value, const gfx::Font& font,
 		float columnWidth)
 	{
 		ImGui::PushID(label.data());

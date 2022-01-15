@@ -16,7 +16,7 @@ namespace krakoa::gfx
 		static void Initialize();
 
 		static Multi_Ptr<Font> Load(const std::filesystem::path& filepath, float size);
-		static std::set<Multi_Ptr<Font>> LoadFamilyFromFile(const std::string_view& family, float size);
+		static std::set<Multi_Ptr<Font>> LoadFamilyFromFile(std::string_view family, float size);
 
 	private:
 		static bool initialized;

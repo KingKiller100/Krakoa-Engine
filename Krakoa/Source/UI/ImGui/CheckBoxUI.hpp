@@ -8,5 +8,5 @@
 
 namespace krakoa::ui
 {
-	bool DrawCheckBox(const std::string_view& label, bool enabled);
+	bool DrawCheckBox(std::string_view label, bool enabled);
 }

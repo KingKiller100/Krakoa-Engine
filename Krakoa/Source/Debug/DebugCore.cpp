@@ -53,8 +53,9 @@ namespace krakoa::debug
 		);
 	}
 
-	void RaiseException( std::string_view msg )
+	void RaiseException( std::string_view msg, klib::SourceInfo sourceInfo )
 	{
-		THROW_WITH_SRC( std::runtime_error(  msg.data() ) );
+		const auto error = util::Fmt( "{0}\n{1}", msg, sourceInfo );
+		throw std::runtime_error( msg.data() );
 	}
 }

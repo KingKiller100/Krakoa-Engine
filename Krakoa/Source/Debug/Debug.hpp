@@ -21,5 +21,5 @@
 
 #endif
 
-#define KRK_FATAL(msg) ::krakoa::debug::RaiseException(msg, SOURCE_INFO(), krakoa::EngineLogger::GetLogger())
+#define KRK_FATAL(msg) ::krakoa::debug::RaiseException(msg, SOURCE_INFO())
 

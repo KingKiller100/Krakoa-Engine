@@ -25,7 +25,7 @@ namespace krakoa::os
 
 	OperatingSystemWindows::~OperatingSystemWindows()
 	{
-		errorHandler->CheckForNewError();
+		errorHandler->Update();
 		LogOS( "[{0}]: {1}", errorHandler->GetCode(), errorHandler->GetText() );
 
 		libStore->UnloadAll();

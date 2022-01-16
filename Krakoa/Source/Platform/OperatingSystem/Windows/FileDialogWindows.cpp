@@ -48,7 +48,7 @@ namespace krakoa::os
 			}
 
 			auto& eh = iOperatingSystem::Pointer()->GetErrorHandler();
-			eh.CheckForNewError();
+			eh.Update();
 
 			if ( const auto errCode = eh.GetCode(); errCode != 0 )
 			{

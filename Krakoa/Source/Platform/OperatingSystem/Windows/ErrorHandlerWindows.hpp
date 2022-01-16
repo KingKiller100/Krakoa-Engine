@@ -17,16 +17,15 @@ namespace krakoa::os::errors
 		[[nodiscard]] std::uint32_t GetCode() const noexcept override;
 		[[nodiscard]] std::string_view GetText() const noexcept override;
 		void EmergencyExit() override;
-		void CheckForNewError() override;
+		void Update() override;
 		void UpdateCode();
-		bool UpdateText(DWORD code);
+		[[nodiscard]] std::string TranslateErrorCode( DWORD code ) const;
 
 		void SetEmergencyExitFunc(std::function<EmergencyExitFunc> func) override;
 
 	private:
-		DWORD errorCode;
-		std::string errorText;
-		std::function<EmergencyExitFunc> exitFunc;
+		DWORD errorCode_;
+		std::function<EmergencyExitFunc> onExitEvent_;
 	};
 }
 

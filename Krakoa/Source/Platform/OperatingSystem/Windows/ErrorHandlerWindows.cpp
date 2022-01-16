@@ -11,73 +11,66 @@
 namespace krakoa::os::errors
 {
 	ErrorHandlerWindows::ErrorHandlerWindows()
-		: errorCode(0)
-		, errorText()
-		, exitFunc()
-	{}
+	= default;
 
 	ErrorHandlerWindows::~ErrorHandlerWindows()
-		= default;
+	= default;
 
 	void ErrorHandlerWindows::EmergencyExit()
 	{
-		LogOSError("Force termination");
-		LogOSError("EmergencyExit via \"::TerminateProcess(::GetCurrentProcess(), -1)\"");
-		CheckForNewError();
-		LogOSError(util::Fmt("#{0}: {1}", GetCode(), GetText()));
-		exitFunc();
-		::TerminateProcess(::GetCurrentProcess(), -1);
+		LogOSError( "Force termination" );
+		LogOSError( "EmergencyExit via \"::TerminateProcess(::GetCurrentProcess(), -1)\"" );
+		Update();
+		LogOSError( util::Fmt( "#{0}: {1}", GetCode(), GetText() ) );
+		onExitEvent_();
+		::TerminateProcess( ::GetCurrentProcess(), -1 );
 	}
 
-	void ErrorHandlerWindows::CheckForNewError()
+	void ErrorHandlerWindows::Update()
 	{
 		UpdateCode();
-		if (!UpdateText(GetCode()))
-		{
-			errorText = util::Fmt("Unknown Error : 0x{0:h}", errorCode);
-		}
 	}
 
 	void ErrorHandlerWindows::UpdateCode()
 	{
-		errorCode = ::GetLastError();
+		errorCode_ = ::GetLastError();
 	}
 
-	bool ErrorHandlerWindows::UpdateText(const DWORD code)
+	std::string ErrorHandlerWindows::TranslateErrorCode( const DWORD code ) const
 	{
 		static constexpr ::DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM;
 
-		::LPWSTR osString = nullptr;
-		const ::DWORD formatRes = ::FormatMessageW(flags, nullptr, code, 0, (LPWSTR)&osString, 0, nullptr);
+		::LPWSTR formattedMessage = nullptr;
+		const ::DWORD formatRes = ::FormatMessageW( flags, nullptr, code, 0, ( LPWSTR )&formattedMessage, 0, nullptr );
 
-		if (formatRes == 0)
-			return false;
+		if ( formatRes == 0 )
+			return "";
 
-		errorText = klib::Convert<char>(osString);
+		std::string errorText = klib::Convert<char>( formattedMessage );
 
-		::LocalFree(osString);
-		osString = nullptr;
+		::LocalFree( formattedMessage );
+		formattedMessage = nullptr;
 
-		errorText = klib::Replace(errorText, '\r', ' ');
-		errorText = klib::Replace(errorText, '\n', ' ');
+		errorText = klib::Replace( errorText, '\r', ' ' );
+		errorText = klib::Replace( errorText, '\n', ' ' );
 
-		return true;
+		return errorText;
 	}
 
-	void ErrorHandlerWindows::SetEmergencyExitFunc(std::function<EmergencyExitFunc> func)
+	void ErrorHandlerWindows::SetEmergencyExitFunc( std::function<EmergencyExitFunc> func )
 	{
-		KRK_ASSERT(func != nullptr, "Termination function cannot be set to null");
-		exitFunc = std::move(func);
+		KRK_ASSERT( func != nullptr, "Termination function cannot be set to null" );
+		onExitEvent_ = std::move( func );
 	}
 
 	std::uint32_t ErrorHandlerWindows::GetCode() const noexcept
 	{
-		return errorCode;
+		return errorCode_;
 	}
 
 	std::string_view ErrorHandlerWindows::GetText() const noexcept
 	{
-		return errorText;
+		return TranslateErrorCode( GetCode() );
 	}
 }
 

@@ -38,6 +38,8 @@ void InitializeVirtualFileSystem();
 void InitializeGlobalConfig( const krakoa::os::iOperatingSystem& os );
 void TryRunApplication();
 void RunApplication();
+krakoa::os::iOperatingSystem& ConnectOS();
+void ConfigureLogging();
 
 int main()
 {
@@ -67,33 +69,10 @@ void Launch()
 	krakoa::tests::TestDriver::RunAll();
 	krakoa::tests::TestDriver::ShutDown();
 #else
-	KRK_PROFILE_SESSION_BEGIN( "Start Up", "KRK_PROFILER-StartUp" );
 
 	KRK_INIT_LOGS( "" );
 
-	krakoa::os::CreateOperatingSystemInterface();
-	auto& operatingSystem = krakoa::os::iOperatingSystem::Reference();
-
-	InitializeVirtualFileSystem();
-	InitializeGlobalConfig( operatingSystem );
-
-	const auto logLevelStr = krakoa::configurations::GetConfiguration<std::string_view>( "Logging", "Level" );
-	const auto maxBytes = krakoa::configurations::GetConfiguration<size_t>( "Logging", "MaxBytes" );
-	const auto maxDays = krakoa::configurations::GetConfiguration<size_t>( "Logging", "MaxDays" );
-	const auto minLvl = klib::LogLevel::FromString( klib::ToUpper( logLevelStr ) );
-
-
-	krakoa::EngineLogger::SetMinimumLogLevelUsingConfig( minLvl );
-	krakoa::EngineLogger::RemoveIfTooOldFile(maxDays);
-	krakoa::EngineLogger::RemoveIfTooLarge(maxBytes);
-
-	krakoa::CreateApplication();
-	operatingSystem.GetErrorHandler().SetEmergencyExitFunc( []()
-	{
-		krakoa::Application::Pointer()->ShutDown();
-	} );
-
-	if ( klib::ScanForDebugger( std::chrono::milliseconds( 500 ) ) )
+	if ( klib::WaitForDebugger( "RemoteDebugger" ) )
 	{
 		RunApplication();
 	}
@@ -161,8 +140,19 @@ void TryRunApplication()
 
 void RunApplication()
 {
+	KRK_PROFILE_SESSION_BEGIN( "Start Up", "KRK_PROFILER-StartUp" );
+
+	auto& operatingSystem = ConnectOS();
+
+	InitializeVirtualFileSystem();
+	InitializeGlobalConfig( operatingSystem );
+	ConfigureLogging();
+
+	krakoa::CreateApplication();
+
 	auto& pApp = krakoa::Application::Reference();
 	pApp.Initialize();
+
 	KRK_PROFILE_SESSION_END();
 
 	KRK_PROFILE_SESSION_BEGIN( "RunTime", "KRK_PROFILER-Runtime" );
@@ -173,4 +163,29 @@ void RunApplication()
 	pApp.ShutDown();
 	KRK_PROFILE_SESSION_END();
 #endif
+}
+
+inline krakoa::os::iOperatingSystem& ConnectOS()
+{
+	krakoa::os::CreateOperatingSystemInterface();
+
+	krakoa::os::iOperatingSystem::Reference().GetErrorHandler().SetEmergencyExitFunc( []()
+	{
+		if ( krakoa::Application::IsActive() )
+			krakoa::Application::Pointer()->ShutDown();
+	} );
+
+	return krakoa::os::iOperatingSystem::Reference();
+}
+
+inline void ConfigureLogging()
+{
+	const auto logLevelStr = krakoa::configurations::GetConfiguration<std::string_view>( "Logging", "Level" );
+	const auto maxBytes = krakoa::configurations::GetConfiguration<size_t>( "Logging", "MaxBytes" );
+	const auto maxDays = krakoa::configurations::GetConfiguration<size_t>( "Logging", "MaxDays" );
+	const auto minLvl = klib::LogLevel::FromString( klib::ToUpper( logLevelStr ) );
+
+	krakoa::EngineLogger::SetMinimumLogLevelUsingConfig( minLvl );
+	krakoa::EngineLogger::RemoveIfTooOldFile( maxDays );
+	krakoa::EngineLogger::RemoveIfTooLarge( maxBytes );
 }

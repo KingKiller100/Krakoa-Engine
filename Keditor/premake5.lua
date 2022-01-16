@@ -25,7 +25,6 @@ project "Keditor"
 
     links
     {
-        "kLibrary",
         "Krakoa"
     }
 
@@ -55,13 +54,7 @@ project "Keditor"
         runtime "Debug"
 
     filter "configurations:Test"
-        -- targetdir ("bin/" .. OutputDir ..  "/Component Tests")
         targetname ("Test")
-        defines 
-        {
-            "KRAKOA_TEST",
-            "KLIB_TEST"
-        }
         symbols "On"
         runtime "Debug"
 

@@ -64,9 +64,6 @@ namespace memory
    including AllocHeader & end marker"
 )");
 
-#ifdef KRAKOA_RELEASE
-		MEM_TOGGLE_LOGGING(); // Disable memory logging
-#endif
 	}
 
 	void HeapFactory::ShutDown() noexcept

@@ -34,13 +34,24 @@ namespace memory
 	};
 }
 
-// ENGINE SIDE Log Macros
-#define MEM_INIT_LOGS(msg)                                          ::memory::MemoryLogger::Init(msg)
-#define MEM_LOG_RAW(msg)                                            ::memory::MemoryLogger::Raw(msg)
-#define MEM_TRC(msg)                                                ::memory::MemoryLogger::Trace(msg)
-#define MEM_DBG(msg)                                                ::memory::MemoryLogger::Debug(msg)
-#define MEM_INF(msg)                                                ::memory::MemoryLogger::Info(msg)
-#define MEM_WRN(msg)                                                ::memory::MemoryLogger::Warn(msg)
-#define MEM_ERR(msg)                                                ::memory::MemoryLogger::Error(msg, SOURCE_INFO())
-#define MEM_BANNER(msg, fPad, bPad, padCount)                       ::memory::MemoryLogger::Banner(msg, fPad, bPad, padCount)
+// MEMORY Log Macros
 
+#ifdef KRAKOA_DEBUG
+#	define MEM_INIT_LOGS(msg)                                          ::memory::MemoryLogger::Init(msg)
+#	define MEM_LOG_RAW(msg)                                            ::memory::MemoryLogger::Raw(msg)
+#	define MEM_TRC(msg)                                                ::memory::MemoryLogger::Trace(msg)
+#	define MEM_DBG(msg)                                                ::memory::MemoryLogger::Debug(msg)
+#	define MEM_INF(msg)                                                ::memory::MemoryLogger::Info(msg)
+#	define MEM_WRN(msg)                                                ::memory::MemoryLogger::Warn(msg)
+#	define MEM_ERR(msg)                                                ::memory::MemoryLogger::Error(msg, SOURCE_INFO())
+#	define MEM_BANNER(msg, fPad, bPad, padCount)                       ::memory::MemoryLogger::Banner(msg, fPad, bPad, padCount)
+#else
+#	define MEM_INIT_LOGS(msg)                            
+#	define MEM_LOG_RAW(msg)                              
+#	define MEM_TRC(msg)                                  
+#	define MEM_DBG(msg)                                  
+#	define MEM_INF(msg)                                  
+#	define MEM_WRN(msg)                                  
+#	define MEM_ERR(msg)                                  
+#	define MEM_BANNER(msg, fPad, bPad, padCount)         
+#endif

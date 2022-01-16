@@ -35,13 +35,13 @@ project "Krakoa"
         "%{IncludeDir.YAML}",
         "%{IncludeDir.IMGUIZMO}",
     }
-
+    
     defines
 	{
         "KLIB_SHORT_NAMESPACE",
         "_CRT_SECURE_NO_WARNINGS"
 	}
-
+    
     links
     {
         "kLibrary",
@@ -51,52 +51,60 @@ project "Krakoa"
         "YAML",
         "opengl32.lib",
     }
-
+    
 	filter "files:Vendors/ImGuizmo/**.cpp"
 	flags { "NoPCH" }
-
+    
     filter "system:Windows"
-        staticruntime "On"
-        systemversion "latest"
-
-        defines
-        {
-            "KRAKOA_OS_WINDOWS",
-            -- "KRAKOA_BUILD_DLL",
-            "KLIB_LIB",
-            "KLIB_SHORT_NAMESPACE",
-			"GLFW_INCLUDE_NONE",
-            "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
-        }
-        
+    staticruntime "On"
+    systemversion "latest"
+    
+    defines
+    {
+        "KRAKOA_OS_WINDOWS",
+        -- "KRAKOA_BUILD_DLL",
+        "KLIB_LIB",
+        "KLIB_SHORT_NAMESPACE",
+        "GLFW_INCLUDE_NONE",
+        "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
+    }
+    
     filter "configurations:Debug"
-        defines 
-        {
-            "KRK_ENABLE_ASSERT",
-            "KRAKOA_DEBUG",
-            "KLIB_DEBUG",
-            "KLOG_OPT_DBG_STR",
-        }
-        removefiles
-        {
-            "%{prj.name}/Source/**/*test*"
-        }
-        symbols "On"
-        runtime "Debug"
-        
+    defines 
+    {
+        "KRK_ENABLE_ASSERT",
+        "KRAKOA_DEBUG",
+        "KLIB_DEBUG",
+        "KLOG_OPT_DBG_STR",
+    }
+    removefiles
+    {
+        "%{prj.name}/Source/**/*test*"
+    }
+    symbols "On"
+    runtime "Debug"
+    
     filter "configurations:Test"
-        defines 
-        {
-            "KRAKOA_TEST",
-            "KLIB_TEST"
-        }
-        files
-        {
-            "%{prj.name}/Tests/**",
-        }
-        symbols "On"
-        runtime "Debug"
-        
+    defines 
+    {
+        "KRAKOA_TEST",
+        "KLIB_TEST"
+    }
+    links
+    {
+        "kTests",
+    }
+    includedirs 
+    {
+        "%{IncludeDir.KLIB_Tests}"
+    }
+    files
+    {
+        "%{prj.name}/Tests/**",
+    }
+    symbols "On"
+    runtime "Debug"
+    
     filter "configurations:Release"
         defines 
         {

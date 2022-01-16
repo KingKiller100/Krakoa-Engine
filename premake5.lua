@@ -25,6 +25,7 @@ group "Dependencies"
     include "Krakoa/Vendors/imgui"
     include "Krakoa/Vendors/YAML"
     include "../kLibrary/"
+    include "../kLibrary/Tests"
 group ""
 
 include "Krakoa"

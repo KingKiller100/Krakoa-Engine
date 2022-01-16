@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include <Testing/TesterBase.hpp>
-
 #ifdef KRAKOA_TEST
+#	include <Testing/TesterBase.hpp>
+
 namespace krakoa::tests
 {
 	class MemoryTrackerTester final : public kTest::TesterBase

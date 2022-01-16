@@ -11,9 +11,9 @@ namespace krakoa::filesystem
 {
 	namespace fs = std::filesystem;
 
-	fs::path VirtualFileExplorer::root;
-	VirtualFileExplorer::PathRedirectsMap VirtualFileExplorer::redirectMap;
-	VirtualFileExplorer::DirectoryMap VirtualFileExplorer::folderMap;
+	fs::path VirtualFileExplorer::rootDirectory_;
+	VirtualFileExplorer::PathRedirectsMap VirtualFileExplorer::directoryRedirectMap_;
+	VirtualFileExplorer::DirectoryMap VirtualFileExplorer::directoryMap_;
 
 	namespace
 	{
@@ -109,7 +109,7 @@ namespace krakoa::filesystem
 
 		VerifyDirectory(path);
 
-		root = absPath;
+		rootDirectory_ = absPath;
 	}
 
 	void VirtualFileExplorer::MountAbs(const std::filesystem::path& absPath, const std::string& vtlPath)
@@ -118,7 +118,7 @@ namespace krakoa::filesystem
 
 		VerifyDirectory(absPath);
 
-		if (redirectMap.find(vtlPath) != redirectMap.end())
+		if (directoryRedirectMap_.find(vtlPath) != directoryRedirectMap_.end())
 		{
 			KRK_ERR(vtlPath + " already exists. Please dismount first if you want to change path");
 			return;
@@ -126,30 +126,30 @@ namespace krakoa::filesystem
 
 		const auto key = klib::ToLower(vtlPath);
 
-		redirectMap[key] = absPath;
+		directoryRedirectMap_[key] = absPath;
 		MapVPath(key);
 	}
 
 	void VirtualFileExplorer::Mount(const std::filesystem::path& relativePath, const std::string& vtlPath)
 	{
-		MountAbs(root / relativePath, vtlPath);
+		MountAbs(rootDirectory_ / relativePath, vtlPath);
 	}
 
 	void VirtualFileExplorer::Dismount(const std::string& vtlPath)
 	{
 		KRK_INF(klib::ToString("Dismounting virtual path \"{0}\"", vtlPath));
 
-		const auto iter = redirectMap.find(vtlPath);
-		if (iter == redirectMap.end())
+		const auto iter = directoryRedirectMap_.find(vtlPath);
+		if (iter == directoryRedirectMap_.end())
 			return;
-		redirectMap.erase(iter);
-		folderMap.erase(vtlPath);
+		directoryRedirectMap_.erase(iter);
+		directoryMap_.erase(vtlPath);
 	}
 
 	void VirtualFileExplorer::DismountAll()
 	{
-		redirectMap.clear();
-		folderMap.clear();
+		directoryRedirectMap_.clear();
+		directoryMap_.clear();
 	}
 
 	klib::PathList VirtualFileExplorer::GetFiles(const std::string& vtlPath, FileSearchMode searchMode)
@@ -158,7 +158,7 @@ namespace krakoa::filesystem
 		auto hierarchy = klib::Split(correctPath, "\\");
 		const auto& key = hierarchy.front();
 
-		auto vDirectory = folderMap.at(klib::ToLower(key));
+		auto vDirectory = directoryMap_.at(klib::ToLower(key));
 
 		const auto folder = hierarchy.size() >= 2
 			? GetDirectoryImpl(&vDirectory, hierarchy)
@@ -185,7 +185,7 @@ namespace krakoa::filesystem
 		auto hierarchy = klib::Split(correctPath, "\\");
 		const auto& key = hierarchy.front();
 
-		auto vDirectory = folderMap.at(klib::ToLower(key));
+		auto vDirectory = directoryMap_.at(klib::ToLower(key));
 		
 		const auto folder = hierarchy.size() >= 2
 			? GetDirectoryImpl(&vDirectory, hierarchy)
@@ -225,7 +225,7 @@ namespace krakoa::filesystem
 		auto hierarchy = klib::Split(correctPath, "\\");
 		const auto& key = hierarchy.front();
 
-		auto vDirectory = folderMap.at(klib::ToLower(key));
+		auto vDirectory = directoryMap_.at(klib::ToLower(key));
 
 		const auto folder = hierarchy.size() >= 2
 			? GetDirectoryImpl(&vDirectory, hierarchy)
@@ -254,9 +254,9 @@ namespace krakoa::filesystem
 	{
 		const auto key = klib::ToLower(vtlPath);
 
-		const auto iter = redirectMap.find(key);
+		const auto iter = directoryRedirectMap_.find(key);
 
-		if (iter == redirectMap.end())
+		if (iter == directoryRedirectMap_.end())
 			return {};
 
 		return iter->second;
@@ -279,13 +279,13 @@ namespace krakoa::filesystem
 	void VirtualFileExplorer::MapVPath(const PathRedirectsMap::key_type& key)
 	{
 		const auto& path = GetRealPath(key);
-		auto& vFolder = folderMap.emplace(key, VirtualFolder()).first->second;
+		auto& vFolder = directoryMap_.emplace(key, VirtualFolder()).first->second;
 		MapDriveImpl(path, vFolder);
 	}
 
 	std::filesystem::path VirtualFileExplorer::GetRoot()
 	{
-		return root;
+		return rootDirectory_;
 	}
 }
 

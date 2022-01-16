@@ -29,6 +29,8 @@ namespace krakoa::filesystem
 		using DirectoryMap = std::unordered_map<std::string, VirtualFolder>;
 		
 	public:
+		VirtualFileExplorer() = delete;
+		
 		static void Initialize(std::filesystem::path path);
 
 		static void MountAbs(const std::filesystem::path& absPath, const std::string& vtlPath);
@@ -46,15 +48,16 @@ namespace krakoa::filesystem
 		
 		static std::filesystem::path GetRoot();
 
+
 	private:
 		static void MapVPath(const PathRedirectsMap::key_type& key);
 		static void VerifyDirectory(const std::filesystem::path& path);
 		static std::string CorrectPath(const std::string& path);
 	
 	private:
-		static std::filesystem::path root;
-		static PathRedirectsMap redirectMap;
-		static DirectoryMap folderMap;
+		static std::filesystem::path rootDirectory_;
+		static PathRedirectsMap directoryRedirectMap_;
+		static DirectoryMap directoryMap_;
 	};
 }
 

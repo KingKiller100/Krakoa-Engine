@@ -24,13 +24,15 @@ namespace krakoa::os
 		FileDialogWindows();
 		~FileDialogWindows() override;
 
+		void SetWindow(Multi_Ptr<iWindow> window) override;
 		USE_RESULT std::filesystem::path OpenFile( const FileDialogFilter& filter ) const override;
 		USE_RESULT std::filesystem::path OpenFile( const wFileDialogFilter& filter ) const override;
 		USE_RESULT std::filesystem::path SaveFile( const FileDialogFilter& filter ) const override;
 		USE_RESULT std::filesystem::path SaveFile( const wFileDialogFilter& filter ) const override;
 
 	private:
-		mutable PathString<wchar_t> directory;
+		mutable PathString<wchar_t> directory_;
+		Weak_Ptr<iWindow> window_;
 	};
 }
 

@@ -5,12 +5,18 @@
 
 #include "FileDialogFilter.hpp"
 
+namespace krakoa
+{
+	class iWindow;
+}
+
 namespace krakoa::os
 {
 	class iFileDialog
 	{
 	public:
 		virtual ~iFileDialog() = default;
+		virtual void SetWindow( Multi_Ptr<iWindow> window ) =0;
 		USE_RESULT virtual std::filesystem::path OpenFile( const FileDialogFilter& filter ) const = 0;
 		USE_RESULT virtual std::filesystem::path OpenFile( const wFileDialogFilter& filter ) const = 0;
 		USE_RESULT virtual std::filesystem::path SaveFile( const FileDialogFilter& filter ) const = 0;

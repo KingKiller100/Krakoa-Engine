@@ -10,27 +10,32 @@
 
 #include <HelperMacros.hpp>
 
-
-namespace krakoa::os
+namespace krakoa
 {
-	class iOperatingSystem : public patterns::SimpleSingleton<iOperatingSystem>
+	class iWindow;
+	
+	namespace os
 	{
-	public:
-		virtual ~iOperatingSystem() = default;
+		class iOperatingSystem : public patterns::SimpleSingleton<iOperatingSystem>
+		{
+		public:
+			virtual ~iOperatingSystem() = default;
 
-		virtual void Initialize() = 0;
-		virtual void Shutdown() = 0;
-		USE_RESULT virtual const VersionInfo& GetVersionInfo() const noexcept = 0;
-		USE_RESULT virtual library::LibraryStore& GetLibraryStore() noexcept = 0;
-		USE_RESULT virtual const library::LibraryStore& GetLibraryStore() const noexcept = 0;
-		USE_RESULT virtual errors::iErrorHandler& GetErrorHandler() noexcept = 0;
-		USE_RESULT virtual const errors::iErrorHandler& GetErrorHandler() const noexcept = 0;
-		USE_RESULT virtual iFileDialog& GetFileDialog() noexcept = 0;
-		USE_RESULT virtual const iFileDialog& GetFileDialog() const noexcept = 0;
-		USE_RESULT virtual iEnvironmentVariables<char>& GetEnvironmentVariables() noexcept = 0;
-		USE_RESULT virtual const iEnvironmentVariables<char>& GetEnvironmentVariables() const noexcept = 0;
-	};
+			virtual void Initialize() = 0;
+			virtual void Shutdown() = 0;
+			virtual void ConnectWindow( std::shared_ptr<iWindow> window );
+			USE_RESULT virtual const VersionInfo& GetVersionInfo() const noexcept = 0;
+			USE_RESULT virtual library::LibraryStore& GetLibraryStore() noexcept = 0;
+			USE_RESULT virtual const library::LibraryStore& GetLibraryStore() const noexcept = 0;
+			USE_RESULT virtual errors::iErrorHandler& GetErrorHandler() noexcept = 0;
+			USE_RESULT virtual const errors::iErrorHandler& GetErrorHandler() const noexcept = 0;
+			USE_RESULT virtual iFileDialog& GetFileDialog() noexcept = 0;
+			USE_RESULT virtual const iFileDialog& GetFileDialog() const noexcept = 0;
+			USE_RESULT virtual iEnvironmentVariables<char>& GetEnvironmentVariables() noexcept = 0;
+			USE_RESULT virtual const iEnvironmentVariables<char>& GetEnvironmentVariables() const noexcept = 0;
+		};
 
-	void CreateOperatingSystemInterface();
-	void DestroyOperatingSystemInfo();
+		void CreateOperatingSystemInterface();
+		void DestroyOperatingSystemInfo();
+	}
 }

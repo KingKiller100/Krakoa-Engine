@@ -29,7 +29,7 @@ namespace krakoa::filesystem
 		for ( size_t i = 0; i < fileLines.size(); ++i )
 		{
 			auto& line = fileLines[i];
-			klib::MutSourceInfo source( path, index++, "" );
+			klib::MutSourceInfo source( path, index++, __FUNCSIG__ );
 
 			if ( const auto commentPos = line.find( s_CommentToken ); commentPos != std::string::npos )
 				line.erase( commentPos );
@@ -58,6 +58,7 @@ namespace krakoa::filesystem
 
 	void IniFile::WriteFile( const std::filesystem::path& path, const ValueMap& vMap )
 	{
+		KRK_PROFILE_FUNCTION();
 		g_IniFileLog->AddEntry( klib::LogLevel::INF, "Writing config file: " + path.string() );
 
 		std::string contents;

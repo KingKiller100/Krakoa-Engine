@@ -14,6 +14,7 @@ namespace krakoa::os
 
 		void Initialize() override;
 		void Shutdown() override;
+		void ConnectWindow( std::shared_ptr<iWindow> window ) override;
 		[[nodiscard]] const VersionInfo& GetVersionInfo() const noexcept override;
 		[[nodiscard]] library::LibraryStore& GetLibraryStore() noexcept override;
 		[[nodiscard]] errors::iErrorHandler& GetErrorHandler() noexcept override;

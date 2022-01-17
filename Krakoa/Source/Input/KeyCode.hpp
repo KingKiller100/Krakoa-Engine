@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include <cstdint>
+#include <Utility/Enum/kEnum.hpp>
 
 // Based on GLFW key codes
 
 namespace krakoa::input
 {
-	enum KeyCode : std::uint16_t
-	{
+	ENUM_STRUCT( KeyCode, std::uint16_t,
 		KEY_SPACE = 32,
 		KEY_APOSTROPHE = 39, /* ' */
 		KEY_COMMA = 44, /* , */
@@ -132,7 +132,7 @@ namespace krakoa::input
 		KEY_MENU = 348,
 
 		KEY_LAST
-	};
+			);
 }
 
 // #define KRK_KEY_SPACE              krakoa::input::KeyCode::KEY_SPACE

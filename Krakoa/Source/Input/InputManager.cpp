@@ -6,9 +6,10 @@ namespace krakoa::input
 	InputManager::InputManager(Token)
 	{}
 
-	void InputManager::Initialize() noexcept
+	void InputManager::Initialize( std::shared_ptr<iWindow> window) noexcept
 	{
 		CreateImpl();
+		window_ = window;
 	}
 
 	bool InputManager::IsKeyPressed(KeyCode keycode) noexcept
@@ -31,7 +32,7 @@ namespace krakoa::input
 		return Reference().GetMousePosYImpl();
 	}
 
-	kmaths::Vector2f InputManager::GetMousePosition() noexcept
+	maths::Point InputManager::GetMousePosition() noexcept
 	{
 		return Reference().GetMousePositionImpl();
 	}
@@ -39,5 +40,10 @@ namespace krakoa::input
 	bool InputManager::IsMouseButtonPressed(MouseCode button) noexcept
 	{
 		return Reference().IsMouseButtonPressedImpl(button);
+	}
+
+	iWindow& InputManager::GetWindow()
+	{
+		return *window_;
 	}
 }

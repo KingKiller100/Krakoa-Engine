@@ -23,8 +23,6 @@ namespace krakoa
 		class MenuBar;
 	}
 	
-	class Application;
-	
 	class Keditor2DLayer : public LayerBase
 	{
 	public:
@@ -58,8 +56,6 @@ namespace krakoa
 		bool OnKeyboardPressed(const events::KeyPressedEvent& e);
 	
 	private:
-		Application& application;
-		
 		Solo_Ptr<gfx::SubTexture2D> pSubTexture;
 
 		OrthographicCameraController cameraController;

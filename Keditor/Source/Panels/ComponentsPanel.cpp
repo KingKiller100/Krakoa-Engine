@@ -34,7 +34,7 @@ namespace krakoa::scene::panels
 	using namespace ecs;
 	using namespace ui;
 
-	ComponentsPanel::ComponentsPanel( const Multi_Ptr<EntityUID>& pSelected ) noexcept
+	ComponentsPanel::ComponentsPanel( const Multi_Ptr<EntityUID>& pSelected ) 
 		: pSelectedEntity( pSelected )
 	{
 		InitializeProperties();

@@ -35,10 +35,10 @@
 
 namespace krakoa
 {
-	class KRAKOA_API Application : public patterns::ManagerBase<Application>, util::TypeUniqueIdentifier
+	class KRAKOA_API Application : public std::enable_shared_from_this<Application>, util::TypeUniqueIdentifier
 	{
 	public:
-		Application( Token&, std::string_view appName = "Krakoa Engine" );
+		Application( std::string_view appName );
 		virtual ~Application();
 
 		virtual void Initialize();
@@ -86,20 +86,16 @@ namespace krakoa
 
 	protected:
 		bool isRunning;
-		std::unique_ptr<iWindow> pWindow;
+		std::shared_ptr<iWindow> pWindow;
 		LayerStacker layerStack;
 
 		Solo_Ptr<gfx::iFrameBuffer> frameBuffer;
 
-		std::vector<iSingleton*> managers;
+		std::vector<patterns::iSingleton*> managers;
 
 	private:
 		ImGuiLayer* pImGuiLayer;
 		time::TimeStep timeStep;
 		bool isMinimized;
 	};
-
-	Application& GetApp();
-
-	iWindow& GetWindow();
 }

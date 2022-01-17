@@ -27,10 +27,9 @@ namespace krakoa
 
 	Keditor2DLayer::Keditor2DLayer() noexcept
 		: LayerBase( "Keditor2D" )
-		, application( GetApp() )
 		, cameraController(
-			CAST( float, application.GetWindow().GetWidth() ) // Aspect ratio from window size
-			/ CAST( float, application.GetWindow().GetHeight() ),
+			CAST( float, GetApp().GetWindow().GetWidth() ) // Aspect ratio from window size
+			/ CAST( float, GetApp().GetWindow().GetHeight() ),
 			true ) // Aspect ratio from window size
 		, isViewportFocused( false )
 		, isViewportHovered( false )
@@ -60,7 +59,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		auto& sceneMan = application.GetManager<scene::SceneManager>();
+		auto& sceneMan = GetApp().GetManager<scene::SceneManager>();
 
 		const auto scene = sceneMan.Add( "EmptyScene" );
 
@@ -198,7 +197,7 @@ namespace krakoa
 			}
 		} );
 		menuBar->AddOption( "File", {
-			"Exit", []()
+			"Exit", [this]()
 			{
 				GetApp().Close();
 			}
@@ -224,15 +223,15 @@ namespace krakoa
 
 	void Keditor2DLayer::ToggleScenePlayState() const
 	{
-		if ( input::IsKeyPressed( input::KEY_LEFT_ALT ) )
+		if ( input::IsKeyPressed( input::KeyCode::KEY_LEFT_ALT ) )
 		{
-			auto& sceneMan = application.GetManager<scene::SceneManager>();
+			auto& sceneMan = GetApp().GetManager<scene::SceneManager>();
 
-			if ( input::IsKeyReleased( input::KEY_P ) )
+			if ( input::IsKeyReleased( input::KeyCode::KEY_P ) )
 			{
 				sceneMan.TogglePlayScene();
 			}
-			else if ( input::IsKeyReleased( input::KEY_S ) )
+			else if ( input::IsKeyReleased( input::KeyCode::KEY_S ) )
 			{
 				sceneMan.StopScene();
 			}
@@ -373,11 +372,11 @@ namespace krakoa
 				} );
 			} );
 
-
+			const auto& app = GetApp();
 			if ( !isViewportFocused && !isViewportHovered )
-				application.GetImGuiLayer().BlockEvents();
+				app.GetImGuiLayer().BlockEvents();
 			else
-				application.GetImGuiLayer().UnblockEvents();
+				app.GetImGuiLayer().UnblockEvents();
 		} );
 	}
 
@@ -446,7 +445,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 
-		auto& frameBuffer = application.GetFrameBuffer();
+		auto& frameBuffer = GetApp().GetFrameBuffer();
 		const auto& spec = frameBuffer.GetSpec();
 		const auto viewportSize = ui::GetContentRegionAvailable();
 
@@ -479,22 +478,22 @@ namespace krakoa
 		if ( e.GetRepeatCount() > 0 )
 			return false;
 
-		const auto ctrlBtn = IsKeyPressed( input::KEY_LEFT_CONTROL ) || IsKeyPressed( input::KEY_RIGHT_CONTROL );
-		const auto shiftBtn = IsKeyPressed( input::KEY_LEFT_SHIFT ) || IsKeyPressed( input::KEY_RIGHT_SHIFT );
+		const auto ctrlBtn = input::IsKeyPressed( input::KeyCode::KEY_LEFT_CONTROL ) || input::IsKeyPressed( input::KeyCode::KEY_RIGHT_CONTROL );
+		const auto shiftBtn = input::IsKeyPressed( input::KeyCode::KEY_LEFT_SHIFT ) || input::IsKeyPressed( input::KeyCode::KEY_RIGHT_SHIFT );
 
 		switch ( e.GetKeyCode() )
 		{
-		case input::KEY_N:
+		case input::KeyCode::KEY_N:
 			if ( ctrlBtn && !shiftBtn )
 				CreateNewScene();
 			break;
 
-		case input::KEY_O:
+		case input::KeyCode::KEY_O:
 			if ( ctrlBtn && !shiftBtn )
 				LoadScene();
 			break;
 
-		case input::KEY_S:
+		case input::KeyCode::KEY_S:
 			if ( ctrlBtn )
 			{
 				if ( shiftBtn )

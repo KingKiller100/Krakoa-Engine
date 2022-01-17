@@ -22,7 +22,7 @@ namespace krakoa::scene
 		class ComponentsPanel final : public iScenePanel
 		{
 		public:
-			ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) noexcept;
+			ComponentsPanel(const Multi_Ptr<ecs::EntityUID>& pSelected) ;
 			~ComponentsPanel() noexcept override;
 
 			void LogConnected() const override;

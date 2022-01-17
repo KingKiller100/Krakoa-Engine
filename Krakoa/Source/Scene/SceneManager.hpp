@@ -14,6 +14,11 @@
 
 namespace krakoa
 {
+	class iWindow;
+}
+
+namespace krakoa
+{
 	namespace scene
 	{
 		namespace panels
@@ -38,7 +43,7 @@ namespace krakoa
 		, public patterns::SimpleStateMachine<SceneConstants::SceneRuntimeState::Underlying_t>
 		{
 		public:
-			SceneManager();
+			SceneManager(Multi_Ptr<iWindow> window);
 			~SceneManager() override;
 
 			Weak_Ptr<iScene> Add(const std::string& name);
@@ -79,6 +84,7 @@ namespace krakoa
 			SceneRuntimeState state;
 
 			Multi_Ptr<ecs::EntityComponentSystem> entityComponentSystem;
+			Weak_Ptr<iWindow> window_;
 		};
 	}
 }

@@ -3,6 +3,7 @@
 #include "iScene.hpp"
 
 #include "Entity/Entity.hpp"
+#include "../Maths/Size.hpp"
 
 #include <string>
 #include <vector>
@@ -12,7 +13,7 @@ namespace krakoa::scene
 	class Scene : public iScene
 	{
 	public:
-		Scene(std::string_view name, Multi_Ptr<ecs::EntityComponentSystem> ecs);
+		Scene(std::string_view name, Multi_Ptr<ecs::EntityComponentSystem> ecs, maths::uSize dimensions);
 		~Scene();
 	
 		bool Empty() const override;

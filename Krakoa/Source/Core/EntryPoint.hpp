@@ -21,7 +21,7 @@
 
 namespace krakoa
 {
-	extern void CreateApplication();
+	extern [[nodiscard]] Application* CreateApplication();
 }
 #endif
 
@@ -80,8 +80,7 @@ void Launch()
 	{
 		TryRunApplication();
 	}
-
-	krakoa::Application::Destroy();
+	
 	krakoa::configurations::GlobalConfig::Destroy();
 	krakoa::os::DestroyOperatingSystemInfo();
 	KRK_LOG_END();
@@ -148,19 +147,24 @@ void RunApplication()
 	InitializeGlobalConfig( operatingSystem );
 	ConfigureLogging();
 
-	krakoa::CreateApplication();
+	const auto app = std::shared_ptr<krakoa::Application>( krakoa::CreateApplication() );
 
-	auto& pApp = krakoa::Application::Reference();
-	pApp.Initialize();
+	krakoa::os::iOperatingSystem::Reference().GetErrorHandler().SetEmergencyExitFunc( [app]()
+	{
+		if ( app )
+			app->ShutDown();
+	} );
+
+	app->Initialize();
 
 	KRK_PROFILE_SESSION_END();
 
 	KRK_PROFILE_SESSION_BEGIN( "RunTime", "KRK_PROFILER-Runtime" );
-	pApp.Run();
+	app->Run();
 	KRK_PROFILE_SESSION_END();
 
 	KRK_PROFILE_SESSION_BEGIN( "ShutDown", "KRK_PROFILER-ShutDown" );
-	pApp.ShutDown();
+	app->ShutDown();
 	KRK_PROFILE_SESSION_END();
 #endif
 }
@@ -168,12 +172,6 @@ void RunApplication()
 inline krakoa::os::iOperatingSystem& ConnectOS()
 {
 	krakoa::os::CreateOperatingSystemInterface();
-
-	krakoa::os::iOperatingSystem::Reference().GetErrorHandler().SetEmergencyExitFunc( []()
-	{
-		if ( krakoa::Application::IsActive() )
-			krakoa::Application::Pointer()->ShutDown();
-	} );
 
 	return krakoa::os::iOperatingSystem::Reference();
 }

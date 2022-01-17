@@ -34,4 +34,7 @@ namespace maths
 			return *this;
 		}
 	};
+
+	using Size = BasicSize<float>;
+	using uSize = BasicSize<unsigned>;
 }

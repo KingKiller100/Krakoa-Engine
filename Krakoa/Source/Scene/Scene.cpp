@@ -18,7 +18,7 @@ namespace krakoa::scene
 	using namespace ecs;
 	using namespace components;
 
-	Scene::Scene(std::string_view name, Multi_Ptr<EntityComponentSystem> ecs)
+	Scene::Scene(std::string_view name, Multi_Ptr<EntityComponentSystem> ecs, maths::uSize dimensions)
 		: name(name)
 		, entityComponentSystem(ecs)
 		, runtimeState(nullptr)
@@ -32,7 +32,7 @@ namespace krakoa::scene
 					return;
 
 				auto& sceneCam = camera.GetCamera<SceneCamera>();
-				sceneCam.SetViewportSize(GetApp().GetWindow().GetDimensions());
+				sceneCam.SetViewportSize(dimensions);
 			});
 	}
 

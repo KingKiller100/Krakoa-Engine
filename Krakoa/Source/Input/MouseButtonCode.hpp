@@ -21,7 +21,3 @@ namespace krakoa::input
 		MOUSE_MIDDLE = MOUSE_3,
 	};
 }
-
-#define KRK_MOUSE_BUTTON_LEFT      ::krakoa::input::MouseCode::MOUSE_LEFT
-#define KRK_MOUSE_BUTTON_RIGHT     ::krakoa::input::MouseCode::MOUSE_RIGHT
-#define KRK_MOUSE_BUTTON_MIDDLE    ::krakoa::input::MouseCode::MOUSE_MIDDLE

@@ -2,6 +2,7 @@
 #include "SceneManager.hpp"
 
 #include "Scene.hpp"
+#include "../Core/iWindow.hpp"
 #include "Serialization/SceneSerializer.hpp"
 
 #include "../Graphics/2D/Renderer2D.hpp"
@@ -17,24 +18,25 @@ namespace krakoa::scene
 {
 	using namespace ecs::components;
 
-	SceneManager::SceneManager()
-		: SimpleStateMachine(SceneRuntimeState::STOP,
-			[this](const auto& current, const auto& next)
-	{
-		const SceneRuntimeState prev = current;
-		ResolveNextState(next);
-		const auto msg = klib::ToString("Scene Manager state changed: {0} -> {1}",
-			prev
-			, state);
-		KRK_INF(msg);
-	})
-		, currentScene(scenes.end())
-		, entityComponentSystem(new ecs::EntityComponentSystem())
-		, state(SceneRuntimeState::STOP)
-		, serializer(Make_Solo<serialization::SceneSerializer>())
+	SceneManager::SceneManager(Multi_Ptr<iWindow> window)
+		: SimpleStateMachine( SceneRuntimeState::STOP,
+			[this]( const auto& current, const auto& next )
+			{
+				const SceneRuntimeState prev = current;
+				ResolveNextState( next );
+				const auto msg = klib::ToString( "Scene Manager state changed: {0} -> {1}",
+					prev
+					, state );
+				KRK_INF( msg );
+			} )
+		, currentScene( scenes.end() )
+		, entityComponentSystem( new ecs::EntityComponentSystem() )
+		, state( SceneRuntimeState::STOP )
+		, serializer( Make_Solo<serialization::SceneSerializer>() )
+		, window_( window )
 	{
 		//Temporary
-		filesystem::VirtualFileExplorer::Mount("Keditor\\Assets\\Scenes", "Scenes");
+		filesystem::VirtualFileExplorer::Mount( "Keditor\\Assets\\Scenes", "Scenes" );
 	}
 
 	SceneManager::~SceneManager()
@@ -43,42 +45,46 @@ namespace krakoa::scene
 		entityComponentSystem->RemoveAllEntities();
 	}
 
-	Weak_Ptr<iScene> SceneManager::Add(const std::string& name)
+	Weak_Ptr<iScene> SceneManager::Add( const std::string& name )
 	{
 		KRK_PROFILE_FUNCTION();
 
+		if (window_.expired())
+			return {};
+
+		const auto dimensions = window_.lock()->GetDimensions();
 		auto& scene = scenes[name];
-		scene.reset(new Scene(name, entityComponentSystem));
-		scene->SetRuntimeState(std::addressof(state));
+		scene = Make_Multi<Scene>( name, entityComponentSystem, dimensions );
+		scene->SetRuntimeState( std::addressof( state ) );
 		scene->OnLoad();
-		currentScene = scenes.find(name);
-		serializer->SetScene(scene);
+		currentScene = scenes.find( name );
+		serializer->SetScene( scene );
 		return scene;
 	}
 
-	bool SceneManager::Remove(std::string_view name)
+	bool SceneManager::Remove( std::string_view name )
 	{
 		KRK_PROFILE_FUNCTION();
 
-		const auto iter = scenes.find(name.data());
-		if (iter == scenes.end())
+		const auto iter = scenes.find( name.data() );
+		if ( iter == scenes.end() )
 			return false;
 
 		iter->second->Clear();
-		scenes.erase(iter);
+		scenes.erase( iter );
 		return true;
 	}
 
 	void SceneManager::RemoveAll()
 	{
 		KRK_PROFILE_FUNCTION();
-		for (auto&& scnInfo : scenes)
+		for ( auto&& scnInfo : scenes )
 		{
 			const auto& scene = scnInfo.second;
-			if (scene.use_count() > 1)
+			if ( scene.use_count() > 1 )
 			{
-				const auto msg = util::Fmt("Scene \"{0}\" is still active", scene->GetName());
-				KRK_WRN(msg);
+				const auto msg = util::Fmt( "Scene \"{0}\" is still active", scene->GetName() );
+				KRK_WRN( msg );
 			}
 			scene->Clear();
 		}
@@ -97,50 +103,49 @@ namespace krakoa::scene
 		return currentScene->second;
 	}
 
-	void SceneManager::SetCurrentScene(const std::string& name)
+	void SceneManager::SetCurrentScene( const std::string& name )
 	{
-		currentScene = scenes.find(name);
+		currentScene = scenes.find( name );
 	}
 
-	void SceneManager::SaveToFile(const std::filesystem::path& path)
+	void SceneManager::SaveToFile( const std::filesystem::path& path )
 	{
-		KRK_INF(util::Fmt("Saving scene to \"{0}\"", path));
-		serializer->Serialize(path);
+		KRK_INF( util::Fmt("Saving scene to \"{0}\"", path) );
+		serializer->Serialize( path );
 	}
 
-	void SceneManager::LoadFromFile(const std::filesystem::path& path)
+	void SceneManager::LoadFromFile( const std::filesystem::path& path )
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto sceneName = path.stem().string();
-		if (HasScene(sceneName))
+		if ( HasScene( sceneName ) )
 		{
-			currentScene = scenes.find(sceneName);
+			currentScene = scenes.find( sceneName );
 			return;
 		}
 
-		const auto scn = Add(sceneName);
-		serializer->SetScene(scn);
-		KRK_INF(util::Fmt("Loading scene from \"{0}\"", path));
-		serializer->Deserialize(path);
+		const auto scn = Add( sceneName );
+		serializer->SetScene( scn );
+		KRK_INF( util::Fmt("Loading scene from \"{0}\"", path) );
+		serializer->Deserialize( path );
 	}
 
-	void SceneManager::OnUpdate(const float deltaTime)
+	void SceneManager::OnUpdate( const float deltaTime )
 	{
 		KRK_PROFILE_FUNCTION();
 		auto& scene = *currentScene->second;
 
-		scene.OnUpdate(deltaTime);
+		scene.OnUpdate( deltaTime );
 
-		RenderEntities(scene);
+		RenderEntities( scene );
 	}
 
-	bool SceneManager::HasScene(std::string_view sceneName) const
+	bool SceneManager::HasScene( std::string_view sceneName ) const
 	{
-		const auto iter = std::find_if(scenes.begin(), scenes.end(), [sceneName]
-		(const decltype(scenes)::value_type& scene)
+		const auto iter = std::find_if( scenes.begin(), scenes.end(), [sceneName]( const decltype(scenes)::value_type& scene )
 		{
 			return scene.second->GetName() == sceneName;
-		});
+		} );
 
 		return iter != scenes.cend();
 	}
@@ -152,27 +157,27 @@ namespace krakoa::scene
 
 	void SceneManager::TogglePlayScene()
 	{
-		if (GetState() == SceneRuntimeState::PLAY)
-			SetState(SceneRuntimeState::STOP);
+		if ( GetState() == SceneRuntimeState::PLAY )
+			SetState( SceneRuntimeState::STOP );
 		else
-			SetState(SceneRuntimeState::PLAY);
+			SetState( SceneRuntimeState::PLAY );
 	}
 
 	void SceneManager::StopScene()
 	{
-		SetState(SceneRuntimeState::STOP);
+		SetState( SceneRuntimeState::STOP );
 	}
 
-	void SceneManager::ResolveNextState(SceneRuntimeState::Underlying_t nextState)
+	void SceneManager::ResolveNextState( SceneRuntimeState::Underlying_t nextState )
 	{
 		state = nextState;
 	}
 
-	void SceneManager::RenderEntities(const iScene& scene) const
+	void SceneManager::RenderEntities( const iScene& scene ) const
 	{
 		KRK_PROFILE_FUNCTION();
 
-		if (scene.Empty())
+		if ( scene.Empty() )
 			return;
 
 		iCamera* camera = nullptr;
@@ -181,43 +186,44 @@ namespace krakoa::scene
 		const auto cameraEntities
 			= entityComponentSystem->GetEntitiesWithComponents<CameraComponent, TransformComponent>();
 
-		for (const auto id : cameraEntities)
+		for ( const auto id : cameraEntities )
 		{
-			const auto& entity = scene.GetEntity(id);
+			const auto& entity = scene.GetEntity( id );
 
 			const auto& cam = entity.GetComponent<CameraComponent>();
 			auto& tfm = entity.GetComponent<TransformComponent>();
 
-			if (!cam.IsPrimary())
+			if ( !cam.IsPrimary() )
 				continue;
 
-			camera = std::addressof(cam.GetCamera());
+			camera = std::addressof( cam.GetCamera() );
 			cameraTransform = tfm.GetTransformationMatrix2D();
 			break;
 		}
 
-		if (!camera)
+		if ( !camera )
 			return;
 
 		const auto drawables
 			= entityComponentSystem->GetEntitiesWithComponents<Appearance2DComponent, TransformComponent>();
 
-		gfx::Renderer2D::BeginScene(*camera, cameraTransform);
+		gfx::Renderer2D::BeginScene( *camera, cameraTransform );
 
-		for (const auto id : drawables)
+		for ( const auto id : drawables )
 		{
-			const auto& entity = scene.GetEntity(id);
+			const auto& entity = scene.GetEntity( id );
 
 			const auto& appearance = entity.GetComponent<Appearance2DComponent>();
 			const auto& transform = entity.GetComponent<TransformComponent>();
 
-			switch (appearance.GetGeometryType()) {
+			switch ( appearance.GetGeometryType() )
+			{
 			case gfx::GeometryType::QUAD:
-				gfx::Renderer2D::DrawQuad(appearance, transform);
+				gfx::Renderer2D::DrawQuad( appearance, transform );
 				break;
 
 			case gfx::GeometryType::TRIANGLE:
-				gfx::Renderer2D::DrawTriangle(appearance, transform);
+				gfx::Renderer2D::DrawTriangle( appearance, transform );
 				break;
 
 			case gfx::GeometryType::CIRCLE:
@@ -225,7 +231,7 @@ namespace krakoa::scene
 				break;
 
 			default: // case of an unknown geometry type
-				KRK_FATAL(klib::ToString("Failed to draw entity {0} - unknown geometry type", entity.GetID()));
+				KRK_FATAL( klib::ToString("Failed to draw entity {0} - unknown geometry type", entity.GetID()) );
 				break;
 			}
 		}

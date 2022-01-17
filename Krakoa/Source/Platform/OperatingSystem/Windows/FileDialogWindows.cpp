@@ -25,7 +25,11 @@ namespace krakoa::os
 	{
 		template <typename OpenFileNameT, typename OpenFileDialogFunc, typename T>
 		std::filesystem::path OpenDialog(
-			const T* filter, std::function<OpenFileDialogFunc> dialogFunc, int flags, const klib::Path& directory
+			Multi_Ptr<iWindow> window
+			, const T* filter
+			, std::function<OpenFileDialogFunc> dialogFunc
+			, int flags
+			, const klib::Path& directory
 		)
 		{
 			OpenFileNameT ofn;
@@ -34,7 +38,7 @@ namespace krakoa::os
 
 			ZeroMemory( &ofn, sizeof(ofn) );
 			ofn.lStructSize = sizeof( ofn );
-			ofn.hwndOwner = glfwGetWin32Window( GetWindow().GetNativeWindow<GLFWwindow>() );
+			ofn.hwndOwner = glfwGetWin32Window( window->GetNativeWindow<GLFWwindow>() );
 			ofn.lpstrFile = file.data();
 			ofn.nMaxFile = static_cast<DWORD>( file.size() );
 			ofn.lpstrInitialDir = dir.data();
@@ -61,50 +65,71 @@ namespace krakoa::os
 	}
 
 	FileDialogWindows::FileDialogWindows()
-		: directory( klib::GetCurrentWorkingDirectory<wchar_t>().data() )
+		: directory_( klib::GetCurrentWorkingDirectory<wchar_t>().data() )
 	{}
 
 	FileDialogWindows::~FileDialogWindows()
 	= default;
 
+	void FileDialogWindows::SetWindow( Multi_Ptr<iWindow> window )
+	{
+		window_ = window;
+	}
+
 	std::filesystem::path FileDialogWindows::OpenFile( const FileDialogFilter& filter ) const
 	{
+		if ( window_.expired() )
+			return {};
+
 		auto* data = filter.GetFilter();
 		const auto path = OpenDialog<OPENFILENAMEA, decltype(GetOpenFileNameA)>(
+			window_.lock(),
 			data, GetOpenFileNameA,
 			OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
-			directory.data() );
-		directory = path.parent_path().c_str();
+			directory_.data() );
+		directory_ = path.parent_path().c_str();
 		return path;
 	}
 
 	std::filesystem::path FileDialogWindows::OpenFile( const wFileDialogFilter& filter ) const
 	{
+		if ( window_.expired() )
+			return {};
+
 		const auto path = OpenDialog<OPENFILENAMEW, decltype(GetOpenFileNameW)>(
+			window_.lock(),
 			filter.GetFilter(), GetOpenFileNameW,
 			OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
-			directory.data() );
-		directory = path.parent_path().c_str();
+			directory_.data() );
+		directory_ = path.parent_path().c_str();
 		return path;
 	}
 
 	std::filesystem::path FileDialogWindows::SaveFile( const FileDialogFilter& filter ) const
 	{
+		if ( window_.expired() )
+			return {};
+
 		const auto path = OpenDialog<OPENFILENAMEA, decltype(GetOpenFileNameA)>(
+			window_.lock(),
 			filter.GetFilter(), GetSaveFileNameA,
 			OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR,
-			directory.data() );
-		directory = path.parent_path().c_str();
+			directory_.data() );
+		directory_ = path.parent_path().c_str();
 		return path;
 	}
 
 	std::filesystem::path FileDialogWindows::SaveFile( const wFileDialogFilter& filter ) const
 	{
+		if ( window_.expired() )
+			return {};
+
 		const auto path = OpenDialog<OPENFILENAMEW, decltype(GetOpenFileNameW)>(
+			window_.lock(),
 			filter.GetFilter(), GetSaveFileNameW,
 			OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR,
-			directory.data() );
-		directory = path.parent_path().c_str();
+			directory_.data() );
+		directory_ = path.parent_path().c_str();
 		return path;
 	}
 }

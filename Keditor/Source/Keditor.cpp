@@ -8,8 +8,8 @@ namespace krakoa
 	class Keditor : public Application
 	{
 	public:
-		Keditor(Token&& t)
-			: Application(t, "Keditor")
+		Keditor()
+			: Application("Keditor")
 		{}
 
 		~Keditor() override
@@ -29,9 +29,9 @@ namespace krakoa
 		}
 	};
 
-	void CreateApplication()
+	[[nodiscard]] krakoa::Application* CreateApplication()
 	{
-		Application::Create<Keditor>();
+		return new Keditor();
 	}
 }
 	

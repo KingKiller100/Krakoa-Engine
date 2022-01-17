@@ -24,19 +24,17 @@
 
 namespace krakoa
 {
-	Application::Application( Token&, std::string_view appName )
+	Application::Application( std::string_view appName )
 		: isRunning( true )
 		, timeStep( /*120*/ )
 		, isMinimized( false )
 	{
 		KRK_PROFILE_FUNCTION();
 
-		KRK_ASSERT( !instance, "Instance of application " + std::string(appName) + " already exists!" );
-
 		//timeStep.SetSpeedMultiplier(5);
 
 		// Initialize Window
-		pWindow = std::unique_ptr<iWindow>( iWindow::Create( WindowProperties( appName ) ) );
+		pWindow = std::shared_ptr<iWindow>( iWindow::Create( WindowProperties( appName ) ) );
 		pWindow->SetEventCallback( KRK_BIND_FUNC( Application::OnEvent ) );
 	}
 
@@ -50,14 +48,14 @@ namespace krakoa
 		PushInternalLayers();
 
 		// Initialize InputManager
-		input::InputManager::Initialize();
+		input::InputManager::Initialize( pWindow );
 		AddManager( input::InputManager::Pointer() );
 
 		RegisterManager<filesystem::AssetManager>();
 
 		gfx::Renderer::Initialize();
 
-		AddManager( new scene::SceneManager() );
+		AddManager( new scene::SceneManager( pWindow ) );
 
 		frameBuffer.reset( gfx::iFrameBuffer::Create( {1024, 640, 1, false} ) );
 
@@ -165,6 +163,7 @@ namespace krakoa
 	{
 		KRK_PROFILE_FUNCTION();
 		layerStack.PushOverlay( overlay );
+		overlay->SetApp( shared_from_this() );
 	}
 
 	void Application::PopLayer( LayerBase* layer )
@@ -202,15 +201,5 @@ namespace krakoa
 	ImGuiLayer& Application::GetImGuiLayer() const
 	{
 		return *pImGuiLayer;
-	}
-
-	Application& GetApp()
-	{
-		return Application::Reference();
-	}
-
-	iWindow& GetWindow()
-	{
-		return GetApp().GetWindow();
 	}
 }

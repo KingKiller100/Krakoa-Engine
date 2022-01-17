@@ -1,10 +1,10 @@
 ﻿#pragma once
+#include "../Core/iWindow.hpp"
 #include "../Patterns/ManagerBase.hpp"
+#include "../Maths/Point.hpp"
 
 #include "KeyCode.hpp"
 #include "MouseButtonCode.hpp"
-
-#include <Maths/Vectors/Vector2.hpp>
 
 namespace krakoa::input
 {
@@ -13,7 +13,7 @@ namespace krakoa::input
 	public:
 		InputManager(Token);
 
-		static void Initialize() noexcept;
+		static void Initialize(std::shared_ptr<iWindow> window) noexcept;
 
 		// Keys
 		static bool IsKeyPressed(KeyCode keycode) noexcept;
@@ -22,11 +22,13 @@ namespace krakoa::input
 		// Mouse
 		static float GetMousePosX() noexcept;
 		static float GetMousePosY() noexcept;
-		static kmaths::Vector2f GetMousePosition() noexcept;
+		static maths::Point GetMousePosition() noexcept;
 		static bool IsMouseButtonPressed(MouseCode button) noexcept;
 
 	protected:
 		static void CreateImpl() noexcept;
+
+		static iWindow& GetWindow();
 
 		// Keys
 		USE_RESULT virtual bool IsKeyPressedImpl(KeyCode keycode) const noexcept = 0;
@@ -35,8 +37,10 @@ namespace krakoa::input
 		// Mouse
 		USE_RESULT virtual float GetMousePosXImpl() const noexcept = 0;
 		USE_RESULT virtual float GetMousePosYImpl() const noexcept = 0;
-		USE_RESULT virtual kmaths::Vector2f GetMousePositionImpl() const noexcept = 0;
+		USE_RESULT virtual maths::Point GetMousePositionImpl() const noexcept = 0;
 		USE_RESULT virtual bool IsMouseButtonPressedImpl(const MouseCode button) const noexcept = 0;
 
+	private:
+		static std::shared_ptr<iWindow> window_;
 	};
 }

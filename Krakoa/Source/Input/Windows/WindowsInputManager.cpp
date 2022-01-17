@@ -8,13 +8,13 @@
 #include <GLFW/glfw3.h>
 
 namespace krakoa::input
-{	
-	WindowsInputManager::WindowsInputManager(const Token& t) noexcept
-		: InputManager(t)
-	{	}
+{
+	WindowsInputManager::WindowsInputManager( const Token& t ) noexcept
+		: InputManager( t )
+	{ }
 
 	WindowsInputManager::~WindowsInputManager()
-		= default;
+	= default;
 
 	void InputManager::CreateImpl() noexcept
 	{
@@ -22,46 +22,46 @@ namespace krakoa::input
 		Create<WindowsInputManager>();
 	}
 
-	bool WindowsInputManager::IsKeyPressedImpl(KeyCode keycode) const noexcept
+	bool WindowsInputManager::IsKeyPressedImpl( KeyCode keycode ) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = GetWindow().GetNativeWindow<GLFWwindow>();
-		const auto state = glfwGetKey(window, static_cast<int>(keycode));
+		const auto state = glfwGetKey( window, keycode.ToUnderlying() );
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInputManager::IsKeyReleasedImpl(KeyCode keycode) const noexcept
+	bool WindowsInputManager::IsKeyReleasedImpl( KeyCode keycode ) const noexcept
 	{
-		static std::bitset<KEY_LAST> bitset;
+		static std::bitset<KeyCode::KEY_LAST> s_Bitset;
 
 		bool released = false;
-		
-		if (IsKeyPressedImpl(keycode))
-			bitset.set(keycode);
-		else if (bitset[keycode])
+
+		if ( IsKeyPressedImpl( keycode ) )
+			s_Bitset.set( keycode.ToUnderlying() );
+		else if ( s_Bitset[keycode.ToUnderlying()] )
 		{
-			bitset.reset(keycode);
+			s_Bitset.reset( keycode.ToUnderlying() );
 			released = true;
 		}
 
 		return released;
 	}
 
-	bool WindowsInputManager::IsMouseButtonPressedImpl(MouseCode button) const noexcept
+	bool WindowsInputManager::IsMouseButtonPressedImpl( MouseCode button ) const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = GetWindow().GetNativeWindow<GLFWwindow>();
-		const auto state = glfwGetMouseButton(window, static_cast<int>(button));
+		const auto state = glfwGetMouseButton( window, static_cast<int>( button ) );
 		return state == GLFW_PRESS;
 	}
 
-	kmaths::Vector2f WindowsInputManager::GetMousePositionImpl() const noexcept
+	maths::Point WindowsInputManager::GetMousePositionImpl() const noexcept
 	{
 		KRK_PROFILE_FUNCTION();
 		const auto window = GetWindow().GetNativeWindow<GLFWwindow>();
 		double xPos, yPos;
-		glfwGetCursorPos(window, &xPos, &yPos);
-		return { static_cast<float>(xPos), static_cast<float>(yPos) };
+		glfwGetCursorPos( window, &xPos, &yPos );
+		return {static_cast<float>( xPos ), static_cast<float>( yPos )};
 	}
 
 	float WindowsInputManager::GetMousePosXImpl() const noexcept
@@ -78,4 +78,3 @@ namespace krakoa::input
 		return y;
 	}
 }
-

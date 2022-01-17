@@ -26,7 +26,7 @@ namespace krakoa::os
 	OperatingSystemWindows::~OperatingSystemWindows()
 	{
 		errorHandler->Update();
-		LogOS( "[{0}]: {1}", errorHandler->GetCode(), errorHandler->GetText() );
+		LogOSError( "[{0}]: {1}", errorHandler->GetCode(), errorHandler->GetText() );
 
 		libStore->UnloadAll();
 	}
@@ -48,6 +48,11 @@ namespace krakoa::os
 	void OperatingSystemWindows::Shutdown()
 	{
 		libStore->UnloadAll();
+	}
+
+	void OperatingSystemWindows::ConnectWindow( std::shared_ptr<iWindow> window )
+	{
+		fileDialog->SetWindow(window);
 	}
 
 	const VersionInfo& OperatingSystemWindows::GetVersionInfo() const noexcept
